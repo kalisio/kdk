@@ -3,12 +3,13 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { Time } from '../../../../core/client/time.js'
+import { convertToLeafletFromSimpleStyleSpec } from '../../leaflet/utils/index.js'
 import { fetchGeoJson, getFeatureId, isInMemoryLayer } from '../../utils.js'
 
 export const geojsonLayers = {
   methods: {
     convertFromSimpleStyleSpecOrDefaults (properties) {
-      let { stroke, strokeWidth, fill } = this.convertFromSimpleStyleSpec(properties)
+      let { stroke, strokeWidth, fill } = convertToLeafletFromSimpleStyleSpec(properties)
       if (!stroke) stroke = Cesium.GeoJsonDataSource.stroke
       if (!strokeWidth) strokeWidth = Cesium.GeoJsonDataSource.strokeWidth
       if (!fill) fill = Cesium.GeoJsonDataSource.fill
@@ -191,7 +192,7 @@ export const geojsonLayers = {
       if (tooltipTemplate) {
         cesiumOptions.tooltip.compiler = _.template(tooltipTemplate)
       }
-      this.convertFromSimpleStyleSpec(cesiumOptions, 'update-in-place')
+      convertToLeafletFromSimpleStyleSpec(cesiumOptions, 'update-in-place')
       // Perform required conversion from JSON to Cesium objects
       // If templating occurs we need to wait until it is performed to convert to Cesium objects
       if (cesiumOptions.entityStyle && !entityStyleTemplate) cesiumOptions.entityStyle = this.convertToCesiumObjects(cesiumOptions.entityStyle)
@@ -305,7 +306,7 @@ export const geojsonLayers = {
     // Perform required conversion from JSON to Cesium objects
     if (_.has(this, 'activityOptions.engine.featureStyle')) {
       Object.assign(Cesium.GeoJsonDataSource,
-        this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.featureStyle'), 'update-in-place'))
+        convertToLeafletFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.featureStyle'), 'update-in-place'))
     }
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)

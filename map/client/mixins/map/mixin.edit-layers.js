@@ -2,7 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import { getType, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
-import { bindLeafletEvents, unbindLeafletEvents } from '../../utils.map.js'
+import { bindLeafletEvents, unbindLeafletEvents, convertToLeafletFromSimpleStyleSpec, createLeafletMarkerFromStyle } from '../../utils.map.js'
 
 // Events we listen while layer is in edition mode
 const mapEditEvents = ['pm:create']
@@ -72,7 +72,7 @@ export const editLayers = {
             _.get(this, 'activityOptions.engine.editFeatureStyle', _.get(this, 'activityOptions.engine.featureStyle')))
         },
         pointToLayer: (feature, latlng) => {
-          return this.createMarkerFromStyle(latlng, Object.assign({ pmIgnore: false }, // Allow geoman edition
+          return createLeafletMarkerFromStyle(latlng, Object.assign({ pmIgnore: false }, // Allow geoman edition
             _.get(this, 'activityOptions.engine.editPointStyle', _.get(this, 'activityOptions.engine.pointStyle'))))
         }
       }
@@ -484,10 +484,10 @@ export const editLayers = {
   beforeMount () {
     // Perform required conversion for default feature styling
     if (_.has(this, 'activityOptions.engine.editFeatureStyle')) {
-      this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editFeatureStyle'), 'update-in-place')
+      convertToLeafletFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editFeatureStyle'), 'update-in-place')
     }
     if (_.has(this, 'activityOptions.engine.editPointStyle')) {
-      this.convertFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editPointStyle'), 'update-in-place')
+      convertToLeafletFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editPointStyle'), 'update-in-place')
     }
   }
 }

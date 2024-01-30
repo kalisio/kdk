@@ -1,5 +1,8 @@
 import _ from 'lodash'
+import chroma from 'chroma-js'
+import moment from 'moment'
 import L from 'leaflet'
+import { Time, Units } from '../../../../core/client/index.js'
 import { ShapeMarker } from '../ShapeMarker.js'
 
 L.shapeMarker = function (latlng, options) {
@@ -108,4 +111,55 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
   if (_.has(convertedStyle, 'pane')) _.set(convertedStyle, 'pane', _.get(convertedStyle, 'pane').toString())
   if (_.has(convertedStyle, 'shadowPane')) _.set(convertedStyle, 'shadowPane', _.get(convertedStyle, 'shadowPane').toString())
   return convertedStyle
+}
+
+export function getDefaultMarker (feature, latlng, options) {
+  const properties = feature.properties
+  const leafletOptions = options.leaflet || options
+  const style = Object.assign({},
+    _.get(this, 'activityOptions.engine.pointStyle'),
+    leafletOptions.layerStyle,
+    convertToLeafletFromSimpleStyleSpec(feature.style || feature.properties))
+  // We allow to template style properties according to feature,
+  // because it can be slow you have to specify a subset of properties
+  const context = { properties, feature, chroma, moment, Units, Time }
+  if (leafletOptions.template) {
+    // Create the map of variables
+    if (options.variables) context.variables = _.reduce(options.variables,
+      (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
+    leafletOptions.template.forEach(entry => {
+      // Perform templating, set using simple spec mapping first then raw if property not found
+      _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler(context))
+    })
+  }
+  // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
+  if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
+  if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
+  return (latlng ? createLeafletMarkerFromStyle(latlng, style) : style)
+}
+
+export function getDefaultStyle (feature, options) {
+  const properties = feature.properties
+  const leafletOptions = options.leaflet || options
+  const style = Object.assign({},
+    _.get(this, 'activityOptions.engine.featureStyle'),
+    leafletOptions.layerStyle,
+    convertToLeafletFromSimpleStyleSpec(feature.style || feature.properties))
+
+  // We allow to template style properties according to feature,
+  // because it can be slow you have to specify a subset of properties
+  const context = { properties, feature, chroma, moment, Units, Time }
+  if (leafletOptions.template) {
+    // Create the map of variables
+    if (options.variables) context.variables = _.reduce(options.variables,
+      (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
+    leafletOptions.template.forEach(entry => {
+      // Perform templating, set using simple spec mapping first then raw if property not found
+      _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler(context))
+    })
+  }
+  // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
+  if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
+  if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
+  return style
 }

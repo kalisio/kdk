@@ -12,6 +12,7 @@ import { api, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as mixins from '../mixins'
 import { useCatalog, useCurrentActivity } from '../composables'
+import { convertToLeafletFromSimpleStyleSpec, createLeafletMarkerFromStyle } from '../leaflet/utils/index.js'
 import meta from 'moment-timezone/data/meta/latest.json'
 
 // Convert timezones to GeoJson
@@ -75,8 +76,8 @@ export default {
     },
     getTimezoneMarker (feature, latlng) {
       const isSelected = (this.timezone === feature.properties.name)
-      return this.createMarkerFromStyle(latlng,
-        this.convertFromSimpleStyleSpec({
+      return createLeafletMarkerFromStyle(latlng,
+        convertToLeafletFromSimpleStyleSpec({
           'marker-type': 'circleMarker',
           radius: isSelected ? 8 : 5,
           'stroke-color': getCssVar('primary'),

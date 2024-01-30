@@ -7,7 +7,7 @@ import { Time, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer } from '../../utils.map.js'
+import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, convertToLeafletFromSimpleStyleSpec } from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default remove handler for leaflet-realtime due to
@@ -307,7 +307,7 @@ export const geojsonLayers = {
           // If layer provided do not override
           if (!_.has(leafletOptions, key)) _.set(leafletOptions, key, _.get(geoJsonOptions, key))
         })
-        leafletOptions.layerStyle = this.convertFromSimpleStyleSpec(leafletOptions)
+        leafletOptions.layerStyle = convertToLeafletFromSimpleStyleSpec(leafletOptions)
         let layer = this.createLeafletLayer(options)
 
         // Specific case of realtime layer where the underlying container also need to be added to map
