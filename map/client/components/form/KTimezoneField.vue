@@ -11,6 +11,8 @@
         :label="label"
         :options="options"
         use-input
+        hide-dropdown-icon
+        clearable
         @update:model-value='onChanged'
         @filter="onAutocomplete"
         emit-value
@@ -18,16 +20,8 @@
         :error="hasError"
         :error-message="errorLabel"
         :disable="disabled"
-        bottom-slots>
-        <!-- Map display -->
-        <template v-slot:prepend>
-          <k-action
-            id="timezone-map"
-            icon="las la-map-marker"
-            color="primary"
-            :handler="openTimezoneMap"
-            :tooltip="$t('KTimezoneField.TIMEZONE_MAP_TOOLTIP')" />
-        </template>
+        bottom-slots
+      >
         <!-- Options display -->
         <template v-slot:option="scope">
           <q-item
@@ -40,11 +34,14 @@
           </q-item>
         </template>
         <template v-slot:append>
-          <q-icon
-            v-if="model"
-            class="cursor-pointer"
-            name="cancel"
-            @click.stop="fill('')"
+          <!-- Map display -->
+          <KAction
+            id="timezone-map"
+            icon="las la-map-marker"
+            color="primary"
+            :handler="openTimezoneMap"
+            :tooltip="$t('KTimezoneField.TIMEZONE_MAP_TOOLTIP')"
+            :propagate="false"
           />
         </template>
         <!-- Helper -->
