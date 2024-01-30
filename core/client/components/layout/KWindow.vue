@@ -289,7 +289,6 @@ function refresh (newState, oldState) {
       logger.warn(`[KDK] invalid window state ${currentWindow.state}`)
   }
 }
-
 function setPinnedGeometry () {
   const sizeRatio = currentWindow.sizePolicy.pinned[$q.screen.name]
   const w = $q.screen.width * sizeRatio[0] / 100

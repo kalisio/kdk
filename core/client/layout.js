@@ -8,7 +8,7 @@ import { bindContent } from './utils/utils.content.js'
 const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const windowDefaultContols = { pin: true, unpin: false, maximize: true, restore: false, close: true, resize: true }
+const windowDefaultContols = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowDefaultContols }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
