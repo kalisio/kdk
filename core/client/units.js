@@ -174,22 +174,22 @@ const equivalentDoseRate = {
   'svh': {
     symbol: 'units.SIEVERT_PER_HOUR_SYMBOL',
     label: 'units.SIEVERT_PER_HOUR_LABEL',
-    definition: '3600 svs'
+    definition: '0.000277778 svs'
   },
   'msvh': {
     symbol: 'units.MILLISIEVERT_PER_HOUR_SYMBOL',
     label: 'units.MILLISIEVERT_PER_HOUR_LABEL',
-    definition: '3.600 svs'
+    definition: '0.000000277778 svs'
   },
   'usvh': {
     symbol: 'units.MICROSIEVERT_PER_HOUR_SYMBOL',
     label: 'units.MICROSIEVERT_PER_HOUR_LABEL',
-    definition: '0.0036 svs'
+    definition: '0.000000000277778 svs'
   },
   'nsvh': {
     symbol: 'units.NANOSIEVERT_PER_HOUR_SYMBOL',
     label: 'units.NANOSIEVERT_PER_HOUR_LABEL',
-    definition: '0.0000036 svs'
+    definition: '0.000000000000277778 svs'
   }
 }
 
