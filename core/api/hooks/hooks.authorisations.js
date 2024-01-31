@@ -190,8 +190,9 @@ export async function authorise (hook) {
     let subject = hook.params.user
     if (!subject) {
       const payload = _.get(hook.params, 'authentication.payload')
-      if (payload && payload.sub) {
-        subject = Object.assign({ _id: payload.sub }, payload)
+      // Token targeting API gateway (sub = keyId) or app used through iframe (appId = keyId)
+      if (payload && (payload.sub || payload.appId)) {
+        subject = Object.assign({ _id: (payload.sub || payload.appId) }, payload)
       }
     }
     const abilities = await authorisationService.getAbilities(subject)

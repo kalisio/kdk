@@ -15,6 +15,22 @@ const { ObjectID } = mongodb
 const { oauth, OAuthStrategy } = OAuth
 const { NotAuthenticated } = errors
 
+export class Authentication extends AuthenticationService {
+  // Feathers does not seem to take input payload into account when renewing the token,
+  // see https://github.com/feathersjs/feathers/issues/3419
+  async getPayload(authResult, params) {
+    // Params can override defaults
+    if (params.payload) {
+      return params.payload
+    } else if (authResult.authentication && authResult.authentication.payload) {
+      // Avoid conflicting with default token options
+      return _.omit(authResult.authentication.payload, ['aud', 'iss'])
+    } else {
+      return {}
+    }
+  }
+}
+
 export class AuthenticationProviderStrategy extends OAuthStrategy {
   async getEntityData (profile, entity) {
     const createEntity = _.isNil(entity)
@@ -151,7 +167,7 @@ export default function auth (app) {
   if (config.oauth) config.oauth = _.omitBy(config.oauth, _.isNil)
   app.set('authentication', config)
 
-  const authentication = new AuthenticationService(app)
+  const authentication = new Authentication(app)
   const strategies = config.authStrategies || []
   if (strategies.includes('jwt')) authentication.register('jwt', new JWTAuthenticationStrategy())
   if (strategies.includes('local')) authentication.register('local', new LocalStrategy())
