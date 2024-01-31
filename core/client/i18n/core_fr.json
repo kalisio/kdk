@@ -913,6 +913,7 @@
     "SET_STEP": "Régler le pas",
     "NEXT_DAY": "Jour suivant",
     "NEXT_HOUR": "Heure suivante",
-    "NEXT_STEP": "Pas suivant"
+    "NEXT_STEP": "Pas suivant",
+    "1D": "1j"
   }
 }

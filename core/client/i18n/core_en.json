@@ -911,7 +911,8 @@
     "SET_STEP": "Set step",
     "NEXT_DAY": "Next day",
     "NEXT_HOUR": "Next hour",
-    "NEXT_STEP": "Next step"
+    "NEXT_STEP": "Next step",
+    "1D": "1d"
   }
 }
 

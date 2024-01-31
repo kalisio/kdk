@@ -26,7 +26,7 @@
           <q-fab-action
             :id="step.id"
             :color="step.color"
-            :label="step.label"
+            :label="$tie(step.label)"
             padding="0"
             @click="onStepClicked(step.label)"
           />
@@ -63,7 +63,7 @@ const steps = [
   { id: 'step-60', color: 'primary', label: '1h', value: 60 },
   { id: 'step-180', color: 'primary', label: '3h', value: 180 },
   { id: 'step-360', color: 'primary', label: '6h', value: 360 },
-  { id: 'step-1440', color: 'primary', label: '1D', value: 1440 }
+  { id: 'step-1440', color: 'primary', label: 'KTimeControl.1D', value: 1440 }
 ]
 
 // Computed
