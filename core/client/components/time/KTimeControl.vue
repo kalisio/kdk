@@ -6,7 +6,7 @@
       <KAction id="previous-day" icon="las la-calendar-minus" tooltip="KTimeControl.PREVIOUS_DAY" :handler="onPreviousDayClicked"/>
     </div>
     <KAction id="timecontrol-now" icon="las la-user-clock" :dense="dense" tooltip="KTimeControl.SET_NOW" :handler="onNowClicked">
-      <q-badge v-if="isRealtime" floating rounded color="green">
+      <q-badge v-if="time.realtime" floating rounded color="green">
         <q-icon name="las la-play" size="10px" color="white" />
       </q-badge>
     </KAction>
@@ -45,7 +45,7 @@ import { Store } from '../../store.js'
 import KDateTime from './KDateTime.vue'
 
 // Data
-const isRealtime = Store.get('time.realtime')
+const time = Store.get('time')
 const $q = useQuasar()
 const stepLabel = ref('1h')
 const steps = [
