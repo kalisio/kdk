@@ -24,8 +24,7 @@ graph TB
   FIND --> afterAll
   beforeAll --> GET[GET]
   GET --> afterAll
-  beforeAll --> hook3("serialize('OAuth2 profile')")
-  hook3 -- Email/Name extracted from provider --> hook4("serialize('profile')")
+  beforeAll --> hook4("serialize('profile')")
   hook4 -- Email/Name set in profile --> hook5("serialize('clearPassword')")
   hook5 -- Clear password saved --> hook6("hashPassword")
   hook6 -- Password hashed --> hook7("enforcePasswordPolicy")
@@ -40,7 +39,8 @@ graph TB
   beforeAll --> hook12(populatePreviousObject)
   hook12 -- Previous user as params --> hook13(storePreviousPassword)
   hook13 -- Previous password list updated --> PATCH[PATCH]
-  PATCH --> afterAll
+  PATCH --> hook3(sendNewSubscriptionEmail)
+  hook3 --> Email sent if new subscription --> afterAll
   beforeAll --> REMOVE[REMOVE]
   REMOVE --> afterAll
   linkStyle default stroke-width:2px,fill:none,stroke:black
@@ -48,56 +48,6 @@ graph TB
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-```
-
-## Devices service
-
-::: tip
-Available as a global service
-:::
-
-::: warning
-`update` and `remove` methods are the only ones allowed from the client side
-`create` method is only allowed from the server side
-:::
-
-`create` (respectively `remove`) creates (respectively removes) the device to/from the notification system (APNS or Firebase).
-`update` updates the device registration ID or create it if not yet created.
-
-### Data model
-
-The data model of a device as used by the API is [detailed here](../../architecture/data-model-view.md#device-data-model).
-
-::: tip
-Devices are store in the `devices` property of the user they belong to.
-:::
-
-### Hooks
-
-The following [hooks](./hooks.md) are executed on the `devices` service:
-
-```mermaid
-graph TB
-  before{none before all}
-  after{none after all}
-  before --> UPDATE[UPDATE]
-  UPDATE -- If new device --> CREATE
-  UPDATE -- If existing device --> UPDATE_DEVICE[[UPDATE DEVICE<br/>-pusher service-]]
-  UPDATE_DEVICE --> after
-  before --> hook1("disallow('external')")
-  hook1 --> CREATE[CREATE]
-  CREATE --> CREATE_DEVICE[[CREATE DEVICE<br/>-pusher service-]]
-  CREATE_DEVICE --> PATCH_USER[[PATCH USER<br/>-users service-]]
-  PATCH_USER --> after
-  before --> REMOVE[REMOVE]
-  REMOVE --> REMOVE_DEVICE[[REMOVE DEVICE<br/>-pusher service-]]
-  REMOVE_DEVICE -->  PATCH_USER[[PATCH USER<br/>-users service-]]
-  PATCH_USER --> after
-  linkStyle default stroke-width:2px,fill:none,stroke:black
-  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
-  class hook1,hook2,hook3,hook4 hookClass
-  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
-  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE,CREATE_DEVICE,REMOVE_DEVICE,UPDATE_DEVICE,PATCH_USER operationClass
 ```
 
 ## Mailer service
@@ -135,98 +85,39 @@ graph TB
   class FIND,CREATE,REMOVE operationClass
 ```
 
-## Pusher service
+## Push service
+
+This service is powered by [feathers-webpush](https://github.com/kalisio/feathers-webpush).
 
 ::: tip
 Available as a global service
 :::
 
-This service relies on [sns-mobile](https://github.com/kalisio/sns-mobile), which has a [nice tutorial](http://evanshortiss.com/development/mobile/2014/02/22/sns-push-notifications-using-nodejs.html), to manage the link between [AWS SNS](https://aws.amazon.com/sns) and internal resource objects in order to send push notifications to users.
-
-To get an API access/secret key you need to create a new user in IAM with a role giving access to SNS like `AmazonSNSFullAccess` but in production [you should control access more precisely](http://docs.aws.amazon.com/sns/latest/dg/UsingIAMwithSNS.html).
-
-Since 2017 Google Cloud Messaging (GCM) has become Firebase Cloud Messaging (FCM), to generate an API key follow [this issue](https://stackoverflow.com/questions/39417797/amazon-sns-platform-credentials-are-invalid-when-re-entering-a-gcm-api-key-th) and enter the server key when creating the SNS application on AWS. Although you use the Firebase console you should also see the created API through the Google Cloud console.
-
 ::: warning
-`create` and `remove` methods are the only one allowed from the server side
+Service methods are only allowed from the server side. `create` is the sole available method used to send a notification.
 :::
 
 ### Data model
 
-This service helps (un)registering devices to/from SNS and create/remove SNS topics. This service also helps associating a *resource* object (e.g. a group) with a SNS *topic* to provide push notifications to the users associated with the resource. SNS ARNs are directly stored on the target resource(s) in the `topics` property.
-
-::: tip
-The service is designed to possibly manage a different topic per platform (e.g. ANDROID / IOS), although at the present time the same topic is used by all platforms because by default SNS topics are cross-platforms.
-:::
-
-For instance the topics associated to a group will result in the following structure on the group object:
-```js
-{
-    _id: ObjectId('5f568ba1fc54a1002fe6fe37'),
-    name: 'Centre de Castelnaudary',
-    topics: {
-        ANDROID: 'arn:aws:sns:eu-west-1:xxx',
-        IOS: 'arn:aws:sns:eu-west-1:xxx'
-    }
-}
-```
-
-Last but not least, This service helps publishing messages to SNS devices or topics.
-
-As a consequence, the `create`/`remove` operations have to be called with an `action` property indicating the target SNS operations among `device`, `topic`, `subscriptions` and `message`. The payload varies according to the selected target operation:
-* `device`:
-  * **device** as data: device object with SNS ARN and/or registration ID (i.e. token) for APNS or Firebase
-* `topic`:
-  * **pushObject** as params: target resource owing the topic
-  * **pushService** as params: target resource service
-  * **topicField** as data/query: target property to store the topic
-* `subscriptions`
-  * **pushObject** as params: target resource owing the topic
-  * **users** as params: target subject(s) to subscribe to topic
-  * **topicField** as data/query: target property to store the topic
-* `message`
-  * **pushObject** as params: target resource owing the topic if topic
-  * **pushService** as params: target resource service
-  * **message** as data: message payload
+Subscription and notification data model is provided by [feathers-webpush](https://github.com/kalisio/feathers-webpush).
 
 ### Hooks
 
-The following [hooks](./hooks.md) are executed on the `pusher` service:
+The following [hooks](./hooks.md) are executed on the `push` service:
 
 ```mermaid
 graph TB
-  before{"disallow('external')"}
+  before{none before all}
   after{none after all}
-  before -- Resource as data/params --> hook1(populatePushObject)
-  hook1 -- Resource as params --> CREATE[CREATE]
-  CREATE -- If user device --> CREATE_ENDPOINT[CREATE ENDPOINT]
-  CREATE -- If resource topic --> CREATE_TOPIC[CREATE TOPIC]
-  CREATE -- If subscriptions --> SUBSCRIBE[SUBSCRIBE]
-  CREATE -- If message<br/>-device or topic- --> PUBLISH[PUBLISH]
-  CREATE_ENDPOINT --> after
-  CREATE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
-  PATCH --> after
-  SUBSCRIBE --> after
-  PUBLISH --> after
-  before -- Resource id as query/params --> hook2(populatePushObject)
-  hook2 -- Resource as params --> REMOVE[REMOVE]
-  REMOVE -- If user device --> REMOVE_ENDPOINT[REMOVE ENDPOINT]
-  REMOVE -- If resource topic --> REMOVE_TOPIC[REMOVE TOPIC]
-  REMOVE -- If subscriptions --> UNSUBSCRIBE[UNSUBSCRIBE]
-  REMOVE_ENDPOINT --> after
-  REMOVE_TOPIC --> PATCH[[PATCH RESOURCE<br/>-resource service-]]
-  PATCH --> after
-  UNSUBSCRIBE --> after
-  before --> UPDATE[UPDATE]
-  UPDATE -- If device --> UPDATE_ENDPOINT[UPDATE ENDPOINT]
-  UPDATE_ENDPOINT --> after
+  before --> hook1("disallow('external')")
+  hook1 --> CREATE[CREATE]
+  CREATE --> hook2(deleteExpiredSubscriptions)
+  hook2 --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
   class hook1,hook2,hook3,hook4 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
-  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
-  classDef snsOperationClass fill:#63c5da,stroke:#333,stroke-width:2px
-  class CREATE_ENDPOINT,CREATE_TOPIC,SUBSCRIBE,PUBLISH,REMOVE_ENDPOINT,REMOVE_TOPIC,UNSUBSCRIBE,UPDATE_ENDPOINT snsOperationClass
+  class FIND,CREATE,REMOVE operationClass
 ```
 
 ## Account service
@@ -363,7 +254,7 @@ The data model of a tag as used by the API is [detailed here](../../architecture
 
 ### Hooks
 
-The following [hooks](./hooks.md) are executed on the `tags` service:
+There is no internal hook executed on this service, typically the following [hooks](./hooks.md) can be executed on the `tags` service for an application:
 
 ```mermaid
 graph TB
@@ -373,22 +264,17 @@ graph TB
   FIND --> after
   before --> GET[GET]
   GET --> after
-  before -- Optional resource as data/params --> hook2(populateTagResource)
-  hook2 -- Tag resource as params --> hook3(addTagIfNew)
-  hook3 -- Created or patched tag<br/>by recursive call --> CREATE[CREATE]
-  CREATE --> hook4(tagResource)
-  hook4 -- Updated resource --> after
+  before --> CREATE[CREATE]
+  CREATE --> after
   before --> UPDATE[UPDATE]
   UPDATE --> hook5("updateOrgResource('tags')")
-  hook5 -- Updated tagged members --> after
+  hook5 -- Updated tagged resources --> after
   before --> PATCH[PATCH]
   PATCH --> hook6("updateOrgResource('tags')")
-  hook6 -- Updated tagged members --> after
-  before -- Optional resource as query/params --> hook7(populateTagResource)
-  hook7 -- Tag resource as params --> hook8(removeTagIfUnused)
-  hook8 -- Removed or patched tag<br/>by recursive call --> REMOVE[REMOVE]
-  REMOVE --> hook9(untagResource)
-  hook9 -- Updated resource --> after
+  hook6 -- Updated tagged resources --> after
+  before --> REMOVE[REMOVE]
+  REMOVE --> hook9("updateOrgResource('tags')")
+  hook9 -- Updated tagged resources --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
@@ -560,7 +446,36 @@ The data model of an organisation as used by the API is [detailed here](../../ar
 
 ### Hooks
 
-No specific [hooks](./hooks.md) are executed on the `organisations` service.
+No internal [hooks](./hooks.md) are executed on the `organisations` service, typically the following [hooks](./hooks.md) can be executed on the `organisations` service for an application:
+
+```mermaid
+graph TB
+  before{none before all}
+  after{none after all}
+  before --> FIND[FIND]
+  FIND --> after
+  before --> GET[GET]
+  GET --> after
+  before --> CREATE[CREATE]
+  CREATE --> hook1(createOrganisationServices)
+  hook1 --> hook2(createOrganisationAuthorisations)
+  hook2 -- Updated resources/services --> after
+  before --> UPDATE[UPDATE]
+  UPDATE --> after
+  before --> PATCH[PATCH]
+  PATCH --> after
+  before --> REMOVE[REMOVE]
+  REMOVE --> hook3("removeOrganisationResources('groups')")
+  hook3 --> hook4("removeOrganisationResources('tags')")
+  hook4 --> hook5(removeOrganisationAuthorisations)
+  hook5 --> hook6(removeOrganisationServices)
+  hook6 -- Updated resources/services --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+```
 
 ## Members service
 
@@ -576,7 +491,7 @@ The data model of a member as used by the API is a the one of a [user](../../arc
 
 ### Hooks
 
-No specific [hooks](./hooks.md) are executed on the `members` service.
+No internal [hooks](./hooks.md) are executed on the `members` service.
 
 ## Groups service
 
@@ -590,7 +505,7 @@ The data model of a group as used by the API is [detailed here](../../architectu
 
 ### Hooks
 
-The following [hooks](./hooks.md) are executed on the `groups` service:
+There is no internal hook executed on this service, typically the following [hooks](./hooks.md) can be executed on the `groups` service for an application:
 
 ```mermaid
 graph TB
@@ -603,13 +518,14 @@ graph TB
   before --> CREATE[CREATE]
   CREATE --> after
   before --> UPDATE[UPDATE]
-  UPDATE --> hook1("updateOrgResource('groups')")
-  hook1 -- Updated authorization<br/>scopes on members --> after
+  UPDATE --> hook5("updateOrgResource('tags')")
+  hook5 -- Updated tagged resources --> after
   before --> PATCH[PATCH]
-  PATCH --> hook2("updateOrgResource('groups')")
-  hook2 -- Updated authorization<br/>scopes on members --> after
+  PATCH --> hook6("updateOrgResource('tags')")
+  hook6 -- Updated tagged resources --> after
   before --> REMOVE[REMOVE]
-  REMOVE --> after
+  REMOVE --> hook9("updateOrgResource('tags')")
+  hook9 -- Updated tagged resources --> after
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
   class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass

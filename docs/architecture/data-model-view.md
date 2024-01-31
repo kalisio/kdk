@@ -21,41 +21,31 @@ The details of each property are the following:
 * **[provider]** : user profile information for associated OAuth provider, e.g. `google`
 * **[scope]** : user permissions for associated scope, e.g. `groups`
 * **tags** : user affected tags if any
-* **devices** : user mobile devices if any, each time the user uses a new device it is registered
+* **subscriptions** : user web push subscriptions if any
 
-## Device data model
+## Subscription data model
 
-The most common properties of a device object are described by the following data model:
+As per [feathers-webpush](https://github.com/kalisio/feathers-webpush), subscriptions are attached to users through the `subscriptions` property.
 
-**TODO**
+## Notification data model
 
-This data model is manipulated through the [Device API](./../api/core/services.md).
+As per [feathers-webpush](https://github.com/kalisio/feathers-webpush), notifications are sent according to subscriptions are attached to users.
 
-The details of each property are the following:
-* **platform**: the platform of the device, e.g. `Android`
-* **model**: the model of the device, e.g. `SM-G930U`
-* **manufacturer**: the manufacturer of the device, e.g. `samsung`
-* **uuid**: UUID of the device
-* **registrationId**: the ID of the associated device in the notification system (APNS or Firebase)
-* **arn**: the ARN of associated SNS device
-* **lastActivity**: the date/time of the last connection of this device
-
-Most data are retrieved using the [cordova-plugin-device](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-device/).
+This data model is manipulated through the [push service](./../api/core/services.md#push-service).
 
 ## Tag data model
 
 The most common properties of a tag object are described by the following data model:
 
-**TODO**
+![Tag data model](./../.vitepress/public/images/tags-data-model.svg)
 
-This data model is manipulated through the [Tag API](./../api/core/services.md).
+This data model is manipulated through the [tag service](./../api/core/services.md#tags-service).
 
 The details of each property are the following:
 * **scope**: the scope of the tag (i.e. category), e.g. `skill`
 * **value**: the value of the tag, e.g. `developer`
-* **count**: the number of tagged objects
+* **icon**: the icon specification for this tag if any
 * **context**: the ID of the associated context object providing this tag if any (e.g. the organisation)
-* **topics**: the ARN of associated SNS topics for each platform used to publish messages to tagged objects, used by the [pusher service](./../api/core/services.md#pusher-service)
 
 ## Organization data model
 
@@ -67,7 +57,7 @@ This data model is manipulated through the [organizations service](./../api/core
 
 The details of each property are the following:
 * **name**: the name of the organisation
-* **topics**: the ARN of associated SNS topics for each platform used to publish messages to organization' members, used by the [pusher service](./../api/core/services.md#pusher-service)
+* **description**: the description of the organisation
 
 > the organization ObjectID is used as the internal DB name
 
@@ -82,4 +72,3 @@ This data model is manipulated through the [groups service](./../api/core/servic
 The details of each property are the following:
 * **name**: the name of the group
 * **description**: the description of the group
-* **topics**: the ARN of associated SNS topics for each platform used to publish messages to group' members, used by [pusher service](./../api/core/services.md#pusher-service)

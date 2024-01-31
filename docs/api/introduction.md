@@ -20,7 +20,9 @@ Each submodule, e.g. `core`, is internally broken into 3 different parts.
 
 ## Services
 
-On the client/server side each service API is exposed using the [Feathers isomorphic API](https://docs.feathersjs.com/api/client.html#universal-isomorphic-api) and the [Feathers common database query API](https://docs.feathersjs.com/api/databases/querying.html). Although only web sockets are usually used on the client side, both the [REST](https://docs.feathersjs.com/api/rest.html) and the [Socket](https://docs.feathersjs.com/api/socketio.html) interfaces are configured.
+On the client/server side each service API is exposed using the [Feathers isomorphic API](https://docs.feathersjs.com/api/client.html) and the [Feathers common database query API](https://docs.feathersjs.com/api/databases/querying.html). Although only web sockets are usually used on the client side, both the [REST](https://docs.feathersjs.com/api/express.html) and the [Socket](https://docs.feathersjs.com/api/socketio.html) interfaces are configured.
+
+![Feathers Services](./../.vitepress/public/images/feathers-services.png)
 
 KDK usually exposes the available items of a service (e.g. users) through the `items` (e.g. `users`) service. For example you can request the available users like this on the client side:
 ```javascript
@@ -31,6 +33,10 @@ response.data.forEach(user => {
 ```
 
 > Depending on the permissions set on the user by the application he might not have access to all items of the service.
+
+The following table illustrates the correspondance between REST operations, service methods and real-time events:
+
+![Feathers Services](./../.vitepress/public/images/operations-methods-events.png)
 
 ## Hooks
 
@@ -47,6 +53,7 @@ We try to organise hooks in different categories:
 * *data model* for hooks targetting the processing of output data
 * *logs* for hooks targetting logging features
 * *service* for hooks targetting generic service setup
+* *schemas* for hooks targetting [validation schemas](https://docs.feathersjs.com/api/schema/validators.html)
 
 Others hooks are usually service-centric and so attached to the target service.
 

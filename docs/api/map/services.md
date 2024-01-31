@@ -2,6 +2,10 @@
 
 ## Geocoder service
 
+::: danger
+Deprecated as per KDK version >= 2.1, now supported by https://github.com/kalisio/geokoder.
+:::
+
 ::: tip
 Available as a global service
 :::
@@ -44,7 +48,11 @@ No [hooks](./hooks.md) are executed on the `geocoder` service for now.
 
 ## Catalog service
 
-This service aims at storing the definition of the available map layers or map view contexts (extent and active layers).
+This service aims at storing the definition of available:
+- map layers,
+- map layers categories,
+- map layers legend categories (a.k.a. sublegends),
+- map contexts (extent, active layers and current time).
 
 ::: tip
 Available as a global and a contextual service
@@ -58,7 +66,7 @@ const catalogService = app.getService('catalog')
 let response = await catalogService.find()
 _.forEach(response.data, (layer) => {
 	if (layer[engine]) {
-	  // Process i18n if you'd like to
+	  // Process i18n if you need to
 	  if (this.$t(layer.name)) layer.name = this.$t(layer.name)
 	  if (this.$t(layer.description)) layer.description = this.$t(layer.description)
 	  // Create the underlying layer object in the map/globe
@@ -116,7 +124,8 @@ The `type` and `tags` attributes are typically used by the [catalog panel](./com
 If the layer is a feature layer based on a [feature service](./services.md#feature-service) the additional properties are the following:
 * **service**: the name of the underlying feature service,
 * **probeService**: the name of the underlying feature service containing probe locations,
-* **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object),
+* **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object) - could be an array for compound identifiers,
+* **chronicleId**: the name of the unique timeseries identifier in feature (relative to the nested `properties` object) for measure features - could be an array for compound identifiers,
 * **from**: the oldest stored feature age in history as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
 * **to**: the newest stored feature age in history as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
 * **every**: the sample frequency of the features as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
@@ -124,7 +133,7 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 * **variables**: array of available properties in feature to be [aggregated over time](./services.md#time-based-feature-aggregation), for each entry the following options are available:
   * **name**: property name in feature (relative to the nested `properties` object),
   * **label**: property label to use in UI,
-  * **units**: array of target units to be available in the legend, the first unit is the one used to store the data, others will be converted from using [math.js](http://mathjs.org/docs/datatypes/units.html)
+  * **unit**: target unit of the underlying data, if not the currently used for display it will be converted from using [math.js](http://mathjs.org/docs/datatypes/units.html)
   * **chartjs**: options to be passed to [chart.js](https://www.chartjs.org/docs/latest/charts/line.html#dataset-properties) when drawing timeseries
 
 #### User context
@@ -135,7 +144,43 @@ The data model of a user context as used by the API is the following:
 * **name** : the context name, typically used when listing favorite views
 * **type** : `Context`
 * **south,west,north,east**: context extent,
+* **time**: context time,
 * **layers**: array of active layer names
+
+#### Category
+
+A *layer category* is a way to group layers of a same topic together.
+
+* **name** : the category name, typically used in the [catalog panel](./components.md#catalog-panel)
+* **i18n**: category translations, see [application internationalization](../core/application.md#client-ecosystem) for details
+  * **locale**: translations for a target locale eg `FR`
+     * **Categories**: translation keys/values for category fields
+* **options** : options for this category
+  * **open**: flag to indicate if the category should initially be open in the catalog component
+  * **exclusive**: flag to indicate mutually exclusive layer selection inside category
+  * **filter**: [sift](https://github.com/crcn/sift.js) to select layers belonging to the category
+* **icon** : a [Quasar icon](https://quasar.dev/options/app-icons) for the category, typically used in the [catalog panel](./components.md#catalog-panel)
+
+::: tip
+Categories are not stored in the database but simply exposed through the service from configuration files.
+:::
+
+#### Sublegend
+
+A *sublegend* or *legend category* is a way to group legends of a same topic together.
+
+* **name** : the sublegend name, typically used in the [legend](./components.md#legend)
+* **i18n**: sublegend translations, see [application internationalization](../core/application.md#client-ecosystem) for details
+  * **locale**: translations for a target locale eg `FR`
+     * **Categories**: translation keys/values for sublegend fields
+* **options** : options for this sublegend
+  * **open**: flag to indicate if the sublegned should initially be open in the catalog component
+  * **filter**: [sift](https://github.com/crcn/sift.js) to select layers belonging to the sublegend
+* **icon** : a [Quasar icon](https://quasar.dev/options/app-icons) for the sublegend, typically used in the [legend](./components.md#legend)
+
+::: tip
+Sublegends are not stored in the database but simply exposed through the service from configuration files.
+:::
 
 #### Service
 
@@ -157,7 +202,7 @@ The main [hooks](./hooks.md) executed on the `catalog` service for layers are us
 * [convertToString](../core/hooks.md) before hook for layer schema
 * [convertToJson](../core/hooks.md) after hook for layer schema
 
-Additional hooks are run to update contexts whenever a layer name is updated.
+Additional hooks are run to update contexts whenever a layer name is updated or projects when one is removed.
 
 ## Features service
 
@@ -168,7 +213,7 @@ Available as a global and a contextual service
 The service can be created using the global **createFeaturesService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../core/application.md#createservice-name-options).
 
 ::: warning
-This service does not emit events with individual features because importing large batch of features could lead to big performance drop. For the same reason, any operation result contains only the feature identifier not the whole object as usual.
+This service does not emit events with individual features when importing large batch of features as it could lead to big performance drop. For the same reason, any operation result contains only the feature identifier not the whole object as usual. See details in related section below.
 :::
 
 ### Data model
@@ -347,6 +392,9 @@ const collection = await app.getService('features').find({
 Such a complex query is fine when using the [Feathers isomorphic API](https://docs.feathersjs.com/api/client.html#universal-isomorphic-api) but if to be expressed manually as HTTP REST request you have to convert nested objects to array notation like this: `/api/features?probeId=59248de38bb91d28d8155b3c&forecastTime=2017-05-27T07:00:00.000Z&geometry[$near][$maxDistance]=1000000&geometry[$near][$geometry][type]=Point&geometry[$near][$geometry][coordinates][]=5&geometry[$near][$geometry][coordinates][]=43`.
 
 The service also supports some shortcuts for the most useful types of spatial requests:
+* *within filter* will trigger a [`$geoIntersects`](https://www.mongodb.com/docs/manual/reference/operator/query/geoIntersects/) operation
+  * **longitude**: location longitude
+  * **latitude**: location latitude
 * *proximity filter* will trigger a [`$near`](https://docs.mongodb.com/manual/reference/operator/query/near/) or [`$geoNear`](https://docs.mongodb.com/manual/reference/operator/aggregation/geoNear/) operation (if aggregation is performed)
   * **centerLon**: location longitude
   * **centerLat**: location latitude
@@ -381,6 +429,18 @@ const collection = await api.getService('features').find({
 // Do something with the resulting feature collection
 ```
 
+### Real-time events
+
+Individual events are emitted as usual by default. However, as the `features` service might be used to import/export a lot of features by batch, multiple operations will only emit a single event with the affected bounding box (`bbox` field), time range (`startTime, endTime` fields) and list of layers (`layers` field). Moreover, result of such operations will only contain the `_id` of the features not the whole object. You can control this behaviour with the following service options:
+* **simplifyResult**: array of methods where result simplification applies (defaults to `['create', 'update', 'patch', 'remove']`)
+* **simplifyResultLimit**: upper number of operations allowed before simplifying results (defaults to `1`)
+* **skipEvents**: array of individual events skipped on multiple operations (defaults to `['created', 'updated', 'patched', 'removed']`)
+* **skipEventsLimit**: upper number of operations allowed before skipping individual events (defaults to `1`)
+
+::: tip
+You can always force event or full result emission with the `emitEvents/fullResult` query parameters.
+:::
+
 ### Hooks
 
 The following [hooks](./hooks.md) are executed on the `features` service:
@@ -389,7 +449,10 @@ The following [hooks](./hooks.md) are executed on the `features` service:
 graph TB
   beforeAll{marshallTimeQuery}
   afterAll{after all}
-  afterAll --> hook1(unprocessTime)
+  afterAll --> hook12(unprocessTime)
+  hook12 --> hook13(simplifyEvents)
+  hook13 --> hook14(simplifyEvents)
+  hook14 --> hook15(skipEvents)
   beforeAll --> hook2(marshallComparisonQuery)
   hook2 --> hook3(marshallSortQuery)
   hook3 --> hook4(marshallSpatialQuery)
@@ -414,12 +477,38 @@ graph TB
   REMOVE --> afterAll
   linkStyle default stroke-width:2px,fill:none,stroke:black
   classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
-  class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13 hookClass
+  class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9,hook10,hook11,hook12,hook13,hook14,hook15 hookClass
   classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
   class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
 ```
 
 These are mainly hooks to convert from/to JS/MongoDB data types.
+
+## Projects service
+
+::: tip
+Available as a global and a contextual service
+:::
+
+The service can be created using the global **createProjectsService(options)** function, if no context provided it will be available as a global service otherwise as a contextual service (e.g. attached to a specific organization), please also refer to core module [**createService()**](../core/application.md#createservice-name-options).
+
+### Data model
+
+A *project* consists in a set of map layers and contexts taken from the whole catalog.
+
+The data model of a project as used by the API is the following:
+* **name** : the project name, typically used when listing projects in the [catalog panel](./components.md#catalog-panel)
+* **description** : the project description
+* **layers**: list of project layers by name (built-in layers) or ID (user-defined layers)
+* **views**: list of project views by ID
+* **identifier**: identifier to be used by thrid-party application to identify the project
+
+### Hooks
+
+The main [hooks](./hooks.md) executed on the `projects` service are used to convert from/to JS/MongoDB data types:
+* [convertObjectIDs](../core/hooks.md) before hook for layer ID
+
+Additional hooks are run to populate layers/context with more information like name and underlying service when using the `populate` query paramter.
 
 ## Alerts service
 
