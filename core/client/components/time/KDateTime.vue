@@ -7,6 +7,8 @@
       :disabled="disabled"
       :dense="dense"
     />
+    <!-- Separator -->
+    <div v-if="separator">{{ separator }}</div>
     <!-- Time -->
     <KTime
       v-model="timeModel"
@@ -44,6 +46,10 @@ const props = defineProps({
     validator: (value) => {
       return !_.isEmpty(value) && value.split(' ').length === 2
     }
+  },
+  separator: {
+    type: String,
+    default: undefined
   },
   min: {
     type: String,

@@ -12,7 +12,7 @@
     </KAction>
     <div class="q-px-xs">
       <div class="row items-center k-datetime-chip">
-        <KDateTime id="datetime-controls" v-model="dateTime" :dense="true"/>
+        <KDateTime id="datetime-controls" v-model="dateTime" :dense="true" separator="|" />
       </div>
     </div>
     <div class="q-px-xs">
