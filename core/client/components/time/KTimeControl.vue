@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="q-px-xs">
-      <q-fab id="timecontrol-step" hide-icon vertical-actions-align="center" color="primary" :label="stepLabel" direction="up" padding="0">
+      <q-fab id="timecontrol-step" hide-icon vertical-actions-align="center" color="primary" :label="$tie(stepLabel)" direction="up" padding="0">
         <template v-slot:tooltip>
           <q-tooltip>
             {{ $t('KTimeControl.SET_STEP') }}
