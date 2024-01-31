@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Dialog } from 'quasar'
 
 export const baseField = {
   props: {
@@ -23,8 +24,17 @@ export const baseField = {
     label () {
       return this.$tie(_.get(this.properties.field, 'label', ''))
     },
-    helper () {
-      return this.$tie(_.get(this.properties.field, 'helper', ''))
+    hasHelper () {
+      return !_.isEmpty(_.get(this.properties.field, 'helper', {}))
+    },
+    computedHelperLabel () {
+      return _.get(this.properties.field.helper, 'label', null)
+    },
+    computedHelperIcon () {
+      return _.get(this.properties.field.helper, 'icon', undefined)
+    },
+    computedHelperTooltip () {
+      return _.get(this.properties.field.helper, 'tooltip', '')
     },
     hasError () {
       return !_.isEmpty(this.error)
@@ -56,6 +66,27 @@ export const baseField = {
     }
   },
   methods: {
+    onHelperClicked () {
+      if (_.has(this.properties.field.helper, 'url')) window.open(this.properties.field.helper.url, '_blank')
+      if (_.has(this.properties.field.helper, 'dialog')) {
+        Dialog.create({
+          title: this.$tie(this.properties.field.helper.dialog.title),
+          message: this.$tie(this.properties.field.helper.dialog.message),
+          html: true,
+          persistent: true,
+          ok: {
+            label: this.$tie('READ_MORE'),
+            flat: true
+          },
+          cancel: {
+            label: this.$tie('CLOSE'),
+            flat: true
+          }
+        }).onOk(async (data) => {
+          window.open(this.properties.field.helper.dialog.url, '_blank')
+        })
+      }
+    },
     updateValue (value) {
       if (_.isNil(value)) this.clear()
       else this.fill(value)

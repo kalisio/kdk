@@ -10,7 +10,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_SHORT_TIME_FIELD_LABEL",
-        "helper": "schemas.TIME_FORMAT_SHORT_TIME_FIELD_HELPER"
+        "helper": { "icon": "las la-question", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "longTime": {
@@ -19,7 +19,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_LONG_TIME_FIELD_LABEL",
-        "helper": "schemas.TIME_FORMAT_LONG_TIME_FIELD_HELPER"
+        "helper": { "icon": "las la-question", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "shortDate": {
@@ -28,7 +28,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_SHORT_DATE_FIELD_LABEL",
-        "helper": "schemas.TIME_FORMAT_SHORT_DATE_FIELD_HELPER"
+        "helper": { "icon": "las la-question", "url": "https://momentjs.com/docs/#/displaying/format/" }
 
       }
     },
@@ -38,7 +38,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_LONG_DATE_FIELD_LABEL",
-        "helper": "schemas.TIME_FORMAT_LONG_DATE_FIELD_HELPER"
+        "helper": { "icon": "las la-question", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "shortYear": {
@@ -47,7 +47,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_SHORT_YEAR_FIELD_LABEL",
-        "helper": "schemas.TIME_FORMAT_SHORT_YEAR_FIELD_HELPER"
+        "helper": { "icon": "las la-question", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "longYear": {
@@ -56,7 +56,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_LONG_YEAR_FIELD_LABEL",
-        "helper": "schemas.TIME_FORMAT_LONG_YEAR_FIELD_HELPER"
+        "helper": { "icon": "las la-question", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "timezone": {
@@ -144,7 +144,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.LOCATION_FORMAT_LABEL",
-        "helper": "schemas.LOCATION_FORMAT_HELPER"
+        "helper": { "icon": "las la-question", "url": "https://github.com/nerik/formatcoords#formatting" }
       }
     },
     "defaultLength": {

@@ -21,8 +21,15 @@
         @keyup="onKeyUp($event, i - 1)"
       >
         <!-- Helper -->
-        <template v-if="helper" v-slot:hint>
-          <span v-html="helper"></span>
+        <template v-if="hasHelper" v-slot:append>
+          <k-action
+            :id="properties.name + '-helper'"
+            :label="computedHelperLabel"
+            :icon="computedHelperIcon"
+            :tooltip="computedHelperTooltip"
+            color="primary"
+            :handler="onHelperClicked"
+          />
         </template>
       </q-input>
     </div>
