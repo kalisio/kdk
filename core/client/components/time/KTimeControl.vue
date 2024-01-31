@@ -12,11 +12,16 @@
     </KAction>
     <div class="q-px-xs">
       <div class="row items-center k-datetime-chip">
-        <KDateTime id="datetime-controls" v-model="dateTime" />
+        <KDateTime id="datetime-controls" v-model="dateTime" :dense="true"/>
       </div>
     </div>
     <div class="q-px-xs">
       <q-fab id="timecontrol-step" hide-icon vertical-actions-align="center" color="primary" :label="stepLabel" direction="up" padding="0">
+        <template v-slot:tooltip>
+          <q-tooltip>
+            {{ $t('KTimeControl.SET_STEP') }}
+          </q-tooltip>
+        </template>
         <template v-for="step in steps" :key="step.id">
           <q-fab-action
             :id="step.id"
@@ -79,18 +84,18 @@ function onNowClicked () {
   Time.startRealtime()
 }
 function onPreviousStepClicked () {
-  const newTime = moment(Time.getCurrentTime()).subtract(parseInt(stepLabel.value), 'minute')
+  const newTime = moment(Time.getCurrentTime()).subtract(time.step, 'minute')
   Time.setCurrentTime(newTime)
 }
 function onNextStepClicked () {
-  const newTime = moment(Time.getCurrentTime()).add(parseInt(stepLabel.value), 'minute')
+  const newTime = moment(Time.getCurrentTime()).add(time.step, 'minute')
   Time.setCurrentTime(newTime)
 }
 function onStepClicked(step) {
-  const selectedStep = steps.find(s => s.label === step);
+  const selectedStep = steps.find(s => s.label === step)
   if (selectedStep) {
-    stepLabel.value = step;
-    Time.getStep(selectedStep.value);
+    stepLabel.value = step
+    time.step = selectedStep.value
   }
 }
 function onPreviousHourClicked () {
@@ -116,7 +121,7 @@ function onNextHourClicked () {
     background-color: var(--q-primary);
     color: white;
     border-radius: 50px;
-    padding: 0;
+    padding: 0 5px;
     cursor: pointer;
   }
 </style>

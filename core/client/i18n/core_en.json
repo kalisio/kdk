@@ -901,6 +901,17 @@
   },
   "KTextArea": {
     "COLLAPSE": "Collapse"
+  },
+  "KTimeControl": {
+    "PREVIOUS_STEP": "Previous step",
+    "PREVIOUS_HOUR": "Previous hour",
+    "PREVIOUS_DAY": "Previous day",
+    "SET_NOW": "Real time",
+    "SET_DATETIME": "Set date and time",
+    "SET_STEP": "Set step",
+    "NEXT_DAY": "Next day",
+    "NEXT_HOUR": "Next hour",
+    "NEXT_STEP": "Next step"
   }
 }
 
