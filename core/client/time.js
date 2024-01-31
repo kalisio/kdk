@@ -71,7 +71,7 @@ export const Time = {
   patchField (field) {
     if (this.getRange().field === field) return
     const query = { [field]: { $gte: this.getRange().start.toISOString(), $lte: this.getRange().end.toISOString() } }
-    Store.patch('time.range', { field, query })
+    v
   },
   getRangeQuery () {
     return Store.get('time.range.query')
@@ -159,6 +159,10 @@ export const Time = {
   },
   getStep () {
     return this.get().step
+  },
+  setStep (step) {
+    if (this.getStep() === step) return
+    Store.patch('time', { step })
   },
   // Round hours to expected interval, e.g. using 6 hourly interval 00 || 06 || 12 || 18
   roundHours (hours, interval) {

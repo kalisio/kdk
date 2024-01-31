@@ -28,7 +28,7 @@
             :color="step.color"
             :label="$tie(step.label)"
             padding="0"
-            @click="onStepClicked(step.label)"
+            @click="onStepClicked(step.value)"
           />
         </template>
       </q-fab>
@@ -43,7 +43,7 @@
 
 <script setup>
 import moment from 'moment'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { Time } from '../../time.js'
 import { Store } from '../../store.js'
@@ -52,7 +52,6 @@ import KDateTime from './KDateTime.vue'
 // Data
 const time = Store.get('time')
 const $q = useQuasar()
-const stepLabel = ref('1h')
 const steps = [
   { id: 'step-05', color: 'primary', label: '5m', value: 5 },
   { id: 'step-10', color: 'primary', label: '10m', value: 10 },
@@ -75,6 +74,10 @@ const dateTime = computed({
     Time.setCurrentTime(value)
   }
 })
+const stepLabel = computed(() => {
+  const step = steps.find(s => s.value === time.step)
+  return step ? step.label : ''
+})
 const dense = computed(() => {
   return $q.screen.lt.sm
 })
@@ -84,19 +87,16 @@ function onNowClicked () {
   Time.startRealtime()
 }
 function onPreviousStepClicked () {
-  const newTime = moment(Time.getCurrentTime()).subtract(time.step, 'minute')
+  console.log(time.step)
+  const newTime = moment(Time.getCurrentTime()).subtract(Time.getStep(), 'minute')
   Time.setCurrentTime(newTime)
 }
 function onNextStepClicked () {
-  const newTime = moment(Time.getCurrentTime()).add(time.step, 'minute')
+  const newTime = moment(Time.getCurrentTime()).add(Time.getStep(), 'minute')
   Time.setCurrentTime(newTime)
 }
 function onStepClicked(step) {
-  const selectedStep = steps.find(s => s.label === step)
-  if (selectedStep) {
-    stepLabel.value = step
-    time.step = selectedStep.value
-  }
+  Time.setStep(step)
 }
 function onPreviousHourClicked () {
   const newTime = moment(Time.getCurrentTime()).subtract(1, 'hour')
