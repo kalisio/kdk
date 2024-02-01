@@ -23,7 +23,23 @@
       Grouped fields
     -->
     <template v-for="group in groups" :key="group">
-      <q-expansion-item icon="las la-file-alt" :group="group" :label="$t(group)">
+      <q-expansion-item icon="las la-file-alt" :group="group">
+        <!-- Helper -->
+        <template v-slot:header>
+          <q-item-section>
+            {{ $t(schema.groups[group].label) }}
+          </q-item-section>
+          <q-item-section v-if="hasGroupHelper(schema.groups[group])" side >
+            <q-btn 
+              color="primary"
+              flat
+              round
+              :icon="schema.groups[group].helper.icon"
+              @click.native.stop="onGroupHelperClicked(schema.groups[group])"
+            />
+          </q-item-section>
+        </template>
+        <!-- Content -->
         <q-card>
           <q-card-section>
             <template v-for="field in fields" :key="field.name">
@@ -225,6 +241,12 @@ async function submitted (object) {
     const field = fields.value[i]
     await field.reference.submitted(object, field.name)
   }
+}
+function hasGroupHelper (group) {
+  return !_.isEmpty(_.get(group, 'helper', {}))
+}
+function onGroupHelperClicked (group) {
+  if (_.has(group.helper, 'url')) window.open(group.helper.url, '_blank')
 }
 
 // Hooks

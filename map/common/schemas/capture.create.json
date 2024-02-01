@@ -3,6 +3,11 @@
   "$id": "http://www.kalisio.xyz/schemas/capture.create.json#",
   "description": "Capture schema",
   "type": "object",
+  "groups": {
+    "group-1": {
+      "label": "schemas.CAPTURE_ADVANCED_SETTINGS"
+    }
+  },
   "properties": {
     "resolution": {
       "type": "object", 
@@ -113,7 +118,7 @@
     },
     "dateTime": {
       "type": "object",
-      "group": "schemas.CAPTURE_ADVANCED_SETTINGS",
+      "group": "group-1",
       "default": { "start": "2023-11-17T23:00:00.000Z", "end": "2023-12-17T23:00:00.000Z"},
       "field": {
         "component": "form/KDateTimeRangeField",
