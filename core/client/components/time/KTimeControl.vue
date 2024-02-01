@@ -87,7 +87,6 @@ function onNowClicked () {
   Time.startRealtime()
 }
 function onPreviousStepClicked () {
-  console.log(time.step)
   const newTime = moment(Time.getCurrentTime()).subtract(Time.getStep(), 'minute')
   Time.setCurrentTime(newTime)
 }
