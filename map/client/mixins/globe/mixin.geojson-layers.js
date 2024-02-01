@@ -9,10 +9,15 @@ import { fetchGeoJson, getFeatureId, isInMemoryLayer } from '../../utils.js'
 export const geojsonLayers = {
   methods: {
     convertFromSimpleStyleSpecOrDefaults (properties) {
-      let { stroke, strokeWidth, fill } = convertToLeafletFromSimpleStyleSpec(properties)
+      let { color: stroke, weight: strokeWidth, fillColor: fill, fillOpacity } = convertToLeafletFromSimpleStyleSpec(properties)
       if (!stroke) stroke = Cesium.GeoJsonDataSource.stroke
+      else stroke = Cesium.Color.fromCssColorString(stroke)
       if (!strokeWidth) strokeWidth = Cesium.GeoJsonDataSource.strokeWidth
       if (!fill) fill = Cesium.GeoJsonDataSource.fill
+      else {
+        fill = Cesium.Color.fromCssColorString(fill)
+        if (_.isNumber(fillOpacity)) fill.alpha = fillOpacity
+      }
       return { stroke, strokeWidth, fill }
     },
     async loadGeoJson (dataSource, geoJson, cesiumOptions) {

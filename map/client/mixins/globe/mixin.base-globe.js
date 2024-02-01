@@ -423,19 +423,22 @@ export const baseGlobe = {
           // If feature have been lost at import try to recreate it in order to be compatible with 2D
           if (!emittedEvent.target.feature) {
             let feature = { type: 'Feature' }
-            // FIXME: Generate GeoJson feature if possible (requires Cesium 1.59)
+            /* FIXME: Generate GeoJson feature if possible (requires Cesium 1.59)
+               However this does not work yet and could be too much slow
             if (typeof Cesium.exportKml === 'function') {
-              const kmlEntities = Cesium.exportKml({ entities: [emittedEvent.target] })
-              const geoJson = kml(kmlEntities)
+              const selection = new Cesium.EntityCollection()
+              selection.add(emittedEvent.target)
+              const kmlEntities = await Cesium.exportKml({ entities: selection, modelCallback: () => '' })
+              const geoJson = kml(kmlEntities.kml)
               if (geoJson.features.length > 0) feature = geoJson.features[0]
-            } else {
-              const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position
-                ? emittedEvent.target.position.getValue(0)
-                : emittedEvent.pickedPosition)
-              feature.geometry = {
-                type: 'Point',
-                coordinates: [Cesium.Math.toDegrees(position.longitude), Cesium.Math.toDegrees(position.latitude)]
-              }
+            }
+            */
+            const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position
+              ? emittedEvent.target.position.getValue(0)
+              : emittedEvent.pickedPosition)
+            feature.geometry = {
+              type: 'Point',
+              coordinates: [Cesium.Math.toDegrees(position.longitude), Cesium.Math.toDegrees(position.latitude)]
             }
             feature.properties = (emittedEvent.target.properties ? emittedEvent.target.properties.getValue(0) : {})
             emittedEvent.target.feature = feature
