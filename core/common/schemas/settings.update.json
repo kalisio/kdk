@@ -9,7 +9,7 @@
     "group-3": { "label": "schemas.TIMESERIES_SETTINGS" },
     "group-4": { "label": "schemas.MAP_SETTINGS" },
     "group-5": { "label": "schemas.UNITS_SETTINGS" },
-    "group-6": { "label": "chemas.NOTATION_SETTINGS" }
+    "group-6": { "label": "schemas.NOTATION_SETTINGS" }
   },
   "properties": {
     "shortTime": {
