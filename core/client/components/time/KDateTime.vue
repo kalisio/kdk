@@ -171,7 +171,7 @@ function toHMS (value) {
   }
 }
 
-// Immedaite
+// Immediate
 if (props.modelValue) dateTime.value = moment.utc(props.modelValue).local()
 if (props.min) minDateTime.value = moment.utc(props.min).local()
 if (props.max) maxDateTime.value = moment.utc(props.max).local()

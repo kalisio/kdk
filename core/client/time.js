@@ -71,7 +71,7 @@ export const Time = {
   patchField (field) {
     if (this.getRange().field === field) return
     const query = { [field]: { $gte: this.getRange().start.toISOString(), $lte: this.getRange().end.toISOString() } }
-    v
+    Store.patch('time.range', { field, query })
   },
   getRangeQuery () {
     return Store.get('time.range.query')
