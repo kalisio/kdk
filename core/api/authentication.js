@@ -23,8 +23,8 @@ export class Authentication extends AuthenticationService {
     if (params.payload) {
       return params.payload
     } else if (authResult.authentication && authResult.authentication.payload) {
-      // Avoid conflicting with default token options
-      return _.omit(authResult.authentication.payload, ['aud', 'iss'])
+      // Avoid conflicting with default token options added when generating a new token
+      return _.omit(authResult.authentication.payload, ['aud', 'iss', 'exp', 'sub', 'iat', 'jti', 'nbf'])
     } else {
       return {}
     }
