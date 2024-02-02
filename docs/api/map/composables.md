@@ -57,6 +57,8 @@ Used to manage a map project, call **useProject()** with the following arguments
 * **updateActivity**: defaults to `true`
 * **planetApi**: target api object
 
+> Watches route change to track project ID
+
 The composable exposes the following:
 * **project**: the current project object
 * **projectId**: the ID of the project to be loaded
