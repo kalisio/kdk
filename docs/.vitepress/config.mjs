@@ -89,7 +89,8 @@ function getAPISidebar () {
         { text: 'Services', link: '/api/core/services' },
         { text: 'Hooks', link: '/api/core/hooks' },
         { text: 'Components', link: '/api/core/components' },
-        { text: 'Mixins', link: '/api/core/mixins' }
+        { text: 'Mixins', link: '/api/core/mixins' },
+        { text: 'Composables', link: '/api/core/composables' }
       ]
     },
     { 
@@ -102,7 +103,8 @@ function getAPISidebar () {
         { text: 'Components', link: '/api/map/components' },
         { text: 'Mixins', link: '/api/map/mixins' },
         { text: 'Map Mixins', link: '/api/map/map-mixins' },
-        { text: 'Globe Mixins', link: '/api/map/globe-mixins' }
+        { text: 'Globe Mixins', link: '/api/map/globe-mixins' },
+        { text: 'Composables', link: '/api/map/composables' }
       ]
     }
   ]
