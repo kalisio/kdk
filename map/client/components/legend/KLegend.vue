@@ -14,6 +14,22 @@
         :default-opened="sublegend.opened || opened"
         dense
       >
+        <template v-slot:header>
+          <!-- Label -->
+          <q-item-section>
+            {{ $tie(sublegend.name) }}
+          </q-item-section>
+          <!-- Helper -->
+          <q-item-section v-if="hasSublegendHelper(sublegend)" side >
+            <q-btn 
+              color="primary"
+              flat
+              round
+              :icon="sublegend.helper.icon"
+              @click.native.stop="onSublegendHelperClicked(sublegend)"
+            />
+          </q-item-section>
+        </template>
         <!-- legend components by layers -->
         <template v-for="layer in layersBySublegend[sublegend.name]" :key="layer.name" class="column full-width">
           <KLayerLegend 
@@ -32,6 +48,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
+import { Dialog } from 'quasar'
 import { ref, computed, watch } from 'vue'
 import { i18n, api } from '../../../../core/client'
 import { useCurrentActivity } from '../../composables'
@@ -114,6 +131,20 @@ function onHideLayer (layer) {
 }
 function onZoomChanged () {
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
+}
+function hasSublegendHelper (sublegend) {
+  return !_.isEmpty(_.get(sublegend, 'helper', {}))
+}
+function onSublegendHelperClicked (sublegend) {
+  if (_.has(sublegend.helper, 'url')) window.open(sublegend.helper.url, '_blank')
+  if (_.has(sublegend.helper, 'dialog')) {
+    Dialog.create({
+      title: i18n.t(sublegend.helper.dialog.title),
+      message: i18n.t(sublegend.helper.dialog.message),
+      html: true,
+      persistent: true
+    })
+  }
 }
 
 // Watch
