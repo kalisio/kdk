@@ -474,7 +474,6 @@
     "PASSWORD_FIELD_LABEL": "Enter a password",
     "CONFIRM_PASSWORD_FIELD_LABEL": "Confirm your password",
     "ACCEPT_TERMS_LABEL": "I accept the terms and policies",
-    "ACCEPT_TERMS_HELPER": "terms and policies",
     "ACCEPT_TERMS_ERROR_LABEL": "You must accept our terms and policies to register",
     "REGISTER_LABEL": "Register",
     "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?",

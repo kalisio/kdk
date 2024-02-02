@@ -87,7 +87,6 @@ function getFormSchema () {
         field: {
           component: 'form/KToggleField',
           label: i18n.t('KRegisterScreen.ACCEPT_TERMS_LABEL'),
-          helper: { label: 'KRegisterScreen.ACCEPT_TERMS_HELPER', url: `${domain}/#/terms` },
           errorLabel: i18n.t('KRegisterScreen.ACCEPT_TERMS_ERROR_LABEL', { domain }),
           'checked-icon': 'check',
           'unchecked-icon': 'clear'
