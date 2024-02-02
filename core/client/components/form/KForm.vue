@@ -24,11 +24,12 @@
     -->
     <template v-for="group in groups" :key="group">
       <q-expansion-item icon="las la-file-alt" :group="group">
-        <!-- Helper -->
         <template v-slot:header>
+          <!-- Label -->
           <q-item-section>
             {{ $t(schema.groups[group].label) }}
           </q-item-section>
+          <!-- Helper -->
           <q-item-section v-if="hasGroupHelper(schema.groups[group])" side >
             <q-btn 
               color="primary"
