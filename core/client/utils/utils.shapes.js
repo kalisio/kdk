@@ -1,6 +1,10 @@
 import _ from 'lodash'
 import { uid, getCssVar } from 'quasar'
 
+function defaultRadiusToSize (r) {
+  return [r * 2, r * 2]
+}
+
 // Predefined shapes
 // see https://www.svgrepo.com/ to look for a shape
 export const Shapes = {
@@ -95,6 +99,14 @@ function addSvgAttribute (svg, attibute, value) {
     - size: Number - the icon size in pixel - 14
     - xOffset: String - the x offset from the center of the shape - '-50%'
     - yOffset: String - the y offset from the center of the shape - '-50%'
+    - rotation: Number - the rotation to apply in degree
+  - text: Object specifying a text overlay
+    - label: String - the label to display
+    - color: String - the icon color
+    - size: Number - the font size in pixel - 14
+    - xOffset: String - the x offset from the center of the shape - '-50%'
+    - yOffset: String - the y offset from the center of the shape - '-50%'
+    - rotation: Number - the rotation to apply in degree    
 */
 export function createShape (options) {
   // Check arguments
@@ -102,18 +114,15 @@ export function createShape (options) {
     console.warn(`[KDK] 'options' argument is required`)
     return
   }
-  if (!options.shape) {
-    console.warn(`[KDK] 'options.shape' property is required`)
-    return
-  }
-  // Retrieve the shape
+  // Define the shape
   let shape
-  if (typeof options.shape === 'object') shape = options.shape
-  else {
-    shape = Shapes[options.shape]
-    if (!shape) {
-      console.warn(`[KDK] unknow shape ${options.shape}`)
-      return
+  if (options.shape) {
+    if (typeof options.shape === 'object') shape = options.shape
+    else {
+      shape = Shapes[options.shape]
+      if (!shape) {
+        console.warn(`[KDK] unknow shape ${options.shape}`)
+      }
     }
   }
   // Define the size
@@ -124,53 +133,55 @@ export function createShape (options) {
     height = options.size[1]
   } else {
     if (options.radius) {
-      if (shape.radiusToSize) {
-        const size = shape.radiusToSize(options.radius)
-        width = size[0]
-        height = size[1]
-      } else {
-        width = options.radius * 2
-        height = options.radius * 2
-      }
+      const radiusToSize = _.get(shape, 'radiusToSize', defaultRadiusToSize)
+      const size = radiusToSize(options.radius)
+      width = size[0]
+      height = size[1]
     }
   }
   // Set div container vars
   const beginDivTag = `<div style="position: relative; width: ${width}px; height: ${height}px;">`
   const endDivTag = '</div>'
-  // Set svg shape vars
-  let beginSvgTag = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" preserveAspectRatio="none">`
-  beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', _.join(shape.viewBox, ' '))
-  let svgShapeContent = shape.content
+  // Render shape
+  let beginSvgTag = ''
+  let svgShapeContent = ''
   let svgClipPath = ''
-  const endSvgTag = '</svg>'
-  // Apply fill style
-  const color = options.color || getCssVar('primary')
-  svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
-  if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
-  // Aply stroke style
-  if (options.stroke) {
-    // Ensure the stroke color is defined and not transparent
-    const strokeColor = options.stroke.color || 'transparent'
-    if (strokeColor !== 'transparent') {
-      svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke', strokeColor)
-      // draw inner stroke by double the width and clip the shape by itself
-      // see https://stackoverflow.com/questions/7241393/can-you-control-how-an-svgs-stroke-width-is-drawn
-      const strokeWidth = options.stroke.width || 1
-      svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-width', strokeWidth * 2)
-      // prevent scaling stroke
-      svgShapeContent = addSvgAttribute(svgShapeContent, 'vector-effect', 'non-scaling-stroke')
-      // additional properties
-      if (options.stroke.lineCap) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linecap', options.stroke.lineCap)
-      if (options.stroke.linejoin) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linejoin', options.stroke.lineJoin)
-      if (options.stroke.dashArray) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dasharray', options.stroke.dashArray)
-      if (options.stroke.dashOffset) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dashoffset', options.stroke.dashOffset)
-      const clipId = uid()
-      // clip the shape to avoid stroke overflow
-      svgShapeContent = addSvgAttribute(svgShapeContent, 'clip-path', `url(#${clipId})`)
-      svgClipPath = `<clipPath id="${clipId}">${_.clone(shape.content)}</clipPath>`
+  let endSvgTag = ''
+  if (shape) {
+    beginSvgTag = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" preserveAspectRatio="none">`
+    beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', _.join(shape.viewBox, ' '))
+    svgShapeContent = shape.content
+    svgClipPath = ''
+    endSvgTag = '</svg>'
+    // Apply fill style
+    const color = options.color || getCssVar('primary')
+    svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
+    if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
+    // Aply stroke style
+    if (options.stroke) {
+      // Ensure the stroke color is defined and not transparent
+      const strokeColor = options.stroke.color || 'transparent'
+      if (strokeColor !== 'transparent') {
+        svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke', strokeColor)
+        // draw inner stroke by double the width and clip the shape by itself
+        // see https://stackoverflow.com/questions/7241393/can-you-control-how-an-svgs-stroke-width-is-drawn
+        const strokeWidth = options.stroke.width || 1
+        svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-width', strokeWidth * 2)
+        // prevent scaling stroke
+        svgShapeContent = addSvgAttribute(svgShapeContent, 'vector-effect', 'non-scaling-stroke')
+        // additional properties
+        if (options.stroke.lineCap) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linecap', options.stroke.lineCap)
+        if (options.stroke.linejoin) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linejoin', options.stroke.lineJoin)
+        if (options.stroke.dashArray) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dasharray', options.stroke.dashArray)
+        if (options.stroke.dashOffset) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dashoffset', options.stroke.dashOffset)
+        const clipId = uid()
+        // clip the shape to avoid stroke overflow
+        svgShapeContent = addSvgAttribute(svgShapeContent, 'clip-path', `url(#${clipId})`)
+        svgClipPath = `<clipPath id="${clipId}">${_.clone(shape.content)}</clipPath>`
+      }
     }
   }
-  // Apply icon style
+  // Render icon 
   let iconTag = ''
   if (options.icon) {
     iconTag = '<i '
@@ -180,10 +191,11 @@ export function createShape (options) {
     const size = options.icon.size || 16
     const xOffset = options.icon.xOffset || _.get(shape, 'icon.xOffset', '-50%')
     const yOffset = options.icon.yOffset || _.get(shape, 'icon.yOffset', '-50%')
-    iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}); color: ${color}; opacity: ${opacity}; font-size: ${size}px;"`
+    const rotation = options.icon.rotation || 0
+    iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}) rotate(${rotation}deg); color: ${color}; opacity: ${opacity}; font-size: ${size}px;"`
     iconTag += '/>'
   }
-  // Apply text style
+  // Render text 
   let textTag = ''
   if (options.text) {
     textTag = '<span '
@@ -191,7 +203,8 @@ export function createShape (options) {
     const size = options.text.size || 12
     const xOffset = options.text.xOffset || _.get(shape, 'text.xOffset', '-50%')
     const yOffset = options.text.yOffset || _.get(shape, 'text.yOffset', '-50%')
-    textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}); color: ${color}; font-size: ${size}px;"`
+    const rotation = options.text.rotation || 0    
+    textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}) rotate(${rotation}deg); color: ${color}; font-size: ${size}px;"`
     textTag += '>'
     textTag += options.text.label
     textTag += '</span>'
