@@ -29,9 +29,13 @@ export const pmtilesLayers = {
         }
         style = await response.json()
       }
+      const backgroundLayer = _.find(style.layers, { type: 'background' })
+      const backgroundColor = _.get(backgroundLayer, 'paint.fill-color')
       // Convert to PMTiles plugin paint rules
       let rules = (style ? json_style(style, {}) : {})
       return this.createLeafletLayer({
+        levelDiff: 2,
+        backgroundColor,
         ...leafletOptions,
         ...rules
       })
