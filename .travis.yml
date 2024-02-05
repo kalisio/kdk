@@ -31,9 +31,11 @@ jobs:
     after_script:
     - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
   - stage: DOC
+    os: linux
+    dist: focal
     language: node_js
     node_js:
-    - '16'
+    - '18'
     install: true
     script: bash .travis.doc.sh
     deploy:
