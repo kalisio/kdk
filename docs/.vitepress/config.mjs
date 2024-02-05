@@ -9,10 +9,10 @@ export default withMermaid(
     ignoreDeadLinks: true,
     head: [
       ['link', { href: 'https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css', rel: 'stylesheet' }],
-      ['link', { rel: 'icon', href: `https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-64x64.png` }]
+      ['link', { rel: 'icon', href: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-color-2048x2048.png' }]
     ],
     themeConfig: {
-      logo: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/kano/kano-icon-256x256.png',
+      logo: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-color-2048x2048.png',
       jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkZXYua2FsaXNpby54eXoiLCJpc3MiOiJrYWxpc2lvIn0.CGvJwPPkuiFvNzo3zUBb-_vwD0CKbUfm7w7TkCY-Ts4',
       socialLinks: [{ icon: 'github', link: 'https://github.com/kalisio/kano' }],
       nav: [
@@ -31,8 +31,20 @@ export default withMermaid(
         '/tips/': getTipsSidebar(),
         '/tools/': getToolsSidebar()
       },
+      trustLogos: [
+        { imageLink: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/logos/airbus.png', link: 'https://www.airbus.com/' },
+        { imageLink: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/logos/irsn.png', link: 'https://www.irsn.fr/' }
+      ],
       footer: {
         copyright: 'MIT Licensed | Copyright © 2017-20xx Kalisio'
+      }
+    },
+    vite: {
+      optimizeDeps: {
+        include: ['keycloak-js', 'lodash'],
+      },
+      ssr: {
+        noExternal: ['vitepress-theme-kalisio']
       }
     }
   })
