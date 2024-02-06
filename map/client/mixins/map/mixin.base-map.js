@@ -14,6 +14,8 @@ import '@kalisio/leaflet.donutcluster/src/Leaflet.DonutCluster.css'
 import '@kalisio/leaflet.donutcluster'
 import 'leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js'
 import 'leaflet.geodesic'
+import '@kalisio/leaflet-graphicscale'
+import '@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css'
 import 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import iso8601 from 'iso8601-js-period' // Required by leaflet.timedimension
@@ -85,17 +87,23 @@ export const baseMap = {
         this.map.pm.setLang(getAppLocale())
       }
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
-      if (_.get(viewerOptions, 'scale', true)) this.setupScaleControl()
-      if (_.get(viewerOptions, 'geolocate', true)) this.setupGeolocateControl()
+      const scale = _.get(viewerOptions, 'scale', true)
+      if (scale) this.setupScaleControl(scale)
+      const geolocate = _.get(viewerOptions, 'geolocate', true)
+      if (geolocate) this.setupGeolocateControl(geolocate)
       this.onMapReady()
     },
     onMapReady () {
       this.$emit('map-ready', 'leaflet')
       this.$engineEvents.emit('map-ready', 'leaflet')
     },
-    setupScaleControl () {
-      // Add a scale control
-      this.scaleControl = new L.control.scale()   // eslint-disable-line
+    setupScaleControl (options) {
+      // Add a basic or enhanced scale control
+      if (typeof options === 'object') {
+        this.scaleControl = new L.control.graphicScale(options)
+      } else {
+        this.scaleControl = new L.control.scale()   // eslint-disable-line
+      }
       this.scaleControl.addTo(this.map)
     },
     setupGeolocateControl () {
