@@ -384,10 +384,10 @@ export const geojsonLayers = {
           bindLeafletEvents(layer, LeafletEvents.Feature, this, options)
         },
         style: (feature) => {
-          return this.generateStyle('featureStyle', feature, options)
+          return this.generateStyle('featureStyle', feature, options, _.get(this, 'activityOptions.engine'))
         },
         pointToLayer: (feature, latlng) => {
-          return this.generateStyle('markerStyle', feature, latlng, options)
+          return this.generateStyle('markerStyle', feature, latlng, options, _.get(this, 'activityOptions.engine'))
         }
       }
 
