@@ -94,6 +94,7 @@ function addSvgAttribute (svg, attibute, value) {
     - dashOffset: Number - the stroke dashoffset - 0
   - icon: Object specifying an icon overlay
     - classes: String - the icon class
+    - url: String - the icon url
     - color: String - the icon color
     - opacity: Number - the icon opacity
     - size: Number - the icon size in pixel - 14
@@ -106,7 +107,7 @@ function addSvgAttribute (svg, attibute, value) {
     - size: Number - the font size in pixel - 14
     - xOffset: String - the x offset from the center of the shape - '-50%'
     - yOffset: String - the y offset from the center of the shape - '-50%'
-    - rotation: Number - the rotation to apply in degree    
+    - rotation: Number - the rotation to apply in degree
 */
 export function createShape (options) {
   // Check arguments
@@ -184,16 +185,31 @@ export function createShape (options) {
   // Render icon 
   let iconTag = ''
   if (options.icon) {
-    iconTag = '<i '
-    iconTag += `class="${options.icon.classes}" `
-    const color = options.icon.color || 'black'
-    const opacity = options.icon.opacity || 1
-    const size = options.icon.size || 16
-    const xOffset = options.icon.xOffset || _.get(shape, 'icon.xOffset', '-50%')
-    const yOffset = options.icon.yOffset || _.get(shape, 'icon.yOffset', '-50%')
-    const rotation = options.icon.rotation || 0
-    iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}) rotate(${rotation}deg); color: ${color}; opacity: ${opacity}; font-size: ${size}px;"`
-    iconTag += '/>'
+    if (options.icon.classes || options.icon.url) {
+      let size = options.icon.size || 16
+      let specificStyle = ''
+      if (options.icon.url) {
+        iconTag = `<img src="${options.icon.url}" `
+        // handle size
+        if (!Array.isArray(size)) size = [size, size]
+        iconTag += `width=${size[0]} height=${size[1]} `
+      } else {
+        iconTag += `<i class="${options.icon.classes}" `
+        // handle color
+        const color = options.icon.color || 'black'
+        specificStyle += `color: ${color};`
+        // handle size
+        specificStyle += `font-size: ${size}px;`
+      }
+      const opacity = options.icon.opacity || 1
+      const xOffset = options.icon.xOffset || _.get(shape, 'icon.xOffset', '-50%')
+      const yOffset = options.icon.yOffset || _.get(shape, 'icon.yOffset', '-50%')
+      const rotation = options.icon.rotation || 0
+      iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}) rotate(${rotation}deg); opacity: ${opacity}; ${specificStyle}"`
+      iconTag += '/>'
+    } else {
+      console.warn(`[KDK] the icon must contain either the 'classes' property or the 'url' property`)
+    }
   }
   // Render text 
   let textTag = ''
