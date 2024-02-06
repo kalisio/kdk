@@ -12,17 +12,20 @@
       bottom-slots
       borderless
       @clear="clear">
-      <!-- Helper -->
-      <template v-if="hasHelper" v-slot:append>
-        <k-action
-          :id="properties.name + '-helper'"
-          :label="computedHelperLabel"
-          :icon="computedHelperIcon"
-          :tooltip="computedHelperTooltip"
-          color="primary"
-          :handler="onHelperClicked"
-        />
-      </template>
+        <!-- Helper -->
+        <template v-if="hasHelper" v-slot:append>
+          <k-action
+            :id="properties.name + '-helper'"
+            :label="computedHelperLabel"
+            :icon="computedHelperIcon"
+            :tooltip="computedHelperTooltip"
+            :url="computedHelperUrl"
+            :dialog="computedHelperDialog"
+            :context="computedHelperContext"
+            @dialog-confirmed="onHelperDialogConfirmed"
+            color="primary"
+          />
+        </template>
   </q-field>
   <!-- View tree -->
   <q-tree v-if="viewTree.length" :nodes="viewTree" node-key="_id" label-key="label" children-key="views"
