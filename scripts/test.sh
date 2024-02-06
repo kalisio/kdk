@@ -8,7 +8,7 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
 if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
-    KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" airbus.XXXXXX)
+    KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)
     # clone developement into $KALISIO_DEVELOPMENT_DIR
     git clone --depth 1 "https://$GITHUB_DEVELOPMENT_PAT@github.com/kalisio/development.git" "$KALISIO_DEVELOPMENT_DIR/development"
 
@@ -34,7 +34,7 @@ if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
     cd "$KALISIO_DEVELOPMENT_DIR/weacast"
     yarn install
     for pkg in core gfs probe; do
-        cd "$pkg"
+        cd "packages/$pkg"
         yarn link
         cd ~-
         yarn link "@weacast/$pkg"
