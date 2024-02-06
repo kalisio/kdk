@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'debug'
 import { uid, getCssVar } from 'quasar'
 
 function defaultRadiusToSize (r) {
@@ -112,7 +113,7 @@ function addSvgAttribute (svg, attibute, value) {
 export function createShape (options) {
   // Check arguments
   if (!options) {
-    console.warn(`[KDK] 'options' argument is required`)
+    logger.warn(`[KDK] 'options' argument is required`)
     return
   }
   // Define the shape
@@ -122,7 +123,7 @@ export function createShape (options) {
     else {
       shape = Shapes[options.shape]
       if (!shape) {
-        console.warn(`[KDK] unknow shape ${options.shape}`)
+        logger.warn(`[KDK] unknown shape ${options.shape}`)
       }
     }
   }
@@ -208,22 +209,26 @@ export function createShape (options) {
       iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}) rotate(${rotation}deg); opacity: ${opacity}; ${specificStyle}"`
       iconTag += '/>'
     } else {
-      console.warn(`[KDK] the icon must contain either the 'classes' property or the 'url' property`)
+      logger.warn(`[KDK] icon must contain either the 'classes' property or the 'url' property`)
     }
   }
   // Render text 
   let textTag = ''
   if (options.text) {
-    textTag = '<span '
-    const color = options.text.color || 'black'
-    const size = options.text.size || 12
-    const xOffset = options.text.xOffset || _.get(shape, 'text.xOffset', '-50%')
-    const yOffset = options.text.yOffset || _.get(shape, 'text.yOffset', '-50%')
-    const rotation = options.text.rotation || 0    
-    textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}) rotate(${rotation}deg); color: ${color}; font-size: ${size}px;"`
-    textTag += '>'
-    textTag += options.text.label
-    textTag += '</span>'
+    if (options.text.label) {
+      textTag = '<span '
+      const color = options.text.color || 'black'
+      const size = options.text.size || 12
+      const xOffset = options.text.xOffset || _.get(shape, 'text.xOffset', '-50%')
+      const yOffset = options.text.yOffset || _.get(shape, 'text.yOffset', '-50%')
+      const rotation = options.text.rotation || 0    
+      textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${xOffset},${yOffset}) rotate(${rotation}deg); color: ${color}; font-size: ${size}px;"`
+      textTag += '>'
+      textTag += options.text.label
+      textTag += '</span>'
+    } else {
+      logger.warn(`[KDK] text must contain the 'label' property`)
+    }
   }
   return {
     width,
