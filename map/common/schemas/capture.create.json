@@ -4,7 +4,7 @@
   "description": "Capture schema",
   "type": "object",
   "groups": {
-    "group-1": {
+    "group-advanced-settings": {
       "label": "schemas.CAPTURE_ADVANCED_SETTINGS"
     }
   },
@@ -118,7 +118,7 @@
     },
     "dateTime": {
       "type": "object",
-      "group": "group-1",
+      "group": "group-advanced-settings",
       "default": { "start": "2023-11-17T23:00:00.000Z", "end": "2023-12-17T23:00:00.000Z"},
       "field": {
         "component": "form/KDateTimeRangeField",

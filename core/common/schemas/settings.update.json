@@ -4,72 +4,72 @@
   "title": "schemas.UPDATE_SETTINGS_TITLE",
   "type": "object",
   "groups": {
-    "group-1": { "label": "schemas.TIME_FORMAT_SETTINGS" },
-    "group-2": { "label": "schemas.TIMELINE_SETTINGS" },
-    "group-3": { "label": "schemas.TIMESERIES_SETTINGS" },
-    "group-4": { "label": "schemas.MAP_SETTINGS" },
-    "group-5": { "label": "schemas.UNITS_SETTINGS" },
-    "group-6": { "label": "schemas.NOTATION_SETTINGS" }
+    "group-time": { "label": "schemas.TIME_FORMAT_SETTINGS" },
+    "group-timeline": { "label": "schemas.TIMELINE_SETTINGS" },
+    "group-timeseries": { "label": "schemas.TIMESERIES_SETTINGS" },
+    "group-map": { "label": "schemas.MAP_SETTINGS" },
+    "group-units": { "label": "schemas.UNITS_SETTINGS" },
+    "group-notation": { "label": "schemas.NOTATION_SETTINGS" }
   },
   "properties": {
     "shortTime": {
       "type": "string",
-      "group": "group-1",
+      "group": "group-time",
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_SHORT_TIME_FIELD_LABEL",
-        "helper": { "icon": "far fa-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
+        "helper": { "icon": "las la-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "longTime": {
       "type": "string",
-      "group": "group-1",
+      "group": "group-time",
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_LONG_TIME_FIELD_LABEL",
-        "helper": { "icon": "far fa-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
+        "helper": { "icon": "las la-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "shortDate": {
       "type": "string",
-      "group": "group-1",
+      "group": "group-time",
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_SHORT_DATE_FIELD_LABEL",
-        "helper": { "icon": "far fa-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
+        "helper": { "icon": "las la-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
 
       }
     },
     "longDate": {
       "type": "string",
-      "group": "group-1",
+      "group": "group-time",
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_LONG_DATE_FIELD_LABEL",
-        "helper": { "icon": "far fa-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
+        "helper": { "icon": "las la-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "shortYear": {
       "type": "string",
-      "group": "group-1",
+      "group": "group-time",
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_SHORT_YEAR_FIELD_LABEL",
-        "helper": { "icon": "far fa-question-circlen", "url": "https://momentjs.com/docs/#/displaying/format/" }
+        "helper": { "icon": "las la-question-circlen", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "longYear": {
       "type": "string",
-      "group": "group-1",
+      "group": "group-time",
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_LONG_YEAR_FIELD_LABEL",
-        "helper": { "icon": "far fa-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
+        "helper": { "icon": "las la-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "timezone": {
       "type": "string",
-      "group": "group-1",
+      "group": "group-time",
       "field": {
         "component": "form/KTimezoneField",
         "label": "schemas.TIME_FORMAT_TIMEZONE_FIELD_LABEL"
@@ -77,7 +77,7 @@
     },
     "timelineStep": {
       "type": "number",
-      "group": "group-2",
+      "group": "group-timeline",
       "field": {
         "component": "form/KSelectField",
         "label": "schemas.TIMELINE_STEP",
@@ -98,7 +98,7 @@
     },
     "timelineInterval": {
       "type": "number",
-      "group": "group-2",
+      "group": "group-timeline",
       "field": {
         "component": "form/KSelectField",
         "label": "schemas.TIMELINE_INTERVAL",
@@ -115,7 +115,7 @@
     },
     "timeseriesSpan": {
       "type": "number",
-      "group": "group-3",
+      "group": "group-timeseries",
       "field": {
         "component": "form/KSelectField",
         "label": "schemas.TIMESERIES_SPAN",
@@ -132,7 +132,7 @@
     },
     "restoreView": {
       "type": "boolean",
-      "group": "group-4",
+      "group": "group-map",
       "field": {
         "component": "form/KToggleField",
         "label": "schemas.RESTORE_VIEW_FIELD_LABEL"
@@ -140,7 +140,7 @@
     },
     "restoreLayers": {
       "type": "boolean",
-      "group": "group-4",
+      "group": "group-map",
       "field": {
         "component": "form/KToggleField",
         "label": "schemas.RESTORE_LAYERS_FIELD_LABEL"
@@ -148,16 +148,16 @@
     },
     "location": {
       "type": "string",
-      "group": "group-4",
+      "group": "group-map",
       "field": {
         "component": "form/KTextField",
         "label": "schemas.LOCATION_FORMAT_LABEL",
-        "helper": { "icon": "far fa-question-circle", "url": "https://github.com/nerik/formatcoords#formatting" }
+        "helper": { "icon": "las la-question-circle", "url": "https://github.com/nerik/formatcoords#formatting" }
       }
     },
     "defaultLength": {
       "type": "string",
-      "group": "group-5",
+      "group": "group-units",
       "field": {
         "component": "form/KUnitField",
         "label": "schemas.LENGTH_FIELD_LABEL",
@@ -166,7 +166,7 @@
     },
     "defaultAltitude": {
       "type": "string",
-      "group": "group-5",
+      "group": "group-units",
       "field": {
         "component": "form/KUnitField",
         "label": "schemas.ALTITUDE_FIELD_LABEL",
@@ -175,7 +175,7 @@
     },
     "defaultArea": {
       "type": "string",
-      "group": "group-5",
+      "group": "group-units",
       "field": {
         "component": "form/KUnitField",
         "label": "schemas.AREA_FIELD_LABEL",
@@ -184,7 +184,7 @@
     },
     "defaultVelocity": {
       "type": "string",
-      "group": "group-5",
+      "group": "group-units",
       "field": {
         "component": "form/KUnitField",
         "label": "schemas.VELOCITY_FIELD_LABEL",
@@ -193,7 +193,7 @@
     },
     "defaultTemperature": {
       "type": "string",
-      "group": "group-5",
+      "group": "group-units",
       "field": {
         "component": "form/KUnitField",
         "label": "schemas.TEMPERATURE_FIELD_LABEL",
@@ -202,7 +202,7 @@
     },
     "defaultAngle": {
       "type": "string",
-      "group": "group-5",
+      "group": "group-units",
       "field": {
         "component": "form/KUnitField",
         "label": "schemas.ANGLE_FIELD_LABEL",
@@ -211,7 +211,7 @@
     },
     "defaultEquivalentDoseRate": {
       "type": "string",
-      "group": "group-5",
+      "group": "group-units",
       "field": {
         "component": "form/KUnitField",
         "label": "schemas.EQUIVALENT_DOSE_RATE_FIELD_LABEL",
@@ -220,7 +220,7 @@
     },
     "defaultNotation": {
       "type": "string",
-      "group": "group-6",
+      "group": "group-notation",
       "field": {
         "component": "form/KSelectField",
         "label": "schemas.NOTATION_FIELD_LABEL",
@@ -233,7 +233,7 @@
     },
     "defaultPrecision": {
       "type": "number",
-      "group": "group-6",
+      "group": "group-notation",
       "minimum": 0,
       "maximum": 6,
       "field": {
