@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import logger from 'debug'
+import logger from 'loglevel'
 import { uid, getCssVar } from 'quasar'
 
 function defaultRadiusToSize (r) {
