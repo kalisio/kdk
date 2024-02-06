@@ -22,21 +22,21 @@
     <!--
       Grouped fields
     -->
-    <template v-for="group in groups" :key="group">
-      <q-expansion-item icon="las la-file-alt" :group="group">
+    <template v-for="(group, id) in groups" :key="id">
+      <q-expansion-item icon="las la-file-alt" :group="id">
         <template v-slot:header>
           <!-- Label -->
           <q-item-section>
-            {{ $t(schema.groups[group].label) }}
+            {{ $t(group.label) }}
           </q-item-section>
           <!-- Helper -->
-          <q-item-section v-if="hasGroupHelper(schema.groups[group])" side >
+          <q-item-section v-if="group.helper" side >
             <q-btn 
               color="primary"
               flat
               round
-              :icon="schema.groups[group].helper.icon"
-              @click.native.stop="onGroupHelperClicked(schema.groups[group])"
+              :icon="group.helper.icon"
+              @click.native.stop="onGroupHelperClicked(group)"
             />
           </q-item-section>
         </template>
@@ -44,8 +44,8 @@
         <q-card>
           <q-card-section>
             <template v-for="field in fields" :key="field.name">
-              <slot v-if="field.group === group" :name="'before-' + field.name"/>
-              <slot v-if="field.group === group" :name="field.name">
+              <slot v-if="field.group === id" :name="'before-' + field.name"/>
+              <slot v-if="field.group === id" :name="field.name">
                 <component
                   :ref="onFieldRefCreated"
                   :is="field.component"
@@ -55,7 +55,7 @@
                   :dense="dense"
                   @field-changed="onFieldChanged" />
               </slot>
-              <slot v-if="field.group === group" :name="'after-' + field.name"/>
+              <slot v-if="field.group === id" :name="'after-' + field.name"/>
             </template>
           </q-card-section>
         </q-card>
@@ -67,7 +67,7 @@
 <script setup>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { loadComponent } from '../../utils/index.js'
 import { useSchema } from '../../composables'
 
@@ -97,10 +97,14 @@ const emit = defineEmits(['field-changed', 'form-ready'])
 // Data
 const { schema, compile: compileSchema, validate: validateSchema } = useSchema()
 const fields = ref([])
-const groups = ref([])
 const isReady = ref(false)
 const nbReadyFields = ref(0)
 let buildInProgress = false
+
+// Computed
+const groups = computed(() => {
+  return _.get(props.schema, 'groups', {})
+})
 
 // Watch
 watch(() => props.schema, async (value) => {
@@ -163,7 +167,6 @@ function hasFieldError (field, errors) {
 }
 async function build () {
   fields.value = []
-  groups.value = []
   nbReadyFields.value = 0
   isReady.value = false
   if (!props.schema) throw new Error('Cannot build the form without schema')
@@ -182,7 +185,6 @@ async function build () {
     cloneField.required = _.includes(schema.value.required, property) // add extra required info
     // add the field to the list of fields to be rendered
     fields.value.push(cloneField)
-    if (cloneField.group && !groups.value.includes(cloneField.group)) groups.value.push(cloneField.group)
   })
   buildInProgress = false
 }
@@ -242,9 +244,6 @@ async function submitted (object) {
     const field = fields.value[i]
     await field.reference.submitted(object, field.name)
   }
-}
-function hasGroupHelper (group) {
-  return !_.isEmpty(_.get(group, 'helper', {}))
 }
 function onGroupHelperClicked (group) {
   if (_.has(group.helper, 'url')) window.open(group.helper.url, '_blank')
