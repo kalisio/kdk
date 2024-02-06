@@ -8,9 +8,6 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
 if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
-
-    mongod --dbpath /var/lib/mongo
-
     KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)
     # clone developement into $KALISIO_DEVELOPMENT_DIR
     git clone --depth 1 "https://$GITHUB_DEVELOPMENT_PAT@github.com/kalisio/development.git" "$KALISIO_DEVELOPMENT_DIR/development"
@@ -44,7 +41,7 @@ if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
     done
 
     # Start ci mongo
-    # mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
+    mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
 else
     # Start mongo
     k-mongo
