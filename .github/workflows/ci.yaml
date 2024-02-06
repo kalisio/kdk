@@ -1,0 +1,20 @@
+name: KDK's CI
+on:
+  push:
+    branches:
+      - gha
+jobs:
+  ci:
+    runs-on: ubuntu-22.04
+    container:
+      image: harbor.portal.kalisio.com/kalisio/ci-kdk:latest
+      # Run using Github Actions specific user in our container
+      options: --user 1001
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Run tests
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+          GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
+        run: bash ./scripts/test.sh
