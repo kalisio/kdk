@@ -6,6 +6,18 @@ THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_PATH=$(dirname "$THIS_FILE")
 ROOT_PATH=$(dirname "$THIS_PATH")
 
+ci_requirements() {
+    if [ "${GITHUB_ACTIONS:-}" = true ]; then
+        # ci-kdk container has no java installed
+        sudo apt-get update && sudo apt-get --no-install--recommends --yes install default-jre
+
+        # Start ci mongo
+        mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
+    # elif [ "${GITLAB_CI:-}" = true ]; then
+    # elif [  "${TRAVIS:-}" = true ]; then
+    fi
+}
+
 begin_group() {
     TITLE="$1"
     if [ "${GITHUB_ACTIONS:-}" = true ]; then
@@ -36,10 +48,12 @@ IS_CI=false
 if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
     IS_CI=true
     echo "Running in CI mode ..."
-fi
 
-if [ "$IS_CI" = true ]; then
     begin_group "Setting up CI ..."
+    ci_requirements
+    end_group "Setting up CI ..."
+
+    begin_group "Fetching project dependencies ..."
 
     KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)
     # clone developement into $KALISIO_DEVELOPMENT_DIR
@@ -78,10 +92,7 @@ if [ "$IS_CI" = true ]; then
 
     cd "$ROOT_PATH"
 
-    # Start ci mongo
-    mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
-
-    end_group "Setting up CI ..."
+    end_group "Fetching project dependencies ..."
 else
     # Start mongo
     k-mongo
