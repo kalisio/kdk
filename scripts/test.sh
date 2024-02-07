@@ -6,9 +6,29 @@ THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_PATH=$(dirname "$THIS_FILE")
 ROOT_PATH=$(dirname "$THIS_PATH")
 
-setup_gha() {
-    # Missing java to run tests
-    sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
+begin_group() {
+    TITLE="$1"
+    if [ "${GITHUB_ACTIONS:-}" = true ]; then
+        # see https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
+        echo "::group::$TITLE"
+    elif [ "${GITLAB_CI:-}" = true ]; then
+        # see https://docs.gitlab.com/ee/ci/jobs/#custom-collapsible-sections
+        echo -e "\e[0Ksection_start:$(date +%s):$TITLE\r\e[0KHeader of the 1st collapsible section"
+    elif [  "${TRAVIS:-}" = true ]; then
+        # see
+        echo "travis_fold:start:$TITLE"
+    fi
+}
+
+end_group() {
+    TITLE="$1"
+    if [ "${GITHUB_ACTIONS:-}" = true ]; then
+        echo "::endgroup::"
+    elif [ "${GITLAB_CI:-}" = true ]; then
+        echo -e "\e[0Ksection_end:$(date +%s):$TITLE\r\e[0K"
+    elif [  "${TRAVIS:-}" = true ]; then
+        echo "travis_fold:end:$TITLE"
+    fi
 }
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
@@ -16,12 +36,11 @@ IS_CI=false
 if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
     IS_CI=true
     echo "Running in CI mode ..."
-    if [ "${GITHUB_ACTIONS:-}" = true ]; then
-        setup_gha
-    fi
 fi
 
 if [ "$IS_CI" = true ]; then
+    begin_group "Setting up CI ..."
+
     KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)
     # clone developement into $KALISIO_DEVELOPMENT_DIR
     git clone --depth 1 "https://$GITHUB_DEVELOPMENT_PAT@github.com/kalisio/development.git" "$KALISIO_DEVELOPMENT_DIR/development"
@@ -54,8 +73,12 @@ if [ "$IS_CI" = true ]; then
         yarn link "@weacast/$pkg"
     done
 
+    cd "$ROOT_PATH"
+
     # Start ci mongo
     mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
+
+    end_group "Setting up CI ..."
 else
     # Start mongo
     k-mongo
