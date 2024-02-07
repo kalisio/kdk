@@ -100,8 +100,8 @@ function getSize (size) {
   - stroke: Object specifying the stroke properties
     - color: String - the stroke color
     - width: Number - the stroke width - 0
-    - lineCap: String - the stroke linecap - 'butt'
-    - lineJoin: String - the stroke linejoin - 'miter'
+    - cap: String - the stroke linecap - 'butt'
+    - join: String - the stroke linejoin - 'miter'
     - dashArray: String - the stroke dasharray - 'none'
     - dashOffset: Number - the stroke dashoffset - 0
   - icon: Object specifying an icon overlay
@@ -180,8 +180,8 @@ export function createShape (options) {
         // prevent scaling stroke
         svgShapeContent = addSvgAttribute(svgShapeContent, 'vector-effect', 'non-scaling-stroke')
         // additional properties
-        if (options.stroke.lineCap) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linecap', options.stroke.lineCap)
-        if (options.stroke.linejoin) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linejoin', options.stroke.lineJoin)
+        if (options.stroke.cap) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linecap', options.stroke.cap)
+        if (options.stroke.join) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linejoin', options.stroke.join)
         if (options.stroke.dashArray) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dasharray', options.stroke.dashArray)
         if (options.stroke.dashOffset) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dashoffset', options.stroke.dashOffset)
         const clipId = uid()
