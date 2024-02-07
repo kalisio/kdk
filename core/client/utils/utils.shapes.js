@@ -57,14 +57,20 @@ export const Shapes = {
     viewBox: [0, 0, 384, 512],
     content: '<path d="M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0s192 86 192 192z" />',
     icon: {
-      yOffset: '-80%'
+      yOffset: '-75%'
+    },
+    text: {
+      yOffset: '-75%'
     }
   },
   'square-pin': {
     viewBox: [0, 0, 56, 56],
     content: '<path d="M 27.9532 52.3633 C 29.0079 52.3633 29.9923 51.9180 30.9298 50.3008 L 35.2657 43.0586 L 43.0938 43.0586 C 50.0783 43.0586 53.8280 39.1914 53.8280 32.3242 L 53.8280 14.3711 C 53.8280 7.5039 50.0783 3.6367 43.0938 3.6367 L 12.9064 3.6367 C 5.9454 3.6367 2.1720 7.4805 2.1720 14.3711 L 2.1720 32.3242 C 2.1720 39.2148 5.9454 43.0586 12.9064 43.0586 L 20.6407 43.0586 L 24.9766 50.3008 C 25.9142 51.9180 26.8985 52.3633 27.9532 52.3633 Z"/>',
     icon: {
-      yOffset: '-80%'
+      yOffset: '-75%'
+    },
+    text: {
+      yOffset: '-75%'
     }
   }
 }
@@ -187,7 +193,7 @@ export function createShape (options) {
   let iconTag = ''
   if (options.icon) {
     if (options.icon.classes || options.icon.url) {
-      let size = options.icon.size || 16
+      let size = options.icon.size || [width, height]
       let specificStyle = ''
       if (options.icon.url) {
         iconTag = `<img src="${options.icon.url}" `
