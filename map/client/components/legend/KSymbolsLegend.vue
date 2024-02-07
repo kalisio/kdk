@@ -17,7 +17,7 @@
           >
             <q-item dense>
               <q-item-section avatar v-if="element.component">
-                <div class="row justify-center" style="width: 24px;">
+                <div class="row justify-center">
                   <component
                     :is="element.component"
                     v-bind="element.props"
