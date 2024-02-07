@@ -6,11 +6,19 @@ THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_PATH=$(dirname "$THIS_FILE")
 ROOT_PATH=$(dirname "$THIS_PATH")
 
+setup_gha() {
+    # Missing java to run tests
+    sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
+}
+
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
 IS_CI=false
 if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
     IS_CI=true
     echo "Running in CI mode ..."
+    if [ "${GITHUB_ACTIONS:-}" = true ]; then
+        setup_gha
+    fi
 fi
 
 if [ "$IS_CI" = true ]; then
@@ -70,6 +78,6 @@ yarn test
 TEST_RESULT=$?
 
 if [ "$IS_CI" = true ]; then
+    set -e
     cc-test-reporter after-build --exit-code $TEST_RESULT
-    set +e
 fi
