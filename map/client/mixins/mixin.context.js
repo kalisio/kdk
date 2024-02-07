@@ -170,6 +170,7 @@ export const context = {
       if (_.isEmpty(targetParameters)) {
         const savedParameters = LocalStorage.get(this.getContextKey(context))
         if (this.shouldRestoreContext(context) && !_.isEmpty(savedParameters)) {
+          targetParameters = savedParameters
           // Backward compatibility: we previously stored the bounds as an array
           if (Array.isArray(targetParameters)) {
             targetParameters = {
