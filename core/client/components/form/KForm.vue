@@ -105,7 +105,8 @@ let buildInProgress = false
 
 // Computed
 const groups = computed(() => {
-  return _.get(props.schema, 'groups', {})
+  if (schema.value && schema.value.groups) return schema.value.groups
+  return {}
 })
 
 // Watch
