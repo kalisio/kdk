@@ -59,17 +59,20 @@ if [ "$IS_CI" = true ]; then
         cd "$KALISIO_DEVELOPMENT_DIR/$pkg"
         yarn install
         yarn link
-        cd ~-
+        cd "$ROOT_PATH"
         yarn link "@kalisio/$pkg"
     done
+
+    cd "$KALISIO_DEVELOPMENT_DIR/feathers-import-export"
+    yarn link @kalisio/feathers-s3
 
     git clone --depth 1 "https://github.com/weacast/weacast" "$KALISIO_DEVELOPMENT_DIR/weacast"
     cd "$KALISIO_DEVELOPMENT_DIR/weacast"
     yarn install
     for pkg in core gfs probe; do
-        cd "packages/$pkg"
+        cd "$KALISIO_DEVELOPMENT_DIR/weacast/packages/$pkg"
         yarn link
-        cd ~-
+        cd "$ROOT_PATH"
         yarn link "@weacast/$pkg"
     done
 
