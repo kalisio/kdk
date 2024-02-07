@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { Dialog } from 'quasar'
+import { openURL } from 'quasar'
 
 export const baseField = {
   props: {
@@ -36,6 +36,15 @@ export const baseField = {
     computedHelperTooltip () {
       return _.get(this.properties.field.helper, 'tooltip', '')
     },
+    computedHelperUrl () {
+      return _.get(this.properties.field.helper, 'url', null)
+    },
+    computedHelperDialog () {
+      return _.get(this.properties.field.helper, 'dialog', null)
+    },
+    computedHelperContext () {
+      return _.get(this.properties.field.helper, 'context', null)
+    },
     hasError () {
       return !_.isEmpty(this.error)
     },
@@ -66,27 +75,6 @@ export const baseField = {
     }
   },
   methods: {
-    onHelperClicked () {
-      if (_.has(this.properties.field.helper, 'url')) window.open(this.properties.field.helper.url, '_blank')
-      if (_.has(this.properties.field.helper, 'dialog')) {
-        Dialog.create({
-          title: this.$tie(this.properties.field.helper.dialog.title),
-          message: this.$tie(this.properties.field.helper.dialog.message),
-          html: true,
-          persistent: true,
-          ok: {
-            label: this.$tie('READ_MORE'),
-            flat: true
-          },
-          cancel: {
-            label: this.$tie('CLOSE'),
-            flat: true
-          }
-        }).onOk(async (data) => {
-          window.open(this.properties.field.helper.dialog.url, '_blank')
-        })
-      }
-    },
     updateValue (value) {
       if (_.isNil(value)) this.clear()
       else this.fill(value)
@@ -128,6 +116,9 @@ export const baseField = {
     },
     submitted (object, field) {
       // To be overloaded if you need to perform specific operations after the form has been submitted
+    },
+    onHelperDialogConfirmed (context, result) {
+      if (context.url) openURL(context.url)
     }
   },
   created () {

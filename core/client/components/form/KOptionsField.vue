@@ -33,11 +33,14 @@
     <template v-if="hasHelper" v-slot:append>
       <k-action
         :id="properties.name + '-helper'"
-        :label="computedHelperLabel && computedHelperLabel"
+        :label="computedHelperLabel"
         :icon="computedHelperIcon"
         :tooltip="computedHelperTooltip"
+        :url="computedHelperUrl"
+        :dialog="computedHelperDialog"
+        :context="computedHelperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
         color="primary"
-        :handler="onHelperClicked"
       />
     </template>
   </q-field>

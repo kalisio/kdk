@@ -32,8 +32,11 @@
         :label="computedHelperLabel"
         :icon="computedHelperIcon"
         :tooltip="computedHelperTooltip"
+        :url="computedHelperUrl"
+        :dialog="computedHelperDialog"
+        :context="computedHelperContext"
+        @dialog-confirmed="onHelperDialogConfirmed"
         color="primary"
-        :handler="onHelperClicked"
       />
     </template>
   </q-input>

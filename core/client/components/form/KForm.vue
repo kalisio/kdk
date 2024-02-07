@@ -31,12 +31,14 @@
           </q-item-section>
           <!-- Helper -->
           <q-item-section v-if="group.helper" side >
-            <q-btn 
+            <k-action
+              :id="id + '-helper'"
               color="primary"
-              flat
-              round
-              :icon="group.helper.icon"
-              @click.native.stop="onGroupHelperClicked(group)"
+              :propagate="false"
+              :icon="getHelperIcon(group.helper)"
+              :tooltip="getHelperTooltip(group.helper)"
+              :url="getHelperUrl(group.helper)"
+              :dialog="getHelperDialog(group.helper)"
             />
           </q-item-section>
         </template>
@@ -103,7 +105,8 @@ let buildInProgress = false
 
 // Computed
 const groups = computed(() => {
-  return _.get(props.schema, 'groups', {})
+  if (schema.value && schema.value.groups) return schema.value.groups
+  return {}
 })
 
 // Watch
@@ -245,8 +248,17 @@ async function submitted (object) {
     await field.reference.submitted(object, field.name)
   }
 }
-function onGroupHelperClicked (group) {
-  if (_.has(group.helper, 'url')) window.open(group.helper.url, '_blank')
+function getHelperIcon (helper) {
+  return _.get(helper, 'icon', undefined)
+}
+function getHelperTooltip (helper) {
+  return _.get(helper, 'tooltip', '')
+}
+function getHelperUrl (helper) {
+  return _.get(helper, 'url', null)
+}
+function getHelperDialog (helper) {
+  return _.get(helper, 'dialog', null)
 }
 
 // Hooks

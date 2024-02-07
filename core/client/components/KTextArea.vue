@@ -63,6 +63,10 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  isExpanded: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -70,7 +74,7 @@ const props = defineProps({
 const scrollArea = ref(null)
 const scrollAreaKey = ref(0)
 const isExpandable = ref(false)
-const isExpanded = ref(false)
+const isExpanded = ref(props.isExpanded)
 const isScrollable = ref(false)
 
 // computed

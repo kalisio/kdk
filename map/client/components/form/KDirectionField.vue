@@ -41,8 +41,18 @@
         </KAction>
       </template>
       <!-- Helper -->
-      <template v-if="helper" v-slot:hint>
-        <span v-html="helper"></span>
+      <template v-if="hasHelper" v-slot:append>
+        <k-action
+          :id="properties.name + '-helper'"
+          :label="computedHelperLabel"
+          :icon="computedHelperIcon"
+          :tooltip="computedHelperTooltip"
+          :url="computedHelperUrl"
+          :dialog="computedHelperDialog"
+          :context="computedHelperContext"
+          @dialog-confirmed="onHelperDialogConfirmed"
+          color="primary"
+        />
       </template>
     </q-input>
     <q-field v-else
@@ -72,9 +82,12 @@
           :id="properties.name + '-helper'"
           :label="computedHelperLabel"
           :icon="computedHelperIcon"
-          :tooltip="$t(computedHelperTooltip)"
+          :tooltip="computedHelperTooltip"
+          :url="computedHelperUrl"
+          :dialog="computedHelperDialog"
+          :context="computedHelperContext"
+          @dialog-confirmed="onHelperDialogConfirmed"
           color="primary"
-          :handler="onHelperClicked"
         />
       </template>
     </q-field>

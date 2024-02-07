@@ -113,11 +113,11 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
   return convertedStyle
 }
 
-export function getDefaultMarker (feature, latlng, options) {
+export function getDefaultMarker (feature, latlng, options, engine) {
   const properties = feature.properties
   const leafletOptions = options.leaflet || options
   const style = Object.assign({},
-    _.get(this, 'activityOptions.engine.pointStyle'),
+    _.get(engine, 'pointStyle'),
     leafletOptions.layerStyle,
     convertToLeafletFromSimpleStyleSpec(feature.style || feature.properties))
   // We allow to template style properties according to feature,
@@ -138,11 +138,11 @@ export function getDefaultMarker (feature, latlng, options) {
   return (latlng ? createLeafletMarkerFromStyle(latlng, style) : style)
 }
 
-export function getDefaultStyle (feature, options) {
+export function getDefaultStyle (feature, options, engine) {
   const properties = feature.properties
   const leafletOptions = options.leaflet || options
   const style = Object.assign({},
-    _.get(this, 'activityOptions.engine.featureStyle'),
+    _.get(engine, 'featureStyle'),
     leafletOptions.layerStyle,
     convertToLeafletFromSimpleStyleSpec(feature.style || feature.properties))
 
