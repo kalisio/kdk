@@ -7,7 +7,13 @@ THIS_PATH=$(dirname "$THIS_FILE")
 ROOT_PATH=$(dirname "$THIS_PATH")
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
+IS_CI=false
 if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
+    IS_CI=true
+    echo "Running in CI mode ..."
+fi
+
+if [ "$IS_CI" = true ]; then
     KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)
     # clone developement into $KALISIO_DEVELOPMENT_DIR
     git clone --depth 1 "https://$GITHUB_DEVELOPMENT_PAT@github.com/kalisio/development.git" "$KALISIO_DEVELOPMENT_DIR/development"
@@ -55,4 +61,15 @@ fi
 ## Run tests
 ##
 
+if [ "$IS_CI" = true ]; then
+    cc-test-reporter before-build
+    set +e
+fi
+
 yarn test
+TEST_RESULT=$?
+
+if [ "$IS_CI" = true ]; then
+    cc-test-reporter after-build --exit-code $TEST_RESULT
+    set +e
+fi
