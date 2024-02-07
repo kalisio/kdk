@@ -9,7 +9,7 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 ci_requirements() {
     if [ "${GITHUB_ACTIONS:-}" = true ]; then
         # ci-kdk container has no java installed
-        sudo apt-get update && sudo apt-get --no-install--recommends --yes install default-jre
+        sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
 
         # Start ci mongo
         mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
