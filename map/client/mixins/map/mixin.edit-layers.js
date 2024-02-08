@@ -2,7 +2,10 @@ import _ from 'lodash'
 import L from 'leaflet'
 import { getType, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
-import { bindLeafletEvents, unbindLeafletEvents, convertToLeafletFromSimpleStyleSpec, createLeafletMarkerFromStyle } from '../../utils.map.js'
+import { 
+  bindLeafletEvents, unbindLeafletEvents, 
+  getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle 
+} from '../../utils.map.js'
 
 // Events we listen while layer is in edition mode
 const mapEditEvents = ['pm:create']
@@ -68,12 +71,19 @@ export const editLayers = {
         onEachFeature,
         // Use default styling when editing as dynamic styling can conflict
         style: (feature) => {
-          return Object.assign({},
-            _.get(this, 'activityOptions.engine.editFeatureStyle', _.get(this, 'activityOptions.engine.featureStyle')))
+          if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
+            return getDefaultLineStyle(feature, null,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
+          }
+          if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
+            return getDefaultPolygonStyle(feature, null, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
+          } else {
+            logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
+          }
         },
         pointToLayer: (feature, latlng) => {
-          return createLeafletMarkerFromStyle(latlng, Object.assign({ pmIgnore: false }, // Allow geoman edition
-            _.get(this, 'activityOptions.engine.editPointStyle', _.get(this, 'activityOptions.engine.pointStyle'))))
+          const style = getDefaultPointStyle(feature, null, _.get(this, 'activityOptions.engine'), 'style.edition.point')
+          style.options = { pmIgnore: false } // Allow geoman edition
+          return createMarkerFromPointStyle(latlng, style)
         }
       }
     },
@@ -479,15 +489,5 @@ export const editLayers = {
   },
   created () {
     this.pendingOperations = []
-  },
-  // Need to be done after created as the activity mixin initializes options in it
-  beforeMount () {
-    // Perform required conversion for default feature styling
-    if (_.has(this, 'activityOptions.engine.editFeatureStyle')) {
-      convertToLeafletFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editFeatureStyle'), 'update-in-place')
-    }
-    if (_.has(this, 'activityOptions.engine.editPointStyle')) {
-      convertToLeafletFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.editPointStyle'), 'update-in-place')
-    }
   }
 }
