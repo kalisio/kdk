@@ -13,7 +13,9 @@ begin_group "Normalizing GHA"
 install_yq
 install_age
 install_sops
-# install_node16
+nstall_nvm
+nstall_node16
+nstall_node18
 
 sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
 

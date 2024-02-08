@@ -6,7 +6,9 @@ YQ_VERSION=4.40.5
 AGE_VERSION=1.1.1
 SOPS_VERSION=3.8.1
 
-NODE16_VERSION=16.19.1
+NVM_VERSION=0.39.7
+NODE16_VERSION=16.20.2
+NODE18_VERSION=18.19.0
 
 MONGODB4_VERSION=debian10-4.4.28
 MONGODB5_VERSION=debian11-5.0.24
@@ -64,19 +66,35 @@ install_cc_test_reporter() {
     cd ~-
 }
 
-install_node16() {
-    local DL_PATH="$TMP_PATH/node16"
+install_nvm() {
+    local DL_PATH="$TMP_PATH/nvm"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
-    curl -OLsS https://nodejs.org/dist/v${NODE16_VERSION}/node-v${NODE16_VERSION}-linux-x64.tar.xz
-    curl -OLsS https://nodejs.org/dist/v${NODE16_VERSION}/SHASUMS256.txt
-    sha256sum --ignore-missing --quiet -c SHASUMS256.txt
-    tar xf node-v${NODE16_VERSION}-linux-x64.tar.xz
-    cp -fR node-v${NODE16_VERSION}-linux-x64/bin /usr/local
-    cp -fR node-v${NODE16_VERSION}-linux-x64/lib /usr/local
-    cp -fR node-v${NODE16_VERSION}-linux-x64/share /usr/local
-    npm install --global yarn
+    curl -OLsS https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh
+    bash ./install.sh
     cd ~-
 }
+
+install_node16() {
+    bash -i -c "nvm install ${NODE16_VERSION} && npm install --global yarn"
+}
+
+install_node18() {
+    bash -i -c "nvm install ${NODE18_VERSION} && npm install --global yarn"
+}
+
+# install_node16() {
+#     local DL_PATH="$TMP_PATH/node16"
+#     mkdir -p "$DL_PATH" && cd "$DL_PATH"
+#     curl -OLsS https://nodejs.org/dist/v${NODE16_VERSION}/node-v${NODE16_VERSION}-linux-x64.tar.xz
+#     curl -OLsS https://nodejs.org/dist/v${NODE16_VERSION}/SHASUMS256.txt
+#     sha256sum --ignore-missing --quiet -c SHASUMS256.txt
+#     tar xf node-v${NODE16_VERSION}-linux-x64.tar.xz
+#     cp -fR node-v${NODE16_VERSION}-linux-x64/bin /usr/local
+#     cp -fR node-v${NODE16_VERSION}-linux-x64/lib /usr/local
+#     cp -fR node-v${NODE16_VERSION}-linux-x64/share /usr/local
+#     npm install --global yarn
+#     cd ~-
+# }
 
 install_mongo4() {
     local DL_PATH="$TMP_PATH/mongo4"
