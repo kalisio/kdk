@@ -105,7 +105,7 @@ install_mongo4() {
     # curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
     # DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
     curl -OLsS http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
-    DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+    DEBIAN_FRONTEND=noninteractive && sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
     curl -OLsS https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB4_VERSION}.tgz
     tar xf mongodb-linux-x86_64-${MONGODB4_VERSION}.tgz
     mkdir -p ~/.local/bin/mongo4
