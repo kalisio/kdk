@@ -130,6 +130,9 @@ if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
 
     if [ "${GITHUB_ACTIONS:-}" = true ]; then
         CI_NAME="github"
+        # Add ~/.local/bin to PATH
+        mkdir -p "$HOME/.local/bin"
+        export PATH=$PATH:$HOME/.local/bin
     elif [ "${GITLAB_CI:-}" = true ]; then
         CI_NAME="gitlab"
     elif [  "${TRAVIS:-}" = true ]; then
