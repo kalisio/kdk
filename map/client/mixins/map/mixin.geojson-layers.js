@@ -7,7 +7,10 @@ import { Time, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, convertToLeafletFromSimpleStyleSpec } from '../../utils.map.js'
+import { 
+  fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, 
+  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, createMarkerFromPointStyle
+} from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 // Override default remove handler for leaflet-realtime due to
@@ -301,15 +304,25 @@ export const geojsonLayers = {
             variable.colorScale = kdkCoreUtils.buildColorScale(_.get(variable, 'chromajs'))
           }
         })
+        // Convert and store the style
+        if (leafletOptions.style) {
+          leafletOptions.layerPointStyle = _.get(leafletOptions.style, 'point')
+          leafletOptions.layerLineStyle = _.get(leafletOptions.style, 'line')
+          leafletOptions.layerPolygonStyle = _.get(leafletOptions.style, 'polygon')
+        } else {
+          leafletOptions.layerPointStyle = convertSimpleStyleToPointStyle(leafletOptions)
+          leafletOptions.layerLineStyle = convertSimpleStyleToLineStyle(leafletOptions)
+          leafletOptions.layerPolygonStyle = convertSimpleStyleToPolygonStyle(leafletOptions)
+        }
         // Merge generic GeoJson options and layer options
         const geoJsonOptions = this.getGeoJsonOptions(options)
         Object.keys(geoJsonOptions).forEach(key => {
-          // If layer provided do not override
-          if (!_.has(leafletOptions, key)) _.set(leafletOptions, key, _.get(geoJsonOptions, key))
+          // If layer provided do not override execpt for the style 
+          // Indeed the style property must be overriden to install the Leaflet function style
+          if (!_.has(leafletOptions, key) || (key === 'style')) _.set(leafletOptions, key, _.get(geoJsonOptions, key))
         })
-        leafletOptions.layerStyle = convertToLeafletFromSimpleStyleSpec(leafletOptions)
+        // Create the layer*/
         let layer = this.createLeafletLayer(options)
-
         // Specific case of realtime layer where the underlying container also need to be added to map
         if (leafletOptions.realtime) {
           // Build associated tile layer and bind required events
@@ -384,13 +397,20 @@ export const geojsonLayers = {
           bindLeafletEvents(layer, LeafletEvents.Feature, this, options)
         },
         style: (feature) => {
-          return this.generateStyle('featureStyle', feature, options, _.get(this, 'activityOptions.engine'))
+          if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
+            return this.generateStyle('line', feature, options, _.get(this, 'activityOptions.engine'))
+          }
+          if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
+            return this.generateStyle('polygon', feature, options, _.get(this, 'activityOptions.engine'))
+          } else {
+            logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
+          }
         },
         pointToLayer: (feature, latlng) => {
-          return this.generateStyle('markerStyle', feature, latlng, options, _.get(this, 'activityOptions.engine'))
+          const style = this.generateStyle('point', feature, options, _.get(this, 'activityOptions.engine'))
+          return createMarkerFromPointStyle(latlng, style)
         }
       }
-
       return geojsonOptions
     },
     updateLayer (name, geoJson, options = {}) {

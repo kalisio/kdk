@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import chroma from 'chroma-js'
 import moment from 'moment'
 import L from 'leaflet'
@@ -25,23 +26,168 @@ export const LeafletStyleMappings = {
   'line-join': 'lineJoin',
   'dash-array': 'dashArray',
   'dash-offset': 'dashOffset',
-  'marker-type': 'type',
+  'marker-symbol': 'style.point.shape',
+  'marker-size': 'style.point.size',
+  'marker-color': 'style.point.color',
+  'marker-anchor': 'style.point.anchor',
+  'icon-url': 'style.point.icon.url',
+  'icon-html': 'style.point.html',
+  'icon-color': 'style.point.icon.color',
+  'icon-size': 'style.point.icon.size',
+  'icon-anchor': 'style.point.anchor',
+  'icon-class': 'style.point.icon.classes',
+  'icon-opacity': 'style.point.icon.opacity',
+  'icon-classes': 'style.point.icon.classes',
+  'icon-x-offset': 'style.point.icon.xOffset',
+  'icon-y-offset': 'style.point.icon.yOffset',
+  'style-line-color': 'color',
+  'style-line-width': 'weight',
+  'style-line-opacity': 'opacity',
+  'style-line-cap': 'lineCap',
+  'style-line-join': 'lineJoin',
+  'style-line-dash-array': 'dashArray',
+  'style-line-dash-offset': 'dashOffset',
+  'style-polygon-color': 'fillColor',
+  'style-polygon-opacity': 'fillOpacity',
+  'style-polygon-rule': 'fillRule',
+  'style-polygon-stroke-color': 'color',
+  'style-polygon-stroke-width': 'weight',
+  'style-polygon-stroke-opacity': 'opacity',
+  'style-polygon-stroke-cap': 'lineCap',
+  'style-polygon-stroke-join': 'lineJoin',
+  'style-polygon-stroke-dash-array': 'dashArray',
+  'style-polygon-stroke-dash-offset': 'dashOffset'
+}
+
+const SimpleStylePointToPointStyle = {
+  fill: 'color',
+  'fill-opacity': 'opacity',
+  radius: 'radius',
+  stroke: 'stroke.color',
   'marker-symbol': 'shape',
   'marker-size': 'size',
-  'marker-color': 'fillColor',
+  'marker-color': 'color',
   'marker-anchor': 'anchor',
-  'icon-url': 'icon.iconUrl',
-  'icon-html': 'icon.html',
-  'icon-size': 'icon.iconSize',
-  'icon-anchor': 'icon.iconAnchor',
-  'icon-class': 'icon.className',
+  'stroke-color': 'stroke.color',
+  'stroke-opacity': 'stroke.opacity',
+  'stroke-width': 'stroke.width',
+  'icon-url': 'icon.url',
+  'icon-html': 'html',
   'icon-color': 'icon.color',
+  'icon-size': 'icon.size',
+  'icon-anchor': 'anchor',
+  'icon-class': 'icon.classes',
   'icon-opacity': 'icon.opacity',
   'icon-classes': 'icon.classes',
   'icon-x-offset': 'icon.xOffset',
-  'icon-y-offset': 'icon.yOffset'
+  'icon-y-offset': 'icon.yOffset',
+  'icon-rotate': 'icon.rotate',
+  'z-index': 'pane',
+  pane: 'pane',
 }
-export const LeafletStyleOptions = _.values(LeafletStyleMappings)
+
+const PointStyleTemplateMappings = {
+  stroke: 'style.point.stroke.color',
+  'stroke-color': 'style.point.stroke.color',
+  'stroke-opacity': 'style.point.stroke.opacity',
+  'stroke-width': 'style.point.stroke.width',
+  fill: 'style.point.color',
+  'fill-opacity': 'style.point.opacity',
+  'fill-color': 'style.point.color',
+  weight: 'style.point.stroke.width',
+  radius: 'style.point.radius',
+  'line-cap': 'style.point.stroke.lineCap',
+  'line-join': 'style.point.stroke.lineJoin',
+  'dash-array': 'style.point.stroke.dashArray',
+  'dash-offset': 'style.point.stroke.dashOffset',
+  'marker-symbol': 'style.point.shape',
+  'marker-size': 'style.point.size',
+  'marker-color': 'style.point.color',
+  'marker-anchor': 'style.point.anchor',
+  'icon-url': 'style.point.icon.url',
+  'icon-html': 'style.point.html',
+  'icon-color': 'style.point.icon.color',
+  'icon-size': 'style.point.icon.size',
+  'icon-anchor': 'style.point.anchor',
+  'icon-class': 'style.point.icon.classes',
+  'icon-opacity': 'style.point.icon.opacity',
+  'icon-classes': 'style.point.icon.classes',
+  'icon-x-offset': 'style.point.icon.xOffset',
+  'icon-y-offset': 'style.point.icon.yOffset',
+  'z-index': 'style.point.pane',
+  pane: 'style.point.pane',
+}
+
+const SimpleStyleToLineStyle = {
+  stroke: 'color',
+  'stroke-color': 'color',
+  'stroke-opacity': 'opacity',
+  'stroke-width': 'width',
+  weight: 'width',
+  'z-index': 'pane',
+  pane: 'pane',
+}
+
+const LineStyleTemplateMappings = {
+  stroke: 'style.line.color',
+  'stroke-color': 'style.line.color',
+  'stroke-opacity': 'style.line.opacity',
+  'stroke-width': 'style.line.width',
+  weight: 'style.line.width',
+  'line-cap': 'style.line.cap',
+  'line-join': 'style.line.join',
+  'dash-array': 'style.linee.dashArray',
+  'dash-offset': 'style.line.dashOffset',
+  'z-index': 'style.line.pane',
+  pane: 'style.line.pane'
+}
+
+const SimpleStyleToPolygonStyle = {
+  stroke: 'stroke.color',
+  'stroke-color': 'stroke.color',
+  'stroke-opacity': 'stroke.opacity',
+  'stroke-width': 'sroke.width',
+  fill: 'color',
+  'fill-color': 'color',  
+  'fill-opacity': 'opacity',
+  'z-index': 'pane',
+  pane: 'pane',
+}
+
+const PolygonStyleTemplateMappings = {
+  stroke: 'style.polygon.stroke.color',
+  'stroke-color': 'style.polygon.stroke.color',
+  'stroke-opacity': 'style.polygon.stroke.opacity',
+  'stroke-width': 'style.polygon.stroke.width',
+  fill: 'style.polygon.color',
+  'fill-opacity': 'style.polygon.opacity',
+  'fill-color': 'style.polygon.color',
+  weight: 'style.polygon.stroke.width',
+  'line-cap': 'style.polygon.stroke.cap',
+  'line-join': 'style.polygon.stroke.join',
+  'dash-array': 'style.polygon.stroke.dashArray',
+  'dash-offset': 'style.polygon.stroke.dashOffset',
+  'z-index': 'style.polygon.pane',
+  pane: 'style.polygon.pane',
+}
+
+const LineStyleToLeafletPath = {
+  color: 'color',
+  width: 'weight',
+  opacity: 'opacity',
+  cap: 'lineCap',
+  join: 'lineJoin',
+  dashArray: 'dashArray',
+  dashOffset: 'dashOffset'
+}
+
+const PolygonStyleToLeafletPath = {
+  color: 'fillColor',
+  opacity: 'fillOpacity',
+  rule: 'fillRule',
+}
+
+//export const LeafletStyleOptions = _.values(LeafletStyleMappings)
 
 export function createLeafletIconFromStyle (iconStyle) {
   const iconOptions = iconStyle.options || iconStyle
@@ -54,8 +200,8 @@ export function createLeafletIconFromStyle (iconStyle) {
   return _.get(L, type)(iconOptions)
 }
 
-export function createLeafletMarkerFromStyle (latlng, markerStyle, feature) {
-  let options
+export function createLeafletMarkerFromStyle (latlng, markerStyle) {
+  let options 
   if (markerStyle) {
     // Retrienve the options
     options = markerStyle.options || markerStyle
@@ -73,13 +219,21 @@ export function createLeafletMarkerFromStyle (latlng, markerStyle, feature) {
   return L.shapeMarker(latlng, options)
 }
 
+export function createMarkerFromPointStyle (latlng, style) {
+  if (!latlng) {
+    logger.warn(`[KDK] 'latlng' should be defined`)
+    return
+  }
+  return L.shapeMarker(latlng, style)
+}
+
 export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
   if (!style) return {}
-  const convertedStyle = (inPlace ? style : {})
+  const leafletStyle = (inPlace ? style : {})
   // Compute flags first because if updating in place options in style spec will be replaced
   let isIconSpec = _.has(style, 'icon')
   // First copy any icon spec as not supported by simple style spec
-  if (isIconSpec) _.set(convertedStyle, 'icon', _.get(style, 'icon'))
+  if (isIconSpec) _.set(leafletStyle, 'icon', _.get(style, 'icon'))
   _.forOwn(style, (value, key) => {
     if (_.has(LeafletStyleMappings, key)) {
       const mapping = _.get(LeafletStyleMappings, key)
@@ -89,10 +243,10 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
         case 'marker-anchor':
         case 'icon-anchor':
           if (!Array.isArray(value)) value = [value, value]
-          _.set(convertedStyle, mapping, value)
+          _.set(leafletStyle, mapping, value)
           break
         default:
-          _.set(convertedStyle, mapping, value)
+          _.set(leafletStyle, mapping, value)
       }
       if (inPlace) _.unset(style, key)
       // In this case we have a marker with icon spec
@@ -102,64 +256,96 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
   if (isIconSpec) {
     // Select the right marker type based on icon properties if not already set
     if (!_.has(style, 'marker.type')) {
-      if (_.has(style, 'icon-url') || _.has(style, 'icon-html')) _.set(convertedStyle, 'type', 'marker')
-      else if (_.has(style, 'icon-classes')) _.set(convertedStyle, 'type', 'shapeMarker')
+      if (_.has(style, 'icon-url') || _.has(style, 'icon-html')) _.set(leafletStyle, 'type', 'marker')
+      else if (_.has(style, 'icon-classes')) _.set(leafletStyle, 'type', 'shapeMarker')
     }
   }
   // Manage panes to make z-index work for all types of layers,
   // pane name can actually be a z-index value
-  if (_.has(convertedStyle, 'pane')) _.set(convertedStyle, 'pane', _.get(convertedStyle, 'pane').toString())
-  if (_.has(convertedStyle, 'shadowPane')) _.set(convertedStyle, 'shadowPane', _.get(convertedStyle, 'shadowPane').toString())
+  if (_.has(leafletStyle, 'pane')) _.set(leafletStyle, 'pane', _.get(leafletStyle, 'pane').toString())
+  if (_.has(leafletStyle, 'shadowPane')) _.set(leafletStyle, 'shadowPane', _.get(leafletStyle, 'shadowPane').toString())
+  return leafletStyle
+}
+
+function convertStyle (style, mapping) {
+  let convertedStyle = {}
+  _.forOwn(style, (value, key) => {
+    const mappedKey = _.get(mapping, key)
+    if (mappedKey) _.set(convertedStyle, mappedKey, value)
+  })
   return convertedStyle
 }
 
-export function getDefaultMarker (feature, latlng, options, engine) {
-  const properties = feature.properties
-  const leafletOptions = options.leaflet || options
-  const style = Object.assign({},
-    _.get(engine, 'pointStyle'),
-    leafletOptions.layerStyle,
-    convertToLeafletFromSimpleStyleSpec(feature.style || feature.properties))
-  // We allow to template style properties according to feature,
-  // because it can be slow you have to specify a subset of properties
-  const context = { properties, feature, chroma, moment, Units, Time }
-  if (leafletOptions.template) {
-    // Create the map of variables
-    if (options.variables) context.variables = _.reduce(options.variables,
-      (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
-    leafletOptions.template.forEach(entry => {
-      // Perform templating, set using simple spec mapping first then raw if property not found
-      _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler(context))
-    })
-  }
-  // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
-  if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
-  if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
-  return (latlng ? createLeafletMarkerFromStyle(latlng, style) : style)
+export function convertSimpleStyleToPointStyle (style) {
+  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
+  return style ? convertStyle(style, SimpleStylePointToPointStyle) : {}
 }
 
-export function getDefaultStyle (feature, options, engine) {
-  const properties = feature.properties
-  const leafletOptions = options.leaflet || options
-  const style = Object.assign({},
-    _.get(engine, 'featureStyle'),
-    leafletOptions.layerStyle,
-    convertToLeafletFromSimpleStyleSpec(feature.style || feature.properties))
+export function convertSimpleStyleToLineStyle (style) {
+  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')  
+  return style ? convertStyle(style, SimpleStyleToLineStyle) : {}
+}
 
+export function convertSimpleStyleToPolygonStyle (style) {
+  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
+  return style ? convertStyle(style, SimpleStyleToPolygonStyle) : {}
+}
+
+export function convertLineStyleToLeafletPath (style) {
+  return style ? convertStyle(style, LineStyleToLeafletPath) : {}
+}
+
+export function convertPolygonStyleToLeafletPath (style) {
+  if (!style) return
+  let leafletStyle = convertStyle(style, PolygonStyleToLeafletPath)
+  return Object.assign(leafletStyle, convertLineStyleToLeafletPath(style.stroke))
+}
+
+function processStyle (style, feature, options, mappings) {
+  const leafletOptions = options.leaflet || options
   // We allow to template style properties according to feature,
   // because it can be slow you have to specify a subset of properties
-  const context = { properties, feature, chroma, moment, Units, Time }
+  const context = { properties: feature.properties, feature, chroma, moment, Units, Time }
   if (leafletOptions.template) {
     // Create the map of variables
     if (options.variables) context.variables = _.reduce(options.variables,
       (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
     leafletOptions.template.forEach(entry => {
-      // Perform templating, set using simple spec mapping first then raw if property not found
-      _.set(style, _.get(LeafletStyleMappings, entry.property, entry.property), entry.compiler(context))
+      _.set(style, _.get(mappings, _.kebabCase(entry.property), entry.property), entry.compiler(context))
     })
   }
   // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
   if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
   if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
   return style
+}
+
+export function getDefaultPointStyle (feature, options, engine) {
+  const leafletOptions = options.leaflet || options
+  const style = Object.assign({},
+    _.get(engine, 'style.point'),
+    leafletOptions.layerPointStyle,
+    feature.style ? _.get(feature, 'style') : convertSimpleStyleToPointStyle(feature.properties))
+  processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
+  return style
+}
+
+export function getDefaultLineStyle (feature, options, engine) {
+  const leafletOptions = options.leaflet || options
+  const style = Object.assign({},
+    _.get(engine, 'style.line'),
+    leafletOptions.layerLineStyle,
+    feature.style ? _.get(feature, 'style') : convertSimpleStyleToLineStyle(feature.properties))
+  processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
+  return convertLineStyleToLeafletPath(style)
+}
+
+export function getDefaultPolygonStyle (feature, options, engine) {
+  const leafletOptions = options.leaflet || options
+  const style = Object.assign({},
+    _.get(engine, 'style.polygon'),
+    leafletOptions.layerPolygonStyle,
+    feature.style ? _.get(feature, 'style') : convertSimpleStyleToPolygonStyle(feature.properties))
+  processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
+  return convertPolygonStyleToLeafletPath(style)
 }
