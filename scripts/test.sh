@@ -52,6 +52,8 @@ if [ "$IS_CI" = true ]; then
     cd "$ROOT_PATH"
 
     end_group "Fetching project dependencies ..."
+
+    use_mongo4
 else
     # Start mongo
     k-mongo

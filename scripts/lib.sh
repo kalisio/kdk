@@ -24,7 +24,8 @@ elif [  "${TRAVIS:-}" = true ]; then
 fi
 
 
-if [ "$IS_CI" = true ]; then
+if [ -n "$CI_NAME" ]; then
+    IS_CI=true
     echo "Running in CI mode ..."
 fi
 
