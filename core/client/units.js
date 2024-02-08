@@ -132,7 +132,8 @@ const equivalentDose = {
   'sv': {
     symbol: 'units.SIEVERT_SYMBOL',
     label: 'units.SIEVERT_LABEL',
-    baseName: 'equivalentDose'
+    baseName: 'equivalentDose',
+    aliases: ['sievert']
   },
   'msv': {
     symbol: 'units.MILLISIEVERT_SYMBOL',
