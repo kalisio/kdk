@@ -1,5 +1,33 @@
 #!/usr/bin/env bash
 
+### Host detection
+###
+
+IS_CI=false
+CI_NAME=
+
+if [ "${GITHUB_ACTIONS:-}" = true ]; then
+    CI_NAME="github"
+
+    # Add ~/.local/bin to PATH
+    mkdir -p "$HOME/.local/bin"
+    export PATH=$PATH:$HOME/.local/bin
+
+    # If nvm is present, make it available
+    if [ -d "$HOME/.nvm" ]; then
+        . "$HOME/.nvm/nvm.sh"
+    fi
+elif [ "${GITLAB_CI:-}" = true ]; then
+    CI_NAME="gitlab"
+elif [  "${TRAVIS:-}" = true ]; then
+    CI_NAME="travis"
+fi
+
+
+if [ "$IS_CI" = true ]; then
+    echo "Running in CI mode ..."
+fi
+
 ## requirements
 
 YQ_VERSION=4.40.5
@@ -13,10 +41,16 @@ NODE18_VERSION=18.19.0
 # MONGODB4_VERSION=debian10-4.4.28
 # MONGODB5_VERSION=debian11-5.0.24
 
-TMP_PATH="$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)"
+if [ -n "${RUNNER_TEMP:-}" ]; then # RUNNER_TEMP is Github Action specific
+    TMP_PATH="$(mktemp -d -p "$RUNNER_TEMP" kalisio.XXXXXX)"
+else
+    TMP_PATH="$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)"
+fi
+
+TMP_DL_PATH="$TMP_PATH/dl"
 
 install_yq() {
-    local DL_PATH="$TMP_PATH/yq"
+    local DL_PATH="$TMP_DL_PATH/yq"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64.tar.gz
     # checksum has to be extracted from custom file ...
@@ -34,7 +68,7 @@ install_yq() {
 install_age() {
     # NOTE: available with sudo apt-get install age on bookworm
 
-    local DL_PATH="$TMP_PATH/age"
+    local DL_PATH="$TMP_DL_PATH/age"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz
     # no checksum ...
@@ -45,7 +79,7 @@ install_age() {
 }
 
 install_sops() {
-    local DL_PATH="$TMP_PATH/sops"
+    local DL_PATH="$TMP_DL_PATH/sops"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
     curl -OLsS https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.checksums.txt
@@ -56,7 +90,7 @@ install_sops() {
 }
 
 install_cc_test_reporter() {
-    local DL_PATH="$TMP_PATH/cc"
+    local DL_PATH="$TMP_DL_PATH/cc"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
     curl -OLsS https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64.sha256
@@ -67,7 +101,7 @@ install_cc_test_reporter() {
 }
 
 install_nvm() {
-    local DL_PATH="$TMP_PATH/nvm"
+    local DL_PATH="$TMP_DL_PATH/nvm"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh
     bash ./install.sh
@@ -100,7 +134,7 @@ install_mongo4() {
     # MONGODB4_VERSION=debian10-4.4.28
     MONGODB4_VERSION=ubuntu2004-4.4.28
 
-    local DL_PATH="$TMP_PATH/mongo4"
+    local DL_PATH="$TMP_DL_PATH/mongo4"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     # curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
     # DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
@@ -111,8 +145,8 @@ install_mongo4() {
     mkdir -p ~/.local/bin/mongo4
     cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongo ~/.local/bin/mongo4
     cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongod ~/.local/bin/mongo4
-    mkdir -p /var/lib/mongo && mkdir -p /var/log/mongodb
-    chmod a+rwx /var/lib/mongo && chmod a+rwx /var/log/mongodb
+    sudo mkdir -p /var/lib/mongo && sudo mkdir -p /var/log/mongodb
+    sudo chmod a+rwx /var/lib/mongo && sudo chmod a+rwx /var/log/mongodb
     cd ~-
 
     # Run mongodb like this:
@@ -126,17 +160,32 @@ install_mongo4() {
 # debian11-5.0.24
 # http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
 
+install_cleanup() {
+    rm -fR "$TMP_DL_PATH"
+}
+
+use_mongo4() {
+    ln -sf ~/.loca/bin/mongo4/mongo ~/.local/bin
+    ln -sf ~/.loca/bin/mongo4/mongod ~/.local/bin
+}
+
+use_mongo5() {
+    ln -sf ~/.loca/bin/mongo5/mongo ~/.local/bin
+    ln -sf ~/.loca/bin/mongo5/mongod ~/.local/bin
+}
+
 ## log
 
 begin_group() {
     TITLE="$1"
-    if [ "${GITHUB_ACTIONS:-}" = true ]; then
+
+    if [ "$CI_NAME" = "github" ]; then
         # see https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
         echo "::group::$TITLE"
-    elif [ "${GITLAB_CI:-}" = true ]; then
+    elif [ "$CI_NAME" = "gitlab" ]; then
         # see https://docs.gitlab.com/ee/ci/jobs/#custom-collapsible-sections
         echo -e "\e[0Ksection_start:$(date +%s):$TITLE\r\e[0KHeader of the 1st collapsible section"
-    elif [  "${TRAVIS:-}" = true ]; then
+    elif [ "$CI_NAME" = "travis" ]; then
         # see
         echo "travis_fold:start:$TITLE"
     fi
@@ -144,33 +193,13 @@ begin_group() {
 
 end_group() {
     TITLE="$1"
-    if [ "${GITHUB_ACTIONS:-}" = true ]; then
+
+    if [ "$CI_NAME" = "github" ]; then
         echo "::endgroup::"
-    elif [ "${GITLAB_CI:-}" = true ]; then
+    elif [ "$CI_NAME" = "gitlab" ]; then
         echo -e "\e[0Ksection_end:$(date +%s):$TITLE\r\e[0K"
-    elif [  "${TRAVIS:-}" = true ]; then
+    elif [ "$CI_NAME" = "travis" ]; then
         echo "travis_fold:end:$TITLE"
     fi
 }
 
-IS_CI=false
-CI_NAME=
-if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
-    IS_CI=true
-    echo "Running in CI mode ..."
-
-    if [ "${GITHUB_ACTIONS:-}" = true ]; then
-        CI_NAME="github"
-        # Add ~/.local/bin to PATH
-        mkdir -p "$HOME/.local/bin"
-        export PATH=$PATH:$HOME/.local/bin
-
-        if [ -d "$HOME/.nvm" ]; then
-            . "$HOME/.nvm/nvm.sh"
-        fi
-    elif [ "${GITLAB_CI:-}" = true ]; then
-        CI_NAME="gitlab"
-    elif [  "${TRAVIS:-}" = true ]; then
-        CI_NAME="travis"
-    fi
-fi
