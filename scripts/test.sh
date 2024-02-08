@@ -8,6 +8,8 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 
 . "$THIS_PATH/lib.sh"
 
+nvm use 16
+
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
 if [ "$IS_CI" = true ]; then
     begin_group "Fetching project dependencies ..."
