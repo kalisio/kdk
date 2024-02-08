@@ -12,7 +12,7 @@ import { api, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as mixins from '../mixins'
 import { useCatalog, useCurrentActivity } from '../composables'
-import { convertToLeafletFromSimpleStyleSpec, createLeafletMarkerFromStyle } from '../leaflet/utils/index.js'
+import { createMarkerFromPointStyle } from '../leaflet/utils/index.js'
 import meta from 'moment-timezone/data/meta/latest.json'
 
 // Convert timezones to GeoJson
@@ -76,16 +76,16 @@ export default {
     },
     getTimezoneMarker (feature, latlng) {
       const isSelected = (this.timezone === feature.properties.name)
-      return createLeafletMarkerFromStyle(latlng,
-        convertToLeafletFromSimpleStyleSpec({
-          'marker-type': 'circleMarker',
-          radius: isSelected ? 8 : 5,
-          'stroke-color': getCssVar('primary'),
-          'stroke-opacity': isSelected ? 1 : 0,
-          'fill-opacity': 0.5,
-          'fill-color': isSelected ? getCssVar('secondary') : getCssVar('primary')
-        })
-      )
+      return createMarkerFromPointStyle(latlng, {
+        shape: 'circle',
+        color: 'primary',
+        opacity: isSelected ? 1 : 0.5,
+        radius: isSelected ? 10 : 6,
+        stroke: {
+          color: 'dark',
+          width: isSelected ? 3 : 1
+        }
+      })
     },
     getTimezoneTooltip (feature, layer) {
       const name = _.get(feature, 'properties.name')
@@ -140,7 +140,7 @@ export default {
     }
   },
   created () {
-    this.registerStyle('markerStyle', this.getTimezoneMarker)
+    this.registerStyle('point', this.getTimezoneMarker)
     this.registerStyle('tooltip', this.getTimezoneTooltip)
     this.$engineEvents.on('click', this.onTimezoneSelected)
   },

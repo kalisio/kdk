@@ -93,6 +93,11 @@ function getSize (size) {
   return { width: size[0], height: size[1] }
 }
 
+function getColor (color) {
+  if (!color) return 'black'
+  return getCssVar(color) || color
+}
+
 /*
  Utility to create a shape with the following options:
   - shape: String | Object - name of the predefined shape or object specifyinfg the viewBox and the content
@@ -167,13 +172,13 @@ export function createShape (options) {
     svgClipPath = ''
     endSvgTag = '</svg>'
     // Apply fill style
-    const color = options.color ? getCssVar(options.color) || options.color : 'black'
+    const color = getColor(options.color)
     svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
     if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
     // Aply stroke style
     if (options.stroke) {
       // Ensure the stroke color is defined and not transparent
-      const strokeColor = options.stroke.color || 'transparent'
+      const strokeColor = getColor(options.stroke.color)
       if (strokeColor !== 'transparent') {
         svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke', strokeColor)
         // draw inner stroke by double the width and clip the shape by itself
@@ -207,7 +212,7 @@ export function createShape (options) {
       } else {
         iconTag += `<i class="${options.icon.classes}" `
         // handle color
-        const color = options.icon.color || 'black'
+        const color = getColor(options.icon.color)
         specificStyle += `color: ${color};`
         // handle size
         let iconSize = options.icon.size || defaultIconSize
@@ -227,7 +232,7 @@ export function createShape (options) {
   if (options.text) {
     if (options.text.label) {
       textTag = '<span '
-      const color = options.text.color || 'black'
+      const color = getClolor(options.text.color)
       const textSize = options.text.size || defaultTextSize
       const translation = options.text.translation || _.get(shape, 'text.translation', ['-50%', '-50%'])
       const rotation = options.text.rotation || _.get(shape, 'icon.rotation', 0)

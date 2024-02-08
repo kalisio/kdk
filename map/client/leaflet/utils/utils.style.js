@@ -305,7 +305,6 @@ export function convertPolygonStyleToLeafletPath (style) {
   let leafletStyle = convertStyle(style, PolygonStyleToLeafletPath)
   Object.assign(leafletStyle, convertLineStyleToLeafletPath(style.stroke))
   // handle quasar/default color if needed
-  console.log(leafletStyle)
   leafletStyle.fillColor = leafletStyle.fillColor ? getCssVar(leafletStyle.fillColor) || leafletStyle.fillColor : 'black'
   return leafletStyle
 }
