@@ -54,6 +54,7 @@ if [ "$IS_CI" = true ]; then
     end_group "Fetching project dependencies ..."
 
     use_mongo4
+    start_mongo
 else
     # Start mongo
     k-mongo

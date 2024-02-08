@@ -175,6 +175,10 @@ use_mongo5() {
     ln -sf ~/.loca/bin/mongo5/mongod ~/.local/bin
 }
 
+start_mongo() {
+    mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
+}
+
 ## log
 
 begin_group() {
