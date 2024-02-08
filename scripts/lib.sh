@@ -33,6 +33,7 @@ if [ -n "$CI_NAME" ]; then
 #!/usr/bin/env bash
 mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork --port 27017
 EOF
+    chmod a+x ~/.local/bin/k-mongo
 fi
 
 ## requirements
