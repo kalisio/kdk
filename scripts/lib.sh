@@ -10,8 +10,8 @@ NVM_VERSION=0.39.7
 NODE16_VERSION=16.20.2
 NODE18_VERSION=18.19.0
 
-MONGODB4_VERSION=debian10-4.4.28
-MONGODB5_VERSION=debian11-5.0.24
+# MONGODB4_VERSION=debian10-4.4.28
+# MONGODB5_VERSION=debian11-5.0.24
 
 TMP_PATH="$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)"
 
@@ -97,14 +97,20 @@ install_node18() {
 # }
 
 install_mongo4() {
+    # MONGODB4_VERSION=debian10-4.4.28
+    MONGODB4_VERSION=ubuntu2004-4.4.28
+
     local DL_PATH="$TMP_PATH/mongo4"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
-    curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
-    DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+    # curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+    # DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+    curl -OLsS http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+    DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
     curl -OLsS https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB4_VERSION}.tgz
     tar xf mongodb-linux-x86_64-${MONGODB4_VERSION}.tgz
-    cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongo /usr/local/bin
-    cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongod /usr/local/bin
+    mkdir -p ~/.local/bin/mongo4
+    cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongo ~/.local/bin/mongo4
+    cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongod ~/.local/bin/mongo4
     mkdir -p /var/lib/mongo && mkdir -p /var/log/mongodb
     chmod a+rwx /var/lib/mongo && chmod a+rwx /var/log/mongodb
     cd ~-
@@ -112,6 +118,13 @@ install_mongo4() {
     # Run mongodb like this:
     # mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
 }
+
+# mongo5/ubuntu
+# https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.24.tgz
+# http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+# mongo5/debian
+# debian11-5.0.24
+# http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
 
 ## log
 
@@ -151,6 +164,10 @@ if [ -z "${KALISIO_DEVELOPMENT_DIR:-}" ]; then
         # Add ~/.local/bin to PATH
         mkdir -p "$HOME/.local/bin"
         export PATH=$PATH:$HOME/.local/bin
+
+        if [ -d "$HOME/.nvm" ]; then
+            . "$HOME/.nvm/nvm.sh"
+        fi
     elif [ "${GITLAB_CI:-}" = true ]; then
         CI_NAME="gitlab"
     elif [  "${TRAVIS:-}" = true ]; then

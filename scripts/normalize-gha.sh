@@ -16,6 +16,7 @@ install_sops
 install_nvm
 install_node16
 install_node18
+install_mongo4
 
 sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
 
