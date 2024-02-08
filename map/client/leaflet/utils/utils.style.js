@@ -331,7 +331,7 @@ function processStyle (style, feature, options, mappings) {
 
 export function getDefaultPointStyle (feature, options, engine, engineStylePath = 'style.point') {
   const engineStyle = _.get(engine,engineStylePath, {})
-  const layerStyle = options ? _.get(options.layer || options, 'pointLineStyle') : {}
+  const layerStyle = options ? _.get(options.leaflet || options, 'layerPointStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
   const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
@@ -340,7 +340,7 @@ export function getDefaultPointStyle (feature, options, engine, engineStylePath 
 
 export function getDefaultLineStyle (feature, options, engine, engineStylePath = 'style.line') {
   const engineStyle = _.get(engine,engineStylePath, {})
-  const layerStyle = options ? _.get(options.layer || options, 'layerLineStyle') : {}
+  const layerStyle = options ? _.get(options.leaflet || options, 'layerLineStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
   const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
@@ -349,7 +349,7 @@ export function getDefaultLineStyle (feature, options, engine, engineStylePath =
 
 export function getDefaultPolygonStyle (feature, options, engine, engineStylePath = 'style.polygon') {
   const engineStyle = _.get(engine,engineStylePath, {})
-  const layerStyle = options ? _.get(options.layer || options, 'layerPolygonStyle') : {}
+  const layerStyle = options ? _.get(options.leaflet || options, 'layerPolygonStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
   const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
