@@ -3,6 +3,7 @@ import logger from 'loglevel'
 import chroma from 'chroma-js'
 import moment from 'moment'
 import L from 'leaflet'
+import { getCssVar } from 'quasar'
 import { Time, Units } from '../../../../core/client/index.js'
 import { ShapeMarker } from '../ShapeMarker.js'
 
@@ -292,16 +293,25 @@ export function convertSimpleStyleToPolygonStyle (style) {
 }
 
 export function convertLineStyleToLeafletPath (style) {
-  return style ? convertStyle(style, LineStyleToLeafletPath) : {}
+  if (!style) return
+  let leafletStyle = convertStyle(style, LineStyleToLeafletPath)
+  // handle quasar color/default if needed
+  leafletStyle.color = leafletStyle.color ? getCssVar(leafletStyle.color) || leafletStyle.color : 'black'
+  return leafletStyle
 }
 
 export function convertPolygonStyleToLeafletPath (style) {
   if (!style) return
   let leafletStyle = convertStyle(style, PolygonStyleToLeafletPath)
-  return Object.assign(leafletStyle, convertLineStyleToLeafletPath(style.stroke))
+  Object.assign(leafletStyle, convertLineStyleToLeafletPath(style.stroke))
+  // handle quasar/default color if needed
+  console.log(leafletStyle)
+  leafletStyle.fillColor = leafletStyle.fillColor ? getCssVar(leafletStyle.fillColor) || leafletStyle.fillColor : 'black'
+  return leafletStyle
 }
 
 function processStyle (style, feature, options, mappings) {
+  if (!options) return
   const leafletOptions = options.leaflet || options
   // We allow to template style properties according to feature,
   // because it can be slow you have to specify a subset of properties
@@ -320,32 +330,29 @@ function processStyle (style, feature, options, mappings) {
   return style
 }
 
-export function getDefaultPointStyle (feature, options, engine) {
-  const leafletOptions = options.leaflet || options
-  const style = Object.assign({},
-    _.get(engine, 'style.point'),
-    leafletOptions.layerPointStyle,
-    feature.style ? _.get(feature, 'style') : convertSimpleStyleToPointStyle(feature.properties))
+export function getDefaultPointStyle (feature, options, engine, engineStylePath = 'style.point') {
+  const engineStyle = _.get(engine,engineStylePath, {})
+  const layerStyle = options ? _.get(options.layer || options, 'pointLineStyle') : {}
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
+  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
   return style
 }
 
-export function getDefaultLineStyle (feature, options, engine) {
-  const leafletOptions = options.leaflet || options
-  const style = Object.assign({},
-    _.get(engine, 'style.line'),
-    leafletOptions.layerLineStyle,
-    feature.style ? _.get(feature, 'style') : convertSimpleStyleToLineStyle(feature.properties))
+export function getDefaultLineStyle (feature, options, engine, engineStylePath = 'style.line') {
+  const engineStyle = _.get(engine,engineStylePath, {})
+  const layerStyle = options ? _.get(options.layer || options, 'layerLineStyle') : {}
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
+  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
   return convertLineStyleToLeafletPath(style)
 }
 
-export function getDefaultPolygonStyle (feature, options, engine) {
-  const leafletOptions = options.leaflet || options
-  const style = Object.assign({},
-    _.get(engine, 'style.polygon'),
-    leafletOptions.layerPolygonStyle,
-    feature.style ? _.get(feature, 'style') : convertSimpleStyleToPolygonStyle(feature.properties))
+export function getDefaultPolygonStyle (feature, options, engine, engineStylePath = 'style.polygon') {
+  const engineStyle = _.get(engine,engineStylePath, {})
+  const layerStyle = options ? _.get(options.layer || options, 'layerPolygonStyle') : {}
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
+  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
   return convertPolygonStyleToLeafletPath(style)
 }

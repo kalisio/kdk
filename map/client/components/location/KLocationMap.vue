@@ -30,7 +30,8 @@ import { Geolocation } from '../../geolocation.js'
 import { useCatalog, useCurrentActivity } from '../../composables'
 import {
   coordinatesToGeoJSON, formatUserCoordinates,
-  bindLeafletEvents, unbindLeafletEvents, createLeafletMarkerFromStyle, convertToLeafletFromSimpleStyleSpec
+  bindLeafletEvents, unbindLeafletEvents, 
+  getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
 
 export default {
@@ -171,20 +172,31 @@ export default {
       }
       // create a new layer
       const type = _.get(this.location, 'geometry.type')
-      // style is expressed as simple style spec in config
-      const pointStyle = convertToLeafletFromSimpleStyleSpec(this.engineOptions.pointStyle)
-      const featureStyle = convertToLeafletFromSimpleStyleSpec(this.engineOptions.featureStyle)
       if (type === 'Point') {
         const coordinates = _.get(this.location, 'geometry.coordinates')
-        this.locationLayer = createLeafletMarkerFromStyle([coordinates[1], coordinates[0]],
-          Object.assign({ draggable: this.draggable, pmIgnore: true }, pointStyle))
+        const style = _.get(this.engineOptions, 'style.location.point')
+        this.locationLayer = createMarkerFromPointStyle([coordinates[1], coordinates[0]],
+          Object.assign({ draggable: this.draggable, pmIgnore: true }, style))
         if (this.draggable) this.locationLayer.on('dragend', this.onLocationDragged)
       } else {
         this.locationLayer = L.geoJson(this.location, {
-          pointToLayer: (feature, latlng) => createLeafletMarkerFromStyle(latlng, pointStyle),
-          style: (feature) => featureStyle
+          style: (feature) => {
+            if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
+              return getDefaultLineStyle(feature, null, this.engineOptions, 'style.location.line')
+            }
+            if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
+              return getDefaultPolygonStyle(feature, null, this.engineOptions, 'style.location.polygon')
+            } else {
+              logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
+            }
+          },
+          pointToLayer: (feature, latlng) => {
+            const style = getDefaultPointStyle(feature, null, this.engineOptions, 'style.location.point')
+            return createMarkerFromPointStyle(latlng, style)
+          }
         })
       }
+      //}
       this.locationLayer.addTo(this.map)
       // wait for the next tick to recenter the view
       this.$nextTick(() => this.recenter())

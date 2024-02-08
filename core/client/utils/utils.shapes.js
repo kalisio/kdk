@@ -2,6 +2,9 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { uid, getCssVar } from 'quasar'
 
+const defaultIconSize = 12
+const defaultTextSize = 12
+
 function defaultRadiusToSize (r) {
   return { width: r * 2, height: r * 2 }
 }
@@ -57,10 +60,10 @@ export const Shapes = {
     viewBox: [0, 0, 384, 512],
     content: '<path d="M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0s192 86 192 192z" />',
     icon: {
-      translation: ['-50%', '-75%']
+      translation: ['-50%', '-70%']
     },
     text: {
-      translation: ['-50%', '-75%']
+      translation: ['-50%', '-70%']
     }
   },
   'square-pin': {
@@ -129,7 +132,7 @@ export function createShape (options) {
   }
   // Define the shape
   let shape
-  if (options.shape) {
+  if (options.shape && options.shape !== 'none') {
     if (typeof options.shape === 'object') shape = options.shape
     else {
       shape = Shapes[options.shape]
@@ -164,7 +167,7 @@ export function createShape (options) {
     svgClipPath = ''
     endSvgTag = '</svg>'
     // Apply fill style
-    const color = options.color || getCssVar('primary')
+    const color = options.color ? getCssVar(options.color) || options.color : 'black'
     svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
     if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
     // Aply stroke style
@@ -207,7 +210,7 @@ export function createShape (options) {
         const color = options.icon.color || 'black'
         specificStyle += `color: ${color};`
         // handle size
-        let iconSize = options.icon.size || 12
+        let iconSize = options.icon.size || defaultIconSize
         specificStyle += `font-size: ${iconSize}px;`
       }
       const opacity = options.icon.opacity || 1
@@ -225,7 +228,7 @@ export function createShape (options) {
     if (options.text.label) {
       textTag = '<span '
       const color = options.text.color || 'black'
-      const textSize = options.text.size || 12
+      const textSize = options.text.size || defaultTextSize
       const translation = options.text.translation || _.get(shape, 'text.translation', ['-50%', '-50%'])
       const rotation = options.text.rotation || _.get(shape, 'icon.rotation', 0)
       textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px;"`
