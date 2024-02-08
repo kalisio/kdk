@@ -64,7 +64,8 @@ export const Shapes = {
     },
     text: {
       translation: ['-50%', '-70%']
-    }
+    },
+    anchor: 'bottom-center'
   },
   'square-pin': {
     viewBox: [0, 0, 56, 56],
@@ -74,7 +75,8 @@ export const Shapes = {
     },
     text: {
       translation: ['-50%', '-60%']
-    }
+    },
+    anchor: 'bottom-center'
   }
 }
 
@@ -135,6 +137,8 @@ export function createShape (options) {
     logger.warn(`[KDK] 'options' argument is required`)
     return
   }
+  // Define the anchor
+  let anchor = 'middle-center'
   // Define the shape
   let shape
   if (options.shape && options.shape !== 'none') {
@@ -146,6 +150,7 @@ export function createShape (options) {
         shape = Shapes['circle']
       }
     }
+    anchor = shape.anchor || anchor
   }
   // Define the size
   let size = { width: 24, height: 24 }
@@ -252,9 +257,9 @@ export function createShape (options) {
     htmlTag += '</div>'
   }
   return {
-    width: size.width,
-    height: size.height,
-    html: beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + textTag + htmlTag + endDivTag
+    html: beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + textTag + htmlTag + endDivTag,
+    size,
+    anchor
   }
 }
 

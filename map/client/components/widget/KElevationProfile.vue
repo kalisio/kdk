@@ -1,6 +1,6 @@
 <template>
   <div id="elevation-profile" class="column">
-    <k-chart ref="chart" class="col q-pl-sm q-pr-sm" />
+    <KChart :ref="onChartRefCreated" class="col q-pl-sm q-pr-sm" />
   </div>
 </template>
 
@@ -44,8 +44,15 @@ export default {
     yAxisLabel: { type: String, default: '' },
     mapGhostIcon: {
       type: Object,
-      default (rawProps) {
-        return { 'marker-type': 'shapeMarker', 'fill-color': 'primary', 'icon-classes': 'las la-mountain' }
+      default: () => {
+        return { 
+          shape: "square-pin",
+          size: [60, 24],
+          color: 'secondary',
+          stroke: {
+            color: 'primary'
+          }
+        }
       }
     },
     terrainLegend: { type: String, default: '' }
@@ -76,6 +83,7 @@ export default {
   },
   data () {
     return {
+      ready: false,
       profile: null
     }
   },
@@ -88,6 +96,11 @@ export default {
     }
   },
   methods: {
+    onChartRefCreated (reference) {
+      if (reference) {
+        this.chartRef = reference
+      }
+    },
     hasFeature () {
       return !_.isNil(this.feature)
     },
@@ -107,6 +120,7 @@ export default {
       return lbl || this.$t('KElevationProfile.TERRAIN_CHART_LEGEND')
     },
     updateChart (terrainDataset, profileDataset, profileColor, chartWidth) {
+      if (!this.chartRef) throw new Error('Cannot update the chart while not created')
       const update = {
         type: 'line',
         data: { datasets: [] },
@@ -177,7 +191,7 @@ export default {
                 }
 
                 this.highlightFeature = along(segment, abscissaKm, { units: 'kilometers' })
-                this.highlightFeature.properties = _.cloneDeep(this.mapGhostIcon)
+                this.highlightFeature.style = _.get(this.kActivity, 'activityOptions.engine.style.location.point')
                 this.highlight(this.highlightFeature)
               }
             }
@@ -302,7 +316,7 @@ export default {
       }
 
       // Add profile elevation if provided
-      if (profileDataset.length) {
+      if (_.size(profileDataset)) {
         update.data.datasets.push({
           label: this.title,
           data: profileDataset,
@@ -317,7 +331,7 @@ export default {
       }
 
       // Add terrain elevation dataset
-      if (terrainDataset.length) {
+      if (_.size(terrainDataset)) {
         update.data.datasets.push({
           label: this.getTerrainLegend(),
           data: terrainDataset,
@@ -332,7 +346,7 @@ export default {
         })
       }
 
-      this.$refs.chart.update(update)
+      this.chartRef.update(update)
     },
 
     async refresh () {

@@ -10,7 +10,6 @@
 
 <script>
 import _ from 'lodash'
-import L from 'leaflet'
 import logger from 'loglevel'
 import { ref } from 'vue'
 import { Viewer } from 'mapillary-js'
@@ -164,7 +163,7 @@ export default {
     this.key = undefined
     this.refresh()
   },
-  async beforeUnmount () {
+  beforeUnmount () {
     // Remove event listeners
     this.mapillaryViewer.off('image', this.onImageEvent)
     // Save the states
