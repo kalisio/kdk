@@ -11,6 +11,8 @@ NODE16_VERSION=16.19.1
 MONGODB4_VERSION=debian10-4.4.28
 MONGODB5_VERSION=debian11-5.0.24
 
+TMP_PATH="$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)"
+
 install_yq() {
     local DL_PATH="$TMP_PATH/yq"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
