@@ -7,7 +7,6 @@
 <script>
 import _ from 'lodash'
 import L from 'leaflet'
-import { getCssVar } from 'quasar'
 import { api, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as mixins from '../mixins'

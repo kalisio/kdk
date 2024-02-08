@@ -20,6 +20,7 @@
 
 <script>
 import _ from 'lodash'
+import logger from 'loglevel'
 import L from 'leaflet'
 import config from 'config'
 import centroid from '@turf/centroid'
