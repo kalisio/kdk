@@ -96,8 +96,8 @@ install_cc_test_reporter() {
     curl -OLsS https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
     curl -OLsS https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64.sha256
     sha256sum --ignore-missing --quiet -c test-reporter-latest-linux-amd64.sha256
-    cp test-reporter-latest-linux-amd64 /usr/local/bin/cc-test-reporter
-    chmod +x /usr/local/bin/cc-test-reporter
+    cp test-reporter-latest-linux-amd64 ~/.local/bin/cc-test-reporter
+    chmod +x ~/.local/bin/cc-test-reporter
     cd ~-
 }
 

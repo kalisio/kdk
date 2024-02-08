@@ -17,6 +17,7 @@ install_nvm
 install_node16
 install_node18
 install_mongo4
+install_cc_test_reporter
 install_cleanup
 
 sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
