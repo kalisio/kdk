@@ -27,6 +27,12 @@ fi
 if [ -n "$CI_NAME" ]; then
     IS_CI=true
     echo "Running in CI mode ..."
+
+    # Emulate development k-mongo when running on CI
+    cat <<EOF > ~/.local/bin/k-mongo
+#!/usr/bin/env bash
+mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork --port 27017
+EOF
 fi
 
 ## requirements
@@ -166,18 +172,15 @@ install_cleanup() {
 }
 
 use_mongo4() {
-    ln -sf ~/.loca/bin/mongo4/mongo ~/.local/bin
-    ln -sf ~/.loca/bin/mongo4/mongod ~/.local/bin
+    ln -sf ~/.local/bin/mongo4/mongo ~/.local/bin
+    ln -sf ~/.local/bin/mongo4/mongod ~/.local/bin
 }
 
 use_mongo5() {
-    ln -sf ~/.loca/bin/mongo5/mongo ~/.local/bin
-    ln -sf ~/.loca/bin/mongo5/mongod ~/.local/bin
+    ln -sf ~/.local/bin/mongo5/mongo ~/.local/bin
+    ln -sf ~/.local/bin/mongo5/mongod ~/.local/bin
 }
 
-start_mongo() {
-    mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
-}
 
 ## log
 
