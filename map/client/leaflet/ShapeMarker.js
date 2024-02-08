@@ -22,7 +22,8 @@ export const ShapeMarker = L.Marker.extend({
           html: shape.html,
           className: ''
         }),
-        ...options
+        // forward extra options for different purposes, i.e. clustering
+        ..._.get(options, 'options', {})  
       })
     } else {
       logger.warn(`[KDK] unable to create the shape with the options: ${options}` )
