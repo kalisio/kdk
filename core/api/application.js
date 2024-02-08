@@ -523,6 +523,11 @@ export function kdk (config = {}) {
     service = await configureService(name, service, servicesPath)
     return service
   }
+  // This is used to declare existing service
+  app.declareService = function (name, service, serviceOptions) {
+    service = declareService(name, app, service, serviceOptions)
+    return service
+  }
   // This is used to create standard services
   app.createService = async function (name, options) {
     const service = await createService(name, app, options)
