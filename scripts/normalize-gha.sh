@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set -x
+# set -x
 
 THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_PATH=$(dirname "$THIS_FILE")
@@ -17,6 +17,7 @@ install_nvm
 install_node16
 install_node18
 install_mongo4
+install_mongo5
 install_cc_test_reporter
 install_cleanup
 

@@ -53,7 +53,7 @@ if [ "$IS_CI" = true ]; then
 
     end_group "Fetching project dependencies ..."
 
-    use_mongo4
+    use_mongo 4
 fi
 
 # Start mongo

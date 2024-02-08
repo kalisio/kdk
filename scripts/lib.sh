@@ -156,32 +156,37 @@ install_mongo4() {
     sudo mkdir -p /var/lib/mongo && sudo mkdir -p /var/log/mongodb
     sudo chmod a+rwx /var/lib/mongo && sudo chmod a+rwx /var/log/mongodb
     cd ~-
-
-    # Run mongodb like this:
-    # mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork
 }
 
-# mongo5/ubuntu
-# https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-5.0.24.tgz
-# http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
-# mongo5/debian
-# debian11-5.0.24
-# http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+install_mongo5() {
+    # MONGODB5_VERSION=debian11-5.0.24
+    MONGODB5_VERSION=ubuntu2004-5.0.24
+
+    local DL_PATH="$TMP_DL_PATH/mongo5"
+    mkdir -p "$DL_PATH" && cd "$DL_PATH"
+    # curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+    # DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+    curl -OLsS http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+    DEBIAN_FRONTEND=noninteractive && sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+    curl -OLsS https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB5_VERSION}.tgz
+    tar xf mongodb-linux-x86_64-${MONGODB5_VERSION}.tgz
+    mkdir -p ~/.local/bin/mongo4
+    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongo ~/.local/bin/mongo4
+    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongod ~/.local/bin/mongo4
+    sudo mkdir -p /var/lib/mongo && sudo mkdir -p /var/log/mongodb
+    sudo chmod a+rwx /var/lib/mongo && sudo chmod a+rwx /var/log/mongodb
+    cd ~-
+}
 
 install_cleanup() {
     rm -fR "$TMP_DL_PATH"
 }
 
-use_mongo4() {
-    ln -sf ~/.local/bin/mongo4/mongo ~/.local/bin
-    ln -sf ~/.local/bin/mongo4/mongod ~/.local/bin
+use_mongo() {
+    VERSION=$1
+    ln -sf ~/.local/bin/mongo$VERSION/mongo ~/.local/bin
+    ln -sf ~/.local/bin/mongo$VERSION/mongod ~/.local/bin
 }
-
-use_mongo5() {
-    ln -sf ~/.local/bin/mongo5/mongo ~/.local/bin
-    ln -sf ~/.local/bin/mongo5/mongod ~/.local/bin
-}
-
 
 ## log
 
