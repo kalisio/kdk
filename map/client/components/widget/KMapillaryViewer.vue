@@ -45,26 +45,32 @@ export default {
   methods: {
     saveStates () {
       this.selection.mapillary = {
-        location: this.location,
+        position: this.position,
         bearing: this.bearing,
         imageId: this.imageId
       }
     },
     restoreStates () {
       const states = this.selection.mapillary
-      this.location = states.location
+      this.position = states.position
       this.bearing = states.bearing
       this.imageId = states.imageId
     },
     getMarkerFeature () {
-      const lat = this.location ? this.location.lat : 0
-      const lon = this.location ? this.location.lng : 0
+      const lat = this.position ? this.position.lat : 0
+      const lon = this.position ? this.position.lng : 0
       const bearing = 225 + this.bearing || 0
       return {
         type: 'Feature',
-        properties: {
-          'icon-html': `<img style="${L.DomUtil.TRANSFORM}: translateX(-20px) translateY(-20px) rotateZ(${bearing}deg); width: 40p; height: 40px;" src="/icons/kdk/mapillary-marker.png">`
+        style: {
+          shape: 'none',
+          icon: {
+            url: '/icons/kdk/mapillary-marker.png',
+            size: 40,
+            rotation: bearing
+          }
         },
+        properties: {},
         geometry: {
           type: 'Point',
           coordinates: [lon, lat]
@@ -78,7 +84,7 @@ export default {
         if (this.imageId) {
           this.hasImage = true
           await this.refreshView()
-        } else if (this.location) await this.moveCloseTo(this.location.lat, this.location.lng)
+        } else if (this.position) await this.moveCloseTo(this.position.lat, this.position.lng)
       } else if (this.hasSelectedItem()) {
         const location = this.getSelectedLocation()
         if (location) await this.moveCloseTo(location.lat, location.lng)
@@ -118,7 +124,7 @@ export default {
       }
     },
     centerMap () {
-      if (this.location) this.kActivity.center(this.location.lng, this.location.lat)
+      if (this.position) this.kActivity.center(this.position.lng, this.position.lat)
     },
     async refreshView () {
       this.highlight(this.getMarkerFeature())
@@ -135,7 +141,7 @@ export default {
       const image = viewerImageEvent.image
       this.imageId = image.id
       this.hasImage = true
-      this.location = image.lngLat
+      this.position = image.lngLat
       this.bearing = await this.mapillaryViewer.getBearing()
       this.centerMap()
       this.highlight(this.getMarkerFeature())
@@ -153,7 +159,7 @@ export default {
     // Add event listeners
     this.mapillaryViewer.on('image', this.onImageEvent)
     // Configure the viewer
-    this.location = undefined
+    this.position = undefined
     this.bearing = undefined
     this.key = undefined
     this.refresh()
