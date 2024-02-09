@@ -107,6 +107,7 @@ function getSize (size) {
   - stroke: Object specifying the stroke properties
     - color: String - the stroke color
     - width: Number - the stroke width - 0
+    - opacity: Number - the stroke opacity - 1
     - cap: String - the stroke linecap - 'butt'
     - join: String - the stroke linejoin - 'miter'
     - dashArray: String - the stroke dasharray - 'none'
