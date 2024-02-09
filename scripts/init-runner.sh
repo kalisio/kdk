@@ -2,7 +2,7 @@
 set -euo pipefail
 set -x
 
-JOB=$1
+JOB_ID=$1
 
 THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_PATH=$(dirname "$THIS_FILE")
@@ -19,8 +19,8 @@ init_github_publish_docs() {
     install_reqs nvm node18
 }
 
-begin_group "Init $CI_NAME for $JOB"
+begin_group "Init $CI_ID for $JOB_ID"
 
-init_"${CI_NAME}_${JOB}"
+init_"${CI_ID}_${JOB}"
 
-end_group "Init $CI_NAME for $JOB"
+end_group "Init $CI_ID for $JOB_ID"
