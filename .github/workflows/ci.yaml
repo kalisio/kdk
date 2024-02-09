@@ -6,9 +6,11 @@ on:
 jobs:
   ci:
     strategy:
+      fail-fast: false
       matrix:
         node: [ 16, 18 ]
         mongo: [ 4, 5 ]
+    name: Tests / Node ${{ matrix.node }} / Mongo ${{ matrix.mongo }}
     runs-on: ubuntu-22.04
     # container:
     #   image: harbor.portal.kalisio.com/kalisio/ci-kdk:latest
