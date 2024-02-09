@@ -29,8 +29,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Cache requirements
         uses: actions/cache@v3
-        key: requirements
         with:
+          key: requirements
           path: ${{ env.RUNNER_TEMP }}/dl
       - name: Normalize env
         run: bash ./scripts/normalize-gha.sh
