@@ -10,7 +10,7 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 
 begin_group "Normalizing GHA"
 
-install_reqs yq age sops nvm node16 node18 mongo4 mongo5
+install_reqs yq age sops nvm node16 node18 mongo4 mongo5 cc_test_reporter
 
 sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
 
