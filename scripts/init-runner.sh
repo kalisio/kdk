@@ -21,6 +21,6 @@ init_github_publish_docs() {
 
 begin_group "Init $CI_ID for $JOB_ID"
 
-init_"${CI_ID}_${JOB}"
+init_"${CI_ID}_${JOB_ID}"
 
 end_group "Init $CI_ID for $JOB_ID"
