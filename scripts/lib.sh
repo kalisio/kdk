@@ -153,8 +153,8 @@ install_mongo4() {
     mkdir -p ~/.local/bin/mongo4
     cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongo ~/.local/bin/mongo4
     cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongod ~/.local/bin/mongo4
-    sudo mkdir -p /var/lib/mongo && sudo mkdir -p /var/log/mongodb
-    sudo chmod a+rwx /var/lib/mongo && sudo chmod a+rwx /var/log/mongodb
+    sudo mkdir -p /var/lib/mongo4 && sudo mkdir -p /var/log/mongodb4
+    sudo chmod a+rwx /var/lib/mongo4 && sudo chmod a+rwx /var/log/mongodb4
     cd ~-
 }
 
@@ -170,11 +170,11 @@ install_mongo5() {
     DEBIAN_FRONTEND=noninteractive && sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
     curl -OLsS https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB5_VERSION}.tgz
     tar xf mongodb-linux-x86_64-${MONGODB5_VERSION}.tgz
-    mkdir -p ~/.local/bin/mongo4
-    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongo ~/.local/bin/mongo4
-    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongod ~/.local/bin/mongo4
-    sudo mkdir -p /var/lib/mongo && sudo mkdir -p /var/log/mongodb
-    sudo chmod a+rwx /var/lib/mongo && sudo chmod a+rwx /var/log/mongodb
+    mkdir -p ~/.local/bin/mongo5
+    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongo ~/.local/bin/mongo5
+    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongod ~/.local/bin/mongo5
+    sudo mkdir -p /var/lib/mongo5 && sudo mkdir -p /var/log/mongodb5
+    sudo chmod a+rwx /var/lib/mongo5 && sudo chmod a+rwx /var/log/mongodb5
     cd ~-
 }
 
@@ -184,8 +184,13 @@ install_cleanup() {
 
 use_mongo() {
     VERSION=$1
+
+    # Binaries
     ln -sf "$HOME/.local/bin/mongo$VERSION/mongo" ~/.local/bin
     ln -sf "$HOME/.local/bin/mongo$VERSION/mongod" ~/.local/bin
+    # And working dirs
+    sudo ln -sf "/var/lib/mongo$VERSION" /var/lib/mongo
+    sudo ln -sf "/var/log/mongodb$VERSION" /var/log/mongodb
 
     echo "Now using mongo $VERSION"
 }
