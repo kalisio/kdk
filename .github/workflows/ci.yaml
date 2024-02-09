@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v3
         with:
           key: requirements
-          path: ${{ env.RUNNER_TEMP }}/dl
+          path: ${{ runner.temp }}/dl
       - name: Normalize env
         run: bash ./scripts/normalize-gha.sh
       - name: Run tests
