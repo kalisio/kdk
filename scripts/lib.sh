@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+### Variables provided by this script
+###   - TMP_PATH: a path where to write temp files
+###   - OS_ID: debian or ubuntu or alpine ...
+###   - OS_VERSION:
+###   - CI: true or false
+###   - CI_ID: github or gitlab or travis or empty (CI = false)
+
 ### Host detection
 ###
 
@@ -210,8 +217,14 @@ install_reqs() {
     done
 }
 
+use_node() {
+    local VERSION=$1
+
+    nvm use "$VERSION"
+}
+
 use_mongo() {
-    VERSION=$1
+    local VERSION=$1
 
     # Binaries
     ln -sf "$HOME/.local/bin/mongo$VERSION/mongo" ~/.local/bin
@@ -223,10 +236,58 @@ use_mongo() {
     echo "Now using mongo $VERSION"
 }
 
-## log
+### Git
+###
+
+get_git_tag() {
+    git tag --points-at
+}
+
+get_git_branch() {
+    git branch --show-current
+}
+
+get_git_commit_sha() {
+    git rev-parse HEAD
+}
+
+get_git_changed_files() {
+    local COMMIT0=${1:-HEAD}
+    local COMMIT1=${2:-"$COMMIT0"^}
+
+    git diff --name-only "$COMMIT0" "$COMMIT1"
+}
+
+### Github
+###
+
+deploy_gh_pages() {
+    local REPO_PATH=$1
+    local DOCS_PATH=$2
+    local BRANCH="${3:-gh-pages}"
+    local WORK_PATH
+    WORK_PATH="$(mktemp -d -p "$TMP_PATH" gh_pages.XXXXXX)"
+
+    # Create a worktree with $BRANCH checked out in it
+    cd "$REPO_PATH" && git worktree add "$WORK_PATH" "$BRANCH"
+    # Copy new doc build in there
+    cp -fR "$DOCS_PATH"/* "$WORK_PATH"
+    # Get current commit to include in doc commit message
+    local LOCAL_COMMIT
+    LOCAL_COMMIT=$(get_git_commit_sha)
+    # Add new doc and commit (add a .nojekyll file to skip Github jekyll processing)
+    cd "$WORK_PATH" && touch .nojekyll && git add --all && git commit -m "Doc build from $LOCAL_COMMIT"
+    # Push
+    git push origin "$BRANCH"
+    # Remove temp worktree
+    git worktree remove "$WORK_PATH"
+}
+
+### Log
+###
 
 begin_group() {
-    TITLE="$1"
+    local TITLE="$1"
 
     if [ "$CI_ID" = "github" ]; then
         # see https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
@@ -241,7 +302,7 @@ begin_group() {
 }
 
 end_group() {
-    TITLE="$1"
+    local TITLE="$1"
 
     if [ "$CI_ID" = "github" ]; then
         echo "::endgroup::"

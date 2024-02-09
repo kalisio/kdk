@@ -1,0 +1,30 @@
+name: KDK's docs
+on:
+  push:
+    branches:
+      - gha
+    paths:
+      - "docs/**"
+jobs:
+  publish_docs:
+    # name: Tests / Node ${{ matrix.node }} / Mongo ${{ matrix.mongo }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      # - name: Cache requirements
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: requirements
+      #     path: ${{ runner.temp }}/dl
+      # - name: Get yarn cache directory path
+      #   id: yarn-cache-dir-path
+      #   run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      # - uses: actions/cache@v4
+      #   with:
+      #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Init runner
+        run: bash ./scripts/init-runner.sh publish_docs
+      - name: Publish doc
+        run: bash ./scripts/publish_docs.sh

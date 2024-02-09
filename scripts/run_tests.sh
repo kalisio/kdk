@@ -21,7 +21,7 @@ while getopts "m:n:" option; do
     esac
 done
 
-nvm use "$NODE_VER"
+use_node "$NODE_VER"
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
 if [ "$CI" = true ]; then
@@ -87,7 +87,7 @@ if [ "$CI" = true ]; then
     set +e
 fi
 
-yarn test || true
+yarn test
 TEST_RESULT=$?
 
 if [ "$CI" = true ]; then
