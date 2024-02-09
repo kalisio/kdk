@@ -184,8 +184,10 @@ install_cleanup() {
 
 use_mongo() {
     VERSION=$1
-    ln -sf "~/.local/bin/mongo$VERSION/mongo" ~/.local/bin
-    ln -sf "~/.local/bin/mongo$VERSION/mongod" ~/.local/bin
+    ln -sf "$HOME/.local/bin/mongo$VERSION/mongo" ~/.local/bin
+    ln -sf "$HOME/.local/bin/mongo$VERSION/mongod" ~/.local/bin
+
+    echo "Now using mongo $VERSION"
 }
 
 ## log
