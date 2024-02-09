@@ -8,6 +8,8 @@
 OS_ID=$ID
 OS_VERSION=$VERSION_ID
 
+echo "Running on ${OS_ID}-${OS_VERSION}"
+
 CI=false
 CI_ID=
 
@@ -224,13 +226,13 @@ use_mongo() {
 begin_group() {
     TITLE="$1"
 
-    if [ "$CI_NAME" = "github" ]; then
+    if [ "$CI_ID" = "github" ]; then
         # see https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#grouping-log-lines
         echo "::group::$TITLE"
-    elif [ "$CI_NAME" = "gitlab" ]; then
+    elif [ "$CI_ID" = "gitlab" ]; then
         # see https://docs.gitlab.com/ee/ci/jobs/#custom-collapsible-sections
         echo -e "\e[0Ksection_start:$(date +%s):$TITLE\r\e[0KHeader of the 1st collapsible section"
-    elif [ "$CI_NAME" = "travis" ]; then
+    elif [ "$CI_ID" = "travis" ]; then
         # see
         echo "travis_fold:start:$TITLE"
     fi
@@ -239,11 +241,11 @@ begin_group() {
 end_group() {
     TITLE="$1"
 
-    if [ "$CI_NAME" = "github" ]; then
+    if [ "$CI_ID" = "github" ]; then
         echo "::endgroup::"
-    elif [ "$CI_NAME" = "gitlab" ]; then
+    elif [ "$CI_ID" = "gitlab" ]; then
         echo -e "\e[0Ksection_end:$(date +%s):$TITLE\r\e[0K"
-    elif [ "$CI_NAME" = "travis" ]; then
+    elif [ "$CI_ID" = "travis" ]; then
         echo "travis_fold:end:$TITLE"
     fi
 }
