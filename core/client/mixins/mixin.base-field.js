@@ -27,22 +27,22 @@ export const baseField = {
     hasHelper () {
       return !_.isEmpty(_.get(this.properties.field, 'helper', {}))
     },
-    computedHelperLabel () {
+    helperLabel () {
       return _.get(this.properties.field.helper, 'label', null)
     },
-    computedHelperIcon () {
+    helperIcon () {
       return _.get(this.properties.field.helper, 'icon', undefined)
     },
-    computedHelperTooltip () {
+    helperTooltip () {
       return _.get(this.properties.field.helper, 'tooltip', '')
     },
-    computedHelperUrl () {
+    helperUrl () {
       return _.get(this.properties.field.helper, 'url', null)
     },
-    computedHelperDialog () {
+    helperDialog () {
       return _.get(this.properties.field.helper, 'dialog', null)
     },
-    computedHelperContext () {
+    helperContext () {
       return _.get(this.properties.field.helper, 'context', null)
     },
     hasError () {
@@ -117,7 +117,7 @@ export const baseField = {
     submitted (object, field) {
       // To be overloaded if you need to perform specific operations after the form has been submitted
     },
-    onHelperDialogConfirmed (context, result) {
+    onHelperDialogConfirmed (context) {
       if (context.url) openURL(context.url)
     }
   },

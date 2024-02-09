@@ -1,31 +1,31 @@
 <template>
   <q-field
-      :for="properties.name + '-field'"
-      :id="properties.name + '-field'"
-      :label="label"
-      v-model="model"
-      :error-message="errorLabel"
-      :error="hasError"
-      :disable="disabled"
-      :clearable="clearable"
-      hide-bottom-space
-      bottom-slots
-      borderless
-      @clear="clear">
-        <!-- Helper -->
-        <template v-if="hasHelper" v-slot:append>
-          <k-action
-            :id="properties.name + '-helper'"
-            :label="computedHelperLabel"
-            :icon="computedHelperIcon"
-            :tooltip="computedHelperTooltip"
-            :url="computedHelperUrl"
-            :dialog="computedHelperDialog"
-            :context="computedHelperContext"
-            @dialog-confirmed="onHelperDialogConfirmed"
-            color="primary"
-          />
-        </template>
+    :for="properties.name + '-field'"
+    :id="properties.name + '-field'"
+    :label="label"
+    v-model="model"
+    :error-message="errorLabel"
+    :error="hasError"
+    :disable="disabled"
+    :clearable="clearable"
+    hide-bottom-space
+    bottom-slots
+    borderless
+    @clear="clear">
+      <!-- Helper -->
+      <template v-if="hasHelper" v-slot:append>
+        <k-action
+          :id="properties.name + '-helper'"
+          :label="helperLabel"
+          :icon="helperIcon"
+          :tooltip="helperTooltip"
+          :url="helperUrl"
+          :dialog="helperDialog"
+          :context="helperContext"
+          @dialog-confirmed="onHelperDialogConfirmed"
+          color="primary"
+        />
+      </template>
   </q-field>
   <!-- View tree -->
   <q-tree v-if="viewTree.length" :nodes="viewTree" node-key="_id" label-key="label" children-key="views"

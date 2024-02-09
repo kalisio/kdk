@@ -44,12 +44,12 @@
       <template v-if="hasHelper" v-slot:append>
         <k-action
           :id="properties.name + '-helper'"
-          :label="computedHelperLabel"
-          :icon="computedHelperIcon"
-          :tooltip="computedHelperTooltip"
-          :url="computedHelperUrl"
-          :dialog="computedHelperDialog"
-          :context="computedHelperContext"
+          :label="helperLabel"
+          :icon="helperIcon"
+          :tooltip="helperTooltip"
+          :url="helperUrl"
+          :dialog="helperDialog"
+          :context="helperContext"
           @dialog-confirmed="onHelperDialogConfirmed"
           color="primary"
         />
@@ -80,12 +80,12 @@
       <template v-if="hasHelper" v-slot:append>
         <k-action
           :id="properties.name + '-helper'"
-          :label="computedHelperLabel"
-          :icon="computedHelperIcon"
-          :tooltip="computedHelperTooltip"
-          :url="computedHelperUrl"
-          :dialog="computedHelperDialog"
-          :context="computedHelperContext"
+          :label="helperLabel"
+          :icon="helperIcon"
+          :tooltip="helperTooltip"
+          :url="helperUrl"
+          :dialog="helperDialog"
+          :context="helperContext"
           @dialog-confirmed="onHelperDialogConfirmed"
           color="primary"
         />
