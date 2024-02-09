@@ -114,7 +114,8 @@ install_sops() {
 }
 
 install_cc_test_reporter() {
-    local DL_PATH="$TMP_DL_PATH/cc"
+    local DL_ROOT=$1
+    local DL_PATH="$DL_ROOT/cc"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
     curl -OLsS https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64.sha256
@@ -125,7 +126,8 @@ install_cc_test_reporter() {
 }
 
 install_nvm() {
-    local DL_PATH="$TMP_DL_PATH/nvm"
+    local DL_ROOT=$1
+    local DL_PATH="$DL_ROOT/nvm"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh
     bash ./install.sh
@@ -144,7 +146,8 @@ install_node18() {
 }
 
 install_mongo4() {
-    local DL_PATH="$TMP_DL_PATH/mongo4"
+    local DL_ROOT=$1
+    local DL_PATH="$DL_ROOT/mongo4"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     case "$OS_ID" in
         debian)
@@ -171,7 +174,8 @@ install_mongo4() {
 }
 
 install_mongo5() {
-    local DL_PATH="$TMP_DL_PATH/mongo5"
+    local DL_ROOT=$1
+    local DL_PATH="$DL_ROOT/mongo5"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     case "$OS_ID" in
         debian)
