@@ -25,6 +25,6 @@ jobs:
       #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
       #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Init runner
-        run: bash ./scripts/init-runner.sh publish_docs
+        run: bash ./scripts/init-runner.sh ${{ github.job }}
       - name: Publish doc
         run: bash ./scripts/publish_docs.sh

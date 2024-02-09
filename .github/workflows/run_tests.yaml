@@ -7,10 +7,10 @@ jobs:
   run_tests:
     strategy:
       fail-fast: false
-      # matrix:
-      #   node: [ 16, 18 ]
-      #   mongo: [ 4, 5 ]
-    # name: Tests / Node ${{ matrix.node }} / Mongo ${{ matrix.mongo }}
+      matrix:
+        node: [ 16, 18 ]
+        mongo: [ 4, 5 ]
+    name: Tests / Node ${{ matrix.node }} / Mongo ${{ matrix.mongo }}
     runs-on: ubuntu-22.04
     # container:
     #   image: harbor.portal.kalisio.com/kalisio/ci-kdk:latest
@@ -40,7 +40,7 @@ jobs:
       #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
       #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Init runner
-        run: bash ./scripts/init-runner.sh run_tests
+        run: bash ./scripts/init-runner.sh ${{ github.job }}
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
