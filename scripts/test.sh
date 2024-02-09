@@ -27,7 +27,9 @@ nvm use "$NODE_VER"
 if [ "$CI" = true ]; then
     begin_group "Fetching project dependencies ..."
 
-    KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)
+    KALISIO_DEVELOPMENT_DIR="$TMP_PATH/kalisio"
+    mkdir -p "$KALISIO_DEVELOPMENT_DIR"
+
     # clone developement into $KALISIO_DEVELOPMENT_DIR
     git clone --depth 1 "https://$GITHUB_DEVELOPMENT_PAT@github.com/kalisio/development.git" "$KALISIO_DEVELOPMENT_DIR/development"
 
