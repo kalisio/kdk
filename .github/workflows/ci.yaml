@@ -27,6 +27,11 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      - name: Cache requirements
+        uses: actions/cache@v3
+        key: requirements
+        with:
+          path: ${{ env.RUNNER_TEMP }}/dl
       - name: Normalize env
         run: bash ./scripts/normalize-gha.sh
       - name: Run tests
