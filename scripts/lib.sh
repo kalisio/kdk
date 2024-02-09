@@ -113,15 +113,18 @@ install_nvm() {
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
     curl -OLsS https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh
     bash ./install.sh
+    # We always use yarn as package manager, so tell nvm to install it with every node installation
+    # cf. https://github.com/nvm-sh/nvm?tab=readme-ov-file#default-global-packages-from-file-while-installing
+    bash -i -c 'echo yarn >> $NVM_DIR/default-packages'
     cd ~-
 }
 
 install_node16() {
-    bash -i -c "nvm install ${NODE16_VERSION} && npm install --global yarn"
+    bash -i -c "nvm install ${NODE16_VERSION}"
 }
 
 install_node18() {
-    bash -i -c "nvm install ${NODE18_VERSION} && npm install --global yarn"
+    bash -i -c "nvm install ${NODE18_VERSION}"
 }
 
 # install_node16() {
