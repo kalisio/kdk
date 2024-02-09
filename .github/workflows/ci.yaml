@@ -27,4 +27,4 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
           GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
-        run: bash ./scripts/test.sh
+        run: bash ./scripts/test.sh -n 16 -m 5

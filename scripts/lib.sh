@@ -3,7 +3,7 @@
 ### Host detection
 ###
 
-IS_CI=false
+CI=false
 CI_NAME=
 
 if [ "${GITHUB_ACTIONS:-}" = true ]; then
@@ -25,7 +25,7 @@ fi
 
 
 if [ -n "$CI_NAME" ]; then
-    IS_CI=true
+    CI=true
     echo "Running in CI mode ..."
 
     # Emulate development k-mongo when running on CI
@@ -184,8 +184,8 @@ install_cleanup() {
 
 use_mongo() {
     VERSION=$1
-    ln -sf ~/.local/bin/mongo$VERSION/mongo ~/.local/bin
-    ln -sf ~/.local/bin/mongo$VERSION/mongod ~/.local/bin
+    ln -sf "~/.local/bin/mongo$VERSION/mongo" ~/.local/bin
+    ln -sf "~/.local/bin/mongo$VERSION/mongod" ~/.local/bin
 }
 
 ## log

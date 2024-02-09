@@ -8,10 +8,23 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 
 . "$THIS_PATH/lib.sh"
 
-nvm use 16
+NODE_VER=16
+MONGO_VER=4
+while getopts "m:n:" option; do
+    case $option in
+        m) # defines mongo version
+            MONGO_VER=$OPTARG;;
+        n) # defines node version
+            NODE_VER=$OPTARG;;
+        *)
+            ;;
+    esac
+done
+
+nvm use "$NODE_VER"
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
-if [ "$IS_CI" = true ]; then
+if [ "$CI" = true ]; then
     begin_group "Fetching project dependencies ..."
 
     KALISIO_DEVELOPMENT_DIR=$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)
@@ -53,7 +66,7 @@ if [ "$IS_CI" = true ]; then
 
     end_group "Fetching project dependencies ..."
 
-    use_mongo 4
+    use_mongo "$MONGO_VER"
 fi
 
 # Start mongo
@@ -67,7 +80,7 @@ k-mongo
 ## Run tests
 ##
 
-if [ "$IS_CI" = true ]; then
+if [ "$CI" = true ]; then
     cc-test-reporter before-build
     set +e
 fi
@@ -75,7 +88,7 @@ fi
 yarn test
 TEST_RESULT=$?
 
-if [ "$IS_CI" = true ]; then
+if [ "$CI" = true ]; then
     set -e
     cc-test-reporter after-build --exit-code $TEST_RESULT
 fi
