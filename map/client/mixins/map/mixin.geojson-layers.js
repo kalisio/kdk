@@ -82,6 +82,11 @@ export const geojsonLayers = {
         leafletOptions.updateFeature = function (feature, oldLayer) {
           // A new feature is coming, create it
           if (!oldLayer) return
+          const staticGeometry = _.get(leafletOptions, 'staticGeometry', false)
+          // Keep track of previous geometry if we don't want to update it
+          // Indeed, styling might depend on it
+          if (staticGeometry) feature.geometry = _.get(oldLayer, 'feature.geometry')
+
           // An existing one is found, simply update styling, properties, etc.
           leafletOptions.onEachFeature(feature, oldLayer)
           if (oldLayer.setStyle) {
@@ -95,9 +100,8 @@ export const geojsonLayers = {
               oldLayer.setStyle(leafletOptions.style(feature))
             }
           }
-          // We want to restore values that were there till now but are missing
-          // from the input feature.
-          // Deep for time and runtime
+          // We want to restore values that were there till now but are missing from the input feature.
+          // Deep for time and runtime that might contain objects with variables
           _.defaultsDeep(feature, _.pick(oldLayer.feature, ['time', 'runTime']))
           // _NOT_ deep for properties, otherwise it'll merge array and object properties between the two
           const oldProps = _.get(oldLayer.feature, 'properties')
@@ -110,8 +114,7 @@ export const geojsonLayers = {
             // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
             return
           }
-          // And coordinates if not static
-          const staticGeometry = _.get(leafletOptions, 'staticGeometry', false)
+          // Now update coordinates if not static geometry
           if (staticGeometry) return oldLayer
           // The feature is changing its geometry type, recreate it
           const oldType = _.get(oldLayer, 'feature.geometry.type')
