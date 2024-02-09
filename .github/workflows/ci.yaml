@@ -28,10 +28,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       - name: Cache requirements
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: requirements
           path: ${{ runner.temp }}/dl
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Normalize env
         run: bash ./scripts/normalize-gha.sh
       - name: Run tests
