@@ -7,10 +7,10 @@ jobs:
   ci:
     strategy:
       fail-fast: false
-      matrix:
-        node: [ 16, 18 ]
-        mongo: [ 4, 5 ]
-    name: Tests / Node ${{ matrix.node }} / Mongo ${{ matrix.mongo }}
+      # matrix:
+      #   node: [ 16, 18 ]
+      #   mongo: [ 4, 5 ]
+    # name: Tests / Node ${{ matrix.node }} / Mongo ${{ matrix.mongo }}
     runs-on: ubuntu-22.04
     # container:
     #   image: harbor.portal.kalisio.com/kalisio/ci-kdk:latest
@@ -33,4 +33,5 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
           GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
-        run: bash ./scripts/test.sh -n ${{ matrix.node }} -m ${{ matrix.mongo }}
+        # run: bash ./scripts/test.sh -n ${{ matrix.node }} -m ${{ matrix.mongo }}
+        run: bash ./scripts/test.sh

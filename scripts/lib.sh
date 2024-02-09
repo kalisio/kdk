@@ -3,30 +3,29 @@
 ### Host detection
 ###
 
+. /etc/os-release
+
+OS_ID=$ID
+OS_VERSION=$VERSION_ID
+
 CI=false
-CI_NAME=
+CI_ID=
 
 if [ "${GITHUB_ACTIONS:-}" = true ]; then
-    CI_NAME="github"
+    CI_ID="github"
 
     # Add ~/.local/bin to PATH
     mkdir -p "$HOME/.local/bin"
     export PATH=$PATH:$HOME/.local/bin
-
-    # If nvm is present, make it available
-    if [ -d "$HOME/.nvm" ]; then
-        . "$HOME/.nvm/nvm.sh"
-    fi
 elif [ "${GITLAB_CI:-}" = true ]; then
-    CI_NAME="gitlab"
+    CI_ID="gitlab"
 elif [  "${TRAVIS:-}" = true ]; then
-    CI_NAME="travis"
+    CI_ID="travis"
 fi
 
-
-if [ -n "$CI_NAME" ]; then
+if [ -n "$CI_ID" ]; then
     CI=true
-    echo "Running in CI mode ..."
+    echo "Running in CI mode ($CI_ID)..."
 
     # Emulate development k-mongo when running on CI
     cat <<EOF > ~/.local/bin/k-mongo
@@ -36,7 +35,20 @@ EOF
     chmod a+x ~/.local/bin/k-mongo
 fi
 
-## requirements
+# If nvm is present, make it available to script
+if [ -d "$HOME/.nvm" ]; then
+    . "$HOME/.nvm/nvm.sh"
+fi
+
+# Define a TMP_PATH to operate with temp files
+if [ -n "${RUNNER_TEMP:-}" ]; then # RUNNER_TEMP is Github Action specific
+    TMP_PATH="$RUNNER_TEMP"
+else
+    TMP_PATH="$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)"
+fi
+
+### Requirements
+###
 
 YQ_VERSION=4.40.5
 AGE_VERSION=1.1.1
@@ -46,27 +58,23 @@ NVM_VERSION=0.39.7
 NODE16_VERSION=16.20.2
 NODE18_VERSION=18.19.0
 
-# MONGODB4_VERSION=debian10-4.4.28
-# MONGODB5_VERSION=debian11-5.0.24
-
-if [ -n "${RUNNER_TEMP:-}" ]; then # RUNNER_TEMP is Github Action specific
-    TMP_PATH="$(mktemp -d -p "$RUNNER_TEMP" kalisio.XXXXXX)"
-else
-    TMP_PATH="$(mktemp -d -p "${XDG_RUNTIME_DIR:-}" kalisio.XXXXXX)"
-fi
-
-TMP_DL_PATH="$TMP_PATH/dl"
+MONGODB4_VERSION=4.4.28
+MONGODB5_VERSION=5.0.24
 
 install_yq() {
-    local DL_PATH="$TMP_DL_PATH/yq"
-    mkdir -p "$DL_PATH" && cd "$DL_PATH"
-    curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64.tar.gz
-    # checksum has to be extracted from custom file ...
-    curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/checksums
-    curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/checksums_hashes_order
-    curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/extract-checksum.sh
-    chmod u+x extract-checksum.sh
-    ./extract-checksum.sh "SHA-256" "yq_linux_amd64.tar.gz" | awk '{ print $2 " " $1}' | sha256sum --check
+    local DL_ROOT=$1
+    local DL_PATH="$DL_ROOT/yq"
+    if [ ! -d "$DL_PATH" ]; then
+        mkdir -p "$DL_PATH" && cd "$DL_PATH"
+        curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64.tar.gz
+        # checksum has to be extracted from custom file ...
+        curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/checksums
+        curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/checksums_hashes_order
+        curl -OLsS https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/extract-checksum.sh
+        chmod u+x extract-checksum.sh
+        ./extract-checksum.sh "SHA-256" "yq_linux_amd64.tar.gz" | awk '{ print $2 " " $1}' | sha256sum --check
+    fi
+    cd "$DL_PATH"
     tar xf yq_linux_amd64.tar.gz
     mv yq_linux_amd64 ~/.local/bin/yq
     chmod u+x ~/.local/bin/yq
@@ -74,12 +82,14 @@ install_yq() {
 }
 
 install_age() {
-    # NOTE: available with sudo apt-get install age on bookworm
-
-    local DL_PATH="$TMP_DL_PATH/age"
-    mkdir -p "$DL_PATH" && cd "$DL_PATH"
-    curl -OLsS https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz
-    # no checksum ...
+    local DL_ROOT=$1
+    local DL_PATH="$DL_ROOT/age"
+    if [ ! -d "$DL_PATH" ]; then
+        mkdir -p "$DL_PATH" && cd "$DL_PATH"
+        curl -OLsS https://github.com/FiloSottile/age/releases/download/v${AGE_VERSION}/age-v${AGE_VERSION}-linux-amd64.tar.gz
+        # no checksum ...
+    fi
+    cd "$DL_PATH"
     tar xf age-v${AGE_VERSION}-linux-amd64.tar.gz
     cp age/age ~/.local/bin
     cp age/age-keygen ~/.local/bin
@@ -87,11 +97,15 @@ install_age() {
 }
 
 install_sops() {
-    local DL_PATH="$TMP_DL_PATH/sops"
-    mkdir -p "$DL_PATH" && cd "$DL_PATH"
-    curl -OLsS https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
-    curl -OLsS https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.checksums.txt
-    sha256sum --ignore-missing --quiet -c sops-v${SOPS_VERSION}.checksums.txt
+    local DL_ROOT=$1
+    local DL_PATH="$DL_ROOT/sops"
+    if [ ! -d "$DL_PATH" ]; then
+        mkdir -p "$DL_PATH" && cd "$DL_PATH"
+        curl -OLsS https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
+        curl -OLsS https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.checksums.txt
+        sha256sum --ignore-missing --quiet -c sops-v${SOPS_VERSION}.checksums.txt
+    fi
+    cd "$DL_PATH"
     cp sops-v${SOPS_VERSION}.linux.amd64 ~/.local/bin/sops
     chmod u+x ~/.local/bin/sops
     cd ~-
@@ -127,62 +141,69 @@ install_node18() {
     bash -i -c "nvm install ${NODE18_VERSION}"
 }
 
-# install_node16() {
-#     local DL_PATH="$TMP_PATH/node16"
-#     mkdir -p "$DL_PATH" && cd "$DL_PATH"
-#     curl -OLsS https://nodejs.org/dist/v${NODE16_VERSION}/node-v${NODE16_VERSION}-linux-x64.tar.xz
-#     curl -OLsS https://nodejs.org/dist/v${NODE16_VERSION}/SHASUMS256.txt
-#     sha256sum --ignore-missing --quiet -c SHASUMS256.txt
-#     tar xf node-v${NODE16_VERSION}-linux-x64.tar.xz
-#     cp -fR node-v${NODE16_VERSION}-linux-x64/bin /usr/local
-#     cp -fR node-v${NODE16_VERSION}-linux-x64/lib /usr/local
-#     cp -fR node-v${NODE16_VERSION}-linux-x64/share /usr/local
-#     npm install --global yarn
-#     cd ~-
-# }
-
 install_mongo4() {
-    # MONGODB4_VERSION=debian10-4.4.28
-    MONGODB4_VERSION=ubuntu2004-4.4.28
-
     local DL_PATH="$TMP_DL_PATH/mongo4"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
-    # curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
-    # DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
-    curl -OLsS http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
-    DEBIAN_FRONTEND=noninteractive && sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
-    curl -OLsS https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB4_VERSION}.tgz
-    tar xf mongodb-linux-x86_64-${MONGODB4_VERSION}.tgz
+    case "$OS_ID" in
+        debian)
+            curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+            DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+            local MONGODB_SUFFIX=debian10-${MONGODB4_VERSION}
+            ;;
+        ubuntu)
+            curl -OLsS http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+            DEBIAN_FRONTEND=noninteractive && sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+            local MONGODB_SUFFIX=ubuntu2004-${MONGODB4_VERSION}
+            ;;
+        *)
+    esac
+
+    curl -OLsS "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB_SUFFIX}.tgz"
+    tar xf "mongodb-linux-x86_64-${MONGODB_SUFFIX}.tgz"
     mkdir -p ~/.local/bin/mongo4
-    cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongo ~/.local/bin/mongo4
-    cp -fR mongodb-linux-x86_64-${MONGODB4_VERSION}/bin/mongod ~/.local/bin/mongo4
+    cp -fR "mongodb-linux-x86_64-${MONGODB_SUFFIX}/bin/mongo" ~/.local/bin/mongo4
+    cp -fR "mongodb-linux-x86_64-${MONGODB_SUFFIX}/bin/mongod" ~/.local/bin/mongo4
     sudo mkdir -p /var/lib/mongo4 && sudo mkdir -p /var/log/mongodb4
     sudo chmod a+rwx /var/lib/mongo4 && sudo chmod a+rwx /var/log/mongodb4
     cd ~-
 }
 
 install_mongo5() {
-    # MONGODB5_VERSION=debian11-5.0.24
-    MONGODB5_VERSION=ubuntu2004-5.0.24
-
     local DL_PATH="$TMP_DL_PATH/mongo5"
     mkdir -p "$DL_PATH" && cd "$DL_PATH"
-    # curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
-    # DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
-    curl -OLsS http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
-    DEBIAN_FRONTEND=noninteractive && sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
-    curl -OLsS https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB5_VERSION}.tgz
-    tar xf mongodb-linux-x86_64-${MONGODB5_VERSION}.tgz
+    case "$OS_ID" in
+        debian)
+            curl -OLsS http://ftp.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+            DEBIAN_FRONTEND=noninteractive && dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+            local MONGODB_SUFFIX=debian11-${MONGODB5_VERSION}
+            ;;
+        ubuntu)
+            curl -OLsS http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+            DEBIAN_FRONTEND=noninteractive && sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2.21_amd64.deb
+            local MONGODB_SUFFIX=ubuntu2004-${MONGODB5_VERSION}
+            ;;
+        *)
+    esac
+
+    curl -OLsS "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB_SUFFIX}.tgz"
+    tar xf "mongodb-linux-x86_64-${MONGODB_SUFFIX}.tgz"
     mkdir -p ~/.local/bin/mongo5
-    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongo ~/.local/bin/mongo5
-    cp -fR mongodb-linux-x86_64-${MONGODB5_VERSION}/bin/mongod ~/.local/bin/mongo5
+    cp -fR "mongodb-linux-x86_64-${MONGODB_SUFFIX}/bin/mongo" ~/.local/bin/mongo5
+    cp -fR "mongodb-linux-x86_64-${MONGODB_SUFFIX}/bin/mongod" ~/.local/bin/mongo5
     sudo mkdir -p /var/lib/mongo5 && sudo mkdir -p /var/log/mongodb5
     sudo chmod a+rwx /var/lib/mongo5 && sudo chmod a+rwx /var/log/mongodb5
     cd ~-
 }
 
-install_cleanup() {
-    rm -fR "$TMP_DL_PATH"
+install_reqs() {
+    mkdir -p "$TMP_PATH/dl"
+
+    for REQ in "$@"; do
+        echo "Installing $REQ ..."
+        install_"$REQ" "$TMP_PATH/dl"
+    done
+
+    rm -fR "$TMP_PATH/dl"
 }
 
 use_mongo() {
