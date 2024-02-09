@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref } from 'vue'
-import { Store, i18n } from '../../../core.client.js'
+import { Store, i18n, api } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
 import { useCurrentActivity } from './activity.js'
 import { searchLocation, listGeocoders, filterGeocoders } from '../utils/utils.location.js'
@@ -17,7 +17,7 @@ export function useLocation () {
   // Input geocoders if given should be like { source: xxx, selected: true }
   async function setGeocoders (geocoders) {
     const project = getActivityProject()
-    const planet = getActivityProject().getPlanetApi().getConfig()
+    const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())
     if (_.isNull(geocoders)) {
       // clear the geocoders
       availableGeocoders.value = []
@@ -46,7 +46,8 @@ export function useLocation () {
     return Store.get('geolocation.location')
   }
   async function search (pattern) {
-    const planet = getActivityProject().getPlanetApi().getConfig()
+    const project = getActivityProject()
+    const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())
     return searchLocation(planet, pattern, { geocoders: selectedGeocoders.value })
   }
   // Expose

@@ -11,6 +11,10 @@ export const Capabilities = {
     const content = await capabilities.json()
     logger.debug('[KDK] fetched capabilities:', JSON.stringify(content, null, 4))
     this.content = content
+    // Backend might override some defaults in client config
+    _.forOwn(_.pick(content, ['gateway']), (value, key) => {
+      api.setConfig(key, value)
+    })
     // Used to ensure backward compatibility
     Store.set('capabilities.api', content)
     Store.set('capabilities.client', _.pick(config, ['version', 'buildNumber']))
