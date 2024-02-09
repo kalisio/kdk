@@ -8,7 +8,7 @@ import { GradientPath } from '../../leaflet/GradientPath.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
 import { 
-  fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, 
+  fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, getFeatureStyleType,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
@@ -400,17 +400,19 @@ export const geojsonLayers = {
           bindLeafletEvents(layer, LeafletEvents.Feature, this, options)
         },
         style: (feature) => {
-          if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
-            return this.generateStyle('line', feature, options, _.get(this, 'activityOptions.engine'))
+          const styleType = getFeatureStyleType(feature)
+          if (!styleType) {
+            logger.warn(`[KDK] cannot get a style type from the feature of geometry type ${feature.geometry.type}`)
+            return
           }
-          if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
-            return this.generateStyle('polygon', feature, options, _.get(this, 'activityOptions.engine'))
-          } else {
-            logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
-          }
+          return this.generateStyle(styleType, feature, options, _.get(this, 'activityOptions.engine'))
         },
         pointToLayer: (feature, latlng) => {
           const style = this.generateStyle('point', feature, options, _.get(this, 'activityOptions.engine'))
+          if (!style) {
+            logger.warn('[KDK] cannot generate point style from a feature')
+            return
+          }
           return createMarkerFromPointStyle(latlng, style)
         }
       }

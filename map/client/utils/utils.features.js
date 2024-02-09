@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import moment from 'moment'
 import { getType } from '@turf/invariant'
 import explode from '@turf/explode'
@@ -360,4 +361,17 @@ export async function fetchGeoJson (dataSource, options = {}) {
     transformFeatures(features, options.transform)
   }
   return data
+}
+
+export function getFeatureStyleType (feature) {
+  const geometryType = _.get(feature, 'geometry.type')
+  if (!geometryType) {
+    logger.warn('[KDK] feature has undefined geometry')
+    return
+  }
+  if (geometryType === 'Point') return 'point'
+  if (['LineString', 'MultiLineString'].includes(geometryType)) return 'line'
+  if (['Polygon', 'MultiPolygon'].includes(geometryType)) return 'polygon'
+  logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
+  return
 }
