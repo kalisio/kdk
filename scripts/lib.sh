@@ -208,8 +208,6 @@ install_reqs() {
         echo "Installing $REQ ..."
         install_"$REQ" "$TMP_PATH/dl"
     done
-
-    rm -fR "$TMP_PATH/dl"
 }
 
 use_mongo() {
