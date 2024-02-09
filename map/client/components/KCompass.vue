@@ -16,7 +16,7 @@
         points="50,25 40,70 50,60 60,70"
         :fill="getCssVar('primary')"
         :stroke="getCssVar('primary')"
-        :transform="`rotate(${direction}, 50, 50)`"
+        :transform="`rotate(${direction+180}, 50, 50)`"
       />
       <text x="50" y="7" text-anchor="middle" alignment-baseline="middle" font-size="8px" fill="white">
         {{ $t('KCompass.NORTH') }}
@@ -116,7 +116,7 @@ function computeDirection (x, y) {
   if (!center) return
   const dx = x - center.x
   const dy = y - center.y
-  direction.value = (Math.round(Math.atan2(dy, dx) * 180 / Math.PI) + 450) % 360
+  direction.value = (Math.round(Math.atan2(dy, dx) * 180 / Math.PI) + 270) % 360
 }
 function onHandleDrag (event) {
   const { x, y } = event.type.startsWith('touch') ? event.changedTouches[0] : event
