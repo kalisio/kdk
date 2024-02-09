@@ -1,9 +1,10 @@
 import _ from 'lodash'
+import config from 'config'
 import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid, getCssVar } from 'quasar'
 import { unref, onUnmounted } from 'vue'
-import { getFeatureId } from '../utils.js'
+import { getFeatureId, getFeatureStyleType } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 
 export const HighlightsLayerName = uid()
@@ -11,12 +12,13 @@ export const HighlightsLayerName = uid()
 export function useHighlight (name, options = {}) {
   // Set default options
   options = Object.assign({ updateDelay: 100 }, options)
-  // retrieve activity
+  // Retrieve activity
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
+  let style = activity ? _.get(config, `engines.${activity.engine}.style.selection`) : null
 
-  // data
+  // Data
   // hightligh store for context
   const { store, clear, set, get, unset, has } = composables.useStore(`hightlighs.${name}`)
   // global highlight store
@@ -32,6 +34,8 @@ export function useHighlight (name, options = {}) {
       activity.$engineEvents.off('layer-added', createHighlightsLayer)
       activity.$engineEvents.off('layer-disabled', onHighlightedLayerDisabled)
       activity.$engineEvents.off('layer-enabled', onHighlightedLayerEnabled)
+      // clear style
+      style = null
     }
     activity = newActivity
     if (newActivity) {
@@ -40,6 +44,8 @@ export function useHighlight (name, options = {}) {
       newActivity.$engineEvents.on('layer-added', createHighlightsLayer)
       newActivity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
       newActivity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
+      // set style
+      style = _.get(config, `engines.${activity.engine}.style.selection`)
     }
   }
   function getHighlightId (feature, layer) {
@@ -76,14 +82,25 @@ export function useHighlight (name, options = {}) {
       type: 'Feature',
       isDisabled: (layer ? layer.isDisabled : false),
       properties: Object.assign({
-        'marker-type': 'circleMarker',
-        geodesic: !activity.is2D(), // In 3D we use a circle on ground
-        radius: activity.is2D() ? 10 : 1000,
-        'stroke-color': getCssVar('secondary'),
-        'stroke-width': 3,
-        'fill-color': getCssVar('secondary'),
-        'fill-opacity': 0.5,
-        zOrder: 0
+        zOrder: 0,
+      }, options)
+    }
+    if (activity.is2D()) {
+      Object.assign(highlight, { 
+        style: _.cloneDeep(style[getFeatureStyleType(feature)])
+      })
+      // 2D
+    } else {
+      // 3D
+      Object.assign(highlight, { 
+        properties: {
+          geodesic: true, // In 3D we use a circle on ground
+          radius: 1000,
+          'stroke-color': getCssVar('secondary'),
+          'stroke-width': 3,
+          'fill-color': getCssVar('secondary'),
+          'fill-opacity': 0.5
+        }
       }, options)
     }
     // Use input feature/location to build highlight geometry
@@ -97,8 +114,8 @@ export function useHighlight (name, options = {}) {
       Object.assign(highlight, bboxPolygon(bbox(highlight)))
     }
     // Add additional information provided by feature, if any, for custom styling
-    _.merge(highlight, _.omit(feature, ['geometry']))
-    convertColors(highlight)
+    _.merge(highlight, _.omit(feature, ['geometry', 'style']))
+    //convertColors(highlight)
     set(highlightId, highlight)
     updateHighlightsLayer()
     return highlight

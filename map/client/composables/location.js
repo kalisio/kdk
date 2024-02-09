@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
 import { ref } from 'vue'
 import { Store, i18n, api } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'

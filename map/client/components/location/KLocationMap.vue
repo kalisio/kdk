@@ -31,7 +31,7 @@ import { Geolocation } from '../../geolocation.js'
 import { useCatalog, useCurrentActivity } from '../../composables'
 import {
   coordinatesToGeoJSON, formatUserCoordinates,
-  bindLeafletEvents, unbindLeafletEvents, 
+  bindLeafletEvents, unbindLeafletEvents, getFeatureStyleType,
   getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
 
@@ -182,17 +182,20 @@ export default {
       } else {
         this.locationLayer = L.geoJson(this.location, {
           style: (feature) => {
-            if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
-              return getDefaultLineStyle(feature, null, this.engineOptions, 'style.location.line')
+            const styleType = getFeatureStyleType(feature)
+            if (!styleType) {
+              logger.warn(`[KDK] cannot get a style type from the feature of geometry type ${feature.geometry.type}`)
+              return
             }
-            if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
-              return getDefaultPolygonStyle(feature, null, this.engineOptions, 'style.location.polygon')
-            } else {
-              logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
-            }
+            if (styleType === 'line') return getDefaultLineStyle(feature, null, this.engineOptions, 'style.location.line')
+            return getDefaultPolygonStyle(feature, null, this.engineOptions, 'style.location.polygon')
           },
           pointToLayer: (feature, latlng) => {
             const style = getDefaultPointStyle(feature, null, this.engineOptions, 'style.location.point')
+            if (!style) {
+              logger.warn('[KDK] cannot generate point style from a feature')
+              return
+            }
             return createMarkerFromPointStyle(latlng, style)
           }
         })
