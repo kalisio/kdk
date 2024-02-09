@@ -16,7 +16,6 @@ export function useHighlight (name, options = {}) {
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
-  let style = activity ? _.get(config, `engines.${activity.engine}.style.selection`) : null
 
   // Data
   // hightligh store for context
@@ -34,8 +33,6 @@ export function useHighlight (name, options = {}) {
       activity.$engineEvents.off('layer-added', createHighlightsLayer)
       activity.$engineEvents.off('layer-disabled', onHighlightedLayerDisabled)
       activity.$engineEvents.off('layer-enabled', onHighlightedLayerEnabled)
-      // clear style
-      style = null
     }
     activity = newActivity
     if (newActivity) {
@@ -43,9 +40,7 @@ export function useHighlight (name, options = {}) {
       // so that we can add our highlight layer, before that it would be cleared by catalog loading
       newActivity.$engineEvents.on('layer-added', createHighlightsLayer)
       newActivity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
-      newActivity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
-      // set style
-      style = _.get(config, `engines.${activity.engine}.style.selection`)
+      newActivity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)      
     }
   }
   function getHighlightId (feature, layer) {
@@ -86,12 +81,13 @@ export function useHighlight (name, options = {}) {
       }, options)
     }
     if (activity.is2D()) {
-      Object.assign(highlight, { 
-        style: _.cloneDeep(style[getFeatureStyleType(feature)])
-      })
       // 2D
+      let highlightStyle = _.get(config, `engines.${activity.engine}.style.selection`)
+      Object.assign(highlight, { 
+        style: _.cloneDeep(highlightStyle[getFeatureStyleType(feature)])
+      })
     } else {
-      // 3D
+      // 3D TODO: to be updated when swithing globe to new style
       Object.assign(highlight, { 
         properties: {
           geodesic: true, // In 3D we use a circle on ground
@@ -115,7 +111,8 @@ export function useHighlight (name, options = {}) {
     }
     // Add additional information provided by feature, if any, for custom styling
     _.merge(highlight, _.omit(feature, ['geometry', 'style']))
-    //convertColors(highlight)
+    // TODO: to be removed when swithing globe to new style
+    if (activity.is3D()) convertColors(highlight)
     set(highlightId, highlight)
     updateHighlightsLayer()
     return highlight
