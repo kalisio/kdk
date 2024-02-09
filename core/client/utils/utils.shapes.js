@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { uid, getCssVar } from 'quasar'
+import { uid } from 'quasar'
+import { getHtmlColor } from './utils.colors.js'
 
+const defaultColor = 'black'
 const defaultIconSize = 12
 const defaultTextSize = 12
 
@@ -95,11 +97,6 @@ function getSize (size) {
   return { width: size[0], height: size[1] }
 }
 
-function getColor (color) {
-  if (!color) return 'black'
-  return getCssVar(color) || color
-}
-
 /*
  Utility to create a shape with the following options:
   - shape: String | Object - name of the predefined shape or object specifyinfg the viewBox and the content
@@ -177,13 +174,13 @@ export function createShape (options) {
     svgClipPath = ''
     endSvgTag = '</svg>'
     // Apply fill style
-    const color = getColor(options.color)
+    const color = getHtmlColor(options.color, defaultColor)
     svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
     if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
     // Aply stroke style
     if (options.stroke) {
       // Ensure the stroke color is defined and not transparent
-      const strokeColor = getColor(options.stroke.color)
+      const strokeColor = getHtmlColor(options.stroke.color, defaultColor)
       if (strokeColor !== 'transparent') {
         svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke', strokeColor)
         // draw inner stroke by double the width and clip the shape by itself
@@ -217,7 +214,7 @@ export function createShape (options) {
       } else {
         iconTag += `<i class="${options.icon.classes}" `
         // handle color
-        const color = getColor(options.icon.color)
+        const color = getHtmlColor(options.icon.color, defaultColor)
         specificStyle += `color: ${color};`
         // handle size
         let iconSize = options.icon.size || defaultIconSize
@@ -237,7 +234,7 @@ export function createShape (options) {
   if (options.text) {
     if (options.text.label) {
       textTag = '<span '
-      const color = getClolor(options.text.color)
+      const color = getHtmlColor(options.text.color, defaultColor)
       const textSize = options.text.size || defaultTextSize
       const translation = options.text.translation || _.get(shape, 'text.translation', ['-50%', '-50%'])
       const rotation = options.text.rotation || _.get(shape, 'icon.rotation', 0)

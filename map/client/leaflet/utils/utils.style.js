@@ -3,8 +3,7 @@ import logger from 'loglevel'
 import chroma from 'chroma-js'
 import moment from 'moment'
 import L from 'leaflet'
-import { getCssVar } from 'quasar'
-import { Time, Units } from '../../../../core/client/index.js'
+import { Time, Units, utils as kdkCoreUtils } from '../../../../core/client/index.js'
 import { ShapeMarker } from '../ShapeMarker.js'
 
 L.shapeMarker = function (latlng, options) {
@@ -296,7 +295,7 @@ export function convertLineStyleToLeafletPath (style) {
   if (!style) return
   let leafletStyle = convertStyle(style, LineStyleToLeafletPath)
   // handle quasar color/default if needed
-  leafletStyle.color = leafletStyle.color ? getCssVar(leafletStyle.color) || leafletStyle.color : 'black'
+  leafletStyle.color = kdkCoreUtils.getHtmlColor(leafletStyle.color, 'black')
   return leafletStyle
 }
 
@@ -305,7 +304,7 @@ export function convertPolygonStyleToLeafletPath (style) {
   let leafletStyle = convertStyle(style, PolygonStyleToLeafletPath)
   Object.assign(leafletStyle, convertLineStyleToLeafletPath(style.stroke))
   // handle quasar/default color if needed
-  leafletStyle.fillColor = leafletStyle.fillColor ? getCssVar(leafletStyle.fillColor) || leafletStyle.fillColor : 'black'
+  leafletStyle.fillColor = kdkCoreUtils.getHtmlColor(leafletStyle.fillColor, 'black')
   return leafletStyle
 }
 

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import { getCssVar } from 'quasar'
 import chroma from 'chroma-js'
 
 export const Colors = {
@@ -23,6 +24,11 @@ export const Colors = {
   brown: '#795548',
   grey: '#9e9e9e',
   'blue-grey': '#607d8b'
+}
+
+export function getHtmlColor (color, defaultColor) {
+  if (!color) return defaultColor
+  return getCssVar(color) || color
 }
 
 export function getPaletteFromColor (color) {
