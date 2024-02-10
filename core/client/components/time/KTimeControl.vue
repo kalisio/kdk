@@ -63,6 +63,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import moment from 'moment'
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
