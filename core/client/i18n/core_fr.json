@@ -902,12 +902,12 @@
     "PREVIOUS_STEP": "Pas précedent",
     "PREVIOUS_HOUR": "Heure précédente",
     "PREVIOUS_DAY": "Jour précédent",
-    "SET_NOW": "Temps réel",
+    "START_REALTIME": "Activer le temps réel",
+    "STOP_REALTIME": "Stopper le temps réel",
     "SET_DATETIME": "Régler la date et l'heure",
     "SET_STEP": "Régler le pas",
     "NEXT_DAY": "Jour suivant",
     "NEXT_HOUR": "Heure suivante",
-    "NEXT_STEP": "Pas suivant",
-    "1D": "1j"
+    "NEXT_STEP": "Pas suivant"
   }
 }

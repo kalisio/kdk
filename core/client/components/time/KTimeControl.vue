@@ -5,14 +5,26 @@
       <KAction id="previous-hour" icon="las la-angle-left" tooltip="KTimeControl.PREVIOUS_HOUR" :handler="onPreviousHourClicked"/>
       <KAction id="previous-day" icon="las la-calendar-minus" tooltip="KTimeControl.PREVIOUS_DAY" :handler="onPreviousDayClicked"/>
     </div>
-    <KAction id="timecontrol-now" icon="las la-user-clock" :dense="dense" tooltip="KTimeControl.SET_NOW" :handler="onNowClicked">
+    <KAction 
+      id="timecontrol-now" 
+      icon="las la-user-clock"
+      :tooltip="time.realtime ? 'KTimeControl.STOP_REALTIME' : 'KTimeControl.START_REALTIME'"
+      :dense="dense"  
+      :handler="onRealTimeClicked"
+    >
       <q-badge v-if="time.realtime" floating rounded color="green">
         <q-icon name="las la-play" size="10px" color="white" />
       </q-badge>
     </KAction>
     <div class="q-px-xs">
       <div class="row items-center k-datetime-chip">
-        <KDateTime id="datetime-controls" v-model="dateTime" :dense="true" separator="|" />
+        <KDateTime 
+          id="datetime-controls" 
+          v-model="dateTime" 
+          :timezone="timezone"
+          :dense="true" 
+          :options="{ separator: '|' }" 
+        />
       </div>
     </div>
     <div class="q-px-xs">
@@ -60,8 +72,8 @@ import KDateTime from './KDateTime.vue'
 import SettingsSchema from '../../../common/schemas/settings.update.json'
 
 // Data
-const time = Store.get('time')
 const $q = useQuasar()
+const time = Store.get('time')
 const steps = ref(_.get(SettingsSchema, 'properties.timelineStep.field.options', []))
 
 // Computed
@@ -73,6 +85,9 @@ const dateTime = computed({
     Time.setCurrentTime(value)
   }
 })
+const timezone = computed(() => {
+  return time.format.timezone
+})
 const stepLabel = computed(() => {
   const step = steps.value.find(s => s.value === time.step)
   return step ? step.label : ''
@@ -82,8 +97,9 @@ const dense = computed(() => {
 })
 
 // Functions
-function onNowClicked () {
-  Time.startRealtime()
+function onRealTimeClicked () {
+  if (Time.isRealtime()) Time.stopRealtime()
+  else Time.startRealtime()
 }
 function onPreviousStepClicked () {
   const newTime = moment(Time.getCurrentTime()).subtract(Time.getStep(), 'minute')

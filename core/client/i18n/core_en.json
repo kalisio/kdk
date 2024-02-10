@@ -902,13 +902,13 @@
     "PREVIOUS_STEP": "Previous step",
     "PREVIOUS_HOUR": "Previous hour",
     "PREVIOUS_DAY": "Previous day",
-    "SET_NOW": "Real time",
+    "START_REALTIME": "Start real-time",
+    "STTOP_REALTIME": "Stop real-time",
     "SET_DATETIME": "Set date and time",
     "SET_STEP": "Set step",
     "NEXT_DAY": "Next day",
     "NEXT_HOUR": "Next hour",
-    "NEXT_STEP": "Next step",
-    "1D": "1d"
+    "NEXT_STEP": "Next step"
   }
 }
 

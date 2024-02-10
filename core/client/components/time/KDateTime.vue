@@ -23,6 +23,8 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { ref, computed, watch } from 'vue'
+import { toLocalTimezone } from '../../utils/utils.time.js'
+import { Time } from '../../time.js'
 import KDate from './KDate.vue'
 import KTime from './KTime.vue'
 
@@ -36,6 +38,10 @@ const props = defineProps({
       return true
     }
   },
+  timezone: {
+    type: String,
+    default: null
+  },
   options: {
     type: Object,
     default: () => {}
@@ -46,10 +52,6 @@ const props = defineProps({
     validator: (value) => {
       return !_.isEmpty(value) && value.split(' ').length === 2
     }
-  },
-  separator: {
-    type: String,
-    default: undefined
   },
   min: {
     type: String,
@@ -115,16 +117,24 @@ const timeModel = computed({
 const timeOptions = computed(() => {
   return _.merge({}, _.get(props.options, 'time'), { picker: { options: checkTime } })
 })
+const separator = computed(() => {
+  return _.get(props.options, 'separator')
+})
 
 // Watch
 watch(() => props.modelValue, (value) => {
-  dateTime.value = moment.utc(value).local()
+  dateTime.value = toLocalTimezone(props.modelValue, Time.getFormatTimezone())
+})
+watch(() => props.timezone, (value) => {
+  dateTime.value = toLocalTimezone(props.modelValue, Time.getFormatTimezone())
+  minDateTime.value = toLocalTimezone(props.min, Time.getFormatTimezone())
+  maxDateTime.value = toLocalTimezone(props.max, Time.getFormatTimezone())
 })
 watch(() => props.min, (value) => {
-  minDateTime.value = moment.utc(value).local()
+  minDateTime.value = toLocalTimezone(props.min, Time.getFormatTimezone())
 })
 watch(() => props.max, (value) => {
-  maxDateTime.value = moment.utc(value).local()
+  maxDateTime.value = toLocalTimezone(props.max, Time.getFormatTimezone())
 })
 
 // Functions
@@ -172,7 +182,7 @@ function toHMS (value) {
 }
 
 // Immediate
-if (props.modelValue) dateTime.value = moment.utc(props.modelValue).local()
-if (props.min) minDateTime.value = moment.utc(props.min).local()
-if (props.max) maxDateTime.value = moment.utc(props.max).local()
+if (props.modelValue) dateTime.value = toLocalTimezone(props.modelValue, Time.getFormatTimezone())
+if (props.min) minDateTime.value = toLocalTimezone(props.min, Time.getFormatTimezone())
+if (props.max) maxDateTime.value = toLocalTimezone(props.max, Time.getFormatTimezone())
 </script>

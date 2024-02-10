@@ -540,16 +540,6 @@
     "ARCHIVES_LABEL": "Archives",
     "NO_MODEL_AVAILABLE": "No model available"
   },
-  "KTimeline": {
-    "PREVIOUS_DAY": "Previous day",
-    "NEXT_DAY": "Next day",
-    "PREVIOUS_HOUR": "Previous hour",
-    "NEXT_HOUR": "Next hour",
-    "PREVIOUS_STEP": "Previsous step",
-    "NEXT_STEP": "Next step",
-    "SET_NOW": "Real time",
-    "SET_DATE": "Go on a date"
-  },
   "KInformationBox": {
     "LABEL": "Information box",
     "NO_FEATURE_PROPERTIES": "No information available",
