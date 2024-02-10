@@ -3,6 +3,7 @@ import logger from 'loglevel'
 import { uid } from 'quasar'
 import { getHtmlColor } from './utils.colors.js'
 
+const defaultSize = { width: 24, height: 24 }
 const defaultColor = 'black'
 const defaultIconSize = 12
 const defaultTextSize = 12
@@ -151,7 +152,7 @@ export function createShape (options) {
     anchor = shape.anchor || anchor
   }
   // Define the size
-  let size = { width: 24, height: 24 }
+  let size = defaultSize
   if (options.size) {
     size = getSize(options.size)
   } else {
