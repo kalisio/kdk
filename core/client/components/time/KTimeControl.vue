@@ -16,7 +16,14 @@
       </div>
     </div>
     <div class="q-px-xs">
-      <q-fab id="timecontrol-step" color="primary" :label="$tie(stepLabel)" direction="up" hide-icon padding="xs">
+      <q-fab 
+        id="timecontrol-step" 
+        color="primary" 
+        :label="$tie(stepLabel)" 
+        direction="up" 
+        hide-icon 
+        padding="0"
+      >
         <template v-slot:tooltip>
           <q-tooltip>
             {{ $t('KTimeControl.SET_STEP') }}
@@ -24,8 +31,8 @@
         </template>
         <template v-for="step in steps" :key="step.id">
           <q-fab-action
-            :id="step.id"
-            :color="step.color"
+            :id="step.label"
+            color="primary"
             :label="$tie(step.label)"
             hide-icon
             padding="xs"
@@ -45,27 +52,17 @@
 
 <script setup>
 import moment from 'moment'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { Time } from '../../time.js'
 import { Store } from '../../store.js'
 import KDateTime from './KDateTime.vue'
+import SettingsSchema from '../../../common/schemas/settings.update.json'
 
 // Data
 const time = Store.get('time')
 const $q = useQuasar()
-const steps = [
-  { id: 'step-05', color: 'primary', label: '5m', value: 5 },
-  { id: 'step-10', color: 'primary', label: '10m', value: 10 },
-  { id: 'step-12', color: 'primary', label: '12m', value: 12 },
-  { id: 'step-15', color: 'primary', label: '15m', value: 15 },
-  { id: 'step-20', color: 'primary', label: '20m', value: 20 },
-  { id: 'step-30', color: 'primary', label: '30m', value: 30 },
-  { id: 'step-60', color: 'primary', label: '1h', value: 60 },
-  { id: 'step-180', color: 'primary', label: '3h', value: 180 },
-  { id: 'step-360', color: 'primary', label: '6h', value: 360 },
-  { id: 'step-1440', color: 'primary', label: 'KTimeControl.1D', value: 1440 }
-]
+const steps = ref(_.get(SettingsSchema, 'properties.timelineStep.field.options', []))
 
 // Computed
 const dateTime = computed({
@@ -77,7 +74,7 @@ const dateTime = computed({
   }
 })
 const stepLabel = computed(() => {
-  const step = steps.find(s => s.value === time.step)
+  const step = steps.value.find(s => s.value === time.step)
   return step ? step.label : ''
 })
 const dense = computed(() => {
