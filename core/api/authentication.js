@@ -18,7 +18,7 @@ const { NotAuthenticated } = errors
 export class Authentication extends AuthenticationService {
   // Feathers does not seem to take input payload into account when renewing the token,
   // see https://github.com/feathersjs/feathers/issues/3419
-  async getPayload(authResult, params) {
+  async getPayload (authResult, params) {
     // Params can override defaults
     if (params.payload) {
       return params.payload

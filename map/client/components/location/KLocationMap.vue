@@ -200,7 +200,7 @@ export default {
           }
         })
       }
-      //}
+      // }
       this.locationLayer.addTo(this.map)
       // wait for the next tick to recenter the view
       this.$nextTick(() => this.recenter())

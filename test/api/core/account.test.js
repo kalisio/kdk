@@ -230,7 +230,7 @@ describe('core:account', () => {
     }
   })
   // Let enough time to process
-  .timeout(5000)
+    .timeout(5000)
 
   it('verify user signup', async () => {
     const user = await accountService.create({

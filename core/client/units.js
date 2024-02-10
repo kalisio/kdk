@@ -94,7 +94,7 @@ const angle = {
   }
 }
 const fraction = {
-  'ppm': {
+  ppm: {
     symbol: 'units.PPM_SYMBOL',
     label: 'units.PPM_LABEL'
   }
@@ -112,7 +112,7 @@ const volumeVelocity = {
   }
 }
 const radioactivity = {
-  'bq': {
+  bq: {
     symbol: 'units.BEQUEREL_SYMBOL',
     label: 'units.BEQUEREL_LABEL',
     baseName: 'radioactivity'
@@ -129,65 +129,65 @@ const radioactivityDensity = {
   }
 }
 const equivalentDose = {
-  'sv': {
+  sv: {
     symbol: 'units.SIEVERT_SYMBOL',
     label: 'units.SIEVERT_LABEL',
     baseName: 'equivalentDose',
     aliases: ['sievert']
   },
-  'msv': {
+  msv: {
     symbol: 'units.MILLISIEVERT_SYMBOL',
     label: 'units.MILLISIEVERT_LABEL',
     definition: '0.001 sv'
   },
-  'usv': {
+  usv: {
     symbol: 'units.MICROSIEVERT_SYMBOL',
     label: 'units.MICROSIEVERT_LABEL',
     definition: '0.000001 sv'
   },
-  'nsv': {
+  nsv: {
     symbol: 'units.NANOSIEVERT_SYMBOL',
     label: 'units.NANOSIEVERT_LABEL',
     definition: '0.000000001 sv'
   }
 }
 const equivalentDoseRate = {
-  'svs': {
+  svs: {
     symbol: 'units.SIEVERT_PER_SECOND_SYMBOL',
     label: 'units.SIEVERT_PER_SECOND_LABEL',
     baseName: 'equivalentDoseRate'
   },
-  'msvs': {
+  msvs: {
     symbol: 'units.MILLISIEVERT_PER_SECOND_SYMBOL',
     label: 'units.MILLISIEVERT_PER_SECOND_LABEL',
     definition: '0.001 svs'
   },
-  'usvs': {
+  usvs: {
     symbol: 'units.MICROSIEVERT_PER_SECOND_SYMBOL',
     label: 'units.MICROSIEVERT_PER_SECOND_LABEL',
     definition: '0.000001 svs'
   },
-  'nsvs': {
+  nsvs: {
     symbol: 'units.NANOSIEVERT_PER_SECOND_SYMBOL',
     label: 'units.NANOSIEVERT_PER_SECOND_LABEL',
     definition: '0.000000001 svs'
   },
-  'svh': {
+  svh: {
     symbol: 'units.SIEVERT_PER_HOUR_SYMBOL',
     label: 'units.SIEVERT_PER_HOUR_LABEL',
     definition: '0.000277778 svs'
   },
-  'msvh': {
+  msvh: {
     symbol: 'units.MILLISIEVERT_PER_HOUR_SYMBOL',
     label: 'units.MILLISIEVERT_PER_HOUR_LABEL',
     definition: '0.000000277778 svs'
   },
-  'usvh': {
+  usvh: {
     symbol: 'units.MICROSIEVERT_PER_HOUR_SYMBOL',
     label: 'units.MICROSIEVERT_PER_HOUR_LABEL',
     definition: '0.000000000277778 svs'
   },
-  'nsvh': {
+  nsvh: {
     symbol: 'units.NANOSIEVERT_PER_HOUR_SYMBOL',
     label: 'units.NANOSIEVERT_PER_HOUR_LABEL',
     definition: '0.000000000000277778 svs'

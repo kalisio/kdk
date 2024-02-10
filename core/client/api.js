@@ -162,7 +162,7 @@ export function createClient (config) {
   // Get the base URL/domain to be used (useful for mobile apps)
   api.getBaseUrl = function () {
     // We can override the default app origin anyway
-    let origin = config.origin || window.location.origin
+    const origin = config.origin || window.location.origin
     // Check for registered custom base Url if any
     return LocalStorage.get(baseUrlStorageKey, origin)
   }

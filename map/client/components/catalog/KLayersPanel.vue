@@ -5,7 +5,7 @@
       <!-- Orphan layers -->
       <k-layers-selector
         :layers="orphanLayers"
-        :options="{ hideIfEmpty: true }" 
+        :options="{ hideIfEmpty: true }"
       />
       <!-- Categorized layers -->
       <template v-for="category in filteredCategories">

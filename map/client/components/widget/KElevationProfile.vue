@@ -45,8 +45,8 @@ export default {
     mapGhostIcon: {
       type: Object,
       default: () => {
-        return { 
-          shape: "square-pin",
+        return {
+          shape: 'square-pin',
           size: [60, 24],
           color: 'secondary',
           stroke: {

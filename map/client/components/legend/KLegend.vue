@@ -34,12 +34,12 @@
         </template>
         <!-- legend components by layers -->
         <template v-for="layer in layersBySublegend[sublegend.name]" :key="layer.name" class="column full-width">
-          <KLayerLegend 
-            :layer ="layer" 
-            :zoom="zoom" 
-            :engine="engine" 
+          <KLayerLegend
+            :layer ="layer"
+            :zoom="zoom"
+            :engine="engine"
             :renderers="renderers"
-          /> 
+          />
         </template>
       </q-expansion-item>
     </template>

@@ -276,7 +276,7 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowControls (placement, controls) {
-    for (let key in _.keys(windowDefaultContols)) {
+    for (const key in _.keys(windowDefaultContols)) {
       if (!_.has(controls, key)) {
         logger.warn(`[KDK] Invalid window controls ${controls}`)
         return

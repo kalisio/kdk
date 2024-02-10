@@ -233,7 +233,7 @@ export default {
         // Is current time visible in data time range ?
         const currentTime = Time.getCurrentTime()
         const timeRange = Time.getRange()
-        let annotations = []
+        const annotations = []
         if (currentTime.isBetween(timeRange.start, timeRange.end)) {
           annotations.push({
             type: 'line',

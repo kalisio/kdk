@@ -26,9 +26,9 @@ const props = defineProps({
 // data
 const sanitizeHtmlOptions = {
   ...sanitizeHtml.defaults,
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'strike' ]),
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat(['strike']),
   allowedAttributes: _.merge(sanitizeHtml.defaults.allowedAttributes, { '*': ['style'] }),
-  allowedStyles: { '*': { 'text-align': [/^left$/, /^right$/, /^center$/] }}
+  allowedStyles: { '*': { 'text-align': [/^left$/, /^right$/, /^center$/] } }
 }
 
 // computed

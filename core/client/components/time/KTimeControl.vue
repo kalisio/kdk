@@ -96,7 +96,7 @@ function onNextStepClicked () {
   const newTime = moment(Time.getCurrentTime()).add(Time.getStep(), 'minute')
   Time.setCurrentTime(newTime)
 }
-function onStepClicked(step) {
+function onStepClicked (step) {
   Time.setStep(step)
 }
 function onPreviousHourClicked () {
