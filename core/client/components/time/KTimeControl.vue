@@ -5,11 +5,11 @@
       <KAction id="previous-hour" icon="las la-angle-left" tooltip="KTimeControl.PREVIOUS_HOUR" :handler="onPreviousHourClicked"/>
       <KAction id="previous-day" icon="las la-calendar-minus" tooltip="KTimeControl.PREVIOUS_DAY" :handler="onPreviousDayClicked"/>
     </div>
-    <KAction 
-      id="timecontrol-now" 
+    <KAction
+      id="timecontrol-now"
       icon="las la-user-clock"
       :tooltip="time.realtime ? 'KTimeControl.STOP_REALTIME' : 'KTimeControl.START_REALTIME'"
-      :dense="dense"  
+      :dense="dense"
       :handler="onRealTimeClicked"
     >
       <q-badge v-if="time.realtime" floating rounded color="green">
@@ -18,22 +18,22 @@
     </KAction>
     <div class="q-px-xs">
       <div class="row items-center k-datetime-chip">
-        <KDateTime 
-          id="datetime-controls" 
-          v-model="dateTime" 
+        <KDateTime
+          id="datetime-controls"
+          v-model="dateTime"
           :timezone="timezone"
-          :dense="true" 
-          :options="{ separator: '|' }" 
+          :dense="true"
+          :options="{ separator: '|' }"
         />
       </div>
     </div>
     <div class="q-px-xs">
-      <q-fab 
-        id="timecontrol-step" 
-        color="primary" 
-        :label="$tie(stepLabel)" 
-        direction="up" 
-        hide-icon 
+      <q-fab
+        id="timecontrol-step"
+        color="primary"
+        :label="$tie(stepLabel)"
+        direction="up"
+        hide-icon
         padding="0"
       >
         <template v-slot:tooltip>
