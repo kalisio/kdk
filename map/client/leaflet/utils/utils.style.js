@@ -187,46 +187,7 @@ const PolygonStyleToLeafletPath = {
   rule: 'fillRule',
 }
 
-//export const LeafletStyleOptions = _.values(LeafletStyleMappings)
-
-export function createLeafletIconFromStyle (iconStyle) {
-  const iconOptions = iconStyle.options || iconStyle
-  let type = 'icon'
-  if (iconStyle.html) {
-    type = 'divIcon'
-    // Remove default background style
-    if (!iconOptions.className) _.set(iconOptions, 'className', '')
-  }
-  return _.get(L, type)(iconOptions)
-}
-
-export function createLeafletMarkerFromStyle (latlng, markerStyle) {
-  let options 
-  if (markerStyle) {
-    // Retrienve the options
-    options = markerStyle.options || markerStyle
-    // Retrieve the type
-    const type = markerStyle.type || 'shapeMarker'
-    if (type !== 'shapeMarker') {
-      // parse icon options to create Leaflet icon
-      if (markerStyle.icon) {
-        const icon = createLeafletIconFromStyle(markerStyle.icon)
-        options = Object.assign(_.omit(options, ['icon']), { icon })
-      }
-      return _.get(L, type || 'marker')(latlng, options)
-    }
-  }
-  return L.shapeMarker(latlng, options)
-}
-
-export function createMarkerFromPointStyle (latlng, style) {
-  if (!latlng) {
-    logger.warn(`[KDK] 'latlng' should be defined`)
-    return
-  }
-  return L.shapeMarker(latlng, style)
-}
-
+// TODO: to be removed when updating 3D style
 export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
   if (!style) return {}
   const leafletStyle = (inPlace ? style : {})
@@ -265,6 +226,14 @@ export function convertToLeafletFromSimpleStyleSpec (style, inPlace) {
   if (_.has(leafletStyle, 'pane')) _.set(leafletStyle, 'pane', _.get(leafletStyle, 'pane').toString())
   if (_.has(leafletStyle, 'shadowPane')) _.set(leafletStyle, 'shadowPane', _.get(leafletStyle, 'shadowPane').toString())
   return leafletStyle
+}
+
+export function createMarkerFromPointStyle (latlng, style) {
+  if (!latlng) {
+    logger.warn(`[KDK] 'latlng' should be defined`)
+    return
+  }
+  return L.shapeMarker(latlng, style)
 }
 
 function convertStyle (style, mapping) {
