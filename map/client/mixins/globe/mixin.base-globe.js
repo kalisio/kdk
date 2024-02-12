@@ -100,7 +100,8 @@ export const baseGlobe = {
       }
       // Handle specific case of built-in creation functions
       const createFunction = 'create' + provider
-      provider = (Cesium[createFunction] ? Cesium[createFunction](cesiumOptions) : new Cesium[provider](cesiumOptions))
+      if (Cesium[provider]) provider = new Cesium[provider](cesiumOptions)
+      else provider = Cesium[createFunction](cesiumOptions)
       // Terrain is directly managed using a provider
       return (isTerrainLayer(cesiumOptions) ? provider : new Cesium.ImageryLayer(provider))
     },

@@ -64,7 +64,7 @@ export const geojsonLayers = {
           entitiesToAdd.push({
             id: entity.id + '-wall',
             parent: entity,
-            name: entity.name,
+            name: entity.name ? entity.name : entity.id + '-wall',
             description: entity.description.getValue(0),
             properties: entity.properties.getValue(0),
             wall: {
@@ -85,7 +85,7 @@ export const geojsonLayers = {
           entitiesToAdd.push({
             id: entity.id,
             position: entity.position.getValue(0),
-            name: entity.name,
+            name: entity.name ? entity.name : entity.id,
             description: entity.description.getValue(0),
             properties: entity.properties.getValue(0),
             label: {
