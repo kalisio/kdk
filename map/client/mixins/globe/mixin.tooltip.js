@@ -68,8 +68,12 @@ export const tooltip = {
       }
     },
     onTooltip (options, event) {
-      // Nothing to do in this case
-      if (options && _.get(options, 'cesium.tooltip.permanent)')) return
+      if (options) {
+        const cesiumOptions = options.cesium || options
+        const tooltipStyle = cesiumOptions.tooltip
+        // Nothing to do in this case
+        if (_.get(tooltipStyle, 'options.permanent')) return
+      }
       // FIXME: show/hide tooltip
       const entity = event.target
       if (this.overEntity) {
