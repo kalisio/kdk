@@ -240,22 +240,71 @@ use_mongo() {
 ###
 
 get_git_tag() {
-    git tag --points-at
+    case "$CI_NAME" in
+        github)
+            if [ $"GITHUB_REF_TYPE" = "tag" ]; then
+               echo "$GITHUB_REF_NAME"
+            fi
+            ;;
+        gitlab)
+            echo "${CI_COMMIT_TAG:-}"
+            ;;
+        travis)
+            echo "${TRAVIS_TAG:-}"
+            ;;
+        *)
+            git tag --points-at
+            ;;
+    esac
 }
 
 get_git_branch() {
-    git branch --show-current
+    case "$CI_NAME" in
+        github)
+            if [ $"GITHUB_REF_TYPE" = "branch" ]; then
+               echo "$GITHUB_REF_NAME"
+            fi
+            ;;
+        gitlab)
+            if [ -z "$CI_COMMIT_TAG" ]; then
+                echo "$CI_COMMIT_REF_NAME"
+            fi
+            ;;
+        travis)
+            if [ -z "$TRAVIS_TAG" ]; then
+                echo "$TRAVIS_BRANCH"
+            fi
+            ;;
+        *)
+            git branch --show-current
+            ;;
+    esac
 }
 
 get_git_commit_sha() {
-    git rev-parse HEAD
+    case "$CI_NAME" in
+        github)
+            echo "$GITHUB_SHA"
+            ;;
+        gitlab)
+            echo "$CI_COMMIT_SHA"
+            ;;
+        travis)
+            echo "$TRAVIS_COMMIT"
+            ;;
+        *)
+            git rev-parse HEAD
+            ;;
+    esac
 }
 
 get_git_changed_files() {
     local COMMIT0=${1:-HEAD}
     local COMMIT1=${2:-"$COMMIT0"^}
 
-    git diff --name-only "$COMMIT0" "$COMMIT1"
+    if [ -z "$CI_NAME" ]; then
+        git diff --name-only "$COMMIT0" "$COMMIT1"
+    fi
 }
 
 ### Github

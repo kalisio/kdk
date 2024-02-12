@@ -1,4 +1,4 @@
-name: KDK's docs
+name: Publish docs
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
       - "docs/**"
 jobs:
   publish_docs:
-    # name: Tests / Node ${{ matrix.node }} / Mongo ${{ matrix.mongo }}
+    name: Publish docs
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
@@ -25,6 +25,6 @@ jobs:
       #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
       #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Init runner
-        run: bash ./scripts/init-runner.sh ${{ github.job }}
-      - name: Publish doc
+        run: bash ./scripts/init_runner.sh ${{ github.job }}
+      - name: Publish docs
         run: bash ./scripts/publish_docs.sh

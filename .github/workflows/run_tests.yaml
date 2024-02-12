@@ -1,4 +1,4 @@
-name: KDK's tests
+name: Run tests
 on:
   push:
     branches:
@@ -16,14 +16,6 @@ jobs:
     #   image: harbor.portal.kalisio.com/kalisio/ci-kdk:latest
     #   # Run using Github Actions specific user in our container
     #   options: --user 1001
-    # steps:
-    #   - name: Checkout repo
-    #     uses: actions/checkout@v4
-    #   - name: Run tests
-    #     env:
-    #       SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-    #       GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
-    #     run: bash ./scripts/test.sh
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -40,10 +32,9 @@ jobs:
       #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
       #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Init runner
-        run: bash ./scripts/init-runner.sh ${{ github.job }}
+        run: bash ./scripts/init_runner.sh ${{ github.job }}
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
           GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
-        # run: bash ./scripts/test.sh -n ${{ matrix.node }} -m ${{ matrix.mongo }}
-        run: bash ./scripts/run_tests.sh
+        run: bash ./scripts/run_tests.sh -n ${{ matrix.node }} -m ${{ matrix.mongo }}

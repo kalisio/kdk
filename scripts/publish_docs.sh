@@ -8,13 +8,9 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 
 . "$THIS_PATH/lib.sh"
 
-CHANGED_FILES=$(get_git_changed_files)
+# vitepress version requires node 18
+use_node 18
 
-if [[ "$CHANGED_FILES" =~ ^"docs/" ]]; then
-    # vitepress version requires node 18
-    use_node 18
+cd "$ROOT_PATH/docs" && yarn install && yarn build
 
-    cd "$ROOT_PATH/docs" && yarn install && yarn build
-
-    deploy_gh_pages "$ROOT_PATH" "$ROOT_PATH/docs/.vitepress/dist"
-fi
+deploy_gh_pages "$ROOT_PATH" "$ROOT_PATH/docs/.vitepress/dist"

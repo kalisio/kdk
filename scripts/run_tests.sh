@@ -25,6 +25,10 @@ use_node "$NODE_VER"
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
 if [ "$CI" = true ]; then
+    echo "Current tag is $(get_git_tag)"
+    echo "Current branch is $(get_git_branch)"
+    echo "Current commit is $(get_git_commit_sha)"
+
     begin_group "Fetching project dependencies ..."
 
     KALISIO_DEVELOPMENT_DIR="$TMP_PATH/kalisio"
