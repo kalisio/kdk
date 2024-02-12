@@ -123,6 +123,8 @@ const SimpleStyleToLineStyle = {
   'stroke-color': 'color',
   'stroke-opacity': 'opacity',
   'stroke-width': 'width',
+  'dash-array': 'dashArray',
+  'dash-offset': 'dashOffset',
   weight: 'width',
   'z-index': 'pane',
   pane: 'pane',
@@ -136,7 +138,7 @@ const LineStyleTemplateMappings = {
   weight: 'style.line.width',
   'line-cap': 'style.line.cap',
   'line-join': 'style.line.join',
-  'dash-array': 'style.linee.dashArray',
+  'dash-array': 'style.line.dashArray',
   'dash-offset': 'style.line.dashOffset',
   'z-index': 'style.line.pane',
   pane: 'style.line.pane'
