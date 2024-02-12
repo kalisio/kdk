@@ -102,10 +102,10 @@ export const geojsonLayers = {
       entitiesToAdd.forEach(entity => dataSource.entities.add(entity))
     },
     async updateGeoJsonData (dataSource, options, geoJson) {
-      // As we have async operations during the whole chart creation process avoid reentrance
-      // otherwise we might have interleaved calls leading to multiple charts being created
-      if (this.updatingGeoJsonData[dataSource]) return
-      this.updatingGeoJsonData[dataSource] = true
+      // As we have async operations during the whole whole loading process avoid reentrance
+      // otherwise we might have interleaved calls leading to doublon entities being created
+      if (dataSource.updatingGeoJsonData) return
+      dataSource.updatingGeoJsonData = true
       const cesiumOptions = options.cesium
       const source = _.get(cesiumOptions, 'source')
       const sourceTemplate = _.get(cesiumOptions, 'sourceTemplate')
@@ -149,7 +149,7 @@ export const geojsonLayers = {
       } catch (error) {
         logger.error(error)
       }
-      delete this.updatingGeoJsonData[dataSource]
+      delete dataSource.updatingGeoJsonData
     },
     async createCesiumRealtimeGeoJsonLayer (dataSource, options) {
       const cesiumOptions = options.cesium
