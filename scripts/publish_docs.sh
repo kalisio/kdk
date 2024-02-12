@@ -6,7 +6,7 @@ THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_PATH=$(dirname "$THIS_FILE")
 ROOT_PATH=$(dirname "$THIS_PATH")
 
-. "$THIS_PATH/lib.sh"
+. "$THIS_PATH/kash/kash.sh"
 
 # vitepress version requires node 18
 use_node 18
