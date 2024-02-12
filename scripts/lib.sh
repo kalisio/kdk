@@ -242,7 +242,7 @@ use_mongo() {
 get_git_tag() {
     case "$CI_ID" in
         github)
-            if [ $"GITHUB_REF_TYPE" = "tag" ]; then
+            if [ "$GITHUB_REF_TYPE" = "tag" ]; then
                echo "$GITHUB_REF_NAME"
             fi
             ;;
@@ -261,7 +261,7 @@ get_git_tag() {
 get_git_branch() {
     case "$CI_ID" in
         github)
-            if [ $"GITHUB_REF_TYPE" = "branch" ]; then
+            if [ "$GITHUB_REF_TYPE" = "branch" ]; then
                echo "$GITHUB_REF_NAME"
             fi
             ;;
