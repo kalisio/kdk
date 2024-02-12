@@ -240,7 +240,7 @@ use_mongo() {
 ###
 
 get_git_tag() {
-    case "$CI_NAME" in
+    case "$CI_ID" in
         github)
             if [ $"GITHUB_REF_TYPE" = "tag" ]; then
                echo "$GITHUB_REF_NAME"
@@ -259,7 +259,7 @@ get_git_tag() {
 }
 
 get_git_branch() {
-    case "$CI_NAME" in
+    case "$CI_ID" in
         github)
             if [ $"GITHUB_REF_TYPE" = "branch" ]; then
                echo "$GITHUB_REF_NAME"
@@ -282,7 +282,7 @@ get_git_branch() {
 }
 
 get_git_commit_sha() {
-    case "$CI_NAME" in
+    case "$CI_ID" in
         github)
             echo "$GITHUB_SHA"
             ;;
@@ -302,7 +302,7 @@ get_git_changed_files() {
     local COMMIT0=${1:-HEAD}
     local COMMIT1=${2:-"$COMMIT0"^}
 
-    if [ -z "$CI_NAME" ]; then
+    if [ -z "$CI_ID" ]; then
         git diff --name-only "$COMMIT0" "$COMMIT1"
     fi
 }
