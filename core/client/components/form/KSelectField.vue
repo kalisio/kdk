@@ -27,7 +27,7 @@
     @blur="onChanged"
     @update:model-value="onChanged"
   >
-    <!-- pptions display -->
+    <!-- options display -->
     <template v-slot:option="scope">
       <q-item
         v-bind="scope.itemProps"

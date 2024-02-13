@@ -18,18 +18,9 @@
           dense />
       </div>
       <div id="icons" class="row justify-start items-center q-gutter-sm">
-        <template v-for="icon in iconsPage">
-          <q-icon :id="getIconId(icon.name)" v-if="icon.name === selectedIcon.name" :key="icon.name"
-            style="border-bottom: 0.25rem solid" :color="selectedIcon.color" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
-            <q-tooltip>
-              {{icon.title}}
-            </q-tooltip>
-          </q-icon>
-          <q-icon :id="getIconId(icon.name)" v-if="icon.name !== selectedIcon.name" :key="icon.name"
-            color="grey-7" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
-            <q-tooltip>
-              {{icon.title}}
-            </q-tooltip>
+        <template v-for="icon in iconsPage" :key="icon.name">
+          <q-icon :id="getIconId(icon.name)" :color="getIconColor(icon.name)" :name="icon.name" size="2rem" @click="onIconSelected(icon)">
+            <q-tooltip>{{icon.title}}</q-tooltip>
           </q-icon>
         </template>
       </div>
@@ -105,6 +96,13 @@ export default {
   methods: {
     getIconId (name) {
       return _.kebabCase(name)
+    },
+    getIconColor (name) {
+      let color = 'grey-7'
+      if (name === this.selectedIcon.name) {
+        color = this.selectedIcon.color === 'white' ? 'black' : this.selectedIcon.color
+      }
+      return color
     },
     getIconsForCategory (category) {
       const categoryIcons = this.categoryInfos[this.selectedCategory.value].icons
