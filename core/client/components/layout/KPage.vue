@@ -309,6 +309,7 @@ body {
   background-color: #FFFFFF;
   border: solid 1px lightgrey;
   border-radius: 3px;
+  position: relative;
 }
 .k-pane:hover, .k-left-pane:hover {
   border: solid 1px $primary;
