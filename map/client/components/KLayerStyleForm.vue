@@ -3,57 +3,46 @@
     <k-icon-chooser ref="iconChooser" @icon-choosed="onIconChanged" />
     <k-color-chooser ref="colorChooser" @color-choosed="onColorChanged" />
     <q-expansion-item id="style-general-group" default-opened icon="las la-low-vision" :label="$t('KLayerStyleForm.BASE')" group="group">
-      <q-list dense class="row">
-        <q-item class="col-12">
-          <q-item-section class="col-1">
-            <q-toggle v-model="isVisible"/>
-          </q-item-section>
-          <q-item-section class="col-11 text-left">
-            {{$t('KLayerStyleForm.DEFAULT_VISIBILITY')}}
-          </q-item-section>
+      <q-list dense class="q-pa-md">
+        <q-item class="row justify-start">
+          <q-item-section class="col-1"><q-toggle v-model="isVisible"/></q-item-section>
+          <q-item-section>{{$t('KLayerStyleForm.DEFAULT_VISIBILITY')}}</q-item-section>
         </q-item>
-        <q-item class="col-12">
-          <q-item-section class="col-1">
-            <q-toggle id="style-toggle-minzoom" v-model="hasMinZoom"/>
-          </q-item-section>
-          <q-item-section class="col-6 text-left">
-          {{$t('KLayerStyleForm.MIN_ZOOM')}}
-          </q-item-section>
-          <q-item-section class="col-4 text-left">
+        <q-item class="row justify-start">
+          <q-item-section class="col-1"><q-toggle id="style-toggle-minzoom" v-model="hasMinZoom"/></q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.MIN_ZOOM')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-2">
             <q-slider id="style-set-minzoom" v-model="minZoom" :disable="!hasMinZoom"
               :min="minViewerZoom" :max="hasMaxZoom ? maxZoom : maxViewerZoom" :step="1"
               label label-always :label-value="minZoom"/>
           </q-item-section>
         </q-item>
-        <q-item class="col-12">
-          <q-item-section class="col-1">
-            <q-toggle id="style-toggle-maxzoom" v-model="hasMaxZoom"/>
-          </q-item-section>
-          <q-item-section class="col-6 text-left">
-          {{$t('KLayerStyleForm.MAX_ZOOM')}}
-          </q-item-section>
-          <q-item-section class="col-4">
+        <q-item class="row justify-start">
+          <q-item-section class="col-1"><q-toggle id="style-toggle-maxzoom" v-model="hasMaxZoom"/></q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.MAX_ZOOM')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-2">
             <q-slider id="style-set-maxzoom" v-model="maxZoom" :disable="!hasMaxZoom"
               :min="hasMinZoom ? minZoom : minViewerZoom" :max="maxViewerZoom" :step="1"
               label label-always :label-value="maxZoom"/>
           </q-item-section>
         </q-item>
-        <q-item class="col-12" v-if="isVectorLayer">
-          <q-item-section class="col-1">
-            <q-toggle id="style-is-selectable" v-model="isSelectable"/>
-          </q-item-section>
-          <q-item-section class="col-4 text-left">
-            {{$t('KLayerStyleForm.SELECTABLE')}}
+        <q-item class="row justify-start">
+          <q-item-section class="col-1"><q-toggle id="style-toggle-clustering" v-model="clustering"/></q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.POINT_CLUSTERING')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-2">
+            <q-slider id="style-set-clustering" v-model="disableClusteringAtZoom" :disable="!clustering"
+              :min="minViewerZoom" :max="maxViewerZoom" :step="1"
+              label label-always :label-value="disableClusteringAtZoom"/>
           </q-item-section>
         </q-item>
-        <q-item v-if="!hasFeatureSchema" class="col-12">
-          <q-item-section class="col-1">
-            <q-toggle v-model="hasOpacity"/>
-          </q-item-section>
-          <q-item-section class="col-6 text-left">
-          {{$t('KLayerStyleForm.LAYER_OPACITY')}}
-          </q-item-section>
-          <q-item-section class="col-4">
+        <q-item class="row justify-start" v-if="isVectorLayer">
+          <q-item-section class="col-1"><q-toggle id="style-is-selectable" v-model="isSelectable"/></q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.SELECTABLE')}}</q-item-section>
+        </q-item>
+        <q-item v-if="!hasFeatureSchema" class="row justify-start">
+          <q-item-section class="col-1"><q-toggle v-model="hasOpacity"/></q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.LAYER_OPACITY')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-2">
             <q-slider v-model="opacity" :disable="!hasOpacity"
               :min="0" :max="1" :step="0.1"
               label label-always :label-value="$t('KLayerStyleForm.OPACITY') + ' ' + opacity"/>
@@ -62,206 +51,137 @@
       </q-list>
     </q-expansion-item>
     <q-expansion-item v-if="isVectorLayer" id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
-      <q-list dense class="row items-center justify-around q-pa-md">
-        <q-item class="col-12">
-          <q-item-section class="col-1">
-            <q-toggle id="style-toggle-clustering" v-model="clustering"/>
+      <q-list dense class="q-pa-md">
+        <q-item class="row justify-start">
+          <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}</q-item-section>
+          <q-item-section class="col-1"><q-avatar id="style-point-icons" :text-color="defaultPoint['icon.color']" :icon="defaultPoint['icon.classes']"
+            :color="defaultPoint['icon.color'] === 'white' ? 'dark' : 'white'" @click="onIconClicked(defaultPoint)"/></q-item-section>
+          <q-item-section class="col-1"><q-btn id="style-point-color" round style="max-width: 16px" :color="defaultPoint['color']" @click="onColorClicked(defaultPoint, 'color')"/></q-item-section>
+        </q-item>
+        <q-item v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="row justify-start">
+          <q-item-section avatar><q-btn flat round color="primary" icon="las la-trash" @click="onRemoveIconStyle(iconStyle)">
+            <q-tooltip>{{$t('KLayerStyleForm.REMOVE_POINT_STYLE')}}</q-tooltip></q-btn>
           </q-item-section>
-          <q-item-section class="col-6 text-left">
-          {{$t('KLayerStyleForm.POINT_CLUSTERING')}}
+          <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_POINT_STYLE')}}</q-item-section>
+          <q-item-section class="col-1"><q-avatar :text-color="iconStyle['icon.color']" :icon="iconStyle['icon.classes']" color="white" @click="onIconClicked(iconStyle)"/></q-item-section>
+          <q-item-section class="col-1"><q-btn round style="max-width: 16px" :color="iconStyle['color']" @click="onColorClicked(iconStyle, 'color')"></q-btn></q-item-section>
+          <q-item-section class="col-3"><q-select v-if="iconStyle.operator" v-model="iconStyle.operator" dense :options="getOperators(iconStyle)" emit-value map-options>
+              <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.WHEN_PROPERTY_IS_POINT_STYLE', { property: iconStyle.property })}}</span></template></q-select>
           </q-item-section>
-          <q-item-section class="col-4">
-            <q-slider id="style-point-clustering" v-model="disableClusteringAtZoom" :disable="!clustering"
-              :min="minViewerZoom" :max="maxViewerZoom" :step="1"
-              label label-always :label-value="disableClusteringAtZoom"/>
+          <q-item-section><component :is="iconStyle.component" :ref="iconStyle.onComponentCreated" :properties="iconStyle.properties" @field-changed="iconStyle.onValueChanged"/>
           </q-item-section>
         </q-item>
-        <q-item class="col-12">
-          <q-item-section avatar>
-            <q-chip id="style-point-icons" clickable v-ripple text-color="white"
-              :icon="defaultIcon['icon-classes']" :color="defaultIcon['marker-color']" @click="onIconClicked(defaultIcon)"/>
-          </q-item-section>
-          <q-item-section>
-            {{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}
-          </q-item-section>
-        </q-item>
-        <q-item v-bind:id="'point-feature-schema-' + color" v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="col-12">
-          <q-item-section avatar>
-            <q-chip clickable v-ripple text-color="white"
-              :icon="iconStyle['icon-classes']" :color="iconStyle['marker-color']" @click="onIconClicked(iconStyle)"/>
-          </q-item-section>
-          <q-item-section avatar class="col-4">
-            <q-select v-if="iconStyle.operator" v-model="iconStyle.operator" :label="iconStyle.property" stack-label :options="getOperators(iconStyle)" emit-value map-options/>
-          </q-item-section>
-          <q-item-section class="col-5">
-            <component
-              :is="iconStyle.component"
-              :ref="iconStyle.onComponentCreated"
-              :properties="iconStyle.properties"
-              :display="{ icon: false, label: false }"
-              @field-changed="iconStyle.onValueChanged"
-            />
-          </q-item-section>
-          <q-item-section avatar>
-            <q-btn flat color="primary" icon="las la-trash" @click="onRemoveIconStyle(iconStyle)">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
-                {{$t('KLayerStyleForm.REMOVE_POINT_STYLE')}}
-              </q-tooltip>
-            </q-btn>
-          </q-item-section>
-        </q-item>
-        <q-item v-if="hasFeatureSchema" class="col-12">
-          <q-item-section avatar class="col-6 text-left">
-            {{$t('KLayerStyleForm.ADD_POINT_STYLE')}}
-          </q-item-section>
+        <q-item v-if="hasFeatureSchema" class="row justify-start">
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
-              <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddIconStyle(property)"/>
-              </template>
+              <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.ADD_POINT_STYLE')}}</span></template>
+              <template v-slot:before><q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddIconStyle(property)"/></template>
             </q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
     <q-expansion-item v-if="isVectorLayer" id="style-line-group" icon="las la-grip-lines" :label="$t('KLayerStyleForm.LINES')" group="group">
-      <q-list dense class="row items-center justify-around q-pa-md">
-        <q-item class="col-12">
-          <q-item-section class="col-6 text-left">
-            {{$t('KLayerStyleForm.DEFAULT_LINE_STYLE')}}
+      <q-list dense class="q-pa-md">
+        <q-item class="row justify-start">
+          <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_LINE_STYLE')}}&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-1"><q-slider id="style-line-width" v-model="defaultLine['width']" :min="1" :max="20" :step="1"
+              label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + defaultLine['width'] + 'px'"/>
           </q-item-section>
-          <q-item-section class="col-1">
-            <q-btn id="style-line-color" round small :color="defaultLine['stroke-color']" @click="onColorClicked(defaultLine, 'stroke-color')">
-            </q-btn>
+          <q-item-section class="col-1"><q-slider id="style-line-opacity" v-model="defaultLine['opacity']" :min="0" :max="1" :step="0.1"
+              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + defaultLine['opacity']"/>
           </q-item-section>
-          <q-item-section class="col-2">
-            <q-slider id="style-line-width" v-model="defaultLine['stroke-width']"
-              :min="1" :max="20" :step="1"
-              label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + defaultLine['stroke-width'] + 'px'"/>
+          <q-item-section class="col-1"><q-btn id="style-line-color" round style="max-width: 16px" :color="defaultLine['color']" @click="onColorClicked(defaultLine, 'color')"/></q-item-section>
+        </q-item>
+        <q-item v-if="hasFeatureSchema" v-for="lineStyle in lineStyles" :key="lineStyle.key" class="row justify-start">
+          <q-item-section avatar><q-btn flat round color="primary" icon="las la-trash" @click="onRemoveLineStyle(lineStyle)">
+            <q-tooltip>{{$t('KLayerStyleForm.REMOVE_LINE_STYLE')}}</q-tooltip></q-btn>
           </q-item-section>
-          <q-item-section class="col-2">
-            <q-slider id="style-line-opacity" v-model="defaultLine['stroke-opacity']"
-              :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + defaultLine['stroke-opacity']"/>
+          <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_LINE_STYLE')}}</q-item-section>
+          <q-item-section class="col-1"><q-slider v-model="lineStyle['width']" :min="1" :max="20" :step="1"
+              label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + lineStyle['width'] + 'px'"/>
+          </q-item-section>
+          <q-item-section class="col-1"><q-slider v-model="lineStyle['opacity']" :min="0" :max="1" :step="0.1"
+              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + lineStyle['opacity']"/>
+          </q-item-section>
+          <q-item-section class="col-1"><q-btn round style="max-width: 16px" :color="lineStyle['color']" @click="onColorClicked(lineStyle, 'color')"/></q-item-section>
+          <q-item-section class="col-3"><q-select v-if="lineStyle.operator" v-model="lineStyle.operator" dense :options="getOperators(lineStyle)" emit-value map-options>
+              <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.WHEN_PROPERTY_IS_LINE_STYLE', { property: lineStyle.property })}}</span></template></q-select>
+          </q-item-section>
+          <q-item-section class="col-3"><component :is="lineStyle.component" :ref="lineStyle.onComponentCreated" :properties="lineStyle.properties" @field-changed="lineStyle.onValueChanged"/>
           </q-item-section>
         </q-item>
-        <q-item v-if="hasFeatureSchema" v-for="lineStyle in lineStyles" :key="lineStyle.key" class="col-12">
-          <q-item-section avatar class="col-3">
-            <q-select v-if="lineStyle.operator" v-model="lineStyle.operator" :label="lineStyle.property" stack-label :options="getOperators(lineStyle)" emit-value map-options/>
-          </q-item-section>
-          <q-item-section class="col-3">
-            <component
-              :is="lineStyle.component"
-              :ref="lineStyle.onComponentCreated"
-              :properties="lineStyle.properties"
-              :display="{ icon: false, label: false }"
-              @field-changed="lineStyle.onValueChanged"
-            />
-          </q-item-section>
-          <q-item-section class="col-1">
-            <q-btn round small :color="lineStyle['stroke-color']" @click="onColorClicked(lineStyle, 'stroke-color')">
-            </q-btn>
-          </q-item-section>
-          <q-item-section class="col-2">
-            <q-slider v-model="lineStyle['stroke-width']"
-              :min="1" :max="20" :step="1"
-              label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + lineStyle['stroke-width'] + 'px'"/>
-          </q-item-section>
-          <q-item-section class="col-2">
-            <q-slider v-model="lineStyle['stroke-opacity']"
-              :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + lineStyle['stroke-opacity']"/>
-          </q-item-section>
-          <q-item-section avatar>
-            <q-btn flat color="primary" icon="las la-trash" @click="onRemoveLineStyle(lineStyle)">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
-                {{$t('KLayerStyleForm.REMOVE_LINE_STYLE')}}
-              </q-tooltip>
-            </q-btn>
-          </q-item-section>
-        </q-item>
-        <q-item v-if="hasFeatureSchema" class="col-12">
-          <q-item-section avatar class="col-6 text-left">
-            {{$t('KLayerStyleForm.ADD_LINE_STYLE')}}
-          </q-item-section>
+        <q-item v-if="hasFeatureSchema" class="row justify-start">
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
-              <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddLineStyle(property)"/>
-              </template>
+              <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.ADD_LINE_STYLE')}}</span></template>
+              <template v-slot:before><q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddLineStyle(property)"/></template>
             </q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
     <q-expansion-item v-if="isVectorLayer" id="style-polygon-group" icon="las la-draw-polygon" :label="$t('KLayerStyleForm.POLYGONS')" group="group">
-      <q-list dense class="row items-center justify-around q-pa-md">
-        <q-item class="col-12">
-          <q-item-section class="col-7">
-            {{$t('KLayerStyleForm.DEFAULT_POLYGON_FILL_STYLE')}}
+      <q-list dense class="q-pa-md">
+        <q-item class="row justify-start">
+          <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_POLYGON_LINE_STYLE')}}&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-1"><q-slider id="style-polygon-line-width" v-model="defaultPolygon['stroke.width']" :min="1" :max="20" :step="1"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_WIDTH') + defaultPolygon['stroke.width'] + 'px'"/>
           </q-item-section>
-          <q-item-section class="col-1">
-            <q-btn id="style-polygon-color" round small :color="defaultPolygon['fill-color']" @click="onColorClicked(defaultPolygon, 'fill-color')">
-            </q-btn>
+          <q-item-section class="col-1"><q-slider id="style-polygon-line-opacity" v-model="defaultPolygon['stroke.opacity']" :min="0" :max="1" :step="0.1"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_OPACITY') + defaultPolygon['stroke.opacity']"/>
           </q-item-section>
-          <q-item-section class="col-2">
-            <q-slider id="style-fill-opacity" v-model="defaultPolygon['fill-opacity']"
-              :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + defaultPolygon['fill-opacity']"/>
+          <q-item-section class="col-1"><q-btn id="style-polygon-line-color" round style="max-width: 16px" :color="defaultPolygon['stroke.color']" @click="onColorClicked(defaultPolygon, 'stroke.color')"/>
           </q-item-section>
-        </q-item>
-        <q-item v-if="hasFeatureSchema" v-for="polygonStyle in polygonStyles" :key="polygonStyle.key" class="col-12">
-          <q-item-section avatar class="col-3">
-            <q-select v-if="polygonStyle.operator" v-model="polygonStyle.operator" :label="polygonStyle.property" stack-label :options="getOperators(polygonStyle)" emit-value map-options/>
+          <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_POLYGON_FILL_STYLE')}}&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-1"><q-slider id="style-polygon-opacity" v-model="defaultPolygon['opacity']" :min="0" :max="1" :step="0.1"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + defaultPolygon['opacity']"/>
           </q-item-section>
-          <q-item-section class="col-4">
-            <component
-              :is="polygonStyle.component"
-              :ref="polygonStyle.onComponentCreated"
-              :properties="polygonStyle.properties"
-              :display="{ icon: false, label: false }"
-              @field-changed="polygonStyle.onValueChanged"
-            />
-          </q-item-section>
-          <q-item-section class="col-1">
-            <q-btn round small :color="polygonStyle['fill-color']" @click="onColorClicked(polygonStyle, 'fill-color')">
-            </q-btn>
-          </q-item-section>
-          <q-item-section class="col-2">
-            <q-slider v-model="polygonStyle['fill-opacity']"
-              :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + polygonStyle['fill-opacity']"/>
-          </q-item-section>
-          <q-item-section avatar>
-            <q-btn flat color="primary" icon="las la-trash" @click="onRemovePolygonStyle(polygonStyle)">
-              <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
-                {{$t('KLayerStyleForm.REMOVE_POLYGON_STYLE')}}
-              </q-tooltip>
-            </q-btn>
+          <q-item-section class="col-1"><q-btn id="style-polygon-color" round style="max-width: 16px" :color="defaultPolygon['color']" @click="onColorClicked(defaultPolygon, 'color')"/>
           </q-item-section>
         </q-item>
-        <q-item v-if="hasFeatureSchema" class="col-12">
-          <q-item-section avatar class="col-6 text-left">
-            {{$t('KLayerStyleForm.ADD_POLYGON_STYLE')}}
+        <q-item v-if="hasFeatureSchema" v-for="polygonStyle in polygonStyles" :key="polygonStyle.key" class="row justify-start">
+          <q-item-section avatar><q-btn flat round color="primary" icon="las la-trash" @click="onRemovePolygonStyle(polygonStyle)">
+            <q-tooltip>{{$t('KLayerStyleForm.REMOVE_POLYGON_STYLE')}}</q-tooltip></q-btn>
           </q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_POLYGON_LINE_STYLE')}}</q-item-section>
+          <q-item-section class="col-1"><q-slider v-model="polygonStyle['stroke.width']" :min="1" :max="20" :step="1"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_WIDTH') + polygonStyle['stroke.width'] + 'px'"/>
+          </q-item-section>
+          <q-item-section class="col-1"><q-slider v-model="polygonStyle['stroke.opacity']" :min="0" :max="1" :step="0.1"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_OPACITY') + polygonStyle['stroke.opacity']"/>
+          </q-item-section>
+          <q-item-section><q-btn round style="max-width: 16px" :color="polygonStyle['stroke.color']" @click="onColorClicked(polygonStyle, 'stroke.color')"/>
+          </q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_POLYGON_FILL_STYLE')}}&nbsp;&nbsp;</q-item-section>
+          <q-item-section class="col-1"><q-slider v-model="polygonStyle['opacity']" :min="0" :max="1" :step="0.1"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + polygonStyle['opacity']"/>
+          </q-item-section>
+          <q-item-section class="col-1"><q-btn round style="max-width: 16px" :color="polygonStyle['color']" @click="onColorClicked(polygonStyle, 'color')"/>
+          </q-item-section>
+          <q-item-section class="col-2"><q-select v-if="polygonStyle.operator" v-model="polygonStyle.operator" dense :options="getOperators(polygonStyle)" emit-value map-options>
+              <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.WHEN_PROPERTY_IS_POLYGON_STYLE', { property: polygonStyle.property })}}</span></template></q-select>
+          </q-item-section>
+          <q-item-section class="col-3"><component :is="polygonStyle.component" :ref="polygonStyle.onComponentCreated" :properties="polygonStyle.properties" @field-changed="polygonStyle.onValueChanged"/>
+          </q-item-section>
+        </q-item>
+        <q-item v-if="hasFeatureSchema" class="row justify-start">
           <q-item-section class="col-6">
             <q-select v-model="property" :options="properties">
-              <template v-slot:after>
-                <q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddPolygonStyle(property)"/>
-              </template>
+              <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.ADD_POLYGON_STYLE')}}</span></template>
+              <template v-slot:before><q-btn v-if="property" round dense flat icon="las la-plus" @click="onAddPolygonStyle(property)"/></template>
             </q-select>
           </q-item-section>
         </q-item>
       </q-list>
     </q-expansion-item>
     <q-expansion-item v-if="hasFeatureSchema" ref="popup" id="style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
-      <q-list dense class="row items-center justify-around q-pa-md">
-
-        <q-item class="col-12">
+      <q-list dense class="q-pa-md">
+        <q-item class="row justify-start">
           <q-item-section class="col-1">
             <q-toggle id="style-toggle-popup" v-model="popup"/>
           </q-item-section>
-          <q-item-section class="col-11">
+          <q-item-section class="col-6">
             <q-select
               for="style-popup-field"
               id="style-popup-field"
@@ -289,12 +209,12 @@
       </q-list>
     </q-expansion-item>
     <q-expansion-item v-if="hasFeatureSchema" ref="tooltip" id="style-tooltip-group" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
-      <q-list dense class="row items-center justify-around q-pa-md">
-        <q-item class="col-12">
+      <q-list dense class="q-pa-md">
+        <q-item class="row justify-start">
           <q-item-section class="col-1">
             <q-toggle id="style-toggle-tooltip" v-model="tooltip"/>
           </q-item-section>
-          <q-item-section class="col-11">
+          <q-item-section class="col-6">
             <q-select
               for="style-tooltip-field"
               id="style-tooltip-field"
@@ -320,12 +240,12 @@
       </q-list>
     </q-expansion-item>
     <q-expansion-item v-if="hasFeatureSchema" ref="infobox" id="style-infobox-group" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
-      <q-list dense class="row items-center justify-around q-pa-md">
-        <q-item class="col-12">
+      <q-list dense class="q-pa-md">
+        <q-item class="row justify-start">
           <q-item-section class="col-1">
             <q-toggle id="style-toggle-infobox" v-model="infobox"/>
           </q-item-section>
-          <q-item-section class="col-11">
+          <q-item-section class="col-6">
             <q-select
               for="style-infobox-field"
               id="style-infobox-field"
@@ -441,22 +361,11 @@ export default {
       infoboxProperties: [],
       clustering: true,
       disableClusteringAtZoom: 18,
-      // Required to detail style properties upfront for reactivity
-      defaultIcon: {
-        'marker-color': 'blue',
-        'icon-classes': 'fas fa-circle'
-      },
+      defaultPoint: {},
       iconStyles: [],
-      defaultLine: {
-        'stroke-color': 'red',
-        'stroke-width': 3,
-        'stroke-opacity': 1
-      },
+      defaultLine: {},
       lineStyles: [],
-      defaultPolygon: {
-        'fill-color': 'green',
-        'fill-opacity': 1
-      },
+      defaultPolygon: {},
       polygonStyles: [],
       hasError: false,
       error: ''
@@ -492,7 +401,7 @@ export default {
         properties.field.options = values.map(value => ({ value, label: (_.isNil(value) ? 'NIL' : value) }))
       }
       // Remove label as we add it on top of the operator
-      properties.field.helper = ''
+      properties.field.label = ''
       // Load the required component
       const component = kCoreUtils.loadComponent(componentName)
       const style = {
@@ -526,7 +435,7 @@ export default {
       }
       return operators
     },
-    async processTemplates (values, properties, defaultStyle, styles) {
+    async processTemplates (values, properties, prefix, defaultStyle, styles) {
       // We have styles for a set of feature property values templated using if statements
       // For instance if I want all linear features with property 'A' equals 'V' to be green,
       // all linear features with property 'B' equals 'U' to be red, and all others to be blue (default style),
@@ -539,7 +448,7 @@ export default {
       // We will have an array of template statements, actually one for each style property (i.e. stroke-width, marker-color, etc.)
       const templates = {}
       properties.forEach((property, index) => {
-        const templateStatements = _.get(values, `leaflet.${property}`).split('} else {')
+        const templateStatements = _.get(values, `leaflet.${prefix}.${property}`).split('} else {')
         templates[property] = templateStatements[0].split(' else ').concat(templateStatements[1])
       })
       // Process default style values
@@ -551,8 +460,9 @@ export default {
         // Conversion from palette to RGB color is required
         const value = (property.includes('color') ? kCoreUtils.getPaletteFromColor(template) : template)
         // Convert to number whenever required
-        if (property.includes('width') || property.includes('opacity')) {
-          defaultStyle[property] = _.toNumber(value)
+        const n = _.toNumber(value)
+        if (_.isFinite(n)) {
+          defaultStyle[property] = n
         } else {
           defaultStyle[property] = value
         }
@@ -591,7 +501,7 @@ export default {
         styles.push(style)
       }
     },
-    generateTemplates (properties, defaultStyle, styles) {
+    generateTemplates (properties, prefix, defaultStyle, styles) {
       const hasStyles = (styles.length > 0)
       const values = {}
       const templates = properties.map(property => '')
@@ -635,9 +545,9 @@ export default {
       })
       // Set all templates
       properties.forEach((property, index) => {
-        values[`leaflet.${property}`] = (hasStyles ? `<% ${templates[index]} %>` : templates[index])
+        values[`leaflet.${prefix}.${property}`] = (hasStyles ? `<% ${templates[index]} %>` : templates[index])
       })
-      values['leaflet.template'] = (hasStyles ? properties : [])
+      values['leaflet.template'] = (hasStyles ? properties : []).map(property => `${prefix}.${property}`)
       return values
     },
     fillBaseStyle (values) {
@@ -659,44 +569,63 @@ export default {
       this.iconStyles = []
       const templates = _.get(values, 'leaflet.template', [])
       // When no template we have a single default icon
-      if (!templates.includes('marker-color') && !templates.includes('icon-classes')) {
+      if (!templates.includes('style.point.color')) {
         // Conversion from palette to RGB color is required for markers
-        this.defaultIcon['marker-color'] = kCoreUtils.getPaletteFromColor(_.get(values, 'leaflet.marker-color',
-          _.get(this.options, 'pointStyle.icon.options.markerColor', 'blue')))
-        this.defaultIcon['icon-classes'] = _.get(values, 'leaflet.icon-classes',
-          _.get(this.options, 'pointStyle.icon.options.iconClasses', 'fas fa-circle'))
+        this.defaultPoint['color'] = kCoreUtils.getPaletteFromColor(
+          _.get(values, 'leaflet.style.point.color',
+          _.get(this.options, 'style.point.color', kCoreUtils.getColorFromPalette('red'))))
+        this.defaultPoint['icon.classes'] =
+          _.get(values, 'leaflet.style.point.icon.classes',
+          _.get(this.options, 'style.point.icon.classes', 'fas fa-circle'))
+        this.defaultPoint['icon.color'] = kCoreUtils.getPaletteFromColor(
+          _.get(values, 'leaflet.style.point.icon.color',
+          _.get(this.options, 'style.point.icon.color', kCoreUtils.getColorFromPalette('black'))))
       } else {
-        await this.processTemplates(values, ['marker-color', 'icon-classes'], this.defaultIcon, this.iconStyles)
+        await this.processTemplates(values, ['color', 'icon.classes', 'icon.color'], 'style.point', this.defaultPoint, this.iconStyles)
       }
     },
     async fillLineStyles (values) {
       this.lineStyles = []
       const templates = _.get(values, 'leaflet.template', [])
       // When no template we have a single default style
-      if (!templates.includes('stroke-color') && !templates.includes('stroke-width') && !templates.includes('stroke-opacity')) {
+      if (!templates.includes('style.line.color')) {
         // Conversion from palette to RGB color is required for path style
-        this.defaultLine['stroke-color'] = kCoreUtils.getPaletteFromColor(_.get(values, 'leaflet.stroke-color',
-          kCoreUtils.getColorFromPalette(_.get(this.options, 'featureStyle.color'), 'red')))
-        this.defaultLine['stroke-width'] = _.get(values, 'leaflet.stroke-width',
-          _.get(this.options, 'featureStyle.weight', 3))
-        this.defaultLine['stroke-opacity'] = _.get(values, 'leaflet.stroke-opacity',
-          _.get(this.options, 'featureStyle.opacity', 1))
+        this.defaultLine['color'] = kCoreUtils.getPaletteFromColor(
+          _.get(values, 'leaflet.style.line.color',
+          _.get(this.options, 'style.line.color'), kCoreUtils.getColorFromPalette('red')))
+        this.defaultLine['width'] =
+          _.get(values, 'leaflet.style.line.width',
+          _.get(this.options, 'style.line.width', 3))
+        this.defaultLine['opacity'] =
+          _.get(values, 'leaflet.style.line.opacity',
+          _.get(this.options, 'style.line.opacity', 1))
       } else {
-        await this.processTemplates(values, ['stroke-color', 'stroke-width', 'stroke-opacity'], this.defaultLine, this.lineStyles)
+        await this.processTemplates(values, ['color', 'width', 'opacity'], 'style.line', this.defaultLine, this.lineStyles)
       }
     },
     async fillPolygonStyles (values) {
       this.polygonStyles = []
       const templates = _.get(values, 'leaflet.template', [])
       // When no template we have a single default style
-      if (!templates.includes('fill-color') && !templates.includes('fill-opacity')) {
+      if (!templates.includes('style.polygon.color')) {
         // Conversion from palette to RGB color is required for path style
-        this.defaultPolygon['fill-color'] = kCoreUtils.getPaletteFromColor(_.get(values, 'leaflet.fill-color',
-          kCoreUtils.getColorFromPalette(_.get(this.options, 'featureStyle.fillColor', 'green'))))
-        this.defaultPolygon['fill-opacity'] = _.get(values, 'leaflet.fill-opacity',
-          _.get(this.options, 'featureStyle.fillOpacity', 1))
+        this.defaultPolygon['color'] = kCoreUtils.getPaletteFromColor(
+          _.get(values, 'leaflet.style.polygon.color',
+          _.get(this.options, 'style.polygon.color', kCoreUtils.getColorFromPalette('red'))))
+        this.defaultPolygon['opacity'] =
+          _.get(values, 'leaflet.style.polygon.opacity',
+          _.get(this.options, 'style.polygon.opacity', 1))
+        this.defaultPolygon['stroke.color'] = kCoreUtils.getPaletteFromColor(
+          _.get(values, 'leaflet.style.polygon.stroke.color',
+          _.get(this.options, 'style.polygon.stroke.color', kCoreUtils.getColorFromPalette('red'))))
+        this.defaultPolygon['stroke.width'] =
+          _.get(values, 'leaflet.style.polygon.stroke.width',
+          _.get(this.options, 'style.polygon.stroke.width', 3))
+        this.defaultPolygon['stroke.opacity'] =
+          _.get(values, 'leaflet.style.polygon.stroke.opacity',
+          _.get(this.options, 'style.polygon.stroke.opacity', 1))
       } else {
-        await this.processTemplates(values, ['fill-color', 'fill-opacity'], this.defaultPolygon, this.polygonStyles)
+        await this.processTemplates(values, ['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'style.polygon', this.defaultPolygon, this.polygonStyles)
       }
     },
     async fillPopupStyles (values) {
@@ -785,15 +714,14 @@ export default {
       }
     },
     iconStylesValues () {
-      const values = this.generateTemplates(['marker-color', 'icon-classes'], this.defaultIcon, this.iconStyles)
-      values['leaflet.icon-color'] = '#FFFFFF'
+      const values = this.generateTemplates(['color', 'icon.classes', 'icon.color'], 'style.point', this.defaultPoint, this.iconStyles)
       return values
     },
     lineStylesValues () {
-      return this.generateTemplates(['stroke-color', 'stroke-width', 'stroke-opacity'], this.defaultLine, this.lineStyles)
+      return this.generateTemplates(['color', 'width', 'opacity'], 'style.line', this.defaultLine, this.lineStyles)
     },
     polygonStylesValues () {
-      return this.generateTemplates(['fill-color', 'fill-opacity'], this.defaultPolygon, this.polygonStyles)
+      return this.generateTemplates(['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'style.polygon', this.defaultPolygon, this.polygonStyles)
     },
     popupStylesValues () {
       return {
@@ -837,11 +765,12 @@ export default {
     },
     async onAddIconStyle (property) {
       // Default icon
-      let color = _.get(this.options, 'pointStyle.icon.options.markerColor')
+      let color = _.get(this.options, 'style.point.color')
       if (color) color = kCoreUtils.getPaletteFromColor(color)
       const style = await this.createStyle(property.value, {
-        'icon-classes': _.get(this.options, 'pointStyle.icon.options.iconClasses', 'fas fa-circle'),
-        'marker-color': color || 'blue'
+        'icon.classes': _.get(this.options, 'style.point.icon.classes', 'fas fa-circle'),
+        'icon.color': _.get(this.options, 'style.point.icon.color', 'black'),
+        'color': color || 'red'
       })
       this.iconStyles.push(style)
     },
@@ -852,14 +781,14 @@ export default {
     onIconClicked (style) {
       this.editedStyle = style
       this.$refs.iconChooser.open({
-        name: style['icon-classes'],
-        color: style['marker-color']
+        name: style['icon.classes'],
+        color: style['icon.color']
       })
     },
     onIconChanged (icon) {
       Object.assign(this.editedStyle, {
-        'marker-color': icon.color,
-        'icon-classes': icon.name
+        'icon.color': icon.color,
+        'icon.classes': icon.name
       })
     },
     onColorClicked (style, color) {
@@ -873,9 +802,9 @@ export default {
     async onAddLineStyle (property) {
       const style = await this.createStyle(property.value, {
         // Default line
-        'stroke-color': _.get(this.options, 'featureStyle.color', 'red'),
-        'stroke-width': _.get(this.options, 'featureStyle.weight', 1),
-        'stroke-opacity': _.get(this.options, 'featureStyle.opacity', 1)
+        'color': _.get(this.options, 'style.line.color', 'red'),
+        'width': _.get(this.options, 'style.line.width', 1),
+        'opacity': _.get(this.options, 'style.line.opacity', 1)
       })
       this.lineStyles.push(style)
     },
@@ -886,8 +815,11 @@ export default {
     async onAddPolygonStyle (property) {
       const style = await this.createStyle(property.value, {
         // Default line
-        'fill-color': _.get(this.options, 'featureStyle.fillColor', 'green'),
-        'fill-opacity': _.get(this.options, 'featureStyle.fillOpacity', 1)
+        'color': _.get(this.options, 'style.polygon.color', 'green'),
+        'opacity': _.get(this.options, 'style.polygon.opacity', 1),
+        'stroke.color': _.get(this.options, 'style.polygon.stroke.color', 'red'),
+        'stroke.width': _.get(this.options, 'style.polygon.stroke.width', 1),
+        'stroke.opacity': _.get(this.options, 'style.polygon.stroke.opacity', 1)
       })
       this.polygonStyles.push(style)
     },
