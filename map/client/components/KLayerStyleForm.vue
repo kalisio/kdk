@@ -53,19 +53,37 @@
     <q-expansion-item v-if="isVectorLayer" id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="q-pa-md">
         <q-item class="row justify-start">
-          <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}</q-item-section>
-          <q-item-section class="col-1"><q-avatar id="style-point-icons" :text-color="defaultPoint['icon.color']" :icon="defaultPoint['icon.classes']"
+          <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_ICON_STYLE')}}</q-item-section>
+          <q-item-section avatar><q-avatar id="style-point-icon" :text-color="defaultPoint['icon.color']" :icon="defaultPoint['icon.classes'] || 'fas fa-circle'"
             :color="defaultPoint['icon.color'] === 'white' ? 'dark' : 'white'" @click="onIconClicked(defaultPoint)"/></q-item-section>
-          <q-item-section class="col-1"><q-btn id="style-point-color" round style="max-width: 16px" :color="defaultPoint['color']" @click="onColorClicked(defaultPoint, 'color')"/></q-item-section>
+          <q-item-section class="col-1"><q-select id="style-icon-size" :label="$t('KLayerStyleForm.ICON_SIZE')" hide-dropdown-icon v-model="defaultPoint['icon.size']" dense :options="getSizes()" emit-value map-options/>
+          </q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}&nbsp;&nbsp;</q-item-section>
+          <q-item-section avatar><q-btn id="style-point-color" round style="max-width: 16px" :color="defaultPoint['color']" @click="onColorClicked(defaultPoint, 'color')"/></q-item-section>
+          <q-item-section class="col-1"><q-select id="style-point-size" :label="$t('KLayerStyleForm.POINT_SIZE')" hide-dropdown-icon v-model="defaultPoint.size" dense :options="getSizes()" emit-value map-options/>
+          </q-item-section>
+          <q-item-section side><q-select id="style-point-shape" :label="$t('KLayerStyleForm.POINT_SHAPE')" hide-dropdown-icon v-model="defaultPoint.shape" dense :options="getShapes()" emit-value map-options bottom-slots>
+            <template v-slot:selected-item="scope"><KShape :options="scope.opt"/></template>
+            <template v-slot:option="scope"><KShape class="row justify-center" v-bind="scope.itemProps" :options="scope.opt"/></template>
+          </q-select></q-item-section>
         </q-item>
         <q-item v-if="hasFeatureSchema" v-for="iconStyle in iconStyles" :key="iconStyle.key" class="row justify-start">
           <q-item-section avatar><q-btn flat round color="primary" icon="las la-trash" @click="onRemoveIconStyle(iconStyle)">
             <q-tooltip>{{$t('KLayerStyleForm.REMOVE_POINT_STYLE')}}</q-tooltip></q-btn>
           </q-item-section>
-          <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_POINT_STYLE')}}</q-item-section>
-          <q-item-section class="col-1"><q-avatar :text-color="iconStyle['icon.color']" :icon="iconStyle['icon.classes']" color="white" @click="onIconClicked(iconStyle)"/></q-item-section>
-          <q-item-section class="col-1"><q-btn round style="max-width: 16px" :color="iconStyle['color']" @click="onColorClicked(iconStyle, 'color')"></q-btn></q-item-section>
-          <q-item-section class="col-3"><q-select v-if="iconStyle.operator" v-model="iconStyle.operator" dense :options="getOperators(iconStyle)" emit-value map-options>
+          <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_ICON_STYLE')}}</q-item-section>
+          <q-item-section avatar><q-avatar :text-color="iconStyle['icon.color']" :icon="iconStyle['icon.classes']" color="white" @click="onIconClicked(iconStyle)"/></q-item-section>
+          <q-item-section class="col-1"><q-select :label="$t('KLayerStyleForm.ICON_SIZE')" hide-dropdown-icon v-model="iconStyle['icon.size']" dense :options="getSizes()" emit-value map-options/>
+          </q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_POINT_STYLE')}}&nbsp;&nbsp;</q-item-section>
+          <q-item-section avatar><q-btn round style="max-width: 16px" :color="iconStyle['color']" @click="onColorClicked(iconStyle, 'color')"></q-btn></q-item-section>
+          <q-item-section class="col-1"><q-select id="style-point-size" :label="$t('KLayerStyleForm.POINT_SIZE')" hide-dropdown-icon v-model="iconStyle.size" dense :options="getSizes()" emit-value map-options/>
+          </q-item-section>
+          <q-item-section side><q-select id="style-point-shape" :label="$t('KLayerStyleForm.POINT_SHAPE')" hide-dropdown-icon v-model="iconStyle.shape" dense :options="getShapes()" emit-value map-options bottom-slots>
+            <template v-slot:selected-item="scope"><KShape :options="scope.opt"/></template>
+            <template v-slot:option="scope"><KShape class="row justify-center" v-bind="scope.itemProps" :options="scope.opt"/></template>
+          </q-select></q-item-section>
+          <q-item-section class="col-2"><q-select v-if="iconStyle.operator" v-model="iconStyle.operator" dense :options="getOperators(iconStyle)" emit-value map-options>
               <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.WHEN_PROPERTY_IS_POINT_STYLE', { property: iconStyle.property })}}</span></template></q-select>
           </q-item-section>
           <q-item-section><component :is="iconStyle.component" :ref="iconStyle.onComponentCreated" :properties="iconStyle.properties" @field-changed="iconStyle.onValueChanged"/>
@@ -86,7 +104,7 @@
         <q-item class="row justify-start">
           <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_LINE_STYLE')}}&nbsp;&nbsp;</q-item-section>
           <q-item-section class="col-1"><q-slider id="style-line-width" v-model="defaultLine['width']" :min="1" :max="20" :step="1"
-              label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + defaultLine['width'] + 'px'"/>
+              dense label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + defaultLine['width'] + 'px'"/>
           </q-item-section>
           <q-item-section class="col-1"><q-slider id="style-line-opacity" v-model="defaultLine['opacity']" :min="0" :max="1" :step="0.1"
               label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + defaultLine['opacity']"/>
@@ -105,10 +123,10 @@
               label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + lineStyle['opacity']"/>
           </q-item-section>
           <q-item-section class="col-1"><q-btn round style="max-width: 16px" :color="lineStyle['color']" @click="onColorClicked(lineStyle, 'color')"/></q-item-section>
-          <q-item-section class="col-3"><q-select v-if="lineStyle.operator" v-model="lineStyle.operator" dense :options="getOperators(lineStyle)" emit-value map-options>
+          <q-item-section class="col-2"><q-select v-if="lineStyle.operator" v-model="lineStyle.operator" dense :options="getOperators(lineStyle)" emit-value map-options>
               <template v-slot:prepend><span class="text-body2">{{$t('KLayerStyleForm.WHEN_PROPERTY_IS_LINE_STYLE', { property: lineStyle.property })}}</span></template></q-select>
           </q-item-section>
-          <q-item-section class="col-3"><component :is="lineStyle.component" :ref="lineStyle.onComponentCreated" :properties="lineStyle.properties" @field-changed="lineStyle.onValueChanged"/>
+          <q-item-section class="col-5"><component :is="lineStyle.component" :ref="lineStyle.onComponentCreated" :properties="lineStyle.properties" @field-changed="lineStyle.onValueChanged"/>
           </q-item-section>
         </q-item>
         <q-item v-if="hasFeatureSchema" class="row justify-start">
@@ -178,29 +196,13 @@
     <q-expansion-item v-if="hasFeatureSchema" ref="popup" id="style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
       <q-list dense class="q-pa-md">
         <q-item class="row justify-start">
-          <q-item-section class="col-1">
-            <q-toggle id="style-toggle-popup" v-model="popup"/>
-          </q-item-section>
-          <q-item-section class="col-6">
-            <q-select
-              for="style-popup-field"
-              id="style-popup-field"
-              :disable="!popup"
-              use-chips
-              v-model="popupProperties"
-              multiple
-              :options="properties"
-              :label="$t('KLayerStyleForm.ADD_POPUP')"
-            >
+          <q-item-section class="col-1"><q-toggle id="style-toggle-popup" v-model="popup"/></q-item-section>
+          <q-item-section class="col-6"><q-select for="style-popup-field" id="style-popup-field" :disable="!popup" use-chips
+              v-model="popupProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_POPUP')">
               <!-- Options display -->
               <template v-slot:option="scope">
-                <q-item
-                  v-bind="scope.itemProps"
-                  :id="getPopupId(scope.opt)"
-                >
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
+                <q-item v-bind="scope.itemProps" :id="getPopupId(scope.opt)">
+                  <q-item-section> <q-item-label>{{ scope.opt.label }}</q-item-label> </q-item-section>
                 </q-item>
               </template>
             </q-select>
@@ -211,27 +213,13 @@
     <q-expansion-item v-if="hasFeatureSchema" ref="tooltip" id="style-tooltip-group" icon="las la-mouse-pointer" :label="$t('KLayerStyleForm.TOOLTIP')" group="group">
       <q-list dense class="q-pa-md">
         <q-item class="row justify-start">
-          <q-item-section class="col-1">
-            <q-toggle id="style-toggle-tooltip" v-model="tooltip"/>
-          </q-item-section>
-          <q-item-section class="col-6">
-            <q-select
-              for="style-tooltip-field"
-              id="style-tooltip-field"
-              :disable="!tooltip"
-              v-model="tooltipProperty"
-              :options="properties"
-              :label="$t('KLayerStyleForm.ADD_TOOLTIP')"
-            >
+          <q-item-section class="col-1"><q-toggle id="style-toggle-tooltip" v-model="tooltip"/></q-item-section>
+          <q-item-section class="col-6"><q-select for="style-tooltip-field" id="style-tooltip-field" :disable="!tooltip"
+              v-model="tooltipProperty" :options="properties" :label="$t('KLayerStyleForm.ADD_TOOLTIP')">
               <!-- Options display -->
               <template v-slot:option="scope">
-                <q-item
-                  v-bind="scope.itemProps"
-                  :id="getPopupId(scope.opt)"
-                >
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
+                <q-item v-bind="scope.itemProps" :id="getPopupId(scope.opt)" >
+                  <q-item-section> <q-item-label>{{ scope.opt.label }}</q-item-label> </q-item-section>
                 </q-item>
               </template>
             </q-select>
@@ -242,29 +230,13 @@
     <q-expansion-item v-if="hasFeatureSchema" ref="infobox" id="style-infobox-group" icon="las la-th-list" :label="$t('KLayerStyleForm.INFOBOX')" group="group">
       <q-list dense class="q-pa-md">
         <q-item class="row justify-start">
-          <q-item-section class="col-1">
-            <q-toggle id="style-toggle-infobox" v-model="infobox"/>
-          </q-item-section>
-          <q-item-section class="col-6">
-            <q-select
-              for="style-infobox-field"
-              id="style-infobox-field"
-              :disable="!infobox"
-              use-chips
-              v-model="infoboxProperties"
-              multiple
-              :options="properties"
-              :label="$t('KLayerStyleForm.ADD_INFOBOX')"
-            >
+          <q-item-section class="col-1"><q-toggle id="style-toggle-infobox" v-model="infobox"/> </q-item-section>
+          <q-item-section class="col-6"><q-select for="style-infobox-field" id="style-infobox-field" :disable="!infobox" use-chips
+            v-model="infoboxProperties" multiple :options="properties" :label="$t('KLayerStyleForm.ADD_INFOBOX')" >
               <!-- Options display -->
               <template v-slot:option="scope">
-                <q-item
-                  v-bind="scope.itemProps"
-                  :id="getPopupId(scope.opt)"
-                >
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
+                <q-item v-bind="scope.itemProps" :id="getPopupId(scope.opt)" >
+                  <q-item-section> <q-item-label>{{ scope.opt.label }}</q-item-label> </q-item-section>
                 </q-item>
               </template>
             </q-select>
@@ -274,12 +246,8 @@
     </q-expansion-item>
     <q-list v-show="hasError" dense class="row items-center justify-around q-pa-md">
       <q-item>
-        <q-item-section side>
-          <q-icon name="las la-exclamation-circle" color="negative" />
-        </q-item-section>
-        <q-item-section class="text-negative">
-        {{error}}
-        </q-item-section>
+        <q-item-section side> <q-icon name="las la-exclamation-circle" color="negative" /> </q-item-section>
+        <q-item-section class="text-negative">{{error}} </q-item-section>
       </q-item>
     </q-list>
   </div>
@@ -290,13 +258,15 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { uid } from 'quasar'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
-import { KIconChooser, KColorChooser } from '../../../core/client/components'
+import { KIconChooser, KColorChooser, KShape } from '../../../core/client/components'
+import { processStyleTemplates, generateStyleTemplates } from '../utils/utils.style.js'
 
 export default {
   name: 'k-layer-style-form',
   components: {
     KIconChooser,
-    KColorChooser
+    KColorChooser,
+    KShape
   },
   emits: [
     'form-ready'
@@ -405,16 +375,23 @@ export default {
       // Load the required component
       const component = kCoreUtils.loadComponent(componentName)
       const style = {
-        key: uid().toString(),
-        component,
-        componentName,
-        operator: '===',
-        property,
-        properties,
+        key: uid().toString(), component, componentName,
+        operator: '===', property, properties,
         onComponentCreated: (ref) => { if (ref) ref.fill(style.value) },
         onValueChanged: (field, value) => { style.value = value }
       }
       return Object.assign(style, options)
+    },
+    getSizes () {
+      // From 8 to 64 by step of 8
+      return Array(8).fill().map((_, i) => ({
+        label: `${8*i+8}px`,
+        value: 8*i+8
+      }))
+    },
+    getShapes () {
+      return ['none', 'circle', 'triangle-down', 'triangle', 'triangle-right', 'triangle-left', 'rect', 'diamond', 'star', 'marker-pin', 'square-pin']
+      .map(shape => ({ value: shape, shape, size: 32, opacity: 0.1, color: 'primary', stroke: { color: 'primary', width: 2 } }))
     },
     getOperators (style) {
       let operators = [{
@@ -435,120 +412,12 @@ export default {
       }
       return operators
     },
-    async processTemplates (values, properties, prefix, defaultStyle, styles) {
-      // We have styles for a set of feature property values templated using if statements
-      // For instance if I want all linear features with property 'A' equals 'V' to be green,
-      // all linear features with property 'B' equals 'U' to be red, and all others to be blue (default style),
-      // the 'stroke' style property value once converted to template will be the following:
-      // if (properties.A === "V") { %>#00FF00<% } else
-      // if (properties.B === "U") { %>#FF0000<% } else
-      // { %>#0000FF<% }
-
-      // First split after the last else statement to get default style values, then split after each if/else statement
-      // We will have an array of template statements, actually one for each style property (i.e. stroke-width, marker-color, etc.)
-      const templates = {}
-      properties.forEach((property, index) => {
-        const templateStatements = _.get(values, `leaflet.${prefix}.${property}`).split('} else {')
-        templates[property] = templateStatements[0].split(' else ').concat(templateStatements[1])
-      })
-      // Process default style values
-      properties.forEach((property) => {
-        // Default style value is contained in the last template statement
-        let template = templates[property].pop()
-        // Extract it using a regex
-        template = template.match(/%>([^<%]+)<%/)[1]
-        // Conversion from palette to RGB color is required
-        const value = (property.includes('color') ? kCoreUtils.getPaletteFromColor(template) : template)
-        // Convert to number whenever required
-        const n = _.toNumber(value)
-        if (_.isFinite(n)) {
-          defaultStyle[property] = n
-        } else {
-          defaultStyle[property] = value
-        }
-      })
-      // Then process all templated if statements
-      // As all templates have the same conditional structure use the first template to extract property values
-      const templatesStructure = templates[properties[0]]
-      for (let index = 0; index < templatesStructure.length; index++) {
-        const template = templatesStructure[index]
-        // Identify used operator first
-        const operators = ['===', '!==', '>', '<']
-        const operator = _.find(operators, operator => template.includes(` ${operator} `))
-        // Match properties + operator to get property name part
-        const propertyNameRegex = new RegExp(`properties.([^${operator}]+)${operator}`, 'g')
-        let propertyName = propertyNameRegex.exec(template)[1].trim()
-        const isNumber = !propertyName.includes('.toString()')
-        propertyName = propertyName.replace('.toString()', '')
-        // Split at operator
-        let propertyValue = template.split(` ${operator} `)[1]
-        // Match until last parenthesis of the if expression to get property value part
-        propertyValue = propertyValue.slice(0, propertyValue.indexOf(')'))
-        // Omit enclosing quotes for strings
-        propertyValue = propertyValue.replaceAll('"', '').trim()
-        if (isNumber) propertyValue = _.toNumber(propertyValue)
-        let style = { value: propertyValue, operator }
-        properties.forEach(property => {
-          // Match %> <% block to get style values, e.g. icon colors/names
-          const match = /%>([^<%]+)<%/g.exec(templates[property][index])
-          const value = (match ? match[1].trim() : '')
-          // Conversion from palette to RGB color is required
-          style[property] = (property.includes('color')
-            ? kCoreUtils.getPaletteFromColor(value)
-            : (_.isNumber(value) ? Number(value) : value))
-        })
-        style = await this.createStyle(propertyName, style)
-        styles.push(style)
+    async processTemplates (values, properties, styleType, defaultStyle, styles) {
+      processStyleTemplates(values.leaflet, properties, styleType, defaultStyle, styles) 
+      // Jump from style object to internal requirements for UI with additional component, etc.
+      for (let i = 0; i< styles.length; i++) {
+        styles[i] = await this.createStyle(styles[i].property, styles[i])
       }
-    },
-    generateTemplates (properties, prefix, defaultStyle, styles) {
-      const hasStyles = (styles.length > 0)
-      const values = {}
-      const templates = properties.map(property => '')
-      // Process all styles, a style is a matching feature property value associated with a style property values.
-      // It is expressed as a if statement in the final template expression of the style property.
-      // For instance if I want all linear features with property 'A' equals 'V' to be green,
-      // all linear features with property 'B' equals 'U' to be red, and all others to be blue (default style),
-      // the 'stroke' style property value once converted to template will be the following:
-      // if (properties.A === "V") { %>#00FF00<% } else
-      // if (properties.B === "U") { %>#FF0000<% } else
-      // { %>#0000FF<% }
-      styles.forEach(style => {
-        // Process all properties, for each property
-        properties.forEach((property, index) => {
-          // Conversion from palette to RGB color is required
-          const value = (property.includes('color')
-            ? kCoreUtils.getColorFromPalette(style[property])
-            : style[property])
-          let propertyName = style.property
-          let propertyValue = style.value
-          const propertyOperator = style.operator
-          if (typeof propertyValue !== 'number') {
-            propertyName = `${propertyName}.toString()`
-            propertyValue = `"${propertyValue}"`
-          }
-          // Generate style value for given property value
-          templates[index] += `if (properties.${propertyName} ${propertyOperator} ${propertyValue}) { %>${value}<% } else `
-        })
-      })
-      // Process default style for each style property
-      // If there are some styles based on feature property values it will be the last else statement
-      // otherwise it will simply be the sole value in the template expression
-      properties.forEach((property, index) => {
-        // Conversion from palette to RGB color is required
-        const value = (property.includes('color')
-          ? kCoreUtils.getColorFromPalette(defaultStyle[property])
-          : defaultStyle[property])
-        // Avoid converting numbers to string on default values
-        if (hasStyles) templates[index] += `{ %>${value}<% }`
-        else templates[index] = value
-      })
-      // Set all templates
-      properties.forEach((property, index) => {
-        values[`leaflet.${prefix}.${property}`] = (hasStyles ? `<% ${templates[index]} %>` : templates[index])
-      })
-      values['leaflet.template'] = (hasStyles ? properties : []).map(property => `${prefix}.${property}`)
-      return values
     },
     fillBaseStyle (values) {
       this.isVisible = _.get(values, 'leaflet.isVisible', true)
@@ -574,14 +443,20 @@ export default {
         this.defaultPoint['color'] = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.point.color',
           _.get(this.options, 'style.point.color', kCoreUtils.getColorFromPalette('red'))))
+        this.defaultPoint['size'] = _.get(values, 'leaflet.style.point.size',
+          _.get(this.options, 'style.point.size', 24))
+        this.defaultPoint['shape'] = _.get(values, 'leaflet.style.point.shape',
+          _.get(this.options, 'style.point.shape', 'circle'))
         this.defaultPoint['icon.classes'] =
           _.get(values, 'leaflet.style.point.icon.classes',
-          _.get(this.options, 'style.point.icon.classes', 'fas fa-circle'))
+          _.get(this.options, 'style.point.icon.classes', ''))
         this.defaultPoint['icon.color'] = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.point.icon.color',
           _.get(this.options, 'style.point.icon.color', kCoreUtils.getColorFromPalette('black'))))
+        this.defaultPoint['icon.size'] = _.get(values, 'leaflet.style.point.icon.size',
+          _.get(this.options, 'style.point.icon.size', 12))    
       } else {
-        await this.processTemplates(values, ['color', 'icon.classes', 'icon.color'], 'style.point', this.defaultPoint, this.iconStyles)
+        await this.processTemplates(values, ['color', 'size', 'shape', 'icon.classes', 'icon.color', 'icon.size'], 'point', this.defaultPoint, this.iconStyles)
       }
     },
     async fillLineStyles (values) {
@@ -600,7 +475,7 @@ export default {
           _.get(values, 'leaflet.style.line.opacity',
           _.get(this.options, 'style.line.opacity', 1))
       } else {
-        await this.processTemplates(values, ['color', 'width', 'opacity'], 'style.line', this.defaultLine, this.lineStyles)
+        await this.processTemplates(values, ['color', 'width', 'opacity'], 'line', this.defaultLine, this.lineStyles)
       }
     },
     async fillPolygonStyles (values) {
@@ -625,7 +500,7 @@ export default {
           _.get(values, 'leaflet.style.polygon.stroke.opacity',
           _.get(this.options, 'style.polygon.stroke.opacity', 1))
       } else {
-        await this.processTemplates(values, ['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'style.polygon', this.defaultPolygon, this.polygonStyles)
+        await this.processTemplates(values, ['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'polygon', this.defaultPolygon, this.polygonStyles)
       }
     },
     async fillPopupStyles (values) {
@@ -714,14 +589,16 @@ export default {
       }
     },
     iconStylesValues () {
-      const values = this.generateTemplates(['color', 'icon.classes', 'icon.color'], 'style.point', this.defaultPoint, this.iconStyles)
-      return values
+      // Use dot notation as it will be used to update style values using a patch operation
+      return _.mapKeys(generateStyleTemplates(['color', 'size', 'shape', 'icon.classes', 'icon.color', 'icon.size'], 'point', this.defaultPoint, this.iconStyles), (value, key) => `leaflet.${key}`)
     },
     lineStylesValues () {
-      return this.generateTemplates(['color', 'width', 'opacity'], 'style.line', this.defaultLine, this.lineStyles)
+      // Use dot notation as it will be used to update style values using a patch operation
+      return _.mapKeys(generateStyleTemplates(['color', 'width', 'opacity'], 'line', this.defaultLine, this.lineStyles), (value, key) => `leaflet.${key}`)
     },
     polygonStylesValues () {
-      return this.generateTemplates(['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'style.polygon', this.defaultPolygon, this.polygonStyles)
+      // Use dot notation as it will be used to update style values using a patch operation
+      return _.mapKeys(generateStyleTemplates(['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'polygon', this.defaultPolygon, this.polygonStyles), (value, key) => `leaflet.${key}`)
     },
     popupStylesValues () {
       return {
@@ -770,7 +647,10 @@ export default {
       const style = await this.createStyle(property.value, {
         'icon.classes': _.get(this.options, 'style.point.icon.classes', 'fas fa-circle'),
         'icon.color': _.get(this.options, 'style.point.icon.color', 'black'),
-        'color': color || 'red'
+        'icon.size': _.get(this.options, 'style.point.icon.size', 12),
+        'color': color || 'red',
+        'size': _.get(this.options, 'style.point.size', 24),
+        'shape': _.get(this.options, 'style.point.shape', 'circle')
       })
       this.iconStyles.push(style)
     },
