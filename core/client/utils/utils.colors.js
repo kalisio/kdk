@@ -4,6 +4,7 @@ import { getCssVar } from 'quasar'
 import chroma from 'chroma-js'
 
 export const Colors = {
+  white: '#fff',
   dark: '#333',
   red: '#f44336',
   pink: '#e91e63',
