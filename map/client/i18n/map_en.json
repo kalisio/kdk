@@ -312,17 +312,16 @@
     "timeline": {
       "TIMELINE_LABEL": "The timeline allows to quickly execute actions related to the time of displayed data.",
       "DATE_LABEL": "Jump to any given date by using this button.",
-      "NOW_LABEL": "Stick to real-time using this button.",
-      "NEXT_STEP_LABEL": "Go forward in time to the next step as configured in your settings.",
-      "PREVIOUS_STEP_LABEL": "Go backward in time to the previous step as configured in your settings.",
-      "SETTINGS_LINK_LABEL": "How to update your settings in the main menu",
-      "PICK_MINUTES_LABEL": "Change the minutes of current time.",
+      "PICK_DAY_LABEL": "Pick a given day.",
+      "PICK_HOUR_LABEL": "Or pick time.",
+      "NOW_LABEL": "Activate to real-time using this button.",
+      "STEP_LABEL": "Update step using this button.",
+      "NEXT_STEP_LABEL": "Go forward in time to the next step as configured.",
+      "PREVIOUS_STEP_LABEL": "Go backward in time to the previous step as configured.",
       "NEXT_HOUR_LABEL": "Go forward in time to the next hour.",
       "PREVIOUS_HOUR_LABEL": "Go backward in time to the previous hour.",
-      "PICK_HOUR_LABEL": "Or pick the hours of current time.",
       "NEXT_DAY_LABEL": "Go forward in time to the next day.",
-      "PREVIOUS_DAY_LABEL": "Go backward in time to the previous day.",
-      "PICK_DAY_LABEL": "Or pick a given day."
+      "PREVIOUS_DAY_LABEL": "Go backward in time to the previous day."
     },
     "fab": {
       "PROBE_LABEL": "Probe weather forecast data at a specific location.",

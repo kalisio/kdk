@@ -312,17 +312,16 @@
     "timeline": {
       "TIMELINE_LABEL": "La ligne de temps permet d'accéder aux actions relative à la temporalité des données affichées.",
       "DATE_LABEL": "Sélectionnez n'importe quelle date via ce bouton.",
-      "NOW_LABEL": "Suivez le temps courant via ce bouton.",
-      "NEXT_STEP_LABEL": "Avancez dans le temps tel que configuré dans vos paramètres.",
-      "PREVIOUS_STEP_LABEL": "Reculez dans le temps tel que configuré dans vos paramètres.",
-      "SETTINGS_LINK_LABEL": "Mettre à jour vos paramètres dans le menu principal",
-      "PICK_MINUTES_LABEL": "Modifiez les minutes du temps courant.",
+      "PICK_DAY_LABEL": "Choisissez directement un jour.",
+      "PICK_TIMES_LABEL": "Ou choisissez directement l'horaire.",
+      "NOW_LABEL": "Activez le temps courant via ce bouton.",
+      "STEP_LABEL": "Mettre à jour le pas via ce bouton.",
+      "NEXT_STEP_LABEL": "Avancez dans le temps selon le pas configuré.",
+      "PREVIOUS_STEP_LABEL": "Reculez dans le temps selon le pas configuré.",
       "NEXT_HOUR_LABEL": "Avancez dans le temps d'une heure.",
       "PREVIOUS_HOUR_LABEL": "Reculez dans le temps d'une heure.",
-      "PICK_HOUR_LABEL": "Ou choisissez directement l'horaire.",
       "NEXT_DAY_LABEL": "Avancez dans le temps d'un jour.",
-      "PREVIOUS_DAY_LABEL": "Reculez dans le temps d'un jour.",
-      "PICK_DAY_LABEL": "Ou choisissez directement un jour."
+      "PREVIOUS_DAY_LABEL": "Reculez dans le temps d'un jour."
     },
     "fab": {
       "PROBE_LABEL": "Sonder les prévision météorologiques à la position de votre choix.",

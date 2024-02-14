@@ -1,77 +1,77 @@
 module.exports = [{
-  target: '#timeline',
+  target: '#timecontrols',
   title: 'tours.timeline.TIMELINE_LABEL',
   params: {
     placement: 'top'
   }
 }, {
-  target: '#timeline-date',
+  target: '#datetime-controls',
   title: 'tours.timeline.DATE_LABEL',
   params: {
     placement: 'top'
   }
 }, {
-  target: '#timeline-now',
+  target: '#date-button',
+  title: 'tours.timeline.PICK_DAY_LABEL',
+  params: {
+    placement: 'top',
+    clickOn: '#date-button',
+    clickDelay: 100
+  }
+}, {
+  target: '#time-button',
+  title: 'tours.timeline.PICK_TIMES_LABEL',
+  params: {
+    placement: 'top',
+    clickOn: '#time-button',
+    clickDelay: 100
+  }
+}, {
+  target: '#timecontrol-now',
   title: 'tours.timeline.NOW_LABEL',
   params: {
     placement: 'top'
   }
 }, {
-  target: '#timeline-forward',
-  title: 'tours.timeline.NEXT_STEP_LABEL',
-  link: 'tours.timeline.SETTINGS_LINK_LABEL',
+  target: '#timecontrol-step',
+  title: 'tours.timeline.STEP_LABEL',
   params: {
     placement: 'top',
-    tour: 'home'
   }
 }, {
-  target: '#timeline-backward',
+  target: '#previous-step',
   title: 'tours.timeline.PREVIOUS_STEP_LABEL',
-  link: 'tours.timeline.SETTINGS_LINK_LABEL',
   params: {
     placement: 'top',
-    tour: 'home'
   }
 }, {
-  target: '#timeline-minutes-1',
-  title: 'tours.timeline.PICK_MINUTES_LABEL',
-  params: {
-    placement: 'top'
-  }
-}, {
-  target: '#timeline-next-hour',
-  title: 'tours.timeline.NEXT_HOUR_LABEL',
-  params: {
-    placement: 'top'
-  }
-}, {
-  target: '#timeline-previous-hour',
+  target: '#previous-hour',
   title: 'tours.timeline.PREVIOUS_HOUR_LABEL',
   params: {
-    placement: 'top'
+    placement: 'top',
   }
 }, {
-  target: '#timeline-hours-1',
-  title: 'tours.timeline.PICK_HOUR_LABEL',
-  params: {
-    placement: 'top'
-  }
-}, {
-  target: '#timeline-next-day',
-  title: 'tours.timeline.NEXT_DAY_LABEL',
-  params: {
-    placement: 'top'
-  }
-}, {
-  target: '#timeline-previous-day',
+  target: '#previous-day',
   title: 'tours.timeline.PREVIOUS_DAY_LABEL',
   params: {
-    placement: 'top'
+    placement: 'top',
   }
 }, {
-  target: '#timeline-days-1',
-  title: 'tours.timeline.PICK_DAY_LABEL',
+  target: '#next-day',
+  title: 'tours.timeline.NEXT_DAY_LABEL',
   params: {
-    placement: 'top'
+    placement: 'top',
+  }
+}, {
+  target: '#next-hour',
+  title: 'tours.timeline.NEXT_HOUR_LABEL',
+  params: {
+    placement: 'top',
+  }
+}, {
+  target: '#next-step',
+  title: 'tours.timeline.NEXT_STEP_LABEL',
+  params: {
+    placement: 'top',
   }
 }]
