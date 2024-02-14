@@ -20,6 +20,7 @@ export function useSession (options = {}) {
   const isInitialized = ref(false)
   let pendingReconnection = null
   let pendingReload = null
+  let ignoreReconnectionError = false
 
   const User = Store.getRef('user')
 
@@ -70,9 +71,11 @@ export function useSession (options = {}) {
     // Dismiss pending reload message if any
     if (pendingReload) {
       pendingReload.hide()
+      pendingReload = null
     }
     // Display it only the first time the error appears because multiple attempts will be tried
-    if (!pendingReconnection) {
+    if (!pendingReconnection && !ignoreReconnectionError) {
+      Events.emit('disconnected')
       logger.error(new Error('Socket has been disconnected'))
       // This will ensure any operation in progress will not keep a "dead" loading indicator
       // as this error might appear under-the-hood without notifying service operations
@@ -82,17 +85,39 @@ export function useSession (options = {}) {
         message: i18n.t('composables.session.DISCONNECT'),
         html: true,
         persistent: true,
+        cancel: {
+          id: 'ignore-button',
+          label: i18n.t('composables.session.IGNORE'),
+          color: 'primary',
+          outline: true
+        },
+        ok: {
+          id: 'close-button',
+          label: i18n.t('CLOSE'),
+          color: 'primary'
+        },
         position: 'bottom'
-      }).onDismiss(() => { pendingReconnection = null })
+      })
+      .onOk(() => {
+        pendingReconnection = null
+        ignoreReconnectionError = false
+      })
+      .onCancel(() => {
+        pendingReconnection = null
+        ignoreReconnectionError = true
+      })
     }
   }
   function onReconnect () {
     // Dismiss pending reconnection error message if any
     if (pendingReconnection) {
       pendingReconnection.hide()
+      pendingReconnection = null
     }
+    ignoreReconnectionError = false
     // Display it only the first time the reconnection occurs because multiple attempts will be tried
     if (!pendingReload) {
+      Events.emit('reconnected')
       pendingReload = $q.dialog({
         title: i18n.t('composables.session.INFORMATION'),
         message: i18n.t('composables.session.RECONNECT'),
@@ -110,8 +135,8 @@ export function useSession (options = {}) {
         },
         position: 'bottom'
       })
-        .onOk(() => { window.location.reload() })
-        .onCancel(() => { pendingReload = null })
+      .onOk(() => { window.location.reload() })
+      .onCancel(() => { pendingReload = null })
     }
   }
   function onRateLimit () {
@@ -124,7 +149,8 @@ export function useSession (options = {}) {
         flat: true
       },
       position: 'bottom'
-    }).onOk(() => window.location.reload())
+    })
+    .onOk(() => window.location.reload())
   }
 
   // Hooks
