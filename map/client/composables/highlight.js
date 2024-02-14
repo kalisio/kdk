@@ -160,6 +160,7 @@ export function useHighlight (name, options = {}) {
           isVisible: true,
           realtime: true,
           cluster: false,
+          removeMissing: true,
           popup: { pick: [] }
         }
       })

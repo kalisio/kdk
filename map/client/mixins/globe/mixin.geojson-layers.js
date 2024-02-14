@@ -4,7 +4,24 @@ import logger from 'loglevel'
 import sift from 'sift'
 import { Time } from '../../../../core/client/time.js'
 import { convertToLeafletFromSimpleStyleSpec } from '../../leaflet/utils/index.js'
-import { fetchGeoJson, getFeatureId, isInMemoryLayer } from '../../utils.js'
+import { fetchGeoJson, getFeatureId, processFeatures, isInMemoryLayer } from '../../utils.js'
+
+function getWallEntityId (id) {
+  return id + '-wall'
+}
+
+function updateGeoJsonEntity(source, destination) {
+  destination.position = source.position
+  destination.orientation = source.orientation
+  destination.properties = source.properties
+  destination.description = source.description
+  // Points
+  if (source.billboard) destination.billboard = source.billboard
+  // Lines
+  if (source.polyline) destination.polyline = source.polyline
+  // Polygons
+  if (source.polygon) destination.polygon = source.polygon
+}
 
 export const geojsonLayers = {
   methods: {
@@ -20,13 +37,43 @@ export const geojsonLayers = {
       }
       return { stroke, strokeWidth, fill }
     },
-    async loadGeoJson (dataSource, geoJson, cesiumOptions) {
-      // Clean any previous data as otherwise it seems
-      // data is not correctly updated in viewer
-      dataSource.entities.removeAll()
-      await dataSource.load(geoJson, cesiumOptions)
+    async loadGeoJson (dataSource, geoJson, options, updateOptions = {}) {
+      const cesiumOptions = options.cesium
+      // Remove mode
+      if (_.get(updateOptions, 'remove', false)) {
+        let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+        features.forEach(feature => {
+          const id = getFeatureId(feature, options)
+          const wallId = getWallEntityId(id)
+          if (dataSource.entities.getById(id)) dataSource.entities.removeById(id)
+          // Take care that in case of a wall entity we add it in addition to the original line
+          if (dataSource.entities.getById(wallId)) dataSource.entities.removeById(wallId)
+        })
+        return
+      }
+      // We use a separated source in order to load data otherwise Cesium will replace previous ones, causing flickering
+      const loadingDataSource = new Cesium.GeoJsonDataSource()
+      loadingDataSource.notFromDrop = true
+      await loadingDataSource.load(geoJson, cesiumOptions)
+      // Now we process loaded entities to merge with existing ones if any or add new ones
+      let entities = loadingDataSource.entities.values
+      entities.forEach(entity => {
+        const previousEntity = dataSource.entities.getById(entity.id)
+        if (previousEntity) updateGeoJsonEntity(entity, previousEntity)
+        else dataSource.entities.add(entity)
+      })
+      // Remove any entity not existing anymore
+      if (_.get(updateOptions, 'removeMissing', cesiumOptions.removeMissing)) {
+        dataSource.entities.values.forEach(entity => {
+          const id = entity.id
+          const wallId = getWallEntityId(id)
+          if (!loadingDataSource.entities.getById(id)) dataSource.entities.removeById(id)
+          // Take care that in case of a wall entity we add it in addition to the original line
+          if (dataSource.entities.getById(wallId)) dataSource.entities.removeById(wallId)
+        })
+      }
       // Process specific entities
-      const entities = dataSource.entities.values
+      entities = dataSource.entities.values
       const entitiesToAdd = []
       const entitiesToRemove = []
       for (let i = 0; i < entities.length; i++) {
@@ -61,10 +108,11 @@ export const geojsonLayers = {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleSpecOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
           // This one will come in addition to the original line
+          const wallId = getWallEntityId(entity.id)
           entitiesToAdd.push({
-            id: entity.id + '-wall',
+            id: wallId,
             parent: entity,
-            name: entity.name ? entity.name : entity.id + '-wall',
+            name: entity.name ? entity.name : wallId,
             description: entity.description.getValue(0),
             properties: entity.properties.getValue(0),
             wall: {
@@ -101,61 +149,46 @@ export const geojsonLayers = {
       entitiesToRemove.forEach(entity => dataSource.entities.remove(entity))
       entitiesToAdd.forEach(entity => dataSource.entities.add(entity))
     },
-    async updateGeoJsonData (dataSource, options, geoJson) {
+    async updateGeoJsonData (dataSource, options, geoJson, updateOptions = {}) {
       // As we have async operations during the whole whole loading process avoid reentrance
       // otherwise we might have interleaved calls leading to doublon entities being created
-      if (dataSource.updatingGeoJsonData) return
-      dataSource.updatingGeoJsonData = true
+      //if (dataSource.updatingGeoJsonData) return
+      //dataSource.updatingGeoJsonData = true
       const cesiumOptions = options.cesium
       const source = _.get(cesiumOptions, 'source')
       const sourceTemplate = _.get(cesiumOptions, 'sourceTemplate')
       try {
-        // Update function to fetch for new data and update Cesium data source
-        if (options.probeService) {
-          // If the probe location is given by another service use it on initialization
-          if (dataSource.entities.values.length === 0) {
-            await this.loadGeoJson(dataSource, this.getProbeFeatures(options), cesiumOptions)
-          }
-          // Then get last available measures
-          const measureSource = new Cesium.GeoJsonDataSource()
-          await this.loadGeoJson(measureSource, this.getFeatures(options), cesiumOptions)
-          // Then merge with probes
-          const probes = dataSource.entities.values
-          for (let i = 0; i < probes.length; i++) {
-            const probe = probes[i]
-            const measure = measureSource.entities.getById(probe.id)
-            if (measure) {
-              probe.properties = measure.properties
-              probe.description = measure.description
-            }
-          }
+        if (geoJson) {
+          if (options.processor) processFeatures(geoJson, options.processor)
+          await this.loadGeoJson(dataSource, geoJson, options, updateOptions)
+        } else if (options.probeService) {
+          await this.loadGeoJson(dataSource, this.getProbeFeatures(options), options, updateOptions)
+          await this.loadGeoJson(dataSource, this.getFeatures(options), options, updateOptions)
         } else if (options.service) { // Check for feature service layers only, in this case update in place
           // If no probe reference, nothing to be initialized
-          await this.loadGeoJson(dataSource, this.getFeatures(options), cesiumOptions)
-        } else if (geoJson) {
-          await this.loadGeoJson(dataSource, geoJson, cesiumOptions)
+          await this.loadGeoJson(dataSource, this.getFeatures(options), options, updateOptions)
         } else if (sourceTemplate) {
           const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() })
           if (!dataSource.lastFetchedSource || (dataSource.lastFetchedSource !== sourceToFetch)) {
             dataSource.lastFetchedSource = sourceToFetch
-            await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch, options), cesiumOptions)
+            await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch, options), options, updateOptions)
           }
         } else if (!_.isNil(source)) {
           // Assume source is an URL returning GeoJson
-          await this.loadGeoJson(dataSource, fetchGeoJson(source, options), cesiumOptions)
+          await this.loadGeoJson(dataSource, fetchGeoJson(source, options), options, updateOptions)
         }
         this.applyStyle(dataSource.entities, options)
         if (typeof this.applyTooltips === 'function') this.applyTooltips(dataSource.entities, options)
       } catch (error) {
         logger.error(error)
       }
-      delete dataSource.updatingGeoJsonData
+      //delete dataSource.updatingGeoJsonData
     },
     async createCesiumRealtimeGeoJsonLayer (dataSource, options) {
       const cesiumOptions = options.cesium
       // Add update capabilities
-      dataSource.updateGeoJson = async (geoJson) => {
-        await this.updateGeoJsonData(dataSource, options, geoJson)
+      dataSource.updateGeoJson = async (geoJson, updateOptions) => {
+        await this.updateGeoJsonData(dataSource, options, geoJson, updateOptions)
       }
       // Add source compiler if required
       if (_.has(cesiumOptions, 'sourceTemplate')) {
@@ -252,11 +285,11 @@ export const geojsonLayers = {
     getGeoJsonOptions (options) {
       return _.get(this, 'activityOptions.engine.featureStyle', {})
     },
-    async updateLayer (name, geoJson) {
+    async updateLayer (name, geoJson, updateOptions = {}) {
       // Retrieve the layer
       const layer = this.getCesiumLayerByName(name)
       if (!layer) return // Cannot update invisible layer
-      if (typeof layer.updateGeoJson === 'function') layer.updateGeoJson(geoJson)
+      if (typeof layer.updateGeoJson === 'function') layer.updateGeoJson(geoJson, updateOptions)
 
       // We keep geojson data for in memory layer in a cache since
       // these layers will be destroyed when hidden. We need to be able to restore

@@ -12,7 +12,18 @@ import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
 import { api, Time } from '../../../core/client/index.js'
 
-export function transformFeatures (features, transform) {
+export function processFeatures (geoJson, processor) {
+  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  if (typeof processor === 'function') {
+    features.forEach(feature => processor(feature))
+  } else if (typeof processor === 'string') {
+    const compiler = _.template(processor)
+    features.forEach(feature => compiler({ feature, properties: feature.properties }))
+  }
+}
+
+export function transformFeatures (geoJson, transform) {
+  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
   features.forEach(feature => {
     const scaling = _.get(transform, 'scale')
     const rotation = _.get(transform, 'rotate')
@@ -138,16 +149,8 @@ export async function getProbeFeatures (options) {
   // Check API to be used in case the layer is coming from a remote "planet"
   const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
   const response = await planetApi.getService(options.probeService).find(Object.assign({ query }, options.baseParams))
-  const features = (response.type === 'FeatureCollection' ? response.features : [response])
-  if (typeof options.processor === 'function') {
-    features.forEach(feature => options.processor(feature))
-  } else if (typeof options.processor === 'string') {
-    const compiler = _.template(options.processor)
-    features.forEach(feature => compiler({ feature, properties: feature.properties }))
-  }
-  if (options.transform) {
-    transformFeatures(features, options.transform)
-  }
+  if (options.processor) processFeatures(response, options.processor)
+  if (options.transform) transformFeatures(response, options.transform)
   return response
 }
 
@@ -217,16 +220,8 @@ export async function getFeaturesFromQuery (options, query) {
   // Check API to be used in case the layer is coming from a remote "planet"
   const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
   const response = await planetApi.getService(options.service).find(Object.assign({ query }, options.baseParams))
-  const features = (response.type === 'FeatureCollection' ? response.features : [response])
-  if (typeof options.processor === 'function') {
-    features.forEach(feature => options.processor(feature))
-  } else if (typeof options.processor === 'string') {
-    const compiler = _.template(options.processor)
-    features.forEach(feature => compiler({ feature, properties: feature.properties }))
-  }
-  if (options.transform) {
-    transformFeatures(features, options.transform)
-  }
+  if (options.processor) processFeatures(response, options.processor)
+  if (options.transform) transformFeatures(response, options.transform)
   return response
 }
 
@@ -350,16 +345,8 @@ export async function fetchGeoJson (dataSource, options = {}) {
     throw new Error(`Impossible to fetch ${dataSource}: ` + response.status)
   }
   const data = await response.json()
-  const features = (data.type === 'FeatureCollection' ? data.features : [data])
-  if (typeof options.processor === 'function') {
-    features.forEach(feature => options.processor(feature))
-  } else if (typeof options.processor === 'string') {
-    const compiler = _.template(options.processor)
-    features.forEach(feature => compiler({ feature, properties: feature.properties }))
-  }
-  if (options.transform) {
-    transformFeatures(features, options.transform)
-  }
+  if (options.processor) processFeatures(data, options.processor)
+  if (options.transform) transformFeatures(data, options.transform)
   return data
 }
 
