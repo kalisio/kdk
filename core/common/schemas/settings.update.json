@@ -55,7 +55,7 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.TIME_FORMAT_SHORT_YEAR_FIELD_LABEL",
-        "helper": { "icon": "las la-question-circlen", "url": "https://momentjs.com/docs/#/displaying/format/" }
+        "helper": { "icon": "las la-question-circle", "url": "https://momentjs.com/docs/#/displaying/format/" }
       }
     },
     "longYear": {
