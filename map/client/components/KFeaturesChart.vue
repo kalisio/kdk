@@ -108,7 +108,7 @@ export default {
     properties () {
       const properties = []
       _.forOwn(_.get(this.layer, 'schema.content.properties', {}), (value, key) => {
-        const label = _.get(value, 'field.label', _.get(value, 'field.helper', key))
+        const label = _.get(value, 'field.label', '')
         // Check if we have a translation key or directly the label content
         properties.push({ value: key, label: this.$tie(label) })
       })

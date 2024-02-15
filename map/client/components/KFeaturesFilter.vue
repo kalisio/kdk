@@ -94,9 +94,9 @@ export default {
     properties () {
       const properties = []
       _.forOwn(this.fields, (value, key) => {
-        // Use helper or ID
+        // Use label or ID
         properties.push({
-          label: _.get(value, 'field.helper', key),
+          label: _.get(value, 'field.label', key),
           value: key
         })
       })

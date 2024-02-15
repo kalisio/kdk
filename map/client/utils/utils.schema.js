@@ -38,7 +38,6 @@ export function generatePropertiesSchema (geoJson, name) {
         component: (type === 'number'
           ? 'form/KNumberField'
           : (type === 'boolean' ? 'form/KToggleField' : 'form/KTextField')),
-        helper: key,
         label: key
       }
     }
