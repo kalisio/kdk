@@ -13,7 +13,7 @@ ROOT_PATH=$(dirname "$THIS_PATH")
 ### Github Actions
 
 init_github_run_tests() {
-    install_reqs yq age sops nvm node16 node18 mongo4 mongo5 mongo6 cc_test_reporter
+    install_reqs yq age sops nvm node16 node18 node20 mongo4 mongo5 mongo6 cc_test_reporter
     sudo apt-get update && sudo apt-get --no-install-recommends --yes install default-jre
 }
 
