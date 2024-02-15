@@ -267,6 +267,9 @@ export const geojsonLayers = {
           leafletOptions.panes = [pane]
           leafletOptions.pane = options.name
           leafletOptions.shadowPane = options.name
+          // Make pane available to point style as well as shape markers are created from here
+          _.set(leafletOptions, 'style.point.options.pane', options.name)
+          _.set(leafletOptions, 'style.point.options.shadowPane', options.name)
         }
         // If not explicitely disable use defaults for clustering
         if (!_.has(leafletOptions, 'cluster') && _.get(this, 'activityOptions.engine.cluster')) {
