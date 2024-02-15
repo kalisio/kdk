@@ -22,6 +22,7 @@ while getopts "m:n:" option; do
 done
 
 use_node "$NODE_VER"
+use_mongo "$MONGO_VER"
 
 # Check KALISIO_DEVELOPMENT_DIR is defined (dev) or not (ci)
 if [ "$CI" = true ]; then
@@ -67,8 +68,6 @@ if [ "$CI" = true ]; then
     cd "$ROOT_PATH"
 
     end_group "Fetching project dependencies ..."
-
-    use_mongo "$MONGO_VER"
 fi
 
 # Start mongo
