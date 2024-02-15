@@ -60,9 +60,10 @@
           </q-item-section>
           <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_POINT_STYLE')}}&nbsp;&nbsp;</q-item-section>
           <q-item-section avatar><q-btn id="style-point-color" round style="max-width: 16px" :color="defaultPoint['color']" @click="onColorClicked(defaultPoint, 'color')"/></q-item-section>
+          &nbsp;&nbsp;&nbsp;&nbsp;
           <q-item-section class="col-1"><q-select id="style-point-size" :label="$t('KLayerStyleForm.POINT_SIZE')" hide-dropdown-icon v-model="defaultPoint.size" dense :options="getSizes()" emit-value map-options/>
           </q-item-section>
-          <q-item-section side><q-select id="style-point-shape" :label="$t('KLayerStyleForm.POINT_SHAPE')" hide-dropdown-icon v-model="defaultPoint.shape" dense :options="getShapes()" emit-value map-options bottom-slots>
+          <q-item-section avatar><q-select id="style-point-shape" :label="$t('KLayerStyleForm.POINT_SHAPE')" hide-dropdown-icon v-model="defaultPoint.shape" dense :options="getShapes()" emit-value map-options bottom-slots>
             <template v-slot:selected-item="scope"><KShape :options="scope.opt"/></template>
             <template v-slot:option="scope"><KShape class="row justify-center" v-bind="scope.itemProps" :options="scope.opt"/></template>
           </q-select></q-item-section>
@@ -77,9 +78,10 @@
           </q-item-section>
           <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_POINT_STYLE')}}&nbsp;&nbsp;</q-item-section>
           <q-item-section avatar><q-btn round style="max-width: 16px" :color="iconStyle['color']" @click="onColorClicked(iconStyle, 'color')"></q-btn></q-item-section>
+          &nbsp;&nbsp;&nbsp;&nbsp;
           <q-item-section class="col-1"><q-select id="style-point-size" :label="$t('KLayerStyleForm.POINT_SIZE')" hide-dropdown-icon v-model="iconStyle.size" dense :options="getSizes()" emit-value map-options/>
           </q-item-section>
-          <q-item-section side><q-select id="style-point-shape" :label="$t('KLayerStyleForm.POINT_SHAPE')" hide-dropdown-icon v-model="iconStyle.shape" dense :options="getShapes()" emit-value map-options bottom-slots>
+          <q-item-section avatar><q-select id="style-point-shape" :label="$t('KLayerStyleForm.POINT_SHAPE')" hide-dropdown-icon v-model="iconStyle.shape" dense :options="getShapes()" emit-value map-options bottom-slots>
             <template v-slot:selected-item="scope"><KShape :options="scope.opt"/></template>
             <template v-slot:option="scope"><KShape class="row justify-center" v-bind="scope.itemProps" :options="scope.opt"/></template>
           </q-select></q-item-section>
