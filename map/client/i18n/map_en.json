@@ -26,7 +26,7 @@
   "utils": {
     "layers": {
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {features.length} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {total} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
       "DOWNLOAD_INVALID_FEATURES_LABEL": "By checking this option the invalid features will be exported to a file before saving",
       "INVALID_FEATURES_FILE": "InvalidFeatures.geojson",
       "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",

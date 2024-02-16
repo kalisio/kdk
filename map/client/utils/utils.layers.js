@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Loading } from 'quasar'
+import { Notify, Loading } from 'quasar'
 import explode from '@turf/explode'
 import { i18n, api, utils as kCoreUtils } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
@@ -66,8 +66,8 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   const check = checkFeatures(geoJson)
   if (check.kinks.length > 0) {
     const result = await kCoreUtils.dialog({
-      title: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_TITLE', { features: check.kinks }),
-      message: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_MESSAGE', { features: check.kinks }),
+      title: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_TITLE', { total: check.kinks.length }),
+      message: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_MESSAGE', { total: check.kinks.length }),
       options: {
         type: 'toggle',
         model: [],
@@ -127,7 +127,7 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
     // Because we save all features in a single service use filtering to separate layers
     createdLayer = await api.getService('catalog').patch(createdLayer._id, { baseQuery: { layer: createdLayer._id } })
     if (_.get(layer, 'leaflet.tiled')) {
-      this.$notify({ type: 'positive', message: i18n.t('utils.layers.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
+      Notify.create({ type: 'positive', message: i18n.t('utils.layers.SAVE_DIALOG_MESSAGE'), timeout: 10000, html: true })
     }
   } catch (error) {
     // User error message on operation should be raised by error hook, otherwise this is more a coding error
