@@ -11,7 +11,8 @@ export async function openTimeline (page) {
 
 export async function clickTimelineHour (page, hour, wait = 1000) {
   const isTimelineOpened = await openTimeline(page)
-  const xpath = `//div[contains(., "${hour}h") and contains(@class, "k-timeline-hour-frame")]`
+  await core.click(page, '#time-button', wait)
+  const xpath = `//div[contains(@class, "q-time__clock-pos-${hour}")]`
   const elements = await page.$x(xpath)
   if (elements.length > 0) {
     elements[0].click()
