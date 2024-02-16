@@ -1,5 +1,11 @@
 import _ from 'lodash'
+import chroma from 'chroma-js'
+import moment from 'moment'
 import Cesium from 'cesium/Source/Cesium.js'
+import { Time, Units } from '../../../../core/client/index.js'
+import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle,
+         convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
+         PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
 
 export const CesiumStyleMappings = {
   stroke: 'stroke',
@@ -13,11 +19,12 @@ export const CesiumStyleMappings = {
   'marker-symbol': 'markerSymbol',
   'marker-color': 'markerColor'
 }
+
 export const CesiumStyleOptions = _.values(CesiumStyleMappings)
 export const CesiumEntityTypes = ['billboard', 'box', 'corridor', 'cylinder', 'ellipse', 'ellipsoid',
   'label', 'model', 'path', 'plane', 'point', 'polygon', 'polyline', 'rectangle', 'wall']
 
-export function convertToCesiumFromSimpleStyleSpec (style, inPlace) {
+export function convertToCesiumFromSimpleStyle (style, inPlace) {
   if (!style) return {}
   const convertedStyle = (inPlace ? style : {})
   _.forOwn(style, (value, key) => {
@@ -32,6 +39,50 @@ export function convertToCesiumFromSimpleStyleSpec (style, inPlace) {
     }
   })
   return convertedStyle
+}
+
+function processStyle (style, feature, options, mappings) {
+  if (!options) return
+  const cesiumOptions = options.cesium || options
+  // We allow to template style properties according to feature,
+  // because it can be slow you have to specify a subset of properties
+  const context = { properties: feature.properties, feature, chroma, moment, Units, Time }
+  if (cesiumOptions.template) {
+    // Create the map of variables
+    if (options.variables) context.variables = _.reduce(options.variables,
+      (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
+    cesiumOptions.template.forEach(entry => {
+      _.set(style, _.get(mappings, _.kebabCase(entry.property), entry.property), entry.compiler(context))
+    })
+  }
+  return style
+}
+
+export function getPointSimpleStyle (feature, options, engine, engineStylePath = 'style.point') {
+  const engineStyle = _.get(engine, engineStylePath, {})
+  const layerStyle = options ? _.get(options.cesium || options, 'layerPointStyle') : {}
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
+  processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
+  return convertPointStyleToSimpleStyle(style)
+}
+
+export function getLineSimpleStyle (feature, options, engine, engineStylePath = 'style.line') {
+  const engineStyle = _.get(engine, engineStylePath, {})
+  const layerStyle = options ? _.get(options.cesium || options, 'layerLineStyle') : {}
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
+  processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
+  return convertLineStyleToSimpleStyle(style)
+}
+
+export function getPolygonSimpleStyle (feature, options, engine, engineStylePath = 'style.polygon') {
+  const engineStyle = _.get(engine, engineStylePath, {})
+  const layerStyle = options ? _.get(options.cesium || options, 'layerPolygonStyle') : {}
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
+  processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
+  return convertPolygonStyleToSimpleStyle(style)
 }
 
 export function convertToCesiumObjects (style) {

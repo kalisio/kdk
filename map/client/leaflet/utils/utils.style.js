@@ -4,6 +4,8 @@ import chroma from 'chroma-js'
 import moment from 'moment'
 import L from 'leaflet'
 import { Time, Units, utils as kdkCoreUtils } from '../../../../core/client/index.js'
+import { convertStyle, convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
+         PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
 import { ShapeMarker } from '../ShapeMarker.js'
 
 L.shapeMarker = function (latlng, options) {
@@ -57,120 +59,6 @@ export const LeafletStyleMappings = {
   'style-polygon-stroke-join': 'lineJoin',
   'style-polygon-stroke-dash-array': 'dashArray',
   'style-polygon-stroke-dash-offset': 'dashOffset'
-}
-
-const SimpleStylePointToPointStyle = {
-  fill: 'color',
-  'fill-opacity': 'opacity',
-  radius: 'radius',
-  stroke: 'stroke.color',
-  'marker-symbol': 'shape',
-  'marker-size': 'size',
-  'marker-color': 'color',
-  'marker-anchor': 'anchor',
-  'stroke-color': 'stroke.color',
-  'stroke-opacity': 'stroke.opacity',
-  'stroke-width': 'stroke.width',
-  'icon-url': 'icon.url',
-  'icon-html': 'html',
-  'icon-color': 'icon.color',
-  'icon-size': 'icon.size',
-  'icon-anchor': 'anchor',
-  'icon-class': 'icon.classes',
-  'icon-opacity': 'icon.opacity',
-  'icon-classes': 'icon.classes',
-  'icon-x-offset': 'icon.xOffset',
-  'icon-y-offset': 'icon.yOffset',
-  'icon-rotate': 'icon.rotate',
-  'z-index': 'pane',
-  pane: 'pane',
-}
-
-const PointStyleTemplateMappings = {
-  stroke: 'style.point.stroke.color',
-  'stroke-color': 'style.point.stroke.color',
-  'stroke-opacity': 'style.point.stroke.opacity',
-  'stroke-width': 'style.point.stroke.width',
-  fill: 'style.point.color',
-  'fill-opacity': 'style.point.opacity',
-  'fill-color': 'style.point.color',
-  weight: 'style.point.stroke.width',
-  radius: 'style.point.radius',
-  'line-cap': 'style.point.stroke.lineCap',
-  'line-join': 'style.point.stroke.lineJoin',
-  'dash-array': 'style.point.stroke.dashArray',
-  'dash-offset': 'style.point.stroke.dashOffset',
-  'marker-symbol': 'style.point.shape',
-  'marker-size': 'style.point.size',
-  'marker-color': 'style.point.color',
-  'marker-anchor': 'style.point.anchor',
-  'icon-url': 'style.point.icon.url',
-  'icon-html': 'style.point.html',
-  'icon-color': 'style.point.icon.color',
-  'icon-size': 'style.point.icon.size',
-  'icon-anchor': 'style.point.anchor',
-  'icon-class': 'style.point.icon.classes',
-  'icon-opacity': 'style.point.icon.opacity',
-  'icon-classes': 'style.point.icon.classes',
-  'icon-x-offset': 'style.point.icon.xOffset',
-  'icon-y-offset': 'style.point.icon.yOffset',
-  'z-index': 'style.point.pane',
-  pane: 'style.point.pane',
-}
-
-const SimpleStyleToLineStyle = {
-  stroke: 'color',
-  'stroke-color': 'color',
-  'stroke-opacity': 'opacity',
-  'stroke-width': 'width',
-  'dash-array': 'dashArray',
-  'dash-offset': 'dashOffset',
-  weight: 'width',
-  'z-index': 'pane',
-  pane: 'pane',
-}
-
-const LineStyleTemplateMappings = {
-  stroke: 'style.line.color',
-  'stroke-color': 'style.line.color',
-  'stroke-opacity': 'style.line.opacity',
-  'stroke-width': 'style.line.width',
-  weight: 'style.line.width',
-  'line-cap': 'style.line.cap',
-  'line-join': 'style.line.join',
-  'dash-array': 'style.line.dashArray',
-  'dash-offset': 'style.line.dashOffset',
-  'z-index': 'style.line.pane',
-  pane: 'style.line.pane'
-}
-
-const SimpleStyleToPolygonStyle = {
-  stroke: 'stroke.color',
-  'stroke-color': 'stroke.color',
-  'stroke-opacity': 'stroke.opacity',
-  'stroke-width': 'sroke.width',
-  fill: 'color',
-  'fill-color': 'color',  
-  'fill-opacity': 'opacity',
-  'z-index': 'pane',
-  pane: 'pane',
-}
-
-const PolygonStyleTemplateMappings = {
-  stroke: 'style.polygon.stroke.color',
-  'stroke-color': 'style.polygon.stroke.color',
-  'stroke-opacity': 'style.polygon.stroke.opacity',
-  'stroke-width': 'style.polygon.stroke.width',
-  fill: 'style.polygon.color',
-  'fill-opacity': 'style.polygon.opacity',
-  'fill-color': 'style.polygon.color',
-  weight: 'style.polygon.stroke.width',
-  'line-cap': 'style.polygon.stroke.cap',
-  'line-join': 'style.polygon.stroke.join',
-  'dash-array': 'style.polygon.stroke.dashArray',
-  'dash-offset': 'style.polygon.stroke.dashOffset',
-  'z-index': 'style.polygon.pane',
-  pane: 'style.polygon.pane',
 }
 
 const LineStyleToLeafletPath = {
@@ -238,30 +126,6 @@ export function createMarkerFromPointStyle (latlng, style) {
   return L.shapeMarker(latlng, style)
 }
 
-function convertStyle (style, mapping) {
-  let convertedStyle = {}
-  _.forOwn(style, (value, key) => {
-    const mappedKey = _.get(mapping, key)
-    if (mappedKey) _.set(convertedStyle, mappedKey, value)
-  })
-  return convertedStyle
-}
-
-export function convertSimpleStyleToPointStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
-  return style ? convertStyle(style, SimpleStylePointToPointStyle) : {}
-}
-
-export function convertSimpleStyleToLineStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')  
-  return style ? convertStyle(style, SimpleStyleToLineStyle) : {}
-}
-
-export function convertSimpleStyleToPolygonStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
-  return style ? convertStyle(style, SimpleStyleToPolygonStyle) : {}
-}
-
 export function convertLineStyleToLeafletPath (style) {
   if (!style) return
   let leafletStyle = convertStyle(style, LineStyleToLeafletPath)
@@ -302,7 +166,7 @@ function processStyle (style, feature, options, mappings) {
 export function getDefaultPointStyle (feature, options, engine, engineStylePath = 'style.point') {
   const engineStyle = _.get(engine,engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPointStyle') : {}
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
   const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
   return style
@@ -320,7 +184,7 @@ export function getDefaultLineStyle (feature, options, engine, engineStylePath =
 export function getDefaultPolygonStyle (feature, options, engine, engineStylePath = 'style.polygon') {
   const engineStyle = _.get(engine,engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPolygonStyle') : {}
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
+  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
   const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
   return convertPolygonStyleToLeafletPath(style)

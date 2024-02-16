@@ -3,7 +3,7 @@ import _ from 'lodash'
 import chroma from 'chroma-js'
 import moment from 'moment'
 import { Time, Units } from '../../../../core/client/index.js'
-import { convertToCesiumFromSimpleStyleSpec, convertToCesiumObjects, CesiumEntityTypes } from '../../utils.globe.js'
+import { convertToCesiumFromSimpleStyle, convertToCesiumObjects, CesiumEntityTypes } from '../../utils.globe.js'
 
 export const style = {
   methods: {
@@ -37,8 +37,8 @@ export const style = {
       })
     },
     // Alias to ease development
-    convertFromSimpleStyleSpec (style, inPlace) {
-      return convertToCesiumFromSimpleStyleSpec(style, inPlace)
+    convertFromSimpleStyle (style, inPlace) {
+      return convertToCesiumFromSimpleStyle(style, inPlace)
     },
     // Alias to ease development
     convertToCesiumObjects (style) {

@@ -3,8 +3,9 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { Time } from '../../../../core/client/time.js'
-import { convertToLeafletFromSimpleStyleSpec } from '../../leaflet/utils/index.js'
-import { fetchGeoJson, getFeatureId, processFeatures, isInMemoryLayer } from '../../utils.js'
+import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
+import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
+import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
 
 function getWallEntityId (id) {
   return id + '-wall'
@@ -25,16 +26,11 @@ function updateGeoJsonEntity(source, destination) {
 
 export const geojsonLayers = {
   methods: {
-    convertFromSimpleStyleSpecOrDefaults (properties) {
-      let { color: stroke, weight: strokeWidth, fillColor: fill, fillOpacity } = convertToLeafletFromSimpleStyleSpec(properties)
+    convertFromSimpleStyleOrDefaults (properties) {
+      let { stroke, strokeWidth, fill } = convertToCesiumFromSimpleStyle(properties)
       if (!stroke) stroke = Cesium.GeoJsonDataSource.stroke
-      else stroke = Cesium.Color.fromCssColorString(stroke)
       if (!strokeWidth) strokeWidth = Cesium.GeoJsonDataSource.strokeWidth
       if (!fill) fill = Cesium.GeoJsonDataSource.fill
-      else {
-        fill = Cesium.Color.fromCssColorString(fill)
-        if (_.isNumber(fillOpacity)) fill.alpha = fillOpacity
-      }
       return { stroke, strokeWidth, fill }
     },
     async loadGeoJson (dataSource, geoJson, options, updateOptions = {}) {
@@ -83,7 +79,7 @@ export const geojsonLayers = {
         const radius = _.get(properties, 'radius')
         const geodesic = _.get(properties, 'geodesic')
         if (radius && geodesic) {
-          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleSpecOrDefaults(properties)
+          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // This one will replace the original point
           entitiesToAdd.push({
             id: entity.id,
@@ -105,7 +101,7 @@ export const geojsonLayers = {
         // Walls
         const wall = _.get(properties, 'wall')
         if (wall && entity.polyline) {
-          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleSpecOrDefaults(properties)
+          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
           // This one will come in addition to the original line
           const wallId = getWallEntityId(entity.id)
@@ -127,7 +123,7 @@ export const geojsonLayers = {
         // Labels
         const text = _.get(properties, 'icon-text')
         if (text) {
-          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleSpecOrDefaults(properties)
+          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
           // This one will replace the original point
           entitiesToAdd.push({
@@ -199,22 +195,34 @@ export const geojsonLayers = {
       const cesiumOptions = options.cesium
       // Check for valid type
       if (cesiumOptions.type !== 'geoJson') return
-      // Cesium expect id to be in a 'id' property
+      const engine = _.get(this, 'activityOptions.engine')
       options.processor = (feature) => {
+        // Cesium expect id to be in a 'id' property
         feature.id = getFeatureId(feature, options)
+        // We cannot access data outside the properties object of a feature in Cesium
+        // As a consequence we copy back any style information inside
+        const styleType = getFeatureStyleType(feature)
+        // We need to convert to simple-style spec as cesium manages this only
+        let simpleStyle
+        if (styleType === 'point') simpleStyle = getPointSimpleStyle(feature, options, engine)
+        else if (styleType === 'line') simpleStyle = getLineSimpleStyle(feature, options, engine)
+        else simpleStyle = getPolygonSimpleStyle(feature, options, engine)
+        if (!feature.properties) feature.properties = simpleStyle
+        else Object.assign(feature.properties, simpleStyle)
       }
       // For activities
       if (_.has(this, 'activityOptions.engine.cluster')) {
         if (cesiumOptions.cluster) Object.assign(cesiumOptions.cluster, _.get(this, 'activityOptions.engine.cluster'))
         else cesiumOptions.cluster = Object.assign({}, _.get(this, 'activityOptions.engine.cluster'))
       }
-      // Merge generic GeoJson options and layer options
-      const geoJsonOptions = this.getGeoJsonOptions(options)
-      Object.keys(geoJsonOptions).forEach(key => {
-        // If layer provided do not override
-        if (!_.has(cesiumOptions, key)) _.set(cesiumOptions, key, geoJsonOptions[key])
-      })
       // Optimize templating by creating compilers up-front
+      const layerStyleTemplate = _.get(cesiumOptions, 'template')
+      if (layerStyleTemplate) {
+        // We allow to template style properties according to feature, because it can be slow you have to specify a subset of properties
+        cesiumOptions.template = layerStyleTemplate.map(property => ({
+          property, compiler: _.template(_.get(cesiumOptions, property))
+        }))
+      }
       const entityStyleTemplate = _.get(cesiumOptions, 'entityStyle.template')
       if (entityStyleTemplate) {
         // We allow to template style properties according to feature, because it can be slow you have to specify a subset of properties
@@ -230,7 +238,16 @@ export const geojsonLayers = {
       if (tooltipTemplate) {
         cesiumOptions.tooltip.compiler = _.template(tooltipTemplate)
       }
-      convertToLeafletFromSimpleStyleSpec(cesiumOptions, 'update-in-place')
+      // Convert and store the style
+      if (cesiumOptions.style) {
+        cesiumOptions.layerPointStyle = _.get(cesiumOptions.style, 'point')
+        cesiumOptions.layerLineStyle = _.get(cesiumOptions.style, 'line')
+        cesiumOptions.layerPolygonStyle = _.get(cesiumOptions.style, 'polygon')
+      } else {
+        cesiumOptions.layerPointStyle = convertSimpleStyleToPointStyle(cesiumOptions)
+        cesiumOptions.layerLineStyle = convertSimpleStyleToLineStyle(cesiumOptions)
+        cesiumOptions.layerPolygonStyle = convertSimpleStyleToPolygonStyle(cesiumOptions)
+      }
       // Perform required conversion from JSON to Cesium objects
       // If templating occurs we need to wait until it is performed to convert to Cesium objects
       if (cesiumOptions.entityStyle && !entityStyleTemplate) cesiumOptions.entityStyle = this.convertToCesiumObjects(cesiumOptions.entityStyle)
@@ -341,11 +358,6 @@ export const geojsonLayers = {
   },
   created () {
     this.registerCesiumConstructor(this.createCesiumGeoJsonLayer)
-    // Perform required conversion from JSON to Cesium objects
-    if (_.has(this, 'activityOptions.engine.featureStyle')) {
-      Object.assign(Cesium.GeoJsonDataSource,
-        convertToLeafletFromSimpleStyleSpec(_.get(this, 'activityOptions.engine.featureStyle'), 'update-in-place'))
-    }
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)

@@ -592,29 +592,37 @@ export default {
     },
     iconStylesValues () {
       // Use dot notation as it will be used to update style values using a patch operation
-      return _.mapKeys(generateStyleTemplates(['color', 'size', 'shape', 'icon.classes', 'icon.color', 'icon.size'], 'point', this.defaultPoint, this.iconStyles), (value, key) => `leaflet.${key}`)
+      const templates = generateStyleTemplates(['color', 'size', 'shape', 'icon.classes', 'icon.color', 'icon.size'], 'point', this.defaultPoint, this.iconStyles)
+      // Globe does only support simple styling and maki icon right now
+      return Object.assign({}, _.mapKeys(templates, (value, key) => `leaflet.${key}`),
+        _.mapKeys(_.pick(templates, ['style.point.shape', 'style.point.size', 'style.point.color']), (value, key) => `cesium.${key}`))
     },
     lineStylesValues () {
       // Use dot notation as it will be used to update style values using a patch operation
-      return _.mapKeys(generateStyleTemplates(['color', 'width', 'opacity'], 'line', this.defaultLine, this.lineStyles), (value, key) => `leaflet.${key}`)
+      const templates = generateStyleTemplates(['color', 'width', 'opacity'], 'line', this.defaultLine, this.lineStyles)
+      return Object.assign({}, _.mapKeys(templates, (value, key) => `leaflet.${key}`), _.mapKeys(templates, (value, key) => `cesium.${key}`))
     },
     polygonStylesValues () {
       // Use dot notation as it will be used to update style values using a patch operation
-      return _.mapKeys(generateStyleTemplates(['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'polygon', this.defaultPolygon, this.polygonStyles), (value, key) => `leaflet.${key}`)
+      const templates = generateStyleTemplates(['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'polygon', this.defaultPolygon, this.polygonStyles)
+      return Object.assign({}, _.mapKeys(templates, (value, key) => `leaflet.${key}`), _.mapKeys(templates, (value, key) => `cesium.${key}`))
     },
     popupStylesValues () {
       return {
-        'leaflet.popup': (this.popup ? { pick: this.popupProperties.map(property => property.value) } : false)
+        'leaflet.popup': (this.popup ? { pick: this.popupProperties.map(property => property.value) } : false),
+        'cesium.popup': (this.popup ? { pick: this.popupProperties.map(property => property.value) } : false)
       }
     },
     tooltipStylesValues () {
       return {
-        'leaflet.tooltip': (this.tooltip ? { property: this.tooltipProperty.value } : false)
+        'leaflet.tooltip': (this.tooltip ? { property: this.tooltipProperty.value } : false),
+        'cesium.tooltip': (this.tooltip ? { property: this.tooltipProperty.value } : false)
       }
     },
     infoBoxStylesValues () {
       return {
-        'leaflet.infobox': (this.infobox ? { pick: this.infoboxProperties.map(property => property.value) } : false)
+        'leaflet.infobox': (this.infobox ? { pick: this.infoboxProperties.map(property => property.value) } : false),
+        'cesium.infobox': (this.infobox ? { pick: this.infoboxProperties.map(property => property.value) } : false)
       }
     },
     values () {

@@ -1,6 +1,183 @@
 import _ from 'lodash'
 import { utils as kdkCoreUtils } from '../../../core/client/index.js'
 
+export const IconStyleToSimpleStyle = {
+  size: 'marker-size',
+  color: 'marker-color',
+  url: 'marker-symbol'
+}
+
+export const PointStyleToSimpleStyle = {
+  shape: 'marker-symbol',
+  size: 'marker-size',
+  color: 'marker-color',
+  'icon.url': 'marker-symbol'
+}
+
+export const SimpleStyleToPointStyle = {
+  fill: 'color',
+  'fill-opacity': 'opacity',
+  radius: 'radius',
+  stroke: 'stroke.color',
+  'marker-symbol': 'shape',
+  'marker-size': 'size',
+  'marker-color': 'color',
+  'marker-anchor': 'anchor',
+  'stroke-color': 'stroke.color',
+  'stroke-opacity': 'stroke.opacity',
+  'stroke-width': 'stroke.width',
+  'icon-url': 'icon.url',
+  'icon-html': 'html',
+  'icon-color': 'icon.color',
+  'icon-size': 'icon.size',
+  'icon-anchor': 'anchor',
+  'icon-class': 'icon.classes',
+  'icon-opacity': 'icon.opacity',
+  'icon-classes': 'icon.classes',
+  'icon-x-offset': 'icon.xOffset',
+  'icon-y-offset': 'icon.yOffset',
+  'icon-rotate': 'icon.rotate',
+  'z-index': 'pane',
+  pane: 'pane',
+}
+
+export const PointStyleTemplateMappings = {
+  stroke: 'style.point.stroke.color',
+  'stroke-color': 'style.point.stroke.color',
+  'stroke-opacity': 'style.point.stroke.opacity',
+  'stroke-width': 'style.point.stroke.width',
+  fill: 'style.point.color',
+  'fill-opacity': 'style.point.opacity',
+  'fill-color': 'style.point.color',
+  weight: 'style.point.stroke.width',
+  radius: 'style.point.radius',
+  'line-cap': 'style.point.stroke.lineCap',
+  'line-join': 'style.point.stroke.lineJoin',
+  'dash-array': 'style.point.stroke.dashArray',
+  'dash-offset': 'style.point.stroke.dashOffset',
+  'marker-symbol': 'style.point.shape',
+  'marker-size': 'style.point.size',
+  'marker-color': 'style.point.color',
+  'marker-anchor': 'style.point.anchor',
+  'icon-url': 'style.point.icon.url',
+  'icon-html': 'style.point.html',
+  'icon-color': 'style.point.icon.color',
+  'icon-size': 'style.point.icon.size',
+  'icon-anchor': 'style.point.anchor',
+  'icon-class': 'style.point.icon.classes',
+  'icon-opacity': 'style.point.icon.opacity',
+  'icon-classes': 'style.point.icon.classes',
+  'icon-x-offset': 'style.point.icon.xOffset',
+  'icon-y-offset': 'style.point.icon.yOffset',
+  'z-index': 'style.point.pane',
+  pane: 'style.point.pane',
+}
+
+export const LineStyleToSimpleStyle = {
+  color: 'stroke',
+  width: 'stroke-width',
+  opacity: 'stroke-opacity'
+}
+
+export const SimpleStyleToLineStyle = {
+  stroke: 'color',
+  'stroke-color': 'color',
+  'stroke-opacity': 'opacity',
+  'stroke-width': 'width',
+  'dash-array': 'dashArray',
+  'dash-offset': 'dashOffset',
+  weight: 'width',
+  'z-index': 'pane',
+  pane: 'pane',
+}
+
+export const LineStyleTemplateMappings = {
+  stroke: 'style.line.color',
+  'stroke-color': 'style.line.color',
+  'stroke-opacity': 'style.line.opacity',
+  'stroke-width': 'style.line.width',
+  weight: 'style.line.width',
+  'line-cap': 'style.line.cap',
+  'line-join': 'style.line.join',
+  'dash-array': 'style.line.dashArray',
+  'dash-offset': 'style.line.dashOffset',
+  'z-index': 'style.line.pane',
+  pane: 'style.line.pane'
+}
+
+export const PolygonStyleToSimpleStyle = {
+  color: 'fill',
+  opacity: 'fill-opacity'
+}
+
+export const SimpleStyleToPolygonStyle = {
+  stroke: 'stroke.color',
+  'stroke-color': 'stroke.color',
+  'stroke-opacity': 'stroke.opacity',
+  'stroke-width': 'sroke.width',
+  fill: 'color',
+  'fill-color': 'color',  
+  'fill-opacity': 'opacity',
+  'z-index': 'pane',
+  pane: 'pane',
+}
+
+export const PolygonStyleTemplateMappings = {
+  stroke: 'style.polygon.stroke.color',
+  'stroke-color': 'style.polygon.stroke.color',
+  'stroke-opacity': 'style.polygon.stroke.opacity',
+  'stroke-width': 'style.polygon.stroke.width',
+  fill: 'style.polygon.color',
+  'fill-opacity': 'style.polygon.opacity',
+  'fill-color': 'style.polygon.color',
+  weight: 'style.polygon.stroke.width',
+  'line-cap': 'style.polygon.stroke.cap',
+  'line-join': 'style.polygon.stroke.join',
+  'dash-array': 'style.polygon.stroke.dashArray',
+  'dash-offset': 'style.polygon.stroke.dashOffset',
+  'z-index': 'style.polygon.pane',
+  pane: 'style.polygon.pane',
+}
+
+export const SimpleStyleNumbers = ['marker-size', 'stroke-width', 'stroke-opacity', 'fill-opacity']
+
+// Map properties of a given style according to given mapping, performing number conversion if required
+export function convertStyle (style, mapping, asNumber = []) {
+  let convertedStyle = {}
+  _.forOwn(style, (value, key) => {
+    const mappedKey = _.get(mapping, key)
+    if (mappedKey) _.set(convertedStyle, mappedKey, asNumber.includes(mappedKey) ? _.toNumber(value) : value)
+  })
+  return convertedStyle
+}
+
+export function convertPointStyleToSimpleStyle (style) {
+  return style ? Object.assign(convertStyle(style.icon, IconStyleToSimpleStyle, SimpleStyleNumbers), convertStyle(style, PointStyleToSimpleStyle, SimpleStyleNumbers)) : {}
+}
+
+export function convertSimpleStyleToPointStyle (style) {
+  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
+  return style ? convertStyle(style, SimpleStyleToPointStyle) : {}
+}
+
+export function convertLineStyleToSimpleStyle (style) {
+  return style ? convertStyle(style, LineStyleToSimpleStyle, SimpleStyleNumbers) : {}
+}
+
+export function convertSimpleStyleToLineStyle (style) {
+  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')  
+  return style ? convertStyle(style, SimpleStyleToLineStyle) : {}
+}
+
+export function convertPolygonStyleToSimpleStyle (style) {
+  return style ? Object.assign(convertStyle(style, PolygonStyleToSimpleStyle, SimpleStyleNumbers), convertLineStyleToSimpleStyle(style.stroke)) : {}
+}
+
+export function convertSimpleStyleToPolygonStyle (style) {
+  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
+  return style ? convertStyle(style, SimpleStyleToPolygonStyle) : {}
+}
+
 // Process style expressed with templates in order to generate a non-templated style object for each property value with associated comparison operator.
 // It relies on the assumption we have styles for a set of feature property values templated using if statements
 // For instance if I want all linear features with property 'A' equals 'V' to be green,
