@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { click, clickAction, isElementVisible } from './utils.js'
+import { countElements, click, clickAction, isElementVisible } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:layout')
 
@@ -98,6 +98,16 @@ export async function pinWindow (page, placement) {
 export async function clickFab (page) {
   return clickAction(page, 'fab')
 }
+
+export async function clickFabAction (page, action) {
+  await clickAction(page, 'fab')
+  return clickAction(page, action)
+}
+
+export async function countFabActions (page) {
+  return countElements(page, '//a[contains(@class, "k-action-fab-action")]')
+}
+
 
 export async function closeWelcomeDialog (page) {
   await click(page, '.q-dialog #close-button')
