@@ -377,8 +377,12 @@ export default {
       // Load the required component
       const component = kCoreUtils.loadComponent(componentName)
       const style = {
-        key: uid().toString(), component, componentName,
-        operator: '===', property, properties,
+        key: uid().toString(),
+        component,
+        componentName,
+        operator: '===',
+        property,
+        properties,
         onComponentCreated: (ref) => { if (ref) ref.fill(style.value) },
         onValueChanged: (field, value) => { style.value = value }
       }
@@ -387,13 +391,13 @@ export default {
     getSizes () {
       // From 8 to 64 by step of 8
       return Array(8).fill().map((_, i) => ({
-        label: `${8*i+8}px`,
-        value: 8*i+8
+        label: `${8 * i + 8}px`,
+        value: 8 * i + 8
       }))
     },
     getShapes () {
       return ['none', 'circle', 'triangle-down', 'triangle', 'triangle-right', 'triangle-left', 'rect', 'diamond', 'star', 'marker-pin', 'square-pin']
-      .map(shape => ({ value: shape, shape, size: 32, opacity: 0.1, color: 'primary', stroke: { color: 'primary', width: 2 } }))
+        .map(shape => ({ value: shape, shape, size: 32, opacity: 0.1, color: 'primary', stroke: { color: 'primary', width: 2 } }))
     },
     getOperators (style) {
       let operators = [{
@@ -415,9 +419,9 @@ export default {
       return operators
     },
     async processTemplates (values, properties, styleType, defaultStyle, styles) {
-      processStyleTemplates(values.leaflet, properties, styleType, defaultStyle, styles) 
+      processStyleTemplates(values.leaflet, properties, styleType, defaultStyle, styles)
       // Jump from style object to internal requirements for UI with additional component, etc.
-      for (let i = 0; i< styles.length; i++) {
+      for (let i = 0; i < styles.length; i++) {
         styles[i] = await this.createStyle(styles[i].property, styles[i])
       }
     },
@@ -442,21 +446,21 @@ export default {
       // When no template we have a single default icon
       if (!templates.includes('style.point.color')) {
         // Conversion from palette to RGB color is required for markers
-        this.defaultPoint['color'] = kCoreUtils.getPaletteFromColor(
+        this.defaultPoint.color = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.point.color',
-          _.get(this.options, 'style.point.color', kCoreUtils.getColorFromPalette('red'))))
-        this.defaultPoint['size'] = _.get(values, 'leaflet.style.point.size',
+            _.get(this.options, 'style.point.color', kCoreUtils.getColorFromPalette('red'))))
+        this.defaultPoint.size = _.get(values, 'leaflet.style.point.size',
           _.get(this.options, 'style.point.size', 24))
-        this.defaultPoint['shape'] = _.get(values, 'leaflet.style.point.shape',
+        this.defaultPoint.shape = _.get(values, 'leaflet.style.point.shape',
           _.get(this.options, 'style.point.shape', 'circle'))
         this.defaultPoint['icon.classes'] =
           _.get(values, 'leaflet.style.point.icon.classes',
-          _.get(this.options, 'style.point.icon.classes', ''))
+            _.get(this.options, 'style.point.icon.classes', ''))
         this.defaultPoint['icon.color'] = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.point.icon.color',
-          _.get(this.options, 'style.point.icon.color', kCoreUtils.getColorFromPalette('black'))))
+            _.get(this.options, 'style.point.icon.color', kCoreUtils.getColorFromPalette('black'))))
         this.defaultPoint['icon.size'] = _.get(values, 'leaflet.style.point.icon.size',
-          _.get(this.options, 'style.point.icon.size', 12))    
+          _.get(this.options, 'style.point.icon.size', 12))
       } else {
         await this.processTemplates(values, ['color', 'size', 'shape', 'icon.classes', 'icon.color', 'icon.size'], 'point', this.defaultPoint, this.iconStyles)
       }
@@ -467,15 +471,15 @@ export default {
       // When no template we have a single default style
       if (!templates.includes('style.line.color')) {
         // Conversion from palette to RGB color is required for path style
-        this.defaultLine['color'] = kCoreUtils.getPaletteFromColor(
+        this.defaultLine.color = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.line.color',
-          _.get(this.options, 'style.line.color'), kCoreUtils.getColorFromPalette('red')))
-        this.defaultLine['width'] =
+            _.get(this.options, 'style.line.color'), kCoreUtils.getColorFromPalette('red')))
+        this.defaultLine.width =
           _.get(values, 'leaflet.style.line.width',
-          _.get(this.options, 'style.line.width', 3))
-        this.defaultLine['opacity'] =
+            _.get(this.options, 'style.line.width', 3))
+        this.defaultLine.opacity =
           _.get(values, 'leaflet.style.line.opacity',
-          _.get(this.options, 'style.line.opacity', 1))
+            _.get(this.options, 'style.line.opacity', 1))
       } else {
         await this.processTemplates(values, ['color', 'width', 'opacity'], 'line', this.defaultLine, this.lineStyles)
       }
@@ -486,21 +490,21 @@ export default {
       // When no template we have a single default style
       if (!templates.includes('style.polygon.color')) {
         // Conversion from palette to RGB color is required for path style
-        this.defaultPolygon['color'] = kCoreUtils.getPaletteFromColor(
+        this.defaultPolygon.color = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.polygon.color',
-          _.get(this.options, 'style.polygon.color', kCoreUtils.getColorFromPalette('red'))))
-        this.defaultPolygon['opacity'] =
+            _.get(this.options, 'style.polygon.color', kCoreUtils.getColorFromPalette('red'))))
+        this.defaultPolygon.opacity =
           _.get(values, 'leaflet.style.polygon.opacity',
-          _.get(this.options, 'style.polygon.opacity', 1))
+            _.get(this.options, 'style.polygon.opacity', 1))
         this.defaultPolygon['stroke.color'] = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.polygon.stroke.color',
-          _.get(this.options, 'style.polygon.stroke.color', kCoreUtils.getColorFromPalette('red'))))
+            _.get(this.options, 'style.polygon.stroke.color', kCoreUtils.getColorFromPalette('red'))))
         this.defaultPolygon['stroke.width'] =
           _.get(values, 'leaflet.style.polygon.stroke.width',
-          _.get(this.options, 'style.polygon.stroke.width', 3))
+            _.get(this.options, 'style.polygon.stroke.width', 3))
         this.defaultPolygon['stroke.opacity'] =
           _.get(values, 'leaflet.style.polygon.stroke.opacity',
-          _.get(this.options, 'style.polygon.stroke.opacity', 1))
+            _.get(this.options, 'style.polygon.stroke.opacity', 1))
       } else {
         await this.processTemplates(values, ['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'polygon', this.defaultPolygon, this.polygonStyles)
       }
@@ -658,9 +662,9 @@ export default {
         'icon.classes': _.get(this.options, 'style.point.icon.classes', 'fas fa-circle'),
         'icon.color': _.get(this.options, 'style.point.icon.color', 'black'),
         'icon.size': _.get(this.options, 'style.point.icon.size', 12),
-        'color': color || 'red',
-        'size': _.get(this.options, 'style.point.size', 24),
-        'shape': _.get(this.options, 'style.point.shape', 'circle')
+        color: color || 'red',
+        size: _.get(this.options, 'style.point.size', 24),
+        shape: _.get(this.options, 'style.point.shape', 'circle')
       })
       this.iconStyles.push(style)
     },
@@ -692,9 +696,9 @@ export default {
     async onAddLineStyle (property) {
       const style = await this.createStyle(property.value, {
         // Default line
-        'color': _.get(this.options, 'style.line.color', 'red'),
-        'width': _.get(this.options, 'style.line.width', 1),
-        'opacity': _.get(this.options, 'style.line.opacity', 1)
+        color: _.get(this.options, 'style.line.color', 'red'),
+        width: _.get(this.options, 'style.line.width', 1),
+        opacity: _.get(this.options, 'style.line.opacity', 1)
       })
       this.lineStyles.push(style)
     },
@@ -705,8 +709,8 @@ export default {
     async onAddPolygonStyle (property) {
       const style = await this.createStyle(property.value, {
         // Default line
-        'color': _.get(this.options, 'style.polygon.color', 'green'),
-        'opacity': _.get(this.options, 'style.polygon.opacity', 1),
+        color: _.get(this.options, 'style.polygon.color', 'green'),
+        opacity: _.get(this.options, 'style.polygon.opacity', 1),
         'stroke.color': _.get(this.options, 'style.polygon.stroke.color', 'red'),
         'stroke.width': _.get(this.options, 'style.polygon.stroke.width', 1),
         'stroke.opacity': _.get(this.options, 'style.polygon.stroke.opacity', 1)

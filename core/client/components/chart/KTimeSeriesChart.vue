@@ -26,8 +26,6 @@ import { i18n } from '../../i18n'
 //   unit:
 // }
 
-
-
 // Props
 const props = defineProps({
   timeSeries: { type: Array, default: () => [] },
