@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { countElements, click, clickAction, isElementVisible } from './utils.js'
+import { countElements, click, clickAction, isElementVisible, isActionVisible } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:layout')
 
@@ -79,20 +79,30 @@ export async function isWindowMaximized (page, placement) {
   return isElementVisible(page, `#restore-${placement}-window`)
 }
 
+async function clickWindowControl (page, placement, control) {
+  const action = `${control}-${placement}-window`
+  if (!await isActionVisible(page, action)) await clickAction(page, 'window-controls')
+  await clickAction(page, action)
+}
+
 export async function closeWindow (page, placement) {
-  await clickAction(page, `close-${placement}-window`)
+  await clickWindowControl(page, placement, 'close')
 }
 
 export async function maximizeWindow (page, placement) {
-  await clickAction(page, `maximize-${placement}-window`)
+  await clickWindowControl(page, placement, 'maximize')
 }
 
 export async function restoreWindow (page, placement) {
-  await clickAction(page, `restore-${placement}-window`)
+  await clickWindowControl(page, placement, 'restore')
 }
 
 export async function pinWindow (page, placement) {
-  await clickAction(page, `pin-${placement}-window`)
+  await clickWindowControl(page, placement, 'pin')
+}
+
+export async function unpinWindow (page, placement) {
+  await clickWindowControl(page, placement, 'unpin')
 }
 
 export async function clickFab (page) {

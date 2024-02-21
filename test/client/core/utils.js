@@ -52,6 +52,13 @@ export async function click (page, selector, wait = 500) {
   }
 }
 
+/* Helper function to check whether an action is visible
+ */
+export async function isActionVisible (page, action) {
+  const selector = `#${action}`
+  return isElementVisible(page, selector)
+}
+
 /* Helper function to click on an action selector
  */
 export async function clickAction (page, action, wait = 500) {
