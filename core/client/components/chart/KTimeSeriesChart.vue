@@ -26,11 +26,9 @@ import { i18n } from '../../i18n'
 //   unit:
 // }
 
-let canvas = null
-let chart = null
-const unit2axis = new Map()
 
-const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-click'])
+
+// Props
 const props = defineProps({
   timeSeries: { type: Array, default: () => [] },
   xAxisKey: { type: String, default: 'x' },
@@ -44,19 +42,19 @@ const props = defineProps({
   options: { type: Object, default: () => ({}) }
 })
 
-defineExpose({
-  update,
-  getZoom,
-  exportSeries
-})
+// Emits
+const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-click'])
 
-// data
+// Data
+let canvas = null
+let chart = null
+const unit2axis = new Map()
 const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
 const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
 let min = null
 let max = null
 
-// watch
+// Watch
 watch(() => props.timeSeries, update)
 watch(() => props.xAxisKey, update)
 watch(() => props.yAxisKey, update)
@@ -67,7 +65,7 @@ watch(() => props.logarithmic, update)
 watch(() => props.currentTime, update)
 watch(() => props.options, update)
 
-// function
+// Functions
 async function onCanvasRef (ref) {
   if (ref) {
     if (!chart) {
@@ -82,7 +80,6 @@ async function onCanvasRef (ref) {
   }
   canvas = ref
 }
-
 function getUnit (timeSerie) {
   // Falback to base unit
   const unit = _.get(timeSerie, 'variable.unit')
@@ -110,13 +107,11 @@ function computeScaleBound (scale, property, min, max) {
     _.set(scale, property, scaleBound(min, max))
   }
 }
-
 async function makeChartConfig () {
   // Order matters as we compute internals like data time range
   const datasets = await makeDatasets()
   const scales = makeScales()
   const annotation = makeAnnotation()
-
   const config = {
     type: 'line',
     data: { datasets },
@@ -197,7 +192,6 @@ async function makeChartConfig () {
   computeScaleBound(scales.x, 'suggestedMax', startTime.value, endTime.value)
   return config
 }
-
 function makeScales () {
   // Setup time ticks unit
   const hours = endTime.value.diff(startTime.value, 'hours')
@@ -245,9 +239,7 @@ function makeScales () {
       }
     }
   }
-
   const scales = { x }
-
   // Build a scale per unit
   unit2axis.clear()
   let axisId = 0
@@ -281,7 +273,6 @@ function makeScales () {
   }
   return scales
 }
-
 async function makeDatasets () {
   const datasets = []
   for (const timeSerie of props.timeSeries) {
@@ -327,7 +318,6 @@ async function makeDatasets () {
 
   return datasets
 }
-
 function makeAnnotation () {
   let annotation = {}
   // Is current time visible in chart ?
@@ -355,7 +345,6 @@ function makeAnnotation () {
   }
   return annotation
 }
-
 async function exportSeries (options = {}) {
   let times = []
   for (let i = 0; i < props.timeSeries.length; i++) {
@@ -393,7 +382,6 @@ async function exportSeries (options = {}) {
   downloadAsBlob(csv, _.template(options.filename || i18n.t('KTimeSeriesChart.SERIES_EXPORT_FILE'))(),
     'text/csv;charset=utf-8;')
 }
-
 async function update () {
   if (!canvas) return
   // Reset time/value range
@@ -410,7 +398,6 @@ async function update () {
     chart.update()
   }
 }
-
 async function updateCurrentTime () {
   if (!props.currentTime) return
   update()
@@ -422,5 +409,12 @@ onMounted(() => {
 })
 onBeforeUnmount(() => {
   Events.off('time-current-time-changed', updateCurrentTime)
+})
+
+// Expose
+defineExpose({
+  update,
+  getZoom,
+  exportSeries
 })
 </script>
