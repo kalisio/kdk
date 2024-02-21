@@ -145,7 +145,7 @@ export function createShape (options) {
     else {
       shape = Shapes[options.shape]
       if (!shape) {
-        logger.warn(`[KDK] unknown shape ${options.shape}. Using default shape 'circle'`)
+        logger.warn(`[KDK] unknown shape '${options.shape}'. Using default shape 'circle'`)
         shape = Shapes['circle']
       }
     }
