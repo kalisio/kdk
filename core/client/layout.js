@@ -331,15 +331,13 @@ export const Layout = {
     Store.patch(this.getElementPath(`windows.${placement}`), { current })
   },
   findWindow (widget) {
-    let result = { placement: undefined, window: undefined }
-    placements.forEach(placement => {
+    for (const placement of placements) {
       const window = this.getWindow(placement)
       if (_.find(window.components, { id: widget })) {
-        result = { placement, window }
-      } else {
-        logger.debug(`[KDK] Unable to find the widget ${widget}`)
+        return { placement, window }
       }
-    })
-    return result
+    }
+    logger.debug(`[KDK] Unable to find the widget ${widget}`)
+    return { placement: undefined, window: undefined }
   }
 }
