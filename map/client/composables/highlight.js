@@ -69,9 +69,10 @@ export function useHighlight (name, options = {}) {
       }
     })
   }
-  function highlight (feature, layer) {
+  function highlight (feature, layer, selected = true) {
+    console.log(selected)
     const highlightId = getHighlightId(feature, layer)
-    // Default highlight feature with styling
+    // Define default highlight feature
     const highlight = {
       highlightId,
       type: 'Feature',
@@ -80,12 +81,43 @@ export function useHighlight (name, options = {}) {
         zOrder: 0,
       }, options)
     }
+    // Assign geometry
+    Object.assign(highlight, feature.geometry
+      ? { geometry: feature.geometry }
+      : { geometry: { type: 'Point', coordinates: [_.get(feature, 'lng', 0), _.get(feature, 'lat', 0)] } }
+    )
+    // Use bbox for line/polygons
+    if (options.asBbox && (highlight.geometry.type !== 'Point')) {
+      Object.assign(highlight, bboxPolygon(bbox(highlight)))
+    }
+    // Assign style
     if (activity.is2D()) {
-      // 2D
-      let highlightStyle = _.get(config, `engines.${activity.engine}.style.selection`)
-      Object.assign(highlight, { 
-        style: _.cloneDeep(highlightStyle[getFeatureStyleType(feature)])
-      })
+      if (selected) {
+        let highlightStyle = _.get(config, `engines.${activity.engine}.style.selection`)[getFeatureStyleType(highlight)]
+        // adapt the size to the marker using feature style
+        let size = _.get(feature, 'style.size')
+        if (size) {
+          if (!Array.isArray(size)) size = [size, size]
+        } else {
+          let radius = _.get(feature, 'style.radius')
+          if (radius) size = [radius * 2, radius * 2]
+        }
+        // adapt the size to the marker using layer style
+        if (!size) {
+          size = _.get(layer, `${activity.engine}.style.point.size`)
+          if (size) {
+            if (!Array.isArray(size)) size = [size, size]
+          } else {
+            let radius = _.get(layer, `${activity.engine}.style.point.radius`)
+            if (radius) size = [radius * 2, radius * 2]
+          }
+        }
+        if (size) Object.assign(highlightStyle, { size: [size[0] + 8, size[1] + 8] }) 
+        Object.assign(highlight, { style: highlightStyle })
+      } else {
+        // retrieve feature sytle
+        Object.assign(highlight, { style: feature.style })
+      }
     } else {
       // 3D TODO: to be updated when swithing globe to new style
       Object.assign(highlight, { 
@@ -98,16 +130,6 @@ export function useHighlight (name, options = {}) {
           'fill-opacity': 0.5
         }
       }, options)
-    }
-    // Use input feature/location to build highlight geometry
-    Object.assign(highlight, feature.geometry
-      ? { geometry: feature.geometry }
-      : {
-          geometry: { type: 'Point', coordinates: [_.get(feature, 'lng', 0), _.get(feature, 'lat', 0)] }
-        })
-    // Use bbox for line/polygons
-    if (options.asBbox && (highlight.geometry.type !== 'Point')) {
-      Object.assign(highlight, bboxPolygon(bbox(highlight)))
     }
     // Add additional information provided by feature, if any, for custom styling
     _.merge(highlight, _.omit(feature, ['geometry', 'style']))

@@ -23,12 +23,6 @@ export default {
   components: {
     KPanel
   },
-  props: {
-    highlight: {
-      type: Object,
-      default: () => ({ zOrder: 1 })
-    }
-  },
   computed: {
     location () {
       return this.hasSelectedLocation() && this.getSelectedLocation()
@@ -126,7 +120,7 @@ export default {
       if (this.position) this.kActivity.center(this.position.lng, this.position.lat)
     },
     async refreshView () {
-      this.highlight(this.getMarkerFeature())
+      this.highlight(this.getMarkerFeature(), null, false)
       try {
         await this.mapillaryViewer.moveTo(this.imageId)
       } catch (error) {
@@ -143,7 +137,7 @@ export default {
       this.position = image.lngLat
       this.bearing = await this.mapillaryViewer.getBearing()
       this.centerMap()
-      this.highlight(this.getMarkerFeature())
+      this.highlight(this.getMarkerFeature(), null, false)
     },
     onResized (size) {
       if (this.mapillaryViewer) this.mapillaryViewer.resize()
@@ -169,13 +163,13 @@ export default {
     // Save the states
     this.saveStates()
   },
-  setup (props) {
+  setup () {
     // Data
     const hasImage = ref(false)
     // Expose
     return {
       ...useCurrentActivity(),
-      ...useHighlight('mapillary', props.highlight),
+      ...useHighlight('mapillary'),
       hasImage
     }
   }

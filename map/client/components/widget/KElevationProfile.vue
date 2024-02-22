@@ -36,25 +36,8 @@ export default {
       type: String,
       default: ''
     },
-    highlight: {
-      type: Object,
-      default: () => ({ 'stroke-color': 'primary', 'fill-opacity': 0, zOrder: 1 })
-    },
     xAxisLabel: { type: String, default: '' },
     yAxisLabel: { type: String, default: '' },
-    mapGhostIcon: {
-      type: Object,
-      default: () => {
-        return {
-          shape: 'square-pin',
-          size: [60, 24],
-          color: 'secondary',
-          stroke: {
-            color: 'primary'
-          }
-        }
-      }
-    },
     terrainLegend: { type: String, default: '' }
   },
   computed: {
@@ -192,7 +175,7 @@ export default {
 
                 this.highlightFeature = along(segment, abscissaKm, { units: 'kilometers' })
                 this.highlightFeature.style = _.get(this.kActivity, 'activityOptions.engine.style.location.point')
-                this.highlight(this.highlightFeature)
+                this.highlight(this.highlightFeature, null, false)
               }
             }
           },
@@ -358,11 +341,11 @@ export default {
       // Check supported geometry
       const geometry = _.get(this.feature, 'geometry.type')
       if (geometry !== 'LineString' && geometry !== 'MultiLineString') {
-        logger.warn('the selected feature has an invald geometry')
+        logger.warn('[KDK] the selected feature has an invald geometry')
         this.$notify({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
-      this.highlight(this.feature)
+      this.highlight(this.feature, false)
       this.chartDistanceUnit = Store.get('units.default.length')
       this.chartHeightUnit = Store.get('units.default.altitude')
 
@@ -461,7 +444,7 @@ export default {
   setup (props) {
     return {
       ...useCurrentActivity(),
-      ...useHighlight('elevation-profile', props.highlight)
+      ...useHighlight('elevation-profile')
     }
   }
 }

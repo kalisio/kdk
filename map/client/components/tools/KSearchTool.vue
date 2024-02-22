@@ -37,6 +37,7 @@ const computedStyle = computed(() => {
 // Functions
 async function createLocationLayer () {
   // create the layer
+  const style = CurrentActivity.value.activityOptions.engine.style.location
   await CurrentActivity.value.addLayer({
     name: LocationLayerName,
     type: 'OverlayLayer',
@@ -47,15 +48,18 @@ async function createLocationLayer () {
       isVisible: true,
       realtime: true,
       interactive: false,
+      style,
       popup: { template: '<%= properties.name %>' }
     },
     cesium: {
       type: 'geoJson',
       isVisible: true,
       realtime: true,
-      popup: { template: '<%= properties.name %>' },
+      // FIXME: should use the style
+      // style,
       'marker-symbol': 'marker',
-      'marker-color': getCssVar('primary')
+      'marker-color': getCssVar('primary'),
+      popup: { template: '<%= properties.name %>' }
     }
   })
   // updated the layer with the location
