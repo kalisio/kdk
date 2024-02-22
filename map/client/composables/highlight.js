@@ -70,7 +70,6 @@ export function useHighlight (name, options = {}) {
     })
   }
   function highlight (feature, layer, selected = true) {
-    console.log(selected)
     const highlightId = getHighlightId(feature, layer)
     // Define default highlight feature
     const highlight = {
