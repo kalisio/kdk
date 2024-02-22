@@ -119,6 +119,7 @@ export async function dropFile (page, filePath, wait = 2000) {
   const loaderSelector = '#dropFileInput'
   const loader = await page.$(loaderSelector)
   await loader.uploadFile(filePath)
+  await page.waitForNetworkIdle()  
   await page.waitForTimeout(wait)
 }
 
@@ -247,15 +248,17 @@ export async function clickProject (page, tabId, name) {
   await page.waitForNetworkIdle()
 }
 
-export async function switchProject (page, name) {
+export async function switchProject (page, name, wait = 2000) {
   await core.click(page, '#project-menu', 2000)
   await core.clickXPath(page, `//div[contains(@component, "collection/KItem") and contains(., "${name}")]`, 1000)
   await page.waitForNetworkIdle()
+  await page.waitForTimeout(wait)
 }
 
-export async function closeProject (page) {
+export async function closeProject (page, wait = 2000) {
   await core.click(page, '#close-project')
   await page.waitForNetworkIdle()
+  await page.waitForTimeout(wait)
 }
 
 export async function removeProject (page, tabId, name) {
