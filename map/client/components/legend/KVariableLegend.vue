@@ -1,17 +1,19 @@
 <template>
-  <template v-for="variable in variables" :key="variable.name">
-    <KLegendRenderer
-      :label="variable.label"
-    >
-      <!-- content -->
-      <div class="q-pa-sm">
-        <KColorScale
+  <KLegendRenderer
+    :label="label"
+  >
+  <div class="q-pl-md">
+    <template v-for="variable in variables" :key="variable.name">
+      <!-- caption -->
+      <span class="text-caption">{{ variable.label }}</span>
+      <!-- colorscale -->
+      <KColorScale
         v-bind="variable.colorScale"
         style="height: 46px;"
       />
-    </div>
-    </KLegendRenderer>
-  </template>
+    </template>
+  </div>
+  </KLegendRenderer>
 </template>
 
 <script setup>
@@ -44,11 +46,11 @@ const variables = computed(() => {
     return _.has(variable, 'chromajs')
   })
     .map(variable => {
-    // Pick useful properties
+      // Pick useful properties
       let { name, label, chromajs, unit } = _.pick(variable, ['name', 'label', 'chromajs', 'unit'])
       // Avoid mutating layer data
       const colorScale = _.cloneDeep(chromajs)
-      label = `${i18n.t(label)} (${Units.getTargetUnitSymbol(unit)})`
+      label = `${i18n.tie(label)} (${Units.getTargetUnitSymbol(unit)})`
       // Rename required properties for backward compatibility
       if (colorScale.scale) {
         colorScale.colors = colorScale.scale
