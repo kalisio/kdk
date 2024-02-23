@@ -5,7 +5,7 @@ import config from 'config'
 export const LocalStorage = {
   initialize () {
     this.prefix = _.kebabCase(_.get(config, 'appName', 'kdk'))
-    logger.debug(`[KDK] initializing local storage with prefix: ${this.prefix}`)
+    logger.debug(`[KDK] initializing local storage with prefix: '${this.prefix}'`)
   },
   localKey (key) {
     const keyPrefix = `${this.prefix}-`
@@ -16,11 +16,11 @@ export const LocalStorage = {
     const jsonValue = JSON.stringify(value)
     window.localStorage.setItem(this.localKey(key), jsonValue)
   },
-  get (key, defautlValue) {
+  get (key, defaultValue) {
     const value = window.localStorage.getItem(this.localKey(key))
     if (_.isNil(value)) {
-      logger.debug(`[KDK] Cannot find local storage value with key ${key}. Returning default value ${defautlValue}`)
-      return defautlValue
+      logger.debug(`[KDK] Cannot find local storage value with key '${key}'. Returning default value '${defaultValue}'`)
+      return defaultValue
     }
     return JSON.parse(value)
   },
