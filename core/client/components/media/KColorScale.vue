@@ -21,7 +21,7 @@ const props = defineProps({
     default: undefined
   },
   colors: {
-    type: String,
+    type: [String, Array],
     default: 'OrRd'
   },
   domain: {
