@@ -154,7 +154,6 @@ export function convertPointStyleToSimpleStyle (style) {
 }
 
 export function convertSimpleStyleToPointStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
   return style ? convertStyle(style, SimpleStyleToPointStyle) : {}
 }
 
