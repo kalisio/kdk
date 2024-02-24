@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import * as math from 'mathjs'
 import config from 'config'
 import { i18n } from './i18n.js'
@@ -317,6 +318,10 @@ export const Units = {
   // Convert between units by names
   // If target unit is not specified will use default unit (if any) for source unit
   convert (value, sourceUnit, targetUnit) {
+    if (_.isNil(value)) {
+      logger.warn(`[KDK] cannont convert an nil value`)
+      return
+    }
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
@@ -334,6 +339,10 @@ export const Units = {
   // If target unit is not specified will use default unit (if any) for source unit
   // options are mathjs format options
   format (value, sourceUnit, targetUnit, options) {
+    if (_.isNil(value)) {
+      logger.warn(`[KDK] cannot format a nil value`)
+      return
+    }
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
     const n = (targetUnit ? this.convert(value, sourceUnit, targetUnit) : value)
