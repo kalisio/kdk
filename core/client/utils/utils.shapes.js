@@ -123,7 +123,8 @@ function getSize (size) {
     - rotation: Number - the rotation to apply in degree
   - text: Object specifying a text overlay
     - label: String - the label to display
-    - color: String - the icon color
+    - classes: extra classes to apply to the text
+    - color: String - the text color
     - size: Number - the font size in pixel - 14
     - translation: Array - the translation to apply from the center of the shape ['-50%', '-50%']
     - rotation: Number - the rotation to apply in degree
@@ -206,27 +207,29 @@ export function createShape (options) {
   // Render icon 
   let iconTag = ''
   if (options.icon) {
-    if (options.icon.classes || options.icon.url) {
-      let specificStyle = ''
-      if (options.icon.url) {
-        let iconSize = options.icon.size ? getSize(options.icon.size) : size
-        iconTag = `<img src="${options.icon.url}" `
-        // handle size
-        iconTag += `width=${iconSize.width} height=${iconSize.height} `
-      } else {
-        iconTag += `<i class="${options.icon.classes}" `
-        // handle color
-        const color = getHtmlColor(options.icon.color, defaultColor)
-        specificStyle += `color: ${color};`
-        // handle size
-        let iconSize = options.icon.size || defaultIconSize
-        specificStyle += `font-size: ${iconSize}px;`
+    if (!_.isNil(options.icon.classes) || !_.isNil(options.icon.url)) {
+      if (!_.isEmpty(options.icon.classes) || !_.isEmpty(options.icon.url)) {
+        let specificStyle = ''
+        if (options.icon.url) {
+          let iconSize = options.icon.size ? getSize(options.icon.size) : size
+          iconTag = `<img src="${options.icon.url}" `
+          // handle size
+          iconTag += `width=${iconSize.width} height=${iconSize.height} `
+        } else {
+          iconTag += `<i class="${options.icon.classes}" `
+          // handle color
+          const color = getHtmlColor(options.icon.color, defaultColor)
+          specificStyle += `color: ${color};`
+          // handle size
+          let iconSize = options.icon.size || defaultIconSize
+          specificStyle += `font-size: ${iconSize}px;`
+        }
+        const opacity = options.icon.opacity || 1
+        const translation = options.icon.translation || _.get(shape, 'icon.translation', ['-50%', '-50%'])
+        const rotation = options.icon.rotation || _.get(shape, 'icon.rotation', 0)
+        iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); opacity: ${opacity}; ${specificStyle}"`
+        iconTag += '/>'
       }
-      const opacity = options.icon.opacity || 1
-      const translation = options.icon.translation || _.get(shape, 'icon.translation', ['-50%', '-50%'])
-      const rotation = options.icon.rotation || _.get(shape, 'icon.rotation', 0)
-      iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); opacity: ${opacity}; ${specificStyle}"`
-      iconTag += '/>'
     } else {
       logger.warn(`[KDK] icon must contain either the 'classes' property or the 'url' property`)
     }
@@ -234,16 +237,19 @@ export function createShape (options) {
   // Render text 
   let textTag = ''
   if (options.text) {
-    if (options.text.label) {
-      textTag = '<span '
-      const color = getHtmlColor(options.text.color, defaultColor)
-      const textSize = options.text.size || defaultTextSize
-      const translation = options.text.translation || _.get(shape, 'text.translation', ['-50%', '-50%'])
-      const rotation = options.text.rotation || _.get(shape, 'icon.rotation', 0)
-      textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px;"`
-      textTag += '>'
-      textTag += options.text.label
-      textTag += '</span>'
+    if (!_.isNil(options.text.label)) {
+      if (!_.isEmpty(options.text.label)) {
+        textTag = '<span '
+        if (options.text.classes) textTag += `classes="${options.text.classes}" `
+        const color = getHtmlColor(options.text.color, defaultColor)
+        const textSize = options.text.size || defaultTextSize
+        const translation = options.text.translation || _.get(shape, 'text.translation', ['-50%', '-50%'])
+        const rotation = options.text.rotation || _.get(shape, 'icon.rotation', 0)
+        textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px;"`
+        textTag += '>'
+        textTag += options.text.label
+        textTag += '</span>'
+      }
     } else {
       logger.warn(`[KDK] text must contain the 'label' property`)
     }
