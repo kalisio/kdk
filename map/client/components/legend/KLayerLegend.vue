@@ -46,7 +46,7 @@ const legends = computed(() => {
     const minZoom = _.get(legend, 'minZoom', _.get(props.layer, `${props.engine}.minZoom`, 0))
     const maxZoom = _.get(legend, 'maxZoom', _.get(props.layer, `${props.engine}.maxZoom`, 99))
     if (props.zoom >= minZoom && props.zoom <= maxZoom) {
-      logger.debug(`[KDK] Register '${props.layer.name}' legend '${legend.label}''`)
+      logger.debug(`[KDK] Register '${props.layer.name}'`)
       const renderer = props.renderers[legend.type]
       if (!renderer) {
         logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
