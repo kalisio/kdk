@@ -84,7 +84,7 @@ const props = defineProps({
         image: 'legend/KImageLegend',
         'color-scale': 'legend/KColorScaleLegend',
         symbols: 'legend/KSymbolsLegend',
-        variable: 'legend/KVariableLegend'
+        variables: 'legend/KVariablesLegend'
       }
     }
   }

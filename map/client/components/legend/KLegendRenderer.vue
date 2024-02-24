@@ -1,11 +1,13 @@
 <template>
   <div class="column full-width q-gutter-xs">
-    <div v-if="label" class="text-weight-light">
+    <div v-if="label" class="text-weight-medium">
       {{ $tie(label) }}
     </div>
-    <slot>
+    <div class="q-pr-sm">
+      <slot>
       <!-- to be overloaded -->
-    </slot>
+      </slot>
+    </div>
   </div>
 </template>
 

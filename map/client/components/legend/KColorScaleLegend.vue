@@ -7,7 +7,7 @@
     <div class="q-pa-sm">
       <KColorScale
         v-bind="content"
-        style="height: 46px;"
+        style="height: 44px;"
       />
     </div>
   </KLegendRenderer>

@@ -26,7 +26,7 @@
                 </div>
               </q-item-section>
               <q-item-section>
-                <q-item-label>
+                <q-item-label class="text-caption">
                   {{ $tie(element.label )}}
                 </q-item-label>
               </q-item-section>

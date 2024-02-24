@@ -1,8 +1,9 @@
 <template>
   <KLegendRenderer
+    v-if="content"
     :label="label"
   >
-  <div class="q-pl-md">
+    <!-- content -->
     <template v-for="variable in variables" :key="variable.name">
       <!-- caption -->
       <span class="text-caption">{{ variable.label }}</span>
@@ -12,12 +13,12 @@
         style="height: 46px;"
       />
     </template>
-  </div>
   </KLegendRenderer>
 </template>
 
 <script setup>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { computed } from 'vue'
 import { i18n } from '../../../../core/client'
 import { Units } from '../../../../core/client/units'
@@ -35,15 +36,20 @@ const props = defineProps({
     default: undefined
   },
   content: {
-    type: Object,
-    default: () => null
+    type: String,
+    default: '.'
   }
 })
 
 // Computed
 const variables = computed(() => {
-  return props.layer.variables.filter(variable => {
-    return _.has(variable, 'chromajs')
+  const regexp = new RegExp(props.content)
+  return _.filter(props.layer.variables, variable => {
+    if (regexp.test(variable)) {
+      if (variable.chromajs) return true
+      logger.warn(`[KDK] variable '${variable.name}' must have a 'chromajs' property`)
+    }
+    return false
   })
     .map(variable => {
       // Pick useful properties
