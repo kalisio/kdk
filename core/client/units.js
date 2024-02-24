@@ -317,6 +317,7 @@ export const Units = {
   // Convert between units by names
   // If target unit is not specified will use default unit (if any) for source unit
   convert (value, sourceUnit, targetUnit) {
+    if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
     // Check if the target unit does exist
