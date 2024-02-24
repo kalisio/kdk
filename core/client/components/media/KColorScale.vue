@@ -10,6 +10,7 @@
 
 <script setup>
 import _ from 'lodash'
+import * as math from 'mathjs'
 import { computed, watch, onMounted } from 'vue'
 import { uid } from 'quasar'
 import { buildColorScale } from '../../utils/utils.colors'
@@ -50,7 +51,8 @@ const props = defineProps({
         ticks: {
           size: 10,
           font: 'Arial',
-          color: 'black'
+          color: 'black',
+          format: { notation: 'auto', precision: 3 }
         }
       }
     }
@@ -64,14 +66,14 @@ const props = defineProps({
   }
 })
 
-// data
+// Data
 const canvasId = uid()
 let canvas = null
 let canvasContext = null
 let expectedSize = null
 const callRefresh = _.debounce(() => { refresh() }, 200)
 
-// computed
+// Computed
 const labelSize = computed(() => {
   return _.get(props.layout, 'label.size', 12)
 })
@@ -102,7 +104,11 @@ const ticksColor = computed(() => {
 const gutter = computed(() => {
   return _.get(props.layout, 'gutter', 4)
 })
-// functions
+
+// Functions
+function formatTick (tick) {
+  return math.format(tick, props.layout.ticks.format)
+}
 function drawLabel () {
   if (_.isNil(props.label)) return
   canvasContext.font = labelFont.value
@@ -111,7 +117,7 @@ function drawLabel () {
   let xLabel = canvas.width
   switch (labelAlign.value) {
     case 'left':
-      xLabel = 0
+    xLabel = 0
       break
     case 'center':
       xLabel = canvas.width / 2
@@ -140,16 +146,16 @@ function drawDiscreteHorizontalScale () {
     if (i === 0) {
       if (props.classes[i] !== Number.MIN_VALUE) {
         canvasContext.textAlign = 'left'
-        tick = props.classes[i]
+        tick = formatTick(props.classes[i])
       }
     } else if (i === props.classes.length - 1) {
       if (props.classes[i] !== Number.MAX_VALUE) {
         canvasContext.textAlign = 'right'
-        tick = props.classes[i]
+        tick = formatTick(props.classes[i])
       }
     } else {
       canvasContext.textAlign = 'center'
-      tick = props.classes[i]
+      tick = formatTick(props.classes[i])
     }
     if (tick) canvasContext.fillText(tick, i * boxWidth, yTicks)
   }
@@ -173,10 +179,10 @@ function drawDiscreteVerticalScale () {
   for (let i = 0; i < props.classes.length; ++i) {
     let tick
     if (i === 0) {
-      if (props.classes[i] !== Number.MIN_VALUE) tick = props.classes[i]
+      if (props.classes[i] !== Number.MIN_VALUE) tick = formatTick(props.classes[i])
     } else if (i === props.classes.length - 1) {
-      if (props.classes[i] !== Number.MAX_VALUE) tick = props.classes[i]
-    } else tick = props.classes[i]
+      if (props.classes[i] !== Number.MAX_VALUE) tick = formatTick(props.classes[i])
+    } else tick = formatTick(props.classes[i])
     if (tick) canvasContext.fillText(tick, x, yBar + (length - i) * boxHeight + ticksSize.value / 2)
   }
 }
