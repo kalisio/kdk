@@ -1,7 +1,6 @@
 <template>
   <k-modal
     id="add-layer-modal"
-    :title="title"
     v-model="isModalOpened"
   >
     <div>
