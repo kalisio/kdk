@@ -73,9 +73,9 @@ export default {
         this.addLayer(layers[0])
       }
     },
-    getTimezoneMarker (feature, latlng) {
+    getTimezoneMarker (feature, options) {
       const isSelected = (this.timezone === feature.properties.name)
-      return createMarkerFromPointStyle(latlng, {
+      return {
         shape: 'circle',
         color: 'primary',
         opacity: isSelected ? 1 : 0.5,
@@ -84,7 +84,7 @@ export default {
           color: 'dark',
           width: isSelected ? 3 : 1
         }
-      })
+      }
     },
     getTimezoneTooltip (feature, layer) {
       const name = _.get(feature, 'properties.name')
