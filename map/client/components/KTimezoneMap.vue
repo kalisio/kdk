@@ -11,7 +11,6 @@ import { api, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as mixins from '../mixins'
 import { useCatalog, useCurrentActivity } from '../composables'
-import { createMarkerFromPointStyle } from '../leaflet/utils/index.js'
 import meta from 'moment-timezone/data/meta/latest.json'
 
 // Convert timezones to GeoJson
