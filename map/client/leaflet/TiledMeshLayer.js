@@ -281,13 +281,15 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   updateColorMap () {
+    const chromajs = this.conf.chromajs
+    if (_.isNil(chromajs)) return
+
     // create color map using domain or classes
     // domain and classes can be specified from options
     // if not, domain can be gathered from grid source
     this.colorMap = null
     this.colorMapShaderCode = null
 
-    const chromajs = _.get(this.conf, 'chromajs')
     const classes = chromajs.classes
     let domain
     if (!classes) {
