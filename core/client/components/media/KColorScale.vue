@@ -4,7 +4,7 @@
     <canvas
       class="k-color-scale"
       :id="canvasId"
-      />
+    />
   </div>
 </template>
 
@@ -242,10 +242,10 @@ function onResized (size) {
   if (canvas) callRefresh()
 }
 
-// watch
-watch(props, () => { if (canvas) refresh() })
+// Watch
+watch(props, () => { if (canvas) callRefresh() })
 
-// hooks
+// Hooks
 onMounted(() => {
   canvas = document.getElementById(canvasId)
   canvasContext = canvas.getContext('2d')

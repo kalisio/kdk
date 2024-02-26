@@ -4,11 +4,8 @@
     :label="label"
   >
     <!-- content -->
-    <div class="q-pa-sm">
-      <KColorScale
-        v-bind="content"
-        style="height: 44px;"
-      />
+    <div class="q-pa-xs">
+      <KColorScale v-bind="content" />
     </div>
   </KLegendRenderer>
 </template>
