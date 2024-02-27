@@ -35,6 +35,10 @@
       "REMOVING_LABEL": "Please wait while removing layer data",
       "REMOVE_DIALOG_TITLE": "Remove {layer} ?",
       "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{layer}</b> from your workspace ?"
+    },
+    "capture": {
+      "CAPTURE_PDF_FILE": "capture_{time}.pdf",
+      "CAPTURE_IMAGE_FILE": "capture_{time}.png"
     }
   },
   "mixins": {

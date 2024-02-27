@@ -35,6 +35,10 @@
       "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
       "REMOVE_DIALOG_TITLE": "Supprimer {layer} ?",
       "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {layer} de votre espace de travail ?"
+    },
+    "capture": {
+      "CAPTURE_PDF_FILE": "impression_{time}.pdf",
+      "CAPTURE_IMAGE_FILE": "impression_{time}.png"
     }
   },
   "mixins": {
