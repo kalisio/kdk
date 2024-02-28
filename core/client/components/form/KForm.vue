@@ -23,7 +23,7 @@
       Grouped fields
     -->
     <template v-for="(group, id) in groups" :key="id">
-      <q-expansion-item icon="las la-file-alt" :group="id">
+      <q-expansion-item v-if="group.hasFields" icon="las la-file-alt" :group="id">
         <template v-slot:header>
           <!-- Label -->
           <q-item-section>
@@ -105,7 +105,11 @@ let buildInProgress = false
 
 // Computed
 const groups = computed(() => {
-  if (schema.value && schema.value.groups) return schema.value.groups
+  if (schema.value && schema.value.groups) {
+    return _.mapValues(schema.value.groups, (group, id) => Object.assign({
+      hasFields: _.find(fields.value, { group: id })
+    }, group))
+  }
   return {}
 })
 
