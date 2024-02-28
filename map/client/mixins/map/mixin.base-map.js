@@ -289,11 +289,12 @@ export const baseMap = {
     },
     updateLayerDisabled (layer) {
       const wasDisabled = layer.isDisabled
-      layer.isDisabled = this.isLayerDisabled(layer)
-      if (layer.isDisabled !== wasDisabled) {
-        if (wasDisabled) this.onLayerEnabled(layer)
-        else this.onLayerDisabled(layer)
-      }
+      const isDisabled = this.isLayerDisabled(layer)
+      // Test if state changed
+      if (wasDisabled === isDisabled) return
+      layer.isDisabled = isDisabled
+      if (wasDisabled) this.onLayerEnabled(layer)
+      else this.onLayerDisabled(layer)
     },
     onLayerEnabled (layer) {
       this.$emit('layer-enabled', layer)
