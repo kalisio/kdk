@@ -11,9 +11,9 @@ export const ShapeMarker = L.Marker.extend({
     if (shape) {
       L.Marker.prototype.initialize.call(this, latlng, {
         icon: L.divIcon({
-          iconSize: [shape.width, shape.height],
+          iconSize: [shape.size.width, shape.size.height],
           iconAnchor: this.getAnchor(shape.anchor, shape.size),
-          popupAnchor: [0, -shape.height / 2],
+          popupAnchor: [0, -shape.size.height / 2],
           html: shape.html,
           className: ''
         }),
