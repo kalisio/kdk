@@ -10,7 +10,8 @@ export const ShapeMarker = L.Marker.extend({
     const shape = coreUtils.createShape(options)
     if (shape) {
       L.Marker.prototype.initialize.call(this, latlng, {
-        icon: L.divIcon({
+        // We allow to directly provide the icon
+        icon: shape.icon || L.divIcon({
           iconSize: [shape.size.width, shape.size.height],
           iconAnchor: this.getAnchor(shape.anchor, shape.size),
           popupAnchor: [0, -shape.size.height / 2],
