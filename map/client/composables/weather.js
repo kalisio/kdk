@@ -185,7 +185,7 @@ export function useWeather (options = {}) {
       forceDir: true
     }
   }
-  function createWindBarbMarker (feature) {
+  function createWindBarbIcon (feature) {
     const options = getWindBarbOptions(feature)
     return (options ? new L.WindBarb.Icon(getWindBarbOptions(feature)) : null)
   }
@@ -195,7 +195,7 @@ export function useWeather (options = {}) {
   }
   function getProbedLocationForecastMarker (feature, latlng, options) {
     // Use wind barbs on probed features
-    const icon = createWindBarbMarker(feature)
+    const icon = createWindBarbIcon(feature)
     return (icon ? L.marker(latlng, { icon }) : null)
   }
 
@@ -205,7 +205,7 @@ export function useWeather (options = {}) {
     isWeatherProbe,
     getForecastAsHtml,
     getWindBarbOptions,
-    createWindBarbMarker,
+    createWindBarbIcon,
     getProbedLocationForecastAtCurrentTime,
     getProbedLocationForecastTooltip,
     getProbedLocationForecastMarker

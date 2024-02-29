@@ -374,12 +374,6 @@ export default {
       const feature = (isWeatherProbe
         ? this.getProbedLocationForecastAtCurrentTime(this.probedLocation)
         : this.getProbedLocationMeasureAtCurrentTime(this.probedLocation))
-      if (isWeatherProbe) {
-        const tooltip = this.getForecastAsHtml(feature)
-        if (tooltip) _.set(feature, 'properties.tooltip', { html: `<b>${tooltip}</b>` })
-        const options = this.getWindBarbOptions(feature)
-        if (options) _.set(feature, 'properties.icon', { type: 'WindBarb.icon', options })
-      }
       this.highlight(feature, this.layer)
     },
     onZoomRestored () {
