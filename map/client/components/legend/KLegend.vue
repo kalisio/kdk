@@ -21,7 +21,7 @@
           </q-item-section>
           <!-- Helper -->
           <q-item-section v-if="sublegend.helper" side >
-            <k-action
+            <KAction
               :id="sublegend.name + '-helper'"
               color="primary"
               :propagate="false"
