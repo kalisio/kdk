@@ -52,8 +52,12 @@ const legends = computed(() => {
         logger.warn(`[KDK] Cannot find any renderer for the layer's legend of type of ${legend.type}`)
         return
       }
-      legend.renderer = coreUtils.loadComponent(renderer)
-      result.push(legend)
+      result.push({
+        layer: props.layer,
+        label: legend.label,
+        content: legend.content,
+        renderer: coreUtils.loadComponent(renderer)
+      })
     }
   })
   return result
