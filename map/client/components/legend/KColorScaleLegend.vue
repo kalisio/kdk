@@ -4,10 +4,10 @@
     :label="label"
   >
     <!-- content -->
-    <div class="q-pa-sm">
-      <KColorScale
+    <div class="q-pa-xs">
+      <KColorScale 
         v-bind="content"
-        style="height: 44px;"
+        :style="`height: ${height}px;`"
       />
     </div>
   </KLegendRenderer>
@@ -26,6 +26,10 @@ defineProps({
   content: {
     type: Object,
     default: () => null
+  },
+  height: {
+    type: Number,
+    default: () => 40
   }
 })
 </script>
