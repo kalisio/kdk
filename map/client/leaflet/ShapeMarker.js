@@ -7,23 +7,31 @@ export const ShapeMarker = L.Marker.extend({
 
   // Constructor
   initialize (latlng, options) {
-    const shape = coreUtils.createShape(options)
-    if (shape) {
+    if (options.icon instanceof L.Icon) { // We allow to directly provide the icon
       L.Marker.prototype.initialize.call(this, latlng, {
-        // We allow to directly provide the icon
-        icon: shape.icon || L.divIcon({
-          iconSize: [shape.size.width, shape.size.height],
-          iconAnchor: this.getAnchor(shape.anchor, shape.size),
-          popupAnchor: [0, -shape.size.height / 2],
-          html: shape.html,
-          className: ''
-        }),
+        icon: options.icon,
         // forward extra options for different purposes, i.e. clustering
         ..._.get(options, 'options', {})  
       })
     } else {
-      logger.warn(`[KDK] unable to create the shape with the options: ${options}` )
+      const shape = coreUtils.createShape(options)
+      if (shape) {
+        L.Marker.prototype.initialize.call(this, latlng, {
+          icon: L.divIcon({
+            iconSize: [shape.size.width, shape.size.height],
+            iconAnchor: this.getAnchor(shape.anchor, shape.size),
+            popupAnchor: [0, -shape.size.height / 2],
+            html: shape.html,
+            className: ''
+          }),
+          // forward extra options for different purposes, i.e. clustering
+          ..._.get(options, 'options', {})  
+        })
+      } else {
+        logger.warn(`[KDK] unable to create the shape with the options: ${options}` )
+      }
     }
+    
   },
 
   getAnchor (position, size) {

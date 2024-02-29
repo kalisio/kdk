@@ -206,7 +206,6 @@ export function createShape (options) {
   }
   // Render icon 
   let iconTag = ''
-  let icon
   if (options.icon) {
     if (!_.isNil(options.icon.classes) || !_.isNil(options.icon.url)) {
       if (!_.isEmpty(options.icon.classes) || !_.isEmpty(options.icon.url)) {
@@ -231,8 +230,6 @@ export function createShape (options) {
         iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); opacity: ${opacity}; ${specificStyle}"`
         iconTag += '/>'
       }
-    } else if (options.icon instanceof L.Icon) { // We allow to directly provide the icon
-      icon = options.icon
     } else {
       logger.warn(`[KDK] icon must contain either the 'classes' property or the 'url' property`)
     }
@@ -266,7 +263,6 @@ export function createShape (options) {
   }
   return {
     html: beginDivTag + beginSvgTag + svgClipPath + svgShapeContent + endSvgTag + iconTag + textTag + htmlTag + endDivTag,
-    icon,
     size,
     anchor
   }
