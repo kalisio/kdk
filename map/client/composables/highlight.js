@@ -92,7 +92,9 @@ export function useHighlight (name, options = {}) {
     // Assign style
     if (activity.is2D()) {
       if (selected) {
-        let highlightStyle = _.get(config, `engines.${activity.engine}.style.selection`)[getFeatureStyleType(highlight)]
+        // Do not alter config object
+        const selectionStylePath = `engines.${activity.engine}.style.selection.${getFeatureStyleType(highlight)}`
+        let highlightStyle = _.cloneDeep(_.get(config, selectionStylePath, {}))
         // adapt the size to the marker using feature style
         let size = _.get(feature, 'style.size')
         if (size) {
