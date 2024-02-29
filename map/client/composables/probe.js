@@ -67,7 +67,10 @@ export function useProbe (name, options = {}) {
 
   let lastClickedPosition
   function onClicked (layer, event) {
-    if (!isProbing()) return
+    if (!isProbing()) {
+      if (get('item')) clearProbe()
+      return
+    }
     // FIXME: For some layers, eg based on path, we get a first click with the layer as target
     // then a second click with the map as target, we need to filter the later for selection
     const containerPosition = _.get(event, 'containerPoint')
