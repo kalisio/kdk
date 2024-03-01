@@ -3,7 +3,7 @@ import chroma from 'chroma-js'
 import moment from 'moment'
 import Cesium from 'cesium/Source/Cesium.js'
 import { Time, Units } from '../../../../core/client/index.js'
-import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle,
+import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
          convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
 
@@ -64,7 +64,7 @@ export function getPointSimpleStyle (feature, options, engine, engineStylePath =
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
   const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
-  return convertPointStyleToSimpleStyle(style)
+  return convertSimpleStyleColors(convertPointStyleToSimpleStyle(style))
 }
 
 export function getLineSimpleStyle (feature, options, engine, engineStylePath = 'style.line') {
@@ -73,7 +73,7 @@ export function getLineSimpleStyle (feature, options, engine, engineStylePath = 
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
   const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
-  return convertLineStyleToSimpleStyle(style)
+  return convertSimpleStyleColors(convertLineStyleToSimpleStyle(style))
 }
 
 export function getPolygonSimpleStyle (feature, options, engine, engineStylePath = 'style.polygon') {
@@ -82,7 +82,7 @@ export function getPolygonSimpleStyle (feature, options, engine, engineStylePath
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
   const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
-  return convertPolygonStyleToSimpleStyle(style)
+  return convertSimpleStyleColors(convertPolygonStyleToSimpleStyle(style))
 }
 
 export function convertToCesiumObjects (style) {
