@@ -2,6 +2,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
+import { uid } from 'quasar'
 import { Time } from '../../../../core/client/time.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
@@ -197,6 +198,8 @@ export const geojsonLayers = {
       if (cesiumOptions.type !== 'geoJson') return
       const engine = _.get(this, 'activityOptions.engine')
       options.processor = (feature) => {
+        // File import
+        if (!options.featureId && !feature._id) feature._id = uid().toString()
         // Cesium expect id to be in a 'id' property
         feature.id = getFeatureId(feature, options)
         // We cannot access data outside the properties object of a feature in Cesium

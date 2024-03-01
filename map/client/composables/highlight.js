@@ -2,7 +2,7 @@ import _ from 'lodash'
 import config from 'config'
 import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
-import { uid, getCssVar } from 'quasar'
+import { uid } from 'quasar'
 import { unref, onUnmounted } from 'vue'
 import { getFeatureId, getFeatureStyleType } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
@@ -60,15 +60,6 @@ export function useHighlight (name, options = {}) {
   function getHighlight (feature, layer) {
     return get(getHighlightId(feature, layer))
   }
-  function convertColors (highlight) {
-    // Convert from quasar color palette to actual color
-    _.forOwn(highlight.properties, (value, key) => {
-      if (key.endsWith('-color')) {
-        const color = getCssVar(value)
-        if (color) _.set(highlight, `properties.${key}`, color)
-      }
-    })
-  }
   function highlight (feature, layer, selected = true) {
     const highlightId = getHighlightId(feature, layer)
     // Define default highlight feature
@@ -90,11 +81,11 @@ export function useHighlight (name, options = {}) {
       Object.assign(highlight, bboxPolygon(bbox(highlight)))
     }
     // Assign style
-    if (activity.is2D()) {
-      if (selected) {
-        // Do not alter config object
-        const selectionStylePath = `engines.${activity.engine}.style.selection.${getFeatureStyleType(highlight)}`
-        let highlightStyle = _.cloneDeep(_.get(config, selectionStylePath, {}))
+    if (selected) {
+      // Do not alter config object
+      const selectionStylePath = `engines.${activity.engine}.style.selection.${getFeatureStyleType(highlight)}`
+      let highlightStyle = _.cloneDeep(_.get(config, selectionStylePath, {}))
+      if (activity.is2D()) {
         // adapt the size to the marker using feature style
         let size = _.get(feature, 'style.size')
         if (size) {
@@ -114,28 +105,14 @@ export function useHighlight (name, options = {}) {
           }
         }
         if (size) Object.assign(highlightStyle, { size: [size[0] + 8, size[1] + 8] }) 
-        Object.assign(highlight, { style: highlightStyle })
-      } else {
-        // retrieve feature sytle
-        Object.assign(highlight, { style: feature.style })
       }
+      Object.assign(highlight, { style: highlightStyle })
     } else {
-      // 3D TODO: to be updated when swithing globe to new style
-      Object.assign(highlight, { 
-        properties: {
-          geodesic: true, // In 3D we use a circle on ground
-          radius: 1000,
-          'stroke-color': getCssVar('secondary'),
-          'stroke-width': 3,
-          'fill-color': getCssVar('secondary'),
-          'fill-opacity': 0.5
-        }
-      }, options)
+      // retrieve feature sytle
+      Object.assign(highlight, { style: feature.style })
     }
     // Add additional information provided by feature, if any, for custom styling
     _.merge(highlight, _.omit(feature, ['geometry', 'style']))
-    // TODO: to be removed when swithing globe to new style
-    if (activity.is3D()) convertColors(highlight)
     set(highlightId, highlight)
     updateHighlightsLayer()
     return highlight

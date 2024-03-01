@@ -3,12 +3,11 @@ import sift from 'sift'
 import logger from 'loglevel'
 import Emitter from 'tiny-emitter'
 import { getCssVar } from 'quasar'
-import { kml } from '@tmcw/togeojson'
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
 import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
 import { Geolocation } from '../../geolocation.js'
-import { convertCesiumHandlerEvent, isTerrainLayer } from '../../utils.globe.js'
+import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson } from '../../utils.globe.js'
 // Cesium has its own dynamic module loader requiring to be configured
 // Cesium files need to be also added as static assets of the applciation
 BuildModuleUrl.setBaseUrl('/Cesium/')
@@ -279,6 +278,12 @@ export const baseGlobe = {
     clearLayers () {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
     },
+    async toGeoJson (name) {
+      const layer = this.getCesiumLayerByName(name)
+      if (!layer.entities) return
+      const geoJson = await convertEntitiesToGeoJson(layer.entities)
+      return geoJson
+    },
     zoomToBounds (bounds) {
       this.viewer.camera.flyTo({
         duration: 0,
@@ -402,7 +407,7 @@ export const baseGlobe = {
       }
       return position
     },
-    getDefaultPickHandler (event) {
+    async getDefaultPickHandler (event) {
       const emittedEvent = {}
       let options
       let pickedPosition = this.viewer.camera.pickEllipsoid(event.endPosition || event.position, this.viewer.scene.globe.ellipsoid)
@@ -422,24 +427,32 @@ export const baseGlobe = {
         emittedEvent.target = pickedObject.id || pickedObject.primitive.id
         if (emittedEvent.target instanceof Cesium.Entity) {
           // If feature have been lost at import try to recreate it in order to be compatible with 2D
+          // We attach it to the target entity so that we won't compute it each time the mouse move
+          // FIXME: should it be a problem with real-time updates ?
           if (!emittedEvent.target.feature) {
-            let feature = { type: 'Feature' }
-            /* FIXME: Generate GeoJson feature if possible (requires Cesium 1.59)
-               However this does not work yet and could be too much slow
+            // Cesium expect id to be in a 'id' property but internally we use _id
+            // Get it back as otherwise it might break code relying on feature ID
+            let feature = {
+              _id: emittedEvent.target.id,
+              type: 'Feature'
+            }
+            // Generate GeoJson feature if possible (requires Cesium 1.59)
             if (typeof Cesium.exportKml === 'function') {
               const selection = new Cesium.EntityCollection()
               selection.add(emittedEvent.target)
-              const kmlEntities = await Cesium.exportKml({ entities: selection, modelCallback: () => '' })
-              const geoJson = kml(kmlEntities.kml)
-              if (geoJson.features.length > 0) feature = geoJson.features[0]
+              const geoJson = await convertEntitiesToGeoJson(selection)
+              if (geoJson.features.length > 0) {
+                Object.assign(feature, geoJson.features[0])
+              }
             }
-            */
-            const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position
-              ? emittedEvent.target.position.getValue(0)
-              : emittedEvent.pickedPosition)
-            feature.geometry = {
-              type: 'Point',
-              coordinates: [Cesium.Math.toDegrees(position.longitude), Cesium.Math.toDegrees(position.latitude)]
+            if (!feature.geometry) {
+              const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position
+                ? emittedEvent.target.position.getValue(0)
+                : emittedEvent.pickedPosition)
+              feature.geometry = {
+                type: 'Point',
+                coordinates: [Cesium.Math.toDegrees(position.longitude), Cesium.Math.toDegrees(position.latitude)]
+              }
             }
             feature.properties = (emittedEvent.target.properties ? emittedEvent.target.properties.getValue(0) : {})
             emittedEvent.target.feature = feature

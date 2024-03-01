@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { getCssVar } from 'quasar'
 import { utils as kdkCoreUtils } from '../../../core/client/index.js'
 
 export const IconStyleToSimpleStyle = {
@@ -147,6 +148,17 @@ export function convertStyle (style, mapping, asNumber = []) {
     if (mappedKey) _.set(convertedStyle, mappedKey, asNumber.includes(mappedKey) ? _.toNumber(value) : value)
   })
   return convertedStyle
+}
+
+export function convertSimpleStyleColors (style) {
+  // Convert from quasar color palette to actual color
+  _.forOwn(style, (value, key) => {
+    if (['stroke', 'fill', 'marker-color'].includes(key)) {
+      const color = getCssVar(value)
+      if (color) _.set(style, key, color)
+    }
+  })
+  return style
 }
 
 export function convertPointStyleToSimpleStyle (style) {
