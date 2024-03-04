@@ -33,6 +33,10 @@ export const Planets = {
       client.get('storage').removeItem(options.gatewayJwt)
     })
     const accessToken = await client.get('storage').getItem(options.apiJwt)
+    if (!accessToken) {
+      logger.error(new Error(`You must set planet ${name} token first`))
+      return
+    }
     await client.authenticate({
       strategy: 'jwt',
       accessToken
@@ -44,6 +48,10 @@ export const Planets = {
   async disconnect (name) {
     await this.planets[name].logout()
     delete this.planets[name]
+  },
+
+  isConnected (name) {
+    return !_.isNil(this.planets[name])
   },
 
   get (name) {
