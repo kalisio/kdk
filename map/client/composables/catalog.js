@@ -27,9 +27,12 @@ export function useCatalog (options = {}) {
   const orphanLayers = computed(() => catalog.getOrphanLayers(layers.value, layersByCategory.value))
 
   // Functions
-  async function getLayers () {
+  async function getLayers (filterQuery = {}) {
+    const query = Object.assign({},
+      options.project ? Object.assign(getCatalogProjectQuery(options.project), options.layers) : options.layers,
+      filterQuery)
     layers.value = await catalog.getLayers({
-      query: options.project ? Object.assign(getCatalogProjectQuery(options.project), options.layers) : options.layers,
+      query,
       context: options.context,
       planetApi: options.planetApi
     })
