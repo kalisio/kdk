@@ -27,9 +27,9 @@ export const levels = {
     },
     clearSelectableLevels (layer) {
       if (this.selectableLevelsLayer) {
-        this.setSelectedLevel(null)
         this.selectableLevels = {}
         this.selectableLevelsLayer = null
+        this.setSelectedLevel(null)
       }
     },
     setSelectedLevel (level) {
