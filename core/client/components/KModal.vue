@@ -112,7 +112,7 @@ const xlMinWidths = { wide: 90, medium: 55, narrow: 25 }
 const computedStyle = computed(() => {
   // compute the modal max height
   const screenHeight = $q.screen.height
-  const modalMaxHeight = props.maximized ? screenHeight : 0.8 * screenHeight
+  const modalMaxHeight = props.maximized ? screenHeight : 0.9 * screenHeight
   // compute the scroll area max height
   // take into account the header and footer height
   let contentMaxHeight = modalMaxHeight - headerHeight.value
