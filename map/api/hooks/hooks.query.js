@@ -30,6 +30,17 @@ function getGeometryQueryForBBox (bbox) {
     }
   }
 }
+
+export function marshallGeoJsonQuery (hook) {
+  const query = hook.params.query
+  if (query) {
+    if (query.geoJson) {
+      delete query.geoJson
+      hook.params.asGeoJson = true
+    }
+  }
+}
+
 export function marshallSpatialQuery (hook) {
   const query = hook.params.query
   if (query) {
@@ -116,11 +127,9 @@ export function marshallSpatialQuery (hook) {
       }
       query.geometry = geometryQuery
     }
-    if (query.geoJson) {
-      delete query.geoJson
-      hook.params.asGeoJson = true
-    }
   }
+  // Include GeoJson query by default
+  marshallGeoJsonQuery(hook)
 }
 
 export function asGeoJson (options = {}) {
@@ -190,10 +199,19 @@ export function asGeoJson (options = {}) {
     // Move some data to properties ?
     if (options.properties) {
       results.forEach(item => {
-        options.properties.forEach(mapping => {
-          if (mapping.from) _.set(item, `properties.${mapping.to || mapping.from}`, _.get(item, `${mapping.from}`))
-          if (mapping.delete) _.unset(item, `${mapping.from}`)
-        })
+        // True indicates to move all fields to properties
+        if (options.properties === true) {
+          _.forOwn(item, (value, key) => {
+            if ((key === 'geometry') || (key === 'type')) return
+            _.set(item, `properties.${key}`, _.get(item, key))
+            _.unset(item, key)
+          })
+        } else { // Else we expect a specific mapping
+          options.properties.forEach(mapping => {
+            if (mapping.from) _.set(item, `properties.${mapping.to || mapping.from}`, _.get(item, `${mapping.from}`))
+            if (mapping.delete) _.unset(item, `${mapping.from}`)
+          })
+        }
       })
     }
     // Copy pagination information if any so that client can use it anyway
