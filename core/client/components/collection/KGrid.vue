@@ -1,5 +1,5 @@
 <template>
-  <div v-if="items.length > 0" class="q-pa-sm fit row">
+  <div v-if="items.length > 0" class="q-pa-sm row">
     <template v-for="item in items" :key="item._id">
       <div :class="itemClass">
         <component
