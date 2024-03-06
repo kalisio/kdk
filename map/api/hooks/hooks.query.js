@@ -202,7 +202,7 @@ export function asGeoJson (options = {}) {
         // True indicates to move all fields to properties
         if (options.properties === true) {
           _.forOwn(item, (value, key) => {
-            if ((key === 'geometry') || (key === 'type')) return
+            if ((key === 'geometry') || (key === 'type') || (key === '_id')) return
             _.set(item, `properties.${key}`, _.get(item, key))
             _.unset(item, key)
           })
