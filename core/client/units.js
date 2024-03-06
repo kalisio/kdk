@@ -289,7 +289,7 @@ export const Units = {
   // Get unit symbol by unit name
   getUnitSymbol (unit) {
     const definition = this.getUnit(unit)
-    return (definition ? i18n.t(definition.symbol) : unit)
+    return (definition ? i18n.tie(definition.symbol) : unit)
   },
   // Get default unit definition (if any) for a given quantity/unit name
   getDefaultUnit (quantityOrUnit) {
