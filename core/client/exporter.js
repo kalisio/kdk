@@ -26,9 +26,12 @@ const ExporterQueue = {
     const request = this.pendingRequests.shift()
     try {
       // compute a filename
-      const timestamp = moment().toISOString().replace(/:/g, '-')
-      let filename = `${_.get(request, 'basename', request.service)}_${timestamp}.${request.format}`
-      if (_.get(request, 'gzip', true)) filename += '.gz'
+      let filename = request.filename
+      if (!filename) {
+        const timestamp = moment().toISOString().replace(/:/g, '-')
+        filename = `${_.get(request, 'basename', request.service)}_${timestamp}.${request.format}`
+        if (_.get(request, 'gzip', true)) filename += '.gz'
+      }
       // retrienve the target service path
       const servicePath = api.getServicePath(request.service).substring(1)
       // retrieve the transform assigned to the format
@@ -104,8 +107,10 @@ export const Exporter = {
         message: i18n.t('exporter.MESSAGE'),
         options: {
           type: 'radio',
-          model: options.formats[0].value,
-          items: options.formats
+          model: options.formats[0].label,
+          items: options.formats.map(format => { 
+            return { label: format.label, value: format.label }
+          })
         },
         cancel: {
           id: 'cancel-button',
@@ -121,8 +126,9 @@ export const Exporter = {
         persistent: true
       }
       Dialog.create(dialog)
-        .onOk((format) => {
-          if (!ExporterQueue.push(Object.assign(params, { format }))) {
+        .onOk((formatLabel) => {
+          const format = _.find(options.formats, { label: formatLabel } )
+          if (!ExporterQueue.push(Object.assign(params, format))) {
             Notify.create({
               type: 'negative',
               message: i18n.t('exporter.EXPORTS_LIMIT_REACHED')
@@ -130,7 +136,7 @@ export const Exporter = {
           }
         })
     } else {
-      if (!ExporterQueue.push(Object.assign(params, { format: options.formats[0].value }))) {
+      if (!ExporterQueue.push(Object.assign(params, formats[0]))) {
         Notify.create({
           type: 'negative',
           message: i18n.t('exporter.EXPORTS_LIMIT_REACHED')
