@@ -148,6 +148,9 @@ export function asGeoJson (options = {}) {
     const isPaginated = !_.isNil(results.data)
     const pagination = (isPaginated ? _.pick(results, ['total', 'skip', 'limit']) : {})
     results = (isPaginated ? results.data : results)
+    // Single item case, i.e. GET ?
+    const isFeatureCollection = Array.isArray(results)
+    if (!isFeatureCollection) results = [results]
     results = results
       .filter(item => {
         // Check if item is not already in GeoJson feature format and we can convert if required
@@ -214,18 +217,20 @@ export function asGeoJson (options = {}) {
         }
       })
     }
-    // Copy pagination information if any so that client can use it anyway
-    if (_.get(options, 'asFeatureCollection', true)) {
+    // If we should make it available as a GeoJson feature collection create it
+    if (isFeatureCollection && _.get(options, 'asFeatureCollection', true)) {
+      // Copy pagination information if any so that client can use it anyway
       _.set(hook, options.dataPath || 'result', Object.assign({
         type: 'FeatureCollection',
         features: results
       }, pagination)) // If no pagination this merged object will be empty
     } else if (isPaginated) {
+      // Copy pagination information if any so that client can use it anyway
       _.set(hook, options.dataPath || 'result', Object.assign({
         data: results
       }, pagination))
     } else {
-      _.set(hook, options.dataPath || 'result', results)
+      _.set(hook, options.dataPath || 'result', isFeatureCollection ? results : results[0])
     }
   }
 }
