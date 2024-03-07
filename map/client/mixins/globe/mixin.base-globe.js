@@ -284,16 +284,21 @@ export const baseGlobe = {
       const geoJson = await convertEntitiesToGeoJson(layer.entities)
       return geoJson
     },
-    zoomToBounds (bounds) {
+    zoomToBounds (bounds, heading = 0, pitch = -90, roll = 0, duration = 0) {
       this.viewer.camera.flyTo({
-        duration: 0,
         destination: Array.isArray(bounds) // Assume Cesium rectangle object if not array
           ? Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0])
-          : bounds
+          : bounds,
+        orientation: {
+          heading: Cesium.Math.toRadians(heading),
+          pitch: Cesium.Math.toRadians(pitch),
+          roll: Cesium.Math.toRadians(roll)
+        },
+        duration
       })
     },
-    zoomToBBox (bbox) {
-      this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
+    zoomToBBox (bbox, heading = 0, pitch = -90, roll = 0, duration = 0) {
+      this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]], heading, pitch, roll, duration)
     },
     zoomToLayer (name) {
       const layer = this.getCesiumLayerByName(name)
@@ -311,7 +316,7 @@ export const baseGlobe = {
         }
       }
     },
-    center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0) {
+    center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0, duration = 0) {
       const center = this.viewer.camera.positionCartographic
       const target = {
         destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude || center.height),
@@ -319,7 +324,8 @@ export const baseGlobe = {
           heading: Cesium.Math.toRadians(heading),
           pitch: Cesium.Math.toRadians(pitch),
           roll: Cesium.Math.toRadians(roll)
-        }
+        },
+        duration
       }
       if (this.viewer.clock.shouldAnimate) this.viewer.camera.flyTo(target)
       else this.viewer.camera.setView(target)
