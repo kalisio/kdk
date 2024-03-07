@@ -327,7 +327,7 @@ export const baseGlobe = {
         },
         duration
       }
-      if (this.viewer.clock.shouldAnimate) this.viewer.camera.flyTo(target)
+      if (duration) this.viewer.camera.flyTo(target)
       else this.viewer.camera.setView(target)
     },
     getCenter () {
