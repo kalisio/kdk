@@ -5,7 +5,7 @@
   >
     <!-- content -->
     <div class="q-pa-xs">
-      <KColorScale 
+      <KColorScale
         v-bind="content"
         :style="`height: ${height}px;`"
       />

@@ -319,7 +319,7 @@ export const Units = {
   // If target unit is not specified will use default unit (if any) for source unit
   convert (value, sourceUnit, targetUnit) {
     if (_.isNil(value)) {
-      logger.warn(`[KDK] cannont convert an nil value`)
+      logger.warn('[KDK] cannont convert an nil value')
       return
     }
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
@@ -340,7 +340,7 @@ export const Units = {
   // options are mathjs format options
   format (value, sourceUnit, targetUnit, options) {
     if (_.isNil(value)) {
-      logger.warn(`[KDK] cannot format a nil value`)
+      logger.warn('[KDK] cannot format a nil value')
       return
     }
     // If target unit is not given use default one
