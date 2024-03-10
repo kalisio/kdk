@@ -119,7 +119,7 @@ export async function dropFile (page, filePath, wait = 2000) {
   const loaderSelector = '#dropFileInput'
   const loader = await page.$(loaderSelector)
   await loader.uploadFile(filePath)
-  await page.waitForNetworkIdle()  
+  await page.waitForNetworkIdle()
   await page.waitForTimeout(wait)
 }
 

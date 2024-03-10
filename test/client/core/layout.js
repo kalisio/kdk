@@ -118,7 +118,6 @@ export async function countFabActions (page) {
   return countElements(page, '//a[contains(@class, "k-action-fab-action")]')
 }
 
-
 export async function closeWelcomeDialog (page) {
   await click(page, '.q-dialog #close-button')
 }

@@ -239,11 +239,13 @@ export default {
           newLayer.cesium.parameters.styles = style
           // add legend url if available in the picked style
           const legendUrl = _.get(this.layer.styles, [style, 'legend'])
-          if (legendUrl) newLayer.legend = {
-            type: 'image',
-            label: newLayer.name,
-            content: {
-              src: legendUrl
+          if (legendUrl) {
+            newLayer.legend = {
+              type: 'image',
+              label: newLayer.name,
+              content: {
+                src: legendUrl
+              }
             }
           }
         }
@@ -303,11 +305,13 @@ export default {
 
         // add legend url if available in the style
         const legendUrl = _.get(this.layer.styles, [style, 'legend'])
-        if (legendUrl) newLayer.legend = {
-          type: 'image',
-          label: newLayer.name,
-          content: {
-            src: legendUrl
+        if (legendUrl) {
+          newLayer.legend = {
+            type: 'image',
+            label: newLayer.name,
+            content: {
+              src: legendUrl
+            }
           }
         }
       } else if (this.service.protocol === 'TMS') {

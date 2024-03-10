@@ -108,7 +108,7 @@ export const Exporter = {
         options: {
           type: 'radio',
           model: options.formats[0].label,
-          items: options.formats.map(format => { 
+          items: options.formats.map(format => {
             return { label: format.label, value: format.label }
           })
         },
@@ -127,7 +127,7 @@ export const Exporter = {
       }
       Dialog.create(dialog)
         .onOk((formatLabel) => {
-          const format = _.find(options.formats, { label: formatLabel } )
+          const format = _.find(options.formats, { label: formatLabel })
           if (!ExporterQueue.push(Object.assign(params, format))) {
             Notify.create({
               type: 'negative',
@@ -136,7 +136,7 @@ export const Exporter = {
           }
         })
     } else {
-      if (!ExporterQueue.push(Object.assign(params, formats[0]))) {
+      if (!ExporterQueue.push(Object.assign(params, options.formats[0]))) {
         Notify.create({
           type: 'negative',
           message: i18n.t('exporter.EXPORTS_LIMIT_REACHED')

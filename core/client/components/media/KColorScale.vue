@@ -117,7 +117,7 @@ function drawLabel () {
   let xLabel = canvas.width
   switch (labelAlign.value) {
     case 'left':
-    xLabel = 0
+      xLabel = 0
       break
     case 'center':
       xLabel = canvas.width / 2
