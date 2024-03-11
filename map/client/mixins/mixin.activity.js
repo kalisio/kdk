@@ -246,6 +246,9 @@ export const activity = {
         } catch (error) {
           logger.error(`[KDK] ${error}`)
         }
+      } else {
+        if (weacastEnabled) logger.warn('[KDK] Weacast setup function is missing')
+        else logger.debug('[KDK] disabling Weacast')
       }
       // Retrieve the layers
       try {
