@@ -494,7 +494,9 @@ export const baseMap = {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     center (longitude, latitude, zoomLevel, options) {
-      this.map.setView(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
+      const duration = _.get(options, 'duration', 0)
+      if (duration) this.map.flyTo(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
+      else this.map.setView(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
     },
     getCenter () {
       const center = this.map.getCenter()
