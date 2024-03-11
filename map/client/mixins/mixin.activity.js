@@ -239,7 +239,8 @@ export const activity = {
       // Check if the activity is using context restoration
       const hasContext = (typeof this.restoreContext === 'function')
       // Retrieve the forecast models
-      if (this.setupWeacast) {
+      const weacastEnabled = _.get(config, 'weacast.enabled', true)
+      if (weacastEnabled && this.setupWeacast) {
         try {
           await this.setupWeacast()
         } catch (error) {
