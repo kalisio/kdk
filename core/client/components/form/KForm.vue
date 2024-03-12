@@ -23,7 +23,7 @@
       Grouped fields
     -->
     <template v-for="(group, id) in groups" :key="id">
-      <q-expansion-item v-if="group.hasFields" icon="las la-file-alt" :group="id">
+      <q-expansion-item v-show="group.hasFields" icon="las la-file-alt" :group="id">
         <template v-slot:header>
           <!-- Label -->
           <q-item-section>
