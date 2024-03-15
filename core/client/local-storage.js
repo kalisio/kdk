@@ -16,6 +16,10 @@ export const LocalStorage = {
     const jsonValue = JSON.stringify(value)
     window.localStorage.setItem(this.localKey(key), jsonValue)
   },
+  has (key) {
+    const value = window.localStorage.getItem(this.localKey(key))
+    return !_.isNil(value)
+  },
   get (key, defaultValue) {
     const value = window.localStorage.getItem(this.localKey(key))
     if (_.isNil(value)) {

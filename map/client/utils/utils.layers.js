@@ -2,7 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { Notify, Loading } from 'quasar'
 import explode from '@turf/explode'
-import { i18n, api, utils as kCoreUtils } from '../../../core/client/index.js'
+import { i18n, api, LocalCache, utils as kCoreUtils } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
@@ -41,6 +41,29 @@ export function isLayerEditable (layer) {
   // Only possible when saved by default
   if (!layer._id) return false
   return _.get(layer, 'isEditable', isUserLayer(layer))
+}
+
+export function isLayerCachable (layer) {
+  return _.get(layer, 'isCachable', _.has(layer, 'leaflet.source'))
+}
+
+export function isLayerCached (layer) {
+  return _.get(layer, 'isCached')
+}
+
+export async function setLayerCached (layer, cached) {
+  const url = _.get(layer, 'leaflet.source')
+  if (cached) {
+    await LocalCache.clear('layers', url)
+    _.set(layer, 'isCached', false)
+  } else {
+    await LocalCache.set('layers', url)
+    _.set(layer, 'isCached', true)
+  }
+}
+
+export async function toggleLayerCache (layer) {
+  setLayerCached (layer, isLayerCached(layer))
 }
 
 export function isLayerRemovable (layer) {

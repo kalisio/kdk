@@ -86,6 +86,8 @@
       "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
       "CAPTURE_VIEW": "Capture the view",
       "SAVE_LABEL": "Save layer",
+      "OFFLINE_LABEL": "Make available offline",
+      "ONLINE_LABEL": "Make available online",
       "REMOVE_LABEL": "Remove"
     },
     "timeseries": {

@@ -5,6 +5,7 @@ import { Store } from './store.js'
 import { Theme } from './theme.js'
 import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
+import { LocalCache } from './local-cache.js'
 import { Storage } from './storage.js'
 import { Time } from './time.js'
 import { Units } from './units.js'
@@ -27,6 +28,7 @@ export { Store }
 export { Theme }
 export { Capabilities }
 export { LocalStorage }
+export { LocalCache }
 export { Storage }
 export { Time }
 export { Units }
@@ -66,6 +68,7 @@ export default async function initialize () {
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
   LocalStorage.initialize()
+  LocalCache.initialize()
   Storage.initialize()
   Layout.initialize()
   Filter.initialize()

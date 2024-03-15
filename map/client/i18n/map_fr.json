@@ -86,6 +86,8 @@
       "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés",
       "CAPTURE_VIEW": "Capturer la vue",
       "SAVE_LABEL": "Sauvegarder la couche",
+      "OFFLINE_LABEL": "Rendre disponible hors-ligne",
+      "ONLINE_LABEL": "Rendre disponible en-ligne",
       "REMOVE_LABEL": "Supprimer"
     },
     "timeseries": {
