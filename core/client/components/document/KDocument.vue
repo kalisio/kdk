@@ -59,20 +59,24 @@ watch(() => [props.content, props.url], async (value) => {
       if (props.localize) urls = i18n.localize(props.url)
       else urls = [props.url]
       for (const url of urls) {
-        const response = await fetch(url)
-        if (response.status === 200) {
-          content.value = await response.text()
-          break
+        try {
+          const response = await fetch(url)
+          if (response.status === 200) {
+            content.value = await response.text()
+            break
+          }
+        } catch (error) {
+          // ignore the error
         }
       }
-      if (data.value === null) {
+      if (content.value === null) {
         logger.error(`[KDK] fetch '${props.url}' failed with error with code: ${response.status}`)
       }
     } else {
       logger.error(`[KDK] cannot guess content type for '${props.url}'`)
     }
   } else {
-    data.value = null
+    content.value = null
   }
 }, { immediate: true })
 </script>
