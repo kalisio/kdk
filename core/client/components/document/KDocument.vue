@@ -40,7 +40,6 @@ const content = ref(null)
 
 // Function
 function guessContentType () {
-  if (!_.isEmpty(props.contentType)) return props.contentType
   const index = _.lastIndexOf(props.url, '.')
   if (index) {
     return props.url.substring(index + 1)
@@ -48,7 +47,7 @@ function guessContentType () {
 }
 
 // Watch
-watch(() => [props.content, props.url], async (value) => {
+watch(() => props.url, async (value) => {
   if (!_.isEmpty(props.url)) {
     content.value = null
     // guess content type
@@ -61,10 +60,11 @@ watch(() => [props.content, props.url], async (value) => {
       for (const url of urls) {
         try {
           const response = await fetch(url)
-          if (response.status === 200) {
-            content.value = await response.text()
-            break
+          if (!response.ok) {
+            throw new Error(response.status);
           }
+          content.value = await response.text()
+          break
         } catch (error) {
           // ignore the error
         }
