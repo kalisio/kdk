@@ -60,18 +60,18 @@ const TiledFeatureLayer = L.GridLayer.extend({
   getEvents () {
     const events = L.GridLayer.prototype.getEvents.call(this)
 
-    // dragstart sets userIsDragging flag
-    const onDragStart = events.dragstart
-    events.dragstart = (event) => {
+    // movestart sets userIsDragging flag
+    const onMoveStart = events.movestart
+    events.movestart = (event) => {
       this.userIsDragging = true
-      if (onDragStart) onDragStart.call(this, event)
+      if (onMoveStart) onMoveStart.call(this, event)
     }
 
-    // dragstart clears userIsDragging flag
-    const onDragEnd = events.dragend
-    events.dragend = (event) => {
+    // moveend clears userIsDragging flag
+    const onMoveEnd = events.moveend
+    events.moveend = (event) => {
       this.userIsDragging = false
-      if (onDragEnd) onDragEnd.call(this, event)
+      if (onMoveEnd) onMoveEnd.call(this, event)
     }
 
     // zoomstart records zoomStartLevel
