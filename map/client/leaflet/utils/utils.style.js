@@ -4,6 +4,7 @@ import chroma from 'chroma-js'
 import moment from 'moment'
 import L from 'leaflet'
 import { Time, Units, utils as kdkCoreUtils } from '../../../../core/client/index.js'
+import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertStyle, convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
 import { ShapeMarker } from '../ShapeMarker.js'
@@ -68,13 +69,14 @@ const LineStyleToLeafletPath = {
   cap: 'lineCap',
   join: 'lineJoin',
   dashArray: 'dashArray',
-  dashOffset: 'dashOffset'
+  dashOffset: 'dashOffset',
+  pane: 'pane'
 }
 
 const PolygonStyleToLeafletPath = {
   color: 'fillColor',
   opacity: 'fillOpacity',
-  rule: 'fillRule',
+  rule: 'fillRule'
 }
 
 // TODO: to be removed when updating 3D style
@@ -158,8 +160,9 @@ function processStyle (style, feature, options, mappings) {
     })
   }
   // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
-  if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
-  if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
+  const type = getFeatureStyleType(feature)
+  if (leafletOptions.pane && !_.has(style, `${type}.options.pane`)) _.set(style, `${type}.options.pane`, leafletOptions.pane)
+  if (leafletOptions.shadowPane && !_.has(style, `${type}.options.shadowPane`)) _.set(style, `${type}.options.shadowPane`, leafletOptions.shadowPane)
   return style
 }
 
