@@ -147,13 +147,16 @@ export const baseMap = {
       return processedOptions
     },
     createLeafletPane (paneOrZIndex) {
-      // Create pane if required
-      const paneName = paneOrZIndex.toString()
+      // Input can be a name, a z-index, an object with both options
+      const paneName = (typeof paneOrZIndex === 'object' ? paneOrZIndex.name || paneOrZIndex.zIndex : paneOrZIndex.toString())
       let pane = this.map.getPane(paneName)
+      // Create pane if required
       if (!pane) {
+        let zIndex
+        if (typeof paneOrZIndex === 'object') zIndex = paneOrZIndex.zIndex || 400
+        else if (typeof paneOrZIndex === 'number') zIndex = paneOrZIndex
         pane = this.map.createPane(paneName)
-        if (typeof paneOrZIndex === 'number') _.set(pane, 'style.zIndex', paneOrZIndex)
-        else _.set(pane, 'style.zIndex', 400) // Defaults for overlay in Leaflet
+        _.set(pane, 'style.zIndex', zIndex || 400) // Defaults for overlay in Leaflet
       }
       this.leafletPanes[paneName] = pane
       return pane
@@ -207,7 +210,7 @@ export const baseMap = {
       const panes = _.get(leafletOptions, 'panes')
       if (panes) {
         panes.forEach(paneOptions => {
-          const pane = this.createLeafletPane(paneOptions.name || paneOptions.zIndex)
+          const pane = this.createLeafletPane(paneOptions)
           Object.assign(pane, paneOptions)
         })
         this.updateLeafletPanesVisibility(panes.map(paneOptions => paneOptions.name || paneOptions.zIndex.toString()))
