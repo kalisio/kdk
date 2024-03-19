@@ -247,6 +247,7 @@ const fabBehaviour = computed(() => {
     case 'top-left': return { direction: 'down', actionsAlign: 'right' }
   }
 })
+
 // Watch
 watch(() => leftPane.visible, (visible) => {
   if (visible) {
