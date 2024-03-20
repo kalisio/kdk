@@ -267,11 +267,11 @@ export const geojsonLayers = {
           leafletOptions.panes = [pane]
           leafletOptions.pane = options.name
           leafletOptions.shadowPane = options.name
-          // Make pane available to point style as well as shape markers are created from here
+          // Make pane available to styles as well as eg shape markers are created from here
           for (const type in ['point', 'line', 'polygon']) {
             if (_.has(leafletOptions, `style.${type}`)) {
-              _.set(leafletOptions, `style.${type}.options.pane`, options.name)
-              _.set(leafletOptions, `style.${type}.options.shadowPane`, options.name)
+              _.set(leafletOptions, `style.${type}.pane`, options.name)
+              _.set(leafletOptions, `style.${type}.shadowPane`, options.name)
             }
           }
         }

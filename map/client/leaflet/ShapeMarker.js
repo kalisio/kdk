@@ -7,11 +7,14 @@ export const ShapeMarker = L.Marker.extend({
 
   // Constructor
   initialize (latlng, options) {
+    // Forward extra options for different purposes, i.e. clustering, panes, ...
+    const markerOptions = _.get(options, 'options', {})
+    // We allow to specify panes directly at root level
+    Object.assign(markerOptions, _.pick(options, ['pane', 'shadowPane']))
     if (options.icon instanceof L.Icon) { // We allow to directly provide the icon
       L.Marker.prototype.initialize.call(this, latlng, {
         icon: options.icon,
-        // forward extra options for different purposes, i.e. clustering
-        ..._.get(options, 'options', {})  
+        ...markerOptions
       })
     } else {
       const shape = coreUtils.createShape(options)
@@ -24,8 +27,7 @@ export const ShapeMarker = L.Marker.extend({
             html: shape.html,
             className: ''
           }),
-          // forward extra options for different purposes, i.e. clustering
-          ..._.get(options, 'options', {})  
+          ...markerOptions
         })
       } else {
         logger.warn(`[KDK] unable to create the shape with the options: ${options}` )

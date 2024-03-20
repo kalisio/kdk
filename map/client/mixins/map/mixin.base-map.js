@@ -146,9 +146,12 @@ export const baseMap = {
       leafletOptions.attribution = processedOptions.attribution
       return processedOptions
     },
+    getLeafletPaneName (paneOrZIndex) {
+      return (typeof paneOrZIndex === 'object' ? paneOrZIndex.name || paneOrZIndex.zIndex : paneOrZIndex.toString())
+    },
     createLeafletPane (paneOrZIndex) {
       // Input can be a name, a z-index, an object with both options
-      const paneName = (typeof paneOrZIndex === 'object' ? paneOrZIndex.name || paneOrZIndex.zIndex : paneOrZIndex.toString())
+      const paneName = this.getLeafletPaneName(paneOrZIndex)
       let pane = this.map.getPane(paneName)
       // Create pane if required
       if (!pane) {
@@ -171,12 +174,10 @@ export const baseMap = {
       if (!pane) return
       delete this.leafletPanes[paneName]
     },
-    updateLeafletPanesVisibility (panes) {
+    updateLeafletPanesVisibility () {
       const zoom = this.map.getZoom()
       // Check if we need to hide/show some panes based on current zoom level
       _.forOwn(this.leafletPanes, (pane, paneName) => {
-        // Filter only some panes ?
-        if (panes && panes.includes(paneName)) return
         const hasMinZoom = !!_.get(pane, 'minZoom')
         const hasMaxZoom = !!_.get(pane, 'maxZoom')
         if (!hasMinZoom && !hasMaxZoom) return
@@ -213,7 +214,7 @@ export const baseMap = {
           const pane = this.createLeafletPane(paneOptions)
           Object.assign(pane, paneOptions)
         })
-        this.updateLeafletPanesVisibility(panes.map(paneOptions => paneOptions.name || paneOptions.zIndex.toString()))
+        this.updateLeafletPanesVisibility()
       }
 
       // Some Leaflet constructors can have additional arguments given as options
