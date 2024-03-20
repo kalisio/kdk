@@ -121,6 +121,10 @@ export const geojsonLayers = {
             }
           })
         }
+        // Billboard with 'none' shape should be removed as Cesium creates it even if the maki icon id is unknown
+        if (entity.billboard && (_.get(properties, 'marker-symbol') === 'none')) {
+          entitiesToRemove.push(entity)
+        }
         // Labels
         const text = _.get(properties, 'icon-text')
         if (text) {
