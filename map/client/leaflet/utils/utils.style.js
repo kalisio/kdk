@@ -76,7 +76,8 @@ const LineStyleToLeafletPath = {
 const PolygonStyleToLeafletPath = {
   color: 'fillColor',
   opacity: 'fillOpacity',
-  rule: 'fillRule'
+  rule: 'fillRule',
+  pane: 'pane'
 }
 
 // TODO: to be removed when updating 3D style
@@ -161,8 +162,8 @@ function processStyle (style, feature, options, mappings) {
   }
   // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
   const type = getFeatureStyleType(feature)
-  if (leafletOptions.pane && !_.has(style, `${type}.options.pane`)) _.set(style, `${type}.options.pane`, leafletOptions.pane)
-  if (leafletOptions.shadowPane && !_.has(style, `${type}.options.shadowPane`)) _.set(style, `${type}.options.shadowPane`, leafletOptions.shadowPane)
+  if (leafletOptions.pane && !_.has(style, `${type}.pane`)) _.set(style, `${type}.pane`, leafletOptions.pane)
+  if (leafletOptions.shadowPane && !_.has(style, `${type}.shadowPane`)) _.set(style, `${type}.shadowPane`, leafletOptions.shadowPane)
   return style
 }
 
