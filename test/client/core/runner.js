@@ -32,7 +32,7 @@ export class Runner {
       baseUrl: domain,
       browser: {
         product: defaultBrowser,
-        headless: process.env.HEADLESS ? 'new' : false,
+        headless: !!process.env.HEADLESS ? 'new' : false,
         devtools: (process.env.NODE_ENV === 'development'),
         defaultViewport: {
           width: +process.env.VIEWPORT_WIDTH || 1024,
