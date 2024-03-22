@@ -1,7 +1,14 @@
 <template>
-  <KAction
+  <div>
+    <KAction
+    :id="props.id"
+    :icon="props.icon"
+    :label="props.label"
+    :stack="props.stack"
     :url="url"
   />
+  </div>
+
 </template>
 
 <script setup>
@@ -10,10 +17,12 @@ import config from 'config'
 import { ref } from 'vue'
 import { i18n } from '../../i18n'
 import { getPlatform } from '../../utils/utils.platform'
+import { actionProps } from '../../utils/utils.actions'
 import { useVersion } from '../../composables'
 import KAction from '../KAction.vue'
 
 // Data
+const props = defineProps(actionProps)
 const { clientVersionName, apiVersionName } = useVersion()
 const platform = getPlatform()
 // bug report

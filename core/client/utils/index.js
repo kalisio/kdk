@@ -15,6 +15,7 @@ export * from './utils.pwa.js'
 export * from './utils.shapes.js'
 export * from './utils.session.js'
 export * from './utils.time.js'
+export * from './utils.actions.js'
 
 Notify.setDefaults({
   position: 'bottom-left',
