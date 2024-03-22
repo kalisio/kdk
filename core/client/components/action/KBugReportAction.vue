@@ -1,14 +1,8 @@
 <template>
-  <div>
-    <KAction
-    :id="props.id"
-    :icon="props.icon"
-    :label="props.label"
-    :stack="props.stack"
+  <KAction
+    v-bind="props"
     :url="url"
   />
-  </div>
-
 </template>
 
 <script setup>
@@ -22,7 +16,7 @@ import { useVersion } from '../../composables'
 import KAction from '../KAction.vue'
 
 // Data
-const props = defineProps(actionProps)
+const props = defineProps(_.pick(actionProps, ['id', 'icon', 'label', 'stack']))
 const { clientVersionName, apiVersionName } = useVersion()
 const platform = getPlatform()
 // bug report
