@@ -11,7 +11,7 @@ import config from 'config'
 import { ref } from 'vue'
 import { i18n } from '../../i18n'
 import { getPlatform } from '../../utils/utils.platform'
-import { actionProps } from '../../utils/utils.actions'
+import { props as actionProps } from '../../utils/utils.actions'
 import { useVersion } from '../../composables'
 import KAction from '../KAction.vue'
 

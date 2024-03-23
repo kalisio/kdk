@@ -1,4 +1,4 @@
-export const actionProps = {
+export const props = {
   id: {
     type: String,
     default: ''
