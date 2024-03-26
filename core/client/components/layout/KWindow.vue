@@ -187,7 +187,7 @@ const headerControls = computed(() => {
     visible: currentWindow.controls.unpin && currentWindow.state === 'pinned' && restoreGeometry,
     handler: () => Layout.setWindowState(props.placement, 'floating')
   }, {
-    id: `unpin-${props.placement}-window`,
+    id: `maximize-${props.placement}-window`,
     icon: 'las la-expand',
     size: 'sm',
     tooltip: 'KWindow.MAXIMIZE_ACTION',
