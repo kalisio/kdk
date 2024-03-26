@@ -18,7 +18,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.userIsDragging = false
     this.userIsZooming = false
     this.pendingStationUpdates = []
-    this.updateCount = 0
 
     this.getFeatureKey = (feature) => {
       return getFeatureId(feature, this.layer)
@@ -268,10 +267,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
   },
 
   _update (center) {
-    // This counter is used to skip async requests that may finish while we issued
-    // a new batch of requests.
-    ++this.updateCount
-
     L.GridLayer.prototype._update.call(this)
 
     // No update while dragging
@@ -369,9 +364,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
       const promise = this.layer.probeService
         ? this.activity.getProbeFeatures(_.merge({ baseQuery: r.query }, this.layer))
         : this.featureSource(r.query)
-      // Store current updateCount on promise and check if it's still the one active
-      // once request ends
-      promise.updateCount = this.updateCount
       r.tiles.forEach((tile) => {
         tile.featuresRequest = promise
 
@@ -379,9 +371,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
       })
 
       promise.then((data) => {
-        // Make sure we still care about this request
-        if (promise.updateCount != this.updateCount) return
-
         // Gather all associated tiles, taking children tiles into account
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.featuresChildren.length) allTiles.push(tile.featuresChildren) })
@@ -458,9 +447,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const measureRequests = this.mergeRequests(tilesWithMeasuresRequest)
     measureRequests.forEach((r) => {
       const promise = this.featureSource(r.query)
-      // Store current updateCount on promise and check if it's still the one active
-      // once request ends
-      promise.updateCount = this.updateCount
       const stationPromises = []
       r.tiles.forEach((tile) => {
         tile.measuresRequest = promise
@@ -472,9 +458,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // When stations are fetched, we flag them with a 'measureRequestIssued' property that we
       // may use in dynamic styling
       Promise.all(stationPromises).then(() => {
-        // Make sure we still care about this request
-        if (promise.updateCount != this.updateCount) return
-
         const flaggedStations = []
         r.tiles.forEach((tile) => {
           tile.features.forEach((id) => {
@@ -490,9 +473,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
       })
 
       promise.then((data) => {
-        // Make sure we still care about this request
-        if (promise.updateCount != this.updateCount) return
-
         // Gather all associated tiles, taking children tiles into account
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.measuresChildren.length) allTiles.push(tile.measuresChildren) })
