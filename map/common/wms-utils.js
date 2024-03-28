@@ -96,15 +96,20 @@ export async function discover (url, searchParams = {}, caps = null) {
         // check for time dimension
         for (const dimension of _.get(layer, 'Dimension', [])) {
           if (_.get(dimension, '$.name', '').toLowerCase() === 'time') {
-            _.set(obj, 'timeDimension', {})
+            const timeRange = _.get(dimension, '_')
+            // If time range is not given in dimension it should be in extent
+            if (timeRange) _.set(obj, 'timeDimension.times', timeRange.trim())
+            else if (!_.has(obj, 'timeDimension')) _.set(obj, 'timeDimension', {})
           }
         }
         // check for time range
         if (obj.timeDimension) {
           for (const extent of _.get(layer, 'Extent', [])) {
             if (_.get(extent, '$.name', '').toLowerCase() === 'time') {
-              const timeRange = _.get(extent, '_', '').trim()
-              _.set(obj, 'timeDimension.times', timeRange)
+              const timeRange = _.get(extent, '_')
+              // If time range is not given in extent it should be in dimension
+              if (timeRange) _.set(obj, 'timeDimension.times', timeRange.trim())
+              else if (!_.has(obj, 'timeDimension')) _.set(obj, 'timeDimension', {})
             }
           }
         }
