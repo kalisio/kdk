@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
+import moment from 'moment'
 import L from 'leaflet'
 import Emitter from 'tiny-emitter'
 import 'leaflet/dist/leaflet.css'
@@ -260,19 +261,36 @@ export const baseMap = {
       if (timeDimension) {
         // It appears that sometimes the time resolution is missing, default as 1 day
         // Please refer to https://www.mapserver.org/ogc/wms_time.html#specifying-time-extents
+        _.set(timeDimension, 'period', 'P1D')
         const timeRange = _.get(timeDimension, 'times')
-        if ((typeof timeRange === 'string') && (timeRange.split('/').length === 2)) {
+        const timeRangeComponents = (typeof timeRange === 'string' ? timeRange.split('/') : [])
+        if (timeRangeComponents.length === 2) {
           _.set(timeDimension, 'times', `${timeRange}/P1D`)
+        } else if (timeRangeComponents.length === 3) {
+          _.set(timeDimension, 'period', timeRangeComponents[2])
         }
+        // Used to format time accordingly
+        const periodAsDuration = moment.duration(_.get(timeDimension, 'period'))
         // As we'd like to control time on a per-layer basis create a specific time dimension object
         layer = this.createLeafletLayer({
           type: 'timeDimension.layer.wms',
           source: layer,
           timeDimension: L.timeDimension(timeDimension),
-          currentTime: Time.getCurrentTime()
+          currentTime: Time.getCurrentTime().toDate().getTime()
         })
         // This allow the layer to conform our internal time interface
-        layer.setCurrentTime = (datetime) => { layer._timeDimension.setCurrentTime(datetime) }
+        layer.setCurrentTime = (datetime) => { layer._timeDimension.setCurrentTime(datetime.toDate().getTime()) }
+        // Default implementation always generate ISO datetime that might break some servers with eg day period only
+        layer._createLayerForTime = (time) => {
+          // Remove some internals to avoid polluting request
+          const wmsParams = _.omit(layer._baseLayer.options, ['timeDimension', 'isVisible', 'type'])
+          // Format time according to period
+          if (periodAsDuration.years() > 0) wmsParams.time = moment.utc(time).format('YYYY').toISOString()
+          else if (periodAsDuration.months() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM')
+          else if (periodAsDuration.days() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM-DD')
+          else wmsParams.time = moment.utc(time).toISOString()
+          return new layer._baseLayer.constructor(layer._baseLayer.getURL(), wmsParams)
+        }
       }
       return layer
     },
