@@ -131,6 +131,23 @@ export async function getCategories (options = {}) {
   return categories
 }
 
+export async function getSublegends (options = {}) {
+  _.defaults(options, {
+    query: {},
+    context: '',
+    planetApi: api
+  })
+
+  let sublegends = []
+  const catalogService = options.planetApi.getService('catalog', options.context)
+  if (catalogService) {
+    const response = await catalogService.find({ query: Object.assign({ type: 'Sublegend' }, options.query) })
+    _.forEach(response.data, processTranslations)
+    sublegends = sublegends.concat(response.data)
+  }
+  return sublegends
+}
+
 export async function getViews (options = {}) {
   _.defaults(options, {
     query: {},

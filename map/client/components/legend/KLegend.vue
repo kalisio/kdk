@@ -51,16 +51,12 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { ref, computed, watch } from 'vue'
-import { i18n, api } from '../../../../core/client'
-import { useCurrentActivity } from '../../composables'
+import { i18n, api, Store } from '../../../../core/client'
+import { useCurrentActivity, useCatalog } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
 
 // Props
 const props = defineProps({
-  contextOrId: {
-    type: String,
-    default: undefined
-  },
   headerClass: {
     type: String,
     default: 'bg-grey-3 text-weight-regular'
@@ -89,6 +85,11 @@ const props = defineProps({
     }
   }
 })
+
+// Use global catalog
+const { getSublegends } = useCatalog()
+// Use local catalog if any
+const { getSublegends: getContextSublegends } = useCatalog({ context: Store.get('context') })
 
 // Data
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
@@ -150,9 +151,10 @@ function getHelperDialog (helper) {
 watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
   // Retrieve the legends from catalog if required
   if (props.sublegendsFromCatalog) {
-    const catalogService = api.getService('catalog', props.contextOrId)
-    const response = await catalogService.find({ query: { type: 'Sublegend' } })
-    sublegends.value = response.data
+    sublegends.value = await getSublegends()
+    if (Store.get('context')) {
+      sublegends.value = sublegends.value.concat(await getContextSublegends())
+    }
   } else {
     sublegends.value = []
   }
