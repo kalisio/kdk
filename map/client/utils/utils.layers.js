@@ -138,7 +138,8 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
 }
 
 export async function saveLayer (layer) {
-  await api.getService('catalog').create(_.omit(layer, InternalLayerProperties))
+  layer = await api.getService('catalog').create(_.omit(layer, InternalLayerProperties))
+  return layer
 }
 
 export async function removeLayer (layer) {
