@@ -122,6 +122,14 @@ export class Runner {
       this.errors.push(message)
       debug('Page error:', message)
     })
+    // Process the page language
+    await this.page.evaluateOnNewDocument((options) => {
+      Object.defineProperty(navigator, 'language', {
+        get: function() {
+          return _.get(options, 'lang', 'en-US')
+        }
+      })
+    }, this.options)
     // Navigate the to given url
     await this.page.goto(this.getUrl(path))
     return this.page
