@@ -2,6 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { Notify, Loading } from 'quasar'
 import explode from '@turf/explode'
+import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
 
@@ -53,17 +54,63 @@ export function isLayerCached (layer) {
 
 export async function setLayerCached (layer, cached) {
   const url = _.get(layer, 'leaflet.source')
-  if (cached) {
-    await LocalCache.clear('layers', url)
-    _.set(layer, 'isCached', false)
-  } else {
-    await LocalCache.set('layers', url)
-    _.set(layer, 'isCached', true)
+  await LocalCache.set('layers', url)
+  _.set(layer, 'isCached', true)
+}
+
+export async function setBaseLayerCached (layer, bounds) {
+  const urlTemplate = _.get(layer, 'leaflet.source')
+  _.set(layer, 'isCached', true)
+  for (let zoom = 3; zoom<=_.get(layer, 'leaflet.maxNativeZoom'); zoom++) {
+    let sm =  new SphericalMercator()
+    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], zoom, true)
+    for (let y = tilesBounds.minY; y<=tilesBounds.maxY; y++) {
+      for (let x = tilesBounds.minX; x<=tilesBounds.maxX; x++) {
+        let url = urlTemplate.replace('{z}', zoom).replace('{x}', x).replace('{y}', y)
+        await LocalCache.set('layers', url)
+      }
+    }
   }
 }
 
-export async function toggleLayerCache (layer) {
-  setLayerCached (layer, isLayerCached(layer))
+export async function setLayerUncached (layer) {
+  const url = _.get(layer, 'leaflet.source')
+  await LocalCache.clear('layers', url)
+  _.set(layer, 'isCached', false)
+}
+
+export async function setBaseLayerUncached (layer) {
+  let urlTemplate = _.get(layer, 'leaflet.source')
+  urlTemplate.replace('/', '\/')
+  urlTemplate.replace('{z}', '[0-9]+')
+  urlTemplate.replace('{x}', '[0-9]+')
+  urlTemplate.replace('{y}', '[0-9]+')
+  urlTemplate = urlTemplate.split('?jwt')[0]
+  urlTemplate = '^' + urlTemplate + '$'
+  const regex = new RegExp(urlTemplate)
+  _.set(layer, 'isCached', false)
+  const keys = LocalCache.get('layers')
+  for (url in keys) {
+    if (url.check(regex)) {
+      await LocalCache.clear('layer', url)
+    }
+  }
+}
+
+export async function toggleLayerCache (layer, bounds) {
+  if (layer.type === 'BaseLayer') {
+    if (isLayerCached(layer)) {
+      setBaseLayerUncached(layer)
+    } else {
+      setBaseLayerCached(layer, bounds)
+    }
+  } else {
+    if (isLayerCached(layer)) {
+      setLayerUncached(layer)
+    } else {
+      setLayerCached (layer)
+    }
+  }
 }
 
 export function isLayerRemovable (layer) {

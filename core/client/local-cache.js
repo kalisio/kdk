@@ -20,35 +20,38 @@ export const LocalCache = {
     await caches.delete(cacheName)
     await localforage.removeItem(cacheName)
   },
-  async has (cacheName, url) {
+  async has (cacheName, key) {
     // Check if cached or not
     const urls = await localforage.getItem(cacheName)
-    return urls && urls[url]
+    return urls && urls[key]
   },
   async set (cacheName, url) {
+    const key = new URL(url)
+    key.searchParams.delete('jwt')
     const cache = await this.getCache(cacheName)
-    await cache.add(url)
     const urls = await localforage.getItem(cacheName)
     // Tag we cache it in local storage
     if (urls) {
-      urls[url] = true
+      urls[key] = true
       await localforage.setItem(cacheName, urls)
     } else {
-      await localforage.setItem(cacheName, { [url]: true })
+      await localforage.setItem(cacheName, { [key]: true })
     }
+    const response = await fetch(url)
+    await cache.put(key, response)
+    // await cache.add(url)
   },
-  async get (cacheName, url) {
+  async get (cacheName) {
     const cache = await this.getCache(cacheName)
-    const response = await cache.match(url)
-    return response
+    return cache.keys
   },
-  async clear (cacheName, url) {
-    if (this.has(cacheName, url)) {
+  async clear (cacheName, key) {
+    if (this.has(cacheName, key)) {
       const cache = await this.getCache(cacheName)
-      cache.delete(url)
+      cache.delete(key)
       // Tag we don't cache it anymore in local storage
       const urls = await localforage.getItem(cacheName)
-      delete urls[url]
+      delete urls[key]
       await localforage.setItem(cacheName, urls)
     }
   }
