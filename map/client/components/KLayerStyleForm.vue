@@ -555,18 +555,22 @@ export default {
       this.fillBaseStyle(values)
       // Clustering
       this.fillClusteringStyle(values)
-      // Points
-      await this.fillIconStyles(values)
-      // Lines
-      await this.fillLineStyles(values)
-      // Polygons
-      await this.fillPolygonStyles(values)
-      // Popup
-      await this.fillPopupStyles(values)
-      // Tooltip
-      await this.fillTooltipStyles(values)
-      // Infobox
-      await this.fillInfoBoxStyles(values)
+      if (this.isVectorLayer) {
+        // Points
+        await this.fillIconStyles(values)
+        // Lines
+        await this.fillLineStyles(values)
+        // Polygons
+        await this.fillPolygonStyles(values)
+      }
+      if (this.hasFeatureSchema) {
+        // Popup
+        await this.fillPopupStyles(values)
+        // Tooltip
+        await this.fillTooltipStyles(values)
+        // Infobox
+        await this.fillInfoBoxStyles(values)
+      }
     },
     validate () {
       const values = this.values()
@@ -640,18 +644,22 @@ export default {
       _.merge(values, this.baseValues())
       // Clustering
       _.merge(values, this.clusteringValues())
-      // Point style
-      _.mergeWith(values, this.iconStylesValues(), customizer)
-      // Line style
-      _.mergeWith(values, this.lineStylesValues(), customizer)
-      // Polygon style
-      _.mergeWith(values, this.polygonStylesValues(), customizer)
-      // Popup style
-      _.merge(values, this.popupStylesValues())
-      // Tooltip style
-      _.merge(values, this.tooltipStylesValues())
-      // Infobox style
-      _.merge(values, this.infoBoxStylesValues())
+      if (this.isVectorLayer) {
+        // Point style
+        _.mergeWith(values, this.iconStylesValues(), customizer)
+        // Line style
+        _.mergeWith(values, this.lineStylesValues(), customizer)
+        // Polygon style
+        _.mergeWith(values, this.polygonStylesValues(), customizer)
+      }
+      if (this.hasFeatureSchema) {
+        // Popup style
+        _.merge(values, this.popupStylesValues())
+        // Tooltip style
+        _.merge(values, this.tooltipStylesValues())
+        // Infobox style
+        _.merge(values, this.infoBoxStylesValues())
+      }
       return values
     },
     async onAddIconStyle (property) {
