@@ -51,7 +51,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { ref, computed, watch } from 'vue'
-import { i18n, api, Store } from '../../../../core/client'
+import { i18n, Store } from '../../../../core/client'
 import { useCurrentActivity, useCatalog } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
 
