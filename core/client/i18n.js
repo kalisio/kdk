@@ -90,7 +90,7 @@ export const i18n = {
       logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
       return key
     }
-    const index = path.indexOf('.')
+    const index = path.lastIndexOf('.')
     let baseName = index > 0 ? path.substring(0, index) : path
     let extName = index > 0 ? path.substring(index, path.length) : ''
     return [

@@ -7,7 +7,7 @@
     <!-- Version -->
     <KVersion class="q-pa-sm" />
     <!-- Endpoint -->
-    <div class="row justify-center">
+    <div class="q-pb-md row justify-center">
       <cite>{{ $t('KAbout.DOMAIN') }}
         <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a>
       </cite>
@@ -15,15 +15,17 @@
         &nbsp;({{ $config('flavor') }})
       </cite>
     </div>
-    <!-- separator -->
-    <div class="q-py-md">
-      <q-separator />
+    <!-- Extra content -->
+    <div v-if="content" class="q-pl-md q-pr-md q-pt-md">
+      <KContent :content="content" />
     </div>
+    <!-- Separator -->
+    <q-separator />
     <!-- Actions -->
     <KPanel
       id="actions"
       :content="actions"
-      class="justify-center"
+      class="q-pt-md justify-center"
     />
     <!-- Sponsor -->
     <KSponsor class="q-pt-lg" />
@@ -35,11 +37,13 @@ import _ from 'lodash'
 import config from 'config'
 import { ref } from 'vue'
 import { loadComponent } from '../../utils'
+import KContent from '../KContent.vue'
 import KVersion from '../KVersion.vue'
 import KSponsor from '../KSponsor.vue'
 import KPanel from '../KPanel.vue'
 
 // Data
 const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
+const content = ref(_.get(config, 'about.content', []))
 const actions = ref(_.get(config, 'about.actions', []))
 </script>
