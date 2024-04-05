@@ -18,6 +18,6 @@ const props = defineProps({
 
 // Watch
 watch(() => props.content, async (value) => {
-    html.value = props.content
+  html.value = props.content
 }, { immediate: true })
 </script>

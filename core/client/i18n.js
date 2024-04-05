@@ -88,11 +88,11 @@ export const i18n = {
   localize (path) {
     if (!this.i18n) {
       logger.error('[KDK] i18n instance is not existing. Did you initialize it ?')
-      return key
+      return path
     }
     const index = path.lastIndexOf('.')
-    let baseName = index > 0 ? path.substring(0, index) : path
-    let extName = index > 0 ? path.substring(index, path.length) : ''
+    const baseName = index > 0 ? path.substring(0, index) : path
+    const extName = index > 0 ? path.substring(index, path.length) : ''
     return [
       `${baseName}_${this.i18n.global.locale}${extName}`,
       `${baseName}_${this.i18n.global.fallbackLocale}${extName}`,

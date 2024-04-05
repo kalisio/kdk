@@ -32,7 +32,7 @@ export class Runner {
       baseUrl: domain,
       browser: {
         product: defaultBrowser,
-        headless: process.env.HEADLESS ? (!!process.env.HEADLESS ? 'new' : false) : false,
+        headless: process.env.HEADLESS ? (process.env.HEADLESS ? 'new' : false) : false,
         devtools: (process.env.NODE_ENV === 'development'),
         defaultViewport: {
           width: +process.env.VIEWPORT_WIDTH || 1024,
@@ -125,7 +125,7 @@ export class Runner {
     // Process the page language
     await this.page.evaluateOnNewDocument((options) => {
       Object.defineProperty(navigator, 'language', {
-        get: function() {
+        get: function () {
           return _.get(options, 'lang', 'en-US')
         }
       })

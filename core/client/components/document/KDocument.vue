@@ -13,7 +13,7 @@
 <script setup>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { ref, watch } from 'vue' 
+import { ref, watch } from 'vue'
 import { i18n } from '../../i18n.js'
 import KHtml from './KHtml.vue'
 import KMarkdown from './KMarkdown.vue'
@@ -31,7 +31,7 @@ const props = defineProps({
   options: {
     type: Object,
     default: () => null
-  },
+  }
 })
 
 // Data

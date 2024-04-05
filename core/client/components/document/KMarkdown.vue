@@ -1,5 +1,5 @@
 <template>
-  <KHtml 
+  <KHtml
     v-if="html"
     :content="html"
   />
