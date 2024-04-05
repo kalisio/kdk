@@ -57,14 +57,15 @@ watch(() => props.url, async (value) => {
       // localize file if needed
       if (props.localize) urls = i18n.localize(props.url)
       else urls = [props.url]
+      // try to load the content
+      let response
       for (const url of urls) {
         try {
-          const response = await fetch(url)
-          if (!response.ok) {
-            throw new Error(response.status);
+          response = await fetch(url)
+          if (response.ok) {
+            content.value = await response.text()
+            break
           }
-          content.value = await response.text()
-          break
         } catch (error) {
           // ignore the error
         }
