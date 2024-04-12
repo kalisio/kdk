@@ -67,7 +67,8 @@
       "MouseEvent",
       "AbortController",
       "localStorage",
-      "DOMParser"
+      "DOMParser",
+      "caches"
     ]
   },
   "directories": {

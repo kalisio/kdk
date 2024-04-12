@@ -52,64 +52,98 @@ export function isLayerCached (layer) {
   return _.get(layer, 'isCached')
 }
 
-export async function setLayerCached (layer, cached) {
+export async function setGeojsonLayerCached (layer, view) {
   const url = _.get(layer, 'leaflet.source')
-  await LocalCache.set('layers', url)
-  _.set(layer, 'isCached', true)
+  let key = new URL(url)
+  key.searchParams.delete('jwt')
+  if (await LocalCache.has(key.href)) {
+    await LocalCache.addTag(key.href, view)
+  } else {
+    await LocalCache.set('layers', url, view)
+  }
 }
 
-export async function setBaseLayerCached (layer, bounds) {
+export async function setBaseLayerCached (layer, view, options) {
+  const bounds = options.bounds
+  const minZoom = options.minZoom || 3
+  const maxZoom = options.maxZoom || _.get(layer, 'leaflet.maxNativeZoom')
+  const nbConcurrentRequests = options.nbConcurrentRequests || 10
+
   const urlTemplate = _.get(layer, 'leaflet.source')
   _.set(layer, 'isCached', true)
-  for (let zoom = 3; zoom<=_.get(layer, 'leaflet.maxNativeZoom'); zoom++) {
+  let promises = []
+  for (let zoom = minZoom; zoom<=maxZoom; zoom++) {
     let sm =  new SphericalMercator()
-    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], zoom, true)
+    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], zoom, _.get(layer, 'leaflet.tms'))
     for (let y = tilesBounds.minY; y<=tilesBounds.maxY; y++) {
       for (let x = tilesBounds.minX; x<=tilesBounds.maxX; x++) {
         let url = urlTemplate.replace('{z}', zoom).replace('{x}', x).replace('{y}', y)
-        await LocalCache.set('layers', url)
+        let key = new URL(url)
+        key.searchParams.delete('jwt')
+        if (await LocalCache.has(key.href)) {
+          promises.push(LocalCache.addTag('layers', key, view))
+        } else {
+          promises.push(LocalCache.set('layers', key, url, view))
+          _.set(layer, 'isCached', true)
+        }
+        if (promises.length === nbConcurrentRequests) {
+          await Promise.all(promises)
+          promises = []
+        }
+      }
+    }
+  }
+  await Promise.all(promises)
+}
+
+export async function setGeojsonLayerUncached (layer, view) {
+  const url = _.get(layer, 'leaflet.source')
+  let key = new URL(url)
+  key.searchParams.delete('jwt')
+  await removeViewForCachedUrl(key, view)
+}
+
+async function removeViewForCachedUrl(url, view) {
+  await LocalCache.removeTag(url, view)
+  const tags = await LocalCache.getTags(url)
+  if (tags && tags.length === 0) {
+    await LocalCache.clear('layers', url)
+  }
+}
+
+export async function setBaseLayerUncached (layer, view, options) {
+  const bounds = options.bounds
+  const minZoom = options.minZoom || 3
+  const maxZoom = options.maxZoom || _.get(layer, 'leaflet.maxNativeZoom')
+
+  const urlTemplate = _.get(layer, 'leaflet.source')
+  for (let zoom = minZoom; zoom<=maxZoom; zoom++) {
+    let sm =  new SphericalMercator()
+    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], zoom, _.get(layer, 'leaflet.tms'))
+    for (let y = tilesBounds.minY; y<=tilesBounds.maxY; y++) {
+      for (let x = tilesBounds.minX; x<=tilesBounds.maxX; x++) {
+        let url = urlTemplate.replace('{z}', zoom).replace('{x}', x).replace('{y}', y)
+        let key = new URL(url)
+        key.searchParams.delete('jwt')
+        await removeViewForCachedUrl(key.href, view)
       }
     }
   }
 }
 
-export async function setLayerUncached (layer) {
-  const url = _.get(layer, 'leaflet.source')
-  await LocalCache.clear('layers', url)
-  _.set(layer, 'isCached', false)
-}
-
-export async function setBaseLayerUncached (layer) {
-  let urlTemplate = _.get(layer, 'leaflet.source')
-  urlTemplate.replace('/', '\/')
-  urlTemplate.replace('{z}', '[0-9]+')
-  urlTemplate.replace('{x}', '[0-9]+')
-  urlTemplate.replace('{y}', '[0-9]+')
-  urlTemplate = urlTemplate.split('?jwt')[0]
-  urlTemplate = '^' + urlTemplate + '$'
-  const regex = new RegExp(urlTemplate)
-  _.set(layer, 'isCached', false)
-  const keys = LocalCache.get('layers')
-  for (url in keys) {
-    if (url.check(regex)) {
-      await LocalCache.clear('layer', url)
-    }
+export async function setLayerCached (layer, view, bounds) {
+  if (layer.type === 'BaseLayer') {
+    setBaseLayerCached(layer, view, bounds)
+  } else {
+    setGeojsonLayerCached (layer, view)
   }
 }
 
-export async function toggleLayerCache (layer, bounds) {
+export async function setLayerUncached (layer, view, bounds) {
   if (layer.type === 'BaseLayer') {
-    if (isLayerCached(layer)) {
-      setBaseLayerUncached(layer)
-    } else {
-      setBaseLayerCached(layer, bounds)
-    }
+    setBaseLayerUncached(layer, view, bounds)
   } else {
-    if (isLayerCached(layer)) {
-      setLayerUncached(layer)
-    } else {
-      setLayerCached (layer)
-    }
+    setGeojsonLayerUncached (layer, view)
   }
 }
 

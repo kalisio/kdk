@@ -442,6 +442,10 @@
   "KViewsPanel": {
     "SORT_VIEWS": "Sort views",
     "REMOVE_VIEW": "@:REMOVE",
+    "CACHE_VIEW": "Make available offline",
+    "UNCACHE_VIEW": "Make available online",
+    "CACHING_VIEW": "Downloading view in progress",
+    "UNCACHING_VIEW": "Memory space successfully freed",
     "SET_HOME_VIEW": "Set as default view",
     "REMOVE_DIALOG_TITLE": "Remove {view} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{view}</b> from your workspace ?"

@@ -27,10 +27,12 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Filter, Sorter, utils, i18n } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n, LocalCache } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 import { useProject } from '../../composables'
+import { Notify } from 'quasar'
+import localforage from 'localforage'
 
 export default {
   name: 'k-views-panel',
@@ -43,21 +45,22 @@ export default {
   inject: ['kActivity'],
   data () {
     const viewActions = []
-    if (this.$can('create', 'catalog', this.kActivity.contextId)) {
-      viewActions.push({
+    viewActions.push({
         id: 'view-overflowmenu',
         component: 'menu/KMenu',
         dropdownIcon: 'las la-ellipsis-v',
         actionRenderer: 'item',
         propagate: false,
         dense: true,
-        content: [{
+        content: []
+      })
+    if (this.$can('create', 'catalog', this.kActivity.contextId)) {
+      viewActions[0].content.push({
           id: 'remove-view',
           icon: 'las la-trash',
           label: 'KViewsPanel.REMOVE_VIEW',
           handler: (item) => this.removeView(item)
-        }]
-      })
+        })
     }
     return {
       scrollAreaMaxWidth: 0,
@@ -121,6 +124,46 @@ export default {
           }
           break
         }
+        case 'cache-view': {
+          let dismiss = null
+          dismiss = Notify.create({
+            group: 'views',
+            icon: 'las la-hourglass-half',
+            message: i18n.t('KViewsPanel.CACHING_VIEW'),
+            color: 'primary',
+            timeout: 0,
+            spinner: true
+          })
+          const views = await localforage.getItem('views')
+          if (views) {
+            views[view._id] = true
+            await localforage.setItem('views', views)
+          } else {
+            await localforage.setItem('views', { [view._id]: true })
+          }
+          const layers = this.project.layers
+          for (let i = 0 ; i<layers.length ; i++) {
+            await this.kActivity.setLayerCached(this.kActivity.getLayerById(layers[i]._id), view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
+          }
+          dismiss()
+          break
+        }
+        case 'uncache-view': {
+          const views = await localforage.getItem('views') || {}
+          delete views[view._id]
+          await localforage.setItem('views', views)
+          const layers = this.project.layers
+          for (let i = 0 ; i<layers.length ; i++) {
+            await this.kActivity.setLayerUncached(this.kActivity.getLayerById(layers[i]._id), view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
+          }
+          Notify.create({
+            group: 'views',
+            icon: 'las la-trash-alt',
+            message: i18n.t('KViewsPanel.UNCACHING_VIEW'),
+            color: 'primary'
+          })
+          break
+        }
         default:
           logger.debug('invalid action ', action)
       }
@@ -144,6 +187,13 @@ export default {
     },
     onResized (size) {
       this.scrollAreaMaxWidth = size.width
+    },
+    async cacheView (view) {
+      //Pour chaque layer de la view
+        kActivity.toggleLayerCache(layer)
+    },
+    async uncacheView (view) {
+
     }
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront

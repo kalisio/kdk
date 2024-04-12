@@ -86,8 +86,6 @@
       "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés",
       "CAPTURE_VIEW": "Capturer la vue",
       "SAVE_LABEL": "Sauvegarder la couche",
-      "OFFLINE_LABEL": "Rendre disponible hors-ligne",
-      "ONLINE_LABEL": "Rendre disponible en-ligne",
       "REMOVE_LABEL": "Supprimer"
     },
     "timeseries": {
@@ -443,6 +441,10 @@
   "KViewsPanel": {
     "SORT_VIEWS": "Trier les vues",
     "REMOVE_VIEW": "@:REMOVE",
+    "CACHE_VIEW": "Rendre disponible hors-ligne",
+    "UNCACHE_VIEW": "Rendre disponible en ligne",
+    "CACHING_VIEW": "Téléchargement de la vue en cours",
+    "UNCACHING_VIEW": "Espace mémoire libéré avec succès",
     "SET_HOME_VIEW": "Définir comme vue par défaut",
     "REMOVE_DIALOG_TITLE": "Supprimer {view} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {view} de votre espace de travail ?"

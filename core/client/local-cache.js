@@ -1,15 +1,12 @@
-import _ from 'lodash'
 import logger from 'loglevel'
-import config from 'config'
 import localforage from 'localforage'
 
 export const LocalCache = {
   initialize () {
-    logger.debug(`[KDK] initializing local cache`)
+    logger.debug('[KDK] initializing local cache')
   },
   async createCache (cacheName) {
     const cache = await caches.open(cacheName)
-    await localforage.setItem(cacheName, {})
     return cache
   },
   async getCache (cacheName) {
@@ -18,41 +15,45 @@ export const LocalCache = {
   },
   async removeCache (cacheName) {
     await caches.delete(cacheName)
-    await localforage.removeItem(cacheName)
   },
-  async has (cacheName, key) {
-    // Check if cached or not
-    const urls = await localforage.getItem(cacheName)
-    return urls && urls[key]
+  async has (key) {
+    const url = await localforage.getItem(key)
+    return url
   },
-  async set (cacheName, url) {
-    const key = new URL(url)
-    key.searchParams.delete('jwt')
+  async set (cacheName, key, url, tag) {
     const cache = await this.getCache(cacheName)
-    const urls = await localforage.getItem(cacheName)
-    // Tag we cache it in local storage
-    if (urls) {
-      urls[key] = true
-      await localforage.setItem(cacheName, urls)
-    } else {
-      await localforage.setItem(cacheName, { [key]: true })
-    }
     const response = await fetch(url)
     await cache.put(key, response)
-    // await cache.add(url)
+    await localforage.setItem(key, [tag])
+
   },
-  async get (cacheName) {
-    const cache = await this.getCache(cacheName)
-    return cache.keys
+  async getTags (key) {
+    return await localforage.getItem(key)
+  },
+  async addTag (key, tag) {
+    if (this.has(key)) {
+      let tags = localforage.getItem(key)
+      if (!tags.contains(tag)) {
+        tags.push(tag)
+        await localforage.setItem(key, tags)
+      }
+    }
+  },
+  async removeTag (key, tag) {
+    if (this.has(key)) {
+      let tags = await localforage.getItem(key)
+      if (tags) {
+        let index = tags.indexOf(tag)
+        tags.splice(index, 1)
+        await localforage.setItem(key, tags)
+      }
+    }
   },
   async clear (cacheName, key) {
-    if (this.has(cacheName, key)) {
+    if (this.has(key)) {
       const cache = await this.getCache(cacheName)
       cache.delete(key)
-      // Tag we don't cache it anymore in local storage
-      const urls = await localforage.getItem(cacheName)
-      delete urls[key]
-      await localforage.setItem(cacheName, urls)
+      localforage.removeItem(key)
     }
   }
 }
