@@ -59,7 +59,7 @@ export async function setGeojsonLayerCached (layer, view) {
   if (await LocalCache.has(key.href)) {
     await LocalCache.addTag(key.href, view)
   } else {
-    await LocalCache.set('layers', url, view)
+    await LocalCache.set('layers', key.href, url, view)
   }
 }
 
@@ -70,7 +70,6 @@ export async function setBaseLayerCached (layer, view, options) {
   const nbConcurrentRequests = options.nbConcurrentRequests || 10
 
   const urlTemplate = _.get(layer, 'leaflet.source')
-  _.set(layer, 'isCached', true)
   let promises = []
   for (let zoom = minZoom; zoom<=maxZoom; zoom++) {
     let sm =  new SphericalMercator()
@@ -83,8 +82,7 @@ export async function setBaseLayerCached (layer, view, options) {
         if (await LocalCache.has(key.href)) {
           promises.push(LocalCache.addTag('layers', key, view))
         } else {
-          promises.push(LocalCache.set('layers', key, url, view))
-          _.set(layer, 'isCached', true)
+          promises.push(LocalCache.set('layers', key.href, url, view))
         }
         if (promises.length === nbConcurrentRequests) {
           await Promise.all(promises)
@@ -133,17 +131,17 @@ export async function setBaseLayerUncached (layer, view, options) {
 
 export async function setLayerCached (layer, view, bounds) {
   if (layer.type === 'BaseLayer') {
-    setBaseLayerCached(layer, view, bounds)
+    await setBaseLayerCached(layer, view, bounds)
   } else {
-    setGeojsonLayerCached (layer, view)
+    await setGeojsonLayerCached (layer, view)
   }
 }
 
 export async function setLayerUncached (layer, view, bounds) {
   if (layer.type === 'BaseLayer') {
-    setBaseLayerUncached(layer, view, bounds)
+    await setBaseLayerUncached(layer, view, bounds)
   } else {
-    setGeojsonLayerUncached (layer, view)
+    await setGeojsonLayerUncached (layer, view)
   }
 }
 

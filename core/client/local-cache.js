@@ -32,8 +32,8 @@ export const LocalCache = {
   },
   async addTag (key, tag) {
     if (this.has(key)) {
-      let tags = localforage.getItem(key)
-      if (!tags.contains(tag)) {
+      let tags = await this.getTags(key)
+      if (tags && !tags.contains(tag)) {
         tags.push(tag)
         await localforage.setItem(key, tags)
       }
@@ -41,7 +41,7 @@ export const LocalCache = {
   },
   async removeTag (key, tag) {
     if (this.has(key)) {
-      let tags = await localforage.getItem(key)
+      let tags = await this.getTags(key)
       if (tags) {
         let index = tags.indexOf(tag)
         tags.splice(index, 1)
