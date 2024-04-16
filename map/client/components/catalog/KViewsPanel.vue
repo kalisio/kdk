@@ -143,7 +143,8 @@ export default {
           }
           const layers = this.project.layers
           for (let i = 0 ; i<layers.length ; i++) {
-            await this.kActivity.setLayerCached(this.kActivity.getLayerById(layers[i]._id), view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
+            const layer = (layers[i]._id ? this.kActivity.getLayerById(layers[i]._id) : this.kActivity.getLayerByName(layers[i].name))
+            await this.kActivity.setLayerCached(layer, view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
           }
           dismiss()
           break
@@ -154,7 +155,8 @@ export default {
           await localforage.setItem('views', views)
           const layers = this.project.layers
           for (let i = 0 ; i<layers.length ; i++) {
-            await this.kActivity.setLayerUncached(this.kActivity.getLayerById(layers[i]._id), view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
+            const layer = (layers[i]._id ? this.kActivity.getLayerById(layers[i]._id) : this.kActivity.getLayerByName(layers[i].name))
+            await this.kActivity.setLayerUncached(layer, view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
           }
           Notify.create({
             group: 'views',
