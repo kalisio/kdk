@@ -150,6 +150,13 @@ export default {
           break
         }
         case 'uncache-view': {
+          Notify.create({
+            group: 'views',
+            icon: 'las la-trash-alt',
+            message: i18n.t('KViewsPanel.UNCACHING_VIEW'),
+            color: 'primary',
+            timeout: 3000
+          })
           const views = await localforage.getItem('views') || {}
           delete views[view._id]
           await localforage.setItem('views', views)
@@ -158,12 +165,6 @@ export default {
             const layer = (layers[i]._id ? this.kActivity.getLayerById(layers[i]._id) : this.kActivity.getLayerByName(layers[i].name))
             await this.kActivity.setLayerUncached(layer, view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
           }
-          Notify.create({
-            group: 'views',
-            icon: 'las la-trash-alt',
-            message: i18n.t('KViewsPanel.UNCACHING_VIEW'),
-            color: 'primary'
-          })
           break
         }
         default:

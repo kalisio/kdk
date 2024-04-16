@@ -80,7 +80,7 @@ export async function setBaseLayerCached (layer, view, options) {
         let key = new URL(url)
         key.searchParams.delete('jwt')
         if (await LocalCache.has(key.href)) {
-          promises.push(LocalCache.addTag('layers', key, view))
+          promises.push(LocalCache.addTag(key.href, view))
         } else {
           promises.push(LocalCache.set('layers', key.href, url, view))
         }
@@ -98,7 +98,7 @@ export async function setGeojsonLayerUncached (layer, view) {
   const url = _.get(layer, 'leaflet.source')
   let key = new URL(url)
   key.searchParams.delete('jwt')
-  await removeViewForCachedUrl(key, view)
+  await removeViewForCachedUrl(key.href, view)
 }
 
 async function removeViewForCachedUrl(url, view) {
