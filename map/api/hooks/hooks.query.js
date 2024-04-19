@@ -142,6 +142,7 @@ export function asGeoJson (options = {}) {
     const latitudeProperty = (options.latitudeProperty || 'latitude')
     const altitudeProperty = (options.altitudeProperty || 'altitude')
     const geometryProperty = (options.geometryProperty || 'geometry')
+    const allowNullGeometries = _.get(options, 'allowNullGeometries', false)
     let results = _.get(hook, options.dataPath || 'result')
     // Already as GeoJson ?
     if (results.type === 'FeatureCollection') return
@@ -159,7 +160,9 @@ export function asGeoJson (options = {}) {
                Array.isArray(_.get(item, geometryProperty)) ||
                // Check for a geometry property (previously provided or already transformed item)
                (_.has(item, geometryProperty + '.type') && _.has(item, geometryProperty + '.coordinates')) ||
-               (_.has(item, geometryProperty + '.geometry.type') && _.has(item, geometryProperty + '.geometry.coordinates'))
+               (_.has(item, geometryProperty + '.geometry.type') && _.has(item, geometryProperty + '.geometry.coordinates')) ||
+               // Check for null geometries when allowed
+               allowNullGeometries
       })
       .map(item => {
         let coordinates
@@ -194,7 +197,7 @@ export function asGeoJson (options = {}) {
           // Item locations are not already in GeoJson feature format so we need to convert
           return Object.assign({
             type: 'Feature',
-            geometry: { type: 'Point', coordinates },
+            geometry: (coordinates ? { type: 'Point', coordinates } : null),
             properties: {}
           }, _.omit(item, [longitudeProperty, latitudeProperty]))
         }
