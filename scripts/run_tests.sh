@@ -13,11 +13,14 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 ##
 
 NODE_VER=16
-MONGO_VER=""
+MONGO_VER="4"
 CI_STEP_NAME="Run tests"
 CODE_COVERAGE=false
-while getopts "n:cr:" option; do
+while getopts "m:n:cr:" option; do
     case $option in
+        m) # defines mongo version
+            MONGO_VER=$OPTARG
+            ;;    
         n) # defines node version
             NODE_VER=$OPTARG
              ;;
