@@ -1,0 +1,3 @@
+[submodule "scripts/kash"]
+	path = scripts/kash
+	url = http://github.com/kalisio/kash
