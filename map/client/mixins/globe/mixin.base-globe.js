@@ -54,6 +54,8 @@ export const baseGlobe = {
         terrainProviderViewModels: []
       })
       this.viewer = new Cesium.Viewer(domEl, viewerOptions)
+      // Debug mode ?
+      if (viewerOptions.debug) this.viewer.extend(Cesium.viewerCesiumInspectorMixin)
       // Cesium always create a default provider
       this.viewer.scene.imageryLayers.removeAll()
       // Add defaults handler
