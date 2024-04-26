@@ -4,15 +4,40 @@
 
 If you'd like a third-party application to rely on the API of your application without authenticating using a user/password you can generate an access token with a fixed expiration date to be used as an API key.
 
-If your API needs a user ID to work as expected first register a user as usual. Then, using your application secret and a [JWT library](https://jwt.io/), issue a JWT with a payload matching the configuration options of your application regarding audience (i.e. domain), issuer and the user ID if any, e.g.:
+### Personal access token
+
+If your API needs a user ID to work as expected first register a user as usual. Then, using your application secret and a [JWT library](https://jwt.io/), issue a JWT with a payload matching the configuration options of your application regarding audience (i.e. domain), issuer and the user ID in the `sub` claim if any, e.g.:
 ```json
 {
   "aud": "kano.kargo.kalisio.xyz",
   "iss": "kalisio",
   "exp": 1552402010,
-  "userId": "5bc5b166beb4648d3cd79327"
+  "sub": "5bc5b166beb4648d3cd79327"
 }
 ```
+
+::: tip
+In local development environment `aud=kalisio`.
+:::
+
+### Impersonated access token
+
+If you don't want to rely on an existing user with the appropriate permissions you can create a stateless token thant directly includes it, the payload of your token will be used as a virtual user object. For instance, if your app rely on a `permissions` field to compute user abilities you can provide a token like this:
+```json
+{
+  "aud": "kano.kargo.kalisio.xyz",
+  "iss": "kalisio",
+  "exp": 1552402010,
+  "sub": "myapp",
+  "permissions": "superadmin"
+}
+```
+
+In this case the `sub` claim is not used internally and can be used for instance to identify the owner of the token.
+
+::: tip
+In local development environment `aud=kalisio`.
+:::
 
 ## Linking errors
 
