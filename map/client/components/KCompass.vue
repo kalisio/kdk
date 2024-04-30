@@ -133,8 +133,8 @@ function onHandleDrag (event) {
 }
 function getLabel () {
   if (props.labelMode === 'from') return `${direction.value}°`
-  return i18n.t('KCompass.FROM_TO', { 
-    direction: direction.value, 
+  return i18n.t('KCompass.FROM_TO', {
+    direction: direction.value,
     source: (direction.value + 180) % 360
   })
 }
