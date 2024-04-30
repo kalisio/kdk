@@ -42,7 +42,7 @@
         color="primary"
         text-color="white"
         outline
-        :label="`${modelValue}°`"
+        :label="getLabel()"
       />
       <q-popup-edit
         v-model="direction"
@@ -51,6 +51,7 @@
       >
         <q-input
           v-model.number="scope.value"
+          :prefix="getPrefix()"
           suffix="°"
           autofocus
           dense
@@ -64,6 +65,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { getCssVar } from 'quasar'
+import { i18n } from '../../../core/client'
 
 // Props
 const props = defineProps({
@@ -78,6 +80,13 @@ const props = defineProps({
   ticks: {
     type: Number,
     default: 16
+  },
+  labelMode: {
+    type: String,
+    default: 'from',
+    validator(value) {
+      return ['from', 'from-to'].includes(value)
+    }
   }
 })
 
@@ -122,12 +131,23 @@ function onHandleDrag (event) {
   const { x, y } = event.type.startsWith('touch') ? event.changedTouches[0] : event
   computeDirection(x, y)
 }
+function getLabel () {
+  if (props.labelMode === 'from') return `${direction.value}°`
+  return i18n.t('KCompass.FROM_TO', { 
+    direction: direction.value, 
+    source: (direction.value + 180) % 360
+  })
+}
+function getPrefix () {
+  if (props.labelMode === 'from') return ''
+  return i18n.t('KCompass.FROM')
+}
 function onStartDrag (event) {
   window.addEventListener('mousemove', onHandleDrag)
   window.addEventListener('touchmove', onHandleDrag)
   window.addEventListener('mouseup', onStropDrag)
   window.addEventListener('touchend', onStropDrag)
-};
+}
 function onStropDrag () {
   window.removeEventListener('mousemove', onHandleDrag)
   window.removeEventListener('touchmove', onHandleDrag)

@@ -685,6 +685,8 @@
     "LABEL": "Legend"
   },
   "KCompass": {
+    "FROM_TO": "From {direction}° to {source}°",
+    "FROM": "From",
     "NORTH": "N",
     "EAST": "E",
     "SOUTH": "S",
