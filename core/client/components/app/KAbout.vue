@@ -2,17 +2,17 @@
   <div class="column">
     <!-- Banner -->
     <div class="row justify-center">
-      <component :is="logoComponent" />
+      <KContent :content="banner" />
     </div>
     <!-- Version -->
     <KVersion class="q-pa-sm" />
     <!-- Endpoint -->
     <div class="q-pb-md row justify-center">
       <cite>{{ $t('KAbout.DOMAIN') }}
-        <a :href="$config('domain')" target="_blank">{{ $config('domain') }}</a>
+        <a :href="domain" target="_blank">{{ domain }}</a>
       </cite>
       <cite>
-        &nbsp;({{ $config('flavor') }})
+        &nbsp;({{ flavor }})
       </cite>
     </div>
     <!-- Extra content -->
@@ -36,14 +36,15 @@
 import _ from 'lodash'
 import config from 'config'
 import { ref } from 'vue'
-import { loadComponent } from '../../utils'
 import KContent from '../KContent.vue'
 import KVersion from '../KVersion.vue'
 import KSponsor from '../KSponsor.vue'
 import KPanel from '../KPanel.vue'
 
 // Data
-const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
+const domain = ref(_.get(config, 'domain'))
+const flavor = ref(_.get(config, 'flavor'))
+const banner = ref(_.get(config, 'about.banner', [{ component: 'KLogo' }]))
 const content = ref(_.get(config, 'about.content', []))
 const actions = ref(_.get(config, 'about.actions', []))
 </script>
