@@ -53,7 +53,7 @@ import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { Layout } from '../../layout'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 // Props
 defineProps({

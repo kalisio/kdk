@@ -1,4 +1,3 @@
-import KAction from './KAction.vue'
 import KAvatar from './KAvatar.vue'
 import KBlock from './KBlock.vue'
 import KChip from './KChip.vue'
@@ -16,7 +15,6 @@ import KTextArea from './KTextArea.vue'
 import KVersion from './KVersion.vue'
 
 export {
-  KAction,
   KAvatar,
   KBlock,
   KChip,
@@ -34,6 +32,7 @@ export {
   KVersion
 }
 
+export * from './action/index.js'
 export * from './layout/index.js'
 export * from './form/index.js'
 export * from './collection/index.js'

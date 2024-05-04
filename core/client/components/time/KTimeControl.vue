@@ -70,6 +70,7 @@ import { useQuasar } from 'quasar'
 import { Time } from '../../time.js'
 import { Store } from '../../store.js'
 import KDateTime from './KDateTime.vue'
+import KAction from '../action/KAction.vue'
 import SettingsSchema from '../../../common/schemas/settings.update.json'
 
 // Data

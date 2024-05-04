@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import KAction from './KAction.vue'
+import KAction from './action/KAction.vue'
 
 export default {
   components: {

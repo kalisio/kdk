@@ -94,7 +94,7 @@ import { i18n } from '../../i18n.js'
 import { RoleNames } from '../../../common/permissions'
 import KModal from '../KModal.vue'
 import KForm from '../form/KForm.vue'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 export default {
   emits: ['opened', 'closed'],

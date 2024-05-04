@@ -11,15 +11,16 @@ import config from 'config'
 import { ref } from 'vue'
 import { i18n } from '../../i18n'
 import { getPlatform } from '../../utils/utils.platform'
-import { props as actionProps } from '../../utils/utils.actions'
+import { actionProps } from '../../utils/utils.actions'
 import { useVersion } from '../../composables'
-import KAction from '../KAction.vue'
+import KAction from './/KAction.vue'
 
 // Data
-const props = defineProps(_.pick(actionProps, ['id', 'icon', 'label', 'stack']))
+const props = defineProps(_.omit(actionProps, ['toggle', 'url', 'handler', 'route', 'dialog']))
 const { clientVersionName, apiVersionName } = useVersion()
 const platform = getPlatform()
-// bug report
+
+// Setup bug report info
 const bugReport = {
   address: _.get(config, 'publisherContact'),
   subject: i18n.t('KAbout.BUG_REPORT_SUBJECT', {

@@ -12,7 +12,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import KAction from '../../../../core/client/components/KAction.vue'
+import KAction from '../../../../core/client/components/action/KAction.vue'
 import { useCurrentActivity } from '../../composables'
 import { Geolocation } from '../../geolocation.js'
 

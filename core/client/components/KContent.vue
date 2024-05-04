@@ -103,7 +103,7 @@ function getComponents (content, mode) {
   // Then create component objects
   _.forEach(components, component => {
     // Get the component and add the required props
-    component.name = _.get(component, 'component', 'KAction')
+    component.name = _.get(component, 'component', 'action/KAction')
     component.uid = uid()
     processedComponents.push(component)
   })

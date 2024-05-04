@@ -25,5 +25,5 @@
 </template>
 
 <script setup>
-import KAction from './KAction.vue'
+import KAction from './action/KAction.vue'
 </script>

@@ -1,11 +1,11 @@
-export const props = {
+export const actionProps = {
   id: {
     type: String,
-    default: ''
+    required: true
   },
   label: {
     type: String,
-    default: ''
+    default: null
   },
   icon: {
     type: String,
@@ -82,5 +82,12 @@ export const props = {
   url: {
     type: String,
     default: null
+  },
+  renderer: {
+    type: String,
+    default: 'button',
+    validator: (value) => {
+      return ['button', 'form-button', 'item', 'fab', 'fab-action', 'tab'].includes(value)
+    }
   }
 }

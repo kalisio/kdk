@@ -19,7 +19,7 @@ import _ from 'lodash'
 import { copyToClipboard } from 'quasar'
 import { Layout, utils as kdkCoreUtils } from '../../../core.client'
 import { formatUserCoordinates } from '../utils'
-import KAction from '../../../core/client/components/KAction.vue'
+import KAction from '../../../core/client/components/action/KAction.vue'
 
 export default {
   components: {
