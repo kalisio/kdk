@@ -1,5 +1,4 @@
 import KAvatar from './KAvatar.vue'
-import KBlock from './KBlock.vue'
 import KChip from './KChip.vue'
 import KChipsPane from './KChipsPane.vue'
 import KContent from './KContent.vue'
@@ -16,7 +15,6 @@ import KVersion from './KVersion.vue'
 
 export {
   KAvatar,
-  KBlock,
   KChip,
   KChipsPane,
   KContent,
