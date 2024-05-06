@@ -115,7 +115,8 @@ style: {
       color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
       size: '12px', // any HTML size
       translation: ['-50%', '-50%'], // translation to apply to render the text relative to the shape
-      rotation: 0 // rotation to apply to render the text relative to the shape
+      rotation: 0, // rotation to apply to render the text relative to the shape
+      extraStyle: 'background-color: #1A1A1A' // additional CSS to be applied to text
     },
    html: null // an HTML element to be rendered
   }

@@ -338,8 +338,10 @@ Under the hood it relies on the [createShape](https://github.com/kalisio/kdk/blo
     color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
     size: '12px', // any HTML size
     translation: ['-50%', '-50%'], // translation to apply to render the text relative to the shape
-    rotation: 0 // rotation to apply to render the text relative to the shape
+    rotation: 0, // rotation to apply to render the text relative to the shape
+    extraStyle: 'background-color: #1A1A1A' // additional CSS to be applied to text
   },
+  extraStyle: 'transform: translate(50%, 0%)', // additional CSS to be applied to the whole element (ie shape, icon and text)
   html: null // an HTML element to be rendered
 }
 ```
@@ -356,7 +358,8 @@ Shapes['my-shape'] = {
     translation: // the default translation to apply to render the text. Default value is ['-50%', '-50%'] (optional)
   },
   anchor: 'bottom-center', // the anchor of the shape. Default value is `center-center` (optional)
-  radiusToSize: (r) => { return ...  } // a function to compute the size according a radius. Default function returns the double of the radius (optional)
+  radiusToSize: (r) => { return ...  }, // a function to compute the size according a radius. Default function returns the double of the radius (optional)
+  extraStyle: 'background-color: #1A1A1A', // additional CSS to be applied to the shape (optional)
 },
 ```
 
