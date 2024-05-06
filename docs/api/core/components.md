@@ -360,7 +360,7 @@ Shapes['my-shape'] = {
 },
 ```
 
-::: note Tip
+::: tip Tip
 Checkout the [Miscellaneous activity](https://kapp.dev.kalisio.xyz/#/home/miscellaneous) to see examples.
 :::
 
@@ -369,7 +369,7 @@ Checkout the [Miscellaneous activity](https://kapp.dev.kalisio.xyz/#/home/miscel
 The [KColorScale](https://github.com/kalisio/kdk/blob/master/core/client/components/media/KColorScale.vue) component helps to render [Chroma color scales](https://gka.github.io/chroma.js/#color-scales).
 You can provide the `scale`, `domain` and `classes` properties and also a `label` as well as a `direction` (vertical or horizontal).
 
-::: note Tip
+::: tip Tip
 Checkout the [Miscellaneous activity](https://kapp.dev.kalisio.xyz/#/home/miscellaneous) to see examples.
 :::
 
@@ -381,7 +381,7 @@ In addition and only if needed, it uses [chroma.js](https://gka.github.io/chroma
 
 Checkout the [ChartActivity](https://github.com/kalisio/kApp/blob/master/src/components/ChartActivity.vue) to understand how it works.
 
-::: tip
+::: tip Tip
 Have a look at the [choma color scales](https://gka.github.io/chroma.js/#color-scales) to see how to define your color scale.
 :::
 

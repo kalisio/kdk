@@ -158,12 +158,15 @@ In addition and for backward compatibility, **KDK** supports an enhanced [simple
 | `icon-x-offset` | `style.point.icon.xOffset` |
 | `icon-y-offset` | `style.point.icon.yOffset` |
 
-https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
-
 The mixin automatically registers defaults styling for the the following type: `point`, `line` and `polygon`. For each type, the following options are  merged with the following order of precedence:
-    * feature style :  **feature.style** or on [simple style spec options](https://github.com/mapbox/simplestyle-spec) **feature.properties**
+    * feature style:  **feature.style** or on [simple style spec options](https://github.com/mapbox/simplestyle-spec) **feature.properties**
     * layer style set on layer descriptor
     * engline style set on engine descriptot
+
+::: tip Tip
+Check out this [features.geojson](https://github.com/kalisio/kano/blob/master/test/data/style-editor/features.geojson) file to have some examples
+![Map style](../../.vitepress/public/images/kano-style.png)
+:::
 
 ## Map Popup
 
