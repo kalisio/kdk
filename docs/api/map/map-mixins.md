@@ -122,22 +122,7 @@ style: {
 }
 ```
 
-**KDK** comes with a set of predefined marker shapes: `circle`, `rect`, `rounded-rect`, `diamond`, `triangle`, `triangle-down`, `triangle-left`, `triangle-right`, `star`, `marker-pin`, `square-pin`. But it allows you to register you own shape. For that, you have to define the shape such as below:
-
-```js
- 'my-shape': {
-    content: // the SVG path of the shape (required)
-    viewBox: // the bounding box of the path (required)
-    icon: {
-      translation: // the default translation to apply to render the icon. Default value is ['-50%', '-50%'] (optional)
-    },
-    text: {
-      translation: // the default translation to apply to render the text. Default value is ['-50%', '-50%'] (optional)
-    },
-    anchor: 'bottom-center', // the anchor of the shape. Default value is `center-center` (optional)
-    radiusToSize: (r) => { return ...  } // a function to compute the size according a radius. Default function returns the double of the radius (optional)
-  },
-```
+**KDK** comes with a set of predefined marker shapes: `circle`, `rect`, `rounded-rect`, `diamond`, `triangle`, `triangle-down`, `triangle-left`, `triangle-right`, `star`, `marker-pin`, `square-pin`. But it allows you to register you own shape. See the [Shapes](../core/components.md#shapes) section to know more.
 
 In addition and for backward compatibility, **KDK** supports an enhanced [simple style spec options](https://github.com/mapbox/simplestyle-spec) with the following mapping:
 
