@@ -56,52 +56,129 @@ If you add a `panes` option to your layer descriptor we will create the dedicate
 
 ## Map Style
 
-Make it possible to generate Leaflet map objects with style based on (Geo)Json (feature) properties:
-* **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Leaflet style options](https://leafletjs.com/reference.html#path-option)
-* **createMarkerFromStyle(latlng, style)** helper function create a [Leaflet marker](https://leafletjs.com/reference.html#marker) from marker style options:
-  * **icon** icon style options 
-    * **type** type name (ie constructor function) of the icon to be created for the marker, e.g. [`icon`](https://leafletjs.com/reference.html#icon) (defaults), [`divIcon`](https://leafletjs.com/reference.html#divicon) or [`icon.fontAwesome`](https://github.com/danwild/leaflet-fa-markers)
-    * **options** icon constructor options
-  * **type** type name (ie constructor function) of the marker to be created, e.g. `marker` (defaults) or `circleMarker`
-  * **options** marker constructor options
+**KDK** intoduces its own stye specification as described as below: 
 
-Use **register/unregisterStyle(type, generator)** to (un)register a function generating a Leaflet object depending on the given type:
-  * `markerStyle` => **f(feature, latlng, options)** returns a [Leaflet marker](https://leafletjs.com/reference.html#marker)
-  * `featureStyle` => **f(feature, options)** returns a [Leaflet style object](https://leafletjs.com/reference.html#path-option)
+```js
+style: {
+  // Line geometry
+  line: {
+    color: 'black' // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    width:  1 // any positive value
+    opacity: 1.0 // range from 0.0 (transparent) to 1.0 (opaque)
+    cap: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    join: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    dashArray: 'none', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    dashOffset: 0 // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+  },
+  // Polygon geometry
+  polygon: {
+    color: 'black', // fill color, any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    opacity: 1.0, // fill opacity
+    fillRule: 'evenodd' // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+    stroke: {
+        color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+        width: 1, // any positive value
+        opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+        cap: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+        join: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+        dashArray: 'none', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+        dashOffset: 0, // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    }
+  },
+  // Point geometry
+  marker: {
+    shape: 'circle', // represent a registered SVG shape
+    size: ['24px', '24px'], // array of HTML sizes
+    radius: undefined,  // alternative to the size property.
+    color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+    stroke: { 
+        color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+        width: 1, // any positive value
+        opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+        cap: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+        join: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+        dashArray: 'none', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+        dashOffset: 0 // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    },
+    icon: {
+      classes: undefined // must be specified, e.g 'las la-home'
+      url: '' // url to the image to be displayed. Alternative to the classes property
+      color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+      opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+      size: '14px', // any HTML size
+      translation: ['-50%', '-50%'], // translation to apply to render the icon relative to the shape
+      rotation: 0 // rotation to apply to render the icon relative to the shape
+    },
+    text: {
+      label: undefined, // text to be displayed
+      color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+      size: '12px', // any HTML size
+      translation: ['-50%', '-50%'], // translation to apply to render the text relative to the shape
+      rotation: 0 // rotation to apply to render the text relative to the shape
+    },
+   html: null // an HTML element to be rendered
+  }
+}
+```
 
-::: tip
-The [simple style spec options](https://github.com/mapbox/simplestyle-spec) does not cover all [Leaflet style options](https://leafletjs.com/reference.html#path-option). However you can use it simply by converting option names from camel case to kebab case.
-:::
+**KDK** comes with a set of predefined marker shapes: `circle`, `rect`, `rounded-rect`, `diamond`, `triangle`, `triangle-down`, `triangle-left`, `triangle-right`, `star`, `marker-pin`, `square-pin`. But it allows you to register you own shape. For that, you have to define the shape such as below:
 
-Our mapping extends the simple style spec and can be used to create styles more easily:
-* `weight`: mapped as `weight`,
-* `radius`: mapped as `radius`,
-* `line-cap`: mapped as `lineCap`,
-* `line-join`: mapped as `lineJoin`,
-* `dash-array`: mapped as `dashArray`,
-* `dash-offset`: mapped as `dashOffset`,
-* `marker-type`: mapped as `type`,
-* `marker-symbol`: mapped as `shape`,
-* `marker-size`: mapped as `size`,
-* `marker-color`: mapped as `fillColor`
-* `icon-size`: mapped as `icon.iconSize`,
-* `icon-anchor`: mapped as `icon.iconAnchor`,
-* `icon-class`: mapped as `icon.className`,
-* `icon-html`: mapped as `icon.html` and automatically switch to `divIcon` constructor function,
-* `icon-classes`: mapped as `icon.iconClasses` for `ShapeMarker` only
-* `icon-color`: mapped as `icon.options.iconColor` for `ShapeMarker` only
-* `icon-x-offset`: mapped as `icon.options.iconXOffset` for `ShapeMarker` only
-* `icon-y-offset`: mapped as `icon.options.iconYOffset` for `ShapeMarker` only
+```js
+ 'my-shape': {
+    content: // the SVG path of the shape (required)
+    viewBox: // the bounding box of the path (required)
+    icon: {
+      translation: // the default translation to apply to render the icon. Default value is ['-50%', '-50%'] (optional)
+    },
+    text: {
+      translation: // the default translation to apply to render the text. Default value is ['-50%', '-50%'] (optional)
+    },
+    anchor: 'bottom-center', // the anchor of the shape. Default value is `center-center` (optional)
+    radiusToSize: (r) => { return ...  } // a function to compute the size according a radius. Default function returns the double of the radius (optional)
+  },
+```
 
-The mixin automatically registers defaults styling:
-  * `markerStyle` => will create a marker based on the following options merged with the following order of precedence
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on layer descriptor
-    * [Leaflet style options](https://leafletjs.com/reference.html#path-option) set on the **pointStyle** property in the component
-  * `featureStyle` => will create a style based on the following options merged with the following order of precedence
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on layer descriptor
-    * [Leaflet style options](https://leafletjs.com/reference.html#path-option) set on the **featureStyle** property in the component
+In addition and for backward compatibility, **KDK** supports an enhanced [simple style spec options](https://github.com/mapbox/simplestyle-spec) with the following mapping:
+
+| SimpleStyleSpec | KDK Style |
+|---|---|
+| `z-index` | `pane` |
+| pane | `pane` |
+| stroke | `color` |
+| `stroke-color` | `color` |
+| `stroke-opacity` | `opacity` |
+| `stroke-width` | `weight` |
+| fill | `fillColor` |
+| `fill-opacity` | `fillOpacity` |
+| `fill-color` | `fillColor` |
+| weight | `weight` |
+| radius | `radius` |
+| `line-cap` | `lineCap` |
+| `line-join` | `lineJoin` |
+| `dash-array` | `dashArray` |
+| `dash-offset` | `dashOffset` |
+| `marker-symbol` | `style.point.shape` |
+| `marker-size` | `style.point.size` |
+| `marker-color` | `style.point.color` |
+| `marker-anchor` | `style.point.anchor` |
+| `icon-url` | `style.point.icon.url` |
+| `icon-html` | `style.point.html` |
+| `icon-color` | `style.point.icon.color` |
+| `icon-size` | `style.point.icon.size` |
+| `icon-anchor` | `style.point.anchor` |
+| `icon-class` | `style.point.icon.classes` |
+| `icon-opacity` | `style.point.icon.opacity` |
+| `icon-classes` | `style.point.icon.classes` |
+| `icon-x-offset` | `style.point.icon.xOffset` |
+| `icon-y-offset` | `style.point.icon.yOffset` |
+
+https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+
+The mixin automatically registers defaults styling for the the following type: `point`, `line` and `polygon`. For each type, the following options are  merged with the following order of precedence:
+    * feature style :  **feature.style** or on [simple style spec options](https://github.com/mapbox/simplestyle-spec) **feature.properties**
+    * layer style set on layer descriptor
+    * engline style set on engine descriptot
 
 ## Map Popup
 
