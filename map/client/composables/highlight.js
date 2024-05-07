@@ -8,6 +8,8 @@ import { getFeatureId, getFeatureStyleType } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 
 export const HighlightsLayerName = uid()
+// This ensure it is on tp of everything else
+export const HighlightsZIndex = 999
 
 export function useHighlight (name, options = {}) {
   // Set default options
@@ -153,7 +155,8 @@ export function useHighlight (name, options = {}) {
           interactive: false,
           cluster: false,
           removeMissing: true,
-          popup: { pick: [] }
+          popup: { pick: [] },
+          zIndex: HighlightsZIndex
         },
         cesium: {
           type: 'geoJson',
