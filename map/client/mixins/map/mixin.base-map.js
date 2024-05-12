@@ -438,6 +438,15 @@ export const baseMap = {
         if (geoJson.type === 'FeatureCollection') _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
         else geoJson._id = uid().toString()
       }
+      // Check for panes to be created
+      const panes = []
+      _.forEach(geoJson.features, feature => {
+        const pane = _.get(feature, 'style.pane')
+        if (pane) panes.push({
+          name: pane
+        })
+      })
+      if (!_.isEmpty(panes)) _.set(layerSpec, 'leaflet.panes', panes)
       // Create an empty layer used as a container
       await this.addLayer(layerSpec)
       // Set the content
