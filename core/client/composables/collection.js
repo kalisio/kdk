@@ -119,7 +119,7 @@ export function useCollection (options) {
 
   function resetCollection () {
     // Reset pagination and start again refreshing the collection
-    setCollectionItems([])
+    if (options.appendItems.value) setCollectionItems([])
     currentPage.value = 1
     refreshCollection()
   }
