@@ -260,15 +260,17 @@ export const geojsonLayers = {
         // on non-tiled layers we need to use a pane to manage it
         const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
         const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
+        const hasZIndex = !!_.get(leafletOptions, 'zIndex')
         if (!leafletOptions.tiled && (hasMinZoom || hasMaxZoom)) {
           const pane = { name: options.name }
           if (hasMinZoom) pane.minZoom = _.get(leafletOptions, 'minZoom')
           if (hasMaxZoom) pane.maxZoom = _.get(leafletOptions, 'maxZoom')
+          if (hasZIndex) pane.zIndex = _.get(leafletOptions, 'zIndex')
           leafletOptions.panes = [pane]
           leafletOptions.pane = options.name
           leafletOptions.shadowPane = options.name
           // Make pane available to styles as well as eg shape markers are created from here
-          for (const type in ['point', 'line', 'polygon']) {
+          for (const type of ['point', 'line', 'polygon']) {
             if (_.has(leafletOptions, `style.${type}`)) {
               _.set(leafletOptions, `style.${type}.pane`, options.name)
               _.set(leafletOptions, `style.${type}.shadowPane`, options.name)

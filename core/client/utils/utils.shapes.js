@@ -132,7 +132,7 @@ function getSize (size) {
     - size: Number - the font size in pixel - 14
     - translation: Array - the translation to apply from the center of the shape ['-50%', '-50%']
     - rotation: Number - the rotation to apply in degree
-  - html: Object specifyinng an html overlay
+  - html: Object specifying an html overlay
 
 */
 export function createShape (options) {

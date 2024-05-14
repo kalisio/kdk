@@ -202,7 +202,9 @@ export const baseMap = {
       // This is why Leaflet 1.0 introduced panes: https://leafletjs.com/reference.html#map-pane & https://leafletjs.com/examples/map-panes/
       // By implicitely create a pane for each provided z-index makes this transparent for the user
       let zIndex = _.has(leafletOptions, 'zIndex')
-      if (zIndex) {
+      let pane = _.has(leafletOptions, 'pane')
+      // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
+      if (zIndex && !pane) {
         zIndex = _.get(leafletOptions, 'zIndex')
         this.createLeafletPane(zIndex)
         // Set layer to use target pane
