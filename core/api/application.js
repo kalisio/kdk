@@ -287,14 +287,13 @@ export function createWebhook (path, app, options = {}) {
     const payload = req.body
     const config = app.get('authentication')
     res.set('content-type', 'application/json')
-    const params = {}
+    const params = _.get(req, 'feathers', {})
     try {
       if (options.preprocessor) {
         await options.preprocessor(req, res, payload)
       }
       // Authenticate when required
       if (config) {
-        params.user = _.get(req, 'feathers.user')
         params.checkAuthorisation = true
       }
       if (req.headers['content-type'] !== 'application/json') {
