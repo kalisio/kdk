@@ -190,12 +190,7 @@ async function build () {
     let component = _.get(field.field, 'component', '')
     if (!component) {
       // Provide a default component based on schema value type when none is specified
-      if (field.type === 'number' || field.type === 'integer')
-        component = 'form/KNumberField'
-      else if (field.type === 'boolean')
-        component = 'form/KToggleField'
-      else if (field.type === 'string')
-        component = 'form/KTextField'
+      if (field.type === 'number' || field.type === 'integer') { component = 'form/KNumberField' } else if (field.type === 'boolean') { component = 'form/KToggleField' } else if (field.type === 'string') { component = 'form/KTextField' }
     }
     cloneField.component = loadComponent(component)
     cloneField.reference = null // will be set once te field is rendered

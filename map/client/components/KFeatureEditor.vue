@@ -16,7 +16,6 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
-import { updatePropertiesSchema } from '../utils.js'
 import { KModalEditor } from '../../../core/client/components'
 
 export default {
