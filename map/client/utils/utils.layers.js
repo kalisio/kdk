@@ -5,6 +5,8 @@ import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
+import service from '@kalisio/feathers-localforage'
+import localforage from 'localforage'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
@@ -52,14 +54,13 @@ export function isLayerCached (layer) {
   return _.get(layer, 'isCached')
 }
 
-export async function setGeojsonLayerCached (layer, view) {
-  const url = _.get(layer, 'leaflet.source')
-  let key = new URL(url)
-  key.searchParams.delete('jwt')
-  if (await LocalCache.has(key.href)) {
-    await LocalCache.addTag(key.href, view)
+export async function setLayerCached (layer, view, options) {
+  if (layer.type === 'BaseLayer') {
+    await setBaseLayerCached(layer, view, options)
+  } else if (layer.service) {
+    await setServiceLayerCached(layer, view, options)
   } else {
-    await LocalCache.set('layers', key.href, url, view)
+    await setGeojsonLayerCached (layer, view)
   }
 }
 
@@ -94,11 +95,52 @@ export async function setBaseLayerCached (layer, view, options) {
   await Promise.all(promises)
 }
 
-export async function setGeojsonLayerUncached (layer, view) {
+async function setServiceLayerCached (layer, view, options) {
+  const bounds = options.bounds
+  const offlineServiceName = layer.service + '-offline'
+  
+  const views = await localforage.getItem(offlineServiceName) || []
+  views.push(view)
+  await localforage.setItem(layer.name, views)
+  
+  const offlineService = api.createService(offlineServiceName, {service: service({
+    id: '_id',
+    name: layer.service,
+    storage: ['IndexedDB']
+  })})
+
+  const collection = await api.getService(layer.service).find({
+    query: {
+      south: bounds[0][0],
+      north: bounds[1][0],
+      west: bounds[0][1],
+      east: bounds[1][1]
+    }
+  })
+  for (let feature of collection.features) {
+    await offlineService.create(feature)
+  }
+}
+
+export async function setGeojsonLayerCached (layer, view) {
   const url = _.get(layer, 'leaflet.source')
   let key = new URL(url)
   key.searchParams.delete('jwt')
-  await removeViewForCachedUrl(key.href, view)
+  if (await LocalCache.has(key.href)) {
+    await LocalCache.addTag(key.href, view)
+  } else {
+    await LocalCache.set('layers', key.href, url, view)
+  }
+}
+
+export async function setLayerUncached (layer, view, bounds) {
+  if (layer.type === 'BaseLayer') {
+    await setBaseLayerUncached(layer, view, bounds)
+  } else if (layer.service) {
+    await setServiceLayerUncached(layer, view, bounds)
+  } else {
+    await setGeojsonLayerUncached (layer, view)
+  }
 }
 
 async function removeViewForCachedUrl(url, view) {
@@ -109,7 +151,7 @@ async function removeViewForCachedUrl(url, view) {
   }
 }
 
-export async function setBaseLayerUncached (layer, view, options) {
+async function setBaseLayerUncached (layer, view, options) {
   const bounds = options.bounds
   const minZoom = options.minZoom || 3
   const maxZoom = options.maxZoom || _.get(layer, 'leaflet.maxNativeZoom')
@@ -129,20 +171,33 @@ export async function setBaseLayerUncached (layer, view, options) {
   }
 }
 
-export async function setLayerCached (layer, view, bounds) {
-  if (layer.type === 'BaseLayer') {
-    await setBaseLayerCached(layer, view, bounds)
-  } else {
-    await setGeojsonLayerCached (layer, view)
+async function setServiceLayerUncached (layer, view, bounds) {
+  const views = await localforage.getItem(layer.name) || []
+  views.push(view)
+  await localforage.setItem(layer.name, views)
+
+  const serviceName = layer.service + '-offline'
+  var app = feathers()
+  const feathersService = app.service(serviceName)
+
+  const collection = await app.getService(layer.service).find({
+    query: {
+      south: bounds[0][0],
+      north: bounds[1][0],
+      west: bounds[0][1],
+      east: bounds[1][1]
+    }
+  })
+  for (let feature in collection) {
+    feathersService.remove(feature.id)
   }
 }
 
-export async function setLayerUncached (layer, view, bounds) {
-  if (layer.type === 'BaseLayer') {
-    await setBaseLayerUncached(layer, view, bounds)
-  } else {
-    await setGeojsonLayerUncached (layer, view)
-  }
+async function setGeojsonLayerUncached (layer, view) {
+  const url = _.get(layer, 'leaflet.source')
+  let key = new URL(url)
+  key.searchParams.delete('jwt')
+  await removeViewForCachedUrl(key.href, view)
 }
 
 export function isLayerRemovable (layer) {
