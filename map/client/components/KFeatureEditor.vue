@@ -66,8 +66,8 @@ export default {
         await this.$api.getService(this.service).patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
       }
     },
-    async loadLayerSchema () {
-      return updatePropertiesSchema(_.get(this.layer, 'schema.content'))
+    loadLayerSchema () {
+      return _.get(this.layer, 'schema.content')
     },
     async openModal () {
       kCoreMixins.baseModal.methods.openModal.call(this)
