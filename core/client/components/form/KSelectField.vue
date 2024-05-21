@@ -87,7 +87,7 @@ export default {
     options () {
       let opts = _.map(_.get(this.properties, 'field.options', []), option => {
         const label = this.$tie(_.get(option, 'label', ''))
-        return Object.assign({}, option, { label: label })
+        return Object.assign({}, option, { label })
       })
       if (this.filter) {
         opts = _.filter(opts, option => {

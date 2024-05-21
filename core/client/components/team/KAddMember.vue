@@ -174,7 +174,7 @@ export default {
           $id: 'http://kalisio.xyz/schemas/user-properties',
           type: 'object',
           properties: {
-            role: role
+            role
           },
           required: ['role']
         }
@@ -184,8 +184,8 @@ export default {
         $id: 'http://kalisio.xyz/schemas/user-properties',
         type: 'object',
         properties: {
-          name: name,
-          role: role
+          name,
+          role
         },
         required: ['name', 'role']
       }
@@ -282,9 +282,9 @@ export default {
             const role = _.trim(fileRecord[2])
             if (name.length > 2 && emailExpr.test(email) && RoleNames.includes(role)) {
               const record = {
-                name: name,
-                email: email,
-                role: role
+                name,
+                email,
+                role
               }
               records.push(record)
             } else {

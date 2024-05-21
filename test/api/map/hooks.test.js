@@ -99,7 +99,7 @@ describe('map:hooks', () => {
     expect(hook.result.type).to.equal('FeatureCollection')
     expect(hook.result.features).toExist()
     expect(hook.result.features.length).to.equal(2)
-    hook.result.features.forEach((feature, index) =>{
+    hook.result.features.forEach((feature, index) => {
       expect(feature.type).to.equal('Feature')
       expect(feature.properties).toExist()
       expect(feature.properties.pickedProperty).toExist()
@@ -121,7 +121,7 @@ describe('map:hooks', () => {
     })(hook)
     expect(Array.isArray(hook.result)).beTrue()
     expect(hook.result.length).to.equal(3)
-    hook.result.forEach((feature, index) =>{
+    hook.result.forEach((feature, index) => {
       expect(feature.type).to.equal('Feature')
       expect(feature.properties).toExist()
       expect(feature.properties.pickedProperty).toExist()

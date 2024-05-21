@@ -42,7 +42,7 @@ export default {
       const start = moment(Time.getCurrentTime()).add(duration)
       // Revert range if duration in past
       if (duration.asMilliseconds() > 0) Time.patchRange({ start: end, end: start })
-      else Time.patchRange({ start: start, end: end })
+      else Time.patchRange({ start, end })
     }
   },
   created () {

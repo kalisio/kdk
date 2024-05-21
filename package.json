@@ -43,7 +43,8 @@
   "standard": {
     "parser": "vue-eslint-parser",
     "parserOptions": {
-      "sourceType": "module"
+      "sourceType": "module",
+      "ecmaVersion": "latest"
     },
     "plugins": [
       "vue"
@@ -146,7 +147,7 @@
     "chai-spies": "^0.7.1",
     "containerized": "^1.0.2",
     "cross-env": "^5.2.0",
-    "eslint-plugin-vue": "^9.1.0",
+    "eslint-plugin-vue": "^9.26.0",
     "esm": "^3.2.25",
     "fs-extra": "^8.1.0",
     "googleapis": "^21.3.0",
@@ -157,6 +158,6 @@
     "pngjs": "^5.0.0",
     "puppeteer": "^20.5.0",
     "shx": "^0.3.2",
-    "standard": "^16.0.4"
+    "standard": "^17.1.0"
   }
 }

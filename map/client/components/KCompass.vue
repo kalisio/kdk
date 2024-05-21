@@ -84,7 +84,7 @@ const props = defineProps({
   labelMode: {
     type: String,
     default: 'from',
-    validator(value) {
+    validator (value) {
       return ['from', 'from-to'].includes(value)
     }
   }

@@ -158,7 +158,7 @@ async function makeChartConfig () {
                   backgroundColor: getCssVar('secondary') + '88'
                 },
                 mode: 'x',
-                onZoomStart: onZoomStart,
+                onZoomStart,
                 onZoom: onZoomEnd
               }
             }

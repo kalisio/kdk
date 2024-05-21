@@ -284,7 +284,7 @@ export default {
 
         const url = wmts.buildLeafletUrl(this.service.baseUrl, this.layer, {
           version: this.service.version,
-          style: style,
+          style,
           crs: '3857',
           format: pickedFormat,
           searchParams: this.service.searchParams,
@@ -295,7 +295,7 @@ export default {
           url: url.replace('{z}', '{TileMatrix}').replace('{x}', '{TileCol}').replace('{y}', '{TileRow}'),
           format: pickedFormat,
           layer: this.layer.id,
-          style: style,
+          style,
           tileMatrixSetID: this.layer.crs['3857']
         }
         newLayer.leaflet = {

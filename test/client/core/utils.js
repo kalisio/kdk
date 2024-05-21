@@ -245,7 +245,7 @@ export function compareImages (image1, image2, threshold, diffFilename) {
     alpha: 0.3,
     diffColor: [255, 0, 0],
     diffColorAlt: [0, 255, 0],
-    threshold: threshold
+    threshold
   }
   const numDiffs = pixelmatch(img1.data, img2.data, diff.data, width, height, options)
   const diffRatio = 100.0 * (numDiffs / (width * height))

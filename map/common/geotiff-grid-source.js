@@ -127,8 +127,8 @@ export class GeoTiffGridSource extends GridSource {
     // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
     const window = [left, bottom, right + 1, top + 1]
     const bands = this.rgb
-      ? await usedImage.readRGB({ window: window })
-      : await usedImage.readRasters({ window: window, fillValue: this.nodata })
+      ? await usedImage.readRGB({ window })
+      : await usedImage.readRasters({ window, fillValue: this.nodata })
     const data = this.rgb ? mergeRgb(bands) : bands[0]
 
     if (rx < 0) [left, right] = [right, left]

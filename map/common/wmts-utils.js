@@ -139,16 +139,16 @@ export function buildLeafletUrl (baseUrl, layer, { version = '', style = '', crs
   const ext = _.get(fmt2ext, format.toLowerCase(), 'png')
   return useKvpEncoding
     ? buildUrl(baseUrl, Object.assign({
-        SERVICE: 'WMTS',
-        REQUEST: 'GetTile',
-        VERSION: version,
-        LAYER: layer.id,
-        STYLE: style,
-        FORMAT: format,
-        TILEMATRIXSET: layer.crs[crs],
-        TILEMATRIX: '{z}',
-        TILEROW: '{y}',
-        TILECOL: '{x}'
-      }, searchParams))
+      SERVICE: 'WMTS',
+      REQUEST: 'GetTile',
+      VERSION: version,
+      LAYER: layer.id,
+      STYLE: style,
+      FORMAT: format,
+      TILEMATRIXSET: layer.crs[crs],
+      TILEMATRIX: '{z}',
+      TILEROW: '{y}',
+      TILECOL: '{x}'
+    }, searchParams))
     : buildUrl(`${baseUrl}/${layer.id}/${style}/${layer.crs[crs]}/{z}/{y}/{x}.${ext}`, searchParams)
 }
