@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import config from 'config'
 import { Store } from '../store.js'
 import { Events } from '../events.js'
 import { LocalStorage } from '../local-storage.js'

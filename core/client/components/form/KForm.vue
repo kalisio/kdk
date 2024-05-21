@@ -115,7 +115,11 @@ const groups = computed(() => {
 
 // Watch
 watch(() => props.schema, async (value) => {
-  logger.debug('[KDK] Schema changed', value)
+  logger.debug('[KDK] Schema content changed', value)
+  if (value) await build()
+})
+watch(() => props.filter, async (value) => {
+  logger.debug('[KDK] Schema filter changed', value)
   if (value) await build()
 })
 
