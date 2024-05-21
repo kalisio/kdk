@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { getCssVar } from 'quasar'
+import { getCssVar } from 'quasar'
 import chroma from 'chroma-js'
 
 export const Colors = {
