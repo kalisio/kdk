@@ -98,10 +98,18 @@ export async function setBaseLayerCached (layer, view, options) {
 async function setServiceLayerCached (layer, view, options) {
   const bounds = options.bounds
   const offlineServiceName = layer.service + '-offline'
-  
-  const views = await localforage.getItem(offlineServiceName) || []
-  views.push(view)
-  await localforage.setItem(layer.name, views)
+
+  const services = await localforage.getItem('services')
+  if (services) {
+    if (services[layer.service]) {
+      services[layer.service].push(view)
+    } else {
+      services[layer.service] = [view]
+    }
+    await localforage.setItem('services', services)
+  } else {
+    await localforage.setItem('services', { [layer.service]: [view] })
+  }
   
   const offlineService = api.createService(offlineServiceName, {service: service({
     id: '_id',
