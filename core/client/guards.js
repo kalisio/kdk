@@ -68,10 +68,8 @@ export function routeGuard (user, to, from) {
   const matchedRoute = _.get(to, 'matched', [])
   // Retrieves the last corresponding route
   const lastMatchedRoute = matchedRoute[matchedRoute.length - 1]
-  // If no route matches
-  if (matchedRoute.length === 0) return false
-  // If the last matching route has the name '1', this is a generic route capturing all unknown routes ('/:catchAll(.*)*')
-  if (lastMatchedRoute.name === '1') return false
+  // If the last matching route has the name 'not-found', this is a route capturing all unknown routes ('/:catchAll(.*)*')
+  if (lastMatchedRoute.name === 'not-found') return false
   // If the only corresponding route is the index, it is managed by authenticationGuard
   if (lastMatchedRoute.name === 'index') return false
   // Allow the navigation
