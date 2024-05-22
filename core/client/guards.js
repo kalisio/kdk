@@ -16,7 +16,7 @@ export function authenticationGuard (user, to, from) {
   if (to.path.startsWith('/oauth/')) return true
 
   // Routes accessible whatever the authentication state, eg public
-  if (_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated') || _.get(to, 'meta.public')) {
+  if ((_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated')) || _.get(to, 'meta.public')) {
     // First, check the root route, since all routes are children of the root route
     if (to.path === '/') return 'home'
     // Then, check if the route exists. If the target route does not exist, cancel the navigation
