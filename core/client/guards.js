@@ -14,22 +14,37 @@ let guards = []
 export function authenticationGuard (user, to, from) {
   // Specific case of OAuth provider routes
   if (to.path.startsWith('/oauth/')) return true
+
   // Routes accessible whatever the authentication state, eg public
-  if (_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated')) {
+  if (_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated') || _.get(to, 'meta.public')) {
+    // First, check the root route, since all routes are children of the root route
+    if (to.path === '/') return 'home'
+    // Then, check if the route exists. If the target route does not exist, cancel the navigation
+    // If the length of matched routes is 1, it means only the root route matches
+    if (_.get(to, 'matched').length === 1) return false
+    // Allow the navigation
     return true
   }
+
   // Only when authenticated, eg private
   if (_.get(to, 'meta.authenticated')) {
     // If the user is here then he is authenticated so let it go
     if (user) return true
     // Otherwise redirect to login
     else return 'login'
-  } else if (_.get(to, 'meta.unauthenticated')) {
-    // Only when not authenticated, eg reset password
+  }
+  
+  // Only when not authenticated, eg reset password
+  if (_.get(to, 'meta.unauthenticated')) {
     // If the user is here then he is authenticated so redirect to home
     if (user) return 'home'
-    // Otherwise let it go handling the specific case of domain root
-    else return (to.path === '/' ? 'login' : true)
+    // If the user is not authenticated, handle the specific case of the root domain
+    if (to.path === '/') return 'login'
+    // Then, check if the route exists. If the target route does not exist, cancel the navigation
+    // If the length of matched routes is 1, it means only the root route matches
+    if (_.get(to, 'matched').length === 1) return false
+    // Allow the navigation
+    return true
   }
 }
 
