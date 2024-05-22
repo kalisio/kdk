@@ -19,9 +19,6 @@ export function authenticationGuard (user, to, from) {
   if ((_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated')) || _.get(to, 'meta.public')) {
     // First, check the root route, since all routes are children of the root route
     if (to.path === '/') return 'home'
-    // Then, check if the route exists. If the target route does not exist, cancel the navigation
-    // If the length of matched routes is 1, it means only the root route matches
-    if (_.get(to, 'matched').length === 1) return false
     // Allow the navigation
     return true
   }
@@ -40,9 +37,6 @@ export function authenticationGuard (user, to, from) {
     if (user) return 'home'
     // If the user is not authenticated, handle the specific case of the root domain
     if (to.path === '/') return 'login'
-    // Then, check if the route exists. If the target route does not exist, cancel the navigation
-    // If the length of matched routes is 1, it means only the root route matches
-    if (_.get(to, 'matched').length === 1) return false
     // Allow the navigation
     return true
   }
@@ -68,6 +62,22 @@ export function permissionsGuard (user, to, from) {
   } else return true
 }
 
+// Guard based on route definition
+export function routeGuard (user, to, from) {
+  // Retrieves routes corresponding to the destination
+  const matchedRoute = _.get(to, 'matched', [])
+  // Retrieves the last corresponding route
+  const lastMatchedRoute = matchedRoute[matchedRoute.length - 1]
+  // If no route matches
+  if (matchedRoute.length === 0) return false
+  // If the last matching route has the name '1', this is a generic route capturing all unknown routes ('/:catchAll(.*)*')
+  if (lastMatchedRoute.name === '1') return false
+  // If the only corresponding route is the index, it is managed by authenticationGuard
+  if (lastMatchedRoute.name === 'index') return false
+  // Allow the navigation
+  return true
+}
+
 // Guard routes for a given user, can be used as router navigation guard
 // or as standard function. In this case next will not be used and you get the
 // final result after running all registered guards: true, false or redirect route name
@@ -83,7 +93,7 @@ export function beforeGuard (to, from, next) {
         // but redirection should be handled at the app level to avoid concurrence
         // between both mechanisms. For this you can call the function without passing from/next arguments.
         // next({ name: result })
-        return next(false)
+        return next({ name: result })
       } else {
         return result
       }
