@@ -23,7 +23,6 @@ jobs:
   
   additional_tests:
     strategy:
-      max-parallel: 1
       fail-fast: false
       matrix:
         node: [ 18, 20 ]
