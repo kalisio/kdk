@@ -4,7 +4,6 @@
 [![CI](https://github.com/kalisio/kdk/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/kdk/actions/workflows/main.yaml)
 [![Code Climate](https://codeclimate.com/github/kalisio/kdk/badges/gpa.svg)](https://codeclimate.com/github/kalisio/kdk)
 [![Test Coverage](https://codeclimate.com/github/kalisio/kdk/badges/coverage.svg)](https://codeclimate.com/github/kalisio/kdk/coverage)
-[![Dependency Status](https://img.shields.io/librariesio/github/kalisio/kdk?style=flat-square)](https://david-dm.org/kalisio/kdk)
 [![Documentation](https://img.shields.io/badge/documentation-available-brightgreen.svg)](https://kalisio.github.io/kdk/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
