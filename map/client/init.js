@@ -36,7 +36,9 @@ export default async function init () {
   logger.debug('[KDK] initializing map module')
 
   // Declare the built-in services, others are optional
-  api.declareService('geocoder')
+  api.declareService('catalog')
+  api.declareService('projects')
+  api.declareService('features')
   // Declare our matcher
   api.registerMatcher(siftMatcher)
   // Service to support in memory features edition

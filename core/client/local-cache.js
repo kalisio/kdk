@@ -25,14 +25,13 @@ export const LocalCache = {
     const response = await fetch(url)
     await cache.put(key, response)
     await localforage.setItem(key, [tag])
-
   },
   async getTags (key) {
     return await localforage.getItem(key)
   },
   async addTag (key, tag) {
     if (this.has(key)) {
-      let tags = await this.getTags(key)
+      const tags = await this.getTags(key)
       if (tags && !tags.contains(tag)) {
         tags.push(tag)
         await localforage.setItem(key, tags)
@@ -41,9 +40,9 @@ export const LocalCache = {
   },
   async removeTag (key, tag) {
     if (this.has(key)) {
-      let tags = await this.getTags(key)
+      const tags = await this.getTags(key)
       if (tags) {
-        let index = tags.indexOf(tag)
+        const index = tags.indexOf(tag)
         tags.splice(index, 1)
         await localforage.setItem(key, tags)
       }

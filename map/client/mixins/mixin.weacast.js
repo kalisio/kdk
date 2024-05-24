@@ -25,7 +25,7 @@ export const weacast = {
       }
     },
     async setupForecastModels () {
-      if (!this.getWeacastApi()) return
+      if (!this.getWeacastApi() || this.getWeacastApi().isDisconnected) return
       const response = await this.getWeacastApi().getService('forecasts').find()
       // Required to use splice when modifying objects inside an array to make it reactive
       this.forecastModels.splice(0, this.forecastModels.length, ...response.data)

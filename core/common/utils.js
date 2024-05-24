@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+export * from './utils.offline.js'
+
 // Append a parameter value to a given URL
 export function addQueryParameter (baseUrl, parameter, value) {
   // Check if this is the first parameter to be added or not

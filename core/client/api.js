@@ -6,11 +6,16 @@ import jwtdecode from 'jwt-decode'
 import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
+import createOfflineService from '@kalisio/feathers-localforage'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
 import { Events } from './events.js'
 import { LocalStorage } from './local-storage.js'
+import { makeServiceSnapshot } from '../common/utils.js'
+
+// Disable default feathers behaviour of reauthenticating on disconnect
+feathers.authentication.AuthenticationClient.prototype.handleSocket = () => {}
 
 // Setup log level
 if (_.get(configuration, 'logs.level')) {
@@ -22,6 +27,8 @@ if (_.get(configuration, 'logs.level')) {
 export function createClient (config) {
   // Initiate the client
   const api = feathers()
+  // Initialize connection state
+  api.isDisconnected = !navigator.onLine
   const baseUrlStorageKey = 'baseUrl'
 
   // Matchers that can be added to customize route guards
@@ -91,14 +98,33 @@ export function createClient (config) {
     }
     return path
   }
+
   api.getService = function (name, context) {
-    const path = api.getServicePath(name, context)
-    const service = api.service(path)
+    let servicePath, service
+    // When offline try to use offline service version if any
+    if (api.isDisconnected) {
+      // We don't directly use service() here as it will create a new service wrapper even if it does not exist
+      servicePath = `${api.getServicePath(name, context)}-offline`
+      if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
+      service = api.services[servicePath]
+      if (!service) {
+        // Do not throw as a lot of components expect services to be available at initialization, eg
+        // api.getService('xxx').on('event', () => ...)
+        // In this case we simply warn and return the wrapper to the online service.
+        // However, it is up to the application to make sure of not using such components when offline
+        // throw new Error('Cannot retrieve offline service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
+        logger.warn('[KDK] Cannot retrieve offline service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
+      }
+    }
     if (!service) {
-      throw new Error('Cannot retrieve service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
+      servicePath = api.getServicePath(name, context)
+      service = api.service(servicePath)
+      if (!service) {
+        throw new Error('Cannot retrieve service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
+      }
     }
     // Store the path on first call
-    if (!service.path) service.path = path
+    if (!service.path) service.path = servicePath
     return service
   }
   // Used to register an existing backend service with its options
@@ -136,6 +162,62 @@ export function createClient (config) {
     if (options.hooks) service.hooks(options.hooks)
     if (options.context) service.context = options.context
     return service
+  }
+  // Used to create a frontend only service to be used in offline mode
+  // based on an online service name, will snapshot service data by default
+  api.createOfflineService = async function (serviceName, options = {}) {
+    const offlineServiceName = `${serviceName}-offline`
+
+    const offlineService = api.createService(offlineServiceName, {
+      service: createOfflineService({
+        id: '_id',
+        name: serviceName,
+        multi: true,
+        storage: ['IndexedDB'],
+        // FIXME: this should not be hard-coded as it depends on the service
+        // For now we set it at the max value but if a component
+        // does not explicitely set the limit it will get a lot of data
+        paginate: { default: 5000, max: 5000 }
+      }),
+      // FIXME: this should not be hard-coded as it depends on the service
+      hooks: {
+        before: {
+          // Avoid filtering by server-side only parameters
+          all: (hook) => {
+            _.unset(hook.params, 'query.$locale')
+            _.unset(hook.params, 'query.$collation')
+            _.unset(hook.params, 'query.populate')
+            _.unset(hook.params, 'query.east')
+            _.unset(hook.params, 'query.west')
+            _.unset(hook.params, 'query.north')
+            _.unset(hook.params, 'query.south')
+          }
+        },
+        after: {
+          // Handle paginated GeoJson
+          find: (hook) => {
+            const result = hook.result
+            const features = result.data
+            if (_.get(features, '[0].type') !== 'Feature') return
+            hook.result = Object.assign({
+              type: 'FeatureCollection',
+              features: result.data
+            }, _.pick(result, ['total', 'skip', 'limit']))
+          }
+        }
+      }
+    })
+    if (_.get(options, 'snapshot', true)) {
+      const service = api.getService(serviceName)
+      await makeServiceSnapshot(service, Object.assign({ offlineService }, options))
+    }
+
+    return offlineService
+  }
+  api.removeService = function (name, context) {
+    let path = api.getServicePath(name, context)
+    if (path.startsWith('/')) path = path.substr(1)
+    api.unuse(path)
   }
   // Change the base URL/domain to be used (useful for mobile apps)
   api.setBaseUrl = function (baseUrl) {
@@ -243,6 +325,12 @@ export function createClient (config) {
     api.configure(api.transporter)
     // Retrieve our specific errors on rate-limiting
     api.socket.on('rate-limit', (error) => Events.emit('error', error))
+    // Disable default socketio behaviour of buffering messages when disconnected
+    api.socket.io.on('reconnect', function () {
+      api.socket.sendBuffer = []
+      // Reauthenticate on reconnect
+      api.reAuthenticate(true)
+    })
   }
   api.configure(feathers.authentication({
     storage: window.localStorage,
