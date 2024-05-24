@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import localforage from 'localforage'
 import { KPanel, KAction } from '../../../../core/client/components'
 import { baseItem } from '../../../../core/client/mixins'
@@ -53,8 +54,8 @@ export default {
   },
   computed: {
     viewActions () {
-      let itemActions = _.cloneDeep(this.itemActions)
-      let viewActions = _.get(itemActions, '[0].content', [])
+      const itemActions = _.cloneDeep(this.itemActions)
+      const viewActions = _.get(itemActions, '[0].content', [])
       if (this.cachedViews && this.cachedViews[this.item._id]) {
         viewActions.push({
           id: 'uncache-view',
@@ -75,7 +76,7 @@ export default {
     }
   },
   methods: {
-    async refreshViews() {
+    async refreshViews () {
       const cachedViews = await localforage.getItem('views')
       return cachedViews
     }

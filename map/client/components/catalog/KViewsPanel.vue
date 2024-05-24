@@ -27,10 +27,11 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Filter, Sorter, utils, i18n, LocalCache } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 import { useProject } from '../../composables'
+import { createOfflineServiceForView } from '../../utils/utils.offline.js'
 import { Notify } from 'quasar'
 import localforage from 'localforage'
 
@@ -46,21 +47,21 @@ export default {
   data () {
     const viewActions = []
     viewActions.push({
-        id: 'view-overflowmenu',
-        component: 'menu/KMenu',
-        dropdownIcon: 'las la-ellipsis-v',
-        actionRenderer: 'item',
-        propagate: false,
-        dense: true,
-        content: []
-      })
+      id: 'view-overflowmenu',
+      component: 'menu/KMenu',
+      dropdownIcon: 'las la-ellipsis-v',
+      actionRenderer: 'item',
+      propagate: false,
+      dense: true,
+      content: []
+    })
     if (this.$can('create', 'catalog', this.kActivity.contextId)) {
       viewActions[0].content.push({
-          id: 'remove-view',
-          icon: 'las la-trash',
-          label: 'KViewsPanel.REMOVE_VIEW',
-          handler: (item) => this.removeView(item)
-        })
+        id: 'remove-view',
+        icon: 'las la-trash',
+        label: 'KViewsPanel.REMOVE_VIEW',
+        handler: (item) => this.removeView(item)
+      })
     }
     return {
       scrollAreaMaxWidth: 0,
@@ -141,10 +142,28 @@ export default {
           } else {
             await localforage.setItem('views', { [view._id]: true })
           }
+          // We need at least catalog/project offline services
+          // Take care that catalog only returns items of layer types by default
+          const catalogQueries = [{ type: { $nin: ['Context', 'Service', 'Category'] } }, { type: { $in: ['Context', 'Service', 'Category'] } }]
+          await createOfflineServiceForView('catalog', view._id, {
+            baseQueries: catalogQueries
+          })
+          if (this.kActivity.contextId) {
+            await createOfflineServiceForView('catalog', view._id, {
+              baseQueries: catalogQueries,
+              context: this.kActivity.contextId
+            })
+          }
+          // Take care that projects are not populated by default
+          const projectQuery = { populate: true }
+          await createOfflineServiceForView('projects', view._id, {
+            baseQuery: projectQuery
+          })
+          // Then data layer
           const layers = this.project.layers
-          for (let i = 0 ; i<layers.length ; i++) {
+          for (let i = 0; i < layers.length; i++) {
             const layer = (layers[i]._id ? this.kActivity.getLayerById(layers[i]._id) : this.kActivity.getLayerByName(layers[i].name))
-            await this.kActivity.setLayerCached(layer, view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
+            await this.kActivity.setLayerCached(layer, view._id, { bounds: [[view.south, view.west], [view.north, view.east]] })
           }
           dismiss()
           break
@@ -161,9 +180,9 @@ export default {
           delete views[view._id]
           await localforage.setItem('views', views)
           const layers = this.project.layers
-          for (let i = 0 ; i<layers.length ; i++) {
+          for (let i = 0; i < layers.length; i++) {
             const layer = (layers[i]._id ? this.kActivity.getLayerById(layers[i]._id) : this.kActivity.getLayerByName(layers[i].name))
-            await this.kActivity.setLayerUncached(layer, view._id, {bounds: [[view.south, view.west], [view.north, view.east]]})
+            await this.kActivity.setLayerUncached(layer, view._id, { bounds: [[view.south, view.west], [view.north, view.east]] })
           }
           break
         }
@@ -190,13 +209,6 @@ export default {
     },
     onResized (size) {
       this.scrollAreaMaxWidth = size.width
-    },
-    async cacheView (view) {
-      //Pour chaque layer de la view
-        kActivity.toggleLayerCache(layer)
-    },
-    async uncacheView (view) {
-
     }
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront

@@ -5,7 +5,7 @@ import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
-import service from '@kalisio/feathers-localforage'
+import { createOfflineServiceForView } from './utils.offline.js'
 import localforage from 'localforage'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
@@ -97,37 +97,16 @@ export async function setBaseLayerCached (layer, view, options) {
 
 async function setServiceLayerCached (layer, view, options) {
   const bounds = options.bounds
-  const offlineServiceName = layer.service + '-offline'
-
-  const services = await localforage.getItem('services')
-  if (services) {
-    if (services[layer.service]) {
-      services[layer.service].push(view)
-    } else {
-      services[layer.service] = [view]
-    }
-    await localforage.setItem('services', services)
-  } else {
-    await localforage.setItem('services', { [layer.service]: [view] })
-  }
   
-  const offlineService = api.createService(offlineServiceName, {service: service({
-    id: '_id',
-    name: layer.service,
-    storage: ['IndexedDB']
-  })})
-
-  const collection = await api.getService(layer.service).find({
-    query: {
+  const offlineService = await createOfflineServiceForView(layer.service, view, {
+    baseQuery: {
       south: bounds[0][0],
       north: bounds[1][0],
       west: bounds[0][1],
       east: bounds[1][1]
-    }
+    },
+    dataPath: 'features'
   })
-  for (let feature of collection.features) {
-    await offlineService.create(feature)
-  }
 }
 
 export async function setGeojsonLayerCached (layer, view) {
