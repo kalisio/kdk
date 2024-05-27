@@ -5,7 +5,6 @@ import sift from 'sift'
 import { Store } from './store.js'
 import { bindContent } from './utils/utils.content.js'
 
-const placements = ['top', 'right', 'bottom', 'left']
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const windowDefaultContols = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
@@ -42,6 +41,7 @@ const defaults = {
 
 // Export singleton
 export const Layout = {
+  placements: ['top', 'right', 'bottom', 'left'],
   paths: {
     layout: layoutPath,
     header: layoutPath + '.header',
@@ -68,7 +68,7 @@ export const Layout = {
     Store.set(this.paths.footer, this.getElementDefaults('footer'))
     Store.set(this.paths.page, this.getElementDefaults('page'))
     Store.set(this.paths.fab, this.getElementDefaults('fab'))
-    placements.forEach(placement => {
+    this.placements.forEach(placement => {
       Store.set(_.get(this.paths.panes, placement), this.getElementDefaults(`panes.${placement}`))
       Store.set(_.get(this.paths.windows, placement), this.getElementDefaults(`windows.${placement}`))
     })
@@ -81,16 +81,6 @@ export const Layout = {
   getLayoutDefaults () {
     return Object.assign({}, defaults.options, _.pick(_.get(config, this.paths.layout), _.keys(defaults.layout)))
   },
-  set (layout) {
-    if (layout.header) this.setHeader(layout.header)
-    if (layout.footer) this.setFooter(layout.footer)
-    if (layout.page) this.setPage(layout.page)
-    if (layout.fab) this.setFab(layout.fab)
-    placements.forEach(placement => {
-      if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
-      if (_.has(layout, `windows.${placement}`)) this.setWindow(placement, _.get(layout, `windows.${placement}`))
-    })
-  },
   setView (view) {
     Store.patch(this.paths.layout, { view })
   },
@@ -99,7 +89,7 @@ export const Layout = {
     this.setFooterMode(mode)
     this.setPageMode(mode)
     this.setFabMode(mode)
-    placements.forEach(placement => {
+    this.placements.forEach(placement => {
       this.setPaneMode(placement, mode)
       this.setWindowMode(placement, mode)
     })
@@ -156,6 +146,9 @@ export const Layout = {
     if (props.visible === visible) return
     Store.patch(this.getElementPath(element), { visible })
   },
+  clearElement (element) {
+    this.setElement(element, null)
+  },
   getHeader () {
     return this.getElement('header')
   },
@@ -170,6 +163,9 @@ export const Layout = {
   },
   setHeaderVisible (visible) {
     this.setElementVisible('header', visible)
+  },
+  clearHeader () {
+    this.clearElement('header')
   },
   getFooter () {
     return this.getElement('footer')
@@ -186,6 +182,9 @@ export const Layout = {
   setFooterVisible (visible) {
     this.setElementVisible('footer', visible)
   },
+  clearFooter () {
+    this.clearElement('footer')
+  },
   getPage () {
     return this.getElement('page')
   },
@@ -200,6 +199,9 @@ export const Layout = {
   },
   setPageVisible (visible) {
     this.setElementVisible('page', visible)
+  },
+  clearPage () {
+    this.clearElement('page')
   },
   getFab () {
     return this.getElement('fab')
@@ -239,6 +241,9 @@ export const Layout = {
     if (props.offset === offset) return
     Store.patch(this.getElementPath('fab'), { offset })
   },
+  clearFab () {
+    this.clearElement('fab')
+  },  
   getPane (placement) {
     return this.getElement(`panes.${placement}`)
   },
@@ -258,6 +263,9 @@ export const Layout = {
     const props = this.getElement(`panes.${placement}`)
     if (props.opener === opener) return
     Store.patch(this.getElementPath(`panes.${placement}`), { opener })
+  },
+  clearPane (placement) {
+    this.clearElement(`panes.${placement}`)
   },
   getWindow (placement) {
     return this.getElement(`windows.${placement}`)
@@ -330,8 +338,11 @@ export const Layout = {
     if (!widget) current = _.get(props.components, '[0].id')
     Store.patch(this.getElementPath(`windows.${placement}`), { current })
   },
+  clearWindow (placement) {
+    this.clearElement(`windows.${placement}`)
+  },
   findWindow (widget) {
-    for (const placement of placements) {
+    for (const placement of this.placements) {
       const window = this.getWindow(placement)
       if (_.find(window.components, { id: widget })) {
         return { placement, window }
