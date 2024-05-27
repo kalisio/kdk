@@ -4,7 +4,7 @@ import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import { filterLayers, updateLayerReferences, updateProjects, getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
 
-const { setNow, discard } = common
+const { setNow, discard, when } = common
 
 export default {
   before: {
@@ -47,9 +47,8 @@ export default {
       coreHooks.convertToJson(['schema.content', 'filters'])
     ],
     find: [
-      // Merge built-in categories with user-defined ones
-      getDefaultCategories,
-      getDefaultSublegends
+      // Merge built-in categoriessublegends with user-defined ones for global catalog only
+      when(hook => !hook.service.getContextId(), getDefaultCategories, getDefaultSublegends)
     ],
     get: [],
     create: [],
