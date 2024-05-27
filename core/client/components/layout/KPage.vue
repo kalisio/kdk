@@ -178,7 +178,6 @@ const contentStyleFunction = computed(() => {
   return {
     paddingTop: `${topPadding.value}px`,
     paddingBottom: `${bottomPadding.value}px`,
-    paddingRight: `${rightPadding.value}px`,
     widht: `calc(100vw - ${widthOffset}px)`,
     height: `calc(100vh - ${heightOffset}px)`
   }
@@ -261,7 +260,8 @@ watch(() => leftPane.visible, (visible) => {
 
 // Functions
 function layoutOffsetListener (offset) {
-  // Catch layout offset and returns default Quasar function
+  // Catch layout offset and returns default Quasar function. "offset" is a Number 
+  // (pixels) that refers to the total height of header + footer that occupies on screen.
   // see https://quasar.dev/layout/page#style-fn
   layoutOffset.value = offset
   return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
