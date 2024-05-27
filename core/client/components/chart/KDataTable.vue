@@ -36,26 +36,27 @@ import { Units } from '../../units'
 import { Time } from '../../time'
 import { i18n } from '../../i18n'
 
-// const timeserie = {
-//   variable: { } variable definition
-//   data:
-//   label:
-//   color:
-//   unit:
-// }
-
+// Props
 const props = defineProps({
-  tables: { type: Array, default: () => [] },
-  schema: { type: [String, Object], default: null },
-  nbRowsPerPage: { type: Number, default: 10 }
+  tables: { 
+    type: Array, 
+    default: () => [] 
+  },
+  schema: { 
+    type: [String, Object], 
+    default: () => null 
+  },
+  formatters: {
+    type: Object,
+    default: () => null
+  },
+  nbRowsPerPage: { 
+    type: Number, 
+    default: 10 
+  }
 })
 
-defineExpose({
-  update,
-  exportData
-})
-
-// data
+// Data
 const { schema, compile } = useSchema()
 const pagination = ref({
   // sortBy: '_id',
@@ -71,12 +72,11 @@ const height = ref(0)
 const compilers = {}
 const exportCompilers = {}
 
-// computed
-
-// watch
+// Watch
 watch(() => props.tables, update)
 watch(() => props.schema, update)
 
+// Functions
 async function update () {
   await compile(props.schema)
   columns.value = []
@@ -88,6 +88,7 @@ async function update () {
     const label = _.get(value, 'field.label', _.get(value, 'field.helper', key))
     const visible = _.get(value, 'field.visible', true)
     if (!visible) invisibleColumns.push(key)
+    const formatter = _.has(value, 'field.formatter') ? _.get(props.formatters, value.field.formatter) : null
     const format = _.get(value, 'format')
     const path = _.get(value, 'field.path', key)
     if (_.has(value, 'field.template')) {
@@ -107,6 +108,7 @@ async function update () {
       align: 'center',
       sortable: true,
       format: (value, row) => {
+        if (formatter) return formatter(value, row)
         if (_.isNil(value)) return ''
         if (compilers[key]) return compilers[key]({ value, row, i18n, Units, Time, moment })
         switch (type) {
@@ -173,9 +175,16 @@ async function exportData (options = {}) {
   downloadAsBlob(csv, _.template(options.filename || i18n.t('KDataTable.DATA_EXPORT_FILE'))(), 'text/csv;charset=utf-8;')
 }
 
-// immediate
+// Immediate
 update()
+
+// Exposed
+defineExpose({
+  update,
+  exportData
+})
 </script>
+
 <style lang="scss" scoped>
 .data-table-background {
   background-color: $table-background
