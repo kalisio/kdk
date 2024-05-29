@@ -236,7 +236,7 @@ export async function setToStore (page, path, value) {
  * diffFilename is the filename where the diff of the images will be written,
  * if null, no diff will be written
  */
-export function compareImages (image1, image2, threshold, diffFilename) {
+export function compareImages (image1, image2, threshold ) {
   const img1 = png.PNG.sync.read(fs.readFileSync(image1))
   const img2 = png.PNG.sync.read(fs.readFileSync(image2))
   const { width, height } = img1
@@ -248,9 +248,8 @@ export function compareImages (image1, image2, threshold, diffFilename) {
     threshold
   }
   const numDiffs = pixelmatch(img1.data, img2.data, diff.data, width, height, options)
-  const diffRatio = 100.0 * (numDiffs / (width * height))
-  if (diffFilename) fs.writeFileSync(diffFilename, png.PNG.sync.write(diff))
-  return { diffRatio, diff }
+  const ratio = 100.0 * (numDiffs / (width * height))
+  return { ratio, data: diff }
 }
 
 /* Moves a slider in a chosen direction (right or left), for a specific times

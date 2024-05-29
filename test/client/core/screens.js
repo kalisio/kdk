@@ -17,6 +17,12 @@ export async function login (page, user, wait = 5000) {
   await clickAction(page, 'login-button', wait)
 }
 
+export async function loginWithKeycloak (page, user, wait = 5000) {
+  await type(page, '#username', user.name)
+  await type(page, '#password', user.password)
+  await click(page, '#kc-login', wait)
+}
+
 export async function goToRegisterScreen (page) {
   await Promise.all([
     page.waitForNavigation(),

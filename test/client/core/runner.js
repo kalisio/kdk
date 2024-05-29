@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
+import png from 'pngjs'
 import makeDebug from 'debug'
 import puppeteer from 'puppeteer'
 import { compareImages, GeolocationAccuracy } from './utils.js'
@@ -42,15 +43,19 @@ export class Runner {
       },
       dataDir: defaultDataDir,
       runDir: defaultRunDir,
-      screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
-      screenshotsDir: path.join(defaultRunDir, '/screenshots'),
-      // Could be:
+      screenshots: {
+        dir: path.join(defaultRunDir, '/screenshots'),
+        screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
+        matchThreshold: 0.1,
+        diffTolerance: 0.1,        
+        writeDiffs: true
+      },
+          // Could be:
       // - 'preview' to only run tests without comparing to reference screenshots
       // - 'run' to run tests by comparing to reference screenshots
       // - 'record' to run tests and update reference screenshots
       mode: process.env.TEST_MODE || 'run',
-      writeDiffs: false,
-      matchTreshold: 0.1,
+      
       // Accuracy is required to get some desired behaviours
       geolocation: {
         accuracy: GeolocationAccuracy
@@ -60,9 +65,13 @@ export class Runner {
     console.log('Runner created with the following options:')
     console.log(this.options)
     // Create the run directory if needed
-    if (!fs.existsSync(this.options.screenshotsDir)) {
+    if (!fs.existsSync(this.options.screenshots.dir)) {
       console.log('Creating runner directory structure')
-      fs.mkdirSync(this.options.screenshotsDir, { recursive: true })
+      fs.mkdirSync(this.options.screenshots.dir, { recursive: true })
+    } else {
+      // Clear the directory
+      const files = fs.readdirSync(this.options.screenshots.dir)
+      for (const file of files) fs.unlinkSync(path.join(this.options.screenshots.dir, file))
     }
   }
 
@@ -145,7 +154,7 @@ export class Runner {
     // In record mode erase current ref, otherwise skip capture in preview mode
     if ((this.options.mode !== 'run') && (this.options.mode !== 'record')) return
     // If run mode store in screenshots dir, otherwise in screenrefs dir
-    const dir = (this.options.mode === 'run' ? this.options.screenshotsDir : this.options.screenrefsDir)
+    const dir = (this.options.mode === 'run' ? this.options.screenshots.dir : this.options.screenshots.screenrefsDir)
     const options = Object.assign(
       {
         path: path.join(dir, key + '.png'),
@@ -154,25 +163,29 @@ export class Runner {
     await this.page.screenshot(options)
   }
 
-  async captureAndMatch (key, diffTolerance = 1.0, boundingBox = null) {
+  async captureAndMatch (key, boundingBox = null, tolerance = null) {
     await this.capture(key, boundingBox)
-    // If run mode compare, otherwise skip as we only want to record screenrefs
-    if (this.options.mode === 'run') {
-      const runDir = path.join(this.options.screenshotsDir, key + '.png')
-      const refPath = path.join(this.options.screenrefsDir, key + '.png')
-      const diffFilename = this.options.writeDiffs ? path.join(this.options.screenshotsDir, `diff.${key}.png`) : null
-      const diff = compareImages(runDir, refPath, this.options.matchTreshold, diffFilename)
-      return diff.diffRatio <= diffTolerance
-    } else {
-      return true
+    // If not in run skip the image comparison
+    if (this.options.mode !== 'run') return true
+    // Compare the image
+    const runImageKey = path.join(this.options.screenshots.dir, key + '.png')
+    const refImageKey = path.join(this.options.screenshots.screenrefsDir, key + '.png')
+    const diff = compareImages(runImageKey, refImageKey, this.options.screenshots.matchThreshold)
+    if (!tolerance) tolerance = this.options.screenshots.diffTolerance
+    if (diff.ratio <= tolerance) return true
+    // Write the image diffs
+    if (this.options.screenshots.writeDiffs) {
+      const diffImageKey = path.join(this.options.screenshots.dir, `diff.${key}.png`)
+      fs.writeFileSync(diffImageKey, png.PNG.sync.write(diff.data))
     }
+    return false
   }
 
   compareCaptures (key1, key2, threshold) {
-    const dir = this.options.screenshotsDir
+    const dir = this.options.screenshots.dir
     const img1 = path.join(dir, key1 + '.png')
     const img2 = path.join(dir, key2 + '.png')
-    const imgDiff = this.options.writeDiffs ? path.join(dir, `diff.${key1}.${key2}.png`) : null
+    const imgDiff = this.options.screenshots.writeDiffs ? path.join(dir, `diff.${key1}.${key2}.png`) : null
     const result = compareImages(img1, img2, threshold, imgDiff)
     return result.diffRatio
   }
