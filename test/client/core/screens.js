@@ -18,9 +18,9 @@ export async function login (page, user, wait = 5000) {
 }
 
 export async function loginWithKeycloak (page, user, wait = 5000) {
-  await type(page, '#username', user.name)
-  await type(page, '#password', user.password)
-  await click(page, '#kc-login', wait)
+  await type(page, 'input[name="username"]', user.name)
+  await type(page, 'input[name="password"]', user.password)
+  await click(page, '[name="login"]', wait)
 }
 
 export async function goToRegisterScreen (page) {
