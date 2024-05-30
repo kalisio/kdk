@@ -188,7 +188,7 @@ export function createShape (options) {
     // Apply fill style
     const color = getHtmlColor(options.color, defaultColor)
     svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
-    if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
+    if (!_.isNil(options.opacity)) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
     // Aply stroke style
     if (options.stroke) {
       // Ensure the stroke color is defined and not transparent
