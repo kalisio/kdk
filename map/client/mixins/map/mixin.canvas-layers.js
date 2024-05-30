@@ -361,7 +361,8 @@ export const canvasLayers = {
 
       // Check for valid type
       if (layerOptions.type !== 'kanvasLayer') return
-
+      // Defaults to rotate pane
+      if (this.map._rotate && !options.pane) options.pane = 'rotatePane'
       const layer = this.createLeafletLayer(options)
       this.setCanvasLayerDrawCode(layer, layerOptions.draw)
       if (layerOptions.userData) this.setCanvasLayerUserData(layer, layerOptions.userData)

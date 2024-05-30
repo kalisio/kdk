@@ -159,7 +159,12 @@ export const baseMap = {
         let zIndex
         if (typeof paneOrZIndex === 'object') zIndex = paneOrZIndex.zIndex || 400
         else if (typeof paneOrZIndex === 'number') zIndex = paneOrZIndex
-        pane = this.map.createPane(paneName)
+        // Check for parent pane if any, useful for leaflet-rotate plugin
+        let container = paneOrZIndex.container
+        // Defaults to rotate pane
+        if (this.map._rotate && !container) container = 'rotatePane'
+        container = this.map.getPane(container)
+        pane = this.map.createPane(paneName, container)
         _.set(pane, 'style.zIndex', zIndex || 400) // Defaults for overlay in Leaflet
       }
       this.leafletPanes[paneName] = pane
@@ -526,10 +531,14 @@ export const baseMap = {
     zoomToBBox (bbox) {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
-    center (longitude, latitude, zoomLevel, options) {
+    center (longitude, latitude, zoomLevel, bearing = 0, options = {}) {
+      this.setBearing(bearing)
       const duration = _.get(options, 'duration', 0)
-      if (duration) this.map.flyTo(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
-      else this.map.setView(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
+      if (duration) {
+        this.map.flyTo(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
+      } else {
+        this.map.setView(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
+      }
     },
     getCenter () {
       const center = this.map.getCenter()
@@ -539,6 +548,20 @@ export const baseMap = {
         latitude: center.lat,
         zoomLevel: zoom
       }
+    },
+    setBearing(bearing) {
+      if (typeof this.map.setBearing !== 'function') {
+        logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
+        return
+      }
+      this.map.setBearing(bearing)
+    },
+    getBearing () {
+      if (typeof this.map.getBearing !== 'function') {
+        logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
+        return 0
+      }
+      return this.map.getBearing()
     },
     getBounds () {
       this.viewBounds = this.map.getBounds()

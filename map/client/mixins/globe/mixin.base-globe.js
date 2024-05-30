@@ -318,8 +318,9 @@ export const baseGlobe = {
         }
       }
     },
-    center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0, duration = 0) {
+    center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0, options = {}) {
       const center = this.viewer.camera.positionCartographic
+      const duration = _.get(options, 'duration', 0)
       const target = {
         destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude || center.height),
         orientation: {
