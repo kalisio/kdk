@@ -13,7 +13,7 @@ export const GeolocationAccuracy = 500
  */
 export async function elementExists (page, selector) {
   const exists = !!(await page.$(selector))
-  debug(`Element ${selector} ` + (exists ? 'exists' : 'does not exist'))
+  debug(`[KDK] Element ${selector} ` + (exists ? 'exists' : 'does not exist'))
   return exists
 }
 
@@ -46,7 +46,7 @@ export async function click (page, selector, wait = 500) {
     await page.waitForSelector(selector, { timeout: 2000 })
     await page.click(selector)
     await page.waitForTimeout(wait)
-    debug(`Clicked target ${selector}`)
+    debug(`[KDK] Clicked target ${selector}`)
   } catch (error) {
     console.error(`click ${selector} failed.`)
   }
@@ -64,7 +64,7 @@ export async function isActionVisible (page, action) {
 export async function clickAction (page, action, wait = 500) {
   const selector = `#${action}`
   await click(page, selector, wait)
-  debug(`Clicked action ${selector}`)
+  debug(`[KDK] Clicked action ${selector}`)
 }
 
 /* Helper function to click on a menuUtem selector
@@ -75,7 +75,7 @@ export async function clickMenuItem (page, wait = 500) {
     await page.waitForXPath(xpath)
     await page.waitForTimeout(wait)
   } catch (error) {
-    console.error(`click ${xpath} failed.`)
+    console.error(`[KDK] Click ${xpath} failed.`)
   }
 }
 
@@ -88,10 +88,10 @@ export async function clickXPath (page, xpath, wait = 500) {
     if (elements.length > 0) {
       elements[0].click()
       await page.waitForTimeout(wait)
-      debug(`Clicked target ${xpath}`)
+      debug(`[KDK] Clicked target ${xpath}`)
     }
   } catch (error) {
-    console.error(`click ${xpath} failed.`)
+    console.error(`[KDK] Click ${xpath} failed.`)
   }
 }
 
@@ -115,9 +115,9 @@ export async function clickSelect (page, selector, entry, wait = 500) {
       await page.click(entry)
     }
     await page.waitForTimeout(wait)
-    debug(`Clicked entry ${selector}`)
+    debug(`[KDK) Clicked entry ${selector}`)
   } catch (error) {
-    console.error(`select ${entry} in ${selector} failed.`)
+    console.error(`[KDK) Select ${entry} in ${selector} failed.`)
   }
 }
 
@@ -137,7 +137,7 @@ export async function type (page, selector, text, enter = false, replace = false
     if (enter) await page.keyboard.press('Enter')
     await page.waitForTimeout(wait)
   } catch (error) {
-    console.error(`type ${text} in ${selector} failed.`)
+    console.error(`[KDK] Type ${text} in ${selector} failed.`)
   }
 }
 
@@ -158,7 +158,7 @@ export async function typeXPath (page, selector, text, enter = false, replace = 
     if (enter) await page.keyboard.press('Enter')
     await page.waitForTimeout(wait)
   } catch (error) {
-    console.error(`type ${text} in ${selector} failed.`)
+    console.error(`[KDK] Type ${text} in ${selector} failed.`)
   }
 }
 
@@ -170,7 +170,7 @@ export async function uploadFile (page, selector, filePath, wait = 2000) {
     await element.uploadFile(filePath)
     await page.waitForTimeout(wait)
   } catch (error) {
-    console.error(`upload ${filePath} in ${selector} failed.`)
+    console.error(`[KDK] Upload ${filePath} in ${selector} failed.`)
   }
 }
 
@@ -247,7 +247,12 @@ export function compareImages (image1, image2, threshold ) {
     diffColorAlt: [0, 255, 0],
     threshold
   }
-  const numDiffs = pixelmatch(img1.data, img2.data, diff.data, width, height, options)
+  let numDiffs = width * height
+  try {
+    numDiffs = pixelmatch(img1.data, img2.data, diff.data, width, height, options)
+  } catch (error) {
+    console.error(`[KDK] Image comparison failed: ${error}`)
+  }
   const ratio = 100.0 * (numDiffs / (width * height))
   return { ratio, data: diff }
 }
@@ -261,6 +266,6 @@ export async function moveSlider (page, action, direction, times, wait = 500) {
   for (let i = 0; i < times; i++) {
     await page.keyboard.press(key)
   }
-  debug(`Pressed ${key} ${times} times to move slider ${action}`)
+  debug(`[KDK] Pressed ${key} ${times} times to move slider ${action}`)
   await page.waitForTimeout(wait)
 }
