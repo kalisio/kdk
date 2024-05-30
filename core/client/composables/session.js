@@ -13,6 +13,8 @@ import { restoreSession } from '../utils/utils.session.js'
 
 export function useSession (options = {}) {
   // Data
+  const disconnectKey = 'disconnect-dialog'
+  const reconnectKey = 'reconnect-dialog'
   const router = useRouter()
   const route = useRoute()
   const $q = useQuasar()
@@ -77,6 +79,8 @@ export function useSession (options = {}) {
     if (!pendingReconnection && !ignoreReconnectionError) {
       Events.emit('disconnected')
       logger.error(new Error('Socket has been disconnected'))
+      // Disconnect prompt can be avoided, eg in tests
+      if (!LocalStorage.get(disconnectKey, true)) return
       // This will ensure any operation in progress will not keep a "dead" loading indicator
       // as this error might appear under-the-hood without notifying service operations
       Loading.hide()
@@ -118,6 +122,8 @@ export function useSession (options = {}) {
     // Display it only the first time the reconnection occurs because multiple attempts will be tried
     if (!pendingReload) {
       Events.emit('reconnected')
+      // Reconnect prompt can be avoided, eg in tests
+      if (!LocalStorage.get(reconnectKey, true)) return
       pendingReload = $q.dialog({
         title: i18n.t('composables.session.INFORMATION'),
         message: i18n.t('composables.session.RECONNECT'),
