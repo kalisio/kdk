@@ -26,6 +26,9 @@ function updateGeoJsonEntity(source, destination) {
 }
 
 export const geojsonLayers = {
+  emits: [
+    'layer-updated'
+  ],
   methods: {
     convertFromSimpleStyleOrDefaults (properties) {
       let { stroke, strokeWidth, fill } = convertToCesiumFromSimpleStyle(properties)
@@ -322,6 +325,11 @@ export const geojsonLayers = {
       if (isInMemoryLayer(baseLayer)) {
         this.geojsonCache[name] = geoJson
       }
+      this.onLayerUpdated(baseLayer, layer, { features: geoJson.features || [geoJson] })
+    },
+    onLayerUpdated (layer, cesiumLayer, data) {
+      this.$emit('layer-updated', layer, cesiumLayer, data)
+      this.$engineEvents.emit('layer-updated', layer, cesiumLayer, data)
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       const geoJsonlayers = _.values(this.layers).filter(sift({
