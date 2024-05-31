@@ -303,6 +303,9 @@ export const Units = {
     }
     return defaultUnit
   },
+  setDefaultUnit (quantity, unit) {
+    Store.set(`units.default.${quantity}`, unit)
+  },
   // Get symbol of default unit (if any) for a given quantity/unit name
   getDefaultUnitSymbol (quantityOrUnit) {
     return this.getUnitSymbol(this.getDefaultUnit(quantityOrUnit))
