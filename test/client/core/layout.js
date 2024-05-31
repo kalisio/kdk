@@ -118,18 +118,6 @@ export async function countFabActions (page) {
   return countElements(page, '//a[contains(@class, "k-action-fab-action")]')
 }
 
-export async function closeWelcomeDialog (page) {
-  await click(page, '.q-dialog #close-button')
-}
-
-export async function closeInstallDialog (page) {
-  await click(page, '.q-dialog #ignore-button')
-}
-
-export async function isToastVisible (page) {
-  return isElementVisible(page, '[role="alert"]')
-}
-
 export async function logout (page) {
   await clickPaneAction(page, 'left', 'logout', 1000)
 }

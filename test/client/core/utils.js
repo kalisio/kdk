@@ -48,7 +48,7 @@ export async function click (page, selector, wait = 500) {
     await page.waitForTimeout(wait)
     debug(`[KDK] Clicked target ${selector}`)
   } catch (error) {
-    console.error(`click ${selector} failed.`)
+    console.error(`[KDK] Click ${selector} failed.`)
   }
 }
 
