@@ -148,7 +148,7 @@ export const baseMap = {
       return processedOptions
     },
     getLeafletPaneName (paneOrZIndex) {
-      return (typeof paneOrZIndex === 'object' ? paneOrZIndex.name || paneOrZIndex.zIndex : paneOrZIndex.toString())
+      return (typeof paneOrZIndex === 'object' ? paneOrZIndex.name || paneOrZIndex.zIndex.toString() : paneOrZIndex.toString())
     },
     createLeafletPane (paneOrZIndex) {
       // Input can be a name, a z-index, an object with both options
