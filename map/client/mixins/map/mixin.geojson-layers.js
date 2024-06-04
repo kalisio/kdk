@@ -56,7 +56,10 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
       return new MaskLayer(geojson, options.style(geojson))
     }
   }
-  return geometryToLayer(geojson, options)
+  // As we do so this breaks leaflet-arrowheads plugin
+  const layer = geometryToLayer(geojson, options)
+  if (options.arrowheads && (layer instanceof L.Polyline)) layer.arrowheads(options.arrowheads)
+  return layer
 }
 
 export const geojsonLayers = {
@@ -333,7 +336,7 @@ export const geojsonLayers = {
           // Indeed the style property must be overriden to install the Leaflet function style
           if (!_.has(leafletOptions, key) || (key === 'style')) _.set(leafletOptions, key, _.get(geoJsonOptions, key))
         })
-        // Create the layer*/
+        // Create the layer
         let layer = this.createLeafletLayer(options)
         // Specific case of realtime layer where the underlying container also need to be added to map
         if (leafletOptions.realtime) {
