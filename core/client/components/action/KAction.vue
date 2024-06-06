@@ -147,8 +147,11 @@
 </template>
 
 <script>
-// use normal <script> to declare options
-// TODO: need to updated when switch to vue > 3.3
+// WARNING for now we must declare the inheritAttrs this way. Lint will try to move it. Don't do it.
+// TODO: need to updated when switch to vue > 3.3 to be able to declare options
+export default {
+  inheritAttrs: false
+}
 </script>
 
 <script setup>
@@ -159,9 +162,6 @@ import { useQuasar, openURL } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { actionProps } from '../../utils/utils.actions'
 import { bindParams } from '../../utils/utils.content.js'
-export default {
-  inheritAttrs: false
-}
 
 // Data
 const route = useRoute()
