@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { countElements, click, clickAction, isElementVisible, isActionVisible } from './utils.js'
+import { countElements, clickAction, isElementVisible, isActionVisible } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:layout')
 

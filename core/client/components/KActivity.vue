@@ -15,7 +15,7 @@ import KPage from './layout/KPage.vue'
 
 export default {
   components: {
-    KPage,
+    KPage
   },
   props: {
     name: {
@@ -57,7 +57,7 @@ export default {
     }
   },
   async mounted () {
-    await this.configure()  
+    await this.configure()
     // whenever the user abilities are updated, update activity as well
     this.$events.on('user-abilities-changed', this.configure)
   },

@@ -47,15 +47,15 @@ export class Runner {
         dir: path.join(defaultRunDir, '/screenshots'),
         screenrefsDir: path.join(defaultDataDir, 'screenrefs'),
         matchThreshold: 0.1,
-        diffTolerance: 0.1,        
+        diffTolerance: 0.1,
         writeDiffs: true
       },
-          // Could be:
+      // Could be:
       // - 'preview' to only run tests without comparing to reference screenshots
       // - 'run' to run tests by comparing to reference screenshots
       // - 'record' to run tests and update reference screenshots
       mode: process.env.TEST_MODE || 'run',
-      
+
       // Accuracy is required to get some desired behaviours
       geolocation: {
         accuracy: GeolocationAccuracy

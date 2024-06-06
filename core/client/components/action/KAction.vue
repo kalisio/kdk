@@ -149,9 +149,6 @@
 <script>
 // use normal <script> to declare options
 // TODO: need to updated when switch to vue > 3.3
-export default {
-  inheritAttrs: false
-}
 </script>
 
 <script setup>
@@ -162,6 +159,9 @@ import { useQuasar, openURL } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { actionProps } from '../../utils/utils.actions'
 import { bindParams } from '../../utils/utils.content.js'
+export default {
+  inheritAttrs: false
+}
 
 // Data
 const route = useRoute()

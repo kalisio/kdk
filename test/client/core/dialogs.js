@@ -1,7 +1,4 @@
-import makeDebug from 'debug'
 import { click, isElementVisible } from './utils.js'
-
-const debug = makeDebug('kdk:core:test:dialogs')
 
 export async function closeWelcomeDialog (page) {
   await click(page, '.q-dialog #close-button')

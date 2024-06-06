@@ -40,7 +40,7 @@ export const Filter = {
     const items = this.getItems()
     // Handle the pattern
     if (pattern !== '') {
-      query['$or'] = _.map(fields, field => { return { [field]: { $search: pattern } } })
+      query.$or = _.map(fields, field => { return { [field]: { $search: pattern } } })
       console.log(query)
     }
     // Handle the selection

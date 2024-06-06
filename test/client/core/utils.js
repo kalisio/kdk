@@ -236,7 +236,7 @@ export async function setToStore (page, path, value) {
  * diffFilename is the filename where the diff of the images will be written,
  * if null, no diff will be written
  */
-export function compareImages (image1, image2, threshold ) {
+export function compareImages (image1, image2, threshold) {
   const img1 = png.PNG.sync.read(fs.readFileSync(image1))
   const img2 = png.PNG.sync.read(fs.readFileSync(image2))
   const { width, height } = img1

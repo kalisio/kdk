@@ -30,7 +30,7 @@ export function authenticationGuard (user, to, from) {
     // Otherwise redirect to login
     else return 'login'
   }
-  
+
   // Only when not authenticated, eg reset password
   if (_.get(to, 'meta.unauthenticated')) {
     // If the user is here then he is authenticated so redirect to home

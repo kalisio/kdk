@@ -260,7 +260,7 @@ watch(() => leftPane.visible, (visible) => {
 
 // Functions
 function layoutOffsetListener (offset) {
-  // Catch layout offset and returns default Quasar function. "offset" is a Number 
+  // Catch layout offset and returns default Quasar function. "offset" is a Number
   // (pixels) that refers to the total height of header + footer that occupies on screen.
   // see https://quasar.dev/layout/page#style-fn
   layoutOffset.value = offset

@@ -220,6 +220,37 @@ describe('core:hooks', () => {
     expect(hook.params.collation.locale).to.equal('fr')
   })
 
+  it('marshalls HTTP queries', () => {
+    const now = new Date()
+    const datetime = now.toISOString()
+    const notADateTime = datetime.replace('T', 'Z')
+    const query = {
+      booleanTrue: 'true',
+      booleanFalse: 'false',
+      notABoolean: 'falsy',
+      number: '223',
+      notANumber: '22E',
+      datetime,
+      notADateTime
+    }
+    const hook = {
+      type: 'before',
+      params: { provider: 'socketio', query }
+    }
+    // Nothing should happen with websocket provider
+    hooks.marshallHttpQuery(hook)
+    expect(hook.params.query).to.deep.equal(query)
+    hook.params.provider = 'rest'
+    hooks.marshallHttpQuery(hook)
+    expect(hook.params.query.booleanTrue).to.equal(true)
+    expect(hook.params.query.booleanFalse).to.equal(false)
+    expect(hook.params.query.notABoolean).to.equal('falsy')
+    expect(hook.params.query.number).to.equal(223)
+    expect(hook.params.query.notANumber).to.equal('22E')
+    expect(hook.params.query.datetime.valueOf()).to.equal(now.valueOf())
+    expect(hook.params.query.notADateTime).to.equal(notADateTime)
+  })
+
   it('diacristic search', () => {
     const hook = {
       type: 'before',

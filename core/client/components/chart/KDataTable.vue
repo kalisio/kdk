@@ -38,21 +38,21 @@ import { i18n } from '../../i18n'
 
 // Props
 const props = defineProps({
-  tables: { 
-    type: Array, 
-    default: () => [] 
+  tables: {
+    type: Array,
+    default: () => []
   },
-  schema: { 
-    type: [String, Object], 
-    default: () => null 
+  schema: {
+    type: [String, Object],
+    default: () => null
   },
   formatters: {
     type: Object,
     default: () => null
   },
-  nbRowsPerPage: { 
-    type: Number, 
-    default: 10 
+  nbRowsPerPage: {
+    type: Number,
+    default: 10
   }
 })
 

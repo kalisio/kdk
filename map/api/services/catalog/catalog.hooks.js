@@ -8,7 +8,7 @@ const { setNow, discard, when } = common
 
 export default {
   before: {
-    all: [],
+    all: [coreHooks.marshallHttpQuery],
     find: [
       fuzzySearch({ fields: ['name'] }), coreHooks.diacriticSearch(), filterLayers, coreHooks.distinct
     ],

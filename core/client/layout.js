@@ -243,7 +243,7 @@ export const Layout = {
   },
   clearFab () {
     this.clearElement('fab')
-  },  
+  },
   getPane (placement) {
     return this.getElement(`panes.${placement}`)
   },
