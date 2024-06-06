@@ -161,10 +161,9 @@ export default {
           // fetch content and try to convert to json
           const query = url.href
 
-          caps = await fetch(query, { redirect: 'follow' })
-            .then(resp => resp.text())
-            .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
-
+          const resp = await fetch(query, { redirect: 'follow' })
+          const txt = await resp.text()
+          caps = await xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] })
           // look for SERVICE=xxx
           const protocol = this.findQueryParameter(url.searchParams, 'SERVICE')
           if (protocol === 'WMS') result.protocol = 'WMS'
