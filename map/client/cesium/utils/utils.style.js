@@ -85,21 +85,22 @@ export function getPolygonSimpleStyle (feature, options, engine, engineStylePath
   return convertSimpleStyleColors(convertPolygonStyleToSimpleStyle(style))
 }
 
+// Helper to convert from string to objects
+export function createCesiumObject () {
+  const args = Array.from(arguments)
+  const constructor = args[0]
+  args.shift()
+  const Class = _.get(Cesium, constructor)
+  // Can be callable, constructable or constant
+  let object
+  if (typeof Class === 'function') {
+    try { object = Class(...args) } catch (error) { /* Simply avoid raising any error */ }
+    try { object = new Class(...args) } catch (error) { /* Simply avoid raising any error */ }
+  } else object = Class
+  return object
+}
+
 export function convertToCesiumObjects (style) {
-  // Helper to convert from string to objects
-  function createCesiumObject () {
-    const args = Array.from(arguments)
-    const constructor = args[0]
-    args.shift()
-    const Class = _.get(Cesium, constructor)
-    // Can be callable, constructable or constant
-    let object
-    if (typeof Class === 'function') {
-      try { object = Class(...args) } catch (error) { /* Simply avoid raising any error */ }
-      try { object = new Class(...args) } catch (error) { /* Simply avoid raising any error */ }
-    } else object = Class
-    return object
-  }
   const mapValue = (value) => {
     if (typeof value === 'object') {
       const type = value.type

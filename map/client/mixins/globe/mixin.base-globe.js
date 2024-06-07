@@ -7,7 +7,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Source/Widgets/widgets.css'
 import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
 import { Geolocation } from '../../geolocation.js'
-import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson } from '../../utils.globe.js'
+import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
 // Cesium has its own dynamic module loader requiring to be configured
 // Cesium files need to be also added as static assets of the applciation
 BuildModuleUrl.setBaseUrl('/Cesium/')
@@ -54,6 +54,9 @@ export const baseGlobe = {
         terrainProviderViewModels: []
       })
       this.viewer = new Cesium.Viewer(domEl, viewerOptions)
+      const backgroundColor = _.get(viewerOptions, 'backgroundColor')
+      this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Cesium.Color.BLACK)
+      if (!_.get(viewerOptions, 'globe', true)) this.viewer.globe.show = false
       // Debug mode ?
       if (viewerOptions.debug) this.viewer.extend(Cesium.viewerCesiumInspectorMixin)
       // Cesium always create a default provider
