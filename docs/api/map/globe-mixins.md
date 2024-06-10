@@ -9,7 +9,7 @@ This mixin is a mandatory one to build a globe activity
 :::
 
 Make it possible to manage globe layers and extend supported layer types:
-* **setupGlobe(domElement, token)** creates the underlying Cesium globe object with given Cesium Ion token
+* **setupGlobe(domElement, token, options)** creates the underlying Cesium globe object with given Cesium Ion token and viewer options
 * **addLayer(options)/removeLayer(name)** registers/destroys a layer based on a [catalog layer descriptor](./services.md#catalog-service)
 * **showLayer/hideLayer(name)** (un)hides the given layer in globe, on first show the layer will be lazily created
 * **hasLayer(name)** check if a given layer is already registered
@@ -22,7 +22,8 @@ Make it possible to manage globe layers and extend supported layer types:
 * **getCesiumLayerByName(name)** retrieve the underlying Cesium object for a given layer
 * **createCesiumLayer(options)** creates the underlying Cesium object based on a [catalog layer descriptor](./services.md#catalog-service), will check all registered constructor for any one matching
 * **registerCesiumConstructor(constructor)** registers a Cesium constructor function for a given type of layer
-* **center(longitude, latitude, altitude, heading, pitch, roll)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90])
+* **center(longitude, latitude, altitude, heading, pitch, roll, options)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90]),
+ some options like an animation `duration` can also be added
 * **getCenter()** get the current globe view center as longitude, latitude and altitude
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
 

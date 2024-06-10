@@ -25,9 +25,10 @@ Make it possible to manage map layers and extend supported layer types:
 * **createLeafletPane(name)** creates the underlying Leaflet object for a pane
 * **removeLeafletPane(name)** destroys the underlying Leaflet object for a given pane
 * **registerLeafletConstructor(constructor)** registers a Leaflet constructor function for a given type of layer
-* **center(longitude, latitude, zoomLevel)** centers the map view to visualize a given point at a given zoom level
+* **center(longitude, latitude, zoomLevel, bearing, options)** centers the map view to visualize a given point at a given zoom level, and possibly bearing when the [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) plugin is active, some options like an animation `duration` can also be added
 * **getCenter()** get the current map view center as longitude, latitude and zoom level
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
+* **setBearing(bearing)** change the current bearing of the map when the [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) plugin is active
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
 
 This mixin also adds the following internal data properties:
