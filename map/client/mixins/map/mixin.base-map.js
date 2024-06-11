@@ -532,7 +532,9 @@ export const baseMap = {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     center (longitude, latitude, zoomLevel, bearing, options = {}) {
-      this.setBearing(_.isNil(bearing) ? this.map.getBearing() : bearing)
+      if (typeof this.map.getBearing === 'function') {
+        this.setBearing(_.isNil(bearing) ? this.map.getBearing() : bearing)
+      }
       const duration = _.get(options, 'duration', 0)
       if (duration) {
         this.map.flyTo(new L.LatLng(latitude, longitude), _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, options)
