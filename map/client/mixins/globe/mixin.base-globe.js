@@ -56,6 +56,12 @@ export const baseGlobe = {
       this.viewer = new Cesium.Viewer(domEl, viewerOptions)
       const backgroundColor = _.get(viewerOptions, 'backgroundColor')
       this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Cesium.Color.BLACK)
+      if (this.viewer.scene.globe) {
+        const baseColor = _.get(viewerOptions, 'baseColor')
+        this.viewer.scene.globe.baseColor = (baseColor ? createCesiumObject('Color', ...baseColor) : Cesium.Color.BLACK)
+        const undergroundColor = _.get(viewerOptions, 'undergroundColor')
+        this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Cesium.Color.BLACK)
+      }
       // Debug mode ?
       if (viewerOptions.debug) this.viewer.extend(Cesium.viewerCesiumInspectorMixin)
       // Cesium always create a default provider when a globe is used
