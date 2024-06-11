@@ -56,11 +56,10 @@ export const baseGlobe = {
       this.viewer = new Cesium.Viewer(domEl, viewerOptions)
       const backgroundColor = _.get(viewerOptions, 'backgroundColor')
       this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Cesium.Color.BLACK)
-      if (!_.get(viewerOptions, 'globe', true)) this.viewer.globe.show = false
       // Debug mode ?
       if (viewerOptions.debug) this.viewer.extend(Cesium.viewerCesiumInspectorMixin)
-      // Cesium always create a default provider
-      this.viewer.scene.imageryLayers.removeAll()
+      // Cesium always create a default provider when a globe is used
+      if (this.viewer.scene.imageryLayers) this.viewer.scene.imageryLayers.removeAll()
       // Add defaults handler
       this.registerCesiumHandler(this.getDefaultPickHandler, 'MOUSE_MOVE')
       this.registerCesiumHandler(this.getDefaultPickHandler, 'LEFT_CLICK')
@@ -119,7 +118,7 @@ export const baseGlobe = {
         Cesium.ScreenSpaceEventType[eventType])
     },
     unregisterCesiumHandler (eventType) {
-      this.cesiumHandlers.removeInputAction(Cesium.ScreenSpaceEventType[eventType])
+      this.cesiumHandler.removeInputAction(Cesium.ScreenSpaceEventType[eventType])
     },
     async createLayer (options) {
       const processedOptions = this.processCesiumLayerOptions(options)
