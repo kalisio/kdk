@@ -204,7 +204,7 @@
     "TITLE": "My position",
     "METERS": "meters",
     "FEET": "feet",
-    "POPUP": "You are within {distance} {unit} from this point",
+    "POPUP": "You are within {'{distance}'} {'{unit}'} from this point",
     "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
   },
   "schemas": {

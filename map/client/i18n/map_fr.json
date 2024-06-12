@@ -204,7 +204,7 @@
     "TITLE": "Ma position",
     "METERS": "mètres",
     "FEET": "pieds",
-    "POPUP": "Vous êtes à moins de {distance} {unit} de ce point",
+    "POPUP": "Vous êtes à moins de {'{distance}'} {'{unit}'} de ce point",
     "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
   },
   "schemas": {
