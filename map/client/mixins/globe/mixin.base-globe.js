@@ -114,11 +114,17 @@ export const baseGlobe = {
         provider = cesiumOptions.type
         // Handle specific case of built-in creation functions
         createFunction = `create${provider}Async`
-        if (Cesium[createFunction]) {
+        if (_.get(Cesium, createFunction)) {
           provider = createFunction
         } else {
           isImageryProvider = true
           provider += 'ImageryProvider'
+          // Some providers also have built-in creation functions
+          createFunction = `${provider}.fromUrl`
+          if (_.get(Cesium, createFunction)) {
+            provider = createFunction
+            args = [cesiumOptions.url].concat([_.omit(cesiumOptions, ['url'])])
+          }
         }
       }
       const Constructor = _.get(Cesium, provider)
