@@ -1,8 +1,8 @@
 import { kml } from '@tmcw/togeojson'
-import Cesium from 'cesium/Source/Cesium.js'
+import { exportKml } from 'cesium'
 
 export async function convertEntitiesToGeoJson(entities) {
-  const kmlEntities = await Cesium.exportKml({ entities, modelCallback: () => '' })
+  const kmlEntities = await exportKml({ entities, modelCallback: () => '' })
   const parser = new DOMParser()
   return kml(parser.parseFromString(kmlEntities.kml, 'application/xml'))
 }

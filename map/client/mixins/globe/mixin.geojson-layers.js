@@ -1,4 +1,4 @@
-import Cesium from 'cesium/Source/Cesium.js'
+import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty } from 'cesium'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
@@ -32,9 +32,9 @@ export const geojsonLayers = {
   methods: {
     convertFromSimpleStyleOrDefaults (properties) {
       let { stroke, strokeWidth, fill } = convertToCesiumFromSimpleStyle(properties)
-      if (!stroke) stroke = Cesium.GeoJsonDataSource.stroke
-      if (!strokeWidth) strokeWidth = Cesium.GeoJsonDataSource.strokeWidth
-      if (!fill) fill = Cesium.GeoJsonDataSource.fill
+      if (!stroke) stroke = GeoJsonDataSource.stroke
+      if (!strokeWidth) strokeWidth = GeoJsonDataSource.strokeWidth
+      if (!fill) fill = GeoJsonDataSource.fill
       return { stroke, strokeWidth, fill }
     },
     async loadGeoJson (dataSource, geoJson, options, updateOptions = {}) {
@@ -52,7 +52,7 @@ export const geojsonLayers = {
         return
       }
       // We use a separated source in order to load data otherwise Cesium will replace previous ones, causing flickering
-      const loadingDataSource = new Cesium.GeoJsonDataSource()
+      const loadingDataSource = new GeoJsonDataSource()
       loadingDataSource.notFromDrop = true
       await loadingDataSource.load(geoJson, cesiumOptions)
       // Now we process loaded entities to merge with existing ones if any or add new ones
@@ -94,10 +94,10 @@ export const geojsonLayers = {
             ellipse: {
               semiMinorAxis: radius,
               semiMajorAxis: radius,
-              material: new Cesium.ColorMaterialProperty(fill),
-              outlineColor: new Cesium.ConstantProperty(stroke),
+              material: new ColorMaterialProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth,
-              outline: new Cesium.ConstantProperty(true)
+              outline: new ConstantProperty(true)
             }
           })
           entitiesToRemove.push(entity)
@@ -117,10 +117,10 @@ export const geojsonLayers = {
             properties: entity.properties.getValue(0),
             wall: {
               positions: entity.polyline.positions.getValue(0),
-              material: new Cesium.ColorMaterialProperty(fill),
-              outlineColor: new Cesium.ConstantProperty(stroke),
+              material: new ColorMaterialProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth,
-              outline: new Cesium.ConstantProperty(true)
+              outline: new ConstantProperty(true)
             }
           })
         }
@@ -142,8 +142,8 @@ export const geojsonLayers = {
             properties: entity.properties.getValue(0),
             label: {
               text,
-              fillColor: new Cesium.ConstantProperty(fill),
-              outlineColor: new Cesium.ConstantProperty(stroke),
+              fillColor: new ConstantProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth
             }
           })
@@ -279,7 +279,7 @@ export const geojsonLayers = {
       }
       // If we already have a source we simply use it otherwise we create/load it
       if (!dataSource || !dataSource.name) {
-        dataSource = new Cesium.GeoJsonDataSource()
+        dataSource = new GeoJsonDataSource()
         dataSource.notFromDrop = true
         // Check for realtime layers
         if (cesiumOptions.realtime) {

@@ -1,11 +1,12 @@
 import _ from 'lodash'
 import chroma from 'chroma-js'
 import moment from 'moment'
-import Cesium from 'cesium/Source/Cesium.js'
+import { Color } from 'cesium'
 import { Time, Units } from '../../../../core/client/index.js'
 import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
          convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
+import { Cesium } from './utils.cesium.js'
 
 export const CesiumStyleMappings = {
   stroke: 'stroke',
@@ -34,7 +35,7 @@ export function convertToCesiumFromSimpleStyle (style, inPlace) {
       if (inPlace) _.unset(style, key)
       // Convert from string to color object as required by cesium
       if ((typeof value === 'string') && ['markerColor', 'fill', 'stroke'].includes(mapping)) {
-        _.set(convertedStyle, mapping, Cesium.Color.fromCssColorString(value))
+        _.set(convertedStyle, mapping, Color.fromCssColorString(value))
       }
     }
   })

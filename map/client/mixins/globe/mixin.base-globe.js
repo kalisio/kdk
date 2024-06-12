@@ -3,14 +3,15 @@ import sift from 'sift'
 import logger from 'loglevel'
 import Emitter from 'tiny-emitter'
 import { getCssVar } from 'quasar'
-import Cesium from 'cesium/Source/Cesium.js'
+import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
+         Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
+         exportKml, VerticalOrigin, Math as CesiumMath } from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
-import BuildModuleUrl from 'cesium/Source/Core/buildModuleUrl.js'
 import { Geolocation } from '../../geolocation.js'
-import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
-// Cesium has its own dynamic module loader requiring to be configured
-// Cesium files need to be also added as static assets of the applciation
-BuildModuleUrl.setBaseUrl('/Cesium/')
+import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
+// The URL on our server where CesiumJS's static files are hosted
+window.CESIUM_BASE_URL = '/Cesium/'
+buildModuleUrl.setBaseUrl('/Cesium/')
 
 export const baseGlobe = {
   emits: [
@@ -45,25 +46,25 @@ export const baseGlobe = {
           animation: false,
           timeline: false
         })
-      if (token) Cesium.Ion.defaultAccessToken = token
+      if (token) Ion.defaultAccessToken = token
       // If we don't need ion
-      else Cesium.Ion.defaultAccessToken = ''
+      else Ion.defaultAccessToken = ''
       // Initialize the globe
       Object.assign(viewerOptions, {
         imageryProviderViewModels: [],
         terrainProviderViewModels: []
       })
-      this.viewer = new Cesium.Viewer(domEl, viewerOptions)
+      this.viewer = new Viewer(domEl, viewerOptions)
       const backgroundColor = _.get(viewerOptions, 'backgroundColor')
-      this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Cesium.Color.BLACK)
+      this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Color.BLACK)
       if (this.viewer.scene.globe) {
         const baseColor = _.get(viewerOptions, 'baseColor')
-        this.viewer.scene.globe.baseColor = (baseColor ? createCesiumObject('Color', ...baseColor) : Cesium.Color.BLACK)
+        this.viewer.scene.globe.baseColor = (baseColor ? createCesiumObject('Color', ...baseColor) : Color.BLACK)
         const undergroundColor = _.get(viewerOptions, 'undergroundColor')
-        this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Cesium.Color.BLACK)
+        this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Color.BLACK)
       }
       // Debug mode ?
-      if (viewerOptions.debug) this.viewer.extend(Cesium.viewerCesiumInspectorMixin)
+      if (viewerOptions.debug) this.viewer.extend(viewerCesiumInspectorMixin)
       // Cesium always create a default provider when a globe is used
       if (this.viewer.scene.imageryLayers) this.viewer.scene.imageryLayers.removeAll()
       // Add defaults handler
@@ -71,9 +72,9 @@ export const baseGlobe = {
       this.registerCesiumHandler(this.getDefaultPickHandler, 'LEFT_CLICK')
       this.registerCesiumHandler(this.getDefaultPickHandler, 'RIGHT_CLICK')
       // Remove default Cesium handlers
-      this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK)
-      this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
-      this.viewBounds = new Cesium.Rectangle()
+      this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK)
+      this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
+      this.viewBounds = new Rectangle()
       this.onGlobeReady()
     },
     onGlobeReady () {
@@ -84,47 +85,62 @@ export const baseGlobe = {
       // Because we update objects in place and don't want cesium internal objects to be reactive
       const processedOptions = _.cloneDeep(options)
       // Transform from string to actual object
-      processedOptions.cesium.iconUrl = Cesium.buildModuleUrl(processedOptions.iconUrl)
+      processedOptions.cesium.iconUrl = buildModuleUrl(processedOptions.iconUrl)
       // Copy generic options
       processedOptions.cesium.name = processedOptions.name
       processedOptions.cesium.attribution = processedOptions.attribution
       return processedOptions
     },
-    createCesiumLayer (options) {
-      const cesiumOptions = options.cesium || options
+    async createCesiumLayer (options) {
+      let cesiumOptions = options.cesium || options
+      // Convert required objects
+      cesiumOptions = this.convertToCesiumObjects(cesiumOptions)
+      let args = [cesiumOptions]
+      let provider, createFunction, isImageryProvider
       if (cesiumOptions.type === '3DTileset') {
-        const convertedOptions = this.convertToCesiumObjects(cesiumOptions)
-        const tileset = new Cesium.Cesium3DTileset(_.omit(convertedOptions, ['style']))
-        // Not possible to get style as constructor options
-        if (_.has(convertedOptions, 'style')) tileset.style = _.get(convertedOptions, 'style')
-        return tileset
-      }
-      let provider
-      if (isTerrainLayer(cesiumOptions)) {
-        if (cesiumOptions.url || (cesiumOptions.type === 'Ellipsoid')) provider = cesiumOptions.type + 'TerrainProvider'
-        // If no url given will use default terrain creation function createWorldTerrain()
-        else provider = 'WorldTerrain'
+        provider = createFunction = 'Cesium3DTileset.fromUrl'
+        args = [cesiumOptions.url].concat([_.omit(cesiumOptions, ['url', 'style'])])
+      } else if (isTerrainLayer(cesiumOptions)) {
+        if (cesiumOptions.type === 'Ellipsoid') {
+          provider = 'EllipsoidTerrainProvider'
+        } else if (cesiumOptions.url || cesiumOptions.assetId) {
+          provider = createFunction = (cesiumOptions.url ? 'CesiumTerrainProvider.fromUrl' : 'CesiumTerrainProvider.fromIonAssetId')
+          args = [cesiumOptions.url || cesiumOptions.assetId].concat([_.omit(cesiumOptions, ['url', 'assetId'])])
+        } else {
+          // If no url/asset id given will use default terrain creation function createWorldTerrainAsync()
+          provider = createFunction = 'createWorldTerrainAsync'
+        }
       } else {
-        provider = cesiumOptions.type + 'ImageryProvider'
+        provider = cesiumOptions.type
+        // Handle specific case of built-in creation functions
+        createFunction = `create${provider}Async`
+        if (Cesium[createFunction]) {
+          provider = createFunction
+        } else {
+          isImageryProvider = true
+          provider += 'ImageryProvider'
+        }
       }
-      // Handle specific case of built-in creation functions
-      const createFunction = 'create' + provider
-      if (Cesium[provider]) provider = new Cesium[provider](cesiumOptions)
-      else provider = Cesium[createFunction](cesiumOptions)
-      // Terrain is directly managed using a provider
-      return (isTerrainLayer(cesiumOptions) ? provider : new Cesium.ImageryLayer(provider))
+      const Constructor = _.get(Cesium, provider)
+      if (!Constructor) return
+      // Built-in creation function or class constructor ?
+      if (provider === createFunction) provider = await Constructor(...args)
+      else provider = new Constructor(...args)
+      // Not possible to set style as constructor options for tile sets
+      if ((cesiumOptions.type === '3DTileset') && _.has(cesiumOptions, 'style')) provider.style = _.get(cesiumOptions, 'style')
+      return (isImageryProvider ? new ImageryLayer(provider) : provider)
     },
     registerCesiumConstructor (constructor) {
       this.cesiumFactory.push(constructor)
     },
     registerCesiumHandler (handler, eventType) {
-      if (!this.cesiumHandler) this.cesiumHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas)
+      if (!this.cesiumHandler) this.cesiumHandler = new ScreenSpaceEventHandler(this.viewer.scene.canvas)
       const originalEvent = convertCesiumHandlerEvent(eventType)
       this.cesiumHandler.setInputAction((event) => handler(Object.assign(event, { originalEvent })),
-        Cesium.ScreenSpaceEventType[eventType])
+        ScreenSpaceEventType[eventType])
     },
     unregisterCesiumHandler (eventType) {
-      this.cesiumHandler.removeInputAction(Cesium.ScreenSpaceEventType[eventType])
+      this.cesiumHandler.removeInputAction(ScreenSpaceEventType[eventType])
     },
     async createLayer (options) {
       const processedOptions = this.processCesiumLayerOptions(options)
@@ -136,7 +152,7 @@ export const baseGlobe = {
         if (layer) break
       }
       // Use default Cesium layer constructor if none found
-      layer = layer || this.createCesiumLayer(processedOptions)
+      layer = layer || await this.createCesiumLayer(processedOptions)
       // Keep track of processed options
       layer.processedOptions = processedOptions
       return layer
@@ -150,9 +166,9 @@ export const baseGlobe = {
       const cesiumLayer = this.getCesiumLayerByName(name)
       if (isTerrainLayer(layer)) {
         return this.viewer.terrainProvider === cesiumLayer
-      } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
+      } else if (cesiumLayer instanceof ImageryLayer) {
         return this.viewer.scene.imageryLayers.contains(cesiumLayer)
-      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
+      } else if (cesiumLayer instanceof Cesium3DTileset) {
         return this.viewer.scene.primitives.contains(cesiumLayer) && cesiumLayer.show
       } else { // Entity data source otherwise
         return this.viewer.dataSources.contains(cesiumLayer)
@@ -198,9 +214,9 @@ export const baseGlobe = {
       this.cesiumLayers[name] = cesiumLayer
       if (isTerrainLayer(layer)) {
         this.viewer.terrainProvider = cesiumLayer
-      } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
+      } else if (cesiumLayer instanceof ImageryLayer) {
         this.viewer.scene.imageryLayers.add(cesiumLayer)
-      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
+      } else if (cesiumLayer instanceof Cesium3DTileset) {
         cesiumLayer.show = true
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
       } else { // Entity data source otherwise
@@ -225,9 +241,9 @@ export const baseGlobe = {
       delete this.cesiumLayers[name]
       if (isTerrainLayer(layer)) {
         this.viewer.terrainProvider = null
-      } else if (cesiumLayer instanceof Cesium.ImageryLayer) {
+      } else if (cesiumLayer instanceof ImageryLayer) {
         this.viewer.scene.imageryLayers.remove(cesiumLayer, false)
-      } else if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
+      } else if (cesiumLayer instanceof Cesium3DTileset) {
         cesiumLayer.show = false
       } else { // Entity data source otherwise
         this.viewer.dataSources.remove(cesiumLayer, true)
@@ -273,7 +289,7 @@ export const baseGlobe = {
       // If it was visible hide it first (ie remove from globe)
       this.hideLayer(name)
       const cesiumLayer = this.cesiumLayers[name]
-      if (cesiumLayer instanceof Cesium.Cesium3DTileset) {
+      if (cesiumLayer instanceof Cesium3DTileset) {
         this.viewer.scene.primitives.remove(cesiumLayer)
       }
       // Delete the layer
@@ -297,12 +313,12 @@ export const baseGlobe = {
     zoomToBounds (bounds, heading = 0, pitch = -90, roll = 0, duration = 0) {
       this.viewer.camera.flyTo({
         destination: Array.isArray(bounds) // Assume Cesium rectangle object if not array
-          ? Cesium.Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0])
+          ? Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0])
           : bounds,
         orientation: {
-          heading: Cesium.Math.toRadians(heading),
-          pitch: Cesium.Math.toRadians(pitch),
-          roll: Cesium.Math.toRadians(roll)
+          heading: CesiumMath.toRadians(heading),
+          pitch: CesiumMath.toRadians(pitch),
+          roll: CesiumMath.toRadians(roll)
         },
         duration
       })
@@ -330,11 +346,11 @@ export const baseGlobe = {
       const center = this.viewer.camera.positionCartographic
       const duration = _.get(options, 'duration', 0)
       const target = {
-        destination: Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude || center.height),
+        destination: Cartesian3.fromDegrees(longitude, latitude, altitude || center.height),
         orientation: {
-          heading: Cesium.Math.toRadians(heading),
-          pitch: Cesium.Math.toRadians(pitch),
-          roll: Cesium.Math.toRadians(roll)
+          heading: CesiumMath.toRadians(heading),
+          pitch: CesiumMath.toRadians(pitch),
+          roll: CesiumMath.toRadians(roll)
         },
         duration
       }
@@ -344,17 +360,17 @@ export const baseGlobe = {
     getCenter () {
       const center = this.viewer.camera.positionCartographic
       return {
-        longitude: Cesium.Math.toDegrees(center.longitude),
-        latitude: Cesium.Math.toDegrees(center.latitude),
+        longitude: CesiumMath.toDegrees(center.longitude),
+        latitude: CesiumMath.toDegrees(center.latitude),
         altitude: center.height
       }
     },
     getBounds () {
       const bounds = this.viewer.camera.computeViewRectangle(this.viewer.scene.globe.ellipsoid, this.viewBounds)
-      const south = Cesium.Math.toDegrees(bounds.south)
-      const west = Cesium.Math.toDegrees(bounds.west)
-      const north = Cesium.Math.toDegrees(bounds.north)
-      const east = Cesium.Math.toDegrees(bounds.east)
+      const south = CesiumMath.toDegrees(bounds.south)
+      const west = CesiumMath.toDegrees(bounds.west)
+      const north = CesiumMath.toDegrees(bounds.north)
+      const east = CesiumMath.toDegrees(bounds.east)
       return [[south, west], [north, east]]
     },
     async showUserLocation () {
@@ -362,14 +378,14 @@ export const baseGlobe = {
         const longitude = Geolocation.getLongitude()
         const latitude = Geolocation.getLatitude()
         this.center(longitude, latitude)
-        const pinBuilder = new Cesium.PinBuilder()
-        const canvas = await pinBuilder.fromMakiIconId('marker', Cesium.Color.fromCssColorString(getCssVar('primary')), 48)
+        const pinBuilder = new PinBuilder()
+        const canvas = await pinBuilder.fromMakiIconId('marker', Color.fromCssColorString(getCssVar('primary')), 48)
         this.userLocationEntity = this.viewer.entities.add({
           name: 'user-location',
-          position: Cesium.Cartesian3.fromDegrees(longitude, latitude),
+          position: Cartesian3.fromDegrees(longitude, latitude),
           billboard: {
             image: canvas.toDataURL(),
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+            verticalOrigin: VerticalOrigin.BOTTOM
           }
         })
         this.viewer.selectedEntity = this.userLocationEntity
@@ -416,11 +432,13 @@ export const baseGlobe = {
       let position = entity.position
       if (!position) {
         if (entity.polygon) {
-          position = Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center
+          position = BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center
         } else if (entity.polyline) {
-          position = Cesium.BoundingSphere.fromPoints(entity.polyline.positions.getValue()).center
+          position = BoundingSphere.fromPoints(entity.polyline.positions.getValue()).center
+        } else if (entity.wall) {
+          position = BoundingSphere.fromPoints(entity.wall.positions.getValue()).center
         }
-        Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(position, position)
+        if (position) Ellipsoid.WGS84.scaleToGeodeticSurface(position, position)
       }
       return position
     },
@@ -431,9 +449,9 @@ export const baseGlobe = {
       if (pickedPosition) {
         // This is for 3D handlers
         emittedEvent.pickedPosition = pickedPosition
-        pickedPosition = Cesium.Cartographic.fromCartesian(pickedPosition)
-        const longitude = Cesium.Math.toDegrees(pickedPosition.longitude)
-        const latitude = Cesium.Math.toDegrees(pickedPosition.latitude)
+        pickedPosition = Cartographic.fromCartesian(pickedPosition)
+        const longitude = CesiumMath.toDegrees(pickedPosition.longitude)
+        const latitude = CesiumMath.toDegrees(pickedPosition.latitude)
         // This ensure we can use similar handlers than for Leaflet
         emittedEvent.latlng = [latitude, longitude]
         emittedEvent.latlng.lng = longitude
@@ -442,7 +460,7 @@ export const baseGlobe = {
       const pickedObject = this.viewer.scene.pick(event.endPosition || event.position)
       if (pickedObject) {
         emittedEvent.target = pickedObject.id || pickedObject.primitive.id
-        if (emittedEvent.target instanceof Cesium.Entity) {
+        if (emittedEvent.target instanceof Entity) {
           // If feature have been lost at import try to recreate it in order to be compatible with 2D
           // We attach it to the target entity so that we won't compute it each time the mouse move
           // FIXME: should it be a problem with real-time updates ?
@@ -454,8 +472,8 @@ export const baseGlobe = {
               type: 'Feature'
             }
             // Generate GeoJson feature if possible (requires Cesium 1.59)
-            if (typeof Cesium.exportKml === 'function') {
-              const selection = new Cesium.EntityCollection()
+            if (typeof exportKml === 'function') {
+              const selection = new EntityCollection()
               selection.add(emittedEvent.target)
               const geoJson = await convertEntitiesToGeoJson(selection)
               if (geoJson.features.length > 0) {
@@ -463,12 +481,12 @@ export const baseGlobe = {
               }
             }
             if (!feature.geometry) {
-              const position = Cesium.Cartographic.fromCartesian(emittedEvent.target.position
+              const position = Cartographic.fromCartesian(emittedEvent.target.position
                 ? emittedEvent.target.position.getValue(0)
                 : emittedEvent.pickedPosition)
               feature.geometry = {
                 type: 'Point',
-                coordinates: [Cesium.Math.toDegrees(position.longitude), Cesium.Math.toDegrees(position.latitude)]
+                coordinates: [CesiumMath.toDegrees(position.longitude), CesiumMath.toDegrees(position.latitude)]
               }
             }
             feature.properties = (emittedEvent.target.properties ? emittedEvent.target.properties.getValue(0) : {})
