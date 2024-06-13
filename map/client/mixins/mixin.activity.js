@@ -185,7 +185,7 @@ export const activity = {
         createdLayer = await layers.saveLayer(layer)
       }
       // Add layer to current project ? Check if not coming from another planet first
-      if (this.project && (project.getPlanetApi() === this.$api)) {
+      if (this.project && (this.project.getPlanetApi() === this.$api)) {
         this.project.layers.push({ _id: createdLayer._id })
         await this.$api.getService('projects').patch(this.project._id, {
           layers: this.project.layers
