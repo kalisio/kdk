@@ -102,8 +102,8 @@ export default {
         try {
           this.creating = true
           const createdView = await this.kActivity.saveContext(view)
-          // Add view to current project ?
-          if (this.project) {
+          // Add view to current project ? Check if not coming from another planet first
+          if (this.project && (project.getPlanetApi() === this.$api)) {
             this.project.views.push({ _id: createdView._id })
             await this.$api.getService('projects').patch(this.project._id, {
               views: this.project.views
