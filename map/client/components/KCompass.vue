@@ -5,7 +5,7 @@
     @touchstart="onStartDrag"
     style="position: relative"
   >
-    <svg width="100%" heigh="100%" viewBox="0 0 100 100" onclick="computeDirection">
+    <svg width="100%" heigh="100%" viewBox="0 0 100 100">
       <circle
         cx="50" cy="50" r="44"
         :stroke="getCssVar('accent')"
@@ -143,6 +143,8 @@ function getPrefix () {
   return i18n.t('KCompass.FROM')
 }
 function onStartDrag (event) {
+  const { x, y } = event
+  computeDirection(x, y)
   window.addEventListener('mousemove', onHandleDrag)
   window.addEventListener('touchmove', onHandleDrag)
   window.addEventListener('mouseup', onStropDrag)
