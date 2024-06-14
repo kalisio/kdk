@@ -7,6 +7,7 @@ import { i18n, api, LocalCache, utils as kCoreUtils } from '../../../core/client
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
 import { createOfflineServiceForView } from './utils.offline.js'
 import localforage from 'localforage'
+import { removeServerSideParameters, referenceCountCreateHook, referenceCountRemoveHook, geoJsonPaginationHook, tiledLayerHook } from '../../../core/client/hooks/hooks.offline.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
@@ -97,6 +98,12 @@ export async function setBaseLayerCached (layer, view, options) {
 
 async function setServiceLayerCached (layer, view, options) {
   const bounds = options.bounds
+  const tiled = _.get(layer, 'leaflet.tiled', false)
+
+  let afterFindHooks = [geoJsonPaginationHook]
+  if (tiled) {
+    afterFindHooks.push(tiledLayerHook)
+  }
   
   const offlineService = await createOfflineServiceForView(layer.service, view, {
     baseQuery: {
@@ -105,7 +112,20 @@ async function setServiceLayerCached (layer, view, options) {
       west: bounds[0][1],
       east: bounds[1][1]
     },
-    dataPath: 'features'
+    dataPath: 'features',
+    clear: false,
+    layerService: true,
+    tiledService: tiled,
+    hooks: {
+      before: {
+        all: removeServerSideParameters,
+        create: referenceCountCreateHook,
+        remove: referenceCountRemoveHook
+      },
+      after: {
+        find: afterFindHooks
+      }
+    }
   })
 }
 
@@ -120,11 +140,11 @@ export async function setGeojsonLayerCached (layer, view) {
   }
 }
 
-export async function setLayerUncached (layer, view, bounds) {
+export async function setLayerUncached (layer, view, options) {
   if (layer.type === 'BaseLayer') {
-    await setBaseLayerUncached(layer, view, bounds)
+    await setBaseLayerUncached(layer, view, options)
   } else if (layer.service) {
-    await setServiceLayerUncached(layer, view, bounds)
+    await setServiceLayerUncached(layer, view, options)
   } else {
     await setGeojsonLayerUncached (layer, view)
   }
@@ -158,16 +178,20 @@ async function setBaseLayerUncached (layer, view, options) {
   }
 }
 
-async function setServiceLayerUncached (layer, view, bounds) {
-  const views = await localforage.getItem(layer.name) || []
-  views.push(view)
-  await localforage.setItem(layer.name, views)
+async function setServiceLayerUncached (layer, view, options) {
+  const bounds = options.bounds
 
-  const serviceName = layer.service + '-offline'
-  var app = feathers()
-  const feathersService = app.service(serviceName)
+  const services = await localforage.getItem('services')
+  const index = services[layer.service].indexOf(view)
+  services[layer.service].splice(index, 1)
+  if (services[layer.service].length === 0) {
+    delete services[layer.service]
+  }
+  await localforage.setItem('services', services)
 
-  const collection = await app.getService(layer.service).find({
+  const offlineService = await api.getOfflineService(layer.service)
+
+  const collection = await api.getService(layer.service).find({
     query: {
       south: bounds[0][0],
       north: bounds[1][0],
@@ -175,8 +199,9 @@ async function setServiceLayerUncached (layer, view, bounds) {
       east: bounds[1][1]
     }
   })
-  for (let feature in collection) {
-    feathersService.remove(feature.id)
+
+  for (let feature of collection.features) {
+    await offlineService.remove(feature._id)
   }
 }
 

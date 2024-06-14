@@ -4,6 +4,10 @@ import localforage from 'localforage'
 export const LocalCache = {
   initialize () {
     logger.debug('[KDK] initializing local cache')
+    localforage.config({
+      name: 'offline-views',
+      storeName: 'cache-entries'
+    })
   },
   async createCache (cacheName) {
     const cache = await caches.open(cacheName)

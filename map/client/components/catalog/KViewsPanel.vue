@@ -27,7 +27,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Filter, Sorter, utils, i18n } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n, api } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 import { useProject } from '../../composables'
@@ -145,20 +145,24 @@ export default {
           // We need at least catalog/project offline services
           // Take care that catalog only returns items of layer types by default
           const catalogQueries = [{ type: { $nin: ['Context', 'Service', 'Category'] } }, { type: { $in: ['Context', 'Service', 'Category'] } }]
-          await createOfflineServiceForView('catalog', view._id, {
-            baseQueries: catalogQueries
-          })
-          if (this.kActivity.contextId) {
+          if (!await api.getOfflineService('catalog')) {
             await createOfflineServiceForView('catalog', view._id, {
-              baseQueries: catalogQueries,
-              context: this.kActivity.contextId
+              baseQueries: catalogQueries
             })
+            if (this.kActivity.contextId) {
+              await createOfflineServiceForView('catalog', view._id, {
+                baseQueries: catalogQueries,
+                context: this.kActivity.contextId
+              })
+            }
           }
           // Take care that projects are not populated by default
-          const projectQuery = { populate: true }
-          await createOfflineServiceForView('projects', view._id, {
-            baseQuery: projectQuery
-          })
+          if (!await api.getOfflineService('projects')) {
+            const projectQuery = { populate: true }
+            await createOfflineServiceForView('projects', view._id, {
+              baseQuery: projectQuery
+            })
+          }
           // Then data layer
           const layers = this.project.layers
           for (let i = 0; i < layers.length; i++) {

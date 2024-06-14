@@ -163,50 +163,40 @@ export function createClient (config) {
     if (options.context) service.context = options.context
     return service
   }
+
+  api.getOfflineService = async function (name, context) {
+    let service, servicePath
+    servicePath = `${api.getServicePath(name, context)}-offline`
+    if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
+    service = api.services[servicePath]
+    return service
+  }
+
   // Used to create a frontend only service to be used in offline mode
   // based on an online service name, will snapshot service data by default
   api.createOfflineService = async function (serviceName, options = {}) {
     const offlineServiceName = `${serviceName}-offline`
 
-    const offlineService = api.createService(offlineServiceName, {
-      service: createOfflineService({
-        id: '_id',
-        name: serviceName,
-        multi: true,
-        storage: ['IndexedDB'],
+    let offlineService = await api.getOfflineService(serviceName)
+
+    if (!offlineService) {
+      const service = api.getService(serviceName)
+      offlineService = api.createService(offlineServiceName, {
+        service: createOfflineService({
+          id: '_id',
+          name: 'offline-services',
+          storeName: serviceName,
+          multi: true,
+          storage: ['IndexedDB'],
+          // FIXME: this should not be hard-coded as it depends on the service
+          // For now we set it at the max value but if a component
+          // does not explicitely set the limit it will get a lot of data
+          paginate: { default: 5000, max: 5000 }
+        }),
         // FIXME: this should not be hard-coded as it depends on the service
-        // For now we set it at the max value but if a component
-        // does not explicitely set the limit it will get a lot of data
-        paginate: { default: 5000, max: 5000 }
-      }),
-      // FIXME: this should not be hard-coded as it depends on the service
-      hooks: {
-        before: {
-          // Avoid filtering by server-side only parameters
-          all: (hook) => {
-            _.unset(hook.params, 'query.$locale')
-            _.unset(hook.params, 'query.$collation')
-            _.unset(hook.params, 'query.populate')
-            _.unset(hook.params, 'query.east')
-            _.unset(hook.params, 'query.west')
-            _.unset(hook.params, 'query.north')
-            _.unset(hook.params, 'query.south')
-          }
-        },
-        after: {
-          // Handle paginated GeoJson
-          find: (hook) => {
-            const result = hook.result
-            const features = result.data
-            if (_.get(features, '[0].type') !== 'Feature') return
-            hook.result = Object.assign({
-              type: 'FeatureCollection',
-              features: result.data
-            }, _.pick(result, ['total', 'skip', 'limit']))
-          }
-        }
-      }
-    })
+        hooks: _.get(options, 'hooks', {})
+      })
+    }
     if (_.get(options, 'snapshot', true)) {
       const service = api.getService(serviceName)
       await makeServiceSnapshot(service, Object.assign({ offlineService }, options))
