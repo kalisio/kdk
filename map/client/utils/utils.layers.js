@@ -189,7 +189,7 @@ async function setServiceLayerUncached (layer, view, options) {
   }
   await localforage.setItem('services', services)
 
-  const offlineService = await api.getOfflineService(layer.service)
+  const offlineService = api.getOfflineService(layer.service)
 
   const collection = await api.getService(layer.service).find({
     query: {

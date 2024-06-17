@@ -145,7 +145,7 @@ export default {
           // We need at least catalog/project offline services
           // Take care that catalog only returns items of layer types by default
           const catalogQueries = [{ type: { $nin: ['Context', 'Service', 'Category'] } }, { type: { $in: ['Context', 'Service', 'Category'] } }]
-          if (!await api.getOfflineService('catalog')) {
+          if (!api.getOfflineService('catalog')) {
             await createOfflineServiceForView('catalog', view._id, {
               baseQueries: catalogQueries
             })
@@ -157,7 +157,7 @@ export default {
             }
           }
           // Take care that projects are not populated by default
-          if (!await api.getOfflineService('projects')) {
+          if (!api.getOfflineService('projects')) {
             const projectQuery = { populate: true }
             await createOfflineServiceForView('projects', view._id, {
               baseQuery: projectQuery

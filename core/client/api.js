@@ -164,7 +164,7 @@ export function createClient (config) {
     return service
   }
 
-  api.getOfflineService = async function (name, context) {
+  api.getOfflineService = function (name, context) {
     let service, servicePath
     servicePath = `${api.getServicePath(name, context)}-offline`
     if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
@@ -177,7 +177,7 @@ export function createClient (config) {
   api.createOfflineService = async function (serviceName, options = {}) {
     const offlineServiceName = `${serviceName}-offline`
 
-    let offlineService = await api.getOfflineService(serviceName)
+    let offlineService = api.getOfflineService(serviceName)
 
     if (!offlineService) {
       const service = api.getService(serviceName)
