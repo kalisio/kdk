@@ -165,11 +165,9 @@ export function createClient (config) {
   }
 
   api.getOfflineService = function (name, context) {
-    let service, servicePath
-    servicePath = `${api.getServicePath(name, context)}-offline`
+    let servicePath = `${api.getServicePath(name, context)}-offline`
     if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
-    service = api.services[servicePath]
-    return service
+    return api.services[servicePath]
   }
 
   // Used to create a frontend only service to be used in offline mode
@@ -180,7 +178,6 @@ export function createClient (config) {
     let offlineService = api.getOfflineService(serviceName)
 
     if (!offlineService) {
-      const service = api.getService(serviceName)
       offlineService = api.createService(offlineServiceName, {
         service: createOfflineService({
           id: '_id',
