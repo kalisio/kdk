@@ -79,9 +79,10 @@ async function onCanvasRef (ref) {
   canvas = ref
 }
 function getUnit (timeSerie) {
-  // Falback to base unit
-  const unit = _.get(timeSerie, 'variable.unit')
-  return unit
+  return _.get(timeSerie, 'variable.unit')
+}
+function setUnit (timeserie, targetUnit) {
+  _.set(timeserie, 'variable.unit', targetUnit)
 }
 function getZoom () {
   const start = moment.utc(_.get(chart, 'scales.x.min'))
@@ -136,8 +137,9 @@ async function makeChartConfig () {
             },
             label: (context) => {
               const { unit, label } = context.dataset
+              const defaultUnit = Units.getDefaultUnit(unit)
               const y = _.get(context, 'parsed.y')
-              return label + ': ' + Units.format(y, unit)
+              return label + ': ' + Units.format(y, defaultUnit)
             }
           }
         },
@@ -243,21 +245,22 @@ function makeScales () {
   let axisId = 0
   for (const timeSerie of props.timeSeries) {
     const unit = getUnit(timeSerie)
-    if (!unit2axis.has(unit)) {
+    const defaultUnit = Units.getDefaultUnit(unit)
+    if (!unit2axis.has(defaultUnit)) {
       const axis = `y${axisId}`
-      unit2axis.set(unit, axis)
+      unit2axis.set(defaultUnit, axis)
       scales[axis] = _.merge({
-        unit,
+        targetUnit: defaultUnit,
         type: props.logarithmic ? 'logarithmic' : 'linear',
         position: (axisId + 1) % 2 ? 'left' : 'right',
         title: {
           display: true,
-          text: unit
+          text: defaultUnit
         },
         ticks: {
           callback: function (value, index, values) {
             if (values[index] !== undefined) {
-              return Units.format(values[index].value, unit, null, { symbol: false })
+              return Units.format(values[index].value, null, null, { symbol: false })
             }
           }
         }
@@ -276,6 +279,8 @@ async function makeDatasets () {
   for (const timeSerie of props.timeSeries) {
     const label = _.get(timeSerie, 'variable.label')
     const unit = getUnit(timeSerie)
+    const defaultUnit = Units.getDefaultUnit(unit)
+    setUnit(timeSerie, defaultUnit)
     const data = await timeSerie.data
     const dataset = Object.assign({
       label,
@@ -288,8 +293,11 @@ async function makeDatasets () {
     // Update time/value range
     data.forEach(item => {
       const time = moment.utc(_.get(item, xAxisKey))
-
-      const value = _.get(item, yAxisKey)
+      let value = _.get(item, yAxisKey)
+      if (unit !== defaultUnit) {
+        value = Units.convert(value, unit, defaultUnit)
+        _.set(item, yAxisKey, value)
+      }
       if (_.isNil(min) || (value < min)) min = value
       if (_.isNil(max) || (value > max)) max = value
       if (!props.startTime) {
