@@ -6,8 +6,10 @@ import { Notify, Dialog, Loading, exportFile } from 'quasar'
 import { defineAsyncComponent, markRaw } from 'vue'
 
 export * from './utils.account.js'
+export * from './utils.actions.js'
 export * from './utils.colors.js'
 export * from './utils.content.js'
+export * from './utils.data.js'
 export * from './utils.locale.js'
 export * from './utils.platform.js'
 export * from './utils.push.js'
@@ -15,7 +17,7 @@ export * from './utils.pwa.js'
 export * from './utils.shapes.js'
 export * from './utils.session.js'
 export * from './utils.time.js'
-export * from './utils.actions.js'
+
 
 Notify.setDefaults({
   position: 'bottom-left',

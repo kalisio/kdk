@@ -322,10 +322,12 @@ export const Units = {
   // If target unit is not specified will use default unit (if any) for source unit
   convert (value, sourceUnit, targetUnit) {
     if (_.isNil(value)) {
-      logger.warn('[KDK] cannont convert an nil value')
+      logger.warn('[KDK] cannont convert a nil value')
       return
-    }
+    } 
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
+    // If target unit is same as source unit does nothing
+    if (targetUnit === sourceUnit) return value
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
     // Check if the target unit does exist
