@@ -8,6 +8,18 @@ export function baseActivity (name) {
       getAppName () {
         return this.$config('appName')
       },
+      configureHeader () {
+        Layout.setHeader(_.get(this.activityOptions, 'header'), this)
+      },
+      clearHeader () {
+        Layout.setHeader(null)
+      },
+      configureFooter () {
+        Layout.setFooter(_.get(this.activityOptions, 'footer'), this)
+      },
+      clearFooter () {
+        Layout.setFooter(null)
+      },
       getTopPane () {
         return Layout.getPane('top')
       },
@@ -174,6 +186,8 @@ export function baseActivity (name) {
         Layout.setWindowVisible(result.placement, false)
       },
       clearActivity () {
+        this.clearHeader()
+        this.clearFooter()
         this.clearTopPane()
         this.clearBottomPane()
         this.clearLeftPane()
@@ -183,6 +197,8 @@ export function baseActivity (name) {
         this.clearWindows()
       },
       configureActivity () {
+        this.configureHeader()
+        this.configureFooter()
         this.configureTopPane()
         this.configureLeftPane()
         this.configureBottomPane()
