@@ -12,7 +12,7 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 ## Parse options
 ##
 
-WORKSPACE_NODE=16
+WORKSPACE_NODE=20
 OPT_LIST="n:"
 
 while getopts "$OPT_LIST" OPT; do
