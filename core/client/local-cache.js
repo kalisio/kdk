@@ -5,8 +5,8 @@ export const LocalCache = {
   initialize () {
     logger.debug('[KDK] initializing local cache')
     localforage.config({
-      name: 'offline-views',
-      storeName: 'cache-entries'
+      name: 'offline_views',
+      storeName: 'cache_entries'
     })
   },
   async createCache (cacheName) {

@@ -24,8 +24,8 @@ export async function referenceCountCreateHook(context) {
                 _id : feature._id
             }
         })
-        if (request.features) {
-            const count = _.get(request, 'features[0].referenceCount') + 1
+        if (_.get(request, 'data.length') !== 0)  {
+            const count = _.get(request, 'data[0].referenceCount') + 1
             feature.referenceCount = count
             service._update(feature._id, feature)
         } else {
@@ -38,7 +38,7 @@ export async function referenceCountCreateHook(context) {
 
 export function referenceCountRemoveHook(context) {
     const service = context.service
-    for (let feature of context.data) {
+    for (let feature of context.arguments[0]) {
         feature.referenceCount--
         if (feature.referenceCount !== 0) {
             service._update(feature._id, feature)
@@ -64,14 +64,14 @@ export async function tiledLayerHook(context) {
     const params = context.params
     const query = await service._find({})
     const features = query.data
+    let result = []
     for (let feature of features) {
         const bbox = [params.east, params.west, params.north, params.south]
         const featurePolygon = _.get(feature, 'geometry.coordinates')
         var intersection = intersect(featureCollection([bbox, featurePolygon]));
         if (intersection) {
-            _.set(context, 'result.data', [feature])
-            break
+            result.push(feature)
         }
-        
     }
+    _.set(context, 'result.data', result)
 }

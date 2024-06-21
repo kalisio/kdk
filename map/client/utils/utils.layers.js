@@ -182,26 +182,28 @@ async function setServiceLayerUncached (layer, view, options) {
   const bounds = options.bounds
 
   const services = await localforage.getItem('services')
-  const index = services[layer.service].indexOf(view)
-  services[layer.service].splice(index, 1)
-  if (services[layer.service].length === 0) {
-    delete services[layer.service]
-  }
-  await localforage.setItem('services', services)
-
-  const offlineService = api.getOfflineService(layer.service)
-
-  const collection = await api.getService(layer.service).find({
-    query: {
-      south: bounds[0][0],
-      north: bounds[1][0],
-      west: bounds[0][1],
-      east: bounds[1][1]
+  if (services && services[layer.service]) {
+    let views = _.get(services[layer.service], 'views')
+    const index = views.indexOf(view)
+    views.splice(index, 1)
+    if (views.length === 0) {
+      delete services[layer.service]
     }
-  })
+    _.set(services, '[layer.service].views', views)
+    await localforage.setItem('services', services)
 
-  for (let feature of collection.features) {
-    await offlineService.remove(feature._id)
+    const offlineService = api.getOfflineService(layer.service)
+
+    const collection = await offlineService.find({
+      query: {
+        south: bounds[0][0],
+        north: bounds[1][0],
+        west: bounds[0][1],
+        east: bounds[1][1]
+      }
+    })
+
+    await offlineService.remove(collection.features)
   }
 }
 

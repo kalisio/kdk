@@ -181,7 +181,7 @@ export function createClient (config) {
       offlineService = api.createService(offlineServiceName, {
         service: createOfflineService({
           id: '_id',
-          name: 'offline-services',
+          name: 'offline_services',
           storeName: serviceName,
           multi: true,
           storage: ['IndexedDB'],

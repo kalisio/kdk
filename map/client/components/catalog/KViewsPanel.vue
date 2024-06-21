@@ -31,7 +31,7 @@ import { Filter, Sorter, utils, i18n, api } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
 import { useProject } from '../../composables'
-import { createOfflineServiceForView } from '../../utils/utils.offline.js'
+import { createOfflineServiceForView, uncacheView } from '../../utils/utils.offline.js'
 import { Notify } from 'quasar'
 import localforage from 'localforage'
 
@@ -180,14 +180,7 @@ export default {
             color: 'primary',
             timeout: 3000
           })
-          const views = await localforage.getItem('views') || {}
-          delete views[view._id]
-          await localforage.setItem('views', views)
-          const layers = this.project.layers
-          for (let i = 0; i < layers.length; i++) {
-            const layer = (layers[i]._id ? this.kActivity.getLayerById(layers[i]._id) : this.kActivity.getLayerByName(layers[i].name))
-            await this.kActivity.setLayerUncached(layer, view._id, { bounds: [[view.south, view.west], [view.north, view.east]] })
-          }
+          uncacheView(view, this.project, this.kActivity)
           break
         }
         default:
@@ -209,6 +202,7 @@ export default {
         }
       })
       if (!result.ok) return false
+      await uncacheView(view, this.project, this.kActivity)
       await this.$api.getService('catalog').remove(view._id)
     },
     onResized (size) {

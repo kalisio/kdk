@@ -29,6 +29,7 @@ import logger from 'loglevel'
 import { Filter, Sorter, utils, i18n } from '../../../../core/client'
 import { KColumn, KPanel, KAction } from '../../../../core/client/components'
 import { catalogPanel } from '../../mixins'
+import { uncacheView } from '../../utils'
 
 export default {
   name: 'k-projects-panel',
@@ -143,6 +144,12 @@ export default {
         }
       })
       if (!result.ok) return false
+      const catalogService = this.$api.getService('catalog')
+      for (let viewId of project.views) {
+        console.log(viewId)
+        let view = await catalogService.get(viewId._id)
+        uncacheView(view, project, this.kActivity)
+      }
       await this.$api.getService('projects').remove(project._id)
     },
     onResized (size) {
