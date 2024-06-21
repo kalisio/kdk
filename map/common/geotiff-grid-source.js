@@ -1,4 +1,5 @@
 import * as GeoTIFF from 'geotiff'
+import _ from 'lodash'
 import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
 // pack r,g,b in an uint32
@@ -56,7 +57,8 @@ export class GeoTiffGridSource extends GridSource {
     this.rgb = config.rgb
 
     try {
-      this.geotiff = await GeoTIFF.fromUrl(config.url)
+      // forceXHR is useful for tests because nock doesn't know how to intercept fetch
+      this.geotiff = await GeoTIFF.fromUrl(config.url, { forceXHR: _.get(config, 'forceXHR', false) })
     } catch (error) {
       // fetching may fail, in this case the source
       // will remain in unusable state
