@@ -51,7 +51,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { ref, computed, watch } from 'vue'
-import { i18n, Store } from '../../../../core/client'
+import { api, i18n, Store } from '../../../../core/client'
 import { useCurrentActivity, useCatalog } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
 
@@ -86,6 +86,13 @@ const props = defineProps({
   }
 })
 
+// Get current project for activity if any
+const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
+const project = getActivityProject()
+// We expect the project object to expose the underlying API
+const planetApi = project && typeof project.getPlanetApi === 'function' ? project.getPlanetApi() : api
+// Use target catalog according to project
+const { getSublegends: getProjectSublegends } = useCatalog({ project, planetApi })
 // Use global catalog
 const { getSublegends } = useCatalog()
 // Use local catalog if any
@@ -152,6 +159,9 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
   // Retrieve the legends from catalog if required
   if (props.sublegendsFromCatalog) {
     sublegends.value = await getSublegends()
+    if (project) {
+      sublegends.value = sublegends.value.concat(await getProjectSublegends())
+    }
     if (Store.get('context')) {
       sublegends.value = sublegends.value.concat(await getContextSublegends())
     }
