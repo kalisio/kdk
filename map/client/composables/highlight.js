@@ -4,7 +4,7 @@ import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid } from 'quasar'
 import { unref, onUnmounted } from 'vue'
-import { getFeatureId, getFeatureStyleType } from '../utils.js'
+import { getFeatureId, getFeatureStyleType, isLayerHighlightable } from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 
 export const HighlightsLayerName = uid()
@@ -63,6 +63,7 @@ export function useHighlight (name, options = {}) {
     return get(getHighlightId(feature, layer))
   }
   function highlight (feature, layer, selected = true) {
+    if (layer && !isLayerHighlightable(layer)) return
     const highlightId = getHighlightId(feature, layer)
     // Define default highlight feature
     const highlight = {

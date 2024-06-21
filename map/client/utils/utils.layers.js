@@ -27,6 +27,10 @@ export function isLayerSelectable (layer) {
   return _.get(layer, 'isSelectable', true)
 }
 
+export function isLayerHighlightable (layer) {
+  return _.get(layer, 'isHighlightable', true)
+}
+
 export function isLayerProbable (layer) {
   return _.get(layer, 'isProbable', false)
 }
