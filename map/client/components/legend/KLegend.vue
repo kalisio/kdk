@@ -52,6 +52,7 @@ import logger from 'loglevel'
 import sift from 'sift'
 import { ref, computed, watch } from 'vue'
 import { api, i18n, Store } from '../../../../core/client'
+import { getLayersBySublegend } from '../../utils'
 import { useCurrentActivity, useCatalog } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
 
@@ -106,19 +107,7 @@ const engine = ref()
 const zoom = ref()
 
 // Computed
-const layersBySublegend = computed(() => {
-  const result = {}
-  _.forEach(sublegends.value, sublegend => {
-    // Built-in legends use filtering while
-    let filter = null
-    if (_.has(sublegend, 'options.filter')) {
-      filter = _.get(sublegend, 'options.filter')
-    }
-    // If the list of layers in category is empty we can have a null filter
-    result[sublegend.name] = filter ? _.filter(layers.value, sift(filter)) : []
-  })
-  return result
-})
+const layersBySublegend = computed(() => getLayersBySublegend(layers.value, sublegends.value))
 
 // Functions
 function onShowLayer (layer, engine) {
