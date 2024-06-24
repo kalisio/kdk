@@ -148,6 +148,21 @@ export async function getSublegends (options = {}) {
   return sublegends
 }
 
+export function getLayersBySublegend (layers, sublegends) {
+  const categorizedLayers = _.clone(layers)
+  const layersBySublegend = {}
+  _.forEach(sublegends, sublegend => {
+    // Built-in legends use filtering
+    let filter = null
+    if (_.has(sublegend, 'options.filter')) {
+      filter = _.get(sublegend, 'options.filter')
+    }
+    // If the list of layers in a sublegend is empty we can have a null filter
+    layersBySublegend[sublegend.name] = filter ? _.remove(categorizedLayers, sift(filter)) : []
+  })
+  return layersBySublegend
+}
+
 export async function getViews (options = {}) {
   _.defaults(options, {
     query: {},
