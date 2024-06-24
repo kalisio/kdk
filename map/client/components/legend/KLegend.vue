@@ -49,7 +49,6 @@
 <script setup>
 import _ from 'lodash'
 import logger from 'loglevel'
-import sift from 'sift'
 import { ref, computed, watch } from 'vue'
 import { api, i18n, Store } from '../../../../core/client'
 import { getLayersBySublegend } from '../../utils'
