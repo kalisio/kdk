@@ -131,9 +131,9 @@ export default {
   async updateAbilities (subject) {
     if (this.cache) {
       if (subject && subject._id) {
-        this.cache.del(subject._id.toString())
+        this.cache.delete(subject._id.toString())
       } else {
-        this.cache.del(ANONYMOUS_USER)
+        this.cache.delete(ANONYMOUS_USER)
       }
     }
 
