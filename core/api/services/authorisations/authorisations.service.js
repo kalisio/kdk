@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import LruCache from 'lru-cache'
+import { LRUCache } from 'lru-cache'
 import makeDebug from 'debug'
 import { defineAbilities } from '../../../common/permissions.js'
 
@@ -92,7 +92,11 @@ export default {
     const config = app.get('authorisation')
     if (config && config.cache) {
       // Store abilities of the N most active users in LRU cache (defaults to 1000)
-      this.cache = new LruCache(config.cache.maxUsers || 1000)
+      const max = config.cache.maxUsers || 1000
+      // LRU cache lib switched from positional parameters to options object at some point
+      // so that now we directly pass the options to it while before we used the max argument
+      if (!config.cache.max && !config.cache.ttl && !config.cache.maxSize) config.cache.max = max
+      this.cache = new LRUCache(config.cache)
       debug('Using LRU cache for user abilities')
     } else {
       debug('Do not use LRU cache for user abilities')
@@ -135,5 +139,10 @@ export default {
 
     const abilities = await this.getAbilities(subject)
     return abilities
+  },
+
+  // Clear abilities
+  clearAbilities() {
+    if (this.cache) this.cache.clear()
   }
 }
