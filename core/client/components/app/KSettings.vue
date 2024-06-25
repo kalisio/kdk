@@ -1,18 +1,16 @@
 <template>
-  <Suspense>
-    <KForm
-      id="settings"
-      ref="formRef"
-      :values="settings"
-      schema="settings.update"
-      :filter="schemaFilter"
-    />
-  </Suspense>
+  <KForm
+    id="settings"
+    ref="formRef"
+    :values="settings"
+    schema="settings.update"
+    :filter="schemaFilter"
+  />
 </template>
 
 <script setup>
 import _ from 'lodash'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { api } from '../../api.js'
 import KForm from '../form/KForm.vue'
 
@@ -31,10 +29,12 @@ async function apply () {
   }
 }
 
-// Immediate
-settings.value = await serviceSettings.get('settings')
-const mapping = serviceSettings.getSettingsMapping()
-schemaFilter.value = Object.keys(mapping).filter(value => _.get(mapping, value))
+// Hooks
+onMounted(async () => {
+  settings.value = await serviceSettings.get('settings')
+  const mapping = serviceSettings.getSettingsMapping()
+  schemaFilter.value = Object.keys(mapping).filter(value => _.get(mapping, value))
+})
 
 // Expose
 defineExpose({
