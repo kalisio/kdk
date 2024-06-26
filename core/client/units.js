@@ -324,7 +324,7 @@ export const Units = {
     if (_.isNil(value)) {
       logger.warn('[KDK] cannont convert a nil value')
       return
-    } 
+    }
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
     // If target unit is same as source unit does nothing
     if (targetUnit === sourceUnit) return value
