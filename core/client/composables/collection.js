@@ -146,6 +146,7 @@ export function useCollection (options) {
   onBeforeMount(() => {
     if (options.appendItems.value) {
       const service = getService()
+      service.on('created', onItemsUpdated)
       service.on('patched', onItemsUpdated)
       service.on('updated', onItemsUpdated)
       service.on('removed', onItemsUpdated)
@@ -157,6 +158,7 @@ export function useCollection (options) {
     unsubscribe()
     if (options.appendItems.value) {
       const service = getService()
+      service.off('created', onItemsUpdated)
       service.off('patched', onItemsUpdated)
       service.off('updated', onItemsUpdated)
       service.off('removed', onItemsUpdated)
