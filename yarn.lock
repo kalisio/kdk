@@ -1297,10 +1297,10 @@
     debug "^4.3.4"
     uuid "^8.3.2"
 
-"@kalisio/feathers-import-export@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@kalisio/feathers-import-export/-/feathers-import-export-1.1.0.tgz#92fddfebd8e1d629fe6eafcf6689e664afa54d7e"
-  integrity sha512-99y13A0XWnwu/AsN0rq1jO/7ZsJUeRogNAqkIUMep9dGGN06XVnkBE6zxmpnsu2zVtKjByO1tR8Ujz/q3ooxGQ==
+"@kalisio/feathers-import-export@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@kalisio/feathers-import-export/-/feathers-import-export-1.2.0.tgz#cf79383726e3b4280623ae314c60821f44ef36fe"
+  integrity sha512-rXvAqeIf1H91POAIL/TJfssKLA1hECFXhJJIK4iN4BmPZ4kt9bqnKa0GQf76HVbU0NLTXkO2GB8Ar5lXy9u0yA==
   dependencies:
     "@kalisio/feathers-s3" "^1.4.0"
     JSONStream "^1.3.5"
