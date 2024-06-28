@@ -1,10 +1,9 @@
 import _ from 'lodash'
-import lruCache from 'lru-cache'
+import { LRUCache } from 'lru-cache'
 import makeDebug from 'debug'
 import { defineAbilities } from '../../../common/permissions.js'
 
 const debug = makeDebug('kdk:core:authorisations:service')
-const { LRUCache } = lruCache
 
 // Global key to store abilities in cache for anonymous users
 const ANONYMOUS_USER = 'anonymous'
