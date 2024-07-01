@@ -1,11 +1,7 @@
 <template>
   <div v-if="items.length > 0" class="row">
     <div class="col-12">
-      <q-list 
-        highlight 
-        :separator="separator"
-        :dense="dense"
-      >
+      <q-list highlight separator>
         <template v-for="item in items" :key="item._id">
           <component
             :id="item._id"
@@ -93,18 +89,6 @@ const props = defineProps({
   processor: {
     type: Function,
     default: undefined
-  },
-  appendItems: {
-    type: Boolean,
-    default: false
-  },
-  separator: {
-    type: Boolean,
-    default: true
-  },
-  dense: {
-    type: Boolean,
-    default: false
   }
 })
 
