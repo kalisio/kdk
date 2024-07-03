@@ -2,6 +2,7 @@ import L from 'leaflet'
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
+import lineOffset from '@turf/line-offset'
 import 'leaflet-realtime'
 import { Time, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
@@ -27,6 +28,31 @@ const Realtime = L.Realtime.extend({
 L.realtime = function (src, options) {
   return new Realtime(src, options)
 }
+// Override default Polyline simplify function to manage offset
+const simplifyPoints = L.Polyline.prototype._simplifyPoints
+L.Polyline.include({
+  _simplifyPoints: function () {
+    simplifyPoints.call(this)
+    // Offset simplified version 
+    if (this.options.offset) {
+      // We'd like to ensure a pixel constant offset when zooming
+      // Zoom 0 resolution is 156 543 m/pixel at equator in default map tiles,
+      // we take latitude into account to account for a convergence factor
+      const latitude = this.getBounds().getCenter().lat
+      const factor = 156543 / Math.pow(2, this._map.getZoom()) / Math.cos(latitude * Math.PI / 180)
+      const offset = Math.max(1, this.options.offset * factor)
+
+      for (let i = 0; i < this._parts.length; i++) {
+        let latLngs = this._parts[i].map(point => this._map.layerPointToLatLng(point))
+        // Ensure a large enough precision for computation (defaults to 6 in Leaflet)
+        const coords = L.GeoJSON.latLngsToCoords(latLngs, 0, false, 12)
+        const feature = lineOffset({ type: 'LineString', coordinates: coords }, offset, { units: 'meters' })
+        latLngs = L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)
+        this._parts[i] = latLngs.map(latlng => this._map.latLngToLayerPoint(latlng))
+      }
+    }
+  }
+})
 
 // Override default Leaflet GeoJson utility to manage some specific use cases
 const geometryToLayer = L.GeoJSON.geometryToLayer
@@ -55,10 +81,18 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
     if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
       return new MaskLayer(geojson, options.style(geojson))
     }
+  }// Automate Leaflet.PolylineOffset plugin use
+  if (geometry && properties && properties.offset) {
+    if (geometry.type === 'LineString') {
+      options = Object.assign({ offset: properties.offset }, options)
+    }
   }
   // As we do so this breaks leaflet-arrowheads plugin
   const layer = geometryToLayer(geojson, options)
-  if (options.arrowheads && (layer instanceof L.Polyline)) layer.arrowheads(options.arrowheads)
+  if (geometry && (options.arrowheads || (properties && properties.arrowheads))) {
+    if (layer instanceof L.Polyline) layer.arrowheads(options.arrowheads || properties.arrowheads)
+  }
+  
   return layer
 }
 
