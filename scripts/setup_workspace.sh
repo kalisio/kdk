@@ -50,6 +50,4 @@ fi
 
 setup_lib_workspace "$WORKSPACE_DIR" "$KALISIO_GITHUB_URL/kalisio/development.git"
 
-run_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$WORKSPACE_DIR/development/workspaces/libs/kdk/dev/kdk.cjs" klifull
-
 end_group "Setting up workspace ..."
