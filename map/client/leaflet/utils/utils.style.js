@@ -171,7 +171,7 @@ export function getDefaultPointStyle (feature, options, engine, engineStylePath 
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPointStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
-  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
   return style
 }
@@ -180,7 +180,7 @@ export function getDefaultLineStyle (feature, options, engine, engineStylePath =
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerLineStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
-  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
   return convertLineStyleToLeafletPath(style)
 }
@@ -189,7 +189,7 @@ export function getDefaultPolygonStyle (feature, options, engine, engineStylePat
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPolygonStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
-  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
   return convertPolygonStyleToLeafletPath(style)
 }
