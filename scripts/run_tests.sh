@@ -40,6 +40,8 @@ done
 ## Init workspace
 ##
 
+run_kli "$WORKSPACE_DIR" "$NODE_VER" "$WORKSPACE_DIR/development/workspaces/libs/kdk/dev/kdk.cjs" klifull
+
 . "$WORKSPACE_DIR/development/workspaces/libs/libs.sh" kdk
 
 ## Run tests

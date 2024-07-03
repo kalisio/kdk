@@ -316,7 +316,7 @@ The following options can be set as feature `properties` to manage more geometry
 * **mask** boolean set to `true` on a `Polygon` or `MultiPolygon` will result in the polygon(s) acting as a mask over the map
 * **offset** integer set to a number of pixels on a `LineString` will result in the line being offset by the specified number of pixels when drawn
 
-![Geodesic feature type](../../.vitepress/public/images/great-cricle-2D.png)
+![Geodesic feature type](../../.vitepress/public/images/great-circle-2D.png)
 
 ![Gradient feature type](../../.vitepress/public/images/line-gradient-2D.png)
 

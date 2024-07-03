@@ -151,7 +151,7 @@ The following options can be set as feature `properties` to manage more geometry
 * **geodesic** boolean set to `true` on a `Point` will result in a great circle represented as a [EllipseGraphics](https://cesiumjs.org/Cesium/Build/Documentation/EllipseGraphics.html), which **radius** must be specified in meters and uses the styling options of the feature
 * **icon-text** string set on a `Point` will result in a [LabelGraphics](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html?classFilter=label) instead of a [BillboardGraphics](https://cesiumjs.org/Cesium/Build/Documentation/BillboardGraphics.html?classFilter=bill), which uses the styling options of the feature
 
-![Geodesic feature type](../../.vitepress/public/images/great-cricle-3D.png)
+![Geodesic feature type](../../.vitepress/public/images/great-circle-3D.png)
 
 ![Wall feature type](../../.vitepress/public/images/wall-3D.png)
 
