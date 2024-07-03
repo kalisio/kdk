@@ -4,7 +4,8 @@ import { getType, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
 import { 
   bindLeafletEvents, unbindLeafletEvents, 
-  getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle 
+  getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle,
+  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle
 } from '../../utils.map.js'
 
 // Events we listen while layer is in edition mode
@@ -55,6 +56,13 @@ export const editLayers = {
     },
     getGeoJsonEditOptions (options) {
       let filteredOptions = options
+      // Convert and store style
+      const leafletOptions = options.leaflet || options
+      const layerStyle = {}
+      layerStyle.layerPointStyle = leafletOptions.style ? _.get(leafletOptions.style, 'point') : convertSimpleStyleToPointStyle(leafletOptions)
+      layerStyle.layerLineStyle = leafletOptions.style ? _.get(leafletOptions.style, 'line') : convertSimpleStyleToLineStyle(leafletOptions)
+      layerStyle.layerPolygonStyle = leafletOptions.style ? _.get(leafletOptions.style, 'polygon') : convertSimpleStyleToPolygonStyle(leafletOptions)
+
       if (_.has(filteredOptions, 'leaflet.tooltip') || _.has(filteredOptions, 'leaflet.popup')) {
         // Disable tooltip & popup features on edited layer
         filteredOptions = Object.assign({}, options)
@@ -72,10 +80,10 @@ export const editLayers = {
         // Use default styling when editing as dynamic styling can conflict
         style: (feature) => {
           if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
-            return getDefaultLineStyle(feature, null,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
+            return getDefaultLineStyle(feature, layerSytle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
           }
           if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
-            return getDefaultPolygonStyle(feature, null, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
+            return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
           } else {
             logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
           }
