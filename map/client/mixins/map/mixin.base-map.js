@@ -92,6 +92,9 @@ export const baseMap = {
       if (scale) this.setupScaleControl(scale)
       const geolocate = _.get(viewerOptions, 'geolocate', true)
       if (geolocate) this.setupGeolocateControl(geolocate)
+      // Add a special hidden pane, used to hide individual features
+      const hiddenPane = this.map.createPane('kdk-hidden-features')
+      hiddenPane.style.display = 'none'
       this.onMapReady()
     },
     onMapReady () {

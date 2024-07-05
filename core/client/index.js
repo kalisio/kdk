@@ -6,6 +6,7 @@ import { Theme } from './theme.js'
 import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
 import { Storage } from './storage.js'
+import { TemplateContext } from './template-context.js'
 import { Time } from './time.js'
 import { Units } from './units.js'
 import { Layout } from './layout.js'
@@ -28,6 +29,7 @@ export { Theme }
 export { Capabilities }
 export { LocalStorage }
 export { Storage }
+export { TemplateContext }
 export { Time }
 export { Units }
 export { Layout }

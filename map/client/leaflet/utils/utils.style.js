@@ -3,7 +3,7 @@ import logger from 'loglevel'
 import chroma from 'chroma-js'
 import moment from 'moment'
 import L from 'leaflet'
-import { Time, Units, utils as kdkCoreUtils } from '../../../../core/client/index.js'
+import { Time, Units, TemplateContext, utils as kdkCoreUtils } from '../../../../core/client/index.js'
 import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertStyle, convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
@@ -151,7 +151,7 @@ function processStyle (style, feature, options, mappings) {
   const leafletOptions = options.leaflet || options
   // We allow to template style properties according to feature,
   // because it can be slow you have to specify a subset of properties
-  const context = { properties: feature.properties, feature, chroma, moment, Units, Time }
+  const context = Object.assign({ properties: feature.properties, feature, chroma, moment, Units, Time }, TemplateContext.get())
   if (leafletOptions.template) {
     // Create the map of variables
     if (options.variables) context.variables = _.reduce(options.variables,
@@ -160,8 +160,18 @@ function processStyle (style, feature, options, mappings) {
       _.set(style, _.get(mappings, _.kebabCase(entry.property), entry.property), entry.compiler(context))
     })
   }
-  // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
+
   const type = getFeatureStyleType(feature)
+
+  // visibility attribute can be used to hide individual features
+  // visibility is true by default but can also be a string when it's
+  // a result of a lodash steing template evaluation
+  let visibility = _.get(style, 'style.visibility', true)
+  if (typeof visibility === 'string') visibility = visibility === 'true'
+  // The 'kdk-hidden-features' pane is created when the leaflet map is initialized
+  if (!visibility) _.set(style, `style.${type}.pane`, 'kdk-hidden-features')
+
+  // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
   if (leafletOptions.pane && !_.has(style, `${type}.pane`)) _.set(style, `${type}.pane`, leafletOptions.pane)
   if (leafletOptions.shadowPane && !_.has(style, `${type}.shadowPane`)) _.set(style, `${type}.shadowPane`, leafletOptions.shadowPane)
   return style
