@@ -28,7 +28,6 @@ export function validateData (schema) {
 
     items.forEach((item, index) => {
       if (item.status === 'rejected') {
-        console.log(item.reason)
         item.validationError = {
           message: item.reason.message,
           data: item.reason.data.map(error => {
@@ -58,7 +57,6 @@ export function validateData (schema) {
     const hasError = (errors.length > 0)
     if (hasError) {
       const firstError = errors[0]
-      console.log(firstError)
       // Single item case => raise the error
       if (!isArray) throw new BadRequest(firstError.message, firstError.data)
       // Multiple items case => raise if no valid data found
