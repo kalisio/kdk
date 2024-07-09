@@ -6,7 +6,7 @@ export function convertData (data, valuePaths, sourceUnit, targetUnit) {
   _.forEach(data, document => {
     _.forEach(valuePaths, valuePath => {
       const value = _.get(document, valuePath)
-      if (value) _.set(document, valuePath, Units.convert(value, sourceUnit, targetUnit))
+      if (value) _.set(document, valuePath, Units.convert(value, sourceUnit.name, targetUnit.name))
     })
   })
 }
@@ -14,8 +14,8 @@ export function convertData (data, valuePaths, sourceUnit, targetUnit) {
 export function convertTimeSerie (data, variable, valuePaths) {
   if (!Array.isArray(valuePaths)) valuePaths = [valuePaths]
   const unit = variable.unit
-  if (unit) {
-    const targetUnit = Units.getDefaultUnit(unit)
+  const targetUnit = variable.targetUnit || Units.getDefaultUnit(unit.name)
+  if (unit.name !== targetUnit.name) {
     convertData(data, valuePaths, unit, targetUnit)
     variable.unit = targetUnit
   }
