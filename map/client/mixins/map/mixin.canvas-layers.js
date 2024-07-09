@@ -207,8 +207,13 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     }
 
     // Skip redraw when no feature hovered and we're not highlighting
-    if (!hoveringFeatures && !this.highlighting) return
-    this.needRedraw()
+    if (!hoveringFeatures && !this.highlighting) {
+      this._canvas.style.cursor = ''
+      return
+    } else {
+      this._canvas.style.cursor = 'pointer'
+      this.needRedraw()
+    }
   },
   // -------------------------------------------------------------
   getEvents: function () {
