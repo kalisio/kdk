@@ -80,7 +80,7 @@ export const editLayers = {
         // Use default styling when editing as dynamic styling can conflict
         style: (feature) => {
           if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
-            return getDefaultLineStyle(feature, layerSytle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
+            return getDefaultLineStyle(feature, layerStyle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
           }
           if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
             return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
@@ -89,7 +89,7 @@ export const editLayers = {
           }
         },
         pointToLayer: (feature, latlng) => {
-          const style = getDefaultPointStyle(feature, null, _.get(this, 'activityOptions.engine'), 'style.edition.point')
+          const style = getDefaultPointStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.point')
           style.options = { pmIgnore: false } // Allow geoman edition
           return createMarkerFromPointStyle(latlng, style)
         }
