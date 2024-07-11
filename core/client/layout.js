@@ -20,7 +20,8 @@ const vWindowDefaultSizePolicy = {
   pinned: { xs: [50, 90], sm: [40, 80], md: [30, 75], lg: [25, 75], xl: [20, 75] }
 }
 const defaults = {
-  layout: { view: 'lHh LpR lFf', mode: undefined },
+  view: 'lHh LpR lFf',
+  mode: undefined,
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults },
@@ -44,6 +45,8 @@ export const Layout = {
   placements: ['top', 'right', 'bottom', 'left'],
   paths: {
     layout: layoutPath,
+    view: layoutPath + '.view',
+    mode: layoutPath + '.mode',
     header: layoutPath + '.header',
     footer: layoutPath + '.footer',
     page: layoutPath + '.page',
@@ -63,7 +66,7 @@ export const Layout = {
   },
   initialize () {
     // create the store structure for each element with their configuration
-    Store.set(this.paths.layout, this.getLayoutDefaults())
+    Store.set(this.paths.view, this.getElementDefaults('view'))
     Store.set(this.paths.header, this.getElementDefaults('header'))
     Store.set(this.paths.footer, this.getElementDefaults('footer'))
     Store.set(this.paths.page, this.getElementDefaults('page'))
@@ -77,9 +80,6 @@ export const Layout = {
   },
   get () {
     return Store.get(this.paths.layout)
-  },
-  getLayoutDefaults () {
-    return Object.assign({}, defaults.options, _.pick(_.get(config, this.paths.layout), _.keys(defaults.layout)))
   },
   setView (view) {
     Store.patch(this.paths.layout, { view })
@@ -108,7 +108,8 @@ export const Layout = {
     const elementPath = this.getElementPath(element)
     const elementDefaults = _.get(defaults, element)
     const elementConfig = _.get(config, elementPath)
-    return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
+    if (elementConfig) return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
+    return _.cloneDeep(elementDefaults)
   },
   setElement (element, options, context, omit = []) {
     const props = _.defaultsDeep(_.cloneDeep(options), this.getElementDefaults(element))
