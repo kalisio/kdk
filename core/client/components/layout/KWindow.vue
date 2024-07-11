@@ -106,7 +106,7 @@ const props = defineProps({
   },
   layoutOffset: {
     type: Number,
-    defaut: 0
+    default: 0
   }
 })
 
@@ -129,7 +129,6 @@ const unpinIcons = {
   bottom: 'las la-angle-up'
 }
 const border = 2
-let backupState
 
 // Provide
 provide('widget', widgetRef)
@@ -199,7 +198,7 @@ const headerControls = computed(() => {
     size: 'sm',
     tooltip: 'KWindow.RESTORE_ACTION',
     visible: currentWindow.controls.restore && currentWindow.state === 'maximized',
-    handler: () => Layout.setWindowState(props.placement, backupState)
+    handler: () => Layout.setWindowState(props.placement, LocalStorage.get(getStorageKey('restore-state')))
   }, {
     id: `close-${props.placement}-window`,
     icon: 'las la-times',
@@ -248,10 +247,10 @@ watch(() => currentWindow.state, (newState, oldState) => refresh(newState, oldSt
 function getStorageKey (element) {
   return `windows-${props.placement}-${element}`
 }
-function storeState () {
+function writeState () {
   LocalStorage.set(getStorageKey('state'), currentWindow.state)
 }
-function restoreState () {
+function readState () {
   return LocalStorage.get(getStorageKey('state'))
 }
 function storeGeometry () {
@@ -263,18 +262,20 @@ function restoreGeometry () {
 function refresh (newState, oldState) {
   switch (newState) {
     case 'pinned': {
-      storeState()
+      LocalStorage.clear(getStorageKey('restore-state'))
+      writeState()
       setPinnedGeometry()
       break
     }
     case 'maximized': {
-      storeState()
-      backupState = oldState
+      if (oldState) LocalStorage.set(getStorageKey('restore-state'), oldState)
+      writeState()
       setMaximizedGeometry()
       break
     }
     case 'floating': {
-      storeState()
+      LocalStorage.clear(getStorageKey('restore-state'))
+      writeState()
       const geometry = restoreGeometry()
       if (geometry) {
         updateGeometry(geometry.position, geometry.size, true)
@@ -318,7 +319,7 @@ function updateGeometry (position, size, check = false) {
     position = [x, y]
     size = [w, h]
   }
-  // compute breakpoings
+  // compute breakpoints
   // Code taken from quasar screen plugin code
   const w = size[0]
   const s = $q.screen.sizes
@@ -395,14 +396,8 @@ function onFooterResized (size) {
 }
 
 // restore the state
-const fallbackState = restoreState() || 'pinned'
-if (currentWindow.state) {
-  logger.debug(`[KDK] restoring ${props.placement} window in ${currentWindow.state} state`)
-  refresh(currentWindow.state, fallbackState)
-} else {
-  logger.debug(`[KDK] restoring ${props.placement} window in ${fallbackState} state`)
-  Layout.setWindowState(props.placement, fallbackState)
-}
+const fallbackState = readState() || 'pinned'
+Layout.setWindowState(props.placement, fallbackState)
 </script>
 
 <style lang="scss" scoped>
