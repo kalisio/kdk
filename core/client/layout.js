@@ -26,7 +26,7 @@ const defaults = {
   page: { ...contentDefaults },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16] },
   panes: {
-    left: { ...contentDefaults, opener: false },
+    left: { ...contentDefaults, opener: false, width: 300 },
     top: { ...contentDefaults, opener: false },
     right: { ...contentDefaults, opener: false },
     bottom: { ...contentDefaults, opener: false }

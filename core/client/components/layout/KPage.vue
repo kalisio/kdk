@@ -18,7 +18,7 @@
       Managed stickies
       Be careful of the order
      -->
-    <!-- bottom pane -->
+    <!-- Bottom pane -->
     <q-page-sticky position="bottom" class="k-sticky">
       <div id="bottom-pane" v-show="hasBottomPaneComponents" class="column items-center">
         <KOpener id="bottom-opener" v-if="bottomPane.opener" v-model="isBottomPaneOpened" position="bottom" />
@@ -34,7 +34,7 @@
         </div>
       </div>
     </q-page-sticky>
-    <!-- right pane -->
+    <!-- Right pane -->
     <q-page-sticky position="right" class="k-sticky">
       <div id="right-pane" v-show="hasRightPaneComponents" class="row items-center">
         <KOpener id="right-opener" v-if="rightPane.opener" v-model="isRightPaneOpened" position="right" />
@@ -51,7 +51,7 @@
         </div>
       </div>
     </q-page-sticky>
-    <!-- top pane -->
+    <!-- Top pane -->
     <q-page-sticky position="top" class="k-sticky">
       <div id="top-pane" v-show="hasTopPaneComponents" class="column items-center">
         <div>
@@ -67,7 +67,7 @@
         <KOpener id="top-opener" v-if="topPane.opener" v-model="isTopPaneOpened" position="top" />
       </div>
     </q-page-sticky>
-    <!-- fab -->
+    <!-- Fab -->
     <q-page-sticky :position="fab.position" :offset="fab.offset" class="k-sticky">
       <KFab
         id="fab"
@@ -76,7 +76,7 @@
         :actions-align="fabBehaviour.actionsAlign"
       />
     </q-page-sticky>
-    <!-- windows -->
+    <!-- Windows -->
     <q-page-sticky position="top-left" :offset="leftWindow.position" class="k-sticky">
       <KWindow
         id="left-window"
@@ -113,23 +113,6 @@
         :style="`max-width: ${bottomWindowSize[0]}px; max-height: ${bottomWindowSize[1]};px`"
       />
     </q-page-sticky>
-    <!-- left pane -->
-    <q-page-sticky position="left" class="k-sticky">
-      <div id="left-pane" v-show="hasLeftPaneComponents" class="row items-center">
-        <div>
-          <KPanel
-            id="left-panel"
-            v-show="leftPane.visible"
-            :content="leftPane.components"
-            :mode="leftPane.mode"
-            direction="vertical"
-            class="k-left-pane"
-            @triggered="setLeftPaneVisible(false)"
-          />
-        </div>
-        <KOpener id="left-opener" v-if="leftPane.opener" v-model="isLeftPaneOpened" position="left" />
-      </div>
-    </q-page-sticky>
   </q-page>
 </template>
 
@@ -157,7 +140,6 @@ const emit = defineEmits(['content-resized'])
 // Data
 const page = Layout.getPage()
 const fab = Layout.getFab()
-const leftPane = Layout.getPane('left')
 const topPane = Layout.getPane('top')
 const rightPane = Layout.getPane('right')
 const bottomPane = Layout.getPane('bottom')
@@ -178,7 +160,7 @@ const contentStyleFunction = computed(() => {
   return {
     paddingTop: `${topPadding.value}px`,
     paddingBottom: `${bottomPadding.value}px`,
-    widht: `calc(100vw - ${widthOffset}px)`,
+    width: `calc(100vw - ${widthOffset}px)`,
     height: `calc(100vh - ${heightOffset}px)`
   }
 })
@@ -188,14 +170,6 @@ const isTopPaneOpened = computed({
   },
   set: function (value) {
     setTopPaneVisible(value)
-  }
-})
-const isLeftPaneOpened = computed({
-  get: function () {
-    return leftPane.visible
-  },
-  set: function (value) {
-    setLeftPaneVisible(value)
   }
 })
 const isRightPaneOpened = computed({
@@ -213,9 +187,6 @@ const isBottomPaneOpened = computed({
   set: function (value) {
     setBottomPaneVisible(value)
   }
-})
-const hasLeftPaneComponents = computed(() => {
-  return !_.isEmpty(leftPane.components)
 })
 const hasTopPaneComponents = computed(() => {
   return !_.isEmpty(topPane.components)
@@ -247,17 +218,6 @@ const fabBehaviour = computed(() => {
   }
 })
 
-// Watch
-watch(() => leftPane.visible, (visible) => {
-  if (visible) {
-    setTimeout(() => {
-      document.addEventListener('click', clickOutsideLeftPanelListener, true)
-    }, 500)
-  } else {
-    document.removeEventListener('click', clickOutsideLeftPanelListener, true)
-  }
-}, { immediate: true })
-
 // Functions
 function layoutOffsetListener (offset) {
   // Catch layout offset and returns default Quasar function. "offset" is a Number
@@ -281,21 +241,11 @@ function onBottomPaneResized (size) {
 function setTopPaneVisible (visible) {
   Layout.setPaneVisible('top', visible)
 }
-function setLeftPaneVisible (visible) {
-  Layout.setPaneVisible('left', visible)
-}
 function setRightPaneVisible (visible) {
   Layout.setPaneVisible('right', visible)
 }
 function setBottomPaneVisible (visible) {
   Layout.setPaneVisible('bottom', visible)
-}
-function clickOutsideLeftPanelListener (event) {
-  const leftPanelElement = document.getElementById('left-panel')
-  if (leftPanelElement && leftPanelElement.contains(event.target)) return
-  const leftOpenerElement = document.getElementById('left-opener')
-  if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
-  setLeftPaneVisible(false)
 }
 </script>
 
@@ -306,17 +256,13 @@ body {
 .k-sticky {
   z-index: $sticky-z-index;
 }
-.k-pane, .k-left-pane {
+.k-pane {
   background-color: #FFFFFF;
   border: solid 1px lightgrey;
   border-radius: 3px;
   position: relative;
 }
-.k-pane:hover, .k-left-pane:hover {
+.k-pane:hover {
   border: solid 1px $primary;
-}
-.k-left-pane {
-  height: 100vh;
-  width: $left-pane-width;
 }
 </style>

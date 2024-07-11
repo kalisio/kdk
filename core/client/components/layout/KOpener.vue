@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 
 // Props
@@ -47,27 +47,22 @@ const hasTouch = $q.platform.has.touch
 const isHovered = ref(false)
 const icon = ref(null)
 
-// Computed
-const isOpened = computed(() => {
-  return props.modelValue
-})
-
 // Functions
 function onMouseOver () {
   if (hasTouch) return
   isHovered.value = true
   switch (props.position) {
     case 'left':
-      icon.value = isOpened.value ? 'las la-angle-left' : 'las la-angle-right'
+      icon.value = props.modelValue ? 'las la-angle-left' : 'las la-angle-right'
       break
     case 'right':
-      icon.value = isOpened.value ? 'las la-angle-right' : 'las la-angle-left'
+      icon.value = props.modelValue ? 'las la-angle-right' : 'las la-angle-left'
       break
     case 'top':
-      icon.value = isOpened.value ? 'las la-angle-up' : 'las la-angle-down'
+      icon.value = props.modelValue ? 'las la-angle-up' : 'las la-angle-down'
       break
     default: // bottom
-      icon.value = isOpened.value ? 'las la-angle-down' : 'las la-angle-up'
+      icon.value = props.modelValue ? 'las la-angle-down' : 'las la-angle-up'
   }
 }
 function onMouseLeave () {
@@ -79,24 +74,24 @@ function onSwipe ({ evt, ...info }) {
   if (!info && !info.direction) return
   switch (props.position) {
     case 'left':
-      if (info.direction === 'left' && isOpened.value) onClick()
-      if (info.direction === 'right' && !isOpened.value) onClick()
+      if (info.direction === 'left' && props.modelValue) onClick()
+      if (info.direction === 'right' && !props.modelValue) onClick()
       break
     case 'right':
-      if (info.direction === 'left' && !isOpened.value) onClick()
-      if (info.direction === 'right' && isOpened.value) onClick()
+      if (info.direction === 'left' && !props.modelValue) onClick()
+      if (info.direction === 'right' && props.modelValue) onClick()
       break
     case 'top':
-      if (info.direction === 'up' && isOpened.value) onClick()
-      if (info.direction === 'down' && !isOpened.value) onClick()
+      if (info.direction === 'up' && props.modelValue) onClick()
+      if (info.direction === 'down' && !props.modelValue) onClick()
       break
     default: // bottom
-      if (info.direction === 'up' && !isOpened.value) onClick()
-      if (info.direction === 'down' && isOpened.value) onClick()
+      if (info.direction === 'up' && !props.modelValue) onClick()
+      if (info.direction === 'down' && props.modelValue) onClick()
   }
 }
 function onClick () {
-  emit('update:modelValue', !isOpened.value)
+  emit('update:modelValue', !props.modelValue)
 }
 </script>
 

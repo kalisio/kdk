@@ -1,11 +1,42 @@
 <template>
   <q-layout
-    v-if="layout"
-    v-bind="layout.options"
+    :view="layout.view"
   >
+    <!-- Left pane -->
+    <div v-if="hasLeftPaneComponents">
+      <q-page-sticky
+        v-if="leftPane.opener" 
+        position="left"
+        :offset="openerOffset"
+        class="k-sticky"
+      >
+        <KOpener
+          id="left-opener" 
+          v-model="isLeftPaneOpened" 
+          position="left" 
+        />
+      </q-page-sticky>
+      <q-drawer
+        id="left-pane"
+        v-model="isLeftPaneOpened"
+        :width="leftPane.width"
+        side="left"
+        overlay
+        no-swipe-open
+        no-swipe-close
+        no-swipe-backdrop
+      >
+        <KPanel
+          id="left-panel"
+          :content="leftPane.components"
+          :mode="leftPane.mode"
+          :filter="leftPane.filter"
+        />
+      </q-drawer>
+    </div>
     <!-- Header -->
     <q-header
-      v-if="header.components"
+      v-if="hasHeaderComponents"
       v-model="isHeaderVisible"
     >
       <KPanel
@@ -17,7 +48,7 @@
     </q-header>
     <!-- Footer -->
     <q-footer
-      v-if="footer.components"
+      v-if="hasFooterComponents"
       v-model="isFooterVisible"
     >
       <KPanel
@@ -35,16 +66,36 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Layout } from '../../layout'
+import KOpener from './KOpener.vue'
 import KPanel from '../KPanel.vue'
 
 // Data
 const layout = Layout.get()
+const leftPane = Layout.getPane('left')
 const header = Layout.getHeader()
 const footer = Layout.getFooter()
+const openerOffset = ref([0, 0])
 
-// Compputed
+// Computed
+const hasLeftPaneComponents = computed(() => {
+  return !_.isEmpty(leftPane.components)
+})
+const hasHeaderComponents = computed(() => {
+  return !_.isEmpty(header.components)
+})
+const hasFooterComponents = computed(() => {
+  return !_.isEmpty(footer.components)
+})
+const isLeftPaneOpened = computed({
+  get: function () {
+    return leftPane.visible
+  },
+  set: function (value) {
+    Layout.setPaneVisible('left', value)
+  }
+})
 const isHeaderVisible = computed({
   get: function () {
     return header.visible
@@ -61,4 +112,33 @@ const isFooterVisible = computed({
     Layout.setFooterVisible(value)
   }
 })
+
+// Functions
+function clickOutsideLeftPanelListener (event) {
+  const leftPanelElement = document.getElementById('left-panel')
+  if (leftPanelElement && leftPanelElement.contains(event.target)) return
+  const leftOpenerElement = document.getElementById('left-opener')
+  if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
+  Layout.setPaneVisible('left', false)
+}
+
+// Watch
+watch(() => leftPane.visible, (visible) => {
+  if (visible) {
+    setTimeout(() => {
+      openerOffset.value = [leftPane.width, 0]
+      document.addEventListener('click', clickOutsideLeftPanelListener, true)
+    }, 100)
+  } else {
+    document.removeEventListener('click', clickOutsideLeftPanelListener, true)
+    openerOffset.value = [0, 0]
+  }
+}, { immediate: true })
+
 </script>
+
+<style lang="scss">
+.k-sticky {
+  z-index: $sticky-z-index;
+}
+</style>
