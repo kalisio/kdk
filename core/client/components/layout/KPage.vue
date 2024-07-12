@@ -118,7 +118,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { Layout } from '../../layout.js'
 import KContent from '../KContent.vue'
 import KPanel from '../KPanel.vue'

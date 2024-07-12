@@ -5,15 +5,15 @@
     <!-- Left pane -->
     <div v-if="hasLeftPaneComponents">
       <q-page-sticky
-        v-if="leftPane.opener" 
+        v-if="leftPane.opener"
         position="left"
         :offset="openerOffset"
         class="k-sticky"
       >
         <KOpener
-          id="left-opener" 
-          v-model="isLeftPaneOpened" 
-          position="left" 
+          id="left-opener"
+          v-model="isLeftPaneOpened"
+          position="left"
         />
       </q-page-sticky>
       <q-drawer
@@ -66,6 +66,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
 import { Layout } from '../../layout'
 import KOpener from './KOpener.vue'
