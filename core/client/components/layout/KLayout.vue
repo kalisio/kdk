@@ -114,15 +114,6 @@ const isFooterVisible = computed({
   }
 })
 
-// Functions
-function clickOutsideLeftPanelListener (event) {
-  const leftPanelElement = document.getElementById('left-panel')
-  if (leftPanelElement && leftPanelElement.contains(event.target)) return
-  const leftOpenerElement = document.getElementById('left-opener')
-  if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
-  Layout.setPaneVisible('left', false)
-}
-
 // Watch
 watch(() => leftPane.visible, (visible) => {
   if (visible) {
@@ -136,6 +127,14 @@ watch(() => leftPane.visible, (visible) => {
   }
 }, { immediate: true })
 
+// Functions
+function clickOutsideLeftPanelListener (event) {
+  const leftPanelElement = document.getElementById('left-panel')
+  if (leftPanelElement && leftPanelElement.contains(event.target)) return
+  const leftOpenerElement = document.getElementById('left-opener')
+  if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
+  Layout.setPaneVisible('left', false)
+}
 </script>
 
 <style lang="scss">
