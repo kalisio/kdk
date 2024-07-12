@@ -166,7 +166,7 @@ The mixin automatically registers defaults styling for the the following type: `
   * layer style set on layer descriptor
   * engine style set on engine descriptor
 
-::: note
+::: tip
 All these style properties can be templated using [lodash string templates](https://lodash.com/docs/4.17.15#template). Their final values will be computed at creation/update time.
 :::
 
