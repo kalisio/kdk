@@ -57,10 +57,11 @@ If you add a `panes` option to your layer descriptor we will create the dedicate
 
 ## Map Style
 
-**KDK** intoduces its own style specification as described as below: 
+**KDK** intoduces its own style specification as described below:
 
 ```js
 style: {
+  visibility: true, // a boolean (or a string with "true" or "false" when templated) controlling feature's visibility, defaults to true
   // Line geometry
   line: {
     color: 'black' // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
@@ -87,7 +88,7 @@ style: {
     }
   },
   // Point geometry
-  marker: {
+  point: {
     shape: 'circle', // represent a registered SVG shape
     size: ['24px', '24px'], // array of HTML sizes
     radius: undefined,  // alternative to the size property.
@@ -119,7 +120,7 @@ style: {
       rotation: 0, // rotation to apply to render the text relative to the shape
       extraStyle: 'background-color: #1A1A1A' // additional CSS to be applied to text
     },
-   html: null // an HTML element to be rendered
+    html: null // an HTML element to be rendered
   }
 }
 ```
@@ -161,9 +162,14 @@ In addition and for backward compatibility, **KDK** supports an enhanced [simple
 | `icon-y-offset` | `style.point.icon.yOffset` |
 
 The mixin automatically registers defaults styling for the the following type: `point`, `line` and `polygon`. For each type, the following options are  merged with the following order of precedence:
-    * feature style:  **feature.style** or on [simple style spec options](https://github.com/mapbox/simplestyle-spec) **feature.properties**
-    * layer style set on layer descriptor
-    * engline style set on engine descriptot
+  * feature style:  **feature.style** or [simple style spec options](https://github.com/mapbox/simplestyle-spec) located in **feature.properties**
+  * layer style set on layer descriptor
+  * engine style set on engine descriptor
+
+::: note
+All these style properties can be templated using [lodash string templates](https://lodash.com/docs/4.17.15#template). Their final values will be computed at creation/update time.
+:::
+
 
 ::: details Example
 
