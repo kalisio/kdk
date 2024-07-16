@@ -29,3 +29,4 @@ This project is licensed under the MIT License - see the [license file](./LICENS
 This project is sponsored by 
 
 [![Kalisio](https://s3.eu-central-1.amazonaws.com/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
+
