@@ -44,19 +44,15 @@ export const pmtilesLayers = {
           }
           _.set(leafletOptions, entry.property, f)
         })
-        const isLabelSymbolizer = (rule) => rule.symbolizer.type.includes('Label') || rule.symbolizer.type.includes('Text')
+        const styleRules = _.map(style, rule => Object.assign(_.omit(rule, ['symbolizer']), {
+            symbolizer: new protomaps[rule.symbolizer.type](rule.symbolizer)
+          })
+        )
+        const isLabelSymbolizer = (rule) => typeof rule.symbolizer.place === 'function'
         const isNotLabelSymbolizer = (rule) => !isLabelSymbolizer(rule)
         // Support v1.x as well as v2.x
-        rules.paint_rules = rules.paintRules = _.map(_.filter(style, isNotLabelSymbolizer), paintRule => {
-          return Object.assign(_.omit(paintRule, ['symbolizer']), {
-            symbolizer: new protomaps[paintRule.symbolizer.type](paintRule.symbolizer)
-          })
-        })
-        rules.label_rules = rules.labelRules = _.map(_.filter(style, isLabelSymbolizer), labelRule => {
-          return Object.assign(_.omit(labelRule, ['symbolizer']), {
-            symbolizer: new protomaps[labelRule.symbolizer.type](labelRule.symbolizer)
-          })
-        })
+        rules.paint_rules = rules.paintRules = _.filter(styleRules, isNotLabelSymbolizer)
+        rules.label_rules = rules.labelRules = _.filter(styleRules, isLabelSymbolizer)
       }
       
       return this.createLeafletLayer({
