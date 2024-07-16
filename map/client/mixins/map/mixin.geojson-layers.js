@@ -599,7 +599,13 @@ export const geojsonLayers = {
       if (cachedGeojson) {
         if (isInMemoryLayer(layer)) {
           // Restore geojson data for in-memory layers that was hidden
-          this.updateLayer(layer.name, cachedGeojson)
+          // Directly deal with the leaflet layer instead of calling updateLayer, we are just restoring data
+          // Handle case where there's clustering on top (cf. updateLayer)
+          if (typeof engineLayer.getLayers === 'function') {
+            const container = engineLayer
+            engineLayer = container.getLayers().find(layer => layer._container === container)
+          }
+          engineLayer._onNewData(false, cachedGeojson)
         } else {
           // Clear cache since layer is not in memory anymore
           delete this.geojsonCache[layer.name]
