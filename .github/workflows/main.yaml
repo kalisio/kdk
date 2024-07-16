@@ -60,7 +60,7 @@ jobs:
       - name: Setup workspace
         env:
           KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
-        run: bash ./scripts/setup_workspace.sh -n 18
+        run: bash ./scripts/setup_workspace.sh -k nokli -n 18
       - name: Build docs
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
