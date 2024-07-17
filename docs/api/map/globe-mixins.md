@@ -33,21 +33,21 @@ This mixin also adds the following internal data properties:
 ## Globe Style
 
 Make it possible to setup Cesium entities objects with style based on (Geo)Json (feature) properties stored in entities:
-* **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Cesium style options](https://cesiumjs.org/Cesium/Build/Documentation/GeoJsonDataSource.html#.load)
+* **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Cesium style options](https://cesium.com/learn/cesiumjs/ref-doc/GeoJsonDataSource.html#.LoadOptions)
 * **convertToCesiumObjects(style)** helper function to convert from JSON description to Cesium objects
 
 Use **register/unregisterStyle(type, generator)** to (un)register a function generating a Cesium object depending on the given type:
-  * `entityStyle` => **f(entity, options)** returns a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
-  * `clusterStyle` => **f(entities, cluster, options)** returns a [Cesium cluster style object](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback)
+  * `entityStyle` => **f(entity, options)** returns a [Cesium entity style object](https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/)
+  * `clusterStyle` => **f(entities, cluster, options)** returns a [Cesium cluster style object](https://cesium.com/learn/cesiumjs/ref-doc/EntityCluster.html#.newClusterCallback)
 
 The mixin automatically registers defaults styling:
   * `entityStyle` => will create a style based on the following options merged with the following order of precedence
     * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
-    * [Cesium entity style options](https://cesium.com/docs/tutorials/creating-entities/) set on layer descriptor
-    * [Cesium entity style options](https://cesium.com/docs/tutorials/creating-entities/) set on the **entityStyle** property in the component options
+    * [Cesium entity style options](https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/) set on layer descriptor
+    * [Cesium entity style options](https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/) set on the **entityStyle** property in the component options
   * `clusterStyle` => will create a style based on the following options merged with the following order of precedence
-    * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on layer descriptor
-    * [Cesium cluster style options](https://cesiumjs.org/Cesium/Build/Documentation/EntityCluster.html#~newClusterCallback) set on the **clusterStyle** property in the component options
+    * [Cesium cluster style options](https://cesium.com/learn/cesiumjs/ref-doc/EntityCluster.html#.newClusterCallback) set on layer descriptor
+    * [Cesium cluster style options](https://cesium.com/learn/cesiumjs/ref-doc/EntityCluster.html#.newClusterCallback) set on the **clusterStyle** property in the component options
 
 Cesium styles often rely on dynamically created objects while the input styling configuration is a static JSON. As a consequence the following rules are used to convert from JSON to Cesium objects:
 * constants are expressed as strings starting with `'Cesium.'`
@@ -78,7 +78,7 @@ ellipse: {
 
 ## Globe Popup
 
-Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as popups based on GeoJson feature properties stored in entities. Use **register/unregisterStyle(`popup`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
+Make it possible to generate [Cesium labels](https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html) as popups based on GeoJson feature properties stored in entities. Use **register/unregisterStyle(`popup`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/)
 
 The mixin automatically registers a default generator that will create a popup displaying a property name/value table based on the following options with the following order of precedence
   * **popup**: set on **entity.properties** or layer descriptor or in the **popup** property of component options
@@ -86,7 +86,7 @@ The mixin automatically registers a default generator that will create a popup d
     * **omit**: array of property names not to appear in the popup
     * **template**: [Lodash template](https://lodash.com/docs/#template) to generate popup content with `feature`, its `properties` and translation function `$t` as context
     * **html**: HTML content of the popup, if provided will override default display
-    * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
+    * **options**: Cesium [label options](https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html)
 
 ::: tip
 If you want to disable a default popup configuration like `popup: { }` (i.e. display all properties) on a per-layer basis you have to explicitely unset it on your layer options using `popup: null` or `popup: false`.
@@ -94,14 +94,14 @@ If you want to disable a default popup configuration like `popup: { }` (i.e. dis
 
 ## Globe Tooltip
 
-Make it possible to generate [Cesium labels](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html) as tooltips based on GeoJson feature properties stored in entities. Use **register/unregisterStyle(`tooltip`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/docs/tutorials/creating-entities/)
+Make it possible to generate [Cesium labels](https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html) as tooltips based on GeoJson feature properties stored in entities. Use **register/unregisterStyle(`tooltip`, generator)** to (un)register a function **f(entity, options)** returning a [Cesium entity style object](https://cesium.com/learn/cesiumjs-learn/cesiumjs-creating-entities/)
 
 The mixin automatically registers a default generator that will create a tooltip based on the following options with the following order of precedence
   * **tooltip**: set on **entity.properties** or layer descriptor or in the **tooltip** property of component options
     * **property**: property name to appear in the tooltip
     * **template**: [Lodash template](https://lodash.com/docs/#template) to generate tooltip content with `feature`, its `properties` and translation function `$t` as context
     * **html**: HTML content of the tooltip, if provided will override default display
-    * **options**: Cesium [label options](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html)
+    * **options**: Cesium [label options](https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html)
 
 ::: tip
 If you want to disable a default tooltip configuration like `tooltip: { property: 'name' }` (i.e. display all properties) on a per-layer basis you have to explicitely unset it on your layer options using `tooltip: null` or `tooltip: false`.
@@ -147,9 +147,10 @@ The following configuration illustrates a GeoJson marker cluster layer using opt
 ### Additional feature types
 
 The following options can be set as feature `properties` to manage more geometry types:
-* **wall** boolean set to `true` on a `LineString` will result in an additional [WallGraphics](https://cesiumjs.org/Cesium/Build/Documentation/WallGraphics.html?classFilter=wall), which uses the styling options of the feature
-* **geodesic** boolean set to `true` on a `Point` will result in a great circle represented as a [EllipseGraphics](https://cesiumjs.org/Cesium/Build/Documentation/EllipseGraphics.html), which **radius** must be specified in meters and uses the styling options of the feature
-* **icon-text** string set on a `Point` will result in a [LabelGraphics](https://cesiumjs.org/Cesium/Build/Documentation/LabelGraphics.html?classFilter=label) instead of a [BillboardGraphics](https://cesiumjs.org/Cesium/Build/Documentation/BillboardGraphics.html?classFilter=bill), which uses the styling options of the feature
+* **wall** boolean set to `true` on a `LineString` will result in an additional [WallGraphics](https://cesium.com/learn/cesiumjs/ref-doc/WallGraphics.html), which uses the styling options of the feature
+* **corridor** boolean set to `true` on a `LineString` will result in a [CorridorGraphics](https://cesium.com/learn/cesiumjs/ref-doc/CorridorGraphics.html) instead, which uses the styling options of the feature
+* **geodesic** boolean set to `true` on a `Point` will result in a great circle represented as a [EllipseGraphics](https://cesium.com/learn/cesiumjs/ref-doc/EllipseGraphics.html), which **radius** must be specified in meters and uses the styling options of the feature
+* **icon-text** string set on a `Point` will result in a [LabelGraphics](https://cesium.com/learn/cesiumjs/ref-doc/LabelGraphics.html) instead of a [BillboardGraphics](https://cesium.com/learn/cesiumjs/ref-doc/BillboardGraphics.html), which uses the styling options of the feature
 
 ![Geodesic feature type](../../.vitepress/public/images/great-circle-3D.png)
 

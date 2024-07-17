@@ -8,8 +8,11 @@ import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInM
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
 
-function getWallEntityId (id) {
-  return id + '-wall'
+// Custom entity types that can be created from a base entity like eg a polyline
+const CustomTypes = ['wall', 'corridor']
+// Generate an id for a custom entity type, eg 'wall'
+function getCustomEntityId (id, type) {
+  return `${id}-${type}`
 }
 
 function updateGeoJsonEntity(source, destination) {
@@ -44,10 +47,12 @@ export const geojsonLayers = {
         let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         features.forEach(feature => {
           const id = getFeatureId(feature, options)
-          const wallId = getWallEntityId(id)
-          if (dataSource.entities.getById(id)) dataSource.entities.removeById(id)
-          // Take care that in case of a wall entity we add it in addition to the original line
-          if (dataSource.entities.getById(wallId)) dataSource.entities.removeById(wallId)
+          CustomTypes.forEach(type => {
+            const customId = getCustomEntityId(id, type)
+            if (dataSource.entities.getById(id)) dataSource.entities.removeById(id)
+            // Take care that in case of a custom entity we add it in addition to or instead the original line
+            if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
+          })
         })
         return
       }
@@ -66,10 +71,12 @@ export const geojsonLayers = {
       if (_.get(updateOptions, 'removeMissing', cesiumOptions.removeMissing)) {
         dataSource.entities.values.forEach(entity => {
           const id = entity.id
-          const wallId = getWallEntityId(id)
-          if (!loadingDataSource.entities.getById(id)) dataSource.entities.removeById(id)
-          // Take care that in case of a wall entity we add it in addition to the original line
-          if (dataSource.entities.getById(wallId)) dataSource.entities.removeById(wallId)
+          CustomTypes.forEach(type => {
+            const customId = getCustomEntityId(id, type)
+            if (!loadingDataSource.entities.getById(id)) dataSource.entities.removeById(id)
+            // Take care that in case of a custom entity we add it in addition to or instead the original line
+            if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
+          })
         })
       }
       // Process specific entities
@@ -108,7 +115,7 @@ export const geojsonLayers = {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
           // This one will come in addition to the original line
-          const wallId = getWallEntityId(entity.id)
+          const wallId = getCustomEntityId(entity.id, 'wall')
           entitiesToAdd.push({
             id: wallId,
             parent: entity,
@@ -123,6 +130,29 @@ export const geojsonLayers = {
               outline: new ConstantProperty(true)
             }
           })
+        }
+        // Corridors
+        const corridor = _.get(properties, 'corridor')
+        if (corridor && entity.polyline) {
+          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
+          // Simply push the entity, other options like width be set using styling options
+          // This one will come in replacement to the original line
+          const corridorId = getCustomEntityId(entity.id, 'corridor')
+          entitiesToAdd.push({
+            id: corridorId,
+            parent: entity,
+            name: entity.name ? entity.name : corridorId,
+            description: entity.description.getValue(0),
+            properties: entity.properties.getValue(0),
+            corridor: {
+              positions: entity.polyline.positions.getValue(0),
+              material: new ColorMaterialProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
+              outlineWidth: strokeWidth,
+              outline: new ConstantProperty(true)
+            }
+          })
+          entitiesToRemove.push(entity)
         }
         // Billboard with 'none' shape should be removed as Cesium creates it even if the maki icon id is unknown
         if (entity.billboard && (_.get(properties, 'marker-symbol') === 'none')) {
