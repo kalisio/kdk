@@ -24,6 +24,8 @@ export const style = {
         }
         // Handle specific case of orientation
         if (style.orientation) entity.orientation = style.orientation
+        // Handle specific case of visibility
+        if (_.has(style, 'visibility')) entity.show = style.visibility
       }
     },
     applyClusterStyle (entities, cluster, options) {
