@@ -379,6 +379,28 @@ export const baseGlobe = {
       const east = CesiumMath.toDegrees(bounds.east)
       return [[south, west], [north, east]]
     },
+    trackEntity (entityId, options = {}) {
+      // Check for entities directly added to the viewer
+      this.viewer.entities.values.forEach(entity => {
+        if (entityId === entity.id) {
+          // Make the camera track this entity
+          this.viewer.trackedEntity = entity
+        }
+      })
+      // Check for external data sources
+      for (let i = 0; i < this.viewer.dataSources.length; i++) {
+        const source = this.viewer.dataSources.get(i)
+        source.entities.values.forEach(entity => {
+          if (entityId === entity.id) {
+            // Make the camera track this entity
+            this.viewer.trackedEntity = entity
+          }
+        })
+      }
+    },
+    untrackEntity () {
+      this.viewer.trackedEntity = null
+    },
     async showUserLocation () {
       if (Geolocation.hasLocation()) {
         const longitude = Geolocation.getLongitude()
