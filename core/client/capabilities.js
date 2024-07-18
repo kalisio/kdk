@@ -9,7 +9,7 @@ export const Capabilities = {
   async initialize () {
     const capabilities = await window.fetch(api.getBaseUrl() + _.get(config, 'apiPath') + '/capabilities')
     const content = await capabilities.json()
-    logger.debug('[KDK] fetched capabilities:', JSON.stringify(content, null, 4))
+    logger.debug('[KDK] Fetched capabilities:', JSON.stringify(content, null, 4))
     this.content = content
     // Backend might override some defaults in client config
     _.forOwn(_.pick(content, ['gateway']), (value, key) => {

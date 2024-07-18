@@ -125,7 +125,7 @@
     "papaparse": "^5.4.1",
     "password-generator": "^2.3.2",
     "password-validator": "^4.0.0",
-    "sanitize-html": "^2.3.2",
+    "sanitize-html": "^2.13.0",
     "sift": "^8.0.0",
     "superagent": "^5.1.0",
     "tiny-emitter": "^2.1.0",

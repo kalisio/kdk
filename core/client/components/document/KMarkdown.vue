@@ -1,24 +1,23 @@
 <template>
-  <KHtml
-    v-if="html"
-    :content="html"
+  <div 
+    v-if="html" 
+    v-html="html" 
   />
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
-import showdown from 'showdown'
-import KHtml from './KHtml.vue'
+import { Document } from '../../document.js'
 
 // Props
 const props = defineProps({
-  content: {
+  url: {
     type: String,
-    default: undefined
+    default: null
   },
-  options: {
-    type: Object,
-    default: () => {}
+  localize: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -26,12 +25,9 @@ const props = defineProps({
 const html = ref(null)
 
 // Watch
-watch(() => [props.content, props.options], async (value) => {
-  if (props.content) {
-    const converter = new showdown.Converter(props.options)
-    html.value = converter.makeHtml(props.content)
-  } else {
-    html.value = null
-  }
+watch(() => props.url, async (value) => {
+  const response = await Document.fetchUrl(value, props.localize)
+  if (response?.ok) html.value = Document.sanitizeHtml(Document.convertMdToHtml(await response.text()))
+  else html.value = null
 }, { immediate: true })
 </script>

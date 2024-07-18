@@ -12,6 +12,7 @@ import { Units } from './units.js'
 import { Layout } from './layout.js'
 import { Filter } from './filter.js'
 import { Sorter } from './sorter.js'
+import { Document } from './document.js'
 import { Exporter } from './exporter.js'
 import { Reader } from './reader.js'
 import services from './services/index.js'
@@ -72,6 +73,7 @@ export default async function initialize () {
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()
+  Document.initialize()
   Exporter.initialize(_.get(config, 'exporter'))
   Schema.initialize(_.get(config, 'schema'))
 
@@ -80,7 +82,7 @@ export default async function initialize () {
 
   // Register the readers
   _.forEach(_.get(config, 'readers.core', []), entry => {
-    logger.debug(`[KDK] registering mime types [${entry.mimeTypes}] to reader ${entry.reader}`)
+    logger.debug(`[KDK] Registering reader ${entry.reader} for [${entry.mimeTypes}] mime types`)
     Reader.register(entry.mimeTypes, readers[entry.reader])
   })
 
