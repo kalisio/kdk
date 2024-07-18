@@ -13,7 +13,10 @@ export const Document = {
         htm: 'document/KHtml',
         html: 'document/KHtml',
         md: 'document/KMarkdown',
-        pdf: 'document/KPdf'
+        pdf: 'document/KPdf',
+        jpg: 'document/KImage',
+        jpeg: 'document/KImage',
+        png: 'document/KImage'
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat([ 'img' ])
