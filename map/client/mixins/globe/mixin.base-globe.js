@@ -5,7 +5,7 @@ import Emitter from 'tiny-emitter'
 import { getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Math as CesiumMath } from 'cesium'
+         exportKml, VerticalOrigin, Transforms, Matrix3, Matrix4, Math as CesiumMath } from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
 import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
@@ -353,6 +353,9 @@ export const baseGlobe = {
       const duration = _.get(options, 'duration', 0)
       const destination = Cartesian3.fromDegrees(longitude, latitude, altitude || center.height)
       const offset = new Cartesian3(_.get(options, 'offset.x', 0), _.get(options, 'offset.y', 0), _.get(options, 'offset.z', 0))
+      const rotation = new Matrix3()
+      Matrix4.getRotation(Transforms.eastNorthUpToFixedFrame(destination, Ellipsoid.WGS84), rotation)
+      Matrix3.multiplyByVector(rotation, offset, offset)
       const target = {
         destination: Cartesian3.add(destination, offset, destination),
         orientation: {
