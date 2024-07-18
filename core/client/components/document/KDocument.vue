@@ -19,13 +19,13 @@ const props = defineProps({
     type: String,
     default: null
   },
-  options: {
-    type: Object,
-    default: () => null
-  },
   localize: {
     type: Boolean,
     default: true
+  },
+  options: {
+    type: Object,
+    default: () => null
   }
 })
 

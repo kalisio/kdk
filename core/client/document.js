@@ -16,9 +16,9 @@ export const Document = {
         pdf: 'document/KPdf'
       },
       htmlSanitizer: {
+        allowedTags: sanitize.defaults.allowedTags.concat([ 'img' ])
       },
-      mdConverter: {
-      }
+      mdConverter: {}
     })
     logger.debug('[KDK] Document options:', JSON.stringify(this.options, null, 4))
   },
