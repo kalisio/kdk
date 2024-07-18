@@ -10,16 +10,14 @@ export const Document = {
     this.options = _.get(config, 'document')
     this.options = _.defaultsDeep(this.options, {
       viewers: {
-        'htm': 'document/KHtml',
-        'html': 'document/KHtml',
-        'md': 'document/KMarkdown',
-        'pdf': 'document/KPdf'
+        htm: 'document/KHtml',
+        html: 'document/KHtml',
+        md: 'document/KMarkdown',
+        pdf: 'document/KPdf'
       },
       htmlSanitizer: {
-
       },
       mdConverter: {
-
       }
     })
     logger.debug('[KDK] Document options:', JSON.stringify(this.options, null, 4))
@@ -35,7 +33,7 @@ export const Document = {
     return sanitize(html, this.options.htmlSanitizer)
   },
   convertMdToHtml (md) {
-    if (_.isNil(html)) return null
+    if (_.isNil(md)) return null
     const converter = new showdown.Converter(this.options.mdConverter)
     return converter.makeHtml(md)
   },
@@ -56,5 +54,5 @@ export const Document = {
       }
     }
     return null
-  } 
+  }
 }

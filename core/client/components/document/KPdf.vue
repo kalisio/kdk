@@ -1,12 +1,12 @@
 <template>
-  <div 
-    id="viewer" 
+  <div
+    id="viewer"
     class="fit"
   />
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { watch, onMounted } from 'vue'
 import { Viewer } from '@pdfme/ui'
 import { Document } from '../../document.js'
 
@@ -24,19 +24,19 @@ const props = defineProps({
 
 // Data
 let domViewer
-const pdf = ref(null)
+let viewer
 
 // Watch
 watch(() => props.url, async (value) => {
   const response = await Document.fetchUrl(value, props.localize)
   if (response?.ok) {
-    const blob  = await response.blob()
+    const blob = await response.blob()
     const reader = new FileReader()
-      reader.onloadend = () => {
-        new Viewer({ domContainer: domViewer, template: { basePdf: reader.result, schemas: [] }, inputs: [{ fake: 'fake' }] })
-      }
-    reader.readAsDataURL(blob);
-  } else pdf.value = null
+    reader.onloadend = () => {
+      viewer = new Viewer({ domContainer: domViewer, template: { basePdf: reader.result, schemas: [] }, inputs: [{ fake: 'fake' }] })
+    }
+    reader.readAsDataURL(blob)
+  } else viewer = null
 }, { immediate: true })
 
 // Hook

@@ -1,7 +1,7 @@
 <template>
-  <div 
-    v-if="html" 
-    v-html="html" 
+  <div
+    v-if="html"
+    v-html="html"
   />
 </template>
 
