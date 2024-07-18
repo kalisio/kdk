@@ -351,8 +351,10 @@ export const baseGlobe = {
     center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0, options = {}) {
       const center = this.viewer.camera.positionCartographic
       const duration = _.get(options, 'duration', 0)
+      const destination = Cartesian3.fromDegrees(longitude, latitude, altitude || center.height)
+      const offset = new Cartesian3(_.get(options, 'offset.x', 0), _.get(options, 'offset.y', 0), _.get(options, 'offset.z', 0))
       const target = {
-        destination: Cartesian3.fromDegrees(longitude, latitude, altitude || center.height),
+        destination: Cartesian3.add(destination, offset, destination),
         orientation: {
           heading: CesiumMath.toRadians(heading),
           pitch: CesiumMath.toRadians(pitch),
