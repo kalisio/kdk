@@ -5,7 +5,7 @@ import Emitter from 'tiny-emitter'
 import { getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Transforms, Matrix3, Matrix4, Math as CesiumMath } from 'cesium'
+         exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, Matrix3, Matrix4, DebugCameraPrimitive, DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
 import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
@@ -30,7 +30,7 @@ export const baseGlobe = {
     refreshGlobe () {
     },
     setupGlobe (domEl, token, options) {
-      const viewerOptions = options ||
+      this.viewerOptions = options ||
         // For activities
         _.get(this, 'activityOptions.engine.viewer', {
           sceneMode: 3, // SceneMode.COLUMBUS_VIEW = 1, SceneMode.SCENE3D = 3,
@@ -50,21 +50,22 @@ export const baseGlobe = {
       // If we don't need ion
       else Ion.defaultAccessToken = ''
       // Initialize the globe
-      Object.assign(viewerOptions, {
+      Object.assign(this.viewerOptions, {
         imageryProviderViewModels: [],
         terrainProviderViewModels: []
       })
-      this.viewer = new Viewer(domEl, viewerOptions)
-      const backgroundColor = _.get(viewerOptions, 'backgroundColor')
+      this.viewer = new Viewer(domEl, this.viewerOptions)
+      const backgroundColor = _.get(this.viewerOptions, 'backgroundColor')
       this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Color.BLACK)
       if (this.viewer.scene.globe) {
-        const baseColor = _.get(viewerOptions, 'baseColor')
+        const baseColor = _.get(this.viewerOptions, 'baseColor')
         this.viewer.scene.globe.baseColor = (baseColor ? createCesiumObject('Color', ...baseColor) : Color.BLACK)
-        const undergroundColor = _.get(viewerOptions, 'undergroundColor')
+        const undergroundColor = _.get(this.viewerOptions, 'undergroundColor')
         this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Color.BLACK)
       }
       // Debug mode ?
-      if (viewerOptions.debug) this.viewer.extend(viewerCesiumInspectorMixin)
+      //this.viewerOptions.debug = true
+      if (this.viewerOptions.debug) this.viewer.extend(viewerCesiumInspectorMixin)
       // Cesium always create a default provider when a globe is used
       if (this.viewer.scene.imageryLayers) this.viewer.scene.imageryLayers.removeAll()
       // Add defaults handler
@@ -351,22 +352,71 @@ export const baseGlobe = {
     center (longitude, latitude, altitude, heading = 0, pitch = -90, roll = 0, options = {}) {
       const center = this.viewer.camera.positionCartographic
       const duration = _.get(options, 'duration', 0)
+      // This is the "base" frame, position with orientation in east north up frame at position
       const destination = Cartesian3.fromDegrees(longitude, latitude, altitude || center.height)
-      const offset = new Cartesian3(_.get(options, 'offset.x', 0), _.get(options, 'offset.y', 0), _.get(options, 'offset.z', 0))
-      const rotation = new Matrix3()
-      Matrix4.getRotation(Transforms.eastNorthUpToFixedFrame(destination, Ellipsoid.WGS84), rotation)
-      Matrix3.multiplyByVector(rotation, offset, offset)
+      const orientation = new HeadingPitchRoll(
+        CesiumMath.toRadians(heading),
+        CesiumMath.toRadians(pitch),
+        CesiumMath.toRadians(roll))
+      // An offset can be provided relative to the base frame as an additional translation/rotation
+      // Typically the base frame can be set to "follow" a vehicle with its GPS position + heading.
+      // Then an offset can be used to take driver's position into account relative to the GPS,
+      // and simulate the moving head of the driver with an additional rotation
+      const destinationOffset = new Cartesian3(
+        _.get(options, 'offset.x', 0),
+        _.get(options, 'offset.y', 0),
+        _.get(options, 'offset.z', 0))
+      const orientationOffset = new HeadingPitchRoll(
+        CesiumMath.toRadians(_.get(options, 'offset.heading', 0)),
+        CesiumMath.toRadians(_.get(options, 'offset.pitch', 0)),
+        CesiumMath.toRadians(_.get(options, 'offset.roll', 0)))
       const target = {
-        destination: Cartesian3.add(destination, offset, destination),
+        destination,
         orientation: {
-          heading: CesiumMath.toRadians(heading),
-          pitch: CesiumMath.toRadians(pitch),
-          roll: CesiumMath.toRadians(roll)
+          heading: orientation.heading,
+          pitch: orientation.pitch,
+          roll: orientation.roll
         },
         duration
       }
       if (duration) this.viewer.camera.flyTo(target)
       else this.viewer.camera.setView(target)
+      this.viewer.camera.move(this.viewer.camera.right, destinationOffset.x)
+      this.viewer.camera.move(this.viewer.camera.direction, destinationOffset.y)
+      this.viewer.camera.move(this.viewer.camera.up, destinationOffset.z)
+      this.viewer.camera.look(this.viewer.camera.up, orientationOffset.heading)
+      this.viewer.camera.look(this.viewer.camera.direction, orientationOffset.pitch)
+      this.viewer.camera.look(this.viewer.camera.right, orientationOffset.roll)
+      if (this.viewerOptions.debug) {
+        const baseQuaternion = Transforms.headingPitchRollQuaternion(destination, orientation, Ellipsoid.WGS84, Transforms.eastNorthUpToFixedFrame)
+        const cameraQuaternion = Transforms.headingPitchRollQuaternion(this.viewer.camera.positionWC,
+        new HeadingPitchRoll(this.viewer.camera.heading, this.viewer.camera.pitch, this.viewer.camera.roll), Ellipsoid.WGS84, Transforms.eastNorthUpToFixedFrame)
+        if (this.baseFrameDebug) {
+          this.baseFrameDebug.modelMatrix = Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(baseQuaternion), destination)
+          this.finalFrameDebug.modelMatrix = Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(cameraQuaternion), this.viewer.camera.positionWC)
+        } else {
+          this.baseFrameDebug = new DebugModelMatrixPrimitive({
+            modelMatrix : Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(baseQuaternion), destination),
+            length : 25,
+            width : 5
+          })
+          this.viewer.scene.primitives.add(this.baseFrameDebug)
+          this.finalFrameDebug = new DebugModelMatrixPrimitive({
+            modelMatrix : Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(cameraQuaternion), this.viewer.camera.positionWC),
+            length : 25,
+            width : 5
+          })
+          this.viewer.scene.primitives.add(this.finalFrameDebug)
+        }
+        // As we don't want to continue tracking the camera after we need to recreate one each time
+        if (this.cameraDebug) this.viewer.scene.primitives.remove(this.cameraDebug)
+        this.cameraDebug = new DebugCameraPrimitive({
+          camera : this.viewer.camera,
+          color : Cesium.Color.YELLOW,
+          updateOnChange: false
+        })
+        this.viewer.scene.primitives.add(this.cameraDebug)
+      }
     },
     getCenter () {
       const center = this.viewer.camera.positionCartographic
@@ -383,6 +433,20 @@ export const baseGlobe = {
       const north = CesiumMath.toDegrees(bounds.north)
       const east = CesiumMath.toDegrees(bounds.east)
       return [[south, west], [north, east]]
+    },
+    onEntityTracked (time) {
+      if (this.viewerOptions.debug) {
+        if (this.trackedFrameDebug) {
+          this.trackedFrameDebug.modelMatrix = this.viewer.trackedEntity.computeModelMatrix(time)
+        } else {
+          this.trackedFrameDebug = new DebugModelMatrixPrimitive({
+            modelMatrix : this.viewer.trackedEntity.computeModelMatrix(time),
+            length : 25,
+            width : 5
+          })
+          this.viewer.scene.primitives.add(this.trackedFrameDebug)
+        }
+      }
     },
     trackEntity (entityId, options = {}) {
       // Check for entities directly added to the viewer
@@ -402,8 +466,15 @@ export const baseGlobe = {
           }
         })
       }
+      if (this.viewer.trackedEntity) {
+        this.viewer.clock.onTick.addEventListener(this.onEntityTracked)
+      }
     },
     untrackEntity () {
+      if (this.viewer.trackedEntity) {
+        if (this.trackedFrameDebug) this.viewer.scene.primitives.remove(this.trackedFrameDebug)
+        this.viewer.clock.onTick.removeEventListener(this.onEntityTracked)
+      }
       this.viewer.trackedEntity = null
     },
     async showUserLocation () {
