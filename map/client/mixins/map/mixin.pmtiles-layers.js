@@ -4,7 +4,7 @@ import moment from 'moment'
 import L from 'leaflet'
 import * as protomaps from 'protomaps-leaflet'
 import { mapbox_style } from '@kalisio/leaflet-pmtiles'
-import { Time, Units } from '../../../../core/client/index.js'
+import { Time, Units, TemplateContext } from '../../../../core/client/index.js'
 
 export const pmtilesLayers = {
   methods: {
@@ -39,7 +39,7 @@ export const pmtilesLayers = {
         leafletOptions.template.forEach(entry => {
           // protomaps allows property functions with zomm/feature as input
           const f = (zoom, feature) => {
-            const context = { properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }
+            const context = Object.assign({ properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }, TemplateContext.get())
             return entry.property.endsWith('filter') ? (entry.compiler(context) === 'true'): entry.compiler(context)
           }
           _.set(leafletOptions, entry.property, f)
