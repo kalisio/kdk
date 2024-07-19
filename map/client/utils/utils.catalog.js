@@ -35,6 +35,7 @@ export async function setEngineJwt (layers, planetApi) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'iconUrl', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'leaflet.source', gatewayUrl, jwtField, jwt)
+      setUrlJwt(layer, 'leaflet.url', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'opendap.url', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'geotiff.url', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'wfs.url', gatewayUrl, jwtField, jwt)
