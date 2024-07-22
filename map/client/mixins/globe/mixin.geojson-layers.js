@@ -242,8 +242,11 @@ export const geojsonLayers = {
         // We cannot access data outside the properties object of a feature in Cesium
         // As a consequence we copy back any style information inside
         // We need to convert to simple-style spec as cesium manages this only
-        // We also need to merge all styling properties as some entities requires eg both line/polygon style (wall polylines)
+        // We also need to merge all styling properties as some entities requires eg both line/polygon style (wall polylines or corridor polygons)
         const simpleStyle = Object.assign(getPointSimpleStyle(feature, options, engine), getLineSimpleStyle(feature, options, engine), getPolygonSimpleStyle(feature, options, engine))
+        // Manage our extended simple-style spec
+        const text = _.get(feature, 'style.text.label')
+        if (text) simpleStyle['icon-text'] = text
         if (!feature.properties) feature.properties = simpleStyle
         else Object.assign(feature.properties, simpleStyle)
       }
