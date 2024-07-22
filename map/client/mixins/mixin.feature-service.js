@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import sift from 'sift'
 import { getType, getGeom } from '@turf/invariant'
 import logger from 'loglevel'
 import * as features from '../utils/utils.features.js'
@@ -97,7 +98,11 @@ export const featureService = {
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
       // As by default we update the whole layer in fetch and replace mode force add/update only mode
       // Can only apply to realtime layers as we need to force a data refresh
-      if (typeof this.updateLayer === 'function') this.updateLayer(layer.name, feature, { removeMissing: false })
+      if (typeof this.updateLayer === 'function') {
+        // Check if feature should be filtered or not according to layer base query
+        const filteredFeature = [feature].filter(sift(_.omit(layer.baseQuery || {}, ['$skip', '$sort', '$limit', '$select'])))
+        if (filteredFeature.length > 0) this.updateLayer(layer.name, feature, { removeMissing: false })
+      }
     },
     onFeaturesRemoved (feature) {
       // We only support single feature edition
@@ -108,7 +113,11 @@ export const featureService = {
       // Only possible when not edited by default
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
       // Can only apply to realtime layers as we need to force a data refresh
-      if (typeof this.updateLayer === 'function') this.updateLayer(layer.name, feature, { remove: true })
+      if (typeof this.updateLayer === 'function') {
+        // Check if feature should be filtered or not according to layer base query
+        const filteredFeature = [feature].filter(sift(_.omit(layer.baseQuery || {}, ['$skip', '$sort', '$limit', '$select'])))
+        if (filteredFeature.length > 0) this.updateLayer(layer.name, feature, { remove: true })
+      }
     }
   },
   created () {

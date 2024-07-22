@@ -317,14 +317,19 @@ export const activity = {
           // (eg style edition, etc.)
           // Here we find layer by ID as renaming could have occured from another client
           const layer = this.getLayerById(object._id)
+          let planetApi
+          if (layer && (typeof layer.getPlanetApi === 'function')) {
+            planetApi = layer.getPlanetApi()
+          }
           if (layer) {
             // Stop any running edition
             if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
             await this.removeCatalogLayer(layer)
           }
           if (event !== 'removed') {
-            // Do we need to inject a token ?
-            await setEngineJwt([object])
+            // Do we need to inject a token or restore planet API ?
+            if (planetApi) Object.assign(object, { getPlanetApi: () => planetApi })
+            await setEngineJwt([object], planetApi)
             await this.addCatalogLayer(object)
           }
           break
