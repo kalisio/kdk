@@ -38,6 +38,20 @@ export function removeStorageService (options = {}) {
   return app.removeService(app.getService('storage', options.context))
 }
 
+export function createMessagesService (options = {}) {
+  console.log(options)
+  const app = this
+  return app.createService('messages', Object.assign({
+    servicesPath,
+    modelsPath
+  }, options))
+}
+
+export function removeMessagesService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('messages', options.context))
+}
+
 export function createDatabasesService (options = {}) {
   const app = this
 
@@ -116,6 +130,12 @@ export default async function () {
       events: ['import-created', 'import-completed', 'export-created', 'export-completed']
     }, app)
     debug('\'import-export\' service created')
+  }
+
+  const messagesConfig = app.get('messages')
+  if (messagesConfig) {
+    await createMessagesService.call(app)
+    debug('\'messages\' service created')
   }
 
   const orgConfig = app.get('organisations')
