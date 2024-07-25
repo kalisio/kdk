@@ -42,7 +42,7 @@ export function useLayout () {
   
   // expose
   return {
-    layout: Layout,
+    Layout,
     configureLayout,
     clearLayout,
     ...additionalFunctions

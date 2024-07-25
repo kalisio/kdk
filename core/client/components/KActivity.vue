@@ -1,5 +1,5 @@
 <template>
-  <KPage>
+  <KPage padding>
     <template v-slot:page-content>
       <slot  />
     </template>
@@ -12,6 +12,7 @@ import logger from 'loglevel'
 import config from 'config'
 import { useActivity, useLayout } from '../composables'
 import KPage from './layout/KPage.vue'
+import { Layout } from '../layout'
 
 export default {
   components: {
@@ -25,6 +26,14 @@ export default {
     layout: {
       type: [Object, Function],
       default: () => null
+    },
+    mode: {
+      type: String,
+      default: null
+    },
+    padding: {
+      type: Boolean,
+      default: true
     }
   },
   setup (props) {
@@ -32,12 +41,21 @@ export default {
     logger.debug(`[KDK] Reading '${props.name}' activity options with key ${keyName}`)
     const options = _.get(config, keyName, {})
     const { setCurrentActivity } = useActivity(keyName, options)
-    const { configureLayout, clearLayout } = useLayout()
+    const { configureLayout, clearLayout, Layout } = useLayout()
     return {
       options,
       setCurrentActivity,
       configureLayout,
       clearLayout
+    }
+  },
+  watch: {
+    mode: {
+      // [!] cannot be immediate as it is required that the activity is configured first
+      handler (value) {
+        logger.debug(`[KDK] Setting layout un '${value}' mode`)
+        if (value) Layout.setMode(value)
+      }
     }
   },
   methods: {
@@ -54,6 +72,8 @@ export default {
       this.configureLayout(_.merge({}, this.options, customLayout), concreteActivity)
       // set the current activity
       this.setCurrentActivity(concreteActivity)
+      // apply the mode if needed
+      if (this.mode) Layout.setMode(this.mode)
     }
   },
   async mounted () {
