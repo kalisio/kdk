@@ -28,6 +28,9 @@ export function useLayout () {
       Layout.clearWindow(placement)
     })
   }
+  function setLayoutMode (mode) {
+    if (mode) Layout.setMode(mode)
+  }
 
   // immediate
   const additionalFunctions = {}
@@ -45,6 +48,7 @@ export function useLayout () {
     Layout,
     configureLayout,
     clearLayout,
+    setLayoutMode,
     ...additionalFunctions
   }
 }

@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { watch, onMounted } from 'vue'
 import { Viewer } from '@pdfme/ui'
 import { Document } from '../../document.js'

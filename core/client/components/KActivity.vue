@@ -12,7 +12,6 @@ import logger from 'loglevel'
 import config from 'config'
 import { useActivity, useLayout } from '../composables'
 import KPage from './layout/KPage.vue'
-import { Layout } from '../layout'
 
 export default {
   components: {
@@ -41,12 +40,13 @@ export default {
     logger.debug(`[KDK] Reading '${props.name}' activity options with key ${keyName}`)
     const options = _.get(config, keyName, {})
     const { setCurrentActivity } = useActivity(keyName, options)
-    const { configureLayout, clearLayout, Layout } = useLayout()
+    const { configureLayout, clearLayout, setLayoutMode } = useLayout()
     return {
       options,
       setCurrentActivity,
       configureLayout,
-      clearLayout
+      clearLayout,
+      setLayoutMode
     }
   },
   watch: {
@@ -54,7 +54,7 @@ export default {
       // [!] cannot be immediate as it is required that the activity is configured first
       handler (value) {
         logger.debug(`[KDK] Setting layout un '${value}' mode`)
-        if (value) Layout.setMode(value)
+        if (value) this.setLayoutMode(value)
       }
     }
   },
@@ -73,7 +73,7 @@ export default {
       // set the current activity
       this.setCurrentActivity(concreteActivity)
       // apply the mode if needed
-      if (this.mode) Layout.setMode(this.mode)
+      if (this.mode) this.setLayoutMode(this.mode)
     }
   },
   async mounted () {
