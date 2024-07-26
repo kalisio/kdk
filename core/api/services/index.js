@@ -39,7 +39,6 @@ export function removeStorageService (options = {}) {
 }
 
 export function createMessagesService (options = {}) {
-  console.log(options)
   const app = this
   return app.createService('messages', Object.assign({
     servicesPath,

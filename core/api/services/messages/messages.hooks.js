@@ -1,9 +1,11 @@
+import commonHooks from 'feathers-hooks-common'
+
 export default {
   before: {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [commonHooks.setNow('createdAt')],
     update: [],
     patch: [],
     remove: []
