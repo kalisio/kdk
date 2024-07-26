@@ -1,7 +1,5 @@
 <template>
-  <KDateTimeRange :modelValue="toto"/>
   <div class="row justify-start items-center q-pl-sm q-pr-sm no-wrap">
-    
     <div id="start-date" class="k-datetime text-body2">
       {{ formattedStartDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_DATE_LABEL') }}</q-tooltip>
@@ -64,18 +62,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import KDateTimeRange from './KDateTimeRange.vue'
 import { Events } from '../../events'
 import { Time } from '../../time'
 import moment from 'moment'
-
-// Props
-const props = defineProps({
-  dense: {
-    type: Boolean,
-    default: false
-  }
-})
 
 // Data
 const timeRange = Time.getRange()
@@ -86,7 +75,7 @@ const startDate = ref(toQuasarDate(timeRange.start))
 const startTime = ref(toQuasarTime(timeRange.start))
 const endDate = ref(toQuasarDate(timeRange.end))
 const endTime = ref(toQuasarDate(timeRange.end))
-const toto = ref({start: timeRange.start,end:timeRange.end})
+
 // Computed
 const start = computed(() => {
   const date = fromQuasarDate(startDate.value, dateFormat)
