@@ -1,5 +1,7 @@
 <template>
+  <KDateTimeRange :modelValue="toto"/>
   <div class="row justify-start items-center q-pl-sm q-pr-sm no-wrap">
+    
     <div id="start-date" class="k-datetime text-body2">
       {{ formattedStartDate }}
       <q-tooltip>{{ $t('KAbsoluteTimeRange.PICK_START_DATE_LABEL') }}</q-tooltip>
@@ -60,13 +62,58 @@
   </div>
 </template>
 
-<script>
-import moment from 'moment'
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import KDateTimeRange from './KDateTimeRange.vue'
+import { Events } from '../../events'
 import { Time } from '../../time'
+import moment from 'moment'
 
+// Props
+const props = defineProps({
+  dense: {
+    type: Boolean,
+    default: false
+  }
+})
+
+// Data
+const timeRange = Time.getRange()
 const dateFormat = 'DD/MM/YYYY'
 const hourFormat = 'HH:mm'
 const checkDateFormat = 'YYYY/MM/DD'
+const startDate = ref(toQuasarDate(timeRange.start))
+const startTime = ref(toQuasarTime(timeRange.start))
+const endDate = ref(toQuasarDate(timeRange.end))
+const endTime = ref(toQuasarDate(timeRange.end))
+const toto = ref({start: timeRange.start,end:timeRange.end})
+// Computed
+const start = computed(() => {
+  const date = fromQuasarDate(startDate.value, dateFormat)
+  const time = fromQuasarTime(startTime.value, hourFormat)
+  date.set({ hour: time.hour(), minute: time.minute() })
+  return date.utc()
+})
+const formattedStartDate = computed(() => {
+  return Time.format(start.value, 'date.short')
+})
+const formattedStartTime = computed(() => {
+  return Time.format(start.value, 'time.long')
+})
+const end = computed(() => {
+  const date = fromQuasarDate(endDate.value, dateFormat)
+  const time = fromQuasarTime(endTime.value, hourFormat)
+  date.set({ hour: time.hour(), minute: time.minute() })
+  return date.utc()
+})
+const formattedEndDate = computed(() => {
+  return Time.format(end.value, 'date.short')
+})
+const formattedEndTime = computed(() => {
+  return Time.format(end.value, 'time.long')
+})
+
+// Functions
 
 // Convert from moment date/time to quasar format in local time zone
 function toQuasarDate (date) {
@@ -86,94 +133,47 @@ function fromQuasarTime (time, format) {
     ? moment.tz(time, format, Time.getFormatTimezone())
     : moment(time, format))
 }
-
-export default {
-  name: 'k-absolute-time-range',
-  props: {
-    dense: {
-      type: Boolean,
-      default: false
-    }
-  },
-  data () {
-    const { start, end } = Time.getRange()
-    return {
-      dateFormat,
-      hourFormat,
-      checkDateFormat,
-      startDate: toQuasarDate(start),
-      startTime: toQuasarTime(start),
-      endDate: toQuasarDate(end),
-      endTime: toQuasarTime(end)
-    }
-  },
-  computed: {
-    start () {
-      const date = fromQuasarDate(this.startDate, this.dateFormat)
-      const time = fromQuasarTime(this.startTime, this.hourFormat)
-      date.set({ hour: time.hour(), minute: time.minute() })
-      return date.utc()
-    },
-    formattedStartDate () {
-      return Time.format(this.start, 'date.short')
-    },
-    formattedStartTime () {
-      return Time.format(this.start, 'time.long')
-    },
-    end () {
-      const date = fromQuasarDate(this.endDate, this.dateFormat)
-      const time = fromQuasarTime(this.endTime, this.hourFormat)
-      date.set({ hour: time.hour(), minute: time.minute() })
-      return date.utc()
-    },
-    formattedEndDate () {
-      return Time.format(this.end, 'date.short')
-    },
-    formattedEndTime () {
-      return Time.format(this.end, 'time.long')
-    }
-  },
-  methods: {
-    checkStartDate (date) {
-      date = fromQuasarDate(date, this.checkDateFormat)
-      const time = fromQuasarTime(this.startTime, this.hourFormat)
-      date.set({ hour: time.hour(), minute: time.minute() })
-      return date.utc().isBefore(this.end)
-    },
-    checkStartTime (hour, minute) {
-      const date = fromQuasarDate(this.startDate, this.dateFormat)
-      date.set({ hour, minute })
-      return date.utc().isBefore(this.end)
-    },
-    checkEndDate (date) {
-      date = fromQuasarDate(date, this.checkDateFormat)
-      const time = fromQuasarTime(this.endTime, this.hourFormat)
-      date.set({ hour: time.hour(), minute: time.minute() })
-      return date.utc().isAfter(this.start)
-    },
-    checkEndTime (hour, minute) {
-      const date = fromQuasarDate(this.endDate, this.dateFormat)
-      date.set({ hour, minute })
-      return date.utc().isAfter(this.start)
-    },
-    onTimeRangeChanged () {
-      Time.patchRange({ start: this.start, end: this.end })
-    },
-    onTimeRangeUpdated () {
-      const { start, end } = Time.getRange()
-      this.startDate = toQuasarDate(start)
-      this.startTime = toQuasarTime(start)
-      this.endDate = toQuasarDate(end)
-      this.endTime = toQuasarTime(end)
-    }
-  },
-  created () {
-    this.$events.on('time-range-changed', () => this.onTimeRangeUpdated())
-  },
-  beforeUnmount () {
-    this.$events.off('time-range-changed', () => this.onTimeRangeUpdated())
-  }
+function checkStartDate (date) {
+  date = fromQuasarDate(date, checkDateFormat)
+  const time = fromQuasarTime(startTime.value, hourFormat)
+  date.set({ hour: time.hour(), minute: time.minute() })
+  return date.utc().isBefore(end.value)
 }
+function checkStartTime (hour, minute) {
+  const date = fromQuasarDate(startDate.value, dateFormat)
+  date.set({ hour, minute })
+  return date.utc().isBefore(end.value)
+}
+function checkEndDate (date) {
+  date = fromQuasarDate(date, checkDateFormat)
+  const time = fromQuasarTime(endTime.value, hourFormat)
+  date.set({ hour: time.hour(), minute: time.minute() })
+  return date.utc().isAfter(start.value)
+}
+function checkEndTime (hour, minute) {
+  const date = fromQuasarDate(endDate.value, dateFormat)
+  date.set({ hour, minute })
+  return date.utc().isAfter(start.value)
+}
+function onTimeRangeChanged () {
+  Time.patchRange({ start: start.value, end: end.value })
+}
+function onTimeRangeUpdated () {
+  const { start, end } = Time.getRange()
+  startDate.value = toQuasarDate(start)
+  startTime.value = toQuasarTime(start)
+  endDate.value = toQuasarDate(end)
+  endTime.value = toQuasarTime(end)
+}
+
+// Hooks
+onMounted(() => {
+  Events.on('time-range-changed', onTimeRangeUpdated)
+})
+
+onBeforeUnmount(() => {
+  Events.off('time-range-changed', onTimeRangeUpdated)
+})
 </script>
 
 <style lang="scss">
