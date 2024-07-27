@@ -1,6 +1,7 @@
 export * from './activity.js'
 export * from './collection.js'
 export * from './layout.js'
+export * from './messages.js'
 export * from './pwa.js'
 export * from './session.js'
 export * from './schema.js'
