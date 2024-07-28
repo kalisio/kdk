@@ -22,6 +22,7 @@
         :width="leftPane.width"
         side="left"
         overlay
+        :behavior="$q.platform.is.mobile ? 'mobile' : 'desktop'"
         no-swipe-open
         no-swipe-close
         no-swipe-backdrop
