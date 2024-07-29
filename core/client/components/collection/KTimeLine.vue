@@ -1,17 +1,35 @@
 <template>
   <div v-if="items.length > 0" class="scroll">
-    <q-timeline color="primary">
+    <q-timeline 
+      color="primary"
+      :layout="layout"
+      :side="side"
+    >
       <q-infinite-scroll 
         @load="onLoad" 
         :initial-index="1"
         :offset="100" 
       >
         <template v-for="(item, index) in items" :key="index">
-          <q-timeline-entry 
-            :title="`${index + 1} - ${item.title}`"
-            :subtitle="item.createdAt"
-          >
-            <div v-html="Document.sanitizeHtml(item.body)" />
+          <q-timeline-entry :color="computedColor">
+            <template v-slot:title>
+              <slot name="entry-title">
+                {{  getTitle(item) }}
+              </slot>
+            </template>
+            <template v-slot:subtitle>
+              <slot name="entry-subtitle">
+                <div class="row items-center">
+                  <div>{{  getTime(item) }}</div>
+                  <template v-for="tag in getTags(item)" :key="tag.name">
+                    <KChip :object="tag" />
+                  </template>
+                </div>
+              </slot>
+            </template>
+            <slot name="entry-content">
+              <div v-html="Document.sanitizeHtml(getContent(item))" />
+            </slot>
           </q-timeline-entry>
         </template>
         <template v-slot:loading>
@@ -43,11 +61,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import _ from 'lodash'
+import { ref, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { Document } from '../../document.js'
-import { loadComponent } from '../../utils'
+import KChip from '../KChip.vue'
 import KStamp from '../KStamp.vue'
 
 // Props
@@ -68,14 +87,6 @@ const props = defineProps({
     type: Object,
     default: () => {}
   },
-  renderer: {
-    type: Object,
-    default: () => {
-      return {
-        component: 'collection/KCard'
-      }
-    }
-  },
   processor: {
     type: Function,
     default: undefined
@@ -88,14 +99,28 @@ const props = defineProps({
     type: String,
     default: 'smart'
   },
+  layout: {
+    type: String,
+    default: 'dense',
+    validator: (value) => {
+      return ['dense', 'comfortable', 'loose'].includes(value)
+    }
+  },
+  side: {
+    type: String,
+    default: 'left',
+    validator: (value) => {
+      return ['left', 'right'].includes(value)
+    }
+  },
   schema: {
     type: Object,
     default: () => { 
       return {
         timeField: 'createdAt',
-        colorField: 'type',
-        titleField: 'title',
-        bodyField: 'body',
+        colorField: 'color',
+        titleField: 'name',
+        contentField: 'description',
         tagsField: 'tags'
       }
     }
@@ -109,15 +134,25 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(_.merge(toRefs(props), { appendItems: ref(true) }))
 let doneFunction = null
 
-// Computed
-const itemRenderer = computed(() => {
-  return loadComponent(props.renderer.component)
-})
-
 // Watch
 watch(items, onCollectionRefreshed)
 
 // Functions
+function getTime (item) {
+  return _.get(item, _.get(props.schema, 'timeField', 'createdAt'))
+}
+function getColor (item) {
+  return _.get(item, _.get(props.schema, 'colorField', 'color'))
+}
+function getTitle (item) {
+  return _.get(item, _.get(props.schema, 'titleField', 'name'))
+}
+function getContent (item) {
+  return _.get(item, _.get(props.schema, 'contentField', 'description'))
+}
+function getTags (item) {
+  return _.get(item, _.get(props.schema, 'tagsField', 'tags'))
+}
 function onLoad (index, done) {
   currentPage.value = index
   refreshCollection()
