@@ -11,7 +11,7 @@
         :offset="100" 
       >
         <template v-for="(item, index) in items" :key="index">
-          <q-timeline-entry :color="computedColor">
+          <q-timeline-entry :color="getColor(item)">
             <template v-slot:title>
               <slot name="entry-title">
                 {{  getTitle(item) }}
@@ -108,7 +108,7 @@ const props = defineProps({
   },
   side: {
     type: String,
-    default: 'left',
+    default: 'right',
     validator: (value) => {
       return ['left', 'right'].includes(value)
     }
@@ -186,3 +186,9 @@ defineExpose({
   resetCollection
 })
 </script>
+
+<style lang="scss">
+.q-timeline__content {
+  padding-bottom: 16px;
+}
+</style>
