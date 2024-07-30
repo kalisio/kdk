@@ -202,8 +202,7 @@ export default {
       }
       // }
       this.locationLayer.addTo(this.map)
-      // wait for the next tick to recenter the view
-      this.$nextTick(() => this.recenter())
+      this.recenter() 
     },
     onLocationDragged () {
       const latLng = this.locationLayer.getLatLng()
@@ -249,19 +248,16 @@ export default {
       unbindLeafletEvents(this.map, ['pm:create'])
       this.map.pm.setGlobalOptions({ layerGroup: null })
     },
-    async refreshBaseLayer () {
-      const layers = await this.getLayers()
-      // Get first visible base layer
-      if (layers.length > 0) {
-        this.addLayer(layers[0])
-      }
-    },
-    mapRefCreated (container) {
+    async mapRefCreated (container) {
       if (container) {
         if (!this.mapReady) {
+          // setup map
           this.setupMap(container, this.engineOptions.viewer)
           this.mapReady = true
-          this.refreshBaseLayer()
+          // setup base layer
+          const baseLayers = await this.getLayers({ type: 'BaseLayer' })
+          if (baseLayers.length > 0) await this.addLayer(baseLayers[0])
+          // setup location
           this.refresh()
         }
       }

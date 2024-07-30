@@ -27,5 +27,5 @@ const props = defineProps({
 })
 
 // Data
-const feature = toRef(props.location)
+const feature = toRef(props, 'location')
 </script>
