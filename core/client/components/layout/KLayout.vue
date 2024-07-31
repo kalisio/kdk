@@ -27,12 +27,14 @@
         no-swipe-close
         no-swipe-backdrop
       >
-        <KPanel
-          id="left-panel"
-          :content="leftPane.components"
-          :mode="leftPane.mode"
-          :filter="leftPane.filter"
-        />
+        <q-scroll-area class="fit">
+          <KPanel
+            id="left-panel"
+            :content="leftPane.components"
+            :mode="leftPane.mode"
+            :filter="leftPane.filter"
+          />
+        </q-scroll-area>
       </q-drawer>
     </div>
     <!-- Header -->
