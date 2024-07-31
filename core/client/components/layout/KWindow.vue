@@ -90,7 +90,10 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed, watch, provide } from 'vue'
 import { useQuasar } from 'quasar'
-import { Store, LocalStorage, Layout, utils } from '../..'
+import { Store } from '../../store.js'
+import { LocalStorage } from '../../local-storage.js'
+import { Layout } from '../../layout.js'
+import { loadComponent, bindContent, computeResponsiveSize } from '../../utils'
 import KPanel from '../KPanel.vue'
 import KScrollArea from '../KScrollArea.vue'
 import KMenu from '../menu/KMenu.vue'
@@ -138,7 +141,7 @@ const widgets = computed(() => {
   let isCurrentValid = false
   _.forEach(currentWindow.components, (widget) => {
     const componentName = _.get(widget, 'content.component')
-    widget.instance = utils.loadComponent(componentName)
+    widget.instance = loadComponent(componentName)
     if (currentWindow.current === widget.id) isCurrentValid = true
   })
   if (!isCurrentValid) Layout.setWindowCurrent(props.placement, _.get(widgets, '[0].id'))
@@ -229,7 +232,7 @@ const widgetLabel = computed(() => {
 const widgetHeader = computed(() => {
   if (!widget.value) return null
   let header = _.cloneDeep(widget.value.header)
-  header = utils.bindContent(header, widgetRef.value)
+  header = bindContent(header, widgetRef.value)
   return header
 })
 const widgetWidth = computed(() => {
@@ -291,18 +294,16 @@ function refresh (newState, oldState) {
   }
 }
 function setPinnedGeometry () {
-  const sizeRatio = currentWindow.sizePolicy.pinned[$q.screen.name]
-  const w = $q.screen.width * sizeRatio[0] / 100
-  const h = $q.screen.height * sizeRatio[1] / 100
+  const size = computeResponsiveSize(currentWindow.sizePolicy.pinned)
   let x, y
   if (props.placement === 'top' || props.placement === 'bottom') {
-    x = $q.screen.width / 2 - w / 2
-    y = props.placement === 'top' ? 0 : $q.screen.height - h
+    x = $q.screen.width / 2 - size[0] / 2
+    y = props.placement === 'top' ? 0 : $q.screen.height - size[1]
   } else {
-    x = props.placement === 'left' ? 0 : $q.screen.width - w
-    y = $q.screen.height / 2 - h / 2
+    x = props.placement === 'left' ? 0 : $q.screen.width - size[0]
+    y = $q.screen.height / 2 - size[1] / 2
   }
-  updateGeometry([x, y], [w, h])
+  updateGeometry([x, y], size)
 }
 function setMaximizedGeometry () {
   updateGeometry([0, 0], [$q.screen.width, $q.screen.height])
@@ -365,7 +366,7 @@ function onMoved (event) {
     if (event.isFinal) storeGeometry()
   }
 }
-function onResized (event) {
+const onResized = _.throttle((event) => {
   if (!event) return
   // Handle the pinned and floating currentState
   if (currentWindow.state !== 'maximized') {
@@ -382,12 +383,12 @@ function onResized (event) {
     updateGeometry(currentWindow.position, newSize)
     if (event.isFinal) storeGeometry()
   }
-}
-function onScreenResized () {
-  if (currentWindow.state === 'pinned') setPinnedGeometry()
-  else if (currentWindow.state === 'maximized') setMaximizedGeometry()
-  else updateGeometry(currentWindow.position, currentWindow.size, true)
-}
+}, 10)
+const onScreenResized = _.throttle(() => {
+    if (currentWindow.state === 'pinned') setPinnedGeometry()
+    else if (currentWindow.state === 'maximized') setMaximizedGeometry()
+    else updateGeometry(currentWindow.position, currentWindow.size, true)
+}, 50)
 function onHeaderResized (size) {
   headerHeight.value = size.height
 }
