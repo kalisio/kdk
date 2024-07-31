@@ -382,5 +382,11 @@ export const Layout = {
     }
     logger.debug(`[KDK] Unable to find the widget ${widget}`)
     return { placement: undefined, window: undefined }
+  },
+  openWidget (widget) {
+    const { placement, window } = this.findWindow(widget)
+    if (!placement) return
+    if (window.current !== 'current') this.setWindowCurrent(placement, widget)
+    if (!window.visible) this.setWindowVisible(placement, true)
   }
 }
