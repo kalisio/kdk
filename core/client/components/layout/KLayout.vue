@@ -7,7 +7,7 @@
       <q-page-sticky
         v-if="leftPane.opener"
         position="left"
-        :offset="openerOffset"
+        :offset="[openerOffset, 0]"
         class="k-sticky"
       >
         <KOpener
@@ -19,7 +19,7 @@
       <q-drawer
         id="left-pane"
         v-model="isLeftPaneOpened"
-        :width="leftPane.width"
+        :width="leftPaneSize"
         side="left"
         overlay
         :behavior="$q.platform.is.mobile ? 'mobile' : 'desktop'"
@@ -69,6 +69,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
+import { computeResponsiveWidth } from '../../utils'
 import { Layout } from '../../layout'
 import KOpener from './KOpener.vue'
 import KPanel from '../KPanel.vue'
@@ -78,11 +79,15 @@ const layout = Layout.get()
 const leftPane = Layout.getPane('left')
 const header = Layout.getHeader()
 const footer = Layout.getFooter()
-const openerOffset = ref([0, 0])
+const openerOffset = ref(0)
 
 // Computed
 const hasLeftPaneComponents = computed(() => {
   return !_.isEmpty(leftPane.components)
+})
+const leftPaneSize = computed(() => {
+  if (leftPane.state === 'responsive') return computeResponsiveWidth(leftPane.sizePolicy.responsive)
+  return leftPane.sizePolicy.fixed
 })
 const hasHeaderComponents = computed(() => {
   return !_.isEmpty(header.components)
@@ -119,14 +124,17 @@ const isFooterVisible = computed({
 watch(() => leftPane.visible, (visible) => {
   if (visible) {
     setTimeout(() => {
-      openerOffset.value = [leftPane.width, 0]
+      openerOffset.value = leftPaneSize.value
       document.addEventListener('click', clickOutsideLeftPanelListener, true)
     }, 100)
   } else {
     document.removeEventListener('click', clickOutsideLeftPanelListener, true)
-    openerOffset.value = [0, 0]
+    openerOffset.value = 0
   }
 }, { immediate: true })
+watch(leftPaneSize, () => {
+  if (openerOffset.value > 0) openerOffset.value = leftPaneSize.value
+})
 
 // Functions
 function clickOutsideLeftPanelListener (event) {

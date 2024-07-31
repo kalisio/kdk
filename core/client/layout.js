@@ -7,8 +7,21 @@ import { bindContent } from './utils/utils.content.js'
 
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const windowDefaultContols = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
-const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowDefaultContols }
+const paneDefaults = { opener: false, state: 'fixed' }
+const lPaneDefaultSizePolicy = {
+  fixed: 300,
+  responsive: { xs: 80, sm: 40, md: 25, lg: 20, xl: 15 }
+}
+const hPaneDefaultSizePolicy = {
+  fixed: undefined,
+  responsive: { xs: 90, sm: 80, md: 70, lg: 60, xl: 50 }
+}
+const rPaneDefaultSizePolicy = {
+  fixed: undefined,
+  responsive: { xs: [80, 80], sm: [60, 80], md: [40, 75], lg: [30, 70], xl: [20, 70] }
+}
+const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
   floating: { position: [0, 0], size: [300, 200] },
@@ -27,10 +40,10 @@ const defaults = {
   page: { ...contentDefaults },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16] },
   panes: {
-    left: { ...contentDefaults, opener: false, width: 300 },
-    top: { ...contentDefaults, opener: false },
-    right: { ...contentDefaults, opener: false },
-    bottom: { ...contentDefaults, opener: false }
+    left: { ...contentDefaults, ...paneDefaults, sizePolicy: lPaneDefaultSizePolicy },
+    top: { ...contentDefaults, ...paneDefaults, sizePolicy: hPaneDefaultSizePolicy },
+    right: { ...contentDefaults, ...paneDefaults, sizePolicy: rPaneDefaultSizePolicy },
+    bottom: { ...contentDefaults, ...paneDefaults, sizePolicy: hPaneDefaultSizePolicy }
   },
   windows: {
     left: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowDefaultSizePolicy },
@@ -265,6 +278,24 @@ export const Layout = {
     if (props.opener === opener) return
     Store.patch(this.getElementPath(`panes.${placement}`), { opener })
   },
+  setPaneState (placement, state) {
+    if (!['fixed', 'responsive'].includes(state)) {
+      logger.warn(`[KDK] Invalid pane state ${state}`)
+      return
+    }
+    const props = this.getElement(`panes.${placement}`)
+    if (props.state === state) return
+    Store.patch(this.getElementPath(`panes.${placement}`), { state })
+  },
+  setPaneSizePolicy (placement, policy) {
+    if (!policy.fixed || !policy.responsive) {
+      logger.warn(`[KDK] Invalid pane sizePolicy ${policy}`)
+      return
+    }
+    const props = this.getElement(`panes.${placement}`)
+    if (_.isEqual(props.sizePolicy, policy)) return
+    Store.patch(this.getElementPath(`panes.${placement}`), { sizePolicy: policy })
+  },
   clearPane (placement) {
     this.clearElement(`panes.${placement}`)
   },
@@ -285,7 +316,7 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowControls (placement, controls) {
-    for (const key in _.keys(windowDefaultContols)) {
+    for (const key in _.keys(windowsDefaultControls)) {
       if (!_.has(controls, key)) {
         logger.warn(`[KDK] Invalid window controls ${controls}`)
         return
@@ -324,7 +355,7 @@ export const Layout = {
   },
   setWindowSizePolicy (placement, policy) {
     if (!policy.minSize || !policy.floating || !policy.pinned) {
-      logger.warn(`[KDK] Invalid sizePolicy ${policy}`)
+      logger.warn(`[KDK] Invalid window sizePolicy ${policy}`)
       return
     }
     const props = this.getElement(`windows.${placement}`)

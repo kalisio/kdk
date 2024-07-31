@@ -28,6 +28,7 @@
             v-show="bottomPane.visible"
             :content="bottomPane.components"
             :mode="bottomPane.mode"
+            :style="bottomPaneStyle"
             class="k-pane"
           />
           <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
@@ -45,6 +46,7 @@
             :content="rightPane.components"
             :mode="rightPane.mode"
             direction="vertical"
+            :style="rightPaneStyle"
             class="k-pane"
           />
           <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
@@ -60,6 +62,7 @@
             v-show="topPane.visible"
             :content="topPane.components"
             :mode="topPane.mode"
+            :style="topPaneStyle"
             class="k-pane"
           />
           <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
@@ -72,8 +75,8 @@
       <KFab
         id="fab"
         v-if="fab.visible"
-        :direction="fabBehaviour.direction"
-        :actions-align="fabBehaviour.actionsAlign"
+        :direction="fabBehavior.direction"
+        :actions-align="fabBehavior.actionsAlign"
       />
     </q-page-sticky>
     <!-- Windows -->
@@ -83,7 +86,7 @@
         v-if="leftWindow.visible"
         placement="left"
         :layout-offset="layoutOffset"
-        :style="`max-width: ${leftWindowSize[0]}px; max-height: ${leftWindowSize[1]};px;`"
+        :style="leftWindowStyle"
       />
     </q-page-sticky>
     <q-page-sticky position="top-left" :offset="topWindow.position" class="k-sticky">
@@ -92,7 +95,7 @@
         v-if="topWindow.visible"
         placement="top"
         :layout-offset="layoutOffset"
-        :style="`max-width: ${topWindowSize[0]}px; max-height: ${topWindowSize[1]};px`"
+        :style="topWindowStyle"
       />
     </q-page-sticky>
     <q-page-sticky position="top-left" :offset="rightWindow.position" class="k-sticky">
@@ -101,7 +104,7 @@
         v-if="rightWindow.visible"
         placement="right"
         :layout-offset="layoutOffset"
-        :style="`max-width: ${rightWindowSize[0]}px; max-height: ${rightWindowSize[1]};px`"
+        :style="rightWindowStyle"
       />
     </q-page-sticky>
     <q-page-sticky position="top-left" :offset="bottomWindow.position" class="k-sticky">
@@ -110,7 +113,7 @@
         v-if="bottomWindow.visible"
         placement="bottom"
         :layout-offset="layoutOffset"
-        :style="`max-width: ${bottomWindowSize[0]}px; max-height: ${bottomWindowSize[1]};px`"
+        :style="bottomWindowStyle"
       />
     </q-page-sticky>
   </q-page>
@@ -119,6 +122,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed } from 'vue'
+import { computeResponsiveWidth, computeResponsiveSize } from '../../utils'
 import { Layout } from '../../layout.js'
 import KContent from '../KContent.vue'
 import KPanel from '../KPanel.vue'
@@ -197,19 +201,52 @@ const hasRightPaneComponents = computed(() => {
 const hasBottomPaneComponents = computed(() => {
   return !_.isEmpty(bottomPane.components)
 })
+const topPaneSize = computed(() => {
+  if (topPane.state === 'responsive') return computeResponsiveWidth(topPane.sizePolicy.responsive)
+  return topPane.sizePolicy.fixed
+})
+const topPaneStyle = computed(() => {
+  return topPaneSize.value ? { width: topPaneSize.value + 'px' } : {}
+})
+const rightPaneSize = computed(() => {
+  if (rightPane.state === 'responsive') return computeResponsiveSize(rightPane.sizePolicy.responsive)
+  return rightPane.sizePolicy.fixed
+})
+const rightPaneStyle = computed(() => {
+  return rightPaneSize.value ? { minWidth: rightPaneSize.value[0] + 'px', minHeight: rightPaneSize.value[1] + 'px' } : {}
+})
+const bottomPaneSize = computed(() => {
+  if (bottomPane.state === 'responsive') return computeResponsiveWidth(bottomPane.sizePolicy.responsive)
+  return bottomPane.sizePolicy.fixed
+})
+const bottomPaneStyle = computed(() => {
+  return bottomPaneSize.value ? { width: bottomPaneSize.value + 'px' } : {}
+})
 const leftWindowSize = computed(() => {
   return leftWindow.size || leftWindow.sizePolicy.minSize
+})
+const leftWindowStyle = computed(() => {
+  return { maxWidth: leftWindowSize[0] + 'px', maxHeight: leftWindowSize[1] + 'px' }
 })
 const topWindowSize = computed(() => {
   return topWindow.size || topWindow.sizePolicy.minSize
 })
+const topWindowStyle = computed(() => {
+  return { maxWidth: topWindowSize[0] + 'px', maxHeight: topWindowSize[1] + 'px' }
+})
 const rightWindowSize = computed(() => {
   return rightWindow.size || rightWindow.sizePolicy.minSize
+})
+const rightWindowStyle = computed(() => {
+  return { maxWidth: rightWindowSize[0] + 'px', maxHeight: rightWindowSize[1] + 'px' }
 })
 const bottomWindowSize = computed(() => {
   return bottomWindow.size || bottomWindow.sizePolicy.minSize
 })
-const fabBehaviour = computed(() => {
+const bottomWindowStyle = computed(() => {
+  return { maxWidth: bottomWindowSize[0] + 'px', maxHeight: bottomWindowSize[1] + 'px' }
+})
+const fabBehavior = computed(() => {
   switch (fab.position) {
     case 'bottom-right': return { direction: 'up', actionsAlign: 'left' }
     case 'bottom-left': return { direction: 'up', actionsAlign: 'right' }
