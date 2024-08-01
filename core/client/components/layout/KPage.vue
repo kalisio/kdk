@@ -213,7 +213,7 @@ const rightPaneSize = computed(() => {
   return rightPane.sizePolicy.fixed
 })
 const rightPaneStyle = computed(() => {
-  return rightPaneSize.value ? { minWidth: rightPaneSize.value[0] + 'px', minHeight: rightPaneSize.value[1] + 'px' } : {}
+  return rightPaneSize.value ? { width: rightPaneSize.value[0] + 'px', height: rightPaneSize.value[1] + 'px' } : {}
 })
 const bottomPaneSize = computed(() => {
   if (bottomPane.state === 'responsive') return computeResponsiveWidth(bottomPane.sizePolicy.responsive)
