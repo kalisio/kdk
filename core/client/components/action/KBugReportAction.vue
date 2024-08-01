@@ -13,7 +13,7 @@ import { i18n } from '../../i18n'
 import { getPlatform } from '../../utils/utils.platform'
 import { actionProps } from '../../utils/utils.actions'
 import { useVersion } from '../../composables'
-import KAction from './/KAction.vue'
+import KAction from './KAction.vue'
 
 // Data
 const props = defineProps(_.omit(actionProps, ['toggle', 'url', 'handler', 'route', 'dialog']))

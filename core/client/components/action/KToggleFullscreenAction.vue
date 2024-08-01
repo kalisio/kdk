@@ -7,6 +7,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, watch } from 'vue'
 import { actionProps, isFullscreen, toggleFullscreen } from '../../utils'
 import KAction from './KAction.vue'
