@@ -13,7 +13,7 @@ import { actionProps, isFullscreen, toggleFullscreen } from '../../utils'
 import KAction from './KAction.vue'
 
 // Props
-const props = defineProps(_.pick(actionProps, ['id', 'label', 'tooltip', 'icon', 'toggle']))
+const props = defineProps(_.omit(actionProps, ['url', 'handler', 'dialog', 'route', 'closePopup']))
 
 // Data
 const actionRef = ref(null)
