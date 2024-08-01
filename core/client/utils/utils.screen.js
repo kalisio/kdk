@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import {toRef } from 'vue'
+import { toRef } from 'vue'
 import { Screen } from 'quasar'
 import { AppFullscreen } from 'quasar'
 
-export const isFullscreen = toRef(AppFullscreen, 'isActive')
+export const Fullscreen = toRef(AppFullscreen, 'isActive')
 
 export function computeResponsiveWidth (width) {
   let breakpointWidth = width
@@ -51,8 +51,7 @@ export function computeResponsiveSize (size) {
 }
 
 export function getOrientation () {
-  if (window) return window.screen.orientation
-  return Screen.width > Screen.height ? 'portrait' : 'landscape'
+    return Screen.width > Screen.height ? 'portrait' : 'landscape'
 }
 
 export async function toggleFullscreen () {
