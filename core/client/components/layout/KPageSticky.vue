@@ -1,7 +1,7 @@
 <template>
   <q-page-sticky
     v-if="hasContent"
-    class="k-sticky"
+    class="k-sticky-z-index"
     :position="position"
     :offset="offset"
   >
@@ -47,7 +47,7 @@ const hasContent = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-  .k-sticky {
+  .k-sticky-z-index {
     z-index: $sticky-z-index;
   }
 </style>

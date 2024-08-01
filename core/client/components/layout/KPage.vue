@@ -19,7 +19,7 @@
       Be careful of the order
      -->
     <!-- Bottom pane -->
-    <q-page-sticky position="bottom" class="k-sticky">
+    <q-page-sticky position="bottom" class="k-pane-z-index">
       <div id="bottom-pane" v-show="hasBottomPaneComponents" class="column items-center">
         <KOpener id="bottom-opener" v-if="bottomPane.opener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
@@ -36,7 +36,7 @@
       </div>
     </q-page-sticky>
     <!-- Right pane -->
-    <q-page-sticky position="right" class="k-sticky">
+    <q-page-sticky position="right" class="k-pane-z-index">
       <div id="right-pane" v-show="hasRightPaneComponents" class="row items-center">
         <KOpener id="right-opener" v-if="rightPane.opener" v-model="isRightPaneOpened" position="right" />
         <div>
@@ -54,7 +54,7 @@
       </div>
     </q-page-sticky>
     <!-- Top pane -->
-    <q-page-sticky position="top" class="k-sticky">
+    <q-page-sticky position="top" class="k-pane-z-index">
       <div id="top-pane" v-show="hasTopPaneComponents" class="column items-center">
         <div>
           <KPanel
@@ -71,7 +71,7 @@
       </div>
     </q-page-sticky>
     <!-- Fab -->
-    <q-page-sticky :position="fab.position" :offset="fab.offset" class="k-sticky">
+    <q-page-sticky :position="fab.position" :offset="fab.offset" class="k-fab-z-index">
       <KFab
         id="fab"
         v-if="fab.visible"
@@ -80,7 +80,7 @@
       />
     </q-page-sticky>
     <!-- Windows -->
-    <q-page-sticky position="top-left" :offset="leftWindow.position" class="k-sticky">
+    <q-page-sticky position="top-left" :offset="leftWindow.position" class="k-window-z-index">
       <KWindow
         id="left-window"
         v-if="leftWindow.visible"
@@ -89,7 +89,7 @@
         :style="leftWindowStyle"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-left" :offset="topWindow.position" class="k-sticky">
+    <q-page-sticky position="top-left" :offset="topWindow.position" class="k-window-z-index">
       <KWindow
         id="top-window"
         v-if="topWindow.visible"
@@ -98,7 +98,7 @@
         :style="topWindowStyle"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-left" :offset="rightWindow.position" class="k-sticky">
+    <q-page-sticky position="top-left" :offset="rightWindow.position" class="k-window-z-index">
       <KWindow
         id="right-window"
         v-if="rightWindow.visible"
@@ -107,7 +107,7 @@
         :style="rightWindowStyle"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-left" :offset="bottomWindow.position" class="k-sticky">
+    <q-page-sticky position="top-left" :offset="bottomWindow.position" class="k-window-z-index">
       <KWindow
         id="bottom-window"
         v-if="bottomWindow.visible"
@@ -290,8 +290,8 @@ function setBottomPaneVisible (visible) {
 body {
   background-color: #EFEFEF;
 }
-.k-sticky {
-  z-index: $sticky-z-index;
+.k-pane-sticky {
+  z-index: $pane-sticky-z-index;
 }
 .k-pane {
   background-color: #FFFFFF;
@@ -301,5 +301,11 @@ body {
 }
 .k-pane:hover {
   border: solid 1px $primary;
+}
+.k-window-z-index {
+  z-index: $window-sticky-z-index;
+}
+.k-fab-z-index {
+  z-index: $fab-sticky-z-index;
 }
 </style>

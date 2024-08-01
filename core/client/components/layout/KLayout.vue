@@ -8,7 +8,7 @@
         v-if="leftPane.opener"
         position="left"
         :offset="[openerOffset, 0]"
-        class="k-sticky"
+        class="k-pane-z-index"
       >
         <KOpener
           id="left-opener"
@@ -149,7 +149,7 @@ function clickOutsideLeftPanelListener (event) {
 </script>
 
 <style lang="scss">
-.k-sticky {
-  z-index: $sticky-z-index;
+.k-pane-z-index {
+  z-index: $pane-sticky-z-index;
 }
 </style>

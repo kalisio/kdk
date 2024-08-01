@@ -16,8 +16,6 @@ $tooltip-fontsize: 12px !default;
 $tooltip-background: $accent !default;
 
 // Window
-$window-min-width: 300px !default;
-$window-min-height: 300px !default;
 $window-background: #ffffff !default;
 $window-border-style: solid !default;
 $window-border-width: 1px !default;
@@ -29,9 +27,22 @@ $window-header-hover-background: #dddddd !default;
 $window-controls-size: 1rem !default;
 
 // Sticky
-$sticky-z-index: 1000 !default;
+$sticky-z-index: 997 !default;
+$pane-sticky-z-index: 3000 !default;
+$window-sticky-z-index: 998 !default;
+$fab-sticky-z-index: 3000 !default;
 
 // Table: quasar has eg $table-hover-background but nothing for background
 $table-background: #fff !default;
 
+// Scrollbar
+.q-scrollarea__thumb {
+  background: $primary;
+  border-radius: 3px;
+}
 
+// Anchor
+a {
+  color: $accent;
+  cursor: pointer;
+}
