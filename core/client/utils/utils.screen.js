@@ -1,7 +1,10 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import {toRef } from 'vue'
 import { Screen } from 'quasar'
 import { AppFullscreen } from 'quasar'
+
+export const isFullscreen = toRef(AppFullscreen, 'isActive')
 
 export function computeResponsiveWidth (width) {
   let breakpointWidth = width
@@ -53,6 +56,14 @@ export function getOrientation () {
 }
 
 export async function toggleFullscreen () {
-  if (AppFullscreen.isActive) return AppFullscreen.request()
-  else return AppFullscreen.exit()
+  return new Promise((resolve, reject) => {
+    AppFullscreen.toggle()
+      .then(() => {
+        resolve(true)
+      })
+      .catch(err => {
+        logger.warn(`[KDK] Cannot toggle fullscreen mode: ${err}`)
+        reject(false)
+      })
+  })
 }

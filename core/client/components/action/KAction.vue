@@ -282,6 +282,12 @@ async function onClicked (event) {
 watch(() => props.toggled, (value) => {
   if (isToggled.value !== value) isToggled.value = value
 })
+
+// Expose
+defineExpose({
+  isToggled,
+  toggle
+})
 </script>
 
 <style lang="scss" scoped>
