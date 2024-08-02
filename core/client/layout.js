@@ -132,7 +132,7 @@ export const Layout = {
     // compute components
     if (Array.isArray(content)) props.components = content.filter(sift(props.filter))
     else props.components = _.get(content, mode, []).filter(sift(props.filter))
-    // pacth the element
+    // patch the element
     Store.patch(this.getElementPath(element), props)
   },
   setElementMode (element, mode) {
@@ -142,7 +142,7 @@ export const Layout = {
     let components
     if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
     else components = _.get(props.content, mode, []).filter(sift(props.filter))
-    // pacth the element
+    // patch the element
     Store.patch(this.getElementPath(element), { mode, components })
   },
   setElementFilter (element, filter) {
@@ -152,7 +152,7 @@ export const Layout = {
     let components
     if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
     else components = _.get(props.content, props.mode, []).filter(sift(props.filter))
-    // pacth the element
+    // patch the element
     Store.patch(this.getElementPath(element), { filter, components })
   },
   setElementVisible (element, visible) {
