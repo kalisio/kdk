@@ -1,5 +1,5 @@
 <template>
-  <div class="fit column">
+  <div class="fit column no-wrap">
     <!-- 
       Header 
     -->
@@ -9,7 +9,6 @@
           :content="header"
           :class="headerClass"
          />
-        <q-separator inset v-if="header"/>
       </slot>
     </div>
     <!--
