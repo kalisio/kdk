@@ -1,5 +1,4 @@
 export * from './mixin.activity.js'
-export * from './mixin.catalog-panel.js'
 export * from './mixin.context.js'
 export * from './mixin.feature-selection.js'
 export * from './mixin.feature-service.js'

@@ -1,43 +1,33 @@
 <template>
-  <q-list dense bordered>
-    <div class="no-padding" :style="panelStyle">
-      <q-resize-observer @resize="onResized" />
-      <KPanel
-        id="favorite-views-toolbar"
-        :content="toolbar"
-        class="no-wrap q-pl-sm q-pr-md"
-      />
-      <KColumn
-        class="q-pl-sm"
-        service="projects"
-        :renderer="projectRenderer"
-        :nbItemsPerPage="20"
-        :append-items="true"
-        :base-query="baseQuery"
-        :filter-query="filter.query"
-        :height="scrollAreaMaxHeight - 100"
-        :width="scrollAreaMaxWidth - 50"
-        :dense="true"
-        @selection-changed="onProjectSelected"
-      />
-    </div>
-  </q-list>
+  <div class="fit column">
+    <KCollection
+      service="projects"
+      :renderer="projectRenderer"
+      :nb-items-per-page="20"
+      :append-items="true"
+      :base-query="baseQuery"
+      :filter-query="filter.query"
+      :dense="true"
+      :header="toolbar"
+      header-class="justify-between"
+      @selection-changed="onProjectSelected"
+      class="q-pl-sm col"
+    />
+  </div>
 </template>
 
 <script>
 import logger from 'loglevel'
 import { Filter, Sorter, utils, i18n } from '../../../../core/client'
-import { KColumn, KPanel, KAction } from '../../../../core/client/components'
-import { catalogPanel } from '../../mixins'
+import { KCollection, KPanel, KAction } from '../../../../core/client/components'
 
 export default {
   name: 'k-projects-panel',
   components: {
-    KColumn,
+    KCollection,
     KPanel,
     KAction
   },
-  mixins: [catalogPanel],
   inject: ['kActivity'],
   computed: {
     baseQuery () {
@@ -48,9 +38,7 @@ export default {
         {
           id: 'projects-filter',
           component: 'collection/KFilter',
-          class: 'full-width'
         },
-        { component: 'QSpace' },
         {
           component: 'collection/KSorter',
           id: 'projects-sorter',
@@ -94,11 +82,12 @@ export default {
     }
     return {
       scrollAreaMaxWidth: 0,
+      scrollAreaMaxHeight: 0,
       filter: Filter.get(),
       sorter: Sorter.get(),
       projectRenderer: {
         component: 'catalog/KProjectSelector',
-        class: 'q-pt-xs q-pb-xs q-pr-xs',
+        class: 'col-12',
         actions: projectActions
       }
     }
@@ -144,9 +133,6 @@ export default {
       })
       if (!result.ok) return false
       await this.$api.getService('projects').remove(project._id)
-    },
-    onResized (size) {
-      this.scrollAreaMaxWidth = size.width
     }
   }
 }

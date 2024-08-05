@@ -1,34 +1,64 @@
 <template>
-  <KScrollArea :maxHeight="scrollAreaMaxHeight" :style="panelStyle">
-    <q-list dense bordered>
-      <slot name="header" />
-      <!-- Orphan layers -->
-      <k-layers-selector
-        :layers="orphanLayers"
-        :options="{ hideIfEmpty: true }"
-      />
-      <!-- Categorized layers -->
-      <template v-for="category in filteredCategories">
-        <q-expansion-item
-          v-if="isVisible(category)"
-          :key="getId(category)"
-          :id="getId(category)"
-          :header-class="getHeaderClass(category)"
-          :icon="getIcon(category)"
-          :label="$t(category.name)"
-          :default-opened="getDefaultOpened(category)"
-          expand-separator>
-          <component
-            :is="category.componentInstance"
-            :layers="layersByCategory[category.name]"
-            :forecastModels="forecastModels"
-            :options="category.options || category">
-          </component>
-        </q-expansion-item>
-      </template>
-      <slot name="footer" />
-    </q-list>
-  </KScrollArea>
+    <div class="fit column">
+    <!-- 
+      Header
+    -->
+    <div class="q-pr-xs q-pb-xs">
+      <slot name="header">
+        <KPanel 
+          :content="header"
+          :class="headerClass"
+         />
+        <q-separator inset v-if="header"/>
+      </slot>
+    </div>
+    <!-- 
+      Content 
+    -->
+    <q-scroll-area class="col">
+      <q-list dense>
+        <!-- Orphan layers -->
+        <KLayersSelector
+          :layers="orphanLayers"
+          :options="{ hideIfEmpty: true }"
+        />
+        <!-- Categorized layers -->
+        <template v-for="category in filteredCategories">
+          <q-expansion-item
+            v-if="isVisible(category)"
+            :key="getId(category)"
+            :id="getId(category)"
+            :header-class="getHeaderClass(category)"
+            :icon="getIcon(category)"
+            :label="$t(category.name)"
+            :default-opened="getDefaultOpened(category)"
+            expand-separator>
+            <component
+              :is="category.componentInstance"
+              :layers="layersByCategory[category.name]"
+              :forecastModels="forecastModels"
+              :options="category.options || category">
+            </component>
+          </q-expansion-item>
+        </template>
+      </q-list>
+    </q-scroll-area>
+    <!-- 
+      Footer
+    -->    
+    <!-- 
+      Footer
+    -->
+    <div>
+      <slot name="footer">
+        <q-separator inset v-if="footer"/>
+        <KPanel 
+          :content="footer" 
+          :class="footerClass"
+        />
+      </slot>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -36,18 +66,14 @@ import sift from 'sift'
 import _ from 'lodash'
 import { loadComponent } from '../../../../core/client/utils'
 import { getLayersByCategory, getOrphanLayers } from '../../utils'
-import { KScrollArea } from '../../../../core/client/components'
-import { catalogPanel } from '../../mixins'
 import { useProject } from '../../composables'
 import KLayersSelector from './KLayersSelector.vue'
 
 export default {
   name: 'k-layers-panel',
   components: {
-    KScrollArea,
     KLayersSelector
   },
-  mixins: [catalogPanel],
   props: {
     layers: {
       type: [Object, Array],
@@ -68,7 +94,23 @@ export default {
     forecastModels: {
       type: Array,
       default: () => []
-    }
+    },
+    header: {
+      type: [Array, Object],
+      default: () => null
+    },
+    headerClass: {
+      type: String,
+      default: undefined
+    },
+    footer: {
+      type: [Array, Object],
+      default: () => null
+    },
+    footerClass: {
+      type: String,
+      default: undefined
+  }
   },
   inheritAttrs: false,
   computed: {
