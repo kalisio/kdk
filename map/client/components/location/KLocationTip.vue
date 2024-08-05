@@ -3,7 +3,9 @@
     anchor="center end"
     self="center middle"
     class="q-pa-none"
-    :delay="300"
+    :delay="500"
+    :hide-delay="150"
+    :transition-duration="150"
     style="border-radius: 100px; border: 1px solid var(--q-primary);"
   >
     <KLocationMap
@@ -15,7 +17,7 @@
 </template>
 
 <script setup>
-import { toRef } from 'vue'
+import { computed } from 'vue'
 import KLocationMap from './KLocationMap.vue'
 
 // Props
@@ -27,5 +29,7 @@ const props = defineProps({
 })
 
 // Data
-const feature = toRef(props, 'location')
+const feature = computed(() => {
+  return props.location
+})
 </script>
