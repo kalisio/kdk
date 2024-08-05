@@ -531,6 +531,9 @@
     "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
+  "KCollection": {
+    "EMPTY_COLLECTION": "@:NO_ITEM"
+  },
   "KGrid": {
     "EMPTY_GRID": "@:NO_ITEM"
   },

@@ -15,7 +15,7 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0" class="scroll q-pr-md">
+    <div v-if="items.length > 0" class="scroll q-pr-md row items-center">
       <!-- Infinite mode -->
       <q-infinite-scroll 
         v-if="appendItems"
@@ -46,7 +46,7 @@
         </template>
       </q-infinite-scroll>
       <!-- Paginated mode -->    
-      <div v-else class="fit">
+      <div v-else class="fit row items-center">
         <template v-for="item in items" :key="item._id">
           <div :class="rendererClass">
             <component
@@ -77,8 +77,9 @@
           <KStamp 
             icon="las la-exclamation-circle" 
             icon-size="1.6rem" 
-            :text="$t('KCollection.NO_ITEMS')" 
+            :text="$t('KCollection.EMPTY_COLLECTION')"
             direction="horizontal" 
+            class="q-pa-md"
           />
         </div>
       </slot>
@@ -177,7 +178,8 @@ const itemRenderer = computed(() => {
   return loadComponent(props.renderer.component)
 })
 const rendererClass = computed(() => {
-  return props.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3'
+  console.log(props.rendererClass)
+  return props.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4'
 })
 
 // Watch
