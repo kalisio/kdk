@@ -74,6 +74,9 @@ export default {
       this.setCurrentActivity(concreteActivity)
       // apply the mode if needed
       if (this.mode) this.setLayoutMode(this.mode)
+    },
+    getOptions () {
+      return this.options
     }
   },
   async mounted () {
