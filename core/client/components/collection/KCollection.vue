@@ -174,12 +174,12 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
 let doneFunction = null
 
+// Computed
 const itemRenderer = computed(() => {
   return loadComponent(props.renderer.component)
 })
 const rendererClass = computed(() => {
-  console.log(props.rendererClass)
-  return props.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4'
+  return props.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3'
 })
 
 // Watch
