@@ -15,36 +15,37 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0" class="scroll q-pr-md row items-center">
-      <!-- Infinite mode -->
-      <q-infinite-scroll 
-        v-if="appendItems"
-        @load="onLoad"
-        :initial-index="1"
-        :offset="200"
-        class="col"
-      >
-        <template v-for="(item, index) in items" :key="item._id">
-          <div :class="rendererClass">
-            <component
-              :id="item._id"
-              :service="service"
-              :item="item"
-              :contextId="contextId"
-              :is="itemRenderer"
-              v-bind="renderer"
-              @item-selected="onItemSelected" />
-          </div>
-        </template>
-        <template v-slot:loading>
-          <div class="text-center q-my-md">
-            <q-spinner-dots 
-              color="primary" 
-              size="40px" 
-            />
-          </div>
-        </template>
-      </q-infinite-scroll>
+    <div v-if="items.length > 0" class="scroll">
+      <div v-if="appendItems" class="row items-center">
+        <!-- Infinite mode -->
+        <q-infinite-scroll 
+          @load="onLoad"
+          :initial-index="1"
+          :offset="200"
+          class="col"
+        >
+          <template v-for="(item, index) in items" :key="item._id">
+            <div :class="rendererClass">
+              <component
+                :id="item._id"
+                :service="service"
+                :item="item"
+                :contextId="contextId"
+                :is="itemRenderer"
+                v-bind="renderer"
+                @item-selected="onItemSelected" />
+            </div>
+          </template>
+          <template v-slot:loading>
+            <div class="text-center q-my-md">
+              <q-spinner-dots 
+                color="primary" 
+                size="40px" 
+              />
+            </div>
+          </template>
+        </q-infinite-scroll>
+      </div>
       <!-- Paginated mode -->    
       <div v-else class="fit row items-center">
         <template v-for="item in items" :key="item._id">
