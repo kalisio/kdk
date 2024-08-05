@@ -4,8 +4,8 @@ import { ref, shallowRef, readonly, onBeforeUnmount } from 'vue'
 import { useStore } from './store.js'
 import { useSelection } from './selection.js'
 
-const kActivity = shallowRef(null)
-const kActivityName = ref(null)
+const CurrentActivity = shallowRef(null)
+const CurrentActivityName = ref(null)
 
 export function useActivity (name, options = {}) {
   _.defaults(options, { selection: true })
@@ -18,9 +18,9 @@ export function useActivity (name, options = {}) {
 
   // functions
   function setCurrentActivity (activity) {
-    if (kActivity.value === activity) return
-    kActivityName.value = activity ? name : null
-    kActivity.value = activity
+    if (CurrentActivity.value === activity) return
+    CurrentActivity.value = activity ? name : null
+    CurrentActivity.value = activity
   }
 
   // expose
@@ -31,7 +31,7 @@ export function useActivity (name, options = {}) {
   }
   if (options.selection) {
     Object.assign(expose, {
-      ...useSelection(kActivityName.value)
+      ...useSelection(CurrentActivityName.value)
     })
   }
 
@@ -46,12 +46,14 @@ export function useCurrentActivity (options = {}) {
 
   // expose
   const expose = {
-    kActivity: readonly(kActivity),
-    kActivityName: readonly(kActivityName)
+    CurrentActivity: readonly(CurrentActivity),
+    kActivity: readonly(CurrentActivity),
+    CurrentActivityName: readonly(CurrentActivityName),
+    kActivityName: readonly(CurrentActivityName)
   }
-  if (kActivityName.value) {
-    const activityState = useStore(`store.${kActivityName.value}.state`)
-    const activityOptions = useStore(`store.${kActivityName.value}.options`)
+  if (CurrentActivityName.value) {
+    const activityState = useStore(`store.${CurrentActivity.value}.state`)
+    const activityOptions = useStore(`store.${CurrentActivity.value}.options`)
 
     Object.assign(expose, {
       state: activityState.store,
@@ -59,7 +61,7 @@ export function useCurrentActivity (options = {}) {
     })
     if (options.selection) {
       Object.assign(expose, {
-        ...useSelection(kActivityName.value)
+        ...useSelection(CurrentActivity.value)
       })
     }
   }
