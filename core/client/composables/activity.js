@@ -52,8 +52,8 @@ export function useCurrentActivity (options = {}) {
     kActivityName: readonly(CurrentActivityName)
   }
   if (CurrentActivityName.value) {
-    const activityState = useStore(`store.${CurrentActivity.value}.state`)
-    const activityOptions = useStore(`store.${CurrentActivity.value}.options`)
+    const activityState = useStore(`store.${CurrentActivityName.value}.state`)
+    const activityOptions = useStore(`store.${CurrentActivityName.value}.options`)
 
     Object.assign(expose, {
       state: activityState.store,
@@ -61,7 +61,7 @@ export function useCurrentActivity (options = {}) {
     })
     if (options.selection) {
       Object.assign(expose, {
-        ...useSelection(CurrentActivity.value)
+        ...useSelection(CurrentActivityName.value)
       })
     }
   }
