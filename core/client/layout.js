@@ -18,7 +18,7 @@ const hPaneDefaultSizePolicy = {
 }
 const rPaneDefaultSizePolicy = {
   fixed: undefined,
-  responsive: { xs: [85, 75], sm: [60, 75], md: [40, 80], lg: [30, 80], xl: [25, 85] }
+  responsive: { xs: [85, 75], sm: [50, 75], md: [35, 80], lg: [25, 80], xl: [20, 85] }
 }
 const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls }
