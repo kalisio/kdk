@@ -56,7 +56,7 @@ const defaultOpened = computed (() => {
   if (states && _.has(states, getId())) return states[getId()]
   // if category explicitly specify default opened state, use that
   if (_.has(props.category, 'options.open')) return props.category.options.open
-  // otherwise, defaut open when there's only one category
+  // otherwise, default open when there's only one category
   // return this.filteredCategories.length === 1
   // robin: to not break existing apps, just return false when options.open is not defined
   return false
