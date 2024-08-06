@@ -19,7 +19,7 @@ export function useActivity (name, options = {}) {
   // functions
   function setCurrentActivity (activity) {
     if (CurrentActivity.value === activity) return
-    CurrentActivity.value = activity ? name : null
+    CurrentActivityName.value = activity ? name : null
     CurrentActivity.value = activity
   }
 
