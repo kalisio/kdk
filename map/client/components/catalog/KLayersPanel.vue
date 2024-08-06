@@ -24,28 +24,17 @@
         />
         <!-- Categorized layers -->
         <template v-for="category in filteredCategories">
-          <q-expansion-item
-            v-if="isVisible(category)"
-            :key="getId(category)"
-            :id="getId(category)"
-            :header-class="getHeaderClass(category)"
-            :icon="getIcon(category)"
-            :label="$t(category.name)"
-            :default-opened="getDefaultOpened(category)"
-            expand-separator>
-            <component
-              :is="category.componentInstance"
-              :layers="layersByCategory[category.name]"
-              :forecastModels="forecastModels"
-              :options="category.options || category">
-            </component>
-          </q-expansion-item>
+          <KCategoryItem
+            v-if="isCategoryVisible(category)"
+            :key="getCategoryId(category)"
+            :id="getCategoryId(category)"
+            :category="category"
+            :layers="layersByCategory[category.name]"
+            :forecastModels="forecastModels"
+          />
         </template>
       </q-list>
     </q-scroll-area>
-    <!-- 
-      Footer
-    -->    
     <!-- 
       Footer
     -->
@@ -64,14 +53,16 @@
 <script>
 import sift from 'sift'
 import _ from 'lodash'
-import { loadComponent } from '../../../../core/client/utils'
+import { utils as coreUtils } from '../../../../core/client'
 import { getLayersByCategory, getOrphanLayers } from '../../utils'
 import { useProject } from '../../composables'
 import KLayersSelector from './KLayersSelector.vue'
+import KCategoryItem from './KCategoryItem.vue'
 
 export default {
   name: 'k-layers-panel',
   components: {
+    KCategoryItem,
     KLayersSelector
   },
   props: {
@@ -123,7 +114,7 @@ export default {
       const filteredCategories = _.filter(this.layerCategories, filter)
       _.forEach(filteredCategories, category => {
         const component = _.get(category, 'component', 'catalog/KLayersSelector')
-        if (!category.componentInstance) category.componentInstance = loadComponent(component)
+        if (!category.componentInstance) category.componentInstance = coreUtils.loadComponent(component)
       })
       return filteredCategories
     },
@@ -135,10 +126,10 @@ export default {
     }
   },
   methods: {
-    getId (category) {
+    getCategoryId (category) {
       return _.kebabCase(category.name)
     },
-    isVisible (category) {
+    isCategoryVisible (category) {
       // Show a built-in category only if it has some layers.
       // Indeed, depending on the app configuration, none might be available for this category.
       // User-defined categories are visible by default, even if empty,
@@ -149,21 +140,6 @@ export default {
         else return !_.get(category, 'hideIfEmpty', !category._id)
       }
       return true
-    },
-    getHeaderClass (category) {
-      if (category.headerClass) return category.headerClass
-      return 'text-' + _.get(category, 'icon.color', 'primary')
-    },
-    getIcon (category) {
-      return _.get(category, 'icon.name', _.get(category, 'icon'))
-    },
-    getDefaultOpened (category) {
-      // if category explicitely specify default opened state, use that
-      if (_.has(category, 'options.open')) return category.options.open
-      // otherwise, defaut open when there's only one category
-      // return this.filteredCategories.length === 1
-      // robin: to not break existing apps, just return false when options.open is not defined
-      return false
     }
   },
   setup () {
