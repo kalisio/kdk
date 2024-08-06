@@ -1,5 +1,5 @@
 <template>
-  <k-modal
+  <KModal
     id="layer-categories-modal"
     :title="title"
     :toolbar="toolbar"
@@ -8,37 +8,49 @@
   >
     <div id="layer-categories-content">
       <q-card-section id="layer-categories-list" v-if="mode === 'list'">
-        <k-list
+        <KCollection
           style="min-height: 50px; min-width: 200px"
           service="catalog"
           :renderer="categoryRenderer"
-          :nbItemsPerPage="8"
+          :nbItemsPerPage="12"
           :base-query="baseQuery"
           :filter-query="filter.query"
-          @collection-refreshed="refreshCategories" />
+          :append-items="true"
+          @collection-refreshed="refreshCategories" 
+        />
       </q-card-section>
       <q-card-section id="layer-category-add" v-if="mode === 'add'">
-        <k-form :ref="onAddFormCreated" :schema="categorySchema" style="min-width: 300px" />
+        <KForm 
+          :ref="onAddFormCreated" 
+          :schema="categorySchema" 
+          style="min-width: 300px" 
+        />
       </q-card-section>
       <q-card-section id="layer-category-edit" v-if="mode === 'edit'">
-        <k-form :ref="onEditFormCreated" @form-ready="onEditFormReady" :schema="categorySchema" style="min-width: 300px" />
+        <KForm 
+          :ref="onEditFormCreated"         
+          :schema="categorySchema" 
+          style="min-width: 300px" 
+          @form-ready="onEditFormReady"
+        />
       </q-card-section>
     </div>
-  </k-modal>
+  </KModal>
 </template>
 
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
-import { KModal, KAction, KPanel, KList } from '../../../../core/client/components'
+import { KModal, KCollection, KAction, KPanel, KForm } from '../../../../core/client/components'
 
 export default {
   name: 'k-layer-categories',
   components: {
     KModal,
+    KCollection,
     KAction,
     KPanel,
-    KList
+    KForm
   },
   mixins: [
     kCoreMixins.baseModal
@@ -191,6 +203,7 @@ export default {
       savingCategory: false,
       categoryRenderer: {
         component: 'collection/KItem',
+        class: 'col-12',
         actions: [{
           id: 'edit-layer-category',
           icon: 'las la-file-alt',
