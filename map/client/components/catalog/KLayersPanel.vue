@@ -15,7 +15,7 @@
     <!-- 
       Content 
     -->
-    <q-scroll-area class="fit" @scroll="onScrolled">
+    <q-scroll-area class="col">
       <!--q-list dense-->
         <!-- Orphan layers -->
         <KLayersSelector
