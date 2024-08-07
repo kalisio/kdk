@@ -122,6 +122,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed } from 'vue'
+import { useQuasar } from 'quasar'
 import { computeResponsiveWidth, computeResponsiveSize } from '../../utils'
 import { Layout } from '../../layout.js'
 import KContent from '../KContent.vue'
@@ -142,6 +143,7 @@ const props = defineProps({
 const emit = defineEmits(['content-resized'])
 
 // Data
+const $q = useQuasar()
 const page = Layout.getPage()
 const fab = Layout.getFab()
 const topPane = Layout.getPane('top')
@@ -158,7 +160,7 @@ const rightPadding = ref(0)
 
 // Computed
 const contentStyleFunction = computed(() => {
-  const layoutPadding = props.padding ? 24 * 2 : 0
+  const layoutPadding = $q.screen.xs ? 16: $q.screen.lt.xl ? 32 : 48
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
   return {
