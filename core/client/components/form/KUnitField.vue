@@ -55,7 +55,9 @@ export default {
   mixins: [baseField],
   computed: {
     options () {
-      const units = Units.getUnits(_.get(this.properties, 'field.quantity'))
+      let units = Units.getUnits(_.get(this.properties, 'field.quantity'))
+      const unitsFilter = _.get(this.properties, 'field.filter', [])
+      if (!_.isEmpty(unitsFilter)) units = _.filter(units, unit => _.includes(unitsFilter, unit.name))
       return units.map(unit => {
         // Check if we have a translation key or directly the label content
         const label = _.get(unit, 'label', '')
