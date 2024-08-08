@@ -532,13 +532,7 @@
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
   "KCollection": {
-    "EMPTY_COLLECTION": "@:NO_ITEM"
-  },
-  "KGrid": {
-    "EMPTY_GRID": "@:NO_ITEM"
-  },
-  "KList": {
-    "EMPTY_LIST": "@:NO_ITEM"
+    "EMPTY": "@:NO_ITEM"
   },
   "KTable": {
     "EMPTY_TABLE": "@:NO_ITEM",
@@ -550,6 +544,9 @@
     "NO_DATA_AVAILABLE": "Aucune donnée disponible",
     "EXPORT_DATA": "Exporter les données",
     "DATA_EXPORT_FILE": "Données.csv"
+  },
+  "KTimeLine": {
+    "EMPTY": "@:NO_ITEM"
   },
   "KHistory": {
     "EMPTY_HISTORY": "@:NO_ITEM"

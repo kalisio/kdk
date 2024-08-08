@@ -1,5 +1,5 @@
 <template>
-  <div class="fit column no-wrap">
+  <div class="column no-wrap">
     <!-- 
       Header 
     -->
@@ -14,37 +14,39 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0" class="scroll">
+    <div v-if="items.length > 0" class="col">
       <!-- Infinite mode -->
-      <q-infinite-scroll v-if="appendItems"
-        @load="onLoad"
-        :initial-index="1"
-        :offset="200"
-        class="col"
-      >
-        <div class="fit row">
-          <template v-for="(item, index) in items" :key="item._id">
-            <div :class="rendererClass">
-              <component
-                :id="item._id"
-                :service="service"
-                :item="item"
-                :contextId="contextId"
-                :is="itemRenderer"
-                v-bind="renderer"
-                @item-selected="onItemSelected" />
+      <div v-if="appendItems" class="fit scroll">
+        <q-infinite-scroll
+          @load="onLoad"
+          :initial-index="1"
+          :offset="200"
+          class="fit"
+        >
+          <div class="row">
+            <template v-for="(item, index) in items" :key="item._id">
+              <div :class="rendererClass">
+                <component
+                  :id="item._id"
+                  :service="service"
+                  :item="item"
+                  :contextId="contextId"
+                  :is="itemRenderer"
+                  v-bind="renderer"
+                  @item-selected="onItemSelected" />
+              </div>
+            </template>
+          </div>
+          <template v-slot:loading>
+            <div class="text-center q-my-md">
+              <q-spinner-dots 
+                color="primary" 
+                size="40px" 
+              />
             </div>
           </template>
-        </div>
-        <template v-slot:loading>
-          <div class="text-center q-my-md">
-            <q-spinner-dots 
-              color="primary" 
-              size="40px" 
-            />
-          </div>
-        </template>
-      </q-infinite-scroll>
+        </q-infinite-scroll>
+      </div>
       <!-- Paginated mode -->    
       <div v-else class="fit row">
         <template v-for="item in items" :key="item._id">
@@ -77,7 +79,7 @@
           <KStamp 
             icon="las la-exclamation-circle" 
             icon-size="1.6rem" 
-            :text="$t('KCollection.EMPTY_COLLECTION')"
+            :text="$t('KCollection.EMPTY')"
             direction="horizontal" 
             class="q-pa-md"
           />
