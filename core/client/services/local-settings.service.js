@@ -59,6 +59,10 @@ export default function (name, api, options) {
       })
     },
 
+    getSchema () {
+      return options.settingsSchema
+    },
+
     getSettingsMapping () {
       return mapping
     }

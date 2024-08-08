@@ -44,8 +44,10 @@ export default function init () {
     defaultNotation: 'units.default.notation',
     defaultPrecision: 'units.default.precision'
   })
+  const settingsSchema = _.get(config, 'settings.schema', 'settings.update')
   api.createService('settings', {
     service: LocalSettingsService,
-    propertyMapping
+    propertyMapping,
+    settingsSchema
   }) // Default options can be overriden from app config
 }

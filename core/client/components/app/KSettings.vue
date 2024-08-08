@@ -3,7 +3,7 @@
     id="settings"
     ref="formRef"
     :values="settings"
-    schema="settings.update"
+    :schema="schema"
     :filter="schemaFilter"
   />
 </template>
@@ -19,6 +19,7 @@ const serviceSettings = api.getService('settings')
 const formRef = ref(null)
 const settings = ref(null)
 const schemaFilter = ref(null)
+const schema = ref('settings.update')
 
 // Functions
 async function apply () {
@@ -35,6 +36,9 @@ onMounted(async () => {
   const mapping = serviceSettings.getSettingsMapping()
   schemaFilter.value = Object.keys(mapping).filter(value => _.get(mapping, value))
 })
+
+// Immediate
+schema.value = serviceSettings.getSchema()
 
 // Expose
 defineExpose({
