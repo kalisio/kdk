@@ -132,7 +132,7 @@ import KWindow from './KWindow.vue'
 import KFab from './KFab.vue'
 
 // Props
-const props = defineProps({
+defineProps({
   padding: {
     type: Boolean,
     default: true
