@@ -532,7 +532,7 @@
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
   "KCollection": {
-    "EMPTY": "@:NO_ITEM"
+    "EMPTY_LABEL": "@:NO_ITEM"
   },
   "KTable": {
     "EMPTY_TABLE": "@:NO_ITEM",
@@ -546,7 +546,7 @@
     "DATA_EXPORT_FILE": "Données.csv"
   },
   "KTimeLine": {
-    "EMPTY": "@:NO_ITEM"
+    "EMPTY_LABEL": "@:NO_ITEM"
   },
   "KHistory": {
     "EMPTY_HISTORY": "@:NO_ITEM"

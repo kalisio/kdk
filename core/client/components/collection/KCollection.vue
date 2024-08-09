@@ -33,7 +33,8 @@
                   :contextId="contextId"
                   :is="itemRenderer"
                   v-bind="renderer"
-                  @item-selected="onItemSelected" />
+                  @item-selected="onItemSelected"
+                />
               </div>
             </template>
           </div>
@@ -79,7 +80,7 @@
           <KStamp 
             icon="las la-exclamation-circle" 
             icon-size="1.6rem" 
-            :text="$t('KCollection.EMPTY')"
+            :text="$t('KCollection.EMPTY_LABEL')"
             direction="horizontal" 
             class="q-pa-md"
           />

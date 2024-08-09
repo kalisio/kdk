@@ -4,7 +4,7 @@
       <!--
         Organisations collection
       -->
-      <KGrid
+      <KCollection
         ref="organisationsGrid"
         service="organisations"
         :renderer="renderer"
@@ -13,10 +13,10 @@
         :list-strategy="'smart'">
         <template v-slot:empty-section>
           <div class="absolute-center">
-            <KStamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_GRID')" />
+            <KStamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KCollection.EMPTY_LABEL')" />
           </div>
         </template>
-      </KGrid>
+      </KCollection>
       <!--
         Router view to enable routing to modals
       -->
@@ -28,14 +28,14 @@
 <script>
 import _ from 'lodash'
 import KPage from '../layout/KPage.vue'
-import KGrid from '../collection/KGrid.vue'
+import KCollection from '../collection/KCollection.vue'
 import KStamp from '../KStamp.vue'
 import { baseActivity } from '../../mixins'
 
 export default {
   components: {
     KPage,
-    KGrid,
+    KCollection,
     KStamp
   },
   mixins: [baseActivity('organisationsActivity')],
