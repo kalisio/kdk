@@ -88,8 +88,7 @@ const hasLeftPaneComponents = computed(() => {
   return !_.isEmpty(leftPane.components)
 })
 const leftPaneSize = computed(() => {
-  if (leftPane.state === 'responsive') return computeResponsiveWidth(leftPane.sizePolicy.responsive)
-  return leftPane.sizePolicy.fixed
+  return computeResponsiveWidth(leftPane.sizes)
 })
 const hasHeaderComponents = computed(() => {
   return !_.isEmpty(header.components)
