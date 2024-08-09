@@ -124,7 +124,7 @@ import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { computeResponsiveWidth, computeResponsiveSize } from '../../utils'
-import { Layout } from '../../layout.js'
+import { useLayout } from '../../composables'
 import KContent from '../KContent.vue'
 import KPanel from '../KPanel.vue'
 import KOpener from './KOpener.vue'
@@ -144,6 +144,7 @@ const emit = defineEmits(['content-resized'])
 
 // Data
 const $q = useQuasar()
+const { Layout } = useLayout()
 const page = Layout.getPage()
 const fab = Layout.getFab()
 const topPane = Layout.getPane('top')
@@ -154,9 +155,6 @@ const topWindow = Layout.getWindow('top')
 const rightWindow = Layout.getWindow('right')
 const bottomWindow = Layout.getWindow('bottom')
 const layoutOffset = ref(0)
-const topPadding = ref(0)
-const bottomPadding = ref(0)
-const rightPadding = ref(0)
 
 // Computed
 const contentStyleFunction = computed(() => {
@@ -164,8 +162,8 @@ const contentStyleFunction = computed(() => {
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
   return {
-    paddingTop: `${topPadding.value}px`,
-    paddingBottom: `${bottomPadding.value}px`,
+    paddingTop: `${topPane.size[1]}px`,
+    paddingBottom: `${bottomPane.size[1]}px`,
     width: `calc(100vw - ${widthOffset}px)`,
     height: `calc(100vh - ${heightOffset}px)`
   }
@@ -204,22 +202,22 @@ const hasBottomPaneComponents = computed(() => {
   return !_.isEmpty(bottomPane.components)
 })
 const topPaneSize = computed(() => {
-  if (topPane.state === 'responsive') return computeResponsiveWidth(topPane.sizePolicy.responsive)
-  return topPane.sizePolicy.fixed
+  if (topPane.sizes) return computeResponsiveWidth(topPane.sizes)
+  return undefined
 })
 const topPaneStyle = computed(() => {
   return topPaneSize.value ? { width: topPaneSize.value + 'px' } : {}
 })
 const rightPaneSize = computed(() => {
-  if (rightPane.state === 'responsive') return computeResponsiveSize(rightPane.sizePolicy.responsive)
-  return rightPane.sizePolicy.fixed
+  if (rightPane.sizes) return computeResponsiveSize(rightPane.sizes)
+  return undefined
 })
 const rightPaneStyle = computed(() => {
   return rightPaneSize.value ? { width: rightPaneSize.value[0] + 'px', height: rightPaneSize.value[1] + 'px' } : {}
 })
 const bottomPaneSize = computed(() => {
-  if (bottomPane.state === 'responsive') return computeResponsiveWidth(bottomPane.sizePolicy.responsive)
-  return bottomPane.sizePolicy.fixed
+  if (bottomPane.sizes) return computeResponsiveWidth(bottomPane.sizes)
+  return undefined
 })
 const bottomPaneStyle = computed(() => {
   return bottomPaneSize.value ? { width: bottomPaneSize.value + 'px' } : {}
@@ -266,16 +264,16 @@ function layoutOffsetListener (offset) {
   return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
 }
 function onContentResized (size) {
-  emit('content-resized', size)
+  Layout.setElementSize('page', [size.width, size.height])
 }
 function onTopPaneResized (size) {
-  topPadding.value = size.height
+  Layout.setElementSize('panes.top', [size.width, size.height])
 }
 function onRightPaneResized (size) {
-  rightPadding.value = size.width
+  Layout.setElementSize('panes.right', [size.width, size.height])
 }
 function onBottomPaneResized (size) {
-  bottomPadding.value = size.height
+  Layout.setElementSize('panes.bottom', [size.width, size.height])
 }
 function setTopPaneVisible (visible) {
   Layout.setPaneVisible('top', visible)

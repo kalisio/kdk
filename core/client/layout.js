@@ -95,7 +95,7 @@ export const Layout = {
     Store.patch(this.paths.padding, { padding })
   },
   clearPadding () {
-    Store.patch(this.paths.layout, { view: this.getElementDefaults('padding') })
+    Store.patch(this.paths.layout, { padding: this.getElementDefaults('padding') })
   },
   setMode (mode) {
     this.setHeaderMode(mode)
