@@ -1,5 +1,5 @@
 <template>
-  <KPage padding>
+  <KPage :padding="padding">
     <template v-slot:page-content>
       <slot  />
     </template>
@@ -29,10 +29,6 @@ export default {
     mode: {
       type: String,
       default: null
-    },
-    padding: {
-      type: Boolean,
-      default: true
     }
   },
   setup (props) {
@@ -40,13 +36,19 @@ export default {
     logger.debug(`[KDK] Reading '${props.name}' activity options with key ${keyName}`)
     const options = _.get(config, keyName, {})
     const { setCurrentActivity } = useActivity(keyName, options)
-    const { configureLayout, clearLayout, setLayoutMode } = useLayout()
+    const { Layout, configureLayout, clearLayout, setLayoutMode } = useLayout()
     return {
       options,
       setCurrentActivity,
+      Layout,
       configureLayout,
       clearLayout,
       setLayoutMode
+    }
+  },
+  computed: {
+    padding () {
+      return this.Layout.padding
     }
   },
   watch: {
