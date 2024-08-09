@@ -50,7 +50,7 @@
                   <div class="row justify-between items-center">
                     <span v-if="getTimestamp(item)">
                       {{  getTimestamp(item) }}
-                    </span>        
+                    </span>
                     <KPanel
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
