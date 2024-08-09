@@ -295,6 +295,7 @@ function refresh (newState, oldState) {
 }
 function setPinnedGeometry () {
   const size = computeResponsiveSize(currentWindow.sizePolicy.pinned)
+  console.log(size)
   let x, y
   if (props.placement === 'top' || props.placement === 'bottom') {
     x = $q.screen.width / 2 - size[0] / 2
@@ -383,7 +384,7 @@ const onResized = _.throttle((event) => {
     updateGeometry(currentWindow.position, newSize)
     if (event.isFinal) storeGeometry()
   }
-}, 10)
+}, 5)
 const onScreenResized = _.throttle(() => {
     if (currentWindow.state === 'pinned') setPinnedGeometry()
     else if (currentWindow.state === 'maximized') setMaximizedGeometry()
