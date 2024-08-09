@@ -217,7 +217,7 @@ export const Units = {
     // Set the units object within the store
     Store.set('units', _.defaultsDeep(config.units || {},
       quantities,
-      { 
+      {
         default: {
           length: 'm',
           altitude: 'm',
@@ -230,8 +230,8 @@ export const Units = {
           equivalentDoseRate: 'usvh',
           notation: 'auto',
           precision: 3
-        },
-      }         
+        }
+      }
     ))
     // Create units not defined by default in mathjs
     this.getQuantities().forEach(quantity => {

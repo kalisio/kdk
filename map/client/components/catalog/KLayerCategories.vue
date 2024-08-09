@@ -16,21 +16,21 @@
           :base-query="baseQuery"
           :filter-query="filter.query"
           :append-items="true"
-          @collection-refreshed="refreshCategories" 
+          @collection-refreshed="refreshCategories"
         />
       </q-card-section>
       <q-card-section id="layer-category-add" v-if="mode === 'add'">
-        <KForm 
-          :ref="onAddFormCreated" 
-          :schema="categorySchema" 
-          style="min-width: 300px" 
+        <KForm
+          :ref="onAddFormCreated"
+          :schema="categorySchema"
+          style="min-width: 300px"
         />
       </q-card-section>
       <q-card-section id="layer-category-edit" v-if="mode === 'edit'">
-        <KForm 
-          :ref="onEditFormCreated"         
-          :schema="categorySchema" 
-          style="min-width: 300px" 
+        <KForm
+          :ref="onEditFormCreated"
+          :schema="categorySchema"
+          style="min-width: 300px"
           @form-ready="onEditFormReady"
         />
       </q-card-section>

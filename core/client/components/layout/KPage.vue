@@ -139,9 +139,6 @@ defineProps({
   }
 })
 
-// Emit
-const emit = defineEmits(['content-resized'])
-
 // Data
 const $q = useQuasar()
 const { Layout } = useLayout()
@@ -158,7 +155,7 @@ const layoutOffset = ref(0)
 
 // Computed
 const contentStyleFunction = computed(() => {
-  const layoutPadding = $q.screen.xs ? 16: $q.screen.lt.xl ? 32 : 48
+  const layoutPadding = $q.screen.xs ? 16 : $q.screen.lt.xl ? 32 : 48
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
   return {

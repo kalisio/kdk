@@ -51,8 +51,8 @@ const headerClass = computed(() => {
 const icon = computed(() => {
   _.get(props.category, 'icon.name', _.get(props.category, 'icon'))
 })
-const defaultOpened = computed (() => {
-  let states = LocalStorage.get(localStorageKey)
+const defaultOpened = computed(() => {
+  const states = LocalStorage.get(localStorageKey)
   if (states && _.has(states, getId())) return states[getId()]
   // if category explicitly specify default opened state, use that
   if (_.has(props.category, 'options.open')) return props.category.options.open
@@ -67,7 +67,7 @@ function getId () {
   return _.kebabCase(_.replace(props.category.name, 'Categories.', ''))
 }
 function onToggled (value) {
-  let states = LocalStorage.get(localStorageKey, {})
+  const states = LocalStorage.get(localStorageKey, {})
   states[getId()] = value
   LocalStorage.set(localStorageKey, states)
 }

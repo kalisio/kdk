@@ -49,13 +49,13 @@ watch(() => props.url, async (value) => {
     const blob = await response.blob()
     const reader = new FileReader()
     reader.onloadend = () => {
-      viewer = new Viewer({ 
-        domContainer: domViewer, 
-        template: { 
-          basePdf: reader.result, 
+      viewer = new Viewer({
+        domContainer: domViewer,
+        template: {
+          basePdf: reader.result,
           schemas: _.get(props.options, 'schemas', defaultSchemas)
         },
-        inputs: _.get(props.options, 'inputs', defaultInputs) 
+        inputs: _.get(props.options, 'inputs', defaultInputs)
       })
     }
     reader.readAsDataURL(blob)

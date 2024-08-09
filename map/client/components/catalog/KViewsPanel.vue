@@ -72,7 +72,7 @@ export default {
       return [
         {
           id: 'views-filter',
-          component: 'collection/KFilter',
+          component: 'collection/KFilter'
         },
         {
           component: 'collection/KSorter',

@@ -1,11 +1,11 @@
 <template>
   <div class="column no-wrap">
-    <!-- 
-      Header 
+    <!--
+      Header
     -->
     <div class="q-pr-xs q-pb-xs">
       <slot name="header">
-        <KPanel 
+        <KPanel
           :content="header"
           :class="headerClass"
          />
@@ -14,19 +14,19 @@
     <div v-if="items.length > 0" class="scroll">
       <!--
         Content
-      --> 
-      <q-timeline 
+      -->
+      <q-timeline
         color="primary"
         :layout="layout"
       >
-        <q-infinite-scroll 
-          @load="onLoad" 
+        <q-infinite-scroll
+          @load="onLoad"
           :initial-index="1"
-          :offset="100" 
+          :offset="100"
         >
           <template v-for="item in items" :key="item._id">
             <!-- Heading entry if any -->
-            <q-timeline-entry 
+            <q-timeline-entry
               v-if="getHeading(item)"
               :heading="true"
             >
@@ -35,7 +35,7 @@
               </div>
             </q-timeline-entry>
             <!-- Item entry -->
-            <q-timeline-entry 
+            <q-timeline-entry
               :color="getColor(item)"
             >
               <template v-slot:title>
@@ -65,43 +65,43 @@
                   :item="item"
                   :contextId="contextId"
                   :is="itemRenderer"
-                  v-bind="renderer" 
+                  v-bind="renderer"
                 />
               </div>
             </q-timeline-entry>
           </template>
           <template v-slot:loading>
             <div class="text-center q-my-md">
-              <q-spinner-dots 
-                color="primary" 
-                size="40px" 
+              <q-spinner-dots
+                color="primary"
+                size="40px"
               />
             </div>
           </template>
         </q-infinite-scroll>
       </q-timeline>
     </div>
-    <!-- Empty slot -->    
+    <!-- Empty slot -->
     <div v-else>
       <slot name="empty">
         <div class="row justify-center">
-          <KStamp 
-            icon="las la-exclamation-circle" 
-            icon-size="1.6rem" 
-            :text="$t('KTimeLine.EMPTY_LABEL')" 
-            direction="horizontal" 
+          <KStamp
+            icon="las la-exclamation-circle"
+            icon-size="1.6rem"
+            :text="$t('KTimeLine.EMPTY_LABEL')"
+            direction="horizontal"
           />
         </div>
       </slot>
     </div>
-    <!-- 
+    <!--
       Footer
     -->
     <div>
       <slot name="footer">
         <q-separator inset v-if="footer"/>
-        <KPanel 
-          :content="footer" 
+        <KPanel
+          :content="footer"
           :class="footerClass"
         />
       </slot>
@@ -132,7 +132,7 @@ const props = defineProps({
   },
   baseQuery: {
     type: Object,
-    default: () => {  return { $sort: { createdAt: -1 } } }
+    default: () => { return { $sort: { createdAt: -1 } } }
   },
   filterQuery: {
     type: Object,
@@ -163,7 +163,7 @@ const props = defineProps({
   },
   schema: {
     type: Object,
-    default: () => { 
+    default: () => {
       return {
         colorField: 'color',
         titleField: 'name',
@@ -249,9 +249,9 @@ function onCollectionRefreshed () {
   _.forEach(items.value, (item, index) => {
     item.previous = index > 0 ? items.value[index - 1] : null
   })
-  // call done callback if needed  
+  // call done callback if needed
   if (doneFunction) {
-    doneFunction(items.value.length === nbTotalItems.value ? true : false)
+    doneFunction(items.value.length === nbTotalItems.value)
     doneFunction = null
   }
 }

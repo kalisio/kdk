@@ -1,7 +1,7 @@
 <template>
   <div v-if="hasTabs" class="fit column">
     <!-- Tabs -->
-    <q-tabs 
+    <q-tabs
       v-model="current"
       :no-caps="noCaps"
       outside-arrows

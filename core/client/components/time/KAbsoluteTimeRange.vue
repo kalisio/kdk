@@ -1,8 +1,8 @@
 <template>
   <KDateTimeRange
-    v-model="dateTimeRangeModel" 
+    v-model="dateTimeRangeModel"
     :options="dateTimeRangeOptions"
-    :min="props.min" 
+    :min="props.min"
     :max="props.max"
     :dense="props.dense"
     :disabled="props.disabled"
@@ -68,7 +68,7 @@ watch(dateTimeRangeModel, (newDateTimeRange, oldDateTimeRange) => {
 function onTimeRangeUpdated () {
   const { start, end } = Time.getRange()
   dateTimeRangeModel.value = {
-    start: start.toISOString(), 
+    start: start.toISOString(),
     end: end.toISOString()
   }
 }

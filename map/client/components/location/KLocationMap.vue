@@ -202,7 +202,7 @@ export default {
       }
       // }
       this.locationLayer.addTo(this.map)
-      this.recenter() 
+      this.recenter()
     },
     onLocationDragged () {
       const latLng = this.locationLayer.getLatLng()

@@ -1,11 +1,11 @@
 <template>
   <div class="column no-wrap">
-    <!-- 
-      Header 
+    <!--
+      Header
     -->
     <div class="q-pr-xs q-pb-xs">
       <slot name="header">
-        <KPanel 
+        <KPanel
           :content="header"
           :class="headerClass"
          />
@@ -40,15 +40,15 @@
           </div>
           <template v-slot:loading>
             <div class="text-center q-my-md">
-              <q-spinner-dots 
-                color="primary" 
-                size="40px" 
+              <q-spinner-dots
+                color="primary"
+                size="40px"
               />
             </div>
           </template>
         </q-infinite-scroll>
       </div>
-      <!-- Paginated mode -->    
+      <!-- Paginated mode -->
       <div v-else class="fit row">
         <template v-for="item in items" :key="item._id">
           <div :class="rendererClass">
@@ -73,28 +73,28 @@
         </div>
       </div>
     </div>
-    <!-- Empty slot -->    
+    <!-- Empty slot -->
     <div v-else>
       <slot name="empty">
         <div class="row justify-center">
-          <KStamp 
-            icon="las la-exclamation-circle" 
-            icon-size="1.6rem" 
+          <KStamp
+            icon="las la-exclamation-circle"
+            icon-size="1.6rem"
             :text="$t('KCollection.EMPTY_LABEL')"
-            direction="horizontal" 
+            direction="horizontal"
             class="q-pa-md"
           />
         </div>
       </slot>
     </div>
-    <!-- 
+    <!--
       Footer
     -->
     <div>
       <slot name="footer">
         <q-separator inset v-if="footer"/>
-        <KPanel 
-          :content="footer" 
+        <KPanel
+          :content="footer"
           :class="footerClass"
         />
       </slot>
@@ -199,9 +199,9 @@ function onItemSelected (item, section) {
 }
 function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
-  // call done callback if needed  
+  // call done callback if needed
   if (doneFunction) {
-    doneFunction(items.value.length === nbTotalItems.value ? true : false)
+    doneFunction(items.value.length === nbTotalItems.value)
     doneFunction = null
   }
 }

@@ -19,7 +19,7 @@ export const Document = {
         png: 'document/KImage'
       },
       htmlSanitizer: {
-        allowedTags: sanitize.defaults.allowedTags.concat([ 'img' ])
+        allowedTags: sanitize.defaults.allowedTags.concat(['img'])
       },
       mdConverter: {}
     })

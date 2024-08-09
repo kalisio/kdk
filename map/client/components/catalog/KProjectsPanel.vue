@@ -37,7 +37,7 @@ export default {
       return [
         {
           id: 'projects-filter',
-          component: 'collection/KFilter',
+          component: 'collection/KFilter'
         },
         {
           component: 'collection/KSorter',
