@@ -7,19 +7,7 @@ import { bindContent } from './utils/utils.content.js'
 
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const paneDefaults = { opener: false, state: 'fixed' }
-const lPaneDefaultSizePolicy = {
-  fixed: 300,
-  responsive: { xs: 80, sm: 40, md: 25, lg: 20, xl: 15 }
-}
-const hPaneDefaultSizePolicy = {
-  fixed: undefined,
-  responsive: { xs: 90, sm: 80, md: 70, lg: 60, xl: 50 }
-}
-const rPaneDefaultSizePolicy = {
-  fixed: undefined,
-  responsive: { xs: [85, 75], sm: [50, 75], md: [35, 80], lg: [25, 80], xl: [20, 85] }
-}
+const paneDefaults = { opener: false, size: [0, 0], state: 'fixed' }
 const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls }
 const hWindowDefaultSizePolicy = {
@@ -34,16 +22,17 @@ const vWindowDefaultSizePolicy = {
 }
 const defaults = {
   view: 'lHh LpR lFf',
+  padding: true,
   mode: undefined,
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
-  page: { ...contentDefaults },
+  page: { ...contentDefaults, size: [0, 0] },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16] },
   panes: {
-    left: { ...contentDefaults, ...paneDefaults, sizePolicy: lPaneDefaultSizePolicy },
-    top: { ...contentDefaults, ...paneDefaults, sizePolicy: hPaneDefaultSizePolicy },
-    right: { ...contentDefaults, ...paneDefaults, sizePolicy: rPaneDefaultSizePolicy },
-    bottom: { ...contentDefaults, ...paneDefaults, sizePolicy: hPaneDefaultSizePolicy }
+    left: { ...contentDefaults, ...paneDefaults, sizes: 300 },
+    top: { ...contentDefaults, ...paneDefaults, sizes: undefined },
+    right: { ...contentDefaults, ...paneDefaults, sizes: { xs: [85, 75], sm: [50, 75], md: [35, 80], lg: [25, 80], xl: [20, 85] } },
+    bottom: { ...contentDefaults, ...paneDefaults, sizes: undefined }
   },
   windows: {
     left: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowDefaultSizePolicy },
@@ -59,6 +48,7 @@ export const Layout = {
   paths: {
     layout: layoutPath,
     view: layoutPath + '.view',
+    padding: layoutPath + '.padding',
     mode: layoutPath + '.mode',
     header: layoutPath + '.header',
     footer: layoutPath + '.footer',
@@ -80,6 +70,7 @@ export const Layout = {
   initialize () {
     // create the store structure for each element with their configuration
     Store.set(this.paths.view, this.getElementDefaults('view'))
+    Store.set(this.paths.padding, this.getElementDefaults('padding'))
     Store.set(this.paths.header, this.getElementDefaults('header'))
     Store.set(this.paths.footer, this.getElementDefaults('footer'))
     Store.set(this.paths.page, this.getElementDefaults('page'))
@@ -96,6 +87,15 @@ export const Layout = {
   },
   setView (view) {
     Store.patch(this.paths.layout, { view })
+  },
+  clearView () {
+    Store.patch(this.paths.layout, { view: this.getElementDefaults('view') })
+  },
+  setPadding (padding) {
+    Store.patch(this.paths.padding, { padding })
+  },
+  clearPadding () {
+    Store.patch(this.paths.layout, { view: this.getElementDefaults('padding') })
   },
   setMode (mode) {
     this.setHeaderMode(mode)
@@ -160,8 +160,17 @@ export const Layout = {
     if (props.visible === visible) return
     Store.patch(this.getElementPath(element), { visible })
   },
+  setElementSize (element, size) {
+    if (!Array.isArray(size) && size.length !== 2) {
+      logger.warn(`[KDK] Invalid size ${size}`)
+      return
+    }
+    const props = this.getElement(element)
+    if (_.isEqual(props.size, size)) return
+    Store.patch(this.getElementPath(element), { size })
+  },
   clearElement (element) {
-    this.setElement(element, null)
+    this.setElement(element, this.getElementDefaults(element))
   },
   getHeader () {
     return this.getElement('header')
@@ -278,23 +287,10 @@ export const Layout = {
     if (props.opener === opener) return
     Store.patch(this.getElementPath(`panes.${placement}`), { opener })
   },
-  setPaneState (placement, state) {
-    if (!['fixed', 'responsive'].includes(state)) {
-      logger.warn(`[KDK] Invalid pane state ${state}`)
-      return
-    }
+  setPaneSizes (placement, sizes) {
     const props = this.getElement(`panes.${placement}`)
-    if (props.state === state) return
-    Store.patch(this.getElementPath(`panes.${placement}`), { state })
-  },
-  setPaneSizePolicy (placement, policy) {
-    if (!policy.fixed || !policy.responsive) {
-      logger.warn(`[KDK] Invalid pane sizePolicy ${policy}`)
-      return
-    }
-    const props = this.getElement(`panes.${placement}`)
-    if (_.isEqual(props.sizePolicy, policy)) return
-    Store.patch(this.getElementPath(`panes.${placement}`), { sizePolicy: policy })
+    if (_.isEqual(props.sizes, sizes)) return
+    Store.patch(this.getElementPath(`panes.${placement}`), { sizes })
   },
   clearPane (placement) {
     this.clearElement(`panes.${placement}`)
@@ -345,13 +341,7 @@ export const Layout = {
     Store.patch(this.getElementPath(`windows.${placement}`), { position })
   },
   setWindowSize (placement, size) {
-    if (!Array.isArray(size) && size.length !== 2) {
-      logger.warn(`[KDK] Invalid size ${size}`)
-      return
-    }
-    const props = this.getElement(`windows.${placement}`)
-    if (_.isEqual(props.size, size)) return
-    Store.patch(this.getElementPath(`windows.${placement}`), { size })
+    this.setElementSize(`windows.${placement}`, size)
   },
   setWindowSizePolicy (placement, policy) {
     if (!policy.minSize || !policy.floating || !policy.pinned) {

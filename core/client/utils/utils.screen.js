@@ -7,46 +7,60 @@ import { AppFullscreen } from 'quasar'
 export const Fullscreen = toRef(AppFullscreen, 'isActive')
 
 export function computeResponsiveWidth (width) {
-  let breakpointWidth = width
-  if (typeof width === 'object') {
-    breakpointWidth = _.get(width, Screen.name)
-    if (!breakpointWidth) {
-      logger.warn(`[KDK] Cannot find width value for breakpoint ${Screen.name}`)
-      return 0
-    }
+  if (_.isNumber(width)) {
+    if (width > 100) return width
+    return Screen.width * width / 100
   }
-  if (!_.isNumber(breakpointWidth) && (breakpointWidth < 0) && (breakpointWidth > 100)) {
-    logger.warn(`[KDK] Invalid parameter ${breakpointWidth}`)
-    return 0
+  if (!_.isObject(width)) {
+    logger.warn(`[KDK] Invalid width parameter ${width}`)
+    return undefined
   }
-  return Screen.width * breakpointWidth / 100
+  let breakpointWidth = _.get(width, Screen.name)
+  if (!breakpointWidth) {
+    logger.warn(`[KDK] Cannot find width value for breakpoint ${Screen.name}`)
+    return undefined
+  }
+  if (!_.isNumber(breakpointWidth)) {
+    logger.warn(`[KDK] Invalid width value ${breakpointWidth} for breakpoint ${Screen.name}`)
+    return undefined
+  }
+  return computeResponsiveWidth(breakpointWidth)
 }
 
 export function computeResponsiveHeight (height) {
-  let breakpointHeight = height
-  if (typeof breakpointHeight === 'object') {
-    breakpointHeight = _.get(height, Screen.name)
-    if (!breakpointHeight) {
-      logger.warn(`[KDK] Cannot find width value for breakpoint ${Screen.name}`)
-      return 0
-    }
+  if (_.isNumber(height)) {
+    if (height > 100) return height
+    return Screen.height * height / 100
   }
-  if (!_.isNumber(breakpointHeight) && (breakpointHeight < 0) && (breakpointHeight > 100)) {
-    logger.warn(`[KDK] Invalid value ${breakpointHeight}`)
-    return 0
+  if (!_.isObject(height)) {
+    logger.warn(`[KDK] Invalid height parameter ${height}`)
+    return undefined
   }
-  return Screen.height * breakpointHeight / 100
+  let breakpointHeight = _.get(height, Screen.name)
+  if (!breakpointHeight) {
+    logger.warn(`[KDK] Cannot find height value for breakpoint ${Screen.name}`)
+    return undefined
+  }
+  if (!_.isNumber(breakpointHeight)) {
+    logger.warn(`[KDK] Invalid height value ${breakpointHeight} for breakpoint ${Screen.name}`)
+    return undefined
+  }
+  return computeResponsiveHeight(breakpointHeight)
 }
 
 export function computeResponsiveSize (size) {
-  let breakpointSize = size
-  if (typeof size === 'object') {
-    breakpointSize = _.get(size, Screen.name)
-    if (!breakpointSize) {
-      logger.warn(`[KDK] Cannot find size value for breakpoint ${Screen.name}`)
-      return [0, 0]
+  if (_.isArray(size)) {
+    if (size.length === 2) {
+      logger.warn(`[KDK] Invalid size parameter ${size}`)
+      return undefined
     }
+    return size
   }
+  if (!_.isObject(size)) {
+    logger.warn(`[KDK] Invalid size parameter ${size}`)
+    return undefined
+  }
+  let breakpointSize = _.get(size, Screen.name)
   return [computeResponsiveWidth(breakpointSize[0]), computeResponsiveHeight(breakpointSize[1])]
 }
 

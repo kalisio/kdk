@@ -4,6 +4,9 @@ export function useLayout () {
 
   // functions
   function configureLayout (configuration, context) {
+    if (configuration.view) Layout.setView(configuration.view)
+    if (configuration.padding) Layout.setPadding(configuration.padding)
+    if (configuration.header) Layout.setHeader(configuration.header, context)
     if (configuration.header) Layout.setHeader(configuration.header, context)
     if (configuration.footer) Layout.setFooter(configuration.footer, context)
     if (configuration.page) Layout.setPage(configuration.page, context)
@@ -19,6 +22,8 @@ export function useLayout () {
     if (configuration.bottomPane) Layout.setPane('bottom', configuration.bottomPane, context)
   }
   function clearLayout () {
+    Layout.clearView()
+    Layout.clearPadding()
     Layout.clearHeader()
     Layout.clearFooter()
     Layout.clearPage()
@@ -31,7 +36,7 @@ export function useLayout () {
   function setLayoutMode (mode) {
     if (mode) Layout.setMode(mode)
   }
-
+  
   // immediate
   const additionalFunctions = {}
   Layout.placements.forEach(placement => {
