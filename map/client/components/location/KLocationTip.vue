@@ -3,7 +3,7 @@
     anchor="center end"
     self="center middle"
     class="q-pa-none"
-    :delay="500"
+    :delay="delay"
     :hide-delay="150"
     :transition-duration="150"
     style="border-radius: 100px; border: 1px solid var(--q-primary);"
@@ -25,6 +25,10 @@ const props = defineProps({
   location: {
     type: Object,
     required: true
+  },
+  delay: {
+    type: Number,
+    default: 500
   }
 })
 
