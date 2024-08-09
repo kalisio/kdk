@@ -39,25 +39,35 @@
               :color="getColor(item)"
             >
               <template v-slot:title>
-                <slot name="entry-title">
+                <slot name="title">
                   <div v-if="getTitle(item)">
                     {{ getTitle(item) }}
                   </div>
                 </slot>
               </template>
               <template v-slot:subtitle>
-                <slot name="entry-subtitle">
-                  <div v-if="getTimestamp(item)">
-                    {{  getTimestamp(item) }}
+                <slot name="subtitle">
+                  <div class="row items-center">
+                    <div v-if="getTimestamp(item)">
+                      {{  getTimestamp(item) }}
+                    </div>
                   </div>
+                  <KPanel
+                    v-if="getDecoration(item)"
+                    :content="getDecoration(item)"
+                  />
                 </slot>
               </template>
-              <slot name="entry-content" :item="item">
-                <div 
-                  v-if="getContent(item)"
-                  v-html="Document.sanitizeHtml(getContent(item))" 
+              <div :class="rendererClass">
+                <component
+                  :id="item._id"
+                  :service="service"
+                  :item="item"
+                  :contextId="contextId"
+                  :is="itemRenderer"
+                  v-bind="renderer" 
                 />
-              </slot>
+              </div>
             </q-timeline-entry>
           </template>
           <template v-slot:loading>
@@ -78,7 +88,7 @@
           <KStamp 
             icon="las la-exclamation-circle" 
             icon-size="1.6rem" 
-            :text="$t('KTimeLine.EMPTY')" 
+            :text="$t('KTimeLine.EMPTY_LABEL')" 
             direction="horizontal" 
           />
         </div>
@@ -102,12 +112,13 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { ref, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
-import { Document } from '../../document.js'
 import { Time } from '../../time.js'
+import { loadComponent } from '../../utils'
 import KStamp from '../KStamp.vue'
+import KPanel from '../KPanel.vue'
 
 // Props
 const props = defineProps({
@@ -126,6 +137,14 @@ const props = defineProps({
   filterQuery: {
     type: Object,
     default: () => {}
+  },
+  renderer: {
+    type: Object,
+    default: () => {
+      return {
+        component: 'collection/KCard'
+      }
+    }
   },
   nbItemsPerPage: {
     type: Number,
@@ -149,12 +168,29 @@ const props = defineProps({
         colorField: 'color',
         titleField: 'name',
         timestampField: 'createdAt',
-        contentField: 'description'
+        contentField: 'description',
+        decorationField: 'tags'
       }
     }
   },
   processor: {
     type: Function,
+    default: undefined
+  },
+  header: {
+    type: [Array, Object],
+    default: () => null
+  },
+  headerClass: {
+    type: String,
+    default: undefined
+  },
+  footer: {
+    type: [Array, Object],
+    default: () => null
+  },
+  footerClass: {
+    type: String,
     default: undefined
   }
 })
@@ -165,6 +201,14 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 // Data
 const { items, nbTotalItems, currentPage, refreshCollection } = useCollection(_.merge(toRefs(props), { appendItems: ref(true) }))
 let doneFunction = null
+
+// Computed
+const itemRenderer = computed(() => {
+  return loadComponent(props.renderer.component)
+})
+const rendererClass = computed(() => {
+  return props.renderer.class || 'q-pa-sm col-12'
+})
 
 // Watch
 watch(items, onCollectionRefreshed)
@@ -191,8 +235,8 @@ function getColor (item) {
 function getTitle (item) {
   return _.get(item, _.get(props.schema, 'titleField'))
 }
-function getContent (item) {
-  return _.get(item, _.get(props.schema, 'contentField'))
+function getDecoration (item) {
+  return _.get(item, _.get(props.schema, 'decorationField'))
 }
 function onLoad (index, done) {
   currentPage.value = index
@@ -223,14 +267,20 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
-.q-timeline__content {
-  padding-bottom: 16px;
-}
 .q-timeline__heading-title {
   padding-bottom: 8px;
 }
 .k-timeline-heading {
   font-size: 1.25rem;
   font-weight: bold;
+}
+.q-timeline__title {
+  margin-bottom: 4px;
+}
+.q-timeline__subtitle {
+  margin-bottom: 0px;
+}
+.q-timeline__content {
+  padding-bottom: 16px;
 }
 </style>
