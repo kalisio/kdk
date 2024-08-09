@@ -47,15 +47,15 @@
               </template>
               <template v-slot:subtitle>
                 <slot name="subtitle">
-                  <div class="row items-center">
-                    <div v-if="getTimestamp(item)">
+                  <div class="row justify-between items-center">
+                    <span v-if="getTimestamp(item)">
                       {{  getTimestamp(item) }}
-                    </div>
+                    </span>        
+                    <KPanel
+                      v-if="getDecoration(item)"
+                      :content="getDecoration(item)"
+                    />
                   </div>
-                  <KPanel
-                    v-if="getDecoration(item)"
-                    :content="getDecoration(item)"
-                  />
                 </slot>
               </template>
               <div :class="rendererClass">
@@ -207,7 +207,7 @@ const itemRenderer = computed(() => {
   return loadComponent(props.renderer.component)
 })
 const rendererClass = computed(() => {
-  return props.renderer.class || 'q-pa-sm col-12'
+  return props.renderer.class || 'col-12'
 })
 
 // Watch
