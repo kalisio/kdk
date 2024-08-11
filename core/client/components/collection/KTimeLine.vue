@@ -47,7 +47,7 @@
               </template>
               <template v-slot:subtitle>
                 <slot name="subtitle">
-                  <div class="row justify-between items-center">
+                  <div class="row items-center q-gutter-x-sm">
                     <span v-if="getTimestamp(item)">
                       {{  getTimestamp(item) }}
                     </span>
@@ -279,6 +279,7 @@ onBeforeUnmount(() => {
 }
 .q-timeline__subtitle {
   margin-bottom: 0px;
+  opacity: 0.9;
 }
 .q-timeline__content {
   padding-bottom: 16px;
