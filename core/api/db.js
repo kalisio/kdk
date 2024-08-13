@@ -29,7 +29,12 @@ export function createObjectID (id) {
   if (isObjectID(id)) return id
   // Take care that numbers could be a valid object ID
   else if ((typeof id === 'number') || !ObjectID.isValid(id)) return null
-  else return new ObjectID(id)
+  else {
+    const objectId = new ObjectID(id)
+    // It appears that ObjectID.isValid is not reliable in some driver versions, see eg https://jira.mongodb.org/browse/NODE-3760
+    // So that we use an additional check here
+    return (objectId.toString() === id ? objectId : null)
+  }
 }
 
 // Utility function used to convert from string to MongoDB IDs as required eg by queries
