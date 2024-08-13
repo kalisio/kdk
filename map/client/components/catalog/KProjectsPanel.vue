@@ -1,6 +1,6 @@
 <template>
   <div class="fit column">
-    <KCollection
+    <KGrid
       service="projects"
       :renderer="projectRenderer"
       :nb-items-per-page="20"
@@ -9,9 +9,9 @@
       :filter-query="filter.query"
       :dense="true"
       :header="toolbar"
-      header-class="justify-between"
+      header-class="full-width no-wrap"
       @selection-changed="onProjectSelected"
-      class="q-pl-sm col"
+      class="q-px-sm col"
     />
   </div>
 </template>
@@ -19,12 +19,12 @@
 <script>
 import logger from 'loglevel'
 import { Filter, Sorter, utils, i18n } from '../../../../core/client'
-import { KCollection, KPanel, KAction } from '../../../../core/client/components'
+import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 
 export default {
   name: 'k-projects-panel',
   components: {
-    KCollection,
+    KGrid,
     KPanel,
     KAction
   },
@@ -81,13 +81,11 @@ export default {
       })
     }
     return {
-      scrollAreaMaxWidth: 0,
-      scrollAreaMaxHeight: 0,
       filter: Filter.get(),
       sorter: Sorter.get(),
       projectRenderer: {
         component: 'catalog/KProjectSelector',
-        class: 'col-12',
+        class: 'q-px-xs col-12',
         actions: projectActions
       }
     }

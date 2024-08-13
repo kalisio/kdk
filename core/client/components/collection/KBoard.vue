@@ -3,7 +3,7 @@
     <div class="fit row justify-between q-gutter-x-sm no-wrap">
       <div class="col-*" />
       <template v-for="column in columns" :key="column.value">
-        <KCollection
+        <KGrid
           ref="columnRefs"
           :id="column.value"
           :name="column.value"
@@ -22,7 +22,7 @@
           v-bind="column.props"
           :append-items="true"
         >
-        </KCollection>
+        </KGrid>
       </template>
       <div class="col-*" />
     </div>
@@ -32,7 +32,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref } from 'vue'
-import KCollection from './KCollection.vue'
+import KGrid from './KGrid.vue'
 
 // Props
 defineProps({

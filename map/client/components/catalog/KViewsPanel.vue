@@ -1,6 +1,6 @@
 <template>
   <div class="fit column">
-    <KCollection
+    <KGrid
       service="catalog"
       :renderer="viewRenderer"
       :nb-items-per-page="20"
@@ -9,9 +9,9 @@
       :filter-query="filterQuery"
       :dense="true"
       :header="toolbar"
-      header-class="justify-between"
+      header-class="full-width no-wrap"
       @selection-changed="onViewSelected"
-      class="q-pl-sm col"
+      class="q-px-sm col"
     />
   </div>
 </template>
@@ -20,13 +20,13 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { Filter, Sorter, utils, i18n } from '../../../../core/client'
-import { KCollection, KPanel, KAction } from '../../../../core/client/components'
+import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 import { useProject } from '../../composables'
 
 export default {
   name: 'k-views-panel',
   components: {
-    KCollection,
+    KGrid,
     KPanel,
     KAction
   },
@@ -54,7 +54,7 @@ export default {
       sorter: Sorter.get(),
       viewRenderer: {
         component: 'catalog/KViewSelector',
-        class: 'col-12',
+        class: 'q-px-xs col-12',
         actions: viewActions
       }
     }

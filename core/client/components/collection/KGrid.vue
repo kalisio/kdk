@@ -1,14 +1,11 @@
 <template>
-  <div class="column no-wrap">
+  <div class="fit column no-wrap">
     <!--
       Header
     -->
     <div class="q-pr-xs q-pb-xs">
       <slot name="header">
-        <KPanel
-          :content="header"
-          :class="headerClass"
-         />
+        <KPanel :content="header" :class="headerClass" />
       </slot>
     </div>
     <!--
@@ -49,7 +46,7 @@
         </q-infinite-scroll>
       </div>
       <!-- Paginated mode -->
-      <div v-else class="fit row">
+      <div v-else class="row">
         <template v-for="item in items" :key="item._id">
           <div :class="rendererClass">
             <component
@@ -59,7 +56,8 @@
               :contextId="contextId"
               :is="itemRenderer"
               v-bind="renderer"
-              @item-selected="onItemSelected" />
+              @item-selected="onItemSelected" 
+            />
           </div>
         </template>
         <div v-if="nbPages > 1" class="col-12">
@@ -80,7 +78,7 @@
           <KStamp
             icon="las la-exclamation-circle"
             icon-size="1.6rem"
-            :text="$t('KCollection.EMPTY_LABEL')"
+            :text="$t('KGrid.EMPTY_LABEL')"
             direction="horizontal"
             class="q-pa-md"
           />
@@ -92,18 +90,15 @@
     -->
     <div>
       <slot name="footer">
-        <q-separator inset v-if="footer"/>
-        <KPanel
-          :content="footer"
-          :class="footerClass"
-        />
+        <q-separator v-if="footer" inset />
+        <KPanel :content="footer" :class="footerClass" />
       </slot>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { loadComponent } from '../../utils'
@@ -175,7 +170,8 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 
 // Data
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
-let doneFunction = null
+const canScroll = ref(false)
+let loadDoneFunction = null
 
 // Computed
 const itemRenderer = computed(() => {
@@ -192,7 +188,7 @@ watch(items, onCollectionRefreshed)
 function onLoad (index, done) {
   currentPage.value = index
   refreshCollection()
-  doneFunction = done
+  loadDoneFunction = done
 }
 function onItemSelected (item, section) {
   emit('selection-changed', item, section)
@@ -200,9 +196,10 @@ function onItemSelected (item, section) {
 function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
   // call done callback if needed
-  if (doneFunction) {
-    doneFunction(items.value.length === nbTotalItems.value)
-    doneFunction = null
+  if (loadDoneFunction) {
+    canScroll.value = items.value.length === nbTotalItems.value
+    loadDoneFunction(canScroll.value)
+    loadDoneFunction = null
   }
 }
 

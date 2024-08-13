@@ -80,7 +80,7 @@
           <KStamp
             icon="las la-exclamation-circle"
             icon-size="1.6rem"
-            :text="$t('KCollection.EMPTY_LABEL')"
+            :text="$t('KGrid.EMPTY_LABEL')"
             direction="horizontal"
             class="q-pa-md"
           />

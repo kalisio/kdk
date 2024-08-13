@@ -4,7 +4,7 @@
       <!--
         Groups collection
       -->
-      <KCollection
+      <KGrid
         ref="groupsGrid"
         :contextId="contextId"
         service="groups"
@@ -17,11 +17,11 @@
             <KStamp
               icon="las la-exclamation-circle"
               icon-size="3rem"
-              :text="$t('KCollection.EMPTY_LABEL')"
+              :text="$t('KGrid.EMPTY_LABEL')"
             />
           </div>
         </template>
-      </KCollection>
+      </KGrid>
       <!--
         Router view to enable routing to modals
       -->
@@ -32,7 +32,7 @@
 
 <script>
 import KPage from '../layout/KPage.vue'
-import KCollection from '../collection/KCollection.vue'
+import KGrid from '../collection/KGrid.vue'
 import KStamp from '../KStamp.vue'
 
 import _ from 'lodash'
@@ -43,7 +43,7 @@ export default {
   name: 'groups-activity',
   components: {
     KPage,
-    KCollection,
+    KGrid,
     KStamp
   },
   mixins: [baseActivity()],

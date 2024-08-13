@@ -8,7 +8,7 @@
   >
     <div id="layer-categories-content">
       <q-card-section id="layer-categories-list" v-if="mode === 'list'">
-        <KCollection
+        <KGrid
           style="min-height: 50px; min-width: 200px"
           service="catalog"
           :renderer="categoryRenderer"
@@ -41,13 +41,13 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
-import { KModal, KCollection, KAction, KPanel, KForm } from '../../../../core/client/components'
+import { KModal, KGrid, KAction, KPanel, KForm } from '../../../../core/client/components'
 
 export default {
   name: 'k-layer-categories',
   components: {
     KModal,
-    KCollection,
+    KGrid,
     KAction,
     KPanel,
     KForm

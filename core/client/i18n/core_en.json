@@ -533,7 +533,7 @@
     "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
   },
-  "KCollection": {
+  "KGrid": {
     "EMPTY_LABEL": "@:NO_ITEM"
   },
   "KTable": {
