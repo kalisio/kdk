@@ -155,7 +155,7 @@ const layoutOffset = ref(0)
 
 // Computed
 const contentStyleFunction = computed(() => {
-  const layoutPadding = $q.screen.xs ? 16 : $q.screen.lt.xl ? 32 : 48
+  const layoutPadding = $q.screen.xs ? 16 : $q.screen.lt.lg ? 32 : 48
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
   return {
