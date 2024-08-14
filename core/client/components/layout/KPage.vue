@@ -12,15 +12,15 @@
           :content="page.components"
           class="fit"
        />
-      </slot>  
+      </slot>
     </div>
     <!--
       Custom stickies
      -->
     <template v-for="sticky in stickies.components" :key="sticky.id">
-      <q-page-sticky 
+      <q-page-sticky
         :id="sticky.id"
-        :position="getStickyPosition(sticky)" 
+        :position="getStickyPosition(sticky)"
         :offset="getStickyOffset(sticky)"
         class="k-sticky-z-index"
       >
@@ -277,11 +277,11 @@ function layoutOffsetListener (offset) {
   return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
 }
 function getStickyPosition (sticky) {
-  if (sticky.position === 'center' ) return 'top'
+  if (sticky.position === 'center') return 'top'
   return sticky.position
 }
 function getStickyOffset (sticky) {
-  if (sticky.position === 'center' ) {
+  if (sticky.position === 'center') {
     const heightPageOffset = page.size[1] / 2
     const heightSizeOffset = sticky.size ? sticky.size[1] / 2 : sticky.height ? sticky.height / 2 : 0
     const heightOffset = heightPageOffset - heightSizeOffset

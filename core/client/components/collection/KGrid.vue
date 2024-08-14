@@ -56,7 +56,7 @@
               :contextId="contextId"
               :is="itemRenderer"
               v-bind="renderer"
-              @item-selected="onItemSelected" 
+              @item-selected="onItemSelected"
             />
           </div>
         </template>
@@ -97,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import { computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { loadComponent } from '../../utils'
