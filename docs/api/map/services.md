@@ -447,8 +447,8 @@ Individual events are emitted as usual by default. However, as the `features` se
 You can always force event or full result emission with the `emitEvents/fullResult` query parameters.
 :::
 
-::: tip
-Only layers with `serviceEvents` option set to `true` will be updated in the client by individual real-time events, multiple operations will not trigger any update.
+::: warning
+Only layers with `serviceEvents` option set to `true` or using the default built-in `features` service will be updated in the client by individual real-time events, multiple operations will not trigger any update.
 :::
 
 ### Hooks
