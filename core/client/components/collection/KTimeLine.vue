@@ -40,7 +40,7 @@
             >
               <template v-slot:title>
                 <slot name="title">
-                  <div v-if="getTitle(item)">
+                  <div v-if="getTitle(item)" class="text-h6">
                     {{ getTitle(item) }}
                   </div>
                 </slot>
@@ -58,15 +58,18 @@
                   </div>
                 </slot>
               </template>
-              <div :class="rendererClass">
+              <div v-if="bodyRenderer" :class="bodyRendererClass">
                 <component
                   :id="item._id"
                   :service="service"
                   :item="item"
                   :contextId="contextId"
-                  :is="itemRenderer"
+                  :is="bodyRendererComponent"
                   v-bind="renderer"
                 />
+              </div>
+              <div v-else :class="$q.screen.lt.md ? 'q-pr-sm' :'q-pr-md'">
+                {{ item.body }}
               </div>
             </q-timeline-entry>
           </template>
@@ -138,14 +141,6 @@ const props = defineProps({
     type: Object,
     default: () => {}
   },
-  renderer: {
-    type: Object,
-    default: () => {
-      return {
-        component: 'collection/KCard'
-      }
-    }
-  },
   nbItemsPerPage: {
     type: Number,
     default: 10
@@ -153,6 +148,10 @@ const props = defineProps({
   listStrategy: {
     type: String,
     default: 'smart'
+  },
+  bodyRenderer: {
+    type: Object,
+    default: () => null
   },
   layout: {
     type: String,
@@ -203,11 +202,11 @@ const { items, nbTotalItems, currentPage, refreshCollection } = useCollection(_.
 let doneFunction = null
 
 // Computed
-const itemRenderer = computed(() => {
-  return loadComponent(props.renderer.component)
+const bodyRendererComponent = computed(() => {
+  return loadComponent(props.bodyRenderer.component)
 })
-const rendererClass = computed(() => {
-  return props.renderer.class || 'col-12'
+const bodyRendererClass = computed(() => {
+  return props.bodyRenderer.class || 'col-12'
 })
 
 // Watch
