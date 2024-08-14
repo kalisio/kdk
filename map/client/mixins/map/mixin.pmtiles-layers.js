@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import chroma from 'chroma-js'
 import moment from 'moment'
+import sift from 'sift'
 import L from 'leaflet'
 import * as protomaps from 'protomaps-leaflet'
 import { mapbox_style } from '@kalisio/leaflet-pmtiles'
@@ -65,6 +66,7 @@ export const pmtilesLayers = {
     onCurrentTimeChangedPMTilesLayers (time) {
       const pmtileslayers = _.values(this.layers).filter(sift({
         'leaflet.type': 'pmtiles',
+        // Skip invisible layers
         isVisible: true
       }))
       pmtileslayers.forEach(async pmtileslayer => {
