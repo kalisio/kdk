@@ -216,6 +216,24 @@ export async function getFeaturesQuery (options, queryInterval, queryLevel) {
   return query
 }
 
+export function isFeatureInQueryInterval (feature, options) {
+  // We assume this is not a time-varying layer
+  if (!feature.time) return true
+  const queryInterval = getFeaturesQueryInterval(options)
+  if (!moment.isDuration(queryInterval)) return true
+  const now = Time.getCurrentTime()
+  const time = moment.utc(feature.time)
+  // Depending on the duration format we might have negative or positive values
+  const gte = (queryInterval.asMilliseconds() > 0
+    ? now.clone().subtract(queryInterval)
+    : now.clone().add(queryInterval))
+  const lte = now
+  // In realtime mode take into account that we don't update time continuously but according to a frequency
+  // so that we might receive features "in the future" according to the current time
+  if (Time.isRealtime()) lte.add(Time.get().interval, 's')
+  return time.isSameOrAfter(gte) && time.isSameOrBefore(lte)
+}
+
 export async function getFeaturesFromQuery (options, query) {
   // Check API to be used in case the layer is coming from a remote "planet"
   const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)

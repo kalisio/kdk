@@ -97,6 +97,9 @@ export const featureService = {
       if (!layer || !this.isLayerVisible(layer.name)) return
       // Only possible when not edited by default
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
+      // Check for time-based layers if update is in the currently visualized time range
+      // so that we don't add too much old features
+      if (!features.isFeatureInQueryInterval(feature, layer)) return
       // As by default we update the whole layer in fetch and replace mode force add/update only mode
       // Can only apply to realtime layers as we need to force a data refresh
       if (typeof this.updateLayer === 'function') {
@@ -113,6 +116,10 @@ export const featureService = {
       if (!layer || !this.isLayerVisible(layer.name)) return
       // Only possible when not edited by default
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
+      // Check for time-based layers if update is in the currently visualized time range ? Should not be relevent in this case. 
+      // Indeed, as time has passed we might have old features that need to be cleaned,
+      // ie features now outside the request time range but inside the initial time range when they were requested
+      //if (!features.isFeatureInQueryInterval(feature, layer)) return
       // Can only apply to realtime layers as we need to force a data refresh
       if (typeof this.updateLayer === 'function') {
         // Check if feature should be filtered or not according to layer base query
