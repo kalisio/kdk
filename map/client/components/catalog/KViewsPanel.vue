@@ -1,5 +1,5 @@
 <template>
-  <div class="fit column">
+  <div class="fit">
     <KGrid
       service="catalog"
       :renderer="viewRenderer"
@@ -11,7 +11,7 @@
       :header="toolbar"
       header-class="full-width no-wrap"
       @selection-changed="onViewSelected"
-      class="q-px-sm col"
+      class="fit q-px-sm"
     />
   </div>
 </template>

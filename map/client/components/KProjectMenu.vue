@@ -17,7 +17,7 @@
       menu-anchor="bottom middle"
       menu-self="top middle">
       <template v-slot:default>
-        <KGridection
+        <KGrid
           service="projects"
           :base-query="{ _id: { $ne: projectId } }"
           :dense="true"
@@ -30,12 +30,12 @@
 
 <script>
 import _ from 'lodash'
-import { KGridection } from '../../../core/client/components'
+import { KGrid } from '../../../core/client/components'
 import { useProject } from '../composables'
 
 export default {
   components: {
-    KGridection
+    KGrid
   },
   inject: ['kActivity'],
   computed: {
