@@ -64,7 +64,7 @@ export default {
       height: `${this.size}px`,
       width: `${this.size}px`,
       position: 'center',
-      offset: [0, -this.size/2],
+      offset: [0, -this.size / 2],
       style: 'pointer-events: none; background-color: #00000020; border-radius: 50%;'
     }
     kdkCoreUtils.bindContent(target, this.kActivity)
