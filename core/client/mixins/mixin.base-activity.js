@@ -131,6 +131,21 @@ export function baseActivity (name) {
       clearPage () {
         Layout.setPage(null)
       },
+      getStickies () {
+        return Layout.getPage()
+      },
+      setStickies (content, mode, filter, sticky) {
+        Layout.setStickies({ content, mode, filter, sticky }, this)
+      },
+      setStickiesMode (mode) {
+        Layout.setStickiesMode(mode)
+      },
+      configureStickies () {
+        Layout.setStickies(_.get(this.activityOptions, 'stickies'), this)
+      },
+      clearStickies () {
+        Layout.clearStickies()
+      },
       getFab () {
         return Layout.getFab()
       },
@@ -193,6 +208,7 @@ export function baseActivity (name) {
         this.clearLeftPane()
         this.clearRightPane()
         this.clearPage()
+        this.clearStickies()
         this.clearFab()
         this.clearWindows()
       },
@@ -204,6 +220,7 @@ export function baseActivity (name) {
         this.configureBottomPane()
         this.configureRightPane()
         this.configurePage()
+        this.configureStickies()
         this.configureFab()
         this.configureWindows()
       },

@@ -10,6 +10,7 @@ export function useLayout () {
     if (configuration.header) Layout.setHeader(configuration.header, context)
     if (configuration.footer) Layout.setFooter(configuration.footer, context)
     if (configuration.page) Layout.setPage(configuration.page, context)
+    if (configuration.stickies) Layout.setStickies(configuration.stickies, context)
     if (configuration.fab) Layout.setFab(configuration.fab, context)
     Layout.placements.forEach(placement => {
       if (_.has(configuration, `panes.${placement}`)) Layout.setPane(placement, _.get(configuration, `panes.${placement}`), context)
@@ -27,6 +28,7 @@ export function useLayout () {
     Layout.clearHeader()
     Layout.clearFooter()
     Layout.clearPage()
+    Layout.clearStickies()
     Layout.clearFab()
     Layout.placements.forEach(placement => {
       Layout.clearPane(placement)

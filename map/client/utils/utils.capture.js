@@ -103,7 +103,7 @@ function headerFooterComponent (text, position) {
   return { content: [{ component: _.get(config, `capture.${position}.component`, 'KCaptureTextArea'), text, position }], visible: true }
 }
 function compassComponent (position) {
-  return { content: _.union(Layout.getPage().content, [{ component: 'layout/KPageSticky', position, offset: [0, 5], content: [{ component: 'KNorth' }] }]) }
+  return { content: _.union(Layout.getStickies().content, [{ position, offset: [0, 5], content: [{ component: 'KNorth' }] }]) }
 }
 function legendComponent () {
   return {

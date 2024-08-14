@@ -4,16 +4,29 @@
       Specific page content: can be provided as slot or/and by configuration
      -->
     <div id="page-content-container" :style="contentStyleFunction">
-      <div class="fit">
-        <q-resize-observer @resize="onContentResized" />
-        <slot name="page-content" />
+      <q-resize-observer @resize="onContentResized" />
+      <slot>
         <KContent
           id="page"
           v-show="page.visible"
           :content="page.components"
-        />
-      </div>
+          class="fit"
+       />
+      </slot>  
     </div>
+    <!--
+      Custom stickies
+     -->
+    <template v-for="sticky in stickies.components" :key="sticky.id">
+      <q-page-sticky 
+        :id="sticky.id"
+        :position="getStickyPosition(sticky)" 
+        :offset="getStickyOffset(sticky)"
+        class="k-sticky-z-index"
+      >
+        <KContent :content="[sticky]" />
+      </q-page-sticky>
+    </template>
     <!--
       Managed stickies
       Be careful of the order
@@ -132,7 +145,7 @@ import KWindow from './KWindow.vue'
 import KFab from './KFab.vue'
 
 // Props
-defineProps({
+const props = defineProps({
   padding: {
     type: Boolean,
     default: true
@@ -143,6 +156,7 @@ defineProps({
 const $q = useQuasar()
 const { Layout } = useLayout()
 const page = Layout.getPage()
+const stickies = Layout.getStickies()
 const fab = Layout.getFab()
 const topPane = Layout.getPane('top')
 const rightPane = Layout.getPane('right')
@@ -155,14 +169,16 @@ const layoutOffset = ref(0)
 
 // Computed
 const contentStyleFunction = computed(() => {
-  const layoutPadding = $q.screen.xs ? 16 : $q.screen.lt.lg ? 32 : 48
+  const layoutPadding = props.padding ? $q.screen.xs ? 16 : $q.screen.lt.lg ? 32 : 48 : 0
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
   return {
     paddingTop: `${topPane.size[1]}px`,
     paddingBottom: `${bottomPane.size[1]}px`,
     width: `calc(100vw - ${widthOffset}px)`,
-    height: `calc(100vh - ${heightOffset}px)`
+    height: `calc(100vh - ${heightOffset}px)`,
+    maxWidth: `calc(100vw - ${widthOffset}px)`,
+    maxHeight: `calc(100vh - ${heightOffset}px)`
   }
 })
 const isTopPaneOpened = computed({
@@ -260,6 +276,20 @@ function layoutOffsetListener (offset) {
   layoutOffset.value = offset
   return { minHeight: offset ? `calc(100vh - ${offset}px)` : '100vh' }
 }
+function getStickyPosition (sticky) {
+  if (sticky.position === 'center' ) return 'top'
+  return sticky.position
+}
+function getStickyOffset (sticky) {
+  if (sticky.position === 'center' ) {
+    const heightPageOffset = page.size[1] / 2
+    const heightSizeOffset = sticky.size ? sticky.size[1] / 2 : sticky.height ? sticky.height / 2 : 0
+    const heightOffset = heightPageOffset - heightSizeOffset
+    if (sticky.offset) return [sticky.offset[0], sticky.offset[1] + heightOffset]
+    return [0, heightOffset]
+  }
+  return sticky.offset
+}
 function onContentResized (size) {
   Layout.setElementSize('page', [size.width, size.height])
 }
@@ -304,5 +334,8 @@ body {
 }
 .k-fab-z-index {
   z-index: $fab-sticky-z-index;
+}
+.k-sticky-z-index {
+  z-index: $sticky-z-index;
 }
 </style>

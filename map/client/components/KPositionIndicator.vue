@@ -28,8 +28,8 @@ export default {
   inject: ['kActivity'],
   props: {
     size: {
-      type: String,
-      default: '3rem'
+      type: Number,
+      default: 48
     }
   },
   data () {
@@ -61,30 +61,24 @@ export default {
       id: 'position-target',
       component: 'QImg',
       src: 'icons/kdk/target.svg',
-      height: this.size,
-      width: this.size,
-      class: 'fixed-center k-position-indicator'
+      height: `${this.size}px`,
+      width: `${this.size}px`,
+      position: 'center',
+      size: [this.size, this.size],
+      style: 'pointer-events: none; background-color: #00000020; border-radius: 50%;'
     }
     kdkCoreUtils.bindContent(target, this.kActivity)
-    const components = Layout.getPage().components
+    const stickies = Layout.getStickies().components
     // Required to use splice when modifying an object inside an array to make it reactive
-    components.splice(components.length, 0, target)
+    stickies.splice(stickies.length, 0, target)
     this.kActivity.$engineEvents.on('move', this.updatePosition)
   },
   beforeUnmount () {
-    const components = Layout.getPage().components
+    const stickies = Layout.getStickies().components
     // Required to use splice when modifying an object inside an array to make it reactive
-    components.splice(_.findIndex(components, component => component.id === 'position-target'), 1)
+    stickies.splice(_.findIndex(stickies, component => component.id === 'position-target'), 1)
     this.kActivity.$engineEvents.off('move', this.updatePosition)
   }
 }
 </script>
 
-<style lang="scss">
-  .k-position-indicator {
-    pointer-events: none;
-    border-radius: 50%;
-    background-color: #00000020;
-    z-index: $sticky-z-index;
-  }
-</style>

@@ -27,6 +27,7 @@ const defaults = {
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults, size: [0, 0] },
+  stickies: { ...contentDefaults },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16] },
   panes: {
     left: { ...contentDefaults, ...paneDefaults, sizes: 300 },
@@ -53,6 +54,7 @@ export const Layout = {
     header: layoutPath + '.header',
     footer: layoutPath + '.footer',
     page: layoutPath + '.page',
+    stickies: layoutPath + '.stickies',
     fab: layoutPath + '.fab',
     panes: {
       left: layoutPath + '.panes.left',
@@ -74,6 +76,7 @@ export const Layout = {
     Store.set(this.paths.header, this.getElementDefaults('header'))
     Store.set(this.paths.footer, this.getElementDefaults('footer'))
     Store.set(this.paths.page, this.getElementDefaults('page'))
+    Store.set(this.paths.stickies, this.getElementDefaults('stickies'))
     Store.set(this.paths.fab, this.getElementDefaults('fab'))
     this.placements.forEach(placement => {
       Store.set(_.get(this.paths.panes, placement), this.getElementDefaults(`panes.${placement}`))
@@ -101,6 +104,7 @@ export const Layout = {
     this.setHeaderMode(mode)
     this.setFooterMode(mode)
     this.setPageMode(mode)
+    this.setStickiesMode(mode)
     this.setFabMode(mode)
     this.placements.forEach(placement => {
       this.setPaneMode(placement, mode)
@@ -225,6 +229,24 @@ export const Layout = {
   },
   clearPage () {
     this.clearElement('page')
+  },
+  getStickies () {
+    return this.getElement('stickies')
+  },
+  setStickies (options, context) {
+    this.setElement('stickies', options, context)
+  },
+  setStickiesMode (mode) {
+    this.setElementMode('stickies', mode)
+  },
+  setStickiesFilter (filter) {
+    this.setElementFilter('stickies', filter)
+  },
+  setStickiesVisible (visible) {
+    this.setElementVisible('stickies', visible)
+  },
+  clearStickies () {
+    this.clearElement('stickies')
   },
   getFab () {
     return this.getElement('fab')
