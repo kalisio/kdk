@@ -65,7 +65,7 @@
                   :item="item"
                   :contextId="contextId"
                   :is="bodyRendererComponent"
-                  v-bind="renderer"
+                  v-bind="bodyRenderer"
                 />
               </div>
               <div v-else :class="$q.screen.lt.md ? 'q-pr-sm' :'q-pr-md'">
