@@ -1,28 +1,26 @@
 <template>
   <KPage padding>
-    <template v-slot:page-content>
-      <!--
-        Members collection, cannot use smart strategy here because membership is not managed at service level
-        but using authorisations on users
-      -->
-      <KGrid
-        ref="membersGrid"
-        service="members"
-        :renderer="renderer"
-        :contextId="contextId"
-        :base-query="baseQuery"
-        :filter-query="filter.query">
-        <template v-slot:empty-section>
-          <div class="absolute-center">
-            <KStamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_LABEL')" />
-          </div>
-        </template>
-      </KGrid>
-      <!--
-        Router view to enable routing to modals
-      -->
-      <router-view service="members"></router-view>
-    </template>
+    <!--
+      Members collection, cannot use smart strategy here because membership is not managed at service level
+      but using authorisations on users
+    -->
+    <KGrid
+      ref="membersGrid"
+      service="members"
+      :renderer="renderer"
+      :contextId="contextId"
+      :base-query="baseQuery"
+      :filter-query="filter.query">
+      <template v-slot:empty-section>
+        <div class="absolute-center">
+          <KStamp icon="las la-exclamation-circle" icon-size="3rem" :text="$t('KGrid.EMPTY_LABEL')" />
+        </div>
+      </template>
+    </KGrid>
+    <!--
+      Router view to enable routing to modals
+    -->
+    <router-view service="members"></router-view>
   </KPage>
 </template>
 

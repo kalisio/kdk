@@ -39,6 +39,27 @@ $table-background: #fff !default;
 .q-scrollarea__thumb {
   background: $primary;
   border-radius: 3px;
+  opacity: .2;
+}
+
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+  background: transparent;
+  overflow: visible;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 10px;
+  background-color: $primary;
+  border-radius: 3px;
+  -webkit-transition: background-color .28s ease-in-out;
+  transition: background-color .28s ease-in-out;
+  opacity: .2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $primary
 }
 
 // Anchor
