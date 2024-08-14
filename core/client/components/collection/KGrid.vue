@@ -1,9 +1,9 @@
 <template>
-  <div class="fit column no-wrap">
+  <div class="column no-wrap">
     <!--
       Header
     -->
-    <div class="q-pr-xs q-pb-xs">
+    <div>
       <slot name="header">
         <KPanel :content="header" :class="headerClass" />
       </slot>
@@ -90,7 +90,6 @@
     -->
     <div>
       <slot name="footer">
-        <q-separator v-if="footer" inset />
         <KPanel :content="footer" :class="footerClass" />
       </slot>
     </div>
@@ -170,7 +169,6 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 
 // Data
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
-const canScroll = ref(false)
 let loadDoneFunction = null
 
 // Computed
@@ -197,8 +195,7 @@ function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
   // call done callback if needed
   if (loadDoneFunction) {
-    canScroll.value = items.value.length === nbTotalItems.value
-    loadDoneFunction(canScroll.value)
+    loadDoneFunction(items.value.length === nbTotalItems.value)
     loadDoneFunction = null
   }
 }

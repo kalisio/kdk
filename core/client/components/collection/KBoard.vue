@@ -1,30 +1,17 @@
 <template>
   <q-scroll-area class="fit">
     <div class="fit row justify-between q-gutter-x-sm no-wrap">
-      <div class="col-*" />
       <template v-for="column in columns" :key="column.value">
         <KGrid
           ref="columnRefs"
           :id="column.value"
           :name="column.value"
-          :header="[{
-            component: 'QSpace'
-          }, {
-            component: 'QChip',
-            label: $tie(column.label),
-            color: 'grey-10',
-            'text-color': 'white',
-            square: true,
-            class: 'justify-center'
-          }, {
-            component: 'QSpace'
-          }]"
           v-bind="column.props"
           :append-items="true"
-        >
-        </KGrid>
+          :header="getHeader(column.label)"
+          headerClass="full-width justify-center"
+        />
       </template>
-      <div class="col-*" />
     </div>
   </q-scroll-area>
 </template>
@@ -32,6 +19,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref } from 'vue'
+import { i18n } from '../../i18n.js'
 import KGrid from './KGrid.vue'
 
 // Props
@@ -51,6 +39,11 @@ function getColumn (value) {
 }
 function getColumns (values) {
   return values.map(value => getColumn(value))
+}
+function getHeader (label) {
+  return [{
+    component: 'QChip', label: i18n.tie(label), color: 'grey-10', 'text-color': 'white', square: true
+  }]
 }
 
 // Expose
