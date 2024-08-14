@@ -282,9 +282,7 @@ function getStickyPosition (sticky) {
 }
 function getStickyOffset (sticky) {
   if (sticky.position === 'center') {
-    const heightPageOffset = page.size[1] / 2
-    const heightSizeOffset = sticky.size ? sticky.size[1] / 2 : sticky.height ? sticky.height / 2 : 0
-    const heightOffset = heightPageOffset - heightSizeOffset
+    const heightOffset = page.size[1] / 2
     if (sticky.offset) return [sticky.offset[0], sticky.offset[1] + heightOffset]
     return [0, heightOffset]
   }
