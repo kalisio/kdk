@@ -1,8 +1,6 @@
 <template>
   <KPage :padding="padding">
-    <template v-slot:page-content>
-      <slot  />
-    </template>
+    <slot />
   </KPage>
 </template>
 
