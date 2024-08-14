@@ -3,6 +3,7 @@ import sift from 'sift'
 import { getType, getGeom } from '@turf/invariant'
 import logger from 'loglevel'
 import * as features from '../utils/utils.features.js'
+import * as layers from '../utils/utils.layers.js'
 
 export const featureService = {
   methods: {
@@ -88,11 +89,11 @@ export const featureService = {
     editFeaturesGeometry: features.editFeaturesGeometry,
     editFeaturesProperties: features.editFeaturesProperties,
     removeFeatures: features.removeFeatures,
-    onFeaturesUpdated (feature) {
+    onFeaturesUpdated (feature, layerId) {
       // We only support single feature edition
       if (!getType(feature) || !getGeom(feature)) return
       // Find related layer
-      const layer = this.getLayerById(feature.layer)
+      const layer = this.getLayerById(layerId || feature.layer)
       if (!layer || !this.isLayerVisible(layer.name)) return
       // Only possible when not edited by default
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
@@ -104,11 +105,11 @@ export const featureService = {
         if (filteredFeature.length > 0) this.updateLayer(layer.name, feature, { removeMissing: false })
       }
     },
-    onFeaturesRemoved (feature) {
+    onFeaturesRemoved (feature, layerId) {
       // We only support single feature edition
       if (!getType(feature) || !getGeom(feature)) return
       // Find related layer
-      const layer = this.getLayerById(feature.layer)
+      const layer = this.getLayerById(layerId || feature.layer)
       if (!layer || !this.isLayerVisible(layer.name)) return
       // Only possible when not edited by default
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) return
@@ -118,6 +119,32 @@ export const featureService = {
         const filteredFeature = [feature].filter(sift(_.omit(layer.baseQuery || {}, ['$skip', '$sort', '$limit', '$select'])))
         if (filteredFeature.length > 0) this.updateLayer(layer.name, feature, { remove: true })
       }
+    },
+    listenToServiceEvents (layer) {
+      // User-defined layers are already managed
+      if (!layer.service || !layer.serviceEvents || layers.isInMemoryLayer(layer) || layers.isFeatureLayer(layer)) return
+      const service = this.$api.getService(layer.service)
+      // Check if service available and not already registered
+      if (!service || this.layerServiceEventListeners[layer._id]) return
+      // Generate listeners targetting the right layer as in this case the features won't hold it contrary to user-defined layers
+      const onFeaturesUpdated = (feature) => this.onFeaturesUpdated(feature, layer._id)
+      const onFeaturesRemoved = (feature) => this.onFeaturesRemoved(feature, layer._id)
+      this.layerServiceEventListeners[layer._id] = { layerService: layer.service, onFeaturesUpdated, onFeaturesRemoved }
+      service.on('created', onFeaturesUpdated)
+      service.on('patched', onFeaturesUpdated)
+      service.on('removed', onFeaturesRemoved)
+    },
+    unlistenToServiceEvents (layer) {
+      // Check if listeners are registered for layer
+      if (!this.layerServiceEventListeners[layer._id]) return
+      const { layerService, onFeaturesUpdated, onFeaturesRemoved } = this.layerServiceEventListeners[layer._id]
+      const service = this.$api.getService(layerService)
+      // Check if service still available
+      if (!service) return
+      service.off('created', onFeaturesUpdated)
+      service.off('patched', onFeaturesUpdated)
+      service.off('removed', onFeaturesRemoved)
+      delete this.layerServiceEventListeners[layer._id]
     }
   },
   created () {
@@ -125,17 +152,34 @@ export const featureService = {
     this.$api.getService('features').timeout = 60 * 60 * 1000 // 1h should be sufficient since we also have size limits
   },
   mounted () {
-    // Listen to user layer changes
+    // Here we need to listen to service events for all realtime layers triggered by it
+    // 1) user-defined layers targetting the features service
     const featuresService = this.$api.getService('features')
     featuresService.on('created', this.onFeaturesUpdated)
     featuresService.on('patched', this.onFeaturesUpdated)
     featuresService.on('removed', this.onFeaturesRemoved)
+    // 2) built-in layers targetting specific services
+    // As we don't know target services upfront we register listeners when layer are added, we track it in a map
+    this.layerServiceEventListeners = {}
+    this.$engineEvents.on('layer-added', this.listenToServiceEvents)
+    this.$engineEvents.on('layer-removed', this.unlistenToServiceEvents)
   },
   beforeUnmount () {
-    // Remove event connections
+    // Remove all listeners
     const featuresService = this.$api.getService('features')
     featuresService.off('created', this.onFeaturesUpdated)
     featuresService.off('patched', this.onFeaturesUpdated)
     featuresService.off('removed', this.onFeaturesRemoved)
+    _.forOwn(this.layerServiceEventListeners, listeners => {
+      const { layerService, onFeaturesUpdated, onFeaturesRemoved } = listeners
+      const service = this.$api.getService(layerService)
+      // Check if service still available
+      if (!service) return
+      service.off('created', onFeaturesUpdated)
+      service.off('patched', onFeaturesUpdated)
+      service.off('removed', onFeaturesRemoved)
+    })
+    this.$engineEvents.off('layer-added', this.listenToServiceEvents)
+    this.$engineEvents.off('layer-removed', this.unlistenToServiceEvents)
   }
 }

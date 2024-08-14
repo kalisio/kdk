@@ -362,13 +362,18 @@ export const geojsonLayers = {
       this.$engineEvents.emit('layer-updated', layer, cesiumLayer, data)
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
+      // Need to update layers that require an update at a given frequency
       const geoJsonlayers = _.values(this.layers).filter(sift({
+        // Possible for realtime layers only
         'cesium.type': 'geoJson',
         'cesium.realtime': true,
-        $or: [ // Supported by template URL or time-based features
+        $or: [ // Supported by template URL or time-based features service
           { 'cesium.sourceTemplate': { $exists: true } },
           { service: { $exists: true } }
         ],
+        // Skip layers powered by realtime service events
+        serviceEvents: { $ne: true },
+        // Skip invisible layers
         isVisible: true
       }))
       geoJsonlayers.forEach(async geoJsonlayer => {
