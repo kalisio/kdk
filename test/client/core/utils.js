@@ -127,10 +127,10 @@ export async function clickSelect (page, selector, entry, wait = 500) {
 export async function clear (page, selector, wait = 500) {
   try {
     await page.waitForSelector(selector, { timeout: 2000 })
-    await page.$eval(selector, element => element.value = '')
+    await page.$eval(selector, element => { element.value = '' })
     await page.waitForTimeout(wait)
   } catch (error) {
-    console.error(`[KDK] Clear ${text} in ${selector} failed.`)
+    console.error(`[KDK] Clear ${selector} failed.`)
   }
 }
 
