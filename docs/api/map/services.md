@@ -127,6 +127,7 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 * **serviceEvents**: if `true` means the layer will be automatically updated as events are received from the underlying feature service, otherwise the data will be updated at a constant frequency as per **every** and **queryFrom** options (see hereafter)
 * **probeService**: the name of the underlying feature service containing probe locations
 * **dbName** : the database holding service data if different from application database
+* **ttl**: time to live of features in the service collection in seconds
 * **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object) - could be an array for compound identifiers
 * **chronicleId**: the name of the unique timeseries identifier in feature (relative to the nested `properties` object) for measure features - could be an array for compound identifiers
 * **featureLabel**: the name of the label identifier in feature (relative to the nested `properties` object) - could be an array, useful to search for features based on a syntaxical pattern using https://github.com/arve0/feathers-mongodb-fuzzy-search
