@@ -121,6 +121,19 @@ export async function clickSelect (page, selector, entry, wait = 500) {
   }
 }
 
+/* Helper function to clear input a text on a given selector
+   ! Not yet working !
+ */
+export async function clear (page, selector, wait = 500) {
+  try {
+    await page.waitForSelector(selector, { timeout: 2000 })
+    await page.$eval(selector, element => element.value = '')
+    await page.waitForTimeout(wait)
+  } catch (error) {
+    console.error(`[KDK] Clear ${text} in ${selector} failed.`)
+  }
+}
+
 /* Helper function to input a text on a given selector
  * set enter to true to run the press 'Enter' key
  */
