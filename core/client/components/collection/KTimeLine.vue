@@ -35,9 +35,7 @@
               </div>
             </q-timeline-entry>
             <!-- Item entry -->
-            <q-timeline-entry
-              :color="getColor(item)"
-            >
+            <q-timeline-entry :color="getColor(item)">
               <template v-slot:title>
                 <slot name="title">
                   <div v-if="getTitle(item)" class="text-h6">
@@ -47,7 +45,7 @@
               </template>
               <template v-slot:subtitle>
                 <slot name="subtitle">
-                  <div class="row items-center q-gutter-x-sm">
+                  <div v-if="layout === 'dense'" class="row items-center q-gutter-x-sm">
                     <span v-if="getTimestamp(item)">
                       {{  getTimestamp(item) }}
                     </span>
@@ -56,10 +54,21 @@
                       :content="getDecoration(item)"
                     />
                   </div>
+                  <div v-else class="column items-end">
+                    <span v-if="getTimestamp(item)">
+                      {{  getTimestamp(item) }}
+                    </span>
+                    <KPanel
+                      v-if="getDecoration(item)"
+                      :content="getDecoration(item)"
+                      class="justify-end"
+                    />
+                  </div>
                 </slot>
               </template>
-              <div v-if="bodyRenderer" :class="bodyRendererClass">
+              <div :class="$q.screen.lt.md ? 'q-pr-sm' :'q-pr-md'">
                 <component
+                  v-if="bodyRenderer" :class="bodyRendererClass"
                   :id="item._id"
                   :service="service"
                   :item="item"
@@ -67,9 +76,9 @@
                   :is="bodyRendererComponent"
                   v-bind="bodyRenderer"
                 />
-              </div>
-              <div v-else :class="$q.screen.lt.md ? 'q-pr-sm' :'q-pr-md'">
-                {{ item.body }}
+                <div v-else>
+                  {{ item.body }}
+                </div>
               </div>
             </q-timeline-entry>
           </template>
@@ -116,6 +125,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import { useQuasar } from 'quasar'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { Time } from '../../time.js'
@@ -152,13 +162,6 @@ const props = defineProps({
   bodyRenderer: {
     type: Object,
     default: () => null
-  },
-  layout: {
-    type: String,
-    default: 'dense',
-    validator: (value) => {
-      return ['dense', 'comfortable', 'loose'].includes(value)
-    }
   },
   schema: {
     type: Object,
@@ -198,6 +201,7 @@ const props = defineProps({
 const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 
 // Data
+const $q = useQuasar()
 const { items, nbTotalItems, currentPage, refreshCollection } = useCollection(_.merge(toRefs(props), { appendItems: ref(true) }))
 let doneFunction = null
 
@@ -207,6 +211,9 @@ const bodyRendererComponent = computed(() => {
 })
 const bodyRendererClass = computed(() => {
   return props.bodyRenderer.class || 'col-12'
+})
+const layout = computed(() => {
+  return $q.screen.lt.md ? 'dense' : 'comfortable'
 })
 
 // Watch
@@ -282,5 +289,13 @@ onBeforeUnmount(() => {
 }
 .q-timeline__content {
   padding-bottom: 16px;
+  width: 100%;
+}
+.q-timeline--comfortable .q-timeline__subtitle {
+  width: 20%;
+}
+.q-timeline--comfortable .q-timeline__content {
+  padding-bottom: 16px;
+  width: 80%;
 }
 </style>
