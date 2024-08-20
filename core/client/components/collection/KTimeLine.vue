@@ -185,6 +185,10 @@ const props = defineProps({
     type: Function,
     default: undefined
   },
+  sideWidth: {
+    type: Number,
+    default: 20
+  },
   header: {
     type: [Array, Object],
     default: () => null
@@ -220,6 +224,9 @@ const bodyRendererClass = computed(() => {
 })
 const layout = computed(() => {
   return $q.screen.lt.md ? 'dense' : 'comfortable'
+})
+const comfortSize = computed(() => {
+  return `${props.sideWidth}%`
 })
 
 // Watch
@@ -304,10 +311,10 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 .q-timeline--comfortable .q-timeline__subtitle {
-  width: 15%;
+  width: v-bind(comfortSize);
 }
 .q-timeline--comfortable .q-timeline__content {
   padding-bottom: 16px;
-  width: 85%;
+  width: calc(100% - v-bind(comfortSize));
 }
 </style>
