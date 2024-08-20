@@ -49,6 +49,9 @@
                     <span v-if="getTimestamp(item)">
                       {{  getTimestamp(item) }}
                     </span>
+                    <span v-if="getAuthor(item)" class="text-caption" style="text-transform: capitalize;">
+                      {{  getAuthor(item) }}
+                    </span>
                     <KPanel
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
@@ -57,6 +60,9 @@
                   <div v-else class="column items-end">
                     <span v-if="getTimestamp(item)">
                       {{  getTimestamp(item) }}
+                    </span>
+                    <span v-if="getAuthor(item)" class="text-caption" style="text-transform: capitalize;">
+                      {{  getAuthor(item) }}
                     </span>
                     <KPanel
                       v-if="getDecoration(item)"
@@ -77,7 +83,7 @@
                   v-bind="bodyRenderer"
                 />
                 <div v-else>
-                  {{ item.body }}
+                  {{ getBody(item) }}
                 </div>
               </div>
             </q-timeline-entry>
@@ -170,7 +176,7 @@ const props = defineProps({
         colorField: 'color',
         titleField: 'name',
         timestampField: 'createdAt',
-        contentField: 'description',
+        bodyField: 'description',
         decorationField: 'tags'
       }
     }
@@ -220,6 +226,25 @@ const layout = computed(() => {
 watch(items, onCollectionRefreshed)
 
 // Functions
+function getTitle (item) {
+  return _.get(item, _.get(props.schema, 'titleField'))
+}
+function getTimestamp (item) {
+  const time = _.get(item, _.get(props.schema, 'timestampField'))
+  if (time) return `${Time.format(time, 'date.long')} - ${Time.format(time, 'time.long')}`
+}
+function getAuthor (item) {
+  return _.get(item, _.get(props.schema, 'authorField'))
+}
+function getDecoration (item) {
+  return _.get(item, _.get(props.schema, 'decorationField'))
+}
+function getBody (item) {
+  return _.get(item, _.get(props.schema, 'bodyField'))
+}
+function getColor (item) {
+  return _.get(item, _.get(props.schema, 'colorField'))
+}
 function getHeading (item) {
   const currentTimestamp = moment(_.get(item, _.get(props.schema, 'timestampField')))
   if (!currentTimestamp || !currentTimestamp.isValid()) return false
@@ -230,19 +255,6 @@ function getHeading (item) {
   if (currentTimestamp.year() !== previousTimestamp.year()) return heading
   if (currentTimestamp.month() !== previousTimestamp.month()) return heading
   return null
-}
-function getTimestamp (item) {
-  const time = _.get(item, _.get(props.schema, 'timestampField'))
-  if (time) return `${Time.format(time, 'date.long')} - ${Time.format(time, 'time.long')}`
-}
-function getColor (item) {
-  return _.get(item, _.get(props.schema, 'colorField'))
-}
-function getTitle (item) {
-  return _.get(item, _.get(props.schema, 'titleField'))
-}
-function getDecoration (item) {
-  return _.get(item, _.get(props.schema, 'decorationField'))
 }
 function onLoad (index, done) {
   currentPage.value = index
