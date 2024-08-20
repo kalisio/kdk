@@ -224,7 +224,7 @@ export function setExpireAfter (delayInSeconds) {
 export async function distinct (hook) {
   const params = hook.params
   const query = params.query
-  if (!query.$distinct) return hook
+  if (!query || !query.$distinct) return hook
   const collection = hook.service.Model
   hook.result = await collection.distinct(query.$distinct, _.omit(query, ['$distinct']))
   return hook

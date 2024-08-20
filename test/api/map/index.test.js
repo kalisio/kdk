@@ -174,7 +174,8 @@ describe('map:services', () => {
     expect(vigicruesStationsLayer.service === 'vigicrues-stations').beTrue()
     await createFeaturesService.call(app, {
       collection: vigicruesStationsLayer.service,
-      featureId: vigicruesStationsLayer.featureId
+      featureId: vigicruesStationsLayer.featureId,
+      featureLabel: vigicruesStationsLayer.featureLabel
     })
     vigicruesStationsService = app.getService(vigicruesStationsLayer.service)
     expect(vigicruesStationsService).toExist()
@@ -194,6 +195,7 @@ describe('map:services', () => {
     await createFeaturesService.call(app, {
       collection: vigicruesObsLayer.service,
       featureId: vigicruesObsLayer.featureId,
+      featureLabel: vigicruesObsLayer.featureLabel,
       variables: vigicruesObsLayer.variables,
       // Raise simplified events
       skipEvents: ['updated'],
@@ -206,6 +208,21 @@ describe('map:services', () => {
     // Feed the collection
     const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.json'))
     await vigicruesObsService.create(observations)
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('search on the vigicrues observations service', async () => {
+    // Fuzzy search
+    let result = await vigicruesStationsService.find({ query: { 'properties.LbStationH': { $search: 'Châtel' } }, paginate: false })
+    expect(result.features).toExist()
+    expect(result.features.length).to.equal(2)
+    // Diacritic search
+    result = await vigicruesStationsService.find({ query: { 'properties.LbStationH': { $search: 'Chatel' } }, paginate: false })
+    expect(result.features.length).to.equal(2)
+    // Distinct search
+    result = await vigicruesStationsService.find({ query: { $distinct: 'properties.LbStationH' } })
+    expect(result.length).to.equal(nbStations)
   })
   // Let enough time to process
     .timeout(5000)
