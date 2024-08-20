@@ -24,13 +24,12 @@ export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
 export async function setEngineJwt (layers, planetApi) {
   // Backward compatibility when we previously used a single API
   if (!planetApi) planetApi = api
-  const planetConfig = planetApi.getConfig()
   // If we need to use API gateway forward token as query parameter
   // (Leaflet does not support anything else by default as it mainly uses raw <img> tags)
-  let jwt = (planetConfig.gatewayJwt ? await planetApi.get('storage').getItem(planetConfig.gatewayJwt) : null)
-  let jwtField = planetConfig.gatewayJwtField
-  // Check both the default built-in config or the server provided one if any (eg mobile apps)
-  const gatewayUrl = Store.get('capabilities.api.gateway') || planetConfig.gateway
+  let jwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
+  let jwtField = planetApi.getConfig('gatewayJwtField')
+  // Check both the default built-in config or the server provided one if any
+  const gatewayUrl = (planetApi.hasConfig('gateway') ? planetApi.getConfig('gateway') : Store.get('capabilities.api.gateway'))
   if (jwt) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'iconUrl', gatewayUrl, jwtField, jwt)
@@ -46,9 +45,9 @@ export async function setEngineJwt (layers, planetApi) {
   }
   // We might also proxy some data directly from the app when using object storage
   // This is only for raw raster data not OGC protocols
-  jwt = (planetConfig.apiJwt ? await planetApi.get('storage').getItem(planetConfig.apiJwt) : null)
+  jwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
   jwtField = 'jwt'
-  const apiUrl = planetApi.getBaseUrl()
+  const apiUrl = planetApi.getConfig('domain')
   if (jwt) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'geotiff.url', apiUrl, jwtField, jwt)

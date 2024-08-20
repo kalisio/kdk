@@ -22,7 +22,6 @@ if (_.get(configuration, 'logs.level')) {
 export function createClient (config) {
   // Initiate the client
   const api = feathers()
-  const baseUrlStorageKey = 'baseUrl'
 
   // Matchers that can be added to customize route guards
   let matchers = []
@@ -137,41 +136,15 @@ export function createClient (config) {
     if (options.context) service.context = options.context
     return service
   }
-  // Change the base URL/domain to be used (useful for mobile apps)
-  api.setBaseUrl = function (baseUrl) {
-    LocalStorage.set(baseUrlStorageKey, baseUrl)
-    // Updating this setting live does not seem to work well in Feathers
-    // For now the caller should simply "reload" the app
-    /*
-    if (config.transport === 'http') {
-      Object.keys(this.services).forEach(path => {
-        const service = this.service(path)
-        if (service.base) {
-          service.base = `${baseUrl}/${path}`
-        }
-      })
-    } else {
-      let socket = io(baseUrl, {
-        transports: ['websocket'],
-        path: (config.apiPath || '/') + 'ws'
-      })
-      this.configure(feathers.socketio(socket))
-    }
-    */
-  }
-  // Get the base URL/domain to be used (useful for mobile apps)
-  api.getBaseUrl = function () {
-    // We can override the default app origin anyway
-    const origin = config.domain || config.origin || window.location.origin
-    // Check for registered custom base Url if any
-    return LocalStorage.get(baseUrlStorageKey, origin)
-  }
   // Helper fonctions to access/alter config used at creation time
   api.getConfig = function (path) {
     return (path ? _.get(config, path) : config)
   }
   api.setConfig = function (path, value) {
     _.set(config, path, value)
+  }
+  api.hasConfig = function (path, value) {
+    return _.has(config, path, value)
   }
 
   api.can = function () {
@@ -230,7 +203,7 @@ export function createClient (config) {
     return result
   }
 
-  const origin = api.getBaseUrl()
+  const origin = api.getConfig('domain')
   if (config.transport === 'http') {
     api.transporter = feathers.rest(origin).fetch(window.fetch.bind(window))
     api.configure(api.transporter)
@@ -279,6 +252,9 @@ export function createClient (config) {
     await fn.call(this, this)
     return this
   }
+
+  // Define domain in config if not forced
+  if (!api.getConfig('domain')) api.setConfig('domain', window.location.origin)
 
   return api
 }
