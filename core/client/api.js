@@ -10,7 +10,6 @@ import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
 import { Events } from './events.js'
-import { LocalStorage } from './local-storage.js'
 
 // Setup log level
 if (_.get(configuration, 'logs.level')) {
