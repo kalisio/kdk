@@ -20,7 +20,7 @@ export default {
   before: {
     all: [coreHooks.marshallTimeQuery, coreHooks.convertObjectIDs(['layer'])],
     find: [coreHooks.marshallComparisonQuery, coreHooks.marshallSortQuery, marshallSpatialQuery,
-      coreHooks.distinct, aggregateFeaturesQuery, coreHooks.aggregationQuery, fuzzySearch, coreHooks.diacriticSearch],
+      coreHooks.distinct, aggregateFeaturesQuery, coreHooks.aggregationQuery, fuzzySearch, coreHooks.diacriticSearch()],
     get: [],
     create: [coreHooks.processTimes(['time']), fullResult, emitEvents],
     update: [coreHooks.processTimes(['time']), fullResult, emitEvents],
