@@ -228,6 +228,9 @@ const layout = computed(() => {
 const comfortSize = computed(() => {
   return `${props.sideWidth}%`
 })
+const comfortPadding = computed(() => {
+  return $q.screen.lt.sm ? '24px' : '32px'
+})
 
 // Watch
 watch(items, onCollectionRefreshed)
@@ -317,4 +320,8 @@ onBeforeUnmount(() => {
   padding-bottom: 16px;
   width: calc(100% - v-bind(comfortSize));
 }
+.q-timeline--dense--right .q-timeline__entry {
+  padding-left: v-bind(comfortPadding);
+}
+
 </style>
