@@ -292,10 +292,10 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 .q-timeline--comfortable .q-timeline__subtitle {
-  width: 20%;
+  width: 15%;
 }
 .q-timeline--comfortable .q-timeline__content {
   padding-bottom: 16px;
-  width: 80%;
+  width: 85%;
 }
 </style>
