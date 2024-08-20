@@ -177,10 +177,11 @@ export default {
         const coordinates = _.get(this.location, 'geometry.coordinates')
         const style = _.get(this.engineOptions, 'style.location.point')
         this.locationLayer = createMarkerFromPointStyle([coordinates[1], coordinates[0]],
-          Object.assign({ draggable: this.draggable, pmIgnore: true }, style))
+          Object.assign({ interactive: this.draggable, draggable: this.draggable, pmIgnore: true }, style))
         if (this.draggable) this.locationLayer.on('dragend', this.onLocationDragged)
       } else {
         this.locationLayer = L.geoJson(this.location, {
+          interactive: false,
           style: (feature) => {
             const styleType = getFeatureStyleType(feature)
             if (!styleType) {
@@ -200,7 +201,6 @@ export default {
           }
         })
       }
-      // }
       this.locationLayer.addTo(this.map)
       this.recenter()
     },
