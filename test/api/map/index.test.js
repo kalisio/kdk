@@ -212,7 +212,7 @@ describe('map:services', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('search on the vigicrues observations service', async () => {
+  it('search on the vigicrues stations service', async () => {
     // Fuzzy search
     let result = await vigicruesStationsService.find({ query: { 'properties.LbStationH': { $search: 'Châtel' } }, paginate: false })
     expect(result.features).toExist()
