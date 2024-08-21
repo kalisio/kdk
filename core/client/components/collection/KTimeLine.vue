@@ -11,18 +11,20 @@
          />
       </slot>
     </div>
-    <div v-if="items.length > 0" class="scroll">
-      <!--
-        Content
-      -->
+    <!--
+      Content
+    -->
+    <div v-if="items.length > 0" ref="scrollTargetRef" id="scroll-target" class="scroll">
       <q-timeline
         color="primary"
         :layout="layout"
       >
         <q-infinite-scroll
+          id="infinite-scroll"
           @load="onLoad"
           :initial-index="1"
-          :offset="100"
+          :offset="200"
+          v-scroll="onScroll"
         >
           <template v-for="item in items" :key="item._id">
             <!-- Heading entry if any -->
@@ -88,14 +90,6 @@
               </div>
             </q-timeline-entry>
           </template>
-          <template v-slot:loading>
-            <div class="text-center q-my-md">
-              <q-spinner-dots
-                color="primary"
-                size="40px"
-              />
-            </div>
-          </template>
         </q-infinite-scroll>
       </q-timeline>
     </div>
@@ -111,6 +105,27 @@
           />
         </div>
       </slot>
+    </div>
+    <!--
+      Scroll 
+     -->
+    <div v-if="scrollTargetRef" class="q-px-sm row items-center">
+      <div class="col-4"></div>
+      <div class="col-4 row justify-center">
+        <ScrollDown
+          v-if="scrollDown"
+          :ref="scrollDownRefCreated"
+          target="scroll-target"
+          :loading="loadDoneFunction ? true : false" 
+      />
+      </div>
+      <div class="col-4 row justify-end">
+        <ScrollToTop
+          v-if="scrollToTop"
+          :ref="scrollToTopRefCreated"
+          target="scroll-target"
+        />
+      </div>
     </div>
     <!--
       Footer
@@ -136,6 +151,8 @@ import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { Time } from '../../time.js'
 import { loadComponent } from '../../utils'
+import ScrollToTop from './ScrollToTop.vue'
+import ScrollDown from './ScrollDown.vue'
 import KStamp from '../KStamp.vue'
 import KPanel from '../KPanel.vue'
 
@@ -189,6 +206,14 @@ const props = defineProps({
     type: Number,
     default: 20
   },
+  scrollDown: {
+    type: Boolean,
+    default: true
+  },
+  scrollToTop: {
+    type: Boolean,
+    default: true
+  },
   header: {
     type: [Array, Object],
     default: () => null
@@ -213,7 +238,10 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 // Data
 const $q = useQuasar()
 const { items, nbTotalItems, currentPage, refreshCollection } = useCollection(_.merge(toRefs(props), { appendItems: ref(true) }))
-let doneFunction = null
+const scrollTargetRef = ref(null)
+const scrollDownRef = ref(null)
+const scrollToTopRef = ref(null)
+const loadDoneFunction = ref(null)
 
 // Computed
 const bodyRendererComponent = computed(() => {
@@ -236,6 +264,14 @@ const comfortPadding = computed(() => {
 watch(items, onCollectionRefreshed)
 
 // Functions
+function scrollDownRefCreated (instance) {
+  scrollDownRef.value = instance
+  if (instance) instance.refresh()
+}
+function scrollToTopRefCreated (instance) {
+  scrollToTopRef.value = instance
+  if (instance) instance.refresh()
+}
 function getTitle (item) {
   return _.get(item, _.get(props.schema, 'titleField'))
 }
@@ -266,10 +302,14 @@ function getHeading (item) {
   if (currentTimestamp.month() !== previousTimestamp.month()) return heading
   return null
 }
+function onScroll () {
+  if (scrollDownRef.value) scrollDownRef.value.refresh()
+  if (scrollToTopRef.value) scrollToTopRef.value.refresh()
+}
 function onLoad (index, done) {
   currentPage.value = index
   refreshCollection()
-  doneFunction = done
+  loadDoneFunction.value = done
 }
 function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
@@ -278,9 +318,12 @@ function onCollectionRefreshed () {
     item.previous = index > 0 ? items.value[index - 1] : null
   })
   // call done callback if needed
-  if (doneFunction) {
-    doneFunction(items.value.length === nbTotalItems.value)
-    doneFunction = null
+  if (loadDoneFunction.value) {
+    loadDoneFunction.value( items.value.length === nbTotalItems.value)
+    loadDoneFunction.value = null
+    // refresh scroll elements
+    if (scrollDownRef.value) scrollDownRef.value.refresh()
+    if (scrollToTopRef.value) scrollToTopRef.value.refresh()
   }
 }
 
