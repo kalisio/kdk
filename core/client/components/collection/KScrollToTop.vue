@@ -12,8 +12,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { scroll } from 'quasar'
+import { ref, watch } from 'vue'
+import { useQuasar, scroll } from 'quasar'
 
 // Props
 const props = defineProps({
@@ -36,8 +36,14 @@ const props = defineProps({
 })
 
 // Data
+const $q = useQuasar()
 const { setVerticalScrollPosition, getVerticalScrollPosition } = scroll
 const isVisible = ref(false)
+
+// Watch
+watch(() => [$q.screen.width, $q.screen.height], () => {
+  refresh()
+})
 
 // Functions
 function refresh () {

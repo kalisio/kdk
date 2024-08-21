@@ -13,37 +13,52 @@
     -->
     <div v-if="items.length > 0" class="col">
       <!-- Infinite mode -->
-      <div v-if="appendItems" class="fit scroll">
-        <q-infinite-scroll
-          @load="onLoad"
-          :initial-index="1"
-          :offset="200"
-          class="fit"
-        >
-          <div class="row">
-            <template v-for="(item, index) in items" :key="item._id">
-              <div :class="rendererClass">
-                <component
-                  :id="item._id"
-                  :service="service"
-                  :item="item"
-                  :contextId="contextId"
-                  :is="itemRenderer"
-                  v-bind="renderer"
-                  @item-selected="onItemSelected"
-                />
-              </div>
-            </template>
-          </div>
-          <template v-slot:loading>
-            <div class="text-center q-my-md">
-              <q-spinner-dots
-                color="primary"
-                size="40px"
-              />
+      <div v-if="appendItems" class="fit column no-wrap">
+        <div ref="scrollTargetRef" id="scroll-target" class="fit scroll">
+          <q-infinite-scroll
+            @load="onLoad"
+            :initial-index="1"
+            :offset="200"
+            v-scroll="onScroll"
+          >
+            <div class="row">
+              <template v-for="(item, index) in items" :key="item._id">
+                <div :class="rendererClass">
+                  <component
+                    :id="item._id"
+                    :service="service"
+                    :item="item"
+                    :contextId="contextId"
+                    :is="itemRenderer"
+                    v-bind="renderer"
+                    @item-selected="onItemSelected"
+                  />
+                </div>
+              </template>
             </div>
-          </template>
-        </q-infinite-scroll>
+          </q-infinite-scroll>
+        </div>
+        <div v-if="scrollTargetRef" 
+          :class="$q.screen.lt.md ? 'q-px-sm' : 'q-px-md'"
+          class="row items-center"
+        >
+          <div class="col-4"></div>
+          <div class="col-4 row justify-center">
+            <KScrollDown
+              v-if="scrollDown"
+              :ref="scrollDownRefCreated"
+              target="scroll-target"
+              :loading="loadDoneFunction ? true : false" 
+            />
+          </div>
+          <div class="col-4 row justify-end">
+            <KScrollToTop
+              v-if="scrollToTop"
+              :ref="scrollToTopRefCreated"
+              target="scroll-target"
+            />
+          </div>
+        </div>
       </div>
       <!-- Paginated mode -->
       <div v-else class="row">
@@ -97,10 +112,12 @@
 </template>
 
 <script setup>
-import { computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { loadComponent } from '../../utils'
+import KScrollToTop from './KScrollToTop.vue'
+import KScrollDown from './KScrollDown.vue'
 import KStamp from '../KStamp.vue'
 import KPanel from '../KPanel.vue'
 
@@ -146,6 +163,14 @@ const props = defineProps({
     type: String,
     default: 'smart'
   },
+  scrollDown: {
+    type: Boolean,
+    default: true
+  },
+  scrollToTop: {
+    type: Boolean,
+    default: true
+  },
   header: {
     type: [Array, Object],
     default: () => null
@@ -169,7 +194,10 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 
 // Data
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
-let loadDoneFunction = null
+const scrollTargetRef = ref(null)
+const scrollDownRef = ref(null)
+const scrollToTopRef = ref(null)
+const loadDoneFunction = ref(null)
 
 // Computed
 const itemRenderer = computed(() => {
@@ -183,10 +211,22 @@ const rendererClass = computed(() => {
 watch(items, onCollectionRefreshed)
 
 // Functions
+function scrollDownRefCreated (instance) {
+  scrollDownRef.value = instance
+  if (instance) instance.refresh()
+}
+function scrollToTopRefCreated (instance) {
+  scrollToTopRef.value = instance
+  if (instance) instance.refresh()
+}
+function onScroll () {
+  if (scrollDownRef.value) scrollDownRef.value.refresh()
+  if (scrollToTopRef.value) scrollToTopRef.value.refresh()
+}
 function onLoad (index, done) {
   currentPage.value = index
   refreshCollection()
-  loadDoneFunction = done
+  loadDoneFunction.value = done
 }
 function onItemSelected (item, section) {
   emit('selection-changed', item, section)
@@ -194,9 +234,12 @@ function onItemSelected (item, section) {
 function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
   // call done callback if needed
-  if (loadDoneFunction) {
-    loadDoneFunction(items.value.length === nbTotalItems.value)
-    loadDoneFunction = null
+  if (loadDoneFunction.value) {
+    loadDoneFunction.value(items.value.length === nbTotalItems.value)
+    loadDoneFunction.value = null
+    // refresh scroll elements
+    if (scrollDownRef.value) scrollDownRef.value.refresh()
+    if (scrollToTopRef.value) scrollToTopRef.value.refresh()    
   }
 }
 

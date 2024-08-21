@@ -109,7 +109,10 @@
     <!--
       Scroll 
      -->
-    <div v-if="scrollTargetRef" class="q-px-sm row items-center">
+    <div v-if="scrollTargetRef" 
+      :class="$q.screen.lt.md ? 'q-px-sm' : 'q-px-md'"
+      class="row items-center"
+    >
       <div class="col-4"></div>
       <div class="col-4 row justify-center">
         <KScrollDown
@@ -319,7 +322,7 @@ function onCollectionRefreshed () {
   })
   // call done callback if needed
   if (loadDoneFunction.value) {
-    loadDoneFunction.value( items.value.length === nbTotalItems.value)
+    loadDoneFunction.value(items.value.length === nbTotalItems.value)
     loadDoneFunction.value = null
     // refresh scroll elements
     if (scrollDownRef.value) scrollDownRef.value.refresh()
