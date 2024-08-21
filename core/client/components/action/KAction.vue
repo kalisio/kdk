@@ -10,7 +10,8 @@
     :icon="!iconRight ? computedIcon : undefined"
     :icon-right="iconRight ? computedIcon : undefined"
     :size="size"
-    flat
+    :flat="flat"
+    :outline="outline"
     :round="label === null"
     :rounded="label !== null"
     :stack="stack"

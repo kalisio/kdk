@@ -23,6 +23,10 @@ export const actionProps = {
     type: String,
     default: 'md'
   },
+  flat: {
+    type: Boolean,
+    default: true
+  },
   outline: {
     type: Boolean,
     default: false
