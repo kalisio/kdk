@@ -6,11 +6,10 @@
     />
     <KAction v-else
       v-if="isVisible"
-      id="load-more"
-      icon="las la-angle-double-down" 
-      color="accent"
+      id="scroll-down"
+      :color="color"
+      :icon="icon" 
       :size="size"
-      :flat="false"
       :handler="scrollOnce"
     />
   </div>
@@ -26,6 +25,10 @@ const props = defineProps({
   target: {
     type: String,
     required: true
+  },
+  color: {
+    type: String,
+    default: 'grey-7'
   },
   icon: {
     type: String,

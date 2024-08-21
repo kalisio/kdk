@@ -1,14 +1,16 @@
 <template>
-  <KAction
-    v-if="isVisible"
-    id="back-to-top"
-    tooltip="KScrollToTop.TOOLTIP"
-    icon="vertical_align_top" 
-    color="accent"
-    :flat="false"
-    :size="size"
-    :handler="scrollToTop"
-  />
+  <div class="k-scroll-to-top">
+    <KAction
+      v-if="isVisible"
+      id="scroll-to-top"
+      tooltip="KScrollToTop.TOOLTIP"
+      :icon="icon" 
+      :color="color"
+      :flat="false"
+      :size="size"
+      :handler="scrollToTop"
+    />
+</div>
 </template>
 
 <script setup>
@@ -21,9 +23,13 @@ const props = defineProps({
     type: String,
     required: true
   },
+  color: {
+    type: String,
+    default: 'grey-7'
+  },
   icon: {
     type: String,
-    default: 'vertical_align_top'
+    default: 'las la-arrow-up'
   },
   size: {
     type: String,
@@ -63,3 +69,10 @@ defineExpose({
   refresh
 })
 </script>
+
+<style lang="scss" scoped>
+.k-scroll-to-top {
+  position: relative;
+  transform: translate(-48px, -24px);
+}
+</style>
