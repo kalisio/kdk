@@ -112,7 +112,7 @@
     <div v-if="scrollTargetRef" class="q-px-sm row items-center">
       <div class="col-4"></div>
       <div class="col-4 row justify-center">
-        <ScrollDown
+        <KScrollDown
           v-if="scrollDown"
           :ref="scrollDownRefCreated"
           target="scroll-target"
@@ -120,7 +120,7 @@
       />
       </div>
       <div class="col-4 row justify-end">
-        <ScrollToTop
+        <KScrollToTop
           v-if="scrollToTop"
           :ref="scrollToTopRefCreated"
           target="scroll-target"
@@ -151,8 +151,8 @@ import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { Time } from '../../time.js'
 import { loadComponent } from '../../utils'
-import ScrollToTop from './ScrollToTop.vue'
-import ScrollDown from './ScrollDown.vue'
+import KScrollToTop from './KScrollToTop.vue'
+import KScrollDown from './KScrollDown.vue'
 import KStamp from '../KStamp.vue'
 import KPanel from '../KPanel.vue'
 

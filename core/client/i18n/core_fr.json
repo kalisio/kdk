@@ -548,6 +548,9 @@
   "KTimeLine": {
     "EMPTY_LABEL": "@:NO_ITEM"
   },
+  "KScrollToTop": {
+    "TOOLTIP": "Haut de page"
+  },
   "KHistory": {
     "EMPTY_HISTORY": "@:NO_ITEM"
   },

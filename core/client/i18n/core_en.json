@@ -550,6 +550,9 @@
   "KTimeLine": {
     "EMPTY_LABEL": "@:NO_ITEM"
   },
+  "KScrollToTop": {
+    "TOOLTIP": "Scroll to top"
+  },
   "KHistory": {
     "EMPTY_HISTORY": "@:NO_ITEM"
   },

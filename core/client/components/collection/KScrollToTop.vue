@@ -2,11 +2,11 @@
   <KAction
     v-if="isVisible"
     id="back-to-top"
-    tooltip="ScrollToTop.TOOLTIP"
+    tooltip="KScrollToTop.TOOLTIP"
     icon="vertical_align_top" 
     color="accent"
     :flat="false"
-    size="size"
+    :size="size"
     :handler="scrollToTop"
   />
 </template>
@@ -27,7 +27,7 @@ const props = defineProps({
   },
   size: {
     type: String,
-    default: 'sm'
+    default: 'md'
   },
   duration: {
     type: Number,
