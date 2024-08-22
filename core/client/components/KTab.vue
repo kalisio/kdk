@@ -78,7 +78,7 @@ const tabs = computed(() => {
   return getModes()
 })
 const panel = computed(() => {
-  return _.cloneDeep(_.get(props.content, current.value))
+  return _.get(props.content, current.value)
 })
 
 // Function
