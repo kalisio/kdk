@@ -7,7 +7,7 @@ import { bindContent } from './utils/utils.content.js'
 
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const paneDefaults = { opener: false, size: [0, 0], state: 'fixed' }
+const paneDefaults = { opener: false, size: [0, 0] }
 const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls }
 const hWindowDefaultSizePolicy = {
@@ -32,7 +32,7 @@ const defaults = {
   panes: {
     left: { ...contentDefaults, ...paneDefaults, sizes: 300 },
     top: { ...contentDefaults, ...paneDefaults, sizes: undefined },
-    right: { ...contentDefaults, ...paneDefaults, sizes: { xs: [85, 75], sm: [50, 75], md: [35, 80], lg: [25, 80], xl: [20, 85] } },
+    right: { ...contentDefaults, ...paneDefaults, sizes: { xs: [85, 75], sm: [360, 75], md: [440, 80], lg: [500, 80], xl: [500, 85] } },
     bottom: { ...contentDefaults, ...paneDefaults, sizes: undefined }
   },
   windows: {
