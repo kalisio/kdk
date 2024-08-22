@@ -41,7 +41,6 @@ export const Filter = {
     // Handle the pattern
     if (pattern !== '') {
       query.$or = _.map(fields, field => { return { [field]: { $search: pattern } } })
-      console.log(query)
     }
     // Handle the selection
     items.forEach(item => {
