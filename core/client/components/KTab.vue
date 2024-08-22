@@ -21,7 +21,7 @@
       :mode="current"
       :filter="filter"
       @triggered="onTriggered"
-      class="q-pt-xs col full-width"
+      class="col full-width"
     />
   </div>
 </template>
