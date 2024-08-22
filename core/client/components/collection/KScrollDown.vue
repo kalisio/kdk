@@ -17,7 +17,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { useQuasar, scroll } from 'quasar'
+import { useQuasar, scroll as qScroll } from 'quasar'
 import { clamp } from '../../utils'
 
 // Props
@@ -50,7 +50,6 @@ const props = defineProps({
 
 // Data
 const $q = useQuasar()
-const { setVerticalScrollPosition, getVerticalScrollPosition, getScrollHeight } = scroll
 const isVisible = ref(false)
 
 // Watch
@@ -63,11 +62,11 @@ function refresh () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) return
   const containerHeight = targetElement.offsetHeight
-  const scrollHeight = getScrollHeight(targetElement)
+  const scrollHeight = qScroll.getScrollHeight(targetElement)
   const diff = scrollHeight - containerHeight
   if (diff <= 0) isVisible.value = false
   else {
-    const ratio = clamp(getVerticalScrollPosition(targetElement) / diff, 0, 1)
+    const ratio = clamp(qScroll.getVerticalScrollPosition(targetElement) / diff, 0, 1)
     const percent = Math.round(ratio * 10000) / 10000
     isVisible.value = percent < 1
   }
@@ -75,8 +74,8 @@ function refresh () {
 function scrollOnce () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) return
-  const position = getVerticalScrollPosition(targetElement)
-  setVerticalScrollPosition(targetElement, position + targetElement.offsetHeight, props.duration)
+  const position = qScroll.getVerticalScrollPosition(targetElement)
+  qScroll.setVerticalScrollPosition(targetElement, position + targetElement.offsetHeight, props.duration)
   refresh()
 }
 

@@ -8,6 +8,7 @@
       :base-query="baseQuery"
       :filter-query="filterQuery"
       :dense="true"
+      :scrollToTop="false"
       :header="toolbar"
       header-class="full-width no-wrap"
       @selection-changed="onViewSelected"

@@ -15,7 +15,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { useQuasar, scroll } from 'quasar'
+import { useQuasar, scroll as qScroll } from 'quasar'
 
 // Props
 const props = defineProps({
@@ -43,7 +43,6 @@ const props = defineProps({
 
 // Data
 const $q = useQuasar()
-const { setVerticalScrollPosition, getVerticalScrollPosition } = scroll
 const isVisible = ref(false)
 
 // Watch
@@ -55,12 +54,12 @@ watch(() => [$q.screen.width, $q.screen.height], () => {
 function refresh () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) return
-  isVisible.value = getVerticalScrollPosition(targetElement) > 0
+  isVisible.value = qScroll.getVerticalScrollPosition(targetElement) > 0
 }
 function scrollToTop () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) return
-  setVerticalScrollPosition(targetElement, 0, props.duration)
+  qScroll.setVerticalScrollPosition(targetElement, 0, props.duration)
   refresh()
 }
 
