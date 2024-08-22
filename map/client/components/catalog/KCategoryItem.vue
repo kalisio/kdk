@@ -42,7 +42,7 @@ const localStorageKey = 'catalog-categories'
 
 // Computed
 const name = computed(() => {
-  return i18n.t(props.category.name)
+  return i18n.tie(props.category.name)
 })
 const headerClass = computed(() => {
   const defaultClass = 'text-' + _.get(props.category, 'icon.color', 'primary')
