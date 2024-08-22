@@ -1,5 +1,5 @@
 <template>
-  <div class="column no-wrap">
+  <div class="fit column no-wrap">
     <!--
       Header
     -->
