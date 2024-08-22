@@ -107,9 +107,9 @@
       </slot>
     </div>
     <!--
-      Scroll 
+      Scroll
      -->
-    <div v-if="scrollTargetRef" 
+    <div v-if="scrollTargetRef"
       :class="$q.screen.lt.md ? 'q-px-sm' : 'q-px-md'"
       class="row items-center"
     >
@@ -119,7 +119,7 @@
           v-if="scrollDown"
           :ref="scrollDownRefCreated"
           target="scroll-target"
-          :loading="loadDoneFunction ? true : false" 
+          :loading="loadDoneFunction ? true : false"
       />
       </div>
       <div class="col-4 row justify-end">

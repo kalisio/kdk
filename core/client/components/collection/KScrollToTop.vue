@@ -4,7 +4,7 @@
       v-if="isVisible"
       id="scroll-to-top"
       tooltip="KScrollToTop.TOOLTIP"
-      :icon="icon" 
+      :icon="icon"
       :color="color"
       :flat="false"
       :size="size"

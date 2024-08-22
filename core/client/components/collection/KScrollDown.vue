@@ -8,7 +8,7 @@
       v-if="isVisible"
       id="scroll-down"
       :color="color"
-      :icon="icon" 
+      :icon="icon"
       :size="size"
       :handler="scrollOnce"
     />
@@ -60,8 +60,8 @@ watch(() => [$q.screen.width, $q.screen.height], () => {
 
 // Functions
 function refresh () {
-  let targetElement = document.getElementById(props.target)
-  if (!targetElement) return 
+  const targetElement = document.getElementById(props.target)
+  if (!targetElement) return
   const containerHeight = targetElement.offsetHeight
   const scrollHeight = getScrollHeight(targetElement)
   const diff = scrollHeight - containerHeight
