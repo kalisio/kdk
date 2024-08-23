@@ -426,7 +426,7 @@ export function getFeatureStyleType (feature) {
 }
 
 // Build timeseries to be used in charts from layer definition for target feature
-export function getTimeSeriesForFeature({ feature, layer, startTime, endTime, runTime, level }) {
+export function getTimeSeriesForFeature({ feature, layer, startTime, endTime, runTime, level, forecastLevel }) {
   const variables = _.get(layer, 'variables', [])
   if (variables.length === 0) return []
   const properties = _.get(feature, 'properties', {})
@@ -444,8 +444,8 @@ export function getTimeSeriesForFeature({ feature, layer, startTime, endTime, ru
     const time = measure.time || measure.forecastTime
     const runTime = measure.runTime
     const properties = _.get(measure, 'properties', {})
-    // Check if we are targetting a specific level
-    const name = (level ? `${variable.name}-${level}` : variable.name)
+    // Check if we are targetting a specific variable at level (forecast model case)
+    const name = (forecastLevel ? `${variable.name}-${forecastLevel}` : variable.name)
     let values = []
     // Aggregated variable available for feature ?
     if (properties[name] && Array.isArray(properties[name])) {
@@ -474,7 +474,7 @@ export function getTimeSeriesForFeature({ feature, layer, startTime, endTime, ru
         chartjs: Object.assign({
           parsing: {
             xAxisKey: 'time',
-            yAxisKey: (level ? `${variable.name}-${level}` : variable.name)
+            yAxisKey: (forecastLevel ? `${variable.name}-${forecastLevel}` : variable.name)
           },
           cubicInterpolationMode: 'monotone',
           tension: 0.4
