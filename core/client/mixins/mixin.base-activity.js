@@ -187,14 +187,13 @@ export function baseActivity (name) {
         Layout.openWidget(widget)
       },
       closeWidget (widget) {
-        const result = this.findWindow(widget)
-        if (!result.placement) {
-          logger.warn(`Cannot find widget ${widget}`)
-          return
-        }
-        Layout.setWindowVisible(result.placement, false)
+        Layout.closeWidget(widget)
+      },
+      clearFocus () {
+        Layout.clearFocus()
       },
       clearActivity () {
+        this.clearFocus()
         this.clearHeader()
         this.clearFooter()
         this.clearTopPane()

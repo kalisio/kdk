@@ -23,6 +23,7 @@ export function useLayout () {
     if (configuration.bottomPane) Layout.setPane('bottom', configuration.bottomPane, context)
   }
   function clearLayout () {
+    Layout.clearFocus()
     Layout.clearView()
     Layout.clearPadding()
     Layout.clearHeader()

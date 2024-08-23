@@ -431,5 +431,8 @@ export const Layout = {
     const props = this.getElement(element)
     Store.patch(this.getElementPath('focus'), { element: { path: element, zIndex: props.zIndex }})
     Store.patch(this.getElementPath(element), { zIndex: focus.zIndex })
+  },
+  clearFocus () {
+    this.clearElement('focus')
   }
 }
