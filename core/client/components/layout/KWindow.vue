@@ -352,6 +352,9 @@ function updateGeometry (position, size, check = false) {
 function onMoved (event) {
   if (!event) return
   if (currentWindow.state !== 'maximized') {
+    // Set Focus
+    Layout.setFocus(`windows.${props.placement}`)
+    // Update geometry
     if (currentWindow.state !== 'floating') {
       storeGeometry()
       Layout.setWindowState(props.placement, 'floating')
@@ -368,6 +371,8 @@ function onMoved (event) {
 }
 const onResized = _.throttle((event) => {
   if (!event) return
+  // Set Focus
+  Layout.setFocus(`windows.${props.placement}`)
   // Handle the pinned and floating currentState
   if (currentWindow.state !== 'maximized') {
     if (currentWindow.state !== 'floating') {

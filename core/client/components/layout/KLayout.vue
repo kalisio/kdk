@@ -8,7 +8,7 @@
         v-if="leftPane.opener"
         position="left"
         :offset="[openerOffset, 0]"
-        class="k-pane-z-index"
+        class="k-left-pane-sticky"
       >
         <KOpener
           id="left-opener"
@@ -84,25 +84,8 @@ const footer = Layout.getFooter()
 const openerOffset = ref(0)
 
 // Computed
-const hasLeftPaneComponents = computed(() => {
-  return !_.isEmpty(leftPane.components)
-})
-const leftPaneSize = computed(() => {
-  return computeResponsiveWidth(leftPane.sizes)
-})
 const hasHeaderComponents = computed(() => {
   return !_.isEmpty(header.components)
-})
-const hasFooterComponents = computed(() => {
-  return !_.isEmpty(footer.components)
-})
-const isLeftPaneOpened = computed({
-  get: function () {
-    return leftPane.visible
-  },
-  set: function (value) {
-    Layout.setPaneVisible('left', value)
-  }
 })
 const isHeaderVisible = computed({
   get: function () {
@@ -112,12 +95,29 @@ const isHeaderVisible = computed({
     Layout.setHeaderVisible(value)
   }
 })
+const hasFooterComponents = computed(() => {
+  return !_.isEmpty(footer.components)
+})
 const isFooterVisible = computed({
   get: function () {
     return footer.visible
   },
   set: function (value) {
     Layout.setFooterVisible(value)
+  }
+})
+const hasLeftPaneComponents = computed(() => {
+  return !_.isEmpty(leftPane.components)
+})
+const leftPaneSize = computed(() => {
+  return computeResponsiveWidth(leftPane.sizes)
+})
+const isLeftPaneOpened = computed({
+  get: function () {
+    return leftPane.visible
+  },
+  set: function (value) {
+    Layout.setPaneVisible('left', value)
   }
 })
 
@@ -148,7 +148,7 @@ function clickOutsideLeftPanelListener (event) {
 </script>
 
 <style lang="scss">
-.k-pane-z-index {
-  z-index: $pane-sticky-z-index;
+.k-left-pane-sticky {
+  z-index: v-bind('leftPane.zIndex');
 }
 </style>

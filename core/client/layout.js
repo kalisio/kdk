@@ -5,11 +5,20 @@ import sift from 'sift'
 import { Store } from './store.js'
 import { bindContent } from './utils/utils.content.js'
 
+const defaultZIndex = {
+  drawer: 3000,  // see Quasar css variables
+  panes: 1000,
+  fab: 1000,
+  windows: 990,
+  stickies: 980,
+  focus: 1010
+}
+
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const paneDefaults = { opener: false, size: [0, 0] }
+const paneDefaults = { opener: false, size: [0, 0], zIndex: defaultZIndex.panes }
 const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
-const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls }
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls, zIndex: 980 }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
   floating: { position: [0, 0], size: [300, 200] },
@@ -27,10 +36,10 @@ const defaults = {
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults, size: [0, 0] },
-  stickies: { ...contentDefaults },
-  fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16] },
+  stickies: { ...contentDefaults, zIndex: defaultZIndex.stickies },
+  fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: defaultZIndex.fab },
   panes: {
-    left: { ...contentDefaults, ...paneDefaults, sizes: 300 },
+    left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: defaultZIndex.drawer }, 
     top: { ...contentDefaults, ...paneDefaults, sizes: undefined },
     right: { ...contentDefaults, ...paneDefaults, sizes: { xs: [85, 75], sm: [360, 75], md: [440, 80], lg: [500, 80], xl: [500, 85] } },
     bottom: { ...contentDefaults, ...paneDefaults, sizes: undefined }
@@ -40,6 +49,10 @@ const defaults = {
     top: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowDefaultSizePolicy },
     right: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowDefaultSizePolicy },
     bottom: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowDefaultSizePolicy }
+  },
+  focus: {
+    element: null,
+    zIndex: defaultZIndex.focus
   }
 }
 
@@ -67,7 +80,8 @@ export const Layout = {
       top: layoutPath + '.windows.top',
       right: layoutPath + '.windows.right',
       bottom: layoutPath + '.windows.bottom'
-    }
+    },
+    focus: layoutPath + '.focus'
   },
   initialize () {
     // create the store structure for each element with their configuration
@@ -82,6 +96,7 @@ export const Layout = {
       Store.set(_.get(this.paths.panes, placement), this.getElementDefaults(`panes.${placement}`))
       Store.set(_.get(this.paths.windows, placement), this.getElementDefaults(`windows.${placement}`))
     })
+    Store.set(this.paths.focus, this.getElementDefaults('focus'))
     // debug message
     logger.debug(`[KDK] Layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
   },
@@ -395,10 +410,26 @@ export const Layout = {
     logger.debug(`[KDK] Unable to find the widget ${widget}`)
     return { placement: undefined, window: undefined }
   },
-  openWidget (widget) {
+  openWidget (widget, focus = true) {
     const { placement, window } = this.findWindow(widget)
     if (!placement) return
     if (window.current !== 'current') this.setWindowCurrent(placement, widget)
     if (!window.visible) this.setWindowVisible(placement, true)
+    if (focus) Layout.setFocus(`windows.${placement}`)
+  },
+  closeWidget (widget) {
+    const { placement, window } = this.findWindow(widget)
+    if (!placement) return
+    if (window.visible) this.setWindowVisible(placement, false)
+  },
+  setFocus (element) {
+    const focus = this.getElement('focus')
+    if (focus.element) {
+      if (focus.element === element) return
+      Store.patch(this.getElementPath(focus.element.path), { zIndex: focus.element.zIndex })  
+    }
+    const props = this.getElement(element)
+    Store.patch(this.getElementPath('focus'), { element: { path: element, zIndex: props.zIndex }})
+    Store.patch(this.getElementPath(element), { zIndex: focus.zIndex })
   }
 }

@@ -184,13 +184,7 @@ export function baseActivity (name) {
         return (window && window.visible)
       },
       openWidget (widget) {
-        const { placement, window } = this.findWindow(widget)
-        if (!placement) {
-          logger.warn(`[KDK] Cannot find widget ${widget}`)
-          return
-        }
-        if (window.current !== widget) Layout.setWindowCurrent(placement, widget)
-        Layout.setWindowVisible(placement, true)
+        Layout.openWidget(widget)
       },
       closeWidget (widget) {
         const result = this.findWindow(widget)

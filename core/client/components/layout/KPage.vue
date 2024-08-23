@@ -22,7 +22,7 @@
         :id="sticky.id"
         :position="getStickyPosition(sticky)"
         :offset="getStickyOffset(sticky)"
-        class="k-sticky-z-index"
+        class="k-sticky"
       >
         <KContent :content="[sticky]" />
       </q-page-sticky>
@@ -32,7 +32,11 @@
       Be careful of the order
      -->
     <!-- Bottom pane -->
-    <q-page-sticky position="bottom" class="k-pane-z-index">
+    <q-page-sticky 
+      position="bottom" 
+      class="k-bottom-pane-sticky"
+      @click="onClicked('panes.bottom')"
+    >
       <div id="bottom-pane" v-show="hasBottomPaneComponents" class="column items-center">
         <KOpener id="bottom-opener" v-if="bottomPane.opener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
@@ -49,7 +53,11 @@
       </div>
     </q-page-sticky>
     <!-- Right pane -->
-    <q-page-sticky position="right" class="k-pane-z-index">
+    <q-page-sticky 
+      position="right" 
+      class="k-right-pane-sticky"
+      @click="onClicked('panes.right')"
+    >
       <div id="right-pane" v-show="hasRightPaneComponents" class="row items-center">
         <KOpener id="right-opener" v-if="rightPane.opener" v-model="isRightPaneOpened" position="right" />
         <div>
@@ -67,7 +75,11 @@
       </div>
     </q-page-sticky>
     <!-- Top pane -->
-    <q-page-sticky position="top" class="k-pane-z-index">
+    <q-page-sticky 
+      position="top" 
+      class="k-top-pane-sticky"
+      @click="onClicked('panes.top')"
+    >
       <div id="top-pane" v-show="hasTopPaneComponents" class="column items-center">
         <div>
           <KPanel
@@ -84,7 +96,12 @@
       </div>
     </q-page-sticky>
     <!-- Fab -->
-    <q-page-sticky :position="fab.position" :offset="fab.offset" class="k-fab-z-index">
+    <q-page-sticky 
+      :position="fab.position" 
+      :offset="fab.offset" 
+      class="k-fab-sticky"
+      @click="onClicked('fab')"
+    >
       <KFab
         id="fab"
         v-if="fab.visible"
@@ -92,8 +109,13 @@
         :actions-align="fabBehavior.actionsAlign"
       />
     </q-page-sticky>
-    <!-- Windows -->
-    <q-page-sticky position="top-left" :offset="leftWindow.position" class="k-window-z-index">
+    <!-- left Window -->
+    <q-page-sticky 
+      position="top-left" 
+      :offset="leftWindow.position" 
+      class="k-left-window-sticky"
+      @click="onClicked('windows.left')"
+    >
       <KWindow
         id="left-window"
         v-if="leftWindow.visible"
@@ -102,7 +124,13 @@
         :style="leftWindowStyle"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-left" :offset="topWindow.position" class="k-window-z-index">
+    <!-- top Window -->
+    <q-page-sticky 
+      position="top-left" 
+      :offset="topWindow.position" 
+      class="k-top-window-sticky" 
+      @click="onClicked('windows.top')"
+    >
       <KWindow
         id="top-window"
         v-if="topWindow.visible"
@@ -111,7 +139,13 @@
         :style="topWindowStyle"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-left" :offset="rightWindow.position" class="k-window-z-index">
+    <!-- right Window -->
+    <q-page-sticky 
+      position="top-left" 
+      :offset="rightWindow.position" 
+      class="k-right-window-sticky" 
+      @click="onClicked('windows.right')"
+    >
       <KWindow
         id="right-window"
         v-if="rightWindow.visible"
@@ -120,7 +154,13 @@
         :style="rightWindowStyle"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-left" :offset="bottomWindow.position" class="k-window-z-index">
+    <!-- bottom Window -->
+    <q-page-sticky 
+      position="top-left" 
+      :offset="bottomWindow.position" 
+      class="k-bottom-window-sticky" 
+      @click="onClicked('windows.bottom')"
+    >
       <KWindow
         id="bottom-window"
         v-if="bottomWindow.visible"
@@ -309,14 +349,23 @@ function setRightPaneVisible (visible) {
 function setBottomPaneVisible (visible) {
   Layout.setPaneVisible('bottom', visible)
 }
+function onClicked (element) {
+  Layout.setFocus(element)
+}
 </script>
 
 <style lang="scss">
 body {
   background-color: #EFEFEF;
 }
-.k-pane-sticky {
-  z-index: $pane-sticky-z-index;
+.k-top-pane-sticky {
+  z-index: v-bind('topPane.zIndex');
+}
+.k-right-pane-sticky {
+  z-index: v-bind('rightPane.zIndex');
+}
+.k-bottom-pane-sticky {
+  z-index: v-bind('bottomPane.zIndex');
 }
 .k-pane {
   background-color: #FFFFFF;
@@ -327,13 +376,22 @@ body {
 .k-pane:hover {
   border: solid 1px $primary;
 }
-.k-window-z-index {
-  z-index: $window-sticky-z-index;
+.k-left-window-sticky {
+  z-index: v-bind('leftWindow.zIndex');
 }
-.k-fab-z-index {
-  z-index: $fab-sticky-z-index;
+.k-top-window-sticky {
+  z-index: v-bind('topWindow.zIndex');
 }
-.k-sticky-z-index {
-  z-index: $sticky-z-index;
+.k-right-window-sticky {
+  z-index: v-bind('rightWindow.zIndex');
+}
+.k-bottom-window-sticky {
+  z-index: v-bind('bottomWindow.zIndex');
+}
+.k-fab-sticky {
+  z-index: v-bind('fab.zIndex');
+}
+.k-sticky {
+  z-index: v-bind('stickies.zIndex');
 }
 </style>
