@@ -33,7 +33,7 @@ export const featureService = {
     getFeaturesFromQuery: features.getFeaturesFromQuery,
     async getFeatures (options, queryInterval, queryLevel) {
       const query = await this.getFeaturesQuery(options, queryInterval, queryLevel)
-      const response = await this.getFeaturesFromQuery(options, query)
+      const response = await features.getFeaturesFromQuery(options, query)
       return response
     },
     async getFeaturesFromLayer (name, queryInterval) {
@@ -42,42 +42,23 @@ export const featureService = {
       if (!layer) return
       return this.getFeatures(layer, queryInterval)
     },
-    getMeasureForFeatureBaseQuery (layer, feature) {
-      // We might have a different ID to identify measures related to a timeseries (what is called a chronicle)
-      // than measures displayed on a map. For instance mobile measures might appear at different locations,
-      // but when selecting one we would like to display the timeseries related to all locations.
-      let featureId = layer.chronicleId || layer.featureId
-      // Support compound ID
-      featureId = (Array.isArray(featureId) ? featureId : [featureId])
-      const query = featureId.reduce((result, id) =>
-        Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
-      {})
-      query.$groupBy = featureId
-      return query
-    },
+    getMeasureForFeatureBaseQuery: features.getMeasureForFeatureBaseQuery,
     async getMeasureForFeatureQuery (layer, feature, startTime, endTime) {
       const query = await this.getFeaturesQuery(_.merge({
-        baseQuery: this.getMeasureForFeatureBaseQuery(layer, feature)
+        baseQuery: features.getMeasureForFeatureBaseQuery(layer, feature)
       }, layer), {
         $gte: startTime.toISOString(),
         $lte: endTime.toISOString()
       })
       return query
     },
-    async getMeasureForFeatureFromQuery (layer, feature, query) {
-      const result = await this.getFeaturesFromQuery(layer, query)
-      if (result.features.length > 0) {
-        return result.features[0]
-      } else {
-        return _.cloneDeep(feature)
-      }
-    },
+    getMeasureForFeatureFromQuery: features.getMeasureForFeatureFromQuery,
     async getMeasureForFeature (layer, feature, startTime, endTime) {
       let probedLocation
       this.setCursor('processing-cursor')
       try {
         const query = await this.getMeasureForFeatureQuery(layer, feature, startTime, endTime)
-        probedLocation = await this.getMeasureForFeatureFromQuery(layer, feature, query)
+        probedLocation = await features.getMeasureForFeatureFromQuery(layer, feature, query)
       } catch (error) {
         logger.error(error)
       }

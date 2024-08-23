@@ -53,15 +53,17 @@ let min = null
 let max = null
 
 // Watch
-watch(() => props.timeSeries, update)
-watch(() => props.xAxisKey, update)
-watch(() => props.yAxisKey, update)
-watch(() => props.startTime, update)
-watch(() => props.endTime, update)
-watch(() => props.zoomable, update)
-watch(() => props.logarithmic, update)
-watch(() => props.currentTime, update)
-watch(() => props.options, update)
+// We use debounce here to avoid pultiple refresh when initializing props
+const requestUpdate = _.debounce(() => update(), 500)
+watch(() => props.timeSeries, requestUpdate)
+watch(() => props.xAxisKey, requestUpdate)
+watch(() => props.yAxisKey, requestUpdate)
+watch(() => props.startTime, requestUpdate)
+watch(() => props.endTime, requestUpdate)
+watch(() => props.zoomable, requestUpdate)
+watch(() => props.logarithmic, requestUpdate)
+watch(() => props.currentTime, requestUpdate)
+watch(() => props.options, requestUpdate)
 
 // Functions
 async function onCanvasRef (ref) {

@@ -10,7 +10,7 @@ import rhumbDistance from '@turf/rhumb-distance'
 import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
-import { api, Time } from '../../../core/client/index.js'
+import { api, Time, Units, i18n } from '../../../core/client/index.js'
 
 export function processFeatures (geoJson, processor) {
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
@@ -243,6 +243,50 @@ export async function getFeaturesFromQuery (options, query) {
   return response
 }
 
+export function getMeasureForFeatureBaseQuery (layer, feature) {
+  // We might have a different ID to identify measures related to a timeseries (what is called a chronicle)
+  // than measures displayed on a map. For instance mobile measures might appear at different locations,
+  // but when selecting one we would like to display the timeseries related to all locations.
+  let featureId = layer.chronicleId || layer.featureId
+  // Support compound ID
+  featureId = (Array.isArray(featureId) ? featureId : [featureId])
+  const query = featureId.reduce((result, id) =>
+    Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
+  {})
+  query.$groupBy = featureId
+  return query
+}
+
+export async function getMeasureForFeatureQuery (layer, feature, startTime, endTime, level) {
+  const query = await getFeaturesQuery(_.merge({
+    baseQuery: getMeasureForFeatureBaseQuery(layer, feature)
+  }, layer), {
+    $gte: startTime.toISOString(),
+    $lte: endTime.toISOString()
+  }, level)
+  return query
+}
+
+export async function getMeasureForFeatureFromQuery (layer, feature, query) {
+  const result = await getFeaturesFromQuery(layer, query)
+  if (result.features.length > 0) {
+    return result.features[0]
+  } else {
+    return _.cloneDeep(feature)
+  }
+}
+
+export async function getMeasureForFeature (layer, feature, startTime, endTime, level) {
+  let probedLocation
+  try {
+    const query = await getMeasureForFeatureQuery(layer, feature, startTime, endTime, level)
+    probedLocation = await getMeasureForFeatureFromQuery(layer, feature, query)
+  } catch (error) {
+    logger.error(error)
+  }
+  return probedLocation
+}
+
 export function checkFeatures (geoJson, options = {
   kinks: true,
   redundantCoordinates: true
@@ -379,4 +423,63 @@ export function getFeatureStyleType (feature) {
   if (['Polygon', 'MultiPolygon'].includes(geometryType)) return 'polygon'
   logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
   return
+}
+
+// Build timeseries to be used in charts from layer definition for target feature
+export function getTimeSeriesForFeature({ feature, layer, startTime, endTime, runTime, level }) {
+  const variables = _.get(layer, 'variables', [])
+  if (variables.length === 0) return []
+  const properties = _.get(feature, 'properties', {})
+  // Fetch data function
+  async function fetch() {
+    const measure = await getMeasureForFeature(layer, feature, startTime, endTime, level)
+    return measure
+  }
+  // Create promise to fetch data as it will be shared by all series,
+  // indeed a measure stores all aggregated variables
+  const data = fetch()
+  
+  async function getDataForVariable(variable) {
+    const measure = await data
+    const time = measure.time || measure.forecastTime
+    const runTime = measure.runTime
+    const properties = _.get(measure, 'properties', {})
+    // Check if we are targetting a specific level
+    const name = (level ? `${variable.name}-${level}` : variable.name)
+    let values = []
+    // Aggregated variable available for feature ?
+    if (properties[name] && Array.isArray(properties[name])) {
+      // Build data structure as expected by visualisation
+      values = properties[name].map((value, index) => ({ time: moment.utc(time[name][index]).valueOf(), [name]: value }))
+      // Keep only selected value if multiple are provided for the same time (eg different forecasts)
+      if (variable.runTimes && !_.isEmpty(_.get(runTime, name)) && runTime) {
+        values = values.filter((value, index) => (runTime[name][index] === runTime.toISOString()))
+      } else values = _.uniqBy(values, 'time')
+    }
+    return values
+  }
+
+  return variables.map(variable => {
+    // Base unit could be either directly the unit or the property of the measure storing the unit
+    const baseUnit = _.get(properties, 'unit', variable.unit)
+    // Known by the unit system ?
+    const unit = Units.getUnit(baseUnit) || { name: baseUnit }
+    return {
+      data: getDataForVariable(variable),
+      variable: {
+        name,
+        label: `${i18n.tie(variable.label)} (${Units.getTargetUnitSymbol(baseUnit)})`,
+        unit,
+        targetUnit: Units.getTargetUnit(unit),
+        chartjs: Object.assign({
+          parsing: {
+            xAxisKey: 'time',
+            yAxisKey: (level ? `${variable.name}-${level}` : variable.name)
+          },
+          cubicInterpolationMode: 'monotone',
+          tension: 0.4
+        }, variable.chartjs)
+      }
+    }
+  })
 }

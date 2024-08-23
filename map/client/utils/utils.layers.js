@@ -65,6 +65,10 @@ export function isTerrainLayer (layer) {
   return (cesiumOptions.type === 'Cesium') || (cesiumOptions.type === 'Ellipsoid')
 }
 
+export function isMeasureLayer (layer) {
+  return layer.variables && layer.service
+}
+
 export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   // Check for invalid features first
   const check = checkFeatures(geoJson)
