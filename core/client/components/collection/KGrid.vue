@@ -224,6 +224,12 @@ function onScroll () {
   if (scrollToTopRef.value) scrollToTopRef.value.refresh()
 }
 function onLoad (index, done) {
+  // check whether the items are all loaded yet
+  if (items.value.length === nbTotalItems.value) {
+    done(true)
+    return
+  }
+  // set the current page and tell the collection to be refreshed  
   currentPage.value = index
   refreshCollection()
   loadDoneFunction.value = done
