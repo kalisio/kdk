@@ -96,14 +96,14 @@
     <!-- Empty slot -->
     <div v-else>
       <slot name="empty">
-        <div class="row justify-center">
-          <KStamp
-            icon="las la-exclamation-circle"
-            icon-size="1.6rem"
-            :text="$t('KTimeLine.EMPTY_LABEL')"
-            direction="horizontal"
-          />
-        </div>
+        <KStamp
+          icon="las la-exclamation-circle"
+          icon-size="4rem"
+          :text="$t('KTimeLine.EMPTY_LABEL')"
+          text-size="1.2rem"
+          direction="vertical"
+          class="absolute-center"
+        />
       </slot>
     </div>
     <!--
