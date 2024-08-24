@@ -75,7 +75,7 @@ function scrollOnce () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) return
   const position = qScrollUtils.getVerticalScrollPosition(targetElement)
-  qScrollUtils.setVerticalScrollPosition(targetElement, position + targetElement.offsetHeight, props.duration)
+  qScrollUtils.setVerticalScrollPosition(targetElement, position + targetElement.offsetHeight * .75, props.duration)
   refresh()
 }
 
