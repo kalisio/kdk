@@ -84,9 +84,7 @@
                   :is="bodyRendererComponent"
                   v-bind="bodyRenderer"
                 />
-                <div v-else>
-                  {{ getBody(item) }}
-                </div>
+                <div v-else v-html="getBody(item)" />
               </div>
             </q-timeline-entry>
           </template>
