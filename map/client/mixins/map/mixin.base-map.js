@@ -653,6 +653,9 @@ export const baseMap = {
     this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   unmounted () {
-    if (this.map) this.map.remove()
+    if (this.map) {
+      this.map.off()
+      this.map.remove()
+    }
   }
 }
