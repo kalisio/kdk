@@ -66,8 +66,7 @@
           :dialog="{
             component: 'location/KLocationMap',
             'v-model': model,
-            draggable: true,
-            header: map,
+            tools: map,
             widthPolicy: 'wide',
             cancelAction: 'CANCEL',
             okAction: {

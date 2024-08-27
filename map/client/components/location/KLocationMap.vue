@@ -5,7 +5,7 @@
     <div class="row justify-center">
       <KPanel
         id="header"
-        :content="headerComponents"
+        :content="header"
         class="k-location-map-toolbar"
       />
     </div>
@@ -46,19 +46,15 @@ export default {
         return _.get(config, 'engines.leaflet')
       }
     },
-    header: {
+    tools: {
       type: Array,
       default: () => []
-    },
-    draggable: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
-    headerComponents () {
+    header () {
       const components = []
-      _.forEach(this.header, component => {
+      _.forEach(this.tools, component => {
         if (component === 'separator') {
           components.push({
             component: 'QSeparator',
@@ -122,15 +118,18 @@ export default {
       })
       return components
     },
+    interactive () {
+      return !_.isEmpty(this.tools)
+    },
+    draggable () {
+      return _.indexOf(this.tools, 'draw-point') !== -1
+    },
     allowGeolocation () {
       return !_.isNil(this.header.geolocate)
     }
   },
   watch: {
     modelValue: function () {
-      this.refresh()
-    },
-    draggable: function () {
       this.refresh()
     }
   },
@@ -151,6 +150,10 @@ export default {
     },
     refresh () {
       if (!this.mapReady) return
+      // disable handler if non interactive
+      if (!this.interactive) {
+        _.forEach(this.map._handlers, handler => { handler.disable() })
+      }
       // clear the existing layer if any
       if (this.locationLayer) {
         this.map.removeLayer(this.locationLayer)
@@ -265,6 +268,10 @@ export default {
   },
   beforeUnmount () {
     this.$engineEvents.off('pm:create', this.stopDraw)
+    if (this.locationLayer) {
+      this.map.removeLayer(this.locationLayer)
+      this.locationLayer = null
+    }
   },
   async setup () {
     // Get current project for activity if any
