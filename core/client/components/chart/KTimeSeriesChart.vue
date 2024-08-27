@@ -298,14 +298,17 @@ async function makeDatasets () {
     // Update time/value range
     data.forEach(item => {
       const time = moment.utc(_.get(item, xAxisKey))
-      let value = _.get(item, yAxisKey)
-      if (value) {
-        if (targetUnit) {
-          value = Units.convert(value, unit.name, targetUnit.name)
-          _.set(item, yAxisKey, value)
+      // Take zero into account
+      if (_.has(item, yAxisKey)) {
+        let value = _.get(item, yAxisKey)
+        if (_.isFinite(value)) {
+          if (targetUnit) {
+            value = Units.convert(value, unit.name, targetUnit.name)
+            _.set(item, yAxisKey, value)
+          }
+          if (_.isNil(min) || (value < min)) min = value
+          if (_.isNil(max) || (value > max)) max = value
         }
-        if (_.isNil(min) || (value < min)) min = value
-        if (_.isNil(max) || (value > max)) max = value
         if (!props.startTime) {
           if (!startTime.value || time.isBefore(startTime.value)) startTime.value = time
         }
