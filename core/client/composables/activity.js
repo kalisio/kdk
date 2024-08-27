@@ -31,7 +31,7 @@ export function useActivity (name, options = {}) {
   }
   if (options.selection) {
     Object.assign(expose, {
-      ...useSelection(CurrentActivityName.value)
+      ...useSelection(name)
     })
   }
 
