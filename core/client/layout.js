@@ -6,7 +6,7 @@ import { Store } from './store.js'
 import { bindContent } from './utils/utils.content.js'
 
 const defaultZIndex = {
-  drawer: 3000,  // see Quasar css variables
+  drawer: 3000, // see Quasar css variables
   panes: 1000,
   fab: 1000,
   windows: 990,
@@ -39,7 +39,7 @@ const defaults = {
   stickies: { ...contentDefaults, zIndex: defaultZIndex.stickies },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: defaultZIndex.fab },
   panes: {
-    left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: defaultZIndex.drawer }, 
+    left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: defaultZIndex.drawer },
     top: { ...contentDefaults, ...paneDefaults, sizes: undefined },
     right: { ...contentDefaults, ...paneDefaults, sizes: { xs: [85, 75], sm: [360, 75], md: [440, 80], lg: [500, 80], xl: [500, 85] } },
     bottom: { ...contentDefaults, ...paneDefaults, sizes: undefined }
@@ -426,10 +426,10 @@ export const Layout = {
     const focus = this.getElement('focus')
     if (focus.element) {
       if (focus.element === element) return
-      Store.patch(this.getElementPath(focus.element.path), { zIndex: focus.element.zIndex })  
+      Store.patch(this.getElementPath(focus.element.path), { zIndex: focus.element.zIndex })
     }
     const props = this.getElement(element)
-    Store.patch(this.getElementPath('focus'), { element: { path: element, zIndex: props.zIndex }})
+    Store.patch(this.getElementPath('focus'), { element: { path: element, zIndex: props.zIndex } })
     Store.patch(this.getElementPath(element), { zIndex: focus.zIndex })
   },
   clearFocus () {

@@ -32,8 +32,8 @@
       Be careful of the order
      -->
     <!-- Bottom pane -->
-    <q-page-sticky 
-      position="bottom" 
+    <q-page-sticky
+      position="bottom"
       class="k-bottom-pane-sticky"
       @click="onClicked('panes.bottom')"
     >
@@ -53,8 +53,8 @@
       </div>
     </q-page-sticky>
     <!-- Right pane -->
-    <q-page-sticky 
-      position="right" 
+    <q-page-sticky
+      position="right"
       class="k-right-pane-sticky"
       @click="onClicked('panes.right')"
     >
@@ -75,8 +75,8 @@
       </div>
     </q-page-sticky>
     <!-- Top pane -->
-    <q-page-sticky 
-      position="top" 
+    <q-page-sticky
+      position="top"
       class="k-top-pane-sticky"
       @click="onClicked('panes.top')"
     >
@@ -96,9 +96,9 @@
       </div>
     </q-page-sticky>
     <!-- Fab -->
-    <q-page-sticky 
-      :position="fab.position" 
-      :offset="fab.offset" 
+    <q-page-sticky
+      :position="fab.position"
+      :offset="fab.offset"
       class="k-fab-sticky"
       @click="onClicked('fab')"
     >
@@ -110,9 +110,9 @@
       />
     </q-page-sticky>
     <!-- left Window -->
-    <q-page-sticky 
-      position="top-left" 
-      :offset="leftWindow.position" 
+    <q-page-sticky
+      position="top-left"
+      :offset="leftWindow.position"
       class="k-left-window-sticky"
       @click="onClicked('windows.left')"
     >
@@ -125,10 +125,10 @@
       />
     </q-page-sticky>
     <!-- top Window -->
-    <q-page-sticky 
-      position="top-left" 
-      :offset="topWindow.position" 
-      class="k-top-window-sticky" 
+    <q-page-sticky
+      position="top-left"
+      :offset="topWindow.position"
+      class="k-top-window-sticky"
       @click="onClicked('windows.top')"
     >
       <KWindow
@@ -140,10 +140,10 @@
       />
     </q-page-sticky>
     <!-- right Window -->
-    <q-page-sticky 
-      position="top-left" 
-      :offset="rightWindow.position" 
-      class="k-right-window-sticky" 
+    <q-page-sticky
+      position="top-left"
+      :offset="rightWindow.position"
+      class="k-right-window-sticky"
       @click="onClicked('windows.right')"
     >
       <KWindow
@@ -155,10 +155,10 @@
       />
     </q-page-sticky>
     <!-- bottom Window -->
-    <q-page-sticky 
-      position="top-left" 
-      :offset="bottomWindow.position" 
-      class="k-bottom-window-sticky" 
+    <q-page-sticky
+      position="top-left"
+      :offset="bottomWindow.position"
+      class="k-bottom-window-sticky"
       @click="onClicked('windows.bottom')"
     >
       <KWindow

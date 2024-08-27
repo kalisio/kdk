@@ -10,7 +10,7 @@ import rhumbDistance from '@turf/rhumb-distance'
 import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
-import { api, Time, Units, i18n } from '../../../core/client/index.js'
+import { api, Time } from '../../../core/client/index.js'
 
 export function processFeatures (geoJson, processor) {
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
@@ -423,63 +423,4 @@ export function getFeatureStyleType (feature) {
   if (['Polygon', 'MultiPolygon'].includes(geometryType)) return 'polygon'
   logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
   return
-}
-
-// Build timeseries to be used in charts from layer definition for target feature
-export function getTimeSeriesForFeature({ feature, layer, startTime, endTime, runTime, level, forecastLevel }) {
-  const variables = _.get(layer, 'variables', [])
-  if (variables.length === 0) return []
-  const properties = _.get(feature, 'properties', {})
-  // Fetch data function
-  async function fetch() {
-    const measure = await getMeasureForFeature(layer, feature, startTime, endTime, level)
-    return measure
-  }
-  // Create promise to fetch data as it will be shared by all series,
-  // indeed a measure stores all aggregated variables
-  const data = fetch()
-  
-  async function getDataForVariable(variable) {
-    const measure = await data
-    const time = measure.time || measure.forecastTime
-    const runTime = measure.runTime
-    const properties = _.get(measure, 'properties', {})
-    // Check if we are targetting a specific variable at level (forecast model case)
-    const name = (forecastLevel ? `${variable.name}-${forecastLevel}` : variable.name)
-    let values = []
-    // Aggregated variable available for feature ?
-    if (properties[name] && Array.isArray(properties[name])) {
-      // Build data structure as expected by visualisation
-      values = properties[name].map((value, index) => ({ time: moment.utc(time[name][index]).valueOf(), [name]: value }))
-      // Keep only selected value if multiple are provided for the same time (eg different forecasts)
-      if (variable.runTimes && !_.isEmpty(_.get(runTime, name)) && runTime) {
-        values = values.filter((value, index) => (runTime[name][index] === runTime.toISOString()))
-      } else values = _.uniqBy(values, 'time')
-    }
-    return values
-  }
-
-  return variables.map(variable => {
-    // Base unit could be either directly the unit or the property of the measure storing the unit
-    const baseUnit = _.get(properties, 'unit', variable.unit)
-    // Known by the unit system ?
-    const unit = Units.getUnit(baseUnit) || { name: baseUnit }
-    return {
-      data: getDataForVariable(variable),
-      variable: {
-        name,
-        label: `${i18n.tie(variable.label)} (${Units.getTargetUnitSymbol(baseUnit)})`,
-        unit,
-        targetUnit: Units.getTargetUnit(unit),
-        chartjs: Object.assign({
-          parsing: {
-            xAxisKey: 'time',
-            yAxisKey: (forecastLevel ? `${variable.name}-${forecastLevel}` : variable.name)
-          },
-          cubicInterpolationMode: 'monotone',
-          tension: 0.4
-        }, variable.chartjs)
-      }
-    }
-  })
 }

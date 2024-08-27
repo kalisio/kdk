@@ -229,7 +229,7 @@ function onLoad (index, done) {
     done(true)
     return
   }
-  // set the current page and tell the collection to be refreshed  
+  // set the current page and tell the collection to be refreshed
   currentPage.value = index
   refreshCollection()
   loadDoneFunction.value = done

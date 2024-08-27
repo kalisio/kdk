@@ -31,6 +31,7 @@ export default function init () {
     timelineStep: 'time.step',
     timelineInterval: 'time.interval',
     timeseriesSpan: 'timeseries.span',
+    timeseriesGroupBy: 'timeseries.groupBy',
     location: 'locationFormat',
     restoreView: 'restore.view',
     restoreLayers: 'restore.layers',
