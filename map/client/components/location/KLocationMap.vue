@@ -1,19 +1,13 @@
 <template>
-  <div class="fit column">
-    <!-- Map container -->
-    <div
-      :ref="mapRefCreated"
-      class="col"
-    >
-      <q-resize-observer @resize="refreshMap" />
-      <!-- Map header -->
-      <div class="row justify-center">
-        <KPanel
-          id="header"
-          :content="headerComponents"
-          class="k-location-map-toolbar"
-        />
-      </div>
+  <div :ref="mapRefCreated" class="fit">
+    <q-resize-observer @resize="refreshMap" />
+    <!-- Map header -->
+    <div class="row justify-center">
+      <KPanel
+        id="header"
+        :content="headerComponents"
+        class="k-location-map-toolbar"
+      />
     </div>
   </div>
 </template>
