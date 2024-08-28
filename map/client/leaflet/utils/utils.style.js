@@ -172,8 +172,8 @@ function processStyle (style, feature, options, mappings) {
   if (!visibility) _.set(style, `style.${type}.pane`, 'kdk-hidden-features')
 
   // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
-  if (leafletOptions.pane && !_.has(style, `${type}.pane`)) _.set(style, `${type}.pane`, leafletOptions.pane)
-  if (leafletOptions.shadowPane && !_.has(style, `${type}.shadowPane`)) _.set(style, `${type}.shadowPane`, leafletOptions.shadowPane)
+  if (leafletOptions.pane && !_.has(style, `style.${type}.pane`)) _.set(style, `style.${type}.pane`, leafletOptions.pane)
+  if (leafletOptions.shadowPane && !_.has(style, `style.${type}.shadowPane`)) _.set(style, `style.${type}.shadowPane`, leafletOptions.shadowPane)
   return style
 }
 
