@@ -174,6 +174,8 @@ function processStyle (style, feature, options, mappings) {
   // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
   if (leafletOptions.pane && !_.has(style, `style.${type}.pane`)) _.set(style, `style.${type}.pane`, leafletOptions.pane)
   if (leafletOptions.shadowPane && !_.has(style, `style.${type}.shadowPane`)) _.set(style, `style.${type}.shadowPane`, leafletOptions.shadowPane)
+  // Similarly forward interactive option from layer if any
+  if (_.has(leafletOptions, 'interactive') && !_.has(style, `style.${type}.interactive`)) _.set(style, `style.${type}.interactive`, leafletOptions.interactive)
   return style
 }
 
