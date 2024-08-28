@@ -80,6 +80,7 @@ export function getTimeSeries({
     // Known by the unit system ?
     const unit = Units.getUnit(baseUnit) || { name: baseUnit }
     const serie = {
+      probedLocation: data,
       data: getDataForVariable(data, variable, forecastLevel),
       variable: {
         name: variable.name,
@@ -97,7 +98,10 @@ export function getTimeSeries({
       }
     }
     // FIXME: how to share promise between series ?
-    serie.fetch = () => { serie.data = getDataForVariable(fetch(), variable, forecastLevel) }
+    serie.fetch = () => {
+      serie.probedLocation = fetch()
+      serie.data = getDataForVariable(serie.probedLocation, variable, forecastLevel)
+    }
     return serie
   })
 
