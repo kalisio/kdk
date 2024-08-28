@@ -70,6 +70,7 @@ async function onCanvasRef (ref) {
   if (ref) {
     if (!chart) {
       const config = await makeChartConfig()
+      if (!config) return
       chart = new Chart(ref.getContext('2d'), config)
     }
   } else {
@@ -114,6 +115,8 @@ function computeScaleBound (scale, property, min, max) {
 async function makeChartConfig () {
   // Order matters as we compute internals like data time range
   const datasets = await makeDatasets()
+  // No data ?
+  if (_.isEmpty(datasets)) return null
   const scales = makeScales()
   const annotation = makeAnnotation()
   const config = {
@@ -286,6 +289,8 @@ async function makeDatasets () {
     const targetUnit = getTargetUnit(timeSerie)
     if (targetUnit) setUnit(timeSerie, targetUnit)
     const data = await timeSerie.data
+    // No data ?
+    if (_.isEmpty(data)) continue
     const dataset = Object.assign({
       label,
       data,
@@ -407,6 +412,11 @@ async function update () {
   max = null
 
   const config = await makeChartConfig()
+  if (!config) {
+    if (chart) chart.destroy()
+    chart = null
+    return
+  }
   if (!chart) {
     chart = new Chart(canvas.getContext('2d'), config)
   } else {
