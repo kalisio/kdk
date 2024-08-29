@@ -5,7 +5,7 @@ import sift from 'sift'
 import { Store } from './store.js'
 import { bindContent } from './utils/utils.content.js'
 
-const defaultZIndex = {
+export const DefaultZIndex = {
   drawer: 3000, // see Quasar css variables
   panes: 1000,
   fab: 1000,
@@ -16,7 +16,7 @@ const defaultZIndex = {
 
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const paneDefaults = { opener: false, size: [0, 0], zIndex: defaultZIndex.panes }
+const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
 const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls, zIndex: 980 }
 const hWindowDefaultSizePolicy = {
@@ -36,10 +36,10 @@ const defaults = {
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
   page: { ...contentDefaults, size: [0, 0] },
-  stickies: { ...contentDefaults, zIndex: defaultZIndex.stickies },
-  fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: defaultZIndex.fab },
+  stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies },
+  fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: DefaultZIndex.fab },
   panes: {
-    left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: defaultZIndex.drawer },
+    left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: DefaultZIndex.drawer },
     top: { ...contentDefaults, ...paneDefaults, sizes: undefined },
     right: { ...contentDefaults, ...paneDefaults, sizes: { xs: [85, 75], sm: [360, 75], md: [440, 80], lg: [500, 80], xl: [500, 85] } },
     bottom: { ...contentDefaults, ...paneDefaults, sizes: undefined }
@@ -52,7 +52,7 @@ const defaults = {
   },
   focus: {
     element: null,
-    zIndex: defaultZIndex.focus
+    zIndex: DefaultZIndex.focus
   }
 }
 
