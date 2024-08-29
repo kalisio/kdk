@@ -78,6 +78,7 @@
                 <component
                   v-if="bodyRenderer" :class="bodyRendererClass"
                   :id="item._id"
+                  :ref="onBodyRendered"
                   :service="service"
                   :item="item"
                   :contextId="contextId"
@@ -265,6 +266,10 @@ const comfortPadding = computed(() => {
 watch(items, onCollectionRefreshed)
 
 // Functions
+function onBodyRendered (instance) {
+  // Force the scroll components to be refreshed 
+  if (instance) onScroll()
+}
 function scrollDownRefCreated (instance) {
   scrollDownRef.value = instance
   if (instance) instance.refresh()
@@ -328,9 +333,6 @@ function onCollectionRefreshed () {
   if (loadDoneFunction.value) {
     loadDoneFunction.value(items.value.length === nbTotalItems.value)
     loadDoneFunction.value = null
-    // refresh scroll elements
-    if (scrollDownRef.value) scrollDownRef.value.refresh()
-    if (scrollToTopRef.value) scrollToTopRef.value.refresh()
   }
 }
 

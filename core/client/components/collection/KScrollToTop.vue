@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, watch } from 'vue'
 import { useQuasar, scroll as qScrollUtils } from 'quasar'
@@ -43,7 +44,7 @@ const props = defineProps({
   },
   zIndex: {
     type: Number,
-    default: () => { return DefaultZIndex.stickies }
+    default: () => { return DefaultZIndex.fab }
   }
 })
 
@@ -57,14 +58,15 @@ watch(() => [$q.screen.width, $q.screen.height], () => {
 })
 
 // Functions
-function refresh () {
+const refresh = _.debounce(() => {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) {
     logger.error('[KDK] Cannot find target element')
     return
   }
   isVisible.value = qScrollUtils.getVerticalScrollPosition(targetElement) > 0
-}
+  logger.trace(`[KDK] (KScrollToTop) Refreshed with visibility: ${isVisible.value}`)
+}, 100)
 function scrollToTop () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) {
@@ -72,6 +74,7 @@ function scrollToTop () {
     return
   }
   qScrollUtils.setVerticalScrollPosition(targetElement, 0, props.duration)
+  logger.trace(`[KDK] (KScrollToTop) Scrolled to top`)
   refresh()
 }
 

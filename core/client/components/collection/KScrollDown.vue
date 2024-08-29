@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, watch } from 'vue'
 import { useQuasar, scroll as qScrollUtils } from 'quasar'
@@ -59,7 +60,7 @@ watch(() => [$q.screen.width, $q.screen.height], () => {
 })
 
 // Functions
-function refresh () {
+const refresh = _.debounce(() => {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) {
     logger.error('[KDK] Cannot find target element')
@@ -67,7 +68,6 @@ function refresh () {
   }
   const containerHeight = targetElement.offsetHeight
   const scrollHeight = qScrollUtils.getScrollHeight(targetElement)
-  console.log(scrollHeight, containerHeight)
   const diff = scrollHeight - containerHeight
   if (diff <= 0) isVisible.value = false
   else {
@@ -75,7 +75,8 @@ function refresh () {
     const percent = Math.round(ratio * 10000) / 10000
     isVisible.value = percent < 1
   }
-}
+  logger.trace(`[KDK] (KScrollDown) Refreshed with visibility: ${isVisible.value}`)
+}, 100)
 function scrollOnce () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) {
@@ -83,7 +84,9 @@ function scrollOnce () {
     return
   }
   const position = qScrollUtils.getVerticalScrollPosition(targetElement)
-  qScrollUtils.setVerticalScrollPosition(targetElement, position + targetElement.offsetHeight * 0.75, props.duration)
+  const offset = targetElement.offsetHeight * 0.75
+  qScrollUtils.setVerticalScrollPosition(targetElement, position + offset, props.duration)
+  logger.trace(`[KDK] (KScrollDown) Scrolled down with offset: ${offset}`)
   refresh()
 }
 

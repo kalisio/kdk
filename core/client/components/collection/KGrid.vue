@@ -26,6 +26,7 @@
                 <div :class="rendererClass">
                   <component
                     :id="item._id"
+                    :ref="onItemRendered"
                     :service="service"
                     :item="item"
                     :contextId="contextId"
@@ -211,6 +212,9 @@ const rendererClass = computed(() => {
 watch(items, onCollectionRefreshed)
 
 // Functions
+function onItemRendered (instance) {
+  if (instance) onScroll()
+}
 function scrollDownRefCreated (instance) {
   scrollDownRef.value = instance
   if (instance) instance.refresh()
@@ -243,9 +247,6 @@ function onCollectionRefreshed () {
   if (loadDoneFunction.value) {
     loadDoneFunction.value(items.value.length === nbTotalItems.value)
     loadDoneFunction.value = null
-    // refresh scroll elements
-    if (scrollDownRef.value) scrollDownRef.value.refresh()
-    if (scrollToTopRef.value) scrollToTopRef.value.refresh()
   }
 }
 
