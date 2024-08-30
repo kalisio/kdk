@@ -896,7 +896,8 @@
   "KTimeSeriesChart": {
     "TIME_LABEL": "Time",
     "EXPORT_SERIES": "Export series",
-    "SERIES_EXPORT_FILE": "Series.csv"
+    "SERIES_EXPORT_FILE": "Series.csv",
+    "NO_DATA_AVAILABLE": "No data available"
   },
   "KFilter": {
     "SEARCH_LABEL": "Search"
