@@ -1,12 +1,6 @@
 <template>
   <div class="fit">
-    <canvas v-show="hasChart" :ref="onCanvasRef" />
-    <div v-show="!hasChart" class="fit">
-      <slot name="empty-time-series">
-        <KStamp class="absolute-center" icon="las la-exclamation-circle" icon-size="3rem"
-          :text="$t('KTimeSeriesChart.NO_DATA_AVAILABLE')" text-size="1rem"/>
-      </slot>
-    </div>
+    <canvas :ref="onCanvasRef" />
   </div>
 </template>
 
@@ -52,7 +46,6 @@ const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-click'])
 // Data
 let canvas = null
 let chart = null
-let hasChart = ref(false)
 const unit2axis = new Map()
 const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
 const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
@@ -79,13 +72,11 @@ async function onCanvasRef (ref) {
       const config = await makeChartConfig()
       if (!config) return
       chart = new Chart(ref.getContext('2d'), config)
-      hasChart.value = true
     }
   } else {
     if (chart) {
       chart.destroy()
       chart = null
-      hasChart.value = false
     }
   }
   canvas = ref
@@ -424,12 +415,10 @@ async function update () {
   if (!config) {
     if (chart) chart.destroy()
     chart = null
-    hasChart.value = false
     return
   }
   if (!chart) {
     chart = new Chart(canvas.getContext('2d'), config)
-    hasChart.value = true
   } else {
     Object.assign(chart, config)
     chart.update()
