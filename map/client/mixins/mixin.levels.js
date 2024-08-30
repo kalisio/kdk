@@ -33,6 +33,7 @@ export const levels = {
       }
     },
     setSelectedLevel (level) {
+      if (this.selectedLevel === level) return
       this.selectedLevel = level
       this.onSelectedLevelChanged(level)
     },

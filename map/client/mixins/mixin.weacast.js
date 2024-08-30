@@ -47,6 +47,7 @@ export const weacast = {
       this.setForecastModel(forecastModel)
     },
     setForecastModel (model) {
+      if (this.forecastModel === model) return
       this.forecastModel = model
       this.onForecastModelChanged(model)
     },
@@ -55,6 +56,7 @@ export const weacast = {
       this.$engineEvents.emit('forecast-model-changed', model)
     },
     setForecastLevel (level) {
+      if (this.forecastLevel === level) return
       this.forecastLevel = level
       this.onForecastLevelChanged(level)
     },
