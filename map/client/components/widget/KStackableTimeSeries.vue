@@ -1,5 +1,5 @@
 <template>
-  <div id="stacked-time-series" class="column justify-start no-wrap" v-if="components.length > 0">
+  <div id="stacked-time-series" v-if="components.length > 0" class="column justify-start no-wrap">
     <!-- Pinned charts first -->
     <template v-for="(timeSerie, index) in timeSeries">
       <div v-if="timeSerie.pinned" class="col column justify-start no-wrap">
