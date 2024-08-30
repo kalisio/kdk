@@ -35,13 +35,13 @@ export function useProbe (name, options = {}) {
     return activity && activity.isCursor('probe-cursor')
   }
   function hasProbedLayer () {
-    return isProbing() && get('item') && get('item').layer
+    return get('item') && get('item').layer
   }
   function getProbedLayer () {
     return get('item').layer
   }
   function hasProbedLocation () {
-    return isProbing() && get('item') && get('item').location
+    return get('item') && get('item').location
   }
   function getProbedLocation () {
     return get('item').location
