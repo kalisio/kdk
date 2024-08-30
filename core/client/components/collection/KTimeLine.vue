@@ -1,9 +1,12 @@
 <template>
-  <div class="fit column no-wrap">
+  <div 
+    class="fit column no-wrap"
+    :class="dense ? 'q-gutter-y-xs' : 'q-gutter-y-sm'"
+  >
     <!--
       Header
     -->
-    <div class="q-pr-xs q-pb-xs">
+    <div id="timeline-header" class="q-pr-xs q-pb-xs">
       <slot name="header">
         <KPanel
           :content="header"
@@ -14,13 +17,16 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0" ref="scrollTargetRef" id="scroll-target" class="scroll">
+    <div v-if="items.length > 0" 
+      id="timeline-content"
+      ref="contentRef"  
+      class="col scroll"
+    >
       <q-timeline
         color="primary"
         :layout="layout"
       >
         <q-infinite-scroll
-          id="infinite-scroll"
           @load="onLoad"
           :initial-index="1"
           :offset="200"
@@ -74,7 +80,7 @@
                   </div>
                 </slot>
               </template>
-              <div :class="$q.screen.lt.md ? 'q-pr-sm' :'q-pr-md'">
+              <div :class="dense ? 'q-pr-sm' : 'q-pr-md'">
                 <component
                   v-if="bodyRenderer" :class="bodyRendererClass"
                   :id="item._id"
@@ -93,7 +99,7 @@
       </q-timeline>
     </div>
     <!-- Empty slot -->
-    <div v-else>
+    <div v-else id="timeline-content">
       <slot name="empty">
         <KStamp
           icon="las la-exclamation-circle"
@@ -106,10 +112,11 @@
       </slot>
     </div>
     <!--
-      Scroll
+      Controls
      -->
-    <div v-if="scrollTargetRef"
-      :class="$q.screen.lt.md ? 'q-px-sm' : 'q-px-md'"
+    <div v-if="contentRef"
+      id="timeline-controls"
+      :class="dense ? 'q-px-sm' : 'q-px-md'"
       class="row items-center"
     >
       <div class="col-4"></div>
@@ -117,7 +124,7 @@
         <KScrollDown
           v-if="scrollDown"
           :ref="scrollDownRefCreated"
-          target="scroll-target"
+          target="timeline-content"
           :loading="loadDoneFunction ? true : false"
       />
       </div>
@@ -125,14 +132,14 @@
         <KScrollToTop
           v-if="scrollToTop"
           :ref="scrollToTopRefCreated"
-          target="scroll-target"
+          target="timeline-content"
         />
       </div>
     </div>
     <!--
       Footer
     -->
-    <div>
+    <div id="timeline-footer">
       <slot name="footer">
         <q-separator inset v-if="footer"/>
         <KPanel
@@ -148,7 +155,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
-import { useQuasar } from 'quasar'
+import { useQuasar, scroll } from 'quasar'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { Time } from '../../time.js'
@@ -231,6 +238,10 @@ const props = defineProps({
   footerClass: {
     type: String,
     default: undefined
+  },
+  dense: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -240,7 +251,7 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 // Data
 const $q = useQuasar()
 const { items, nbTotalItems, currentPage, refreshCollection } = useCollection(_.merge(toRefs(props), { appendItems: ref(true) }))
-const scrollTargetRef = ref(null)
+const contentRef = ref(null)
 const scrollDownRef = ref(null)
 const scrollToTopRef = ref(null)
 const loadDoneFunction = ref(null)
@@ -253,13 +264,14 @@ const bodyRendererClass = computed(() => {
   return props.bodyRenderer.class || 'col-12'
 })
 const layout = computed(() => {
+  if (props.dense) return 'dense'
   return $q.screen.lt.md ? 'dense' : 'comfortable'
 })
 const comfortSize = computed(() => {
   return `${props.sideWidth}%`
 })
 const comfortPadding = computed(() => {
-  return $q.screen.lt.sm ? '24px' : '32px'
+  return props.dense ? '24px' : '32px'
 })
 
 // Watch

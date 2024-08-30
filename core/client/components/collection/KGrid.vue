@@ -1,9 +1,12 @@
 <template>
-  <div class="fit column no-wrap">
+  <div 
+    class="fit column no-wrap"
+    :class="dense ? 'q-gutter-y-xs' : 'q-gutter-y-sm'"
+  >
     <!--
       Header
     -->
-    <div>
+    <div id="grid-header">
       <slot name="header">
         <KPanel :content="header" :class="headerClass" />
       </slot>
@@ -11,55 +14,37 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0" class="col">
+    <div v-if="items.length > 0" 
+      id="grid-content" 
+      ref="contentRef"
+      class="scroll"
+    >
       <!-- Infinite mode -->
-      <div v-if="appendItems" class="fit column no-wrap">
-        <div ref="scrollTargetRef" id="scroll-target" class="fit scroll">
-          <q-infinite-scroll
-            @load="onLoad"
-            :initial-index="1"
-            :offset="200"
-            v-scroll="onScroll"
-          >
-            <div class="row">
-              <template v-for="(item, index) in items" :key="item._id">
-                <div :class="rendererClass">
-                  <component
-                    :id="item._id"
-                    :ref="onItemRendered"
-                    :service="service"
-                    :item="item"
-                    :contextId="contextId"
-                    :is="itemRenderer"
-                    v-bind="renderer"
-                    @item-selected="onItemSelected"
-                  />
-                </div>
-              </template>
-            </div>
-          </q-infinite-scroll>
-        </div>
-        <div v-if="scrollTargetRef"
-          :class="$q.screen.lt.md ? 'q-px-sm' : 'q-px-md'"
-          class="row items-center"
+      <div v-if="appendItems" class="column">
+        <q-infinite-scroll
+          @load="onLoad"
+          :initial-index="1"
+          :offset="200"
+          v-scroll="onScroll"
+          class="col"
         >
-          <div class="col-4"></div>
-          <div class="col-4 row justify-center">
-            <KScrollDown
-              v-if="scrollDown"
-              :ref="scrollDownRefCreated"
-              target="scroll-target"
-              :loading="loadDoneFunction ? true : false"
-            />
+          <div class="row">
+            <template v-for="(item, index) in items" :key="item._id">
+              <div :class="rendererClass">
+                <component
+                  :id="item._id"
+                  :ref="onItemRendered"
+                  :service="service"
+                  :item="item"
+                  :contextId="contextId"
+                  :is="itemRenderer"
+                  v-bind="renderer"
+                  @item-selected="onItemSelected"
+                />
+              </div>
+            </template>
           </div>
-          <div class="col-4 row justify-end">
-            <KScrollToTop
-              v-if="scrollToTop"
-              :ref="scrollToTopRefCreated"
-              target="scroll-target"
-            />
-          </div>
-        </div>
+        </q-infinite-scroll>
       </div>
       <!-- Paginated mode -->
       <div v-else class="row">
@@ -76,19 +61,10 @@
             />
           </div>
         </template>
-        <div v-if="nbPages > 1" class="col-12">
-          <q-pagination
-            class="row justify-center q-ma-md"
-            v-model="currentPage"
-            :max="nbPages"
-            :input="true"
-            @update:model-value="refreshCollection"
-          />
-        </div>
       </div>
     </div>
     <!-- Empty slot -->
-    <div v-else>
+    <div v-else id="grid-content">
       <slot name="empty">
         <div class="row justify-center">
           <KStamp
@@ -102,9 +78,47 @@
       </slot>
     </div>
     <!--
+      Controls
+     -->
+    <div id="grid-controls">
+      <div v-if="appendItems">
+        <!-- scroll -->
+        <div v-if="contentRef" class="row items-center">
+          <div class="col-4"></div>
+          <div class="col-4 row justify-center">
+            <KScrollDown
+              v-if="scrollDown"
+              :ref="scrollDownRefCreated"
+              target="grid-content"
+              :loading="loadDoneFunction ? true : false"
+          />
+          </div>
+          <div class="col-4 row justify-end">
+            <KScrollToTop
+              v-if="scrollToTop"
+              :ref="scrollToTopRefCreated"
+              target="grid-content"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- pagination -->
+      <div v-else>
+        <div v-if="nbPages > 1" class="row justify-center">
+          <q-pagination
+            v-model="currentPage"
+            :max="nbPages"
+            :input="true"
+            @update:model-value="refreshCollection"
+          />
+        </div>
+      </div>
+
+    </div>
+    <!--
       Footer
     -->
-    <div>
+    <div id="grid-footer">
       <slot name="footer">
         <KPanel :content="footer" :class="footerClass" />
       </slot>
@@ -187,6 +201,10 @@ const props = defineProps({
   footerClass: {
     type: String,
     default: undefined
+  },
+  dense: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -195,7 +213,7 @@ const emit = defineEmits(['collection-refreshed', 'selection-changed'])
 
 // Data
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
-const scrollTargetRef = ref(null)
+const contentRef = ref(null)
 const scrollDownRef = ref(null)
 const scrollToTopRef = ref(null)
 const loadDoneFunction = ref(null)
