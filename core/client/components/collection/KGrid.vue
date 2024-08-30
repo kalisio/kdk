@@ -17,7 +17,7 @@
     <div v-if="items.length > 0" 
       id="grid-content" 
       ref="contentRef"
-      class="scroll"
+      class="col scroll"
     >
       <!-- Infinite mode -->
       <div v-if="appendItems" class="column">
