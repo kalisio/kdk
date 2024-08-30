@@ -25,8 +25,8 @@ export function useWeather (options = {}) {
   // data
 
   // functions
-  function getProbedLocationForecastFields () {
-    return {
+  function getProbedLocationForecastFields (variables) {
+    const fields = {
       // Only wind/temperature can be available at different levels now
       windDirection: {
         property: (activity.forecastLevel ? `properties.windDirection-${activity.forecastLevel}` : 'properties.windDirection')
@@ -54,6 +54,15 @@ export function useWeather (options = {}) {
         property: 'properties.name'
       }
     }
+    // Any given variables to extract labels from ?
+    if (variables && variables.length > 0) {
+      _.forOwn(fields, (value, key) => {
+        // Take care that weather fields are prefixed by 'properties.' because they target feature
+        const variable = _.find(variables, { name: `${value.property.replace('properties.', '')}` })
+        if (variable) value.label = variable.label
+      })
+    }
+    return fields
   }
   function isWeatherProbe (feature) {
     const { windDirection, windSpeed } = getProbedLocationForecastFields()
