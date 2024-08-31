@@ -16,19 +16,19 @@ export function useSchema () {
   async function compile (schemaNameOrObject, propertiesFilter) {
     if (typeof schemaNameOrObject === 'string') {
       // load the schema file
-      logger.debug('loading schema ', schemaNameOrObject)
+      logger.trace('[KDK] Loading schema ', schemaNameOrObject)
       const schemaModule = await import(`@schemas/${schemaNameOrObject}.json`)
       schema.value = schemaModule.default
     } else {
       // clone the schema object
-      logger.debug('setting schema ', schemaNameOrObject.$id)
+      logger.trace('setting schema ', schemaNameOrObject.$id)
       schema.value = _.cloneDeep(schemaNameOrObject)
     }
     // filter ther schema
     if (propertiesFilter) {
       let properties = propertiesFilter
       if (typeof propertiesFilter === 'string') properties = _.split(propertiesFilter, ',')
-      logger.debug('filtering schema with ', properties)
+      logger.trace('[KDK] Filtering schema with ', properties)
       _.forOwn(schema.value.properties, (value, key) => {
         if (!properties.includes(key)) delete schema.value.properties[key]
       })
@@ -38,12 +38,12 @@ export function useSchema () {
       schema.value.required = _.intersection(schema.value.required, properties)
     }
     // compile the schema
-    logger.debug('compiling schema ', schema.value.$id)
+    logger.trace('[KDK] Compiling schema ', schema.value.$id)
     validator.value = Schema.register(schema.value)
   }
   function validate (values) {
     if (!validator.value) {
-      logger.error('validator not instantiated')
+      logger.error('[KDK] schema \'validator\' not instantiated')
       return
     }
     const result = validator.value(values)

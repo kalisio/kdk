@@ -31,7 +31,7 @@
     @rejected="onFileRejected">
     <!-- Helper -->
     <template v-if="hasHelper" v-slot:append>
-      <k-action
+      <KAction
         :id="properties.name + '-helper'"
         :label="helperLabel"
         :icon="helperIcon"
@@ -141,7 +141,7 @@ export default {
         let context = _.get(this.properties, 'field.storage.context')
         if (context) context = _.template(context)(Object.assign({}, { fileName: this.model.name }, object))
         const query = _.get(this.properties, 'field.storage.uploadQuery')
-        logger.debug(`Uploading file ${this.model.name} with key ${this.model.key}`)
+        logger.debug(`[KDK] Uploading file ${this.model.name} with key ${this.model.key}`)
         Storage.upload({
           file: this.model.name,
           type: this.model.type,
