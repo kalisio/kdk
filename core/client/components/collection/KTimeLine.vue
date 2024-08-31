@@ -81,16 +81,17 @@
                 </slot>
               </template>
               <div :class="dense ? 'q-pr-sm' : 'q-pr-md'">
-                <component
-                  v-if="bodyRenderer" :class="bodyRendererClass"
-                  :id="item._id"
-                  :ref="onBodyRendered"
-                  :service="service"
-                  :item="item"
-                  :contextId="contextId"
-                  :is="bodyRendererComponent"
-                  v-bind="bodyRenderer"
-                />
+                <div v-if="bodyRenderer" :class="bodyRendererClass">
+                  <component
+                    :id="item._id"
+                    :ref="onBodyRendered"
+                    :service="service"
+                    :item="item"
+                    :contextId="contextId"
+                    :is="bodyRendererComponent"
+                    v-bind="bodyRenderer"
+                  />
+                </div>
                 <div v-else v-html="getBody(item)" />
               </div>
             </q-timeline-entry>

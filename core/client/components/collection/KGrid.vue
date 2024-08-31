@@ -52,6 +52,7 @@
           <div :class="rendererClass">
             <component
               :id="item._id"
+              :ref="onItemRendered"
               :service="service"
               :item="item"
               :contextId="contextId"
