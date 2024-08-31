@@ -4,13 +4,14 @@
       Window header
      -->
     <div
+      :id="`${placement}-window-header`" 
       class="k-window-header full-width row items-center"
       v-touch-pan.prevent.mouse="onMoved"
     >
       <q-resize-observer @resize="onHeaderResized" />
       <!-- window menu -->
       <KPanel
-        id="window-menu"
+        :id="`${placement}-window-menu`" 
         :content="menu"
         @touchstart.passive.stop
         @mousedown.passive.stop
@@ -55,6 +56,7 @@
         :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px;`"
       >
         <component
+          :id="`${placement}-window-content`"
           ref="widgetRef"
           :is="widget.instance"
           v-bind="widget.content"
@@ -62,6 +64,7 @@
         />
       </KScrollArea>
       <component v-else
+        :id="`${placement}-window-content`"
         ref="widgetRef"
         :is="widget.instance"
         v-bind="widget.content"
@@ -71,7 +74,10 @@
     <!--
       Window footer
      -->
-    <div id="window-footer" class="k-window-footer full-width row justify-end">
+    <div 
+      :id="`${placement}-window-footer`" 
+      class="k-window-footer full-width row justify-end"
+    >
       <q-resize-observer @resize="onFooterResized" />
       <!-- window grip -->
       <q-icon
@@ -290,7 +296,7 @@ function refresh (newState, oldState) {
       break
     }
     default:
-      logger.warn(`[KDK] invalid window state ${currentWindow.state}`)
+      logger.error(`[KDK] invalid window state ${currentWindow.state}`)
   }
 }
 function setPinnedGeometry () {
