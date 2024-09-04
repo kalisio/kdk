@@ -67,19 +67,8 @@ watch(() => props.options, requestUpdate)
 
 // Functions
 async function onCanvasRef (ref) {
-  if (ref) {
-    if (!chart) {
-      const config = await makeChartConfig()
-      if (!config) return
-      chart = new Chart(ref.getContext('2d'), config)
-    }
-  } else {
-    if (chart) {
-      chart.destroy()
-      chart = null
-    }
-  }
   canvas = ref
+  update()
 }
 function getUnit (timeSerie) {
   return _.get(timeSerie, 'variable.unit')
