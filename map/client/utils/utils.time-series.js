@@ -63,6 +63,7 @@ export function getTimeSeries({
   let variables = _.get(layer, 'variables', [])
   // However, a probe can target variables coming from multiple layers
   if (layers && layers.length > 0) layers.forEach(layer => { variables = variables.concat(_.get(layer, 'variables', [])) })
+  variables = _.uniqBy(variables, 'name')
   if (variables.length === 0) return []
   const properties = _.get(feature, 'properties', {})
   // Fetch data function
