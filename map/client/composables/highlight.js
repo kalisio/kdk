@@ -13,7 +13,7 @@ export const HighlightsZIndex = 999
 
 export function useHighlight (name, options = {}) {
   // Set default options
-  options = Object.assign({ updateDelay: 100 }, options)
+  options = Object.assign({ updateDelay: 250 }, options)
   // Retrieve activity
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
@@ -117,17 +117,17 @@ export function useHighlight (name, options = {}) {
     // Add additional information provided by feature, if any, for custom styling
     _.merge(highlight, _.omit(feature, ['geometry', 'style']))
     set(highlightId, highlight)
-    updateHighlightsLayer()
+    requestHighlightsLayerUpdate()
     return highlight
   }
   function unhighlight (feature, layer) {
     const highlightId = getHighlightId(feature, layer)
     unset(highlightId)
-    updateHighlightsLayer()
+    requestHighlightsLayerUpdate()
   }
   function clearHighlights () {
     clear()
-    updateHighlightsLayer()
+    requestHighlightsLayerUpdate()
   }
   function getHighlightedFeatures () {
     // Iterate over all highlights
@@ -172,26 +172,23 @@ export function useHighlight (name, options = {}) {
     }
     if (!activity.isLayerVisible(HighlightsLayerName)) await activity.showLayer(HighlightsLayerName)
   }
-  let updateRequested
   function updateHighlightsLayer () {
-    // In order to avoid updating the layer too much often we queue a request update every N ms
-    if (updateRequested) return
-    updateRequested = setTimeout(() => {
-      // Get all highlights
-      let features = getHighlightedFeatures()
-      // Filter invisible ones
-      features = features.filter(feature => !feature.isDisabled)
-      // Order from back to front
-      features = _.sortBy(features, feature => _.get(feature, 'properties.zOrder'))
-      if (activity) {
-        activity.updateLayer(HighlightsLayerName, {
-          type: 'FeatureCollection',
-          features
-        })
-      }
-      updateRequested = false
-    }, options.updateDelay)
+    // Get all highlights
+    let features = getHighlightedFeatures()
+    // Filter invisible ones
+    features = features.filter(feature => !feature.isDisabled)
+    // Order from back to front
+    features = _.sortBy(features, feature => _.get(feature, 'properties.zOrder'))
+    if (activity) {
+      activity.updateLayer(HighlightsLayerName, {
+        type: 'FeatureCollection',
+        features
+      }, { replace: true }) // Always start from fresh data as we debounce the update and might multiple operations might generate a wrong order otherwise
+    }
   }
+  // In order to avoid updating the layer too much often we queue a request update every N ms
+  const requestHighlightsLayerUpdate = _.debounce(updateHighlightsLayer, options.updateDelay)
+   
   function removeHighlightsLayer () {
     // Clear any running update
     if (updateRequested) clearTimeout(updateRequested)
@@ -205,7 +202,7 @@ export function useHighlight (name, options = {}) {
       const suffix = `-${_.kebabCase(layer.name)}-${getFeatureId(feature, layer)}`
       if (feature.highlightId.endsWith(suffix)) feature.isDisabled = true
     })
-    updateHighlightsLayer()
+    requestHighlightsLayerUpdate()
   }
   function onHighlightedLayerEnabled (layer) {
     // Get all highlights
@@ -215,7 +212,7 @@ export function useHighlight (name, options = {}) {
       const suffix = `-${_.kebabCase(layer.name)}-${getFeatureId(feature, layer)}`
       if (feature.highlightId.endsWith(suffix)) feature.isDisabled = false
     })
-    updateHighlightsLayer()
+    requestHighlightsLayerUpdate()
   }
 
   // Cleanup on destroy
