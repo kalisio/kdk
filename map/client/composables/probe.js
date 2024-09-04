@@ -68,7 +68,11 @@ export function useProbe (name, options = {}) {
   let lastClickedPosition
   function onClicked (layer, event) {
     if (!isProbing()) {
-      if (get('item')) clearProbe()
+      if (get('item')) {
+        const feature = _.get(event, 'target.feature')
+        // If not clicking directly on the map we don't cancel last probe, eg feature selection
+        if (!feature) clearProbe()
+      }
       return
     }
     // FIXME: For some layers, eg based on path, we get a first click with the layer as target
