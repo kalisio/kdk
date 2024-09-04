@@ -5,10 +5,10 @@ import { isMeasureLayer } from './utils.layers.js'
 import { getMeasureForFeature } from './utils.features.js'
 import { getForecastForLocation, getForecastProbe, getForecastForFeature } from './utils.weacast.js'
 
-async function getDataForVariable(data, variable, forecastLevel) {
+async function getDataForVariable(data, variable, forecastLevel, runTime) {
   data = await data
-  const time = _.get(data, 'time', _.get(data, 'forecastTime'))
-  const runTime = _.get(data, 'runTime')
+  const times = _.get(data, 'time', _.get(data, 'forecastTime'))
+  const runTimes = _.get(data, 'runTime')
   const properties = _.get(data, 'properties', {})
   // Check if we are targetting a specific variable at level (forecast model case)
   const name = (forecastLevel ? `${variable.name}-${forecastLevel}` : variable.name)
@@ -16,10 +16,10 @@ async function getDataForVariable(data, variable, forecastLevel) {
   // Aggregated variable available for feature ?
   if (properties[name] && Array.isArray(properties[name])) {
     // Build data structure as expected by visualisation
-    values = properties[name].map((value, index) => ({ time: moment.utc(time[name][index]).valueOf(), [name]: value }))
+    values = properties[name].map((value, index) => ({ time: moment.utc(times[name][index]).valueOf(), [name]: value }))
     // Keep only selected value if multiple are provided for the same time (eg different forecasts)
-    if (variable.runTimes && !_.isEmpty(_.get(runTime, name)) && runTime) {
-      values = values.filter((value, index) => (runTime[name][index] === runTime.toISOString()))
+    if (variable.runTimes && runTime && !_.isEmpty(_.get(runTimes, name))) {
+      values = values.filter((value, index) => (runTimes[name][index] === runTime.toISOString()))
     } else values = _.uniqBy(values, 'time')
   }
   return values
@@ -100,7 +100,7 @@ export function getTimeSeries({
     // FIXME: how to share promise between series ?
     serie.fetch = () => {
       serie.probedLocation = fetch()
-      serie.data = getDataForVariable(serie.probedLocation, variable, forecastLevel)
+      serie.data = getDataForVariable(serie.probedLocation, variable, forecastLevel, runTime)
     }
     return serie
   })
