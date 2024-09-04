@@ -74,7 +74,7 @@ function scrollToTop () {
     return
   }
   qScrollUtils.setVerticalScrollPosition(targetElement, 0, props.duration)
-  logger.trace(`[KDK] (KScrollToTop) Scrolled to top`)
+  logger.trace('[KDK] (KScrollToTop) Scrolled to top')
   refresh()
 }
 

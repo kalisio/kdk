@@ -4,14 +4,14 @@
       Window header
      -->
     <div
-      :id="`${placement}-window-header`" 
+      :id="`${placement}-window-header`"
       class="k-window-header full-width row items-center"
       v-touch-pan.prevent.mouse="onMoved"
     >
       <q-resize-observer @resize="onHeaderResized" />
       <!-- window menu -->
       <KPanel
-        :id="`${placement}-window-menu`" 
+        :id="`${placement}-window-menu`"
         :content="menu"
         @touchstart.passive.stop
         @mousedown.passive.stop
@@ -74,8 +74,8 @@
     <!--
       Window footer
      -->
-    <div 
-      :id="`${placement}-window-footer`" 
+    <div
+      :id="`${placement}-window-footer`"
       class="k-window-footer full-width row justify-end"
     >
       <q-resize-observer @resize="onFooterResized" />

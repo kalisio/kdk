@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="fit column no-wrap"
     :class="dense ? 'q-gutter-y-xs' : 'q-gutter-y-sm'"
   >
@@ -14,8 +14,8 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0" 
-      id="grid-content" 
+    <div v-if="items.length > 0"
+      id="grid-content"
       ref="contentRef"
       class="col scroll"
     >

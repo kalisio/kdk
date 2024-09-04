@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="fit column no-wrap"
     :class="dense ? 'q-gutter-y-xs' : 'q-gutter-y-sm'"
   >
@@ -17,9 +17,9 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0" 
+    <div v-if="items.length > 0"
       id="timeline-content"
-      ref="contentRef"  
+      ref="contentRef"
       class="col scroll"
     >
       <q-timeline
@@ -156,7 +156,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
-import { useQuasar, scroll } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useCollection } from '../../composables'
 import { Events } from '../../events.js'
 import { Time } from '../../time.js'
@@ -280,7 +280,7 @@ watch(items, onCollectionRefreshed)
 
 // Functions
 function onBodyRendered (instance) {
-  // Force the scroll components to be refreshed 
+  // Force the scroll components to be refreshed
   if (instance) onScroll()
 }
 function scrollDownRefCreated (instance) {
