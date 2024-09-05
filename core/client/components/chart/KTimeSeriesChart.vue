@@ -1,6 +1,8 @@
 <template>
   <div class="fit">
     <canvas :ref="onCanvasRef" />
+    <KStamp v-if="!hasData" icon="las la-exclamation-circle" icon-size="3rem"
+        :text="$t('KTimeSeriesChart.NO_DATA_AVAILABLE')" text-size="1rem"/>
   </div>
 </template>
 
@@ -47,6 +49,7 @@ const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-click'])
 let canvas = null
 let chart = null
 const unit2axis = new Map()
+const hasData = ref(false)
 const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
 const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
 let min = null
@@ -404,10 +407,12 @@ async function update () {
   if (!config) {
     if (chart) chart.destroy()
     chart = null
+    hasData.value = false
     return
   }
   if (!chart) {
     chart = new Chart(canvas.getContext('2d'), config)
+    hasData.value = true
   } else {
     Object.assign(chart, config)
     chart.update()

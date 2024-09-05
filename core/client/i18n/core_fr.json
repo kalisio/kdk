@@ -894,6 +894,7 @@
   },
   "KTimeSeriesChart": {
     "TIME_LABEL": "Temps",
+    "NO_DATA_AVAILABLE": "Aucune donnée disponible",
     "EXPORT_SERIES": "Exporter les données",
     "SERIES_EXPORT_FILE": "Series.csv"
   },
