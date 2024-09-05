@@ -191,7 +191,6 @@ export function useHighlight (name, options = {}) {
    
   function removeHighlightsLayer () {
     // Clear any running update
-    if (updateRequested) clearTimeout(updateRequested)
     if (activity) activity.removeLayer(HighlightsLayerName)
   }
   function onHighlightedLayerDisabled (layer) {
