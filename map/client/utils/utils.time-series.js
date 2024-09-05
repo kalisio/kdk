@@ -27,7 +27,7 @@ async function getDataForVariable(data, variable, forecastLevel, runTime) {
 
 async function fetchDataForSeries({
   feature, location, layer, startTime, endTime,
-  level, forecastModel, forecastLevel, weacastApi
+  level, forecastModel, forecastLevel, probeFunction, weacastApi
 }) {
   // Use current time range if not provided
   const { start, end } = Time.getRange()
@@ -35,9 +35,10 @@ async function fetchDataForSeries({
   if (!endTime) endTime = end
   // Depending on input use the right function to retrieve data
   let data
-  // No feature clicked => dynamic weacast probe at position
+  // No feature clicked => custom probe function or dynamic weacast probe at position
   if (!feature) {
-    data = await getForecastForLocation({ longitude: location.lng, latitude: location.lat, startTime, endTime, forecastModel, forecastLevel, weacastApi })
+    if (probeFunction) data = await probeFunction({ longitude: location.lng, latitude: location.lat, startTime, endTime })
+    else data = await getForecastForLocation({ longitude: location.lng, latitude: location.lat, startTime, endTime, forecastModel, forecastLevel, weacastApi })
   } else if (layer.probe) { // Static weacast probe
     const probe = await getForecastProbe({ name: layer.probe, forecastModel, weacastApi })
     if (probe) {
@@ -57,7 +58,7 @@ async function fetchDataForSeries({
 // Build timeseries to be used in charts for target feature and associated layer definition or probe location
 export function getTimeSeries({
   feature, location, layer, layers, startTime, endTime, runTime,
-  level, forecastModel, forecastLevel, weacastApi
+  level, forecastModel, forecastLevel, probeFunction, weacastApi
 }) {
   // A feature comes from a single layer so target variables from it
   let variables = _.get(layer, 'variables', [])
@@ -69,7 +70,7 @@ export function getTimeSeries({
   // Fetch data function
   const fetch = () => fetchDataForSeries({
     feature, location, layer, startTime, endTime,
-    level, forecastModel, forecastLevel, weacastApi
+    level, forecastModel, forecastLevel, probeFunction, weacastApi
   })
   // Create promise to fetch data as it will be shared by all series,
   // indeed a measure stores all aggregated variables
