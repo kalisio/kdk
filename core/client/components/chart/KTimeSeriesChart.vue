@@ -109,7 +109,7 @@ async function makeChartConfig () {
   const datasets = await makeDatasets()
   // No data ?
   if (_.isEmpty(datasets)) return null
-  const scales = makeScales()
+  const scales = makeScales(datasets)
   const annotation = makeAnnotation()
   const config = {
     type: 'line',
@@ -191,7 +191,7 @@ async function makeChartConfig () {
   computeScaleBound(scales.x, 'suggestedMax', startTime.value, endTime.value)
   return config
 }
-function makeScales () {
+function makeScales (datasets) {
   // Setup time ticks unit
   const hours = endTime.value.diff(startTime.value, 'hours')
   const days = endTime.value.diff(startTime.value, 'days')
@@ -246,6 +246,9 @@ function makeScales () {
     const unit = getUnit(timeSerie)
     const targetUnit = getTargetUnit(timeSerie) || unit
     if (!unit2axis.has(targetUnit.name)) {
+      // Ensure a related dataset does exist
+      const dataset = _.find(datasets, dataset => (_.get(dataset, 'targetUnit.name', _.get(dataset, 'unit.name')) === targetUnit.name))
+      if (!dataset) continue
       const axis = `y${axisId}`
       unit2axis.set(targetUnit.name, axis)
       scales[axis] = _.merge({
@@ -259,6 +262,7 @@ function makeScales () {
         ticks: {
           callback: function (value, index, values) {
             if (values[index] !== undefined) {
+              // We do not convert using units here as data should have already be converted
               return Units.format(values[index].value, null, null, { symbol: false })
             }
           }
