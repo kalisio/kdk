@@ -58,7 +58,7 @@ async function fetchDataForSeries({
 // Build timeseries to be used in charts for target feature and associated layer definition or probe location
 export function getTimeSeries({
   feature, location, layer, layers, startTime, endTime, runTime,
-  level, forecastModel, forecastLevel, probeFunction, weacastApi
+  level, forecastModel, forecastLevel, probeFunction, weacastApi, fetchDelay
 }) {
   // A feature comes from a single layer so target variables from it
   let variables = _.get(layer, 'variables', [])
@@ -67,14 +67,19 @@ export function getTimeSeries({
   variables = _.uniqBy(variables, 'name')
   if (variables.length === 0) return []
   const properties = _.get(feature, 'properties', {})
-  // Fetch data function
-  const fetch = () => fetchDataForSeries({
+  // Create promise to fetch data as it will be shared by all series,
+  // indeed a measure stores all aggregated variables
+  const data = fetchDataForSeries({
     feature, location, layer, startTime, endTime,
     level, forecastModel, forecastLevel, probeFunction, weacastApi
   })
-  // Create promise to fetch data as it will be shared by all series,
-  // indeed a measure stores all aggregated variables
-  const data = fetch()
+  // Fetch data function to request data update,
+  // we use debounce as a measure stores all aggregated variables
+  // so that when all series are updated at once a single query will be send.
+  const fetch = _.debounce(() => fetchDataForSeries({
+      feature, location, layer, startTime, endTime,
+      level, forecastModel, forecastLevel, probeFunction, weacastApi
+    }), fetchDelay || 250, { leading: true, trailing: false })
   
   const series = variables.map(variable => {
     // Base unit could be either directly the unit or the property of the measure storing the unit
