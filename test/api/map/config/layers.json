@@ -5,7 +5,8 @@
     "attribution" : "",
     "type" : "OverlayLayer",
     "service": "vigicrues-stations",
-    "featureId": "CdStationH"
+    "featureId": "CdStationH",
+    "featureLabel": "LbStationH"
   },
   {
     "name": "vigicrues-observations",
@@ -14,6 +15,7 @@
     "type" : "OverlayLayer",
     "service": "vigicrues-observations",
     "featureId": "CdStationH",
+    "featureLabel": "LbStationH",
     "variables": ["H"],
     "history": 604800
   },

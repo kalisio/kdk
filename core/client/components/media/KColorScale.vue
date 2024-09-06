@@ -13,6 +13,7 @@ import _ from 'lodash'
 import * as math from 'mathjs'
 import { computed, watch, onMounted } from 'vue'
 import { uid } from 'quasar'
+import { Units } from '../../units.js'
 import { buildColorScale } from '../../utils/utils.colors'
 
 // props
@@ -32,6 +33,10 @@ const props = defineProps({
   classes: {
     type: Array,
     default: () => null
+  },
+  unit: {
+    type: String,
+    default: undefined
   },
   layout: {
     type: Object,
@@ -74,6 +79,11 @@ let expectedSize = null
 const callRefresh = _.debounce(() => { refresh() }, 200)
 
 // Computed
+const labelText = computed(() => {
+  let text = props.label
+  if (text && props.unit) text += ` (${Units.getUnitSymbol(props.unit)})`
+  return text
+})
 const labelSize = computed(() => {
   return _.get(props.layout, 'label.size', 12)
 })
@@ -110,7 +120,7 @@ function formatTick (tick) {
   return math.format(tick, props.layout.ticks.format)
 }
 function drawLabel () {
-  if (_.isNil(props.label)) return
+  if (_.isNil(labelText.value)) return
   canvasContext.font = labelFont.value
   canvasContext.fillStyle = labelColor.value
   canvasContext.textAlign = labelAlign.value
@@ -124,7 +134,7 @@ function drawLabel () {
       break
     default:
   }
-  canvasContext.fillText(props.label, xLabel, labelSize.value)
+  canvasContext.fillText(labelText.value, xLabel, labelSize.value)
 }
 function drawDiscreteHorizontalScale () {
   drawLabel()

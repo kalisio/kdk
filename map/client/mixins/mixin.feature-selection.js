@@ -3,16 +3,13 @@ export const featureSelection = {
     'selection.items': {
       handler () {
         this.updateHighlights()
-        const widget = this.getWidgetForSelection()
-        // If window already open on another widget keep it
-        if (widget && !this.isWidgetWindowVisible(widget)) this.openWidget(widget)
+        this.handleWidget(this.getWidgetForSelection())
       }
     },
     'probe.item': {
       handler () {
         this.updateHighlights()
-        const widget = this.getWidgetForProbe()
-        if (widget) this.openWidget(widget)
+        this.handleWidget(this.getWidgetForProbe())
       }
     }
   },
@@ -23,6 +20,11 @@ export const featureSelection = {
         this.highlight(item.feature || item.location, item.layer)
       })
       if (this.hasProbedLocation()) this.highlight(this.getProbedLocation(), this.getProbedLayer())
+    },
+    handleWidget (widget) {
+      // If window already open on another widget keep it
+      if (widget && (widget !== 'none') && !this.isWidgetWindowVisible(widget)) this.openWidget(widget)
     }
   }
 }
+ 

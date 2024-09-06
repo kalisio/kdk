@@ -1,4 +1,4 @@
-import Cesium from 'cesium/Source/Cesium.js'
+import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty } from 'cesium'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
@@ -8,8 +8,11 @@ import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInM
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
 
-function getWallEntityId (id) {
-  return id + '-wall'
+// Custom entity types that can be created from a base entity like eg a polyline
+const CustomTypes = ['wall', 'corridor']
+// Generate an id for a custom entity type, eg 'wall'
+function getCustomEntityId (id, type) {
+  return `${id}-${type}`
 }
 
 function updateGeoJsonEntity(source, destination) {
@@ -26,12 +29,15 @@ function updateGeoJsonEntity(source, destination) {
 }
 
 export const geojsonLayers = {
+  emits: [
+    'layer-updated'
+  ],
   methods: {
     convertFromSimpleStyleOrDefaults (properties) {
       let { stroke, strokeWidth, fill } = convertToCesiumFromSimpleStyle(properties)
-      if (!stroke) stroke = Cesium.GeoJsonDataSource.stroke
-      if (!strokeWidth) strokeWidth = Cesium.GeoJsonDataSource.strokeWidth
-      if (!fill) fill = Cesium.GeoJsonDataSource.fill
+      if (!stroke) stroke = GeoJsonDataSource.stroke
+      if (!strokeWidth) strokeWidth = GeoJsonDataSource.strokeWidth
+      if (!fill) fill = GeoJsonDataSource.fill
       return { stroke, strokeWidth, fill }
     },
     async loadGeoJson (dataSource, geoJson, options, updateOptions = {}) {
@@ -41,15 +47,17 @@ export const geojsonLayers = {
         let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         features.forEach(feature => {
           const id = getFeatureId(feature, options)
-          const wallId = getWallEntityId(id)
-          if (dataSource.entities.getById(id)) dataSource.entities.removeById(id)
-          // Take care that in case of a wall entity we add it in addition to the original line
-          if (dataSource.entities.getById(wallId)) dataSource.entities.removeById(wallId)
+          CustomTypes.forEach(type => {
+            const customId = getCustomEntityId(id, type)
+            if (dataSource.entities.getById(id)) dataSource.entities.removeById(id)
+            // Take care that in case of a custom entity we add it in addition to or instead the original line
+            if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
+          })
         })
         return
       }
       // We use a separated source in order to load data otherwise Cesium will replace previous ones, causing flickering
-      const loadingDataSource = new Cesium.GeoJsonDataSource()
+      const loadingDataSource = new GeoJsonDataSource()
       loadingDataSource.notFromDrop = true
       await loadingDataSource.load(geoJson, cesiumOptions)
       // Now we process loaded entities to merge with existing ones if any or add new ones
@@ -63,10 +71,12 @@ export const geojsonLayers = {
       if (_.get(updateOptions, 'removeMissing', cesiumOptions.removeMissing)) {
         dataSource.entities.values.forEach(entity => {
           const id = entity.id
-          const wallId = getWallEntityId(id)
-          if (!loadingDataSource.entities.getById(id)) dataSource.entities.removeById(id)
-          // Take care that in case of a wall entity we add it in addition to the original line
-          if (dataSource.entities.getById(wallId)) dataSource.entities.removeById(wallId)
+          CustomTypes.forEach(type => {
+            const customId = getCustomEntityId(id, type)
+            if (!loadingDataSource.entities.getById(id)) dataSource.entities.removeById(id)
+            // Take care that in case of a custom entity we add it in addition to or instead the original line
+            if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
+          })
         })
       }
       // Process specific entities
@@ -91,10 +101,10 @@ export const geojsonLayers = {
             ellipse: {
               semiMinorAxis: radius,
               semiMajorAxis: radius,
-              material: new Cesium.ColorMaterialProperty(fill),
-              outlineColor: new Cesium.ConstantProperty(stroke),
+              material: new ColorMaterialProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth,
-              outline: new Cesium.ConstantProperty(true)
+              outline: new ConstantProperty(true)
             }
           })
           entitiesToRemove.push(entity)
@@ -105,7 +115,7 @@ export const geojsonLayers = {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
           // This one will come in addition to the original line
-          const wallId = getWallEntityId(entity.id)
+          const wallId = getCustomEntityId(entity.id, 'wall')
           entitiesToAdd.push({
             id: wallId,
             parent: entity,
@@ -114,12 +124,39 @@ export const geojsonLayers = {
             properties: entity.properties.getValue(0),
             wall: {
               positions: entity.polyline.positions.getValue(0),
-              material: new Cesium.ColorMaterialProperty(fill),
-              outlineColor: new Cesium.ConstantProperty(stroke),
+              material: new ColorMaterialProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth,
-              outline: new Cesium.ConstantProperty(true)
+              outline: new ConstantProperty(true)
             }
           })
+        }
+        // Corridors
+        const corridor = _.get(properties, 'corridor')
+        if (corridor && entity.polyline) {
+          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
+          // Simply push the entity, other options like width be set using styling options
+          // This one will come in replacement to the original line
+          const corridorId = getCustomEntityId(entity.id, 'corridor')
+          entitiesToAdd.push({
+            id: corridorId,
+            parent: entity,
+            name: entity.name ? entity.name : corridorId,
+            description: entity.description.getValue(0),
+            properties: entity.properties.getValue(0),
+            corridor: {
+              positions: entity.polyline.positions.getValue(0),
+              material: new ColorMaterialProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
+              outlineWidth: strokeWidth,
+              outline: new ConstantProperty(true)
+            }
+          })
+          entitiesToRemove.push(entity)
+        }
+        // Billboard with 'none' shape should be removed as Cesium creates it even if the maki icon id is unknown
+        if (entity.billboard && (_.get(properties, 'marker-symbol') === 'none')) {
+          entitiesToRemove.push(entity)
         }
         // Labels
         const text = _.get(properties, 'icon-text')
@@ -135,8 +172,8 @@ export const geojsonLayers = {
             properties: entity.properties.getValue(0),
             label: {
               text,
-              fillColor: new Cesium.ConstantProperty(fill),
-              outlineColor: new Cesium.ConstantProperty(stroke),
+              fillColor: new ConstantProperty(fill),
+              outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth
             }
           })
@@ -204,12 +241,12 @@ export const geojsonLayers = {
         feature.id = getFeatureId(feature, options)
         // We cannot access data outside the properties object of a feature in Cesium
         // As a consequence we copy back any style information inside
-        const styleType = getFeatureStyleType(feature)
         // We need to convert to simple-style spec as cesium manages this only
-        let simpleStyle
-        if (styleType === 'point') simpleStyle = getPointSimpleStyle(feature, options, engine)
-        else if (styleType === 'line') simpleStyle = getLineSimpleStyle(feature, options, engine)
-        else simpleStyle = getPolygonSimpleStyle(feature, options, engine)
+        // We also need to merge all styling properties as some entities requires eg both line/polygon style (wall polylines or corridor polygons)
+        const simpleStyle = Object.assign(getPointSimpleStyle(feature, options, engine), getLineSimpleStyle(feature, options, engine), getPolygonSimpleStyle(feature, options, engine))
+        // Manage our extended simple-style spec
+        const text = _.get(feature, 'style.text.label')
+        if (text) simpleStyle['icon-text'] = text
         if (!feature.properties) feature.properties = simpleStyle
         else Object.assign(feature.properties, simpleStyle)
       }
@@ -275,7 +312,7 @@ export const geojsonLayers = {
       }
       // If we already have a source we simply use it otherwise we create/load it
       if (!dataSource || !dataSource.name) {
-        dataSource = new Cesium.GeoJsonDataSource()
+        dataSource = new GeoJsonDataSource()
         dataSource.notFromDrop = true
         // Check for realtime layers
         if (cesiumOptions.realtime) {
@@ -318,15 +355,25 @@ export const geojsonLayers = {
       if (isInMemoryLayer(baseLayer)) {
         this.geojsonCache[name] = geoJson
       }
+      this.onLayerUpdated(baseLayer, layer, { features: geoJson.features || [geoJson] })
+    },
+    onLayerUpdated (layer, cesiumLayer, data) {
+      this.$emit('layer-updated', layer, cesiumLayer, data)
+      this.$engineEvents.emit('layer-updated', layer, cesiumLayer, data)
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
+      // Need to update layers that require an update at a given frequency
       const geoJsonlayers = _.values(this.layers).filter(sift({
+        // Possible for realtime layers only
         'cesium.type': 'geoJson',
         'cesium.realtime': true,
-        $or: [ // Supported by template URL or time-based features
+        $or: [ // Supported by template URL or time-based features service
           { 'cesium.sourceTemplate': { $exists: true } },
           { service: { $exists: true } }
         ],
+        // Skip layers powered by realtime service events
+        serviceEvents: { $ne: true },
+        // Skip invisible layers
         isVisible: true
       }))
       geoJsonlayers.forEach(async geoJsonlayer => {
@@ -371,7 +418,7 @@ export const geojsonLayers = {
     this.geojsonCache = {}
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
 

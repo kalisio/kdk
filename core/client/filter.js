@@ -8,7 +8,7 @@ export const Filter = {
   initialize () {
     // This object is used to filter the activities based on a search pattern or on specific items
     // The filter then builds the corresponding query
-    Store.set('filter', { field: 'name', pattern: '', items: [], query: {} })
+    Store.set('filter', { fields: 'name', pattern: '', items: [], query: {} })
     // Make filter react to external changes to update the query
     Events.on('filter-changed', () => this.updateFilterQuery())
   },
@@ -18,8 +18,10 @@ export const Filter = {
   getItems () {
     return Store.get('filter.items')
   },
-  getField () {
-    return Store.get('filter.field')
+  getFields () {
+    const fields = Store.get('filter.fields')
+    if (typeof fields === 'string') return [fields]
+    return fields
   },
   getPattern () {
     return Store.get('filter.pattern')
@@ -28,17 +30,17 @@ export const Filter = {
     return Store.get('filter.query')
   },
   clear () {
-    Store.patch('filter', { field: 'name', pattern: '', items: [], query: {} })
+    Store.patch('filter', { fields: 'name', pattern: '', items: [], query: {} })
   },
   // Build query from filter pattern and/or items
   updateFilterQuery () {
     const query = {}
     const pattern = this.getPattern()
-    const field = this.getField()
+    const fields = this.getFields()
     const items = this.getItems()
     // Handle the pattern
     if (pattern !== '') {
-      query[field] = { $search: pattern }
+      query.$or = _.map(fields, field => { return { [field]: { $search: pattern } } })
     }
     // Handle the selection
     items.forEach(item => {

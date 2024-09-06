@@ -26,7 +26,7 @@ import { ref } from 'vue'
 import { Notify } from 'quasar'
 import { Store, i18n, utils } from '../..'
 import KForm from '../form/KForm.vue'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 // Data
 const formRef = ref(null)

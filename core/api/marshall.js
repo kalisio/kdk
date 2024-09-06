@@ -23,17 +23,48 @@ export function marshallComparisonFields (queryObject) {
   })
 }
 
-// Helper function to convert sort operator values to numbers
-export function marshallSortFields (queryObject) {
+// Helper function to convert query parameters to numbers
+export function marshallNumberFields (queryObject) {
   _.forOwn(queryObject, (value, key) => {
     // Process current attributes or  recurse
     if (typeof value === 'object') {
-      marshallSortFields(value)
+      marshallNumberFields(value)
     } else {
       const number = _.toNumber(value)
       // Update from query string to number if required
-      if (!Number.isNaN(number)) {
+      if (_.isFinite(number)) {
         queryObject[key] = number
+      }
+    }
+  })
+}
+// Helper function to convert query parameters to boolean
+export function marshallBooleanFields (queryObject) {
+  _.forOwn(queryObject, (value, key) => {
+    // Process current attributes or  recurse
+    if (typeof value === 'object') {
+      marshallBooleanFields(value)
+    } else if (typeof value === 'string') {
+      // Update from query string to boolean if required
+      if (value.toLowerCase() === 'true') {
+        queryObject[key] = true
+      } else if (value.toLowerCase() === 'false') {
+        queryObject[key] = false
+      }
+    }
+  })
+}
+// Helper function to convert query parameters to dates
+export function marshallDateFields (queryObject) {
+  _.forOwn(queryObject, (value, key) => {
+    // Process current attributes or  recurse
+    if (typeof value === 'object') {
+      marshallDateFields(value)
+    } else if (typeof value === 'string') {
+      // We use moment to validate the date
+      const date = moment.utc(value, moment.ISO_8601)
+      if (date.isValid()) {
+        queryObject[key] = date.toDate()
       }
     }
   })

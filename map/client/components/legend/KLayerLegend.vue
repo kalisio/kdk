@@ -45,7 +45,13 @@ const legends = computed(() => {
   layerLegends.forEach(legend => {
     const minZoom = _.get(legend, 'minZoom', _.get(props.layer, `${props.engine}.minZoom`, 0))
     const maxZoom = _.get(legend, 'maxZoom', _.get(props.layer, `${props.engine}.maxZoom`, 99))
-    if (props.zoom >= minZoom && props.zoom <= maxZoom) {
+    // Check for valid number on min/max zoom level as we might set it to false/null to indicate
+    // there is none and we should use defaults
+    const hasMinZoom = _.isNumber(minZoom)
+    const hasMaxZoom = _.isNumber(maxZoom)
+    const inMinZoomRange = (hasMinZoom ? props.zoom >= minZoom : true)
+    const inMaxZoomRange = (hasMaxZoom ? props.zoom <= maxZoom : true)
+    if (inMinZoomRange && inMaxZoomRange) {
       logger.debug(`[KDK] Register '${props.layer.name}'`)
       const renderer = props.renderers[legend.type]
       if (!renderer) {

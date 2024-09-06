@@ -69,7 +69,7 @@ describe('core:hooks', () => {
       data: {
         'field._id': id.toString(),
         objects: [{
-          _id: id.toString(), date: new Date()
+          _id: id.toString(), date: new Date(), string: 'transmission'
         }, {
           _id: anotherId, date: new Date()
         }],
@@ -79,6 +79,7 @@ describe('core:hooks', () => {
         query: {
           _id: { $in: [id.toString()] },
           id: anotherId,
+          tags: { $in: ['transmission'] },
           array: [new Date(), new Date()]
         }
       }
@@ -92,16 +93,17 @@ describe('core:hooks', () => {
     expect(Array.isArray(hook.data.objects)).beTrue()
     expect(hook.data.objects.length).to.equal(2)
     let object = hook.data.objects[0]
-    expect(Object.keys(object)).to.deep.equal(['_id', 'date'])
+    expect(Object.keys(object)).to.deep.equal(['_id', 'date', 'string'])
     expect(ObjectID.isValid(object._id)).beTrue()
     expect(object._id.toString()).to.equal(id.toString())
     expect(object.date instanceof Date).beTrue()
+    expect(typeof object.string === 'string').beTrue()
     object = hook.data.objects[1]
     expect(Object.keys(object)).to.deep.equal(['_id', 'date'])
     expect(ObjectID.isValid(object._id)).beTrue()
     expect(object._id.toString()).to.equal(anotherId.toString())
     expect(object.date instanceof Date).beTrue()
-    expect(Object.keys(hook.params.query)).to.deep.equal(['_id', 'id', 'array'])
+    expect(Object.keys(hook.params.query)).to.deep.equal(['_id', 'id', 'tags', 'array'])
     expect(Array.isArray(hook.params.query.array)).beTrue()
     expect(hook.params.query.array.length).to.equal(2)
     hook.params.query.array.forEach(value => {
@@ -111,6 +113,7 @@ describe('core:hooks', () => {
     expect(hook.params.query._id.$in[0].toString()).to.equal(id.toString())
     expect(ObjectID.isValid(hook.params.query.id)).beTrue()
     expect(hook.params.query.id.toString()).to.equal(anotherId.toString())
+    expect(typeof hook.params.query.tags.$in[0] === 'string').beTrue()
   })
 
   it('check uniqueness', async () => {
@@ -218,6 +221,37 @@ describe('core:hooks', () => {
     expect(hook.params.query.$locale).beUndefined()
     expect(typeof hook.params.collation).to.equal('object')
     expect(hook.params.collation.locale).to.equal('fr')
+  })
+
+  it('marshalls HTTP queries', () => {
+    const now = new Date()
+    const datetime = now.toISOString()
+    const notADateTime = datetime.replace('T', 'Z')
+    const query = {
+      booleanTrue: 'true',
+      booleanFalse: 'false',
+      notABoolean: 'falsy',
+      number: '223',
+      notANumber: '22E',
+      datetime,
+      notADateTime
+    }
+    const hook = {
+      type: 'before',
+      params: { provider: 'socketio', query }
+    }
+    // Nothing should happen with websocket provider
+    hooks.marshallHttpQuery(hook)
+    expect(hook.params.query).to.deep.equal(query)
+    hook.params.provider = 'rest'
+    hooks.marshallHttpQuery(hook)
+    expect(hook.params.query.booleanTrue).to.equal(true)
+    expect(hook.params.query.booleanFalse).to.equal(false)
+    expect(hook.params.query.notABoolean).to.equal('falsy')
+    expect(hook.params.query.number).to.equal(223)
+    expect(hook.params.query.notANumber).to.equal('22E')
+    expect(hook.params.query.datetime.valueOf()).to.equal(now.valueOf())
+    expect(hook.params.query.notADateTime).to.equal(notADateTime)
   })
 
   it('diacristic search', () => {

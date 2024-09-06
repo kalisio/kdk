@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
+import moment from 'moment'
 import L from 'leaflet'
 import Emitter from 'tiny-emitter'
 import 'leaflet/dist/leaflet.css'
@@ -91,6 +92,9 @@ export const baseMap = {
       if (scale) this.setupScaleControl(scale)
       const geolocate = _.get(viewerOptions, 'geolocate', true)
       if (geolocate) this.setupGeolocateControl(geolocate)
+      // Add a special hidden pane, used to hide individual features
+      const hiddenPane = this.map.createPane('kdk-hidden-features')
+      hiddenPane.style.display = 'none'
       this.onMapReady()
     },
     onMapReady () {
@@ -146,14 +150,25 @@ export const baseMap = {
       leafletOptions.attribution = processedOptions.attribution
       return processedOptions
     },
+    getLeafletPaneName (paneOrZIndex) {
+      return (typeof paneOrZIndex === 'object' ? paneOrZIndex.name || paneOrZIndex.zIndex.toString() : paneOrZIndex.toString())
+    },
     createLeafletPane (paneOrZIndex) {
-      // Create pane if required
-      const paneName = paneOrZIndex.toString()
+      // Input can be a name, a z-index, an object with both options
+      const paneName = this.getLeafletPaneName(paneOrZIndex)
       let pane = this.map.getPane(paneName)
+      // Create pane if required
       if (!pane) {
-        pane = this.map.createPane(paneName)
-        if (typeof paneOrZIndex === 'number') _.set(pane, 'style.zIndex', paneOrZIndex)
-        else _.set(pane, 'style.zIndex', 400) // Defaults for overlay in Leaflet
+        let zIndex
+        if (typeof paneOrZIndex === 'object') zIndex = paneOrZIndex.zIndex || 400
+        else if (typeof paneOrZIndex === 'number') zIndex = paneOrZIndex
+        // Check for parent pane if any, useful for leaflet-rotate plugin
+        let container = paneOrZIndex.container
+        // Defaults to rotate pane
+        if (this.map._rotate && !container) container = 'rotatePane'
+        container = this.map.getPane(container)
+        pane = this.map.createPane(paneName, container)
+        _.set(pane, 'style.zIndex', zIndex || 400) // Defaults for overlay in Leaflet
       }
       this.leafletPanes[paneName] = pane
       return pane
@@ -168,12 +183,10 @@ export const baseMap = {
       if (!pane) return
       delete this.leafletPanes[paneName]
     },
-    updateLeafletPanesVisibility (panes) {
+    updateLeafletPanesVisibility () {
       const zoom = this.map.getZoom()
       // Check if we need to hide/show some panes based on current zoom level
       _.forOwn(this.leafletPanes, (pane, paneName) => {
-        // Filter only some panes ?
-        if (panes && panes.includes(paneName)) return
         const hasMinZoom = !!_.get(pane, 'minZoom')
         const hasMaxZoom = !!_.get(pane, 'maxZoom')
         if (!hasMinZoom && !hasMaxZoom) return
@@ -197,7 +210,9 @@ export const baseMap = {
       // This is why Leaflet 1.0 introduced panes: https://leafletjs.com/reference.html#map-pane & https://leafletjs.com/examples/map-panes/
       // By implicitely create a pane for each provided z-index makes this transparent for the user
       let zIndex = _.has(leafletOptions, 'zIndex')
-      if (zIndex) {
+      let pane = _.has(leafletOptions, 'pane')
+      // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
+      if (zIndex && !pane) {
         zIndex = _.get(leafletOptions, 'zIndex')
         this.createLeafletPane(zIndex)
         // Set layer to use target pane
@@ -207,10 +222,10 @@ export const baseMap = {
       const panes = _.get(leafletOptions, 'panes')
       if (panes) {
         panes.forEach(paneOptions => {
-          const pane = this.createLeafletPane(paneOptions.name || paneOptions.zIndex)
+          const pane = this.createLeafletPane(paneOptions)
           Object.assign(pane, paneOptions)
         })
-        this.updateLeafletPanesVisibility(panes.map(paneOptions => paneOptions.name || paneOptions.zIndex.toString()))
+        this.updateLeafletPanesVisibility()
       }
 
       // Some Leaflet constructors can have additional arguments given as options
@@ -256,19 +271,36 @@ export const baseMap = {
       if (timeDimension) {
         // It appears that sometimes the time resolution is missing, default as 1 day
         // Please refer to https://www.mapserver.org/ogc/wms_time.html#specifying-time-extents
+        _.set(timeDimension, 'period', 'P1D')
         const timeRange = _.get(timeDimension, 'times')
-        if ((typeof timeRange === 'string') && (timeRange.split('/').length === 2)) {
+        const timeRangeComponents = (typeof timeRange === 'string' ? timeRange.split('/') : [])
+        if (timeRangeComponents.length === 2) {
           _.set(timeDimension, 'times', `${timeRange}/P1D`)
+        } else if (timeRangeComponents.length === 3) {
+          _.set(timeDimension, 'period', timeRangeComponents[2])
         }
+        // Used to format time accordingly
+        const periodAsDuration = moment.duration(_.get(timeDimension, 'period'))
         // As we'd like to control time on a per-layer basis create a specific time dimension object
         layer = this.createLeafletLayer({
           type: 'timeDimension.layer.wms',
           source: layer,
           timeDimension: L.timeDimension(timeDimension),
-          currentTime: Time.getCurrentTime()
+          currentTime: Time.getCurrentTime().toDate().getTime()
         })
         // This allow the layer to conform our internal time interface
-        layer.setCurrentTime = (datetime) => { layer._timeDimension.setCurrentTime(datetime) }
+        layer.setCurrentTime = (datetime) => { layer._timeDimension.setCurrentTime(datetime.toDate().getTime()) }
+        // Default implementation always generate ISO datetime that might break some servers with eg day period only
+        layer._createLayerForTime = (time) => {
+          // Remove some internals to avoid polluting request
+          const wmsParams = _.omit(layer._baseLayer.options, ['timeDimension', 'isVisible', 'type'])
+          // Format time according to period
+          if (periodAsDuration.years() > 0) wmsParams.time = moment.utc(time).format('YYYY').toISOString()
+          else if (periodAsDuration.months() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM')
+          else if (periodAsDuration.days() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM-DD')
+          else wmsParams.time = moment.utc(time).toISOString()
+          return new layer._baseLayer.constructor(layer._baseLayer.getURL(), wmsParams)
+        }
       }
       return layer
     },
@@ -416,6 +448,15 @@ export const baseMap = {
         if (geoJson.type === 'FeatureCollection') _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
         else geoJson._id = uid().toString()
       }
+      // Check for panes to be created
+      const panes = []
+      _.forEach(geoJson.features, feature => {
+        const pane = _.get(feature, 'style.pane')
+        if (pane) panes.push({
+          name: pane
+        })
+      })
+      if (!_.isEmpty(panes)) _.set(layerSpec, 'leaflet.panes', panes)
       // Create an empty layer used as a container
       await this.addLayer(layerSpec)
       // Set the content
@@ -493,10 +534,16 @@ export const baseMap = {
     zoomToBBox (bbox) {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
-    center (longitude, latitude, zoomLevel, options) {
+    center (longitude, latitude, zoomLevel, bearing, options = {}) {
+      if (typeof this.map.getBearing === 'function') {
+        this.setBearing(_.isNil(bearing) ? this.map.getBearing() : bearing)
+      }
       const duration = _.get(options, 'duration', 0)
-      if (duration) this.map.flyTo(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
-      else this.map.setView(new L.LatLng(latitude, longitude), zoomLevel || this.map.getZoom(), options)
+      if (duration) {
+        this.map.flyTo(new L.LatLng(latitude, longitude), _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, options)
+      } else {
+        this.map.setView(new L.LatLng(latitude, longitude), _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, options)
+      }
     },
     getCenter () {
       const center = this.map.getCenter()
@@ -506,6 +553,20 @@ export const baseMap = {
         latitude: center.lat,
         zoomLevel: zoom
       }
+    },
+    setBearing(bearing) {
+      if (typeof this.map.setBearing !== 'function') {
+        logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
+        return
+      }
+      this.map.setBearing(bearing)
+    },
+    getBearing () {
+      if (typeof this.map.getBearing !== 'function') {
+        logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
+        return 0
+      }
+      return this.map.getBearing()
     },
     getBounds () {
       this.viewBounds = this.map.getBounds()
@@ -592,6 +653,9 @@ export const baseMap = {
     this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   unmounted () {
-    if (this.map) this.map.remove()
+    if (this.map) {
+      this.map.off()
+      this.map.remove()
+    }
   }
 }

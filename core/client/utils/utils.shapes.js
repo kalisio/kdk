@@ -100,7 +100,11 @@ function getSize (size) {
 
 /*
  Utility to create a shape with the following options:
-  - shape: String | Object - name of the predefined shape or object specifyinfg the viewBox and the content
+  - shape: String | Object - name of the predefined shape or object specifying the following
+    - viewBox: svg viewport definition
+    - content: svg shape
+    - translation: Array - the translation to apply from the center of the shape ['-50%', '-50%']
+    - rotation: Number - the rotation to apply in degree
   - size : Array - [width, height] of the maker
   - radius: Number - the radius to compute a "visual" size. If the size is defined, the radius is omitted.
   - color: String - the fill color
@@ -128,7 +132,7 @@ function getSize (size) {
     - size: Number - the font size in pixel - 14
     - translation: Array - the translation to apply from the center of the shape ['-50%', '-50%']
     - rotation: Number - the rotation to apply in degree
-  - html: Object specifyinng an html overlay
+  - html: Object specifying an html overlay
 
 */
 export function createShape (options) {
@@ -163,7 +167,8 @@ export function createShape (options) {
     }
   }
   // Set div container vars
-  const beginDivTag = `<div style="position: relative; width: ${size.width}px; height: ${size.height}px;">`
+  const extraStyle = _.get(options, 'extraStyle', '')
+  const beginDivTag = `<div style="position: relative; width: ${size.width}px; height: ${size.height}px; ${extraStyle}">`
   const endDivTag = '</div>'
   // Render shape
   let beginSvgTag = ''
@@ -171,7 +176,11 @@ export function createShape (options) {
   let svgClipPath = ''
   let endSvgTag = ''
   if (shape) {
-    beginSvgTag = `<svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" preserveAspectRatio="none">`
+    const extraShapeStyle = shape.extraStyle || ''
+    const translation = shape.translation || [0, 0]
+    const rotation = shape.rotation || 0
+    beginSvgTag = `<svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" preserveAspectRatio="none"
+                  style="transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); ${extraShapeStyle}">`
     beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', _.join(shape.viewBox, ' '))
     svgShapeContent = shape.content
     svgClipPath = ''
@@ -179,7 +188,7 @@ export function createShape (options) {
     // Apply fill style
     const color = getHtmlColor(options.color, defaultColor)
     svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
-    if (options.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
+    if (!_.isNil(options.opacity)) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
     // Aply stroke style
     if (options.stroke) {
       // Ensure the stroke color is defined and not transparent
@@ -245,7 +254,8 @@ export function createShape (options) {
         const textSize = options.text.size || defaultTextSize
         const translation = options.text.translation || _.get(shape, 'text.translation', ['-50%', '-50%'])
         const rotation = options.text.rotation || _.get(shape, 'icon.rotation', 0)
-        textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px;"`
+        const extraTextStyle = options.text.extraStyle || ''
+        textTag += `style="position: absolute; 5px; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px; ${extraTextStyle}"`
         textTag += '>'
         textTag += options.text.label
         textTag += '</span>'

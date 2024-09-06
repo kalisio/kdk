@@ -1,4 +1,4 @@
-import Cesium from 'cesium/Source/Cesium.js'
+import { Fullscreen } from 'cesium'
 
 export const activity = {
   methods: {
@@ -28,10 +28,10 @@ export const activity = {
     onToggleVr () {
       // VR requires fullscreen mode
       if (this.viewer.scene.useWebVR) {
-        if (Cesium.Fullscreen.fullscreen) Cesium.Fullscreen.exitFullscreen()
+        if (Fullscreen.fullscreen) Fullscreen.exitFullscreen()
         this.viewer.scene.useWebVR = false
       } else {
-        if (!Cesium.Fullscreen.fullscreen) Cesium.Fullscreen.requestFullscreen(document.body)
+        if (!Fullscreen.fullscreen) Fullscreen.requestFullscreen(document.body)
         this.viewer.scene.useWebVR = true
       }
     }

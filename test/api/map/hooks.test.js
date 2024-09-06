@@ -1,5 +1,6 @@
 import chai from 'chai'
 import chailint from 'chai-lint'
+import _ from 'lodash'
 import { hooks } from '../../../map/api/index.js'
 
 const { util, expect } = chai
@@ -65,6 +66,19 @@ describe('map:hooks', () => {
   })
 
   it('convert results as GeoJson', () => {
+    const json = [{
+      location: { lat: -4, lon: 33 },
+      pickedProperty: '1',
+      omittedProperty: '1'
+    }, {
+      location: { lat: 47, lon: -96 },
+      pickedProperty: '2',
+      omittedProperty: '2'
+    }, {
+      location: null,
+      pickedProperty: '3',
+      omittedProperty: '3'
+    }]
     const hook = {
       type: 'after',
       params: {
@@ -72,24 +86,56 @@ describe('map:hooks', () => {
           geoJson: true
         }
       },
-      result: [{
-        location: { lat: -4, lon: 33 }
-      }, {
-        location: { lat: 47, lon: -96 }
-      }]
+      result: _.cloneDeep(json)
     }
     hooks.marshallSpatialQuery(hook)
-    hooks.asGeoJson({ longitudeProperty: 'location.lon', latitudeProperty: 'location.lat' })(hook)
+    hooks.asGeoJson({
+      longitudeProperty: 'location.lon',
+      latitudeProperty: 'location.lat',
+      pick: ['pickedProperty'],
+      properties: true
+    })(hook)
     expect(hook.result.type).toExist()
     expect(hook.result.type).to.equal('FeatureCollection')
     expect(hook.result.features).toExist()
     expect(hook.result.features.length).to.equal(2)
-    expect(hook.result.features[0].type).to.equal('Feature')
-    expect(hook.result.features[0].geometry).toExist()
-    expect(hook.result.features[0].geometry.type).to.equal('Point')
-    expect(hook.result.features[0].geometry.coordinates).toExist()
-    expect(hook.result.features[0].geometry.coordinates).to.deep.equal([33, -4])
-    expect(hook.result.features[1].geometry.coordinates).to.deep.equal([-96, 47])
+    hook.result.features.forEach((feature, index) => {
+      expect(feature.type).to.equal('Feature')
+      expect(feature.properties).toExist()
+      expect(feature.properties.pickedProperty).toExist()
+      expect(feature.properties.omittedProperty).beUndefined()
+      expect(feature.geometry).toExist()
+      expect(feature.geometry.type).to.equal('Point')
+      expect(feature.geometry.coordinates).toExist()
+      if (index === 0) expect(feature.geometry.coordinates).to.deep.equal([33, -4])
+      if (index === 1) expect(feature.geometry.coordinates).to.deep.equal([-96, 47])
+    })
+    hook.result = _.cloneDeep(json)
+    hooks.asGeoJson({
+      longitudeProperty: 'location.lon',
+      latitudeProperty: 'location.lat',
+      omit: ['omittedProperty', 'location'],
+      properties: true,
+      allowNullGeometries: true,
+      asFeatureCollection: false
+    })(hook)
+    expect(Array.isArray(hook.result)).beTrue()
+    expect(hook.result.length).to.equal(3)
+    hook.result.forEach((feature, index) => {
+      expect(feature.type).to.equal('Feature')
+      expect(feature.properties).toExist()
+      expect(feature.properties.pickedProperty).toExist()
+      expect(feature.properties.omittedProperty).beUndefined()
+      if (index === 2) {
+        expect(feature.geometry).beNull()
+      } else {
+        expect(feature.geometry).toExist()
+        expect(feature.geometry.type).to.equal('Point')
+        expect(feature.geometry.coordinates).toExist()
+        if (index === 0) expect(feature.geometry.coordinates).to.deep.equal([33, -4])
+        if (index === 1) expect(feature.geometry.coordinates).to.deep.equal([-96, 47])
+      }
+    })
   })
 
   // Cleanup

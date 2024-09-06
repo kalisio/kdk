@@ -101,9 +101,10 @@ The details of each property are the following:
 * **name** : the layer name, typically used in the [catalog panel](./components.md#catalog-panel)
 * **description** : the layer short description, typically used in the [catalog panel](./components.md#catalog-panel)
 * **i18n**: layer translations, see [application internationalization](../core/application.md#client-ecosystem) for details
-  * **locale**: translations for a target locale eg `FR`
+  * **locale**: translations for a target locale eg `fr` or `en`
      * **Layers**: translation keys/values for layer fields
      * **Variables**: translation keys/values for variable fields
+     * **Levels**: translation keys/values for levels fields
 * **type** : usually `BaseLayer` for map backgrounds, `TerrainLayer` for 3D terrain, `OverlayLayer` for additionnal data layers
 * **tags** : list of tags (i.e. array of strings) used to classify the layer
 * **icon** : a [Quasar icon](https://quasar.dev/options/app-icons) for the layer, typically used in the [layers panel](./components.md#layers-panel)
@@ -122,18 +123,24 @@ The `type` and `tags` attributes are typically used by the [catalog panel](./com
 :::
 
 If the layer is a feature layer based on a [feature service](./services.md#feature-service) the additional properties are the following:
-* **service**: the name of the underlying feature service,
-* **probeService**: the name of the underlying feature service containing probe locations,
-* **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object) - could be an array for compound identifiers,
-* **chronicleId**: the name of the unique timeseries identifier in feature (relative to the nested `properties` object) for measure features - could be an array for compound identifiers,
+* **service**: the name of the underlying feature service
+* **serviceEvents**: if `true` means the layer will be automatically updated as events are received from the underlying feature service, otherwise the data will be updated at a constant frequency as per **every** and **queryFrom** options (see hereafter)
+* **probeService**: the name of the underlying feature service containing probe locations
+* **dbName** : the database holding service data if different from application database
+* **ttl**: time to live of features in the service collection in seconds
+* **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object) - could be an array for compound identifiers
+* **chronicleId**: the name of the unique timeseries identifier in feature (relative to the nested `properties` object) for measure features - could be an array for compound identifiers
+* **featureLabel**: the name of the label identifier in feature (relative to the nested `properties` object) - could be an array, useful to search for features based on a syntaxical pattern using https://github.com/arve0/feathers-mongodb-fuzzy-search
 * **from**: the oldest stored feature age in history as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
 * **to**: the newest stored feature age in history as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
 * **every**: the sample frequency of the features as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
-* **queryFrom**: the period to search for data around the current time when displaying the features as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
+* **queryFrom**: the period to search for data before the current time when displaying the features as [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
 * **variables**: array of available properties in feature to be [aggregated over time](./services.md#time-based-feature-aggregation), for each entry the following options are available:
   * **name**: property name in feature (relative to the nested `properties` object),
   * **label**: property label to use in UI,
   * **unit**: target unit of the underlying data, if not the currently used for display it will be converted from using [math.js](http://mathjs.org/docs/datatypes/units.html)
+  * **range**: [minimum, maximum] variable value variation range
+  * **step**: default tick spacing for variable value
   * **chartjs**: options to be passed to [chart.js](https://www.chartjs.org/docs/latest/charts/line.html#dataset-properties) when drawing timeseries
 
 #### User context
@@ -439,6 +446,10 @@ Individual events are emitted as usual by default. However, as the `features` se
 
 ::: tip
 You can always force event or full result emission with the `emitEvents/fullResult` query parameters.
+:::
+
+::: warning
+Only layers with `serviceEvents` option set to `true` or using the default built-in `features` service will be updated in the client by individual real-time events, multiple operations will not trigger any update.
 :::
 
 ### Hooks

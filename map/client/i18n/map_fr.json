@@ -204,7 +204,7 @@
     "TITLE": "Ma position",
     "METERS": "mètres",
     "FEET": "pieds",
-    "POPUP": "Vous êtes à moins de {distance} {unit} de ce point",
+    "POPUP": "Vous êtes à moins de {'{distance}'} {'{unit}'} de ce point",
     "OUTSIDE_MAP_BOUNDS": "Vous semblez localisé en dehors de la carte"
   },
   "schemas": {
@@ -233,6 +233,9 @@
     "TIMELINE_INTERVAL": "Fréquence de rafraichissement des données en temps-réel",
     "TIMESERIES_SETTINGS": "Paramètrage des séries temporelles",
     "TIMESERIES_SPAN": "Intervalle des séries temporelles, en heures",
+    "TIMESERIES_GROUP_BY": "Regroupement des séries temporelles",
+    "TIMESERIES_GROUP_BY_VARIABLE": "Regroupement par variable",
+    "TIMESERIES_GROUP_BY_FEATURE": "Regroupement par élément géographique",
     "CAPTURE_RESOLUTION_FIELD_LABEL": "Paramétrez la résolution",
     "CAPTURE_HEADER_FIELD_LABEL": "Paramétrez le titre",
     "CAPTURE_FOOTER_FIELD_LABEL": "Paramétrez le pied de page",
@@ -695,6 +698,8 @@
     "LABEL": "Légende"
   },
   "KCompass": {
+    "FROM_TO": "De {direction}° vers {source}°",
+    "FROM": "De",
     "NORTH": "N",
     "EAST": "E",
     "SOUTH": "S",

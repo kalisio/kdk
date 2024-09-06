@@ -10,6 +10,7 @@ export function useCatalog (options = {}) {
     // Default filter queries
     layers: {},
     categories: {},
+    sublegends: {},
     views: {},
     // Default to global catalog
     context: '',
@@ -20,6 +21,7 @@ export function useCatalog (options = {}) {
   // Data
   const layers = ref([])
   const categories = ref([])
+  const sublegends = ref([])
   const views = ref([])
 
   // Computed
@@ -46,6 +48,14 @@ export function useCatalog (options = {}) {
     })
     return categories.value
   }
+  async function getSublegends () {
+    sublegends.value = await catalog.getSublegends({
+      query: options.sublegends,
+      context: options.context,
+      planetApi: options.planetApi
+    })
+    return sublegends.value
+  }
   async function getViews () {
     views.value = await catalog.getViews({
       query: options.project ? Object.assign(getCatalogProjectQuery(options.project), options.views) : options.views,
@@ -59,11 +69,13 @@ export function useCatalog (options = {}) {
   return {
     layers,
     categories,
+    sublegends,
     layersByCategory,
     orphanLayers,
     views,
     getLayers,
     getCategories,
+    getSublegends,
     getViews
   }
 }

@@ -4,19 +4,18 @@ import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import { filterLayers, updateLayerReferences, updateProjects, getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
 
-const { setNow, discard } = common
+const { setNow, discard, when } = common
 
 export default {
   before: {
-    all: [],
+    all: [coreHooks.marshallHttpQuery],
     find: [
       fuzzySearch({ fields: ['name'] }), coreHooks.diacriticSearch(), filterLayers, coreHooks.distinct
     ],
     get: [],
     create: [
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'data.type') } }),
-      coreHooks.convertObjectIDs(['baseQuery.layer']),
-      coreHooks.convertToString(['schema.content', 'filters']),
+      coreHooks.convertToString(['baseQuery', 'schema.content', 'filters']),
       setNow('createdAt', 'updatedAt'),
       // This allow to use keys for base queries like 'properties.xxx': 'yyy'
       (hook) => { _.set(hook, 'params.mongodb.checkKeys', false) }
@@ -24,16 +23,14 @@ export default {
     update: [
       coreHooks.populatePreviousObject,
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
-      coreHooks.convertObjectIDs(['baseQuery.layer']),
-      coreHooks.convertToString(['schema.content', 'filters']),
+      coreHooks.convertToString(['baseQuery', 'schema.content', 'filters']),
       discard('createdAt', 'updatedAt'),
       setNow('updatedAt')
     ],
     patch: [
       coreHooks.populatePreviousObject,
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
-      coreHooks.convertObjectIDs(['baseQuery.layer']),
-      coreHooks.convertToString(['schema.content', 'filters']),
+      coreHooks.convertToString(['baseQuery', 'schema.content', 'filters']),
       discard('createdAt', 'updatedAt'),
       setNow('updatedAt')
     ],
@@ -44,12 +41,12 @@ export default {
 
   after: {
     all: [
-      coreHooks.convertToJson(['schema.content', 'filters'])
+      coreHooks.convertToJson(['baseQuery', 'schema.content', 'filters']),
+      coreHooks.convertObjectIDs(['baseQuery.layer'])
     ],
     find: [
-      // Merge built-in categories with user-defined ones
-      getDefaultCategories,
-      getDefaultSublegends
+      // Merge built-in categoriessublegends with user-defined ones for global catalog only
+      when(hook => !hook.service.getContextId(), getDefaultCategories, getDefaultSublegends)
     ],
     get: [],
     create: [],

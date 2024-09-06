@@ -2,6 +2,7 @@ import L from 'leaflet'
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
+import lineOffset from '@turf/line-offset'
 import 'leaflet-realtime'
 import { Time, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
@@ -27,6 +28,31 @@ const Realtime = L.Realtime.extend({
 L.realtime = function (src, options) {
   return new Realtime(src, options)
 }
+// Override default Polyline simplify function to manage offset
+const simplifyPoints = L.Polyline.prototype._simplifyPoints
+L.Polyline.include({
+  _simplifyPoints: function () {
+    simplifyPoints.call(this)
+    // Offset simplified version 
+    if (this.options.offset) {
+      // We'd like to ensure a pixel constant offset when zooming
+      // Zoom 0 resolution is 156 543 m/pixel at equator in default map tiles,
+      // we take latitude into account to account for a convergence factor
+      const latitude = this.getBounds().getCenter().lat
+      const factor = 156543 / Math.pow(2, this._map.getZoom()) / Math.cos(latitude * Math.PI / 180)
+      const offset = Math.max(1, this.options.offset * factor)
+
+      for (let i = 0; i < this._parts.length; i++) {
+        let latLngs = this._parts[i].map(point => this._map.layerPointToLatLng(point))
+        // Ensure a large enough precision for computation (defaults to 6 in Leaflet)
+        const coords = L.GeoJSON.latLngsToCoords(latLngs, 0, false, 12)
+        const feature = lineOffset({ type: 'LineString', coordinates: coords }, offset, { units: 'meters' })
+        latLngs = L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)
+        this._parts[i] = latLngs.map(latlng => this._map.latLngToLayerPoint(latlng))
+      }
+    }
+  }
+})
 
 // Override default Leaflet GeoJson utility to manage some specific use cases
 const geometryToLayer = L.GeoJSON.geometryToLayer
@@ -55,8 +81,19 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
     if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {
       return new MaskLayer(geojson, options.style(geojson))
     }
+  }// Automate Leaflet.PolylineOffset plugin use
+  if (geometry && properties && properties.offset) {
+    if (geometry.type === 'LineString') {
+      options = Object.assign({ offset: properties.offset }, options)
+    }
   }
-  return geometryToLayer(geojson, options)
+  // As we do so this breaks leaflet-arrowheads plugin
+  const layer = geometryToLayer(geojson, options)
+  if (geometry && (options.arrowheads || (properties && properties.arrowheads))) {
+    if (layer instanceof L.Polyline) layer.arrowheads(options.arrowheads || properties.arrowheads)
+  }
+  
+  return layer
 }
 
 export const geojsonLayers = {
@@ -260,18 +297,20 @@ export const geojsonLayers = {
         // on non-tiled layers we need to use a pane to manage it
         const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
         const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
+        const hasZIndex = !!_.get(leafletOptions, 'zIndex')
         if (!leafletOptions.tiled && (hasMinZoom || hasMaxZoom)) {
           const pane = { name: options.name }
           if (hasMinZoom) pane.minZoom = _.get(leafletOptions, 'minZoom')
           if (hasMaxZoom) pane.maxZoom = _.get(leafletOptions, 'maxZoom')
+          if (hasZIndex) pane.zIndex = _.get(leafletOptions, 'zIndex')
           leafletOptions.panes = [pane]
           leafletOptions.pane = options.name
           leafletOptions.shadowPane = options.name
-          // Make pane available to point style as well as shape markers are created from here
-          for (const type in ['point', 'line', 'polygon']) {
+          // Make pane available to styles as well as eg shape markers are created from here
+          for (const type of ['point', 'line', 'polygon']) {
             if (_.has(leafletOptions, `style.${type}`)) {
-              _.set(leafletOptions, `style.${type}.options.pane`, options.name)
-              _.set(leafletOptions, `style.${type}.options.shadowPane`, options.name)
+              _.set(leafletOptions, `style.${type}.pane`, options.name)
+              _.set(leafletOptions, `style.${type}.shadowPane`, options.name)
             }
           }
         }
@@ -331,7 +370,7 @@ export const geojsonLayers = {
           // Indeed the style property must be overriden to install the Leaflet function style
           if (!_.has(leafletOptions, key) || (key === 'style')) _.set(leafletOptions, key, _.get(geoJsonOptions, key))
         })
-        // Create the layer*/
+        // Create the layer
         let layer = this.createLeafletLayer(options)
         // Specific case of realtime layer where the underlying container also need to be added to map
         if (leafletOptions.realtime) {
@@ -479,17 +518,22 @@ export const geojsonLayers = {
       }
     },
     onLayerUpdated (layer, leafletLayer, data) {
-      this.$emit('layer-updated', Object.assign({ layer, leafletLayer }, data))
-      this.$engineEvents.emit('layer-updated', Object.assign({ layer, leafletLayer }, data))
+      this.$emit('layer-updated', layer, leafletLayer, data)
+      this.$engineEvents.emit('layer-updated', layer, leafletLayer, data)
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
+      // Need to update layers that require an update at a given frequency
       const geoJsonlayers = _.values(this.layers).filter(sift({
+        // Possible for realtime layers only
         'leaflet.type': 'geoJson',
         'leaflet.realtime': true,
-        $or: [ // Supported by template URL or time-based features
+        $or: [ // Supported by template URL or time-based features service
           { 'leaflet.sourceTemplate': { $exists: true } },
           { service: { $exists: true } }
         ],
+        // Skip layers powered by realtime service events
+        serviceEvents: { $ne: true },
+        // Skip invisible layers
         isVisible: true
       }))
       geoJsonlayers.forEach(async geoJsonlayer => {
@@ -560,7 +604,13 @@ export const geojsonLayers = {
       if (cachedGeojson) {
         if (isInMemoryLayer(layer)) {
           // Restore geojson data for in-memory layers that was hidden
-          this.updateLayer(layer.name, cachedGeojson)
+          // Directly deal with the leaflet layer instead of calling updateLayer, we are just restoring data
+          // Handle case where there's clustering on top (cf. updateLayer)
+          if (typeof engineLayer.getLayers === 'function') {
+            const container = engineLayer
+            engineLayer = container.getLayers().find(layer => layer._container === container)
+          }
+          engineLayer._onNewData(false, cachedGeojson)
         } else {
           // Clear cache since layer is not in memory anymore
           delete this.geojsonCache[layer.name]
@@ -586,7 +636,7 @@ export const geojsonLayers = {
     this.geojsonCache = {}
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)

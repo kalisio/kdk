@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-for="component in avaiableComponents" :key="component.uid">
+    <template v-for="component in availableComponents" :key="component.uid">
       <Suspense v-if="component.suspense">
         <component
           v-if="component.isVisible && !component.isHidden"
@@ -61,7 +61,7 @@ const props = defineProps({
 const emit = defineEmits(['triggered'])
 
 // Computed
-const avaiableComponents = computed(() => {
+const availableComponents = computed(() => {
   if (_.isEmpty(props.content)) return []
   let components = filterContent(props.content, props.filter || {})
   components = getComponents(components, props.mode, props.context)
@@ -103,7 +103,7 @@ function getComponents (content, mode) {
   // Then create component objects
   _.forEach(components, component => {
     // Get the component and add the required props
-    component.name = _.get(component, 'component', 'KAction')
+    component.name = _.get(component, 'component', 'action/KAction')
     component.uid = uid()
     processedComponents.push(component)
   })

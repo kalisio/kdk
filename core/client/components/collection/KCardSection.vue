@@ -4,8 +4,8 @@
     <!--
       Header section
      -->
-    <div v-if="!hideHeader" class="row full-width items-center" style="min-height: 30px">
-      <span class="text-grey-7 text-body-2">
+    <div v-if="!hideHeader" class="row full-width items-center no-wrap" style="min-height: 30px">
+      <span class="text-grey-7 text-body-2 ellipsis">
         {{ title }}
       </span>
       <q-space />
@@ -13,6 +13,7 @@
         v-if="actions"
         :content="actions"
         :context="context"
+        class="no-wrap"
       />
     </div>
     <!--

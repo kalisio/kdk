@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import KAction from '../../../core/client/components/KAction.vue'
+import KAction from '../../../core/client/components/action/KAction.vue'
 
 export default {
   name: 'k-edit-layer-data',

@@ -155,7 +155,9 @@ describe('map:grid-source', () => {
   describe('geotiff', () => {
     const geotiffOptions = {
       geotiff: {
-        url: 'http://kMap.test/data.tif'
+        url: 'http://kMap.test/data.tif',
+        // because nock doesnt know howto intercept fecth
+        forceXHR: true
       }
     }
 

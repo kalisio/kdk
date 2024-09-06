@@ -79,7 +79,7 @@ import { openURL, useQuasar } from 'quasar'
 import { Store, api } from '../..'
 import { loadComponent } from '../../utils'
 import { LocalStorage } from '../../local-storage.js'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 // Data
 const $q = useQuasar()

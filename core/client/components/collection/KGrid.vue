@@ -1,55 +1,144 @@
 <template>
-  <div v-if="items.length > 0" class="q-pa-sm row">
-    <template v-for="item in items" :key="item._id">
-      <div :class="itemClass">
-        <component
-          :id="item._id"
-          :service="service"
-          :item="item"
-          :contextId="contextId"
-          :is="rendererComponent"
-          v-bind="renderer"
-          @item-selected="onItemSelected" />
-      </div>
-    </template>
-    <div v-if="nbPages > 1" class="col-12">
-      <q-pagination
-        class="justify-center q-ma-md"
-        v-model="currentPage"
-        :max="nbPages"
-        :input="true"
-        @update:model-value="refreshCollection"
-      />
+  <div
+    class="fit column no-wrap"
+    :class="dense ? 'q-gutter-y-xs' : 'q-gutter-y-sm'"
+  >
+    <!--
+      Header
+    -->
+    <div id="grid-header">
+      <slot name="header">
+        <KPanel :content="header" :class="headerClass" />
+      </slot>
     </div>
-  </div>
-  <div v-else>
-    <slot name="empty-section">
-      <div class="row justify-center">
-        <KStamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KGrid.EMPTY_GRID')" direction="horizontal" />
+    <!--
+      Content
+    -->
+    <div v-if="items.length > 0"
+      id="grid-content"
+      ref="contentRef"
+      class="col scroll"
+    >
+      <!-- Infinite mode -->
+      <div v-if="appendItems" class="column">
+        <q-infinite-scroll
+          @load="onLoad"
+          :initial-index="1"
+          :offset="200"
+          v-scroll="onScroll"
+          class="col"
+        >
+          <div class="row">
+            <template v-for="(item, index) in items" :key="item._id">
+              <div :class="rendererClass">
+                <component
+                  :id="item._id"
+                  :ref="onItemRendered"
+                  :service="service"
+                  :item="item"
+                  :contextId="contextId"
+                  :is="itemRenderer"
+                  v-bind="renderer"
+                  @item-selected="onItemSelected"
+                />
+              </div>
+            </template>
+          </div>
+        </q-infinite-scroll>
       </div>
-    </slot>
+      <!-- Paginated mode -->
+      <div v-else class="row">
+        <template v-for="item in items" :key="item._id">
+          <div :class="rendererClass">
+            <component
+              :id="item._id"
+              :ref="onItemRendered"
+              :service="service"
+              :item="item"
+              :contextId="contextId"
+              :is="itemRenderer"
+              v-bind="renderer"
+              @item-selected="onItemSelected"
+            />
+          </div>
+        </template>
+      </div>
+    </div>
+    <!-- Empty slot -->
+    <div v-else id="grid-content">
+      <slot name="empty">
+        <div class="row justify-center">
+          <KStamp
+            icon="las la-exclamation-circle"
+            icon-size="1.6rem"
+            :text="$t('KGrid.EMPTY_LABEL')"
+            direction="horizontal"
+            class="q-pa-md"
+          />
+        </div>
+      </slot>
+    </div>
+    <!--
+      Controls
+     -->
+    <div id="grid-controls">
+      <div v-if="appendItems">
+        <!-- scroll -->
+        <div v-if="contentRef" class="row items-center">
+          <div class="col-4"></div>
+          <div class="col-4 row justify-center">
+            <KScrollDown
+              v-if="scrollDown"
+              :ref="scrollDownRefCreated"
+              target="grid-content"
+              :loading="loadDoneFunction ? true : false"
+          />
+          </div>
+          <div class="col-4 row justify-end">
+            <KScrollToTop
+              v-if="scrollToTop"
+              :ref="scrollToTopRefCreated"
+              target="grid-content"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- pagination -->
+      <div v-else>
+        <div v-if="nbPages > 1" class="row justify-center">
+          <q-pagination
+            v-model="currentPage"
+            :max="nbPages"
+            :input="true"
+            @update:model-value="refreshCollection"
+          />
+        </div>
+      </div>
+
+    </div>
+    <!--
+      Footer
+    -->
+    <div id="grid-footer">
+      <slot name="footer">
+        <KPanel :content="footer" :class="footerClass" />
+      </slot>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
-import KStamp from '../KStamp.vue'
-import { Events } from '../../events.js'
+import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useCollection } from '../../composables'
+import { Events } from '../../events.js'
 import { loadComponent } from '../../utils'
-
-const emit = defineEmits(['selection-changed', 'collection-refreshed'])
+import KScrollToTop from './KScrollToTop.vue'
+import KScrollDown from './KScrollDown.vue'
+import KStamp from '../KStamp.vue'
+import KPanel from '../KPanel.vue'
 
 // Props
 const props = defineProps({
-  renderer: {
-    type: Object,
-    default: () => {
-      return {
-        component: 'collection/KCard'
-      }
-    }
-  },
   contextId: {
     type: String,
     default: undefined
@@ -66,45 +155,126 @@ const props = defineProps({
     type: Object,
     default: () => {}
   },
-  listStrategy: {
-    type: String,
-    default: 'smart'
+  renderer: {
+    type: Object,
+    default: () => {
+      return {
+        component: 'collection/KCard'
+      }
+    }
+  },
+  processor: {
+    type: Function,
+    default: undefined
+  },
+  appendItems: {
+    type: Boolean,
+    default: false
   },
   nbItemsPerPage: {
     type: Number,
     default: 12
   },
-  processor: {
-    type: Function,
+  listStrategy: {
+    type: String,
+    default: 'smart'
+  },
+  scrollDown: {
+    type: Boolean,
+    default: true
+  },
+  scrollToTop: {
+    type: Boolean,
+    default: true
+  },
+  header: {
+    type: [Array, Object],
+    default: () => null
+  },
+  headerClass: {
+    type: String,
     default: undefined
+  },
+  footer: {
+    type: [Array, Object],
+    default: () => null
+  },
+  footerClass: {
+    type: String,
+    default: undefined
+  },
+  dense: {
+    type: Boolean,
+    default: false
   }
 })
 
+// Emits
+const emit = defineEmits(['collection-refreshed', 'selection-changed'])
+
+// Data
+const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
+const contentRef = ref(null)
+const scrollDownRef = ref(null)
+const scrollToTopRef = ref(null)
+const loadDoneFunction = ref(null)
+
 // Computed
-const rendererComponent = computed(() => loadComponent(props.renderer.component))
-const itemClass = computed(() => props.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2')
+const itemRenderer = computed(() => {
+  return loadComponent(props.renderer.component)
+})
+const rendererClass = computed(() => {
+  return props.renderer.class || 'q-pa-sm col-12 col-sm-6 col-md-4 col-lg-3'
+})
+
+// Watch
+watch(items, onCollectionRefreshed)
 
 // Functions
+function onItemRendered (instance) {
+  if (instance) onScroll()
+}
+function scrollDownRefCreated (instance) {
+  scrollDownRef.value = instance
+  if (instance) instance.refresh()
+}
+function scrollToTopRefCreated (instance) {
+  scrollToTopRef.value = instance
+  if (instance) instance.refresh()
+}
+function onScroll () {
+  if (scrollDownRef.value) scrollDownRef.value.refresh()
+  if (scrollToTopRef.value) scrollToTopRef.value.refresh()
+}
+function onLoad (index, done) {
+  // check whether the items are all loaded yet
+  if (items.value.length === nbTotalItems.value) {
+    done(true)
+    return
+  }
+  // set the current page and tell the collection to be refreshed
+  currentPage.value = index
+  refreshCollection()
+  loadDoneFunction.value = done
+}
 function onItemSelected (item, section) {
   emit('selection-changed', item, section)
 }
 function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
+  // call done callback if needed
+  if (loadDoneFunction.value) {
+    loadDoneFunction.value(items.value.length === nbTotalItems.value)
+    loadDoneFunction.value = null
+  }
 }
 
-const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
-
-// Lifecycle hooks
-
-// Emit events so that embbeding components can be aware of it
-watch(items, onCollectionRefreshed)
-
+// Hooks
 onBeforeMount(() => {
   refreshCollection()
   // Whenever the user abilities are updated, update collection as well
   Events.on('user-abilities-changed', refreshCollection)
 })
-
 onBeforeUnmount(() => {
   Events.off('user-abilities-changed', refreshCollection)
 })

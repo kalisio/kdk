@@ -87,7 +87,7 @@ export const Storage = {
     // Ensure service is created
     const service = this.getService(context)
     // Get proxy route to object storage
-    let url = api.getBaseUrl() + config.apiPath
+    let url = api.getConfig('domain') + config.apiPath
     if (service.context) url += `/${context}`
     url += `/storage-objects/${key}`
     // Handle extra query params

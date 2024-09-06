@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import { getForecastForLocation, getForecastProbe, getForecastForFeature } from '../utils/utils.weacast.js'
 
 export const weacast = {
   emits: [
@@ -46,6 +47,7 @@ export const weacast = {
       this.setForecastModel(forecastModel)
     },
     setForecastModel (model) {
+      if (this.forecastModel === model) return
       this.forecastModel = model
       this.onForecastModelChanged(model)
     },
@@ -54,6 +56,7 @@ export const weacast = {
       this.$engineEvents.emit('forecast-model-changed', model)
     },
     setForecastLevel (level) {
+      if (this.forecastLevel === level) return
       this.forecastLevel = level
       this.onForecastLevelChanged(level)
     },
@@ -64,45 +67,11 @@ export const weacast = {
     async getForecastForLocation (long, lat, startTime, endTime) {
       // Not yet ready
       if (!this.forecastModel) return
-      // From now to last available time
-      const geometry = {
-        type: 'Point',
-        coordinates: [long, lat]
-      }
-      const query = {
-        forecastTime: {
-          $gte: startTime.format(),
-          $lte: endTime.format()
-        },
-        geometry: {
-          $geoIntersects: {
-            $geometry: geometry
-          }
-        }
-      }
-      let probedLocation
       this.setCursor('processing-cursor')
-      try {
-        let elements = this.forecastModel.elements.map(element => element.name)
-        // Filter available elements according to current level if any
-        if (this.forecastLevel) elements = elements.filter(element => element.endsWith(this.forecastLevel.toString()))
-        else {
-          elements = elements.filter(element => {
-            const tokens = element.split('-')
-            return (tokens.length === 0) || !_.isFinite(_.toNumber(tokens[tokens.length - 1]))
-          })
-        }
-        const response = await this.getWeacastApi().getService('probes')
-          .create({
-            forecast: this.forecastModel.name,
-            elements
-          }, { query })
-        if (response.features.length > 0) {
-          probedLocation = response.features[0]
-        } else throw new Error('Cannot find valid forecast at location')
-      } catch (error) {
-        logger.error(error)
-      }
+      const probedLocation = await getForecastForLocation({
+        long, lat, startTime, endTime, forecastModel: this.forecastModel,
+        forecastLevel: this.forecastLevel, weacastApi: this.getWeacastApi()
+      })
       this.unsetCursor('processing-cursor')
       return probedLocation
     },
@@ -113,20 +82,8 @@ export const weacast = {
       if (this.probe && (this.probe.name === name) && (this.probe.forecast === this.forecastModel.name)) {
         return this.probe
       }
-      const results = await this.getWeacastApi().getService('probes').find({
-        query: {
-          name,
-          forecast: this.forecastModel.name,
-          $paginate: false,
-          $select: ['elements', 'forecast', 'featureId']
-        }
-      })
-      if (results.length > 0) {
-        this.probe = results[0]
-        return this.probe
-      } else {
-        return null
-      }
+      this.probe = await getForecastProbe({ name, forecastModel: this.forecastModel, weacastApi: this.getWeacastApi() })
+      return this.probe
     },
     async getForecastForFeature (featureId, startTime, endTime) {
       // Not yet ready
@@ -134,42 +91,8 @@ export const weacast = {
       // Check if probe is available
       if (!this.probe) return
 
-      let probedLocation
       this.setCursor('processing-cursor')
-      try {
-        let elements = this.forecastModel.elements.map(element => element.name)
-        // Filter available elements according to current level if any
-        if (this.forecastLevel) {
-          elements = elements.filter(element => element.endsWith(this.forecastLevel.toString()))
-        } else {
-          elements = elements.filter(element => {
-            const tokens = element.split('-')
-            return (tokens.length === 0) || !_.isFinite(_.toNumber(tokens[tokens.length - 1]))
-          })
-        }
-        // Need to add derived values for static probes as they are not computed on the fly
-        const windDirection = (this.forecastLevel ? `windDirection-${this.forecastLevel}` : 'windDirection')
-        const windSpeed = (this.forecastLevel ? `windSpeed-${this.forecastLevel}` : 'windSpeed')
-        elements = elements.concat([windDirection, windSpeed])
-
-        const results = await this.getWeacastApi().getService('probe-results').find({
-          query: {
-            probeId: this.probe._id,
-            forecastTime: {
-              $gte: startTime.format(),
-              $lte: endTime.format()
-            },
-            [this.probe.featureId]: featureId,
-            $groupBy: this.probe.featureId,
-            $aggregate: elements
-          }
-        })
-        if (results.length > 0) {
-          probedLocation = results[0]
-        } else throw new Error('Cannot find valid forecast for feature')
-      } catch (error) {
-        logger.error(error)
-      }
+      const probedLocation = await getForecastForFeature({ probe: this.probe, featureId, startTime, endTime, forecastModel: this.forecastModel, forecastLevel: this.forecastLevel, weacastApi: this.getWeacastApi() })
       this.unsetCursor('processing-cursor')
       return probedLocation
     },

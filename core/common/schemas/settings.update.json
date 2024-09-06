@@ -130,6 +130,18 @@
         ]
       }
     },
+    "timeseriesGroupBy": {
+      "type": "string",
+      "group": "group-timeseries",
+      "field": {
+        "component": "form/KSelectField",
+        "label": "schemas.TIMESERIES_GROUP_BY",
+        "options": [
+          { "label": "schemas.TIMESERIES_GROUP_BY_VARIABLE", "value": "variable" },
+          { "label": "schemas.TIMESERIES_GROUP_BY_FEATURE", "value": "feature", "selected": true }
+        ]
+      }
+    },
     "restoreView": {
       "type": "boolean",
       "group": "group-map",

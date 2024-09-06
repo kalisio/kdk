@@ -85,7 +85,8 @@ export default async function init () {
   }))
   // Default timeseries parameters
   Store.set('timeseries', reactive({
-    span: 1440 // 24H
+    span: 1440, // 24H
+    groupBy: 'feature'
   }))
 
   // Register the readers

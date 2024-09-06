@@ -18,7 +18,7 @@ import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import { Dialog } from 'quasar'
 import { Store, i18n, api } from '../..'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 // Data
 const router = useRouter()

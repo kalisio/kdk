@@ -48,7 +48,7 @@ export class MeteoModelGridSource extends DynamicGridSource {
 
       const [key, conf] = extractGridSourceConfig(item)
       const candidate = {
-        key: key,
+        key,
         staticProps: conf,
         dynamicProps: {},
         from: item.from ? readAsTimeOrDuration(item.from) : null,

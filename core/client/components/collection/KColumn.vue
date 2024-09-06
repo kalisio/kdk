@@ -78,7 +78,7 @@
 import _ from 'lodash'
 import { ref, computed, watch, toRefs, onBeforeMount, onBeforeUnmount } from 'vue'
 import { Events } from '../../events.js'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 import KScrollArea from '../KScrollArea.vue'
 import KStamp from '../KStamp.vue'
 import { useCollection } from '../../composables'

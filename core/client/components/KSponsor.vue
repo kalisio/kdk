@@ -15,7 +15,7 @@
     </div>
     <!-- Kalisio logo -->
     <a href="https://kalisio.com" target="_blank">
-      <q-img src="kalisio.png" :width="computedLogoWidth">
+      <q-img src="kalisio.png" width="64px">
         <q-tooltip>
           {{ $t('KSponsor.MORE_ABOUT_KALISIO') }}
         </q-tooltip>
@@ -25,16 +25,5 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useQuasar } from 'quasar'
-import KAction from './KAction.vue'
-
-// Data
-const $q = useQuasar()
-
-// Computed
-const computedLogoWidth = computed(() => {
-  if ($q.screen.lt.sm) return '64px'
-  return '72px'
-})
+import KAction from './action/KAction.vue'
 </script>

@@ -1,4 +1,5 @@
 import * as GeoTIFF from 'geotiff'
+import _ from 'lodash'
 import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
 // pack r,g,b in an uint32
@@ -56,7 +57,8 @@ export class GeoTiffGridSource extends GridSource {
     this.rgb = config.rgb
 
     try {
-      this.geotiff = await GeoTIFF.fromUrl(config.url)
+      // forceXHR is useful for tests because nock doesn't know how to intercept fetch
+      this.geotiff = await GeoTIFF.fromUrl(config.url, { forceXHR: _.get(config, 'forceXHR', false) })
     } catch (error) {
       // fetching may fail, in this case the source
       // will remain in unusable state
@@ -127,8 +129,8 @@ export class GeoTiffGridSource extends GridSource {
     // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
     const window = [left, bottom, right + 1, top + 1]
     const bands = this.rgb
-      ? await usedImage.readRGB({ window: window })
-      : await usedImage.readRasters({ window: window, fillValue: this.nodata })
+      ? await usedImage.readRGB({ window })
+      : await usedImage.readRasters({ window, fillValue: this.nodata })
     const data = this.rgb ? mergeRgb(bands) : bands[0]
 
     if (rx < 0) [left, right] = [right, left]

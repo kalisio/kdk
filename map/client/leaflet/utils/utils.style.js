@@ -3,7 +3,8 @@ import logger from 'loglevel'
 import chroma from 'chroma-js'
 import moment from 'moment'
 import L from 'leaflet'
-import { Time, Units, utils as kdkCoreUtils } from '../../../../core/client/index.js'
+import { Time, Units, TemplateContext, utils as kdkCoreUtils } from '../../../../core/client/index.js'
+import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertStyle, convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
 import { ShapeMarker } from '../ShapeMarker.js'
@@ -68,13 +69,15 @@ const LineStyleToLeafletPath = {
   cap: 'lineCap',
   join: 'lineJoin',
   dashArray: 'dashArray',
-  dashOffset: 'dashOffset'
+  dashOffset: 'dashOffset',
+  pane: 'pane'
 }
 
 const PolygonStyleToLeafletPath = {
   color: 'fillColor',
   opacity: 'fillOpacity',
   rule: 'fillRule',
+  pane: 'pane'
 }
 
 // TODO: to be removed when updating 3D style
@@ -148,7 +151,7 @@ function processStyle (style, feature, options, mappings) {
   const leafletOptions = options.leaflet || options
   // We allow to template style properties according to feature,
   // because it can be slow you have to specify a subset of properties
-  const context = { properties: feature.properties, feature, chroma, moment, Units, Time }
+  const context = Object.assign({ properties: feature.properties, feature, chroma, moment, Units, Time }, TemplateContext.get())
   if (leafletOptions.template) {
     // Create the map of variables
     if (options.variables) context.variables = _.reduce(options.variables,
@@ -157,9 +160,22 @@ function processStyle (style, feature, options, mappings) {
       _.set(style, _.get(mappings, _.kebabCase(entry.property), entry.property), entry.compiler(context))
     })
   }
+
+  const type = getFeatureStyleType(feature)
+
+  // visibility attribute can be used to hide individual features
+  // visibility is true by default but can also be a string when it's
+  // a result of a lodash steing template evaluation
+  let visibility = _.get(style, 'style.visibility', true)
+  if (typeof visibility === 'string') visibility = visibility === 'true'
+  // The 'kdk-hidden-features' pane is created when the leaflet map is initialized
+  if (!visibility) _.set(style, `style.${type}.pane`, 'kdk-hidden-features')
+
   // We manage panes for z-index, so we need to forward it to marker options (only if not already defined)
-  if (leafletOptions.pane && !style.pane) style.pane = leafletOptions.pane
-  if (leafletOptions.shadowPane && !style.shadowPane) style.shadowPane = leafletOptions.shadowPane
+  if (leafletOptions.pane && !_.has(style, `style.${type}.pane`)) _.set(style, `style.${type}.pane`, leafletOptions.pane)
+  if (leafletOptions.shadowPane && !_.has(style, `style.${type}.shadowPane`)) _.set(style, `style.${type}.shadowPane`, leafletOptions.shadowPane)
+  // Similarly forward interactive option from layer if any
+  if (_.has(leafletOptions, 'interactive') && !_.has(style, `style.${type}.interactive`)) _.set(style, `style.${type}.interactive`, leafletOptions.interactive)
   return style
 }
 
@@ -167,7 +183,7 @@ export function getDefaultPointStyle (feature, options, engine, engineStylePath 
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPointStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
-  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
   return style
 }
@@ -176,7 +192,7 @@ export function getDefaultLineStyle (feature, options, engine, engineStylePath =
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerLineStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
-  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
   return convertLineStyleToLeafletPath(style)
 }
@@ -185,7 +201,7 @@ export function getDefaultPolygonStyle (feature, options, engine, engineStylePat
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPolygonStyle') : {}
   const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
-  const style = Object.assign({}, engineStyle, layerStyle, featureStyle)
+  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
   processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
   return convertPolygonStyleToLeafletPath(style)
 }

@@ -73,6 +73,7 @@
         <KCompass
           v-model="model"
           @update:model-value="onChanged"
+          :labelMode="labelMode"
           class="k-compass"
         />
       </template>
@@ -107,6 +108,9 @@ export default {
   computed: {
     mode () {
       return _.get(this.properties.field, 'mode', 'input')
+    },
+    labelMode () {
+      return _.get(this.properties.field, 'labelMode', 'from')
     },
     clearable () {
       return _.get(this.properties.field, 'clearable', false)

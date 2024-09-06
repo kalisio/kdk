@@ -113,7 +113,7 @@ export const SimpleStyleToPolygonStyle = {
   stroke: 'stroke.color',
   'stroke-color': 'stroke.color',
   'stroke-opacity': 'stroke.opacity',
-  'stroke-width': 'sroke.width',
+  'stroke-width': 'stroke.width',
   fill: 'color',
   'fill-color': 'color',  
   'fill-opacity': 'opacity',

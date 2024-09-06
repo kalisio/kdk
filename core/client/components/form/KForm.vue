@@ -23,7 +23,7 @@
       Grouped fields
     -->
     <template v-for="(group, id) in groups" :key="id">
-      <q-expansion-item v-show="group.hasFields" icon="las la-file-alt" :group="id">
+      <q-expansion-item v-show="group.hasFields" icon="las la-file-alt" :group="id" :id="id">
         <template v-slot:header>
           <!-- Label -->
           <q-item-section>
@@ -115,7 +115,11 @@ const groups = computed(() => {
 
 // Watch
 watch(() => props.schema, async (value) => {
-  logger.debug('[KDK] Schema changed', value)
+  logger.debug('[KDK] Schema content changed', value)
+  if (value) await build()
+})
+watch(() => props.filter, async (value) => {
+  logger.debug('[KDK] Schema filter changed', value)
   if (value) await build()
 })
 
@@ -187,7 +191,12 @@ async function build () {
     // clone and configure the field
     const cloneField = _.clone(field)
     cloneField.name = property // assign a name to allow binding between properties and fields
-    cloneField.component = loadComponent(field.field.component)
+    let component = _.get(field.field, 'component', '')
+    if (!component) {
+      // Provide a default component based on schema value type when none is specified
+      if (field.type === 'number' || field.type === 'integer') { component = 'form/KNumberField' } else if (field.type === 'boolean') { component = 'form/KToggleField' } else if (field.type === 'string') { component = 'form/KTextField' }
+    }
+    cloneField.component = loadComponent(component)
     cloneField.reference = null // will be set once te field is rendered
     cloneField.required = _.includes(schema.value.required, property) // add extra required info
     // add the field to the list of fields to be rendered

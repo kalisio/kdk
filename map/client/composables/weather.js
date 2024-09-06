@@ -3,6 +3,7 @@ import L from 'leaflet'
 import moment from 'moment'
 import { unref, watch } from 'vue'
 import { Time } from '../../../core/client/time.js'
+import { i18n } from '../../../core/client/i18n.js'
 import { Units } from '../../../core/client/units.js'
 import * as composables from '../../../core/client/composables/index.js'
 import { getNearestTime } from '../utils.js'
@@ -24,35 +25,68 @@ export function useWeather (options = {}) {
   // data
 
   // functions
-  function getProbedLocationForecastFields () {
-    return {
+  function getProbedLocationForecastFields (variables) {
+    const fields = {
       // Only wind/temperature can be available at different levels now
-      windDirection: (activity.forecastLevel ? `properties.windDirection-${activity.forecastLevel}` : 'properties.windDirection'),
-      windSpeed: (activity.forecastLevel ? `properties.windSpeed-${activity.forecastLevel}` : 'properties.windSpeed'),
-      temperature: (activity.forecastLevel ? `properties.temperature-${activity.forecastLevel}` : 'properties.temperature'),
-      gust: 'properties.gust',
-      precipitations: 'properties.precipitations',
-      humidity: 'properties.humidity',
-      time: 'forecastTime',
-      name: 'properties.name'
+      windDirection: {
+        property: (activity.forecastLevel ? `properties.windDirection-${activity.forecastLevel}` : 'properties.windDirection')
+      },
+      windSpeed: {
+        property: (activity.forecastLevel ? `properties.windSpeed-${activity.forecastLevel}` : 'properties.windSpeed')
+      },
+      temperature: {
+        property: (activity.forecastLevel ? `properties.temperature-${activity.forecastLevel}` : 'properties.temperature')
+      },
+      gust: {
+        property: 'properties.gust',
+        label: 'max'
+      },
+      precipitations: {
+        property: 'properties.precipitations'
+      },
+      humidity: {
+        property: 'properties.humidity'
+      },
+      time: {
+        property: 'forecastTime'
+      },
+      name: {
+        property: 'properties.name'
+      }
     }
+    // Any given variables to extract labels from ?
+    if (variables && variables.length > 0) {
+      _.forOwn(fields, (value, key) => {
+        // Take care that weather fields are prefixed by 'properties.' because they target feature
+        const variable = _.find(variables, { name: `${value.property.replace('properties.', '')}` })
+        if (variable) value.label = variable.label
+      })
+    }
+    return fields
   }
   function isWeatherProbe (feature) {
     const { windDirection, windSpeed } = getProbedLocationForecastFields()
-    return (_.has(feature, windDirection) &&
-            _.has(feature, windSpeed))
+    return (_.has(feature, windDirection.property) &&
+            _.has(feature, windSpeed.property))
   }
   function getForecastAsHtml (feature, fields = {}) {
     const defaults = getProbedLocationForecastFields()
+    // Retrieve target labels
+    const windDirectionLabel = _.get(fields, 'windDirection.label', defaults.windDirection.label)
+    const windSpeedLabel = _.get(fields, 'windSpeed.label', defaults.windSpeed.label)
+    const gustLabel = _.get(fields, 'gust.label', defaults.gust.label)
+    const temperatureLabel = _.get(fields, 'temperature.label', defaults.temperature.label)
+    const precipitationsLabel = _.get(fields, 'precipitations.label', defaults.precipitations.label)
+    const humidityLabel = _.get(fields, 'humidity.label', defaults.humidity.label)
     // Retrieve target fields on feature
-    const windDirectionField = _.get(fields, 'windDirection', defaults.windDirection)
-    const windSpeedField = _.get(fields, 'windSpeed', defaults.windSpeed)
-    const gustField = _.get(fields, 'gust', defaults.gust)
-    const temperatureField = _.get(fields, 'temperature', defaults.temperature)
-    const precipitationsField = _.get(fields, 'precipitations', defaults.precipitations)
-    const humidityField = _.get(fields, 'humidity', defaults.humidity)
-    const timeField = _.get(fields, 'time', defaults.time)
-    const nameField = _.get(fields, 'name', defaults.name)
+    const windDirectionField = _.get(fields, 'windDirection.property', defaults.windDirection.property)
+    const windSpeedField = _.get(fields, 'windSpeed.property', defaults.windSpeed.property)
+    const gustField = _.get(fields, 'gust.property', defaults.gust.property)
+    const temperatureField = _.get(fields, 'temperature.property', defaults.temperature.property)
+    const precipitationsField = _.get(fields, 'precipitations.property', defaults.precipitations.property)
+    const humidityField = _.get(fields, 'humidity.property', defaults.humidity.property)
+    const timeField = _.get(fields, 'time.property', defaults.time.property)
+    const nameField = _.get(fields, 'name.property', defaults.name.property)
     // Then get values for fields
     const windDirection = _.get(feature, `${windDirectionField}`)
     const windSpeed = _.get(feature, `${windSpeedField}`)
@@ -83,36 +117,42 @@ export function useWeather (options = {}) {
     }
     let html = ''
     if (!_.isNil(windSpeed) && _.isFinite(windSpeed)) {
+      if (windSpeedLabel) html += `${i18n.tie(windSpeedLabel)}: `
       html += Units.format(windSpeed, 'm/s')
       // Add related time if any
       if (!uniqTime) html += getTimeAsHtml(_.get(time, windSpeedField.replace('properties.', '')))
       html += '</br>'
     }
     if (!_.isNil(gust) && _.isFinite(gust)) {
-      html += `max ${Units.format(gust, 'm/s')}`
+      if (gustLabel) html += `${i18n.tie(gustLabel)}: `
+      html += Units.format(gust, 'm/s')
       // Add related time if any
       if (!uniqTime) html += getTimeAsHtml(_.get(time, gustField.replace('properties.', '')))
       html += '</br>'
     }
     if (!_.isNil(windDirection) && _.isFinite(windDirection)) {
+      if (windDirectionLabel) html += `${i18n.tie(windDirectionLabel)}: `
       html += Units.format(windDirection, 'deg')
       // Add related time if any
       if (!uniqTime) html += getTimeAsHtml(_.get(time, windDirectionField.replace('properties.', '')))
       html += '</br>'
     }
     if (!_.isNil(precipitations) && _.isFinite(precipitations)) {
+      if (precipitationsLabel) html += `${i18n.tie(precipitationsLabel)}: `
       html += Units.format(precipitations, 'mm/h')
       // Add related time if any
       if (!uniqTime) html += getTimeAsHtml(_.get(time, precipitationsField.replace('properties.', '')))
       html += '</br>'
     }
     if (!_.isNil(humidity) && _.isFinite(humidity)) {
+      if (humidityLabel) html += `${i18n.tie(humidityLabel)}: `
       html += `${humidity.toFixed(0)} %`
       // Add related time if any
       if (!uniqTime) html += getTimeAsHtml(_.get(time, humidityField.replace('properties.', '')))
       html += '</br>'
     }
     if (!_.isNil(temperature) && _.isFinite(temperature)) {
+      if (temperatureLabel) html += `${i18n.tie(temperatureLabel)}: `
       html += Units.format(temperature, 'degC')
       // Add related time if any
       if (!uniqTime) html += getTimeAsHtml(_.get(time, temperatureField.replace('properties.', '')))
@@ -124,7 +164,7 @@ export function useWeather (options = {}) {
       if (!_.isNil(name)) html = `<b><u>${name}</u></b></br>` + html
       // If we get a signle time for all field add it at the end
       if (uniqTime) {
-        html += getTimeAsHtml(time)
+        html += getTimeAsHtml(time).trim().replace('(', '').replace(')', '')
       }
     }
     return html
@@ -160,8 +200,8 @@ export function useWeather (options = {}) {
   function getWindBarbOptions (feature, fields = {}) {
     const defaults = getProbedLocationForecastFields()
     // Retrieve target fields on feature
-    let windDirection = _.get(fields, 'windDirection', defaults.windDirection)
-    let windSpeed = _.get(fields, 'windSpeed', defaults.windSpeed)
+    let windDirection = _.get(fields, 'windDirection.property', defaults.windDirection.property)
+    let windSpeed = _.get(fields, 'windSpeed.property', defaults.windSpeed.property)
     // TODO: colorize according to temperature scale if ?
     // let temperature = _.get(fields, 'temperature', 'properties.temperature')
     // Then get values for fields
@@ -185,17 +225,17 @@ export function useWeather (options = {}) {
       forceDir: true
     }
   }
-  function createWindBarbIcon (feature) {
-    const options = getWindBarbOptions(feature)
-    return (options ? new L.WindBarb.Icon(getWindBarbOptions(feature)) : null)
+  function createWindBarbIcon (feature, fields = {}) {
+    const options = getWindBarbOptions(feature, fields)
+    return (options ? new L.WindBarb.Icon(options) : null)
   }
-  function getProbedLocationForecastTooltip (feature, layer, options) {
-    const html = getForecastAsHtml(feature)
+  function getProbedLocationForecastTooltip (feature, layer, options, fields = {}) {
+    const html = getForecastAsHtml(feature, fields)
     return (html ? L.tooltip({ permanent: false }, layer).setContent(`<b>${html}</b>`) : null)
   }
-  function getProbedLocationForecastMarker (feature, latlng, options) {
+  function getProbedLocationForecastMarker (feature, latlng, options, fields = {}) {
     // Use wind barbs on probed features
-    const icon = createWindBarbIcon(feature)
+    const icon = createWindBarbIcon(feature, fields)
     return (icon ? L.marker(latlng, { icon }) : null)
   }
 

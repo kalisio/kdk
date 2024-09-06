@@ -1,134 +1,157 @@
 <template>
-  <KScrollArea :maxHeight="scrollAreaMaxHeight" :style="panelStyle">
-    <q-list dense bordered>
-      <slot name="header" />
-      <!-- Orphan layers -->
-      <k-layers-selector
-        :layers="orphanLayers"
-        :options="{ hideIfEmpty: true }"
-      />
-      <!-- Categorized layers -->
-      <template v-for="category in filteredCategories">
-        <q-expansion-item
-          v-if="isVisible(category)"
-          :key="getId(category)"
-          :id="getId(category)"
-          :header-class="getHeaderClass(category)"
-          :icon="getIcon(category)"
-          :label="$t(category.name)"
-          :default-opened="getDefaultOpened(category)"
-          expand-separator>
-          <component
-            :is="category.componentInstance"
+  <div class="fit column">
+    <!--
+      Header
+    -->
+    <div>
+      <slot name="header">
+        <KPanel
+          :content="header"
+          :class="headerClass"
+        />
+        <q-separator inset v-if="header"/>
+      </slot>
+    </div>
+    <!--
+      Content
+    -->
+    <q-scroll-area class="col">
+      <!--q-list dense-->
+        <!-- Orphan layers -->
+        <KLayersSelector
+          :layers="orphanLayers"
+          :options="orphanLayersOptions"
+        />
+        <!-- Categorized layers -->
+        <template v-for="category in filteredCategories">
+          <KCategoryItem
+            v-if="isCategoryVisible(category)"
+            :key="getCategoryId(category)"
+            :id="getCategoryId(category)"
+            :category="category"
             :layers="layersByCategory[category.name]"
             :forecastModels="forecastModels"
-            :options="category.options || category">
-          </component>
-        </q-expansion-item>
-      </template>
-      <slot name="footer" />
-    </q-list>
-  </KScrollArea>
+          />
+        </template>
+      <!--/q-list-->
+    </q-scroll-area>
+    <!--
+      Footer
+    -->
+    <div>
+      <slot name="footer">
+        <q-separator inset v-if="footer"/>
+        <KPanel
+          :content="footer"
+          :class="footerClass"
+        />
+      </slot>
+    </div>
+  </div>
 </template>
 
 <script>
-import sift from 'sift'
+// WARNING for now we must declare the inheritAttrs this way. Lint will try to move it. Don't do it.
+// TODO: need to updated when switch to vue > 3.3 to be able to declare options
+export default {
+  inheritAttrs: false
+}
+</script>
+
+<script setup>
 import _ from 'lodash'
-import { loadComponent } from '../../../../core/client/utils'
+import sift from 'sift'
+import { ref, watchEffect, onMounted } from 'vue'
+import { utils as coreUtils } from '../../../../core/client'
 import { getLayersByCategory, getOrphanLayers } from '../../utils'
-import { KScrollArea } from '../../../../core/client/components'
-import { catalogPanel } from '../../mixins'
 import { useProject } from '../../composables'
 import KLayersSelector from './KLayersSelector.vue'
+import KCategoryItem from './KCategoryItem.vue'
 
-export default {
-  name: 'k-layers-panel',
-  components: {
-    KScrollArea,
-    KLayersSelector
+// Props
+const props = defineProps({
+  layers: {
+    type: [Object, Array],
+    default: () => []
   },
-  mixins: [catalogPanel],
-  props: {
-    layers: {
-      type: [Object, Array],
-      default: () => []
-    },
-    layersFilter: {
-      type: [Object, Function],
-      default: () => {}
-    },
-    layerCategories: {
-      type: Array,
-      default: () => []
-    },
-    layerCategoriesFilter: {
-      type: [Object, Function],
-      default: () => {}
-    },
-    forecastModels: {
-      type: Array,
-      default: () => []
-    }
+  layersFilter: {
+    type: [Object, Function],
+    default: () => {}
   },
-  inheritAttrs: false,
-  computed: {
-    filteredLayers () {
-      const filter = (typeof this.layersFilter === 'object' ? sift(this.layersFilter) : this.layersFilter)
-      return _.filter(this.layers, filter)
-    },
-    filteredCategories () {
-      const filter = (typeof this.layerCategoriesFilter === 'object' ? sift(this.layerCategoriesFilter) : this.layerCategoriesFilter)
-      const filteredCategories = _.filter(this.layerCategories, filter)
-      _.forEach(filteredCategories, category => {
-        const component = _.get(category, 'component', 'catalog/KLayersSelector')
-        if (!category.componentInstance) category.componentInstance = loadComponent(component)
-      })
-      return filteredCategories
-    },
-    layersByCategory () {
-      return getLayersByCategory(this.filteredLayers, this.filteredCategories)
-    },
-    orphanLayers () {
-      return getOrphanLayers(this.filteredLayers, this.layersByCategory)
-    }
+  layerCategories: {
+    type: Array,
+    default: () => []
   },
-  methods: {
-    getId (category) {
-      return _.kebabCase(category.name)
-    },
-    isVisible (category) {
-      // Show a built-in category only if it has some layers.
-      // Indeed, depending on the app configuration, none might be available for this category.
-      // User-defined categories are visible by default, even if empty,
-      // except if used inside a project as in this case having no layers means we don't want to use this category
-      const isEmpty = (this.layersByCategory[category.name].length === 0)
-      if (isEmpty) {
-        if (this.hasProject()) return false
-        else return !_.get(category, 'hideIfEmpty', !category._id)
-      }
-      return true
-    },
-    getHeaderClass (category) {
-      if (category.headerClass) return category.headerClass
-      return 'text-' + _.get(category, 'icon.color', 'primary')
-    },
-    getIcon (category) {
-      return _.get(category, 'icon.name', _.get(category, 'icon'))
-    },
-    getDefaultOpened (category) {
-      // if category explicitely specify default opened state, use that
-      if (_.has(category, 'options.open')) return category.options.open
-      // otherwise, defaut open when there's only one category
-      // return this.filteredCategories.length === 1
-      // robin: to not break existing apps, just return false when options.open is not defined
-      return false
-    }
+  layerCategoriesFilter: {
+    type: [Object, Function],
+    default: () => {}
   },
-  setup () {
-    // Expose
-    return {
-      ...useProject()
-    }
+  forecastModels: {
+    type: Array,
+    default: () => []
+  },
+  header: {
+    type: [Array, Object],
+    default: () => null
+  },
+  headerClass: {
+    type: String,
+    default: undefined
+  },
+  footer: {
+    type: [Array, Object],
+    default: () => null
+  },
+  footerClass: {
+    type: String,
+    default: undefined
   }
+})
+
+// Data
+const { hasProject } = useProject()
+const orphanLayersOptions = { hideIfEmpty: true }
+const filteredCategories = ref([])
+const layersByCategory = ref({})
+const orphanLayers = ref([])
+
+// Watch
+watchEffect(() => { refresh() })
+
+// Functions
+function getCategoryId (category) {
+  return _.kebabCase(category.name)
 }
+function isCategoryVisible (category) {
+// Show a built-in category only if it has some layers.
+// Indeed, depending on the app configuration, none might be available for this category.
+// User-defined categories are visible by default, even if empty,
+// except if used inside a project as in this case having no layers means we don't want to use this category
+  const isEmpty = (layersByCategory.value[category.name].length === 0)
+  if (isEmpty) {
+    if (hasProject()) return false
+    else return !_.get(category, 'hideIfEmpty', !category._id)
+  }
+  return true
+}
+function refresh () {
+  // filter layers
+  const layersFilter = (typeof props.layersFilter === 'object' ? sift(props.layersFilter) : props.layersFilter)
+  const filteredLayers = _.filter(props.layers, layersFilter)
+  // filter categories
+  const categoriesFilter = (typeof props.layerCategoriesFilter === 'object' ? sift(props.layerCategoriesFilter) : props.layerCategoriesFilter)
+  filteredCategories.value = _.filter(props.layerCategories, categoriesFilter)
+  _.forEach(filteredCategories.value, category => {
+    const component = _.get(category, 'component', 'catalog/KLayersSelector')
+    if (!category.componentInstance) category.componentInstance = coreUtils.loadComponent(component)
+  })
+  // compute layers by categories and orphans layers
+  layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
+  orphanLayers.value = getOrphanLayers(filteredLayers, layersByCategory.value)
+}//, 100)
+
+// Hooks
+onMounted(() => {
+  refresh()
+})
 </script>

@@ -11,9 +11,11 @@ export const tooltip = {
         if (tooltip) {
           // Default tooltip position (can change in sticky mode)
           const position = this.getPositionForEntity(entity)
-          const tooltipEntity = this.viewer.entities.add({ parent: entity, position, label: tooltip })
-          // This option is not cesium specific so we have to manage it manually
-          if (tooltip.sticky) tooltipEntity.sticky = true
+          if (position) {
+            const tooltipEntity = this.viewer.entities.add({ parent: entity, position, label: tooltip })
+            // This option is not cesium specific so we have to manage it manually
+            if (tooltip.sticky) tooltipEntity.sticky = true
+          }
         }
       }
     },

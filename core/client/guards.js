@@ -14,22 +14,31 @@ let guards = []
 export function authenticationGuard (user, to, from) {
   // Specific case of OAuth provider routes
   if (to.path.startsWith('/oauth/')) return true
+
   // Routes accessible whatever the authentication state, eg public
-  if (_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated')) {
+  if ((_.get(to, 'meta.authenticated') && _.get(to, 'meta.unauthenticated')) || _.get(to, 'meta.public')) {
+    // First, check the root route, since all routes are children of the root route
+    if (to.path === '/') return 'home'
+    // Allow the navigation
     return true
   }
+
   // Only when authenticated, eg private
   if (_.get(to, 'meta.authenticated')) {
     // If the user is here then he is authenticated so let it go
     if (user) return true
     // Otherwise redirect to login
     else return 'login'
-  } else if (_.get(to, 'meta.unauthenticated')) {
-    // Only when not authenticated, eg reset password
+  }
+
+  // Only when not authenticated, eg reset password
+  if (_.get(to, 'meta.unauthenticated')) {
     // If the user is here then he is authenticated so redirect to home
     if (user) return 'home'
-    // Otherwise let it go handling the specific case of domain root
-    else return (to.path === '/' ? 'login' : true)
+    // If the user is not authenticated, handle the specific case of the root domain
+    if (to.path === '/') return 'login'
+    // Allow the navigation
+    return true
   }
 }
 
@@ -53,6 +62,20 @@ export function permissionsGuard (user, to, from) {
   } else return true
 }
 
+// Guard based on route definition
+export function routeGuard (user, to, from) {
+  // Retrieves routes corresponding to the destination
+  const matchedRoute = _.get(to, 'matched', [])
+  // Retrieves the last corresponding route
+  const lastMatchedRoute = matchedRoute[matchedRoute.length - 1]
+  // If the last matching route has the name 'not-found', this is a route capturing all unknown routes ('/:catchAll(.*)*')
+  if (lastMatchedRoute.name === 'not-found') return false
+  // If the only corresponding route is the index, it is managed by authenticationGuard
+  if (lastMatchedRoute.name === 'index') return false
+  // Allow the navigation
+  return true
+}
+
 // Guard routes for a given user, can be used as router navigation guard
 // or as standard function. In this case next will not be used and you get the
 // final result after running all registered guards: true, false or redirect route name
@@ -68,7 +91,7 @@ export function beforeGuard (to, from, next) {
         // but redirection should be handled at the app level to avoid concurrence
         // between both mechanisms. For this you can call the function without passing from/next arguments.
         // next({ name: result })
-        return next(false)
+        return next({ name: result })
       } else {
         return result
       }

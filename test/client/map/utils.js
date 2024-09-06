@@ -18,8 +18,10 @@ export async function moveMap (page, direction, times, wait = 500) {
 
 /* Zooms the map to a specific level
  */
-export async function zoomToLevel (page, level, wait = 500) {
-  const zoom = await core.getFromStore(page, 'mapActivity.zoom')
+export async function zoomToLevel (page, storePath, level, wait = 500) {
+  // FIXME: better way to get activity state ?
+  // At current time the activity should implement state saving to make it work
+  const zoom = await core.getFromStore(page, `${storePath}.state.zoom`)
   const diff = level - zoom
   const action = (level > zoom) ? 'in' : 'out'
   await moveMap(page, action, Math.abs(diff), wait)

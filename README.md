@@ -1,10 +1,9 @@
 [![KDK](https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-logo-color-512x192.png)](https://kalisio.github.io/kdk/)
 
 [![Latest Release](https://img.shields.io/github/v/tag/kalisio/kdk?sort=semver&label=latest)](https://github.com/kalisio/kdk/releases)
-[![Build Status](https://app.travis-ci.com/kalisio/kdk.svg?branch=master)](https://app.travis-ci.com/kalisio/kdk)
+[![CI](https://github.com/kalisio/kdk/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/kdk/actions/workflows/main.yaml)
 [![Code Climate](https://codeclimate.com/github/kalisio/kdk/badges/gpa.svg)](https://codeclimate.com/github/kalisio/kdk)
 [![Test Coverage](https://codeclimate.com/github/kalisio/kdk/badges/coverage.svg)](https://codeclimate.com/github/kalisio/kdk/coverage)
-[![Dependency Status](https://img.shields.io/librariesio/github/kalisio/kdk?style=flat-square)](https://david-dm.org/kalisio/kdk)
 [![Documentation](https://img.shields.io/badge/documentation-available-brightgreen.svg)](https://kalisio.github.io/kdk/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -30,3 +29,4 @@ This project is licensed under the MIT License - see the [license file](./LICENS
 This project is sponsored by 
 
 [![Kalisio](https://s3.eu-central-1.amazonaws.com/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
+

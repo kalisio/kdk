@@ -17,11 +17,11 @@
       menu-anchor="bottom middle"
       menu-self="top middle">
       <template v-slot:default>
-        <KList
+        <KGrid
           service="projects"
           :base-query="{ _id: { $ne: projectId } }"
-          @selection-changed="onProjectSelected"
           :dense="true"
+          @selection-changed="onProjectSelected"
         />
       </template>
     </q-btn-dropdown>
@@ -30,12 +30,12 @@
 
 <script>
 import _ from 'lodash'
-import { KList } from '../../../core/client/components'
+import { KGrid } from '../../../core/client/components'
 import { useProject } from '../composables'
 
 export default {
   components: {
-    KList
+    KGrid
   },
   inject: ['kActivity'],
   computed: {

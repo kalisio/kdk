@@ -33,5 +33,4 @@ export function fromQuasarTime (time, format) {
   return (Time.getFormatTimezone()
     ? moment.tz(time, format, Time.getFormatTimezone())
     : moment(time, format))
-    console.log()
 }

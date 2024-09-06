@@ -25,9 +25,10 @@ Make it possible to manage map layers and extend supported layer types:
 * **createLeafletPane(name)** creates the underlying Leaflet object for a pane
 * **removeLeafletPane(name)** destroys the underlying Leaflet object for a given pane
 * **registerLeafletConstructor(constructor)** registers a Leaflet constructor function for a given type of layer
-* **center(longitude, latitude, zoomLevel)** centers the map view to visualize a given point at a given zoom level
+* **center(longitude, latitude, zoomLevel, bearing, options)** centers the map view to visualize a given point at a given zoom level, and possibly bearing when the [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) plugin is active, some options like an animation `duration` can also be added
 * **getCenter()** get the current map view center as longitude, latitude and zoom level
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
+* **setBearing(bearing)** change the current bearing of the map when the [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) plugin is active
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
 
 This mixin also adds the following internal data properties:
@@ -56,52 +57,184 @@ If you add a `panes` option to your layer descriptor we will create the dedicate
 
 ## Map Style
 
-Make it possible to generate Leaflet map objects with style based on (Geo)Json (feature) properties:
-* **convertFromSimpleStyleSpec(style)** helper function to convert from [simple style spec options](https://github.com/mapbox/simplestyle-spec) to [Leaflet style options](https://leafletjs.com/reference.html#path-option)
-* **createMarkerFromStyle(latlng, style)** helper function create a [Leaflet marker](https://leafletjs.com/reference.html#marker) from marker style options:
-  * **icon** icon style options 
-    * **type** type name (ie constructor function) of the icon to be created for the marker, e.g. [`icon`](https://leafletjs.com/reference.html#icon) (defaults), [`divIcon`](https://leafletjs.com/reference.html#divicon) or [`icon.fontAwesome`](https://github.com/danwild/leaflet-fa-markers)
-    * **options** icon constructor options
-  * **type** type name (ie constructor function) of the marker to be created, e.g. `marker` (defaults) or `circleMarker`
-  * **options** marker constructor options
+**KDK** intoduces its own style specification as described below:
 
-Use **register/unregisterStyle(type, generator)** to (un)register a function generating a Leaflet object depending on the given type:
-  * `markerStyle` => **f(feature, latlng, options)** returns a [Leaflet marker](https://leafletjs.com/reference.html#marker)
-  * `featureStyle` => **f(feature, options)** returns a [Leaflet style object](https://leafletjs.com/reference.html#path-option)
+```js
+style: {
+  visibility: true, // a boolean (or a string with "true" or "false" when templated) controlling feature's visibility, defaults to true
+  // Line geometry
+  line: {
+    color: 'black' // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    width:  1 // any positive value
+    opacity: 1.0 // range from 0.0 (transparent) to 1.0 (opaque)
+    cap: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+    join: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+    dashArray: 'none', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+    dashOffset: 0 // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+  },
+  // Polygon geometry
+  polygon: {
+    color: 'black', // fill color, any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    opacity: 1.0, // fill opacity
+    fillRule: 'evenodd' // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill-rule
+    stroke: {
+        color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+        width: 1, // any positive value
+        opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+        cap: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+        join: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+        dashArray: 'none', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+        dashOffset: 0, // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    }
+  },
+  // Point geometry
+  point: {
+    shape: 'circle', // represent a registered SVG shape
+    size: ['24px', '24px'], // array of HTML sizes
+    radius: undefined,  // alternative to the size property.
+    color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+    stroke: { 
+        color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+        width: 1, // any positive value
+        opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+        cap: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+        join: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+        dashArray: 'none', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+        dashOffset: 0 // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+    },
+    icon: {
+      classes: undefined // must be specified, e.g 'las la-home'
+      url: '' // url to the image to be displayed. Alternative to the classes property
+      color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+      opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+      size: '14px', // any HTML size
+      translation: ['-50%', '-50%'], // translation to apply to render the icon relative to the shape
+      rotation: 0 // rotation to apply to render the icon relative to the shape
+    },
+    text: {
+      label: undefined, // text to be displayed
+      color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+      size: '12px', // any HTML size
+      translation: ['-50%', '-50%'], // translation to apply to render the text relative to the shape
+      rotation: 0, // rotation to apply to render the text relative to the shape
+      extraStyle: 'background-color: #1A1A1A' // additional CSS to be applied to text
+    },
+    html: null // an HTML element to be rendered
+  }
+}
+```
+
+**KDK** comes with a set of predefined marker shapes: `circle`, `rect`, `rounded-rect`, `diamond`, `triangle`, `triangle-down`, `triangle-left`, `triangle-right`, `star`, `marker-pin`, `square-pin`. But it allows you to register you own shape. See the [Shapes](../core/components.md#shapes) section to understaned how to register a new shape.
+
+In addition and for backward compatibility, **KDK** supports an enhanced [simple style spec options](https://github.com/mapbox/simplestyle-spec) with the following mapping:
+
+| SimpleStyleSpec | KDK Style |
+|---|---|
+| `z-index` | `pane` |
+| pane | `pane` |
+| stroke | `color` |
+| `stroke-color` | `color` |
+| `stroke-opacity` | `opacity` |
+| `stroke-width` | `weight` |
+| fill | `fillColor` |
+| `fill-opacity` | `fillOpacity` |
+| `fill-color` | `fillColor` |
+| weight | `weight` |
+| radius | `radius` |
+| `line-cap` | `lineCap` |
+| `line-join` | `lineJoin` |
+| `dash-array` | `dashArray` |
+| `dash-offset` | `dashOffset` |
+| `marker-symbol` | `style.point.shape` |
+| `marker-size` | `style.point.size` |
+| `marker-color` | `style.point.color` |
+| `marker-anchor` | `style.point.anchor` |
+| `icon-url` | `style.point.icon.url` |
+| `icon-html` | `style.point.html` |
+| `icon-color` | `style.point.icon.color` |
+| `icon-size` | `style.point.icon.size` |
+| `icon-anchor` | `style.point.anchor` |
+| `icon-class` | `style.point.icon.classes` |
+| `icon-opacity` | `style.point.icon.opacity` |
+| `icon-classes` | `style.point.icon.classes` |
+| `icon-x-offset` | `style.point.icon.xOffset` |
+| `icon-y-offset` | `style.point.icon.yOffset` |
+
+The mixin automatically registers defaults styling for the the following type: `point`, `line` and `polygon`. For each type, the following options are  merged with the following order of precedence:
+  * feature style:  **feature.style** or [simple style spec options](https://github.com/mapbox/simplestyle-spec) located in **feature.properties**
+  * layer style set on layer descriptor
+  * engine style set on engine descriptor
 
 ::: tip
-The [simple style spec options](https://github.com/mapbox/simplestyle-spec) does not cover all [Leaflet style options](https://leafletjs.com/reference.html#path-option). However you can use it simply by converting option names from camel case to kebab case.
+All these style properties can be templated using [lodash string templates](https://lodash.com/docs/4.17.15#template). Their final values will be computed at creation/update time.
 :::
 
-Our mapping extends the simple style spec and can be used to create styles more easily:
-* `weight`: mapped as `weight`,
-* `radius`: mapped as `radius`,
-* `line-cap`: mapped as `lineCap`,
-* `line-join`: mapped as `lineJoin`,
-* `dash-array`: mapped as `dashArray`,
-* `dash-offset`: mapped as `dashOffset`,
-* `marker-type`: mapped as `type`,
-* `marker-symbol`: mapped as `shape`,
-* `marker-size`: mapped as `size`,
-* `marker-color`: mapped as `fillColor`
-* `icon-size`: mapped as `icon.iconSize`,
-* `icon-anchor`: mapped as `icon.iconAnchor`,
-* `icon-class`: mapped as `icon.className`,
-* `icon-html`: mapped as `icon.html` and automatically switch to `divIcon` constructor function,
-* `icon-classes`: mapped as `icon.iconClasses` for `ShapeMarker` only
-* `icon-color`: mapped as `icon.options.iconColor` for `ShapeMarker` only
-* `icon-x-offset`: mapped as `icon.options.iconXOffset` for `ShapeMarker` only
-* `icon-y-offset`: mapped as `icon.options.iconYOffset` for `ShapeMarker` only
 
-The mixin automatically registers defaults styling:
-  * `markerStyle` => will create a marker based on the following options merged with the following order of precedence
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on layer descriptor
-    * [Leaflet style options](https://leafletjs.com/reference.html#path-option) set on the **pointStyle** property in the component
-  * `featureStyle` => will create a style based on the following options merged with the following order of precedence
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on **feature.style** or **feature.properties**
-    * [simple style spec options](https://github.com/mapbox/simplestyle-spec) set on layer descriptor
-    * [Leaflet style options](https://leafletjs.com/reference.html#path-option) set on the **featureStyle** property in the component
+::: details Example
+
+The following collection is rendered as illustrated below:
+
+```json
+{
+  "type": "FeatureCollection",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },                                                                              
+  "features": [
+    { 
+      "type": "Feature", 
+      "style": { "color": "magenta", "opacity": 0.5, "stroke": { "color": "yellow", "width": 3 } },
+      "properties": { "name": "Parc de la Colline" }, 
+      "geometry": { "type": "Polygon", "coordinates": [ [ [ -72.357206347890767, 47.72858763003908 ], [ -71.86027854004486, 47.527648291638172 ], [ -72.37075892446839, 47.539848426151735 ], [ -72.357206347890767, 47.72858763003908 ] ] ] } 
+    },
+    { 
+      "type": "Feature", 
+      "properties": { "name": "Centre Paul-Étienne Simard", "fill": "orange", "stroke": "green", "stroke-width": 3 }, 
+      "geometry": { "type": "Polygon", "coordinates": [ [ [ -72.357206347890767, 48.013440900213297 ], [ -72.239750684218109, 48.013440900213297 ], [ -72.253303260795718, 47.856056000888501 ], [ -72.027426984502114, 47.856056000888501 ], [ -72.036462035553868, 48.013440900213297 ], [ -71.905453795303586, 48.01646283861713 ], [ -71.891901218725963, 47.801464984333364 ], [ -72.361723873416651, 47.810567474765456 ], [ -72.357206347890767, 48.013440900213297 ] ] ] } 
+    },
+    { 
+      "type": "Feature", 
+      "properties": { "name": "Loisirs Rivière du Moulin" }, 
+      "geometry": { "type": "Polygon", "coordinates": [ [ [ -72.194575428959382, 48.33278115872843 ], [ -72.018391933450374, 48.33278115872843 ], [ -71.846725963467236, 48.251628525276693 ], [ -71.950629050562299, 48.107038644740094 ], [ -72.203610480011122, 48.107038644740094 ], [ -72.397864077623623, 48.221539261269051 ], [ -72.194575428959382, 48.33278115872843 ] ] ] } 
+    },
+    { 
+      "type": "Feature",
+      "style": { "color": "blue", "opacity": 0.5, "width": 3, "dashArray": "0 8 0" },
+      "properties": { "name": "Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson" }, 
+      "geometry": { "type": "LineString", "coordinates": [ [ -73.839785615317746, 47.564240180362376 ], [ -73.627461915601779, 47.716431476953346 ], [ -73.455795945618627, 47.552045722357249 ], [ -73.279612450109633, 47.710352336655504 ] ] } 
+    },
+    { 
+      "type": "Feature",
+      "properties": { "name": "Sainte-Geneviève", "stroke": "orange", "stroke-width": 6 }, 
+      "geometry": { "type": "LineString", "coordinates": [ [ -73.716981531178234, 47.889388912080449 ], [ -73.423342371996569, 48.091953743979651 ], [ -73.242641350961676, 47.883329977544491 ], [ -73.685358852497131, 47.862118125007399 ] ] } 
+    },
+    { 
+      "type": "Feature", 
+      "properties": { "name": "Saint-Anicet" }, 
+      "geometry": { "type": "LineString", "coordinates": [ [ -73.485142395986983, 48.338787334581873 ], [ -73.480624870461128, 48.161307640513321 ], [ -73.385756834417805, 48.164320903012829 ], [ -73.394791885469544, 48.338787334581873 ] ] } 
+    },
+    { 
+      "type": "Feature", 
+      "style": { "shape": "star", "size": [48, 45], "color": "orange", "stroke": { "color": "green", "width": 2 }, "text": { "label": "01" } },
+      "properties": { "name": "Sydenham" }, 
+      "geometry": { "type": "Point", "coordinates": [ -71.051641470913779, 47.610352336655504 ] } 
+    },
+    { "type": "Feature", 
+      "style": { "shape": "circle", "color": "blue", "size": [32, 32], "stroke": { "color": "white", "width": 1 }, "icon": { "classes": "las la-home", "color": "white", "size": "20" } },
+      "properties": { "name": "Saint-Luc" }, 
+      "geometry": { "type": "Point", "coordinates": [ -71.110369302750115, 47.998430466372736 ] }
+    },
+    { 
+      "type": "Feature", 
+      "style": { "shape": "none", "color": "transparent", "size": [64, 64], "icon": { "url": "icons/kdk/position-cursor.png" } },
+      "properties": { "name": "Loisirs du Fjord du Saguenay" }, 
+      "geometry": { "type": "Point", "coordinates": [ -70.988396113551573, 48.32977780546792 ] }
+    }
+  ]
+}
+```
+
+![Map rendering](../../.vitepress/public/images/kano-style.png)
+:::
 
 ## Map Popup
 
@@ -185,6 +318,15 @@ If you want to disable a default clustering configuration like `cluster: { disab
 The following options can be set as feature `properties` to manage more geometry types:
 * **geodesic** boolean set to `true` on a `LineString` will result in a geodesic line from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin
 * **geodesic** boolean set to `true` on a `Point` will result in a great circle from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin, which **radius** must be specified in meters
+* **gradient** color array set on a `LineString` will result in a color ramp applied to the line by mapping each point to the corresponding color in the array 
+* **mask** boolean set to `true` on a `Polygon` or `MultiPolygon` will result in the polygon(s) acting as a mask over the map
+* **offset** integer set to a number of pixels on a `LineString` will result in the line being offset by the specified number of pixels when drawn
+
+![Geodesic feature type](../../.vitepress/public/images/great-circle-2D.png)
+
+![Gradient feature type](../../.vitepress/public/images/line-gradient-2D.png)
+
+![Offset feature type](../../.vitepress/public/images/line-offset-2D.png)
 
 ### Dynamic styling
 

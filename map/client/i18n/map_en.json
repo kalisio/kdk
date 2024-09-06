@@ -206,7 +206,7 @@
     "TITLE": "My position",
     "METERS": "meters",
     "FEET": "feet",
-    "POPUP": "You are within {distance} {unit} from this point",
+    "POPUP": "You are within {'{distance}'} {'{unit}'} from this point",
     "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
   },
   "schemas": {
@@ -235,6 +235,9 @@
     "TIMELINE_INTERVAL": "Real-time data refresh update interval",
     "TIMESERIES_SETTINGS": "Timeseries parameters",
     "TIMESERIES_SPAN": "Timeseries span (in hours)",
+    "TIMESERIES_GROUP_BY": "Timeseries grouping",
+    "TIMESERIES_GROUP_BY_VARIABLE": "Broup by variable",
+    "TIMESERIES_GROUP_BY_FEATURE": "Group by geographical feature",
     "CAPTURE_RESOLUTION_FIELD_LABEL": "Resolution setting",
     "CAPTURE_HEADER_FIELD_LABEL": "Title setting",
     "CAPTURE_FOOTER_FIELD_LABEL": "Footer setting",
@@ -691,6 +694,8 @@
     "LABEL": "Legend"
   },
   "KCompass": {
+    "FROM_TO": "From {direction}° to {source}°",
+    "FROM": "From",
     "NORTH": "N",
     "EAST": "E",
     "SOUTH": "S",

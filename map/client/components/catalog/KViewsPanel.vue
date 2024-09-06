@@ -1,35 +1,27 @@
 <template>
-  <q-list dense bordered>
-    <div class="no-padding" :style="panelStyle">
-      <q-resize-observer @resize="onResized" />
-      <KPanel
-        id="favorite-views-toolbar"
-        :content="toolbar"
-        class="no-wrap q-pl-sm q-pr-md"
-      />
-      <KColumn
-        class="q-pl-sm"
-        service="catalog"
-        :renderer="viewRenderer"
-        :nbItemsPerPage="20"
-        :append-items="true"
-        :base-query="baseQuery"
-        :filter-query="filterQuery"
-        @selection-changed="onViewSelected"
-        :height="scrollAreaMaxHeight - 100"
-        :width="scrollAreaMaxWidth"
-        :dense="true"
-      />
-    </div>
-  </q-list>
+  <div class="fit">
+    <KGrid
+      service="catalog"
+      :renderer="viewRenderer"
+      :nb-items-per-page="20"
+      :append-items="true"
+      :base-query="baseQuery"
+      :filter-query="filterQuery"
+      :dense="true"
+      :scrollToTop="false"
+      :header="toolbar"
+      header-class="full-width no-wrap"
+      @selection-changed="onViewSelected"
+      class="fit q-px-sm"
+    />
+  </div>
 </template>
 
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Filter, Sorter, utils, i18n, api } from '../../../../core/client'
-import { KColumn, KPanel, KAction } from '../../../../core/client/components'
-import { catalogPanel } from '../../mixins'
+import { Filter, Sorter, utils, i18n } from '../../../../core/client'
+import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 import { useProject } from '../../composables'
 import { createOfflineServiceForView, uncacheView } from '../../utils/utils.offline.js'
 import { Notify } from 'quasar'
@@ -38,11 +30,10 @@ import localforage from 'localforage'
 export default {
   name: 'k-views-panel',
   components: {
-    KColumn,
+    KGrid,
     KPanel,
     KAction
   },
-  mixins: [catalogPanel],
   inject: ['kActivity'],
   data () {
     const viewActions = []
@@ -64,12 +55,11 @@ export default {
       })
     }
     return {
-      scrollAreaMaxWidth: 0,
       filter: Filter.get(),
       sorter: Sorter.get(),
       viewRenderer: {
         component: 'catalog/KViewSelector',
-        class: 'q-pt-xs q-pb-xs q-pr-xs',
+        class: 'q-px-xs col-12',
         actions: viewActions
       }
     }
@@ -87,10 +77,8 @@ export default {
       return [
         {
           id: 'views-filter',
-          component: 'collection/KFilter',
-          class: 'full-width'
+          component: 'collection/KFilter'
         },
-        { component: 'QSpace' },
         {
           component: 'collection/KSorter',
           id: 'views-sorter',
@@ -145,7 +133,7 @@ export default {
           // We need at least catalog/project offline services
           // Take care that catalog only returns items of layer types by default
           const catalogQueries = [{ type: { $nin: ['Context', 'Service', 'Category'] } }, { type: { $in: ['Context', 'Service', 'Category'] } }]
-          if (!api.getOfflineService('catalog')) {
+          if (!this.$api.getOfflineService('catalog')) {
             await createOfflineServiceForView('catalog', view._id, {
               baseQueries: catalogQueries
             })
@@ -157,7 +145,7 @@ export default {
             }
           }
           // Take care that projects are not populated by default
-          if (!api.getOfflineService('projects')) {
+          if (!this.$api.getOfflineService('projects')) {
             const projectQuery = { populate: true }
             await createOfflineServiceForView('projects', view._id, {
               baseQuery: projectQuery
@@ -204,9 +192,6 @@ export default {
       if (!result.ok) return false
       await uncacheView(view, this.project, this.kActivity)
       await this.$api.getService('catalog').remove(view._id)
-    },
-    onResized (size) {
-      this.scrollAreaMaxWidth = size.width
     }
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront

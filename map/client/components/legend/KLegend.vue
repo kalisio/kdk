@@ -49,18 +49,14 @@
 <script setup>
 import _ from 'lodash'
 import logger from 'loglevel'
-import sift from 'sift'
 import { ref, computed, watch } from 'vue'
-import { i18n, api } from '../../../../core/client'
-import { useCurrentActivity } from '../../composables'
+import { api, i18n, Store } from '../../../../core/client'
+import { getLayersBySublegend } from '../../utils'
+import { useCurrentActivity, useCatalog } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
 
 // Props
 const props = defineProps({
-  contextOrId: {
-    type: String,
-    default: undefined
-  },
   headerClass: {
     type: String,
     default: 'bg-grey-3 text-weight-regular'
@@ -90,6 +86,18 @@ const props = defineProps({
   }
 })
 
+// Get current project for activity if any
+const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
+const project = getActivityProject()
+// We expect the project object to expose the underlying API
+const planetApi = project && typeof project.getPlanetApi === 'function' ? project.getPlanetApi() : api
+// Use target catalog according to project
+const { getSublegends: getProjectSublegends } = useCatalog({ project, planetApi })
+// Use global catalog
+const { getSublegends } = useCatalog()
+// Use local catalog if any
+const { getSublegends: getContextSublegends } = useCatalog({ context: Store.get('context') })
+
 // Data
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const sublegends = ref([])
@@ -98,19 +106,7 @@ const engine = ref()
 const zoom = ref()
 
 // Computed
-const layersBySublegend = computed(() => {
-  const result = {}
-  _.forEach(sublegends.value, sublegend => {
-    // Built-in legends use filtering while
-    let filter = null
-    if (_.has(sublegend, 'options.filter')) {
-      filter = _.get(sublegend, 'options.filter')
-    }
-    // If the list of layers in category is empty we can have a null filter
-    result[sublegend.name] = filter ? _.filter(layers.value, sift(filter)) : []
-  })
-  return result
-})
+const layersBySublegend = computed(() => getLayersBySublegend(layers.value, sublegends.value))
 
 // Functions
 function onShowLayer (layer, engine) {
@@ -150,9 +146,13 @@ function getHelperDialog (helper) {
 watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
   // Retrieve the legends from catalog if required
   if (props.sublegendsFromCatalog) {
-    const catalogService = api.getService('catalog', props.contextOrId)
-    const response = await catalogService.find({ query: { type: 'Sublegend' } })
-    sublegends.value = response.data
+    sublegends.value = await getSublegends()
+    if (project) {
+      sublegends.value = sublegends.value.concat(await getProjectSublegends())
+    }
+    if (Store.get('context')) {
+      sublegends.value = sublegends.value.concat(await getContextSublegends())
+    }
   } else {
     sublegends.value = []
   }

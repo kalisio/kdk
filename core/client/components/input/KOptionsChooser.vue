@@ -31,7 +31,7 @@
 <script>
 import _ from 'lodash'
 import { uid } from 'quasar'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 export default {
   name: 'k-option-chooser',

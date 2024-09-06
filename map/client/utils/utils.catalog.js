@@ -24,17 +24,17 @@ export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
 export async function setEngineJwt (layers, planetApi) {
   // Backward compatibility when we previously used a single API
   if (!planetApi) planetApi = api
-  const planetConfig = planetApi.getConfig()
   // If we need to use API gateway forward token as query parameter
   // (Leaflet does not support anything else by default as it mainly uses raw <img> tags)
-  let jwt = (planetConfig.gatewayJwt ? await planetApi.get('storage').getItem(planetConfig.gatewayJwt) : null)
-  let jwtField = planetConfig.gatewayJwtField
-  // Check both the default built-in config or the server provided one if any (eg mobile apps)
-  const gatewayUrl = Store.get('capabilities.api.gateway') || planetConfig.gateway
+  let jwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
+  let jwtField = planetApi.getConfig('gatewayJwtField')
+  // Check both the default built-in config or the server provided one if any
+  const gatewayUrl = (planetApi.hasConfig('gateway') ? planetApi.getConfig('gateway') : Store.get('capabilities.api.gateway'))
   if (jwt) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'iconUrl', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'leaflet.source', gatewayUrl, jwtField, jwt)
+      setUrlJwt(layer, 'leaflet.url', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'opendap.url', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'geotiff.url', gatewayUrl, jwtField, jwt)
       setUrlJwt(layer, 'wfs.url', gatewayUrl, jwtField, jwt)
@@ -45,9 +45,9 @@ export async function setEngineJwt (layers, planetApi) {
   }
   // We might also proxy some data directly from the app when using object storage
   // This is only for raw raster data not OGC protocols
-  jwt = (planetConfig.apiJwt ? await planetApi.get('storage').getItem(planetConfig.apiJwt) : null)
+  jwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
   jwtField = 'jwt'
-  const apiUrl = planetApi.getBaseUrl()
+  const apiUrl = planetApi.getConfig('domain')
   if (jwt) {
     layers.forEach(layer => {
       setUrlJwt(layer, 'geotiff.url', apiUrl, jwtField, jwt)
@@ -129,6 +129,38 @@ export async function getCategories (options = {}) {
     categories = categories.concat(response.data)
   }
   return categories
+}
+
+export async function getSublegends (options = {}) {
+  _.defaults(options, {
+    query: {},
+    context: '',
+    planetApi: api
+  })
+
+  let sublegends = []
+  const catalogService = options.planetApi.getService('catalog', options.context)
+  if (catalogService) {
+    const response = await catalogService.find({ query: Object.assign({ type: 'Sublegend' }, options.query) })
+    _.forEach(response.data, processTranslations)
+    sublegends = sublegends.concat(response.data)
+  }
+  return sublegends
+}
+
+export function getLayersBySublegend (layers, sublegends) {
+  const categorizedLayers = _.clone(layers)
+  const layersBySublegend = {}
+  _.forEach(sublegends, sublegend => {
+    // Built-in legends use filtering
+    let filter = null
+    if (_.has(sublegend, 'options.filter')) {
+      filter = _.get(sublegend, 'options.filter')
+    }
+    // If the list of layers in a sublegend is empty we can have a null filter
+    layersBySublegend[sublegend.name] = filter ? _.remove(categorizedLayers, sift(filter)) : []
+  })
+  return layersBySublegend
 }
 
 export async function getViews (options = {}) {

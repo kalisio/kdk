@@ -29,7 +29,7 @@ import { login } from '../../utils/utils.session.js'
 import { verifyEmail } from '../../utils/utils.account.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 // Data
 const $q = useQuasar()

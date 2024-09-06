@@ -16,7 +16,6 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
-import { updatePropertiesSchema } from '../utils.js'
 import { KModalEditor } from '../../../core/client/components'
 
 export default {
@@ -66,8 +65,8 @@ export default {
         await this.$api.getService(this.service).patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
       }
     },
-    async loadLayerSchema () {
-      return updatePropertiesSchema(_.get(this.layer, 'schema.content'))
+    loadLayerSchema () {
+      return _.get(this.layer, 'schema.content')
     },
     async openModal () {
       kCoreMixins.baseModal.methods.openModal.call(this)

@@ -1,19 +1,13 @@
 <template>
-  <div class="fit column">
-    <!-- Map container -->
-    <div
-      :ref="mapRefCreated"
-      class="col"
-    >
-      <q-resize-observer @resize="refreshMap" />
-      <!-- Map header -->
-      <div class="row justify-center">
-        <KPanel
-          id="header"
-          :content="headerComponents"
-          class="k-location-map-toolbar"
-        />
-      </div>
+  <div :ref="mapRefCreated" class="fit">
+    <q-resize-observer @resize="refreshMap" />
+    <!-- Map header -->
+    <div class="row justify-center">
+      <KPanel
+        id="header"
+        :content="header"
+        class="k-location-map-toolbar"
+      />
     </div>
   </div>
 </template>
@@ -52,19 +46,15 @@ export default {
         return _.get(config, 'engines.leaflet')
       }
     },
-    header: {
+    tools: {
       type: Array,
       default: () => []
-    },
-    draggable: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {
-    headerComponents () {
+    header () {
       const components = []
-      _.forEach(this.header, component => {
+      _.forEach(this.tools, component => {
         if (component === 'separator') {
           components.push({
             component: 'QSeparator',
@@ -128,15 +118,18 @@ export default {
       })
       return components
     },
+    interactive () {
+      return !_.isEmpty(this.tools)
+    },
+    draggable () {
+      return _.indexOf(this.tools, 'draw-point') !== -1
+    },
     allowGeolocation () {
       return !_.isNil(this.header.geolocate)
     }
   },
   watch: {
     modelValue: function () {
-      this.refresh()
-    },
-    draggable: function () {
       this.refresh()
     }
   },
@@ -157,6 +150,10 @@ export default {
     },
     refresh () {
       if (!this.mapReady) return
+      // disable handler if non interactive
+      if (!this.interactive) {
+        _.forEach(this.map._handlers, handler => { handler.disable() })
+      }
       // clear the existing layer if any
       if (this.locationLayer) {
         this.map.removeLayer(this.locationLayer)
@@ -177,10 +174,11 @@ export default {
         const coordinates = _.get(this.location, 'geometry.coordinates')
         const style = _.get(this.engineOptions, 'style.location.point')
         this.locationLayer = createMarkerFromPointStyle([coordinates[1], coordinates[0]],
-          Object.assign({ draggable: this.draggable, pmIgnore: true }, style))
+          Object.assign({ interactive: this.draggable, draggable: this.draggable, pmIgnore: true }, style))
         if (this.draggable) this.locationLayer.on('dragend', this.onLocationDragged)
       } else {
         this.locationLayer = L.geoJson(this.location, {
+          interactive: false,
           style: (feature) => {
             const styleType = getFeatureStyleType(feature)
             if (!styleType) {
@@ -200,10 +198,8 @@ export default {
           }
         })
       }
-      // }
       this.locationLayer.addTo(this.map)
-      // wait for the next tick to recenter the view
-      this.$nextTick(() => this.recenter())
+      this.recenter()
     },
     onLocationDragged () {
       const latLng = this.locationLayer.getLatLng()
@@ -249,19 +245,16 @@ export default {
       unbindLeafletEvents(this.map, ['pm:create'])
       this.map.pm.setGlobalOptions({ layerGroup: null })
     },
-    async refreshBaseLayer () {
-      const layers = await this.getLayers()
-      // Get first visible base layer
-      if (layers.length > 0) {
-        this.addLayer(layers[0])
-      }
-    },
-    mapRefCreated (container) {
+    async mapRefCreated (container) {
       if (container) {
         if (!this.mapReady) {
+          // setup map
           this.setupMap(container, this.engineOptions.viewer)
           this.mapReady = true
-          this.refreshBaseLayer()
+          // setup base layer
+          const baseLayers = await this.getLayers({ type: 'BaseLayer' })
+          if (baseLayers.length > 0) await this.addLayer(baseLayers[0])
+          // setup location
           this.refresh()
         }
       }
@@ -275,6 +268,10 @@ export default {
   },
   beforeUnmount () {
     this.$engineEvents.off('pm:create', this.stopDraw)
+    if (this.locationLayer) {
+      this.map.removeLayer(this.locationLayer)
+      this.locationLayer = null
+    }
   },
   async setup () {
     // Get current project for activity if any

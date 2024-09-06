@@ -71,10 +71,10 @@ export default {
       // sort alphabetically layers per display
       return this.service
         ? _.map(this.service.availableLayers, (value, key) => value).sort((a, b) => {
-            const uppera = a.display.toUpperCase()
-            const upperb = b.display.toUpperCase()
-            return uppera < upperb ? -1 : uppera > upperb ? 1 : 0
-          })
+          const uppera = a.display.toUpperCase()
+          const upperb = b.display.toUpperCase()
+          return uppera < upperb ? -1 : uppera > upperb ? 1 : 0
+        })
         : []
     }
   },

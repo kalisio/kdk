@@ -9,7 +9,7 @@
 
 <script setup>
 import { Exporter } from '../../exporter.js'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 // props
 const props = defineProps({

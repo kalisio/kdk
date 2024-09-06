@@ -301,7 +301,82 @@ There are 2 ways to use the **k-modal-editor**:
 The properties to declare a **k-modal-editor** are identical to those of the **k-modal-editor** plus: 
  * **router**: the router function to be triggered when the editor is getting closed. 
 
-## Chart
+## Graphics
+
+### Shapes
+
+The **KDK** provide a convenient component to render an **SVG** shape using the [KShape](https://github.com/kalisio/kdk/blob/master/core/client/components/media/KShape.vue) component.
+Under the hood it relies on the [createShape](https://github.com/kalisio/kdk/blob/master/core/client/utils/utils.shapes.js#L134) function and requires an objet conforming to the following specification:
+
+```js
+{
+  shape: 'circle', // represent a registered SVG shape
+  size: ['24px', '24px'], // array of HTML sizes
+  radius: undefined,  // alternative to the size property.
+  color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+  opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+  stroke: { 
+      color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+      width: 1, // any positive value
+      opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+      cap: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linecap
+      join: 'round', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-linejoin
+      dashArray: 'none', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+      dashOffset: 0 // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
+  },
+  icon: {
+    classes: undefined // must be specified, e.g 'las la-home'
+    url: '' // url to the image to be displayed. Alternative to the classes property
+    color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
+    size: '14px', // any HTML size
+    translation: ['-50%', '-50%'], // translation to apply to render the icon relative to the shape
+    rotation: 0 // rotation to apply to render the icon relative to the shape
+  },
+  text: {
+    label: undefined, // text to be displayed
+    color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
+    size: '12px', // any HTML size
+    translation: ['-50%', '-50%'], // translation to apply to render the text relative to the shape
+    rotation: 0, // rotation to apply to render the text relative to the shape
+    extraStyle: 'background-color: #1A1A1A' // additional CSS to be applied to text
+  },
+  extraStyle: 'transform: translate(50%, 0%)', // additional CSS to be applied to the whole element (ie shape, icon and text)
+  html: null // an HTML element to be rendered
+}
+```
+The **KDK** comes with a set of predefined marker shapes: `circle`, `rect`, `rounded-rect`, `diamond`, `triangle`, `triangle-down`, `triangle-left`, `triangle-right`, `star`, `marker-pin`, `square-pin`. But it allows you to register you own shape. For that, you have to define the shape such as below:
+
+```js
+Shapes['my-shape'] = {
+  content: // the SVG path of the shape (required)
+  viewBox: // the bounding box of the path (required)
+  icon: {
+    translation: // the default translation to apply to render the icon. Default value is ['-50%', '-50%'] (optional)
+  },
+  text: {
+    translation: // the default translation to apply to render the text. Default value is ['-50%', '-50%'] (optional)
+  },
+  anchor: 'bottom-center', // the anchor of the shape. Default value is `center-center` (optional)
+  radiusToSize: (r) => { return ...  }, // a function to compute the size according a radius. Default function returns the double of the radius (optional)
+  extraStyle: 'background-color: #1A1A1A', // additional CSS to be applied to the shape (optional)
+},
+```
+
+::: tip Tip
+Checkout the [Miscellaneous activity](https://kapp.dev.kalisio.xyz/#/home/miscellaneous) to see examples.
+:::
+
+### Color scales
+
+The [KColorScale](https://github.com/kalisio/kdk/blob/master/core/client/components/media/KColorScale.vue) component helps to render [Chroma color scales](https://gka.github.io/chroma.js/#color-scales).
+You can provide the `scale`, `domain` and `classes` properties and also a `label` as well as a `direction` (vertical or horizontal).
+
+::: tip Tip
+Checkout the [Miscellaneous activity](https://kapp.dev.kalisio.xyz/#/home/miscellaneous) to see examples.
+:::
+
+### Chart
 
 The **KDK** provides a helper component that allows rendering charts based on  [chart.js](https://www.chartjs.org/). 
 
@@ -309,14 +384,11 @@ In addition and only if needed, it uses [chroma.js](https://gka.github.io/chroma
 
 Checkout the [ChartActivity](https://github.com/kalisio/kApp/blob/master/src/components/ChartActivity.vue) to understand how it works.
 
-::: tip
+::: tip Tip
 Have a look at the [choma color scales](https://gka.github.io/chroma.js/#color-scales) to see how to define your color scale.
 :::
 
-## Authentication
-
-The KDK provides you with some default forms to manage login, logout, registration and server endpoint configuration for mobile apps in the [authentication folder](https://github.com/kalisio/kdk/tree/master/core/client/components/authentication).
-
+## 
 ## User Account
 
 The KDK provides you with a default [activity](./components.md#activity) to manage user accounts in the [account folder](https://github.com/kalisio/kdk/tree/master/core/client/components/account):

@@ -19,7 +19,7 @@ export async function itemActionExists (page, component, name, action) {
   return elements.length === 1
 }
 
-export async function clickItem (page, component, name, wait = 250) {
+export async function clickItem (page, component, name, wait = 500) {
   const xpath = `//div[contains(@component, "${component}") and contains(., "${name}")]`
   const elements = await page.$x(xpath)
   if (elements.length > 0) {
@@ -31,7 +31,7 @@ export async function clickItem (page, component, name, wait = 250) {
   }
 }
 
-export async function clickItemAction (page, component, name, action, wait = 250) {
+export async function clickItemAction (page, component, name, action, wait = 500) {
   const xpath = `//div[contains(@component, "${component}") and contains(., "${name}")]//button[@id="${action}"]`
   const elements = await page.$x(xpath)
   if (elements.length > 0) {

@@ -1,4 +1,4 @@
-import Cesium from 'cesium/Source/Cesium.js'
+import { Transforms, Math as CesiumMath, HeadingPitchRoll, Ellipsoid } from 'cesium'
 import _ from 'lodash'
 import chroma from 'chroma-js'
 import moment from 'moment'
@@ -24,6 +24,8 @@ export const style = {
         }
         // Handle specific case of orientation
         if (style.orientation) entity.orientation = style.orientation
+        // Handle specific case of visibility
+        if (_.has(style, 'visibility')) entity.show = style.visibility
       }
     },
     applyClusterStyle (entities, cluster, options) {
@@ -60,13 +62,13 @@ export const style = {
           // Handle specific case of orientation
           if ((property === 'orientation') && entity.position) {
             const localFrameAxes = _.get(entityStyle, 'localFrameAxes', ['east', 'north'])
-            const localFrame = Cesium.Transforms.localFrameToFixedFrameGenerator(...localFrameAxes)
+            const localFrame = Transforms.localFrameToFixedFrameGenerator(...localFrameAxes)
             const position = entity.position.getValue(this.viewer.clock.currentTime)
             // From heading, pitch, roll as templated string to quaternion
-            value = value.split(',').map(angle => Cesium.Math.toRadians(parseFloat(angle)))
-            value = new Cesium.HeadingPitchRoll(...value)
+            value = value.split(',').map(angle => CesiumMath.toRadians(parseFloat(angle)))
+            value = new HeadingPitchRoll(...value)
             // Then from local to position frame
-            value = Cesium.Transforms.headingPitchRollQuaternion(position, value, Cesium.Ellipsoid.WGS84, localFrame)
+            value = Transforms.headingPitchRollQuaternion(position, value, Ellipsoid.WGS84, localFrame)
           }
           _.set(entityStyle, property, value)
         })

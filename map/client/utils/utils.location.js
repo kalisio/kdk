@@ -49,7 +49,8 @@ export async function queryGeocoder(planetConfig, path, query = '') {
   const jwt = await api.get('storage').getItem(planetConfig.gatewayJwt)
   let url = `${endpoint}/${path}`
   if (query) url += `?${query}`
-  const results = await fetch(url, { headers: { Authorization: `Bearer ${jwt}` } }).then((response) => response.json())
+  const response = await fetch(url, { headers: { Authorization: `Bearer ${jwt}` } })
+  const results = await response.json()
   return results
 }
 

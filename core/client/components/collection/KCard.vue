@@ -100,7 +100,7 @@
 
 <script>
 import _ from 'lodash'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 import KPanel from '../KPanel.vue'
 import KTextArea from '../KTextArea.vue'
 import KAvatar from '../KAvatar.vue'

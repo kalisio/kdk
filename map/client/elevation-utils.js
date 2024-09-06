@@ -56,7 +56,7 @@ function fetchProfileDataset (feature, distanceUnit, altitudeUnit) {
     }
   }
 
-  return { dataset: allCoordsHaveAltitude ? dataset : [], segments: segments }
+  return { dataset: allCoordsHaveAltitude ? dataset : [], segments }
 }
 
 function asArray (val) { return (Array.isArray(val) || val === undefined) ? val : [val] }
@@ -236,7 +236,7 @@ function extractElevation (queries, { noDataset, noGeojson, queryParametersInDat
         dataset.push(datasetPoint)
       }
       if (!noGeojson) {
-        const props = { z: e, t: t }
+        const props = { z: e, t }
         if (queryParametersInDataset) {
           props.resolution = r
           if (w !== undefined) props.corridorWidth = w

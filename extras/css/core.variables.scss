@@ -15,12 +15,7 @@ $warning: #d09931 !default;
 $tooltip-fontsize: 12px !default;
 $tooltip-background: $accent !default;
 
-// Pane
-$left-pane-width: 320px !default;
-
 // Window
-$window-min-width: 300px !default;
-$window-min-height: 300px !default;
 $window-background: #ffffff !default;
 $window-border-style: solid !default;
 $window-border-width: 1px !default;
@@ -31,10 +26,39 @@ $window-header-background: #eeeeee !default;
 $window-header-hover-background: #dddddd !default;
 $window-controls-size: 1rem !default;
 
-// Sticky
-$sticky-z-index: 1000 !default;
-
 // Table: quasar has eg $table-hover-background but nothing for background
 $table-background: #fff !default;
 
+// Scrollbar
+.q-scrollarea__thumb {
+  background: $primary;
+  border-radius: 3px;
+  opacity: .2;
+}
 
+/* TODO try to specify style the same as above
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+  background: transparent;
+  overflow: visible;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 10px;
+  background-color: $primary;
+  border-radius: 3px;
+  -webkit-transition: background-color .28s ease-in-out;
+  transition: background-color .28s ease-in-out;
+  opacity: .2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $primary
+}*/
+
+// Anchor
+a {
+  color: $accent;
+  cursor: pointer;
+}

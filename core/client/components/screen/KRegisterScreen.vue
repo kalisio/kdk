@@ -27,7 +27,7 @@ import { useQuasar } from 'quasar'
 import { i18n } from '../../i18n.js'
 import KScreen from './KScreen.vue'
 import KForm from '../form/KForm.vue'
-import KAction from '../KAction.vue'
+import KAction from '../action/KAction.vue'
 
 // Data
 const $q = useQuasar()

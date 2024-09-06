@@ -72,8 +72,13 @@ export default {
       type: String,
       default: 'KFilter.SEARCH_LABEL'
     },
+    // TODO: keep this props for backward compatibility
     field: {
       type: String,
+      default: 'name'
+    },
+    fields: {
+      type: [String, Array],
       default: 'name'
     },
     description: {
@@ -145,7 +150,7 @@ export default {
   },
   created () {
     // Initialize the filter, we keep track of any existing items previously set by another activity
-    this.$store.patch('filter', { field: this.field, pattern: '' })
+    this.$store.patch('filter', { fields: this.fields || this.field, pattern: '' })
   },
   beforeUnmount () {
     this.items = []

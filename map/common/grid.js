@@ -314,7 +314,7 @@ export class GridSource {
 
   emit (event) {
     const callbacks = _.get(this.events, event, [])
-    const ctx = { source: this, event: event }
+    const ctx = { source: this, event }
     for (const cb of callbacks) {
       cb(ctx)
     }
@@ -461,7 +461,7 @@ export class TiledGrid extends BaseGrid {
     for (const tile of tiles) {
       const bbox = tile.getBBox()
       const meta = {
-        tile: tile,
+        tile,
         iLatMin: Math.floor((bbox[0] - this.bbox[0]) / this.resolution[0]),
         iLatMax: Math.floor((bbox[2] - this.bbox[0]) / this.resolution[0]),
         iLonMin: Math.floor((bbox[1] - this.bbox[1]) / this.resolution[1]),

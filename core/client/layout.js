@@ -5,11 +5,20 @@ import sift from 'sift'
 import { Store } from './store.js'
 import { bindContent } from './utils/utils.content.js'
 
-const placements = ['top', 'right', 'bottom', 'left']
+export const DefaultZIndex = {
+  drawer: 3000, // see Quasar css variables
+  panes: 1000,
+  fab: 1000,
+  windows: 990,
+  stickies: 980,
+  focus: 1010
+}
+
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
-const windowDefaultContols = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
-const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowDefaultContols }
+const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
+const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls, zIndex: 980 }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
   floating: { position: [0, 0], size: [300, 200] },
@@ -21,32 +30,44 @@ const vWindowDefaultSizePolicy = {
   pinned: { xs: [50, 90], sm: [40, 80], md: [30, 75], lg: [25, 75], xl: [20, 75] }
 }
 const defaults = {
-  layout: { view: 'lHh LpR lFf', mode: undefined },
+  view: 'lHh LpR lFf',
+  padding: true,
+  mode: undefined,
   header: { ...contentDefaults },
   footer: { ...contentDefaults },
-  page: { ...contentDefaults },
-  fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16] },
+  page: { ...contentDefaults, size: [0, 0] },
+  stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies },
+  fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: DefaultZIndex.fab },
   panes: {
-    left: { ...contentDefaults, opener: false },
-    top: { ...contentDefaults, opener: false },
-    right: { ...contentDefaults, opener: false },
-    bottom: { ...contentDefaults, opener: false }
+    left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: DefaultZIndex.drawer },
+    top: { ...contentDefaults, ...paneDefaults, sizes: undefined },
+    right: { ...contentDefaults, ...paneDefaults, sizes: { xs: [85, 75], sm: [360, 75], md: [440, 80], lg: [500, 80], xl: [500, 85] } },
+    bottom: { ...contentDefaults, ...paneDefaults, sizes: undefined }
   },
   windows: {
     left: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowDefaultSizePolicy },
     top: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowDefaultSizePolicy },
     right: { ...contentDefaults, ...windowDefaults, sizePolicy: vWindowDefaultSizePolicy },
     bottom: { ...contentDefaults, ...windowDefaults, sizePolicy: hWindowDefaultSizePolicy }
+  },
+  focus: {
+    element: null,
+    zIndex: DefaultZIndex.focus
   }
 }
 
 // Export singleton
 export const Layout = {
+  placements: ['top', 'right', 'bottom', 'left'],
   paths: {
     layout: layoutPath,
+    view: layoutPath + '.view',
+    padding: layoutPath + '.padding',
+    mode: layoutPath + '.mode',
     header: layoutPath + '.header',
     footer: layoutPath + '.footer',
     page: layoutPath + '.page',
+    stickies: layoutPath + '.stickies',
     fab: layoutPath + '.fab',
     panes: {
       left: layoutPath + '.panes.left',
@@ -59,47 +80,48 @@ export const Layout = {
       top: layoutPath + '.windows.top',
       right: layoutPath + '.windows.right',
       bottom: layoutPath + '.windows.bottom'
-    }
+    },
+    focus: layoutPath + '.focus'
   },
   initialize () {
     // create the store structure for each element with their configuration
-    Store.set(this.paths.layout, this.getLayoutDefaults())
+    Store.set(this.paths.view, this.getElementDefaults('view'))
+    Store.set(this.paths.padding, this.getElementDefaults('padding'))
     Store.set(this.paths.header, this.getElementDefaults('header'))
     Store.set(this.paths.footer, this.getElementDefaults('footer'))
     Store.set(this.paths.page, this.getElementDefaults('page'))
+    Store.set(this.paths.stickies, this.getElementDefaults('stickies'))
     Store.set(this.paths.fab, this.getElementDefaults('fab'))
-    placements.forEach(placement => {
+    this.placements.forEach(placement => {
       Store.set(_.get(this.paths.panes, placement), this.getElementDefaults(`panes.${placement}`))
       Store.set(_.get(this.paths.windows, placement), this.getElementDefaults(`windows.${placement}`))
     })
+    Store.set(this.paths.focus, this.getElementDefaults('focus'))
     // debug message
     logger.debug(`[KDK] Layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
   },
   get () {
     return Store.get(this.paths.layout)
   },
-  getLayoutDefaults () {
-    return Object.assign({}, defaults.options, _.pick(_.get(config, this.paths.layout), _.keys(defaults.layout)))
-  },
-  set (layout) {
-    if (layout.header) this.setHeader(layout.header)
-    if (layout.footer) this.setFooter(layout.footer)
-    if (layout.page) this.setPage(layout.page)
-    if (layout.fab) this.setFab(layout.fab)
-    placements.forEach(placement => {
-      if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
-      if (_.has(layout, `windows.${placement}`)) this.setWindow(placement, _.get(layout, `windows.${placement}`))
-    })
-  },
   setView (view) {
     Store.patch(this.paths.layout, { view })
+  },
+  clearView () {
+    Store.patch(this.paths.layout, { view: this.getElementDefaults('view') })
+  },
+  setPadding (padding) {
+    Store.patch(this.paths.padding, { padding })
+  },
+  clearPadding () {
+    Store.patch(this.paths.layout, { padding: this.getElementDefaults('padding') })
   },
   setMode (mode) {
     this.setHeaderMode(mode)
     this.setFooterMode(mode)
     this.setPageMode(mode)
+    this.setStickiesMode(mode)
     this.setFabMode(mode)
-    placements.forEach(placement => {
+    this.placements.forEach(placement => {
       this.setPaneMode(placement, mode)
       this.setWindowMode(placement, mode)
     })
@@ -118,7 +140,8 @@ export const Layout = {
     const elementPath = this.getElementPath(element)
     const elementDefaults = _.get(defaults, element)
     const elementConfig = _.get(config, elementPath)
-    return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
+    if (elementConfig) return _.defaultsDeep(_.cloneDeep(elementConfig), elementDefaults)
+    return _.cloneDeep(elementDefaults)
   },
   setElement (element, options, context, omit = []) {
     const props = _.defaultsDeep(_.cloneDeep(options), this.getElementDefaults(element))
@@ -128,7 +151,7 @@ export const Layout = {
     // compute components
     if (Array.isArray(content)) props.components = content.filter(sift(props.filter))
     else props.components = _.get(content, mode, []).filter(sift(props.filter))
-    // pacth the element
+    // patch the element
     Store.patch(this.getElementPath(element), props)
   },
   setElementMode (element, mode) {
@@ -138,7 +161,7 @@ export const Layout = {
     let components
     if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
     else components = _.get(props.content, mode, []).filter(sift(props.filter))
-    // pacth the element
+    // patch the element
     Store.patch(this.getElementPath(element), { mode, components })
   },
   setElementFilter (element, filter) {
@@ -148,13 +171,25 @@ export const Layout = {
     let components
     if (Array.isArray(props.content)) components = props.content.filter(sift(props.filter))
     else components = _.get(props.content, props.mode, []).filter(sift(props.filter))
-    // pacth the element
+    // patch the element
     Store.patch(this.getElementPath(element), { filter, components })
   },
   setElementVisible (element, visible) {
     const props = this.getElement(element)
     if (props.visible === visible) return
     Store.patch(this.getElementPath(element), { visible })
+  },
+  setElementSize (element, size) {
+    if (!Array.isArray(size) && size.length !== 2) {
+      logger.warn(`[KDK] Invalid size ${size}`)
+      return
+    }
+    const props = this.getElement(element)
+    if (_.isEqual(props.size, size)) return
+    Store.patch(this.getElementPath(element), { size })
+  },
+  clearElement (element) {
+    this.setElement(element, this.getElementDefaults(element))
   },
   getHeader () {
     return this.getElement('header')
@@ -171,6 +206,9 @@ export const Layout = {
   setHeaderVisible (visible) {
     this.setElementVisible('header', visible)
   },
+  clearHeader () {
+    this.clearElement('header')
+  },
   getFooter () {
     return this.getElement('footer')
   },
@@ -186,6 +224,9 @@ export const Layout = {
   setFooterVisible (visible) {
     this.setElementVisible('footer', visible)
   },
+  clearFooter () {
+    this.clearElement('footer')
+  },
   getPage () {
     return this.getElement('page')
   },
@@ -200,6 +241,27 @@ export const Layout = {
   },
   setPageVisible (visible) {
     this.setElementVisible('page', visible)
+  },
+  clearPage () {
+    this.clearElement('page')
+  },
+  getStickies () {
+    return this.getElement('stickies')
+  },
+  setStickies (options, context) {
+    this.setElement('stickies', options, context)
+  },
+  setStickiesMode (mode) {
+    this.setElementMode('stickies', mode)
+  },
+  setStickiesFilter (filter) {
+    this.setElementFilter('stickies', filter)
+  },
+  setStickiesVisible (visible) {
+    this.setElementVisible('stickies', visible)
+  },
+  clearStickies () {
+    this.clearElement('stickies')
   },
   getFab () {
     return this.getElement('fab')
@@ -239,6 +301,9 @@ export const Layout = {
     if (props.offset === offset) return
     Store.patch(this.getElementPath('fab'), { offset })
   },
+  clearFab () {
+    this.clearElement('fab')
+  },
   getPane (placement) {
     return this.getElement(`panes.${placement}`)
   },
@@ -259,6 +324,14 @@ export const Layout = {
     if (props.opener === opener) return
     Store.patch(this.getElementPath(`panes.${placement}`), { opener })
   },
+  setPaneSizes (placement, sizes) {
+    const props = this.getElement(`panes.${placement}`)
+    if (_.isEqual(props.sizes, sizes)) return
+    Store.patch(this.getElementPath(`panes.${placement}`), { sizes })
+  },
+  clearPane (placement) {
+    this.clearElement(`panes.${placement}`)
+  },
   getWindow (placement) {
     return this.getElement(`windows.${placement}`)
   },
@@ -276,7 +349,7 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowControls (placement, controls) {
-    for (const key in _.keys(windowDefaultContols)) {
+    for (const key in _.keys(windowsDefaultControls)) {
       if (!_.has(controls, key)) {
         logger.warn(`[KDK] Invalid window controls ${controls}`)
         return
@@ -305,17 +378,11 @@ export const Layout = {
     Store.patch(this.getElementPath(`windows.${placement}`), { position })
   },
   setWindowSize (placement, size) {
-    if (!Array.isArray(size) && size.length !== 2) {
-      logger.warn(`[KDK] Invalid size ${size}`)
-      return
-    }
-    const props = this.getElement(`windows.${placement}`)
-    if (_.isEqual(props.size, size)) return
-    Store.patch(this.getElementPath(`windows.${placement}`), { size })
+    this.setElementSize(`windows.${placement}`, size)
   },
   setWindowSizePolicy (placement, policy) {
     if (!policy.minSize || !policy.floating || !policy.pinned) {
-      logger.warn(`[KDK] Invalid sizePolicy ${policy}`)
+      logger.warn(`[KDK] Invalid window sizePolicy ${policy}`)
       return
     }
     const props = this.getElement(`windows.${placement}`)
@@ -330,8 +397,11 @@ export const Layout = {
     if (!widget) current = _.get(props.components, '[0].id')
     Store.patch(this.getElementPath(`windows.${placement}`), { current })
   },
+  clearWindow (placement) {
+    this.clearElement(`windows.${placement}`)
+  },
   findWindow (widget) {
-    for (const placement of placements) {
+    for (const placement of this.placements) {
       const window = this.getWindow(placement)
       if (_.find(window.components, { id: widget })) {
         return { placement, window }
@@ -339,5 +409,30 @@ export const Layout = {
     }
     logger.debug(`[KDK] Unable to find the widget ${widget}`)
     return { placement: undefined, window: undefined }
+  },
+  openWidget (widget, focus = true) {
+    const { placement, window } = this.findWindow(widget)
+    if (!placement) return
+    if (window.current !== 'current') this.setWindowCurrent(placement, widget)
+    if (!window.visible) this.setWindowVisible(placement, true)
+    if (focus) Layout.setFocus(`windows.${placement}`)
+  },
+  closeWidget (widget) {
+    const { placement, window } = this.findWindow(widget)
+    if (!placement) return
+    if (window.visible) this.setWindowVisible(placement, false)
+  },
+  setFocus (element) {
+    const focus = this.getElement('focus')
+    if (focus.element) {
+      if (focus.element === element) return
+      Store.patch(this.getElementPath(focus.element.path), { zIndex: focus.element.zIndex })
+    }
+    const props = this.getElement(element)
+    Store.patch(this.getElementPath('focus'), { element: { path: element, zIndex: props.zIndex } })
+    Store.patch(this.getElementPath(element), { zIndex: focus.zIndex })
+  },
+  clearFocus () {
+    this.clearElement('focus')
   }
 }

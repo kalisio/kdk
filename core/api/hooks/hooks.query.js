@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { marshallComparisonFields, marshallSortFields, marshallTime } from '../marshall.js'
+import { marshallComparisonFields, marshallTime, marshallBooleanFields, marshallNumberFields, marshallDateFields } from '../marshall.js'
 import mongodb from 'mongodb'
 import makeDebug from 'debug'
 import { makeDiacriticPattern } from '../../common/utils.js'
@@ -27,7 +27,7 @@ export function marshallSortQuery (hook) {
   const query = hook.params.query
   if (query && query.$sort) {
     // Complex queries might have nested objects so we call a recursive function to handle this
-    marshallSortFields(query.$sort)
+    marshallNumberFields(query.$sort)
   }
 }
 
@@ -43,6 +43,19 @@ export function marshallCollationQuery (hook) {
     delete query.$collation
   }
   return hook
+}
+
+export function marshallHttpQuery (hook) {
+  const provider = _.get(hook.params, 'provider')
+  if (provider !== 'rest') return hook
+  const query = hook.params.query
+  if (query) {
+    // Need to convert from client/server side types : numbers, boolean, dates, ...
+    // ORder matters here as a boolean can be converted to number (0/1)
+    marshallNumberFields(query)
+    marshallBooleanFields(query)
+    marshallDateFields(query)
+  }
 }
 
 export async function aggregationQuery (hook) {

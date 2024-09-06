@@ -425,7 +425,7 @@
     "DOMAIN": "Hosted on",
     "FLAVOR": "Flavor",
     "VIEW_CHANGELOG": "Changlog",
-    "BUG_REPORT": "Report us a bug",
+    "BUG_REPORT": "Report a bug",
     "BUG_REPORT_SUBJECT": "[{appName}] Bug report - Client v{clientVersion} - API v{apiVersion}",
     "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
     "PLATFORM_INFO": "Platform information"
@@ -534,10 +534,7 @@
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
   },
   "KGrid": {
-    "EMPTY_GRID": "@:NO_ITEM"
-  },
-  "KList": {
-    "EMPTY_LIST": "@:NO_ITEM"
+    "EMPTY_LABEL": "@:NO_ITEM"
   },
   "KTable": {
     "EMPTY_TABLE": "@:NO_ITEM",
@@ -549,6 +546,12 @@
     "NO_DATA_AVAILABLE": "No data available",
     "EXPORT_DATA": "Export data",
     "DATA_EXPORT_FILE": "Data.csv"
+  },
+  "KTimeLine": {
+    "EMPTY_LABEL": "@:NO_ITEM"
+  },
+  "KScrollToTop": {
+    "TOOLTIP": "Scroll to top"
   },
   "KHistory": {
     "EMPTY_HISTORY": "@:NO_ITEM"
@@ -869,6 +872,9 @@
     "LAST_3_MONTHS_LABEL": "Last 3 months",
     "LAST_6_MONTHS_LABEL": "Last 6 months",
     "LAST_YEAR_LABEL": "Last year",
+    "LAST_2_YEARS_LABEL": "Last 2 years",
+    "LAST_3_YEARS_LABEL": "Last 3 years",
+    "LAST_5_YEARS_LABEL": "Last 5 years",
     "NEXT_HOUR_LABEL": "Next hour",
     "NEXT_2_HOURS_LABEL": "Next 2 hours",
     "NEXT_3_HOURS_LABEL": "Next 3 hours",
@@ -889,6 +895,7 @@
   },
   "KTimeSeriesChart": {
     "TIME_LABEL": "Time",
+    "NO_DATA_AVAILABLE": "No data available",
     "EXPORT_SERIES": "Export series",
     "SERIES_EXPORT_FILE": "Series.csv"
   },

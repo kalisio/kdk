@@ -52,13 +52,12 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Store, Events, i18n, beforeGuard } from '../..'
 import { Notify } from 'quasar'
+import { Store, Events, i18n, beforeGuard } from '../..'
 
 // Data
 const router = useRouter()
 const route = useRoute()
-const notify = Notify.create
 const tourRef = ref()
 const tourSteps = ref([])
 const tourOptions = ref({
@@ -83,7 +82,7 @@ const tourCallbacks = ref({
 const isStepVisible = ref(true)
 let isRunning = false
 
-// functions
+// Functions
 function hasLinkButton (step) {
   return _.has(step, 'params.route') && !_.has(step, 'link') // Only if no link label
 }
@@ -277,7 +276,7 @@ function blockOnMiss () {
       if (!getTarget(target)) missing = true
     })
     if (missing) {
-      notify({ type: 'warning', message: i18n.t('KTour.MISS_ERROR') })
+      Notify.create({ type: 'warning', message: i18n.t('KTour.MISS_ERROR') })
     }
   }
   return missing
@@ -416,7 +415,7 @@ function beforeRoute (to, from, next) {
   next()
 }
 
-// hooks
+// Hooks
 onMounted(() => {
   beforeGuard.unregisterGuard = router.beforeEach(beforeRoute)
   refreshTour()
@@ -426,15 +425,14 @@ onBeforeUnmount(() => {
   Events.off('tours-current-changed', setCurrentTour)
 })
 
-// computed
+// Computed
 const step = computed(() => getStep())
 
-// watch
+// Watch
 watch(route, (to, from) => refreshTour())
 
 // immediate
 Events.on('tours-current-changed', setCurrentTour)
-
 </script>
 
 <style lang="scss" scoped>

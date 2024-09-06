@@ -1,6 +1,8 @@
 <template>
   <div class="fit">
     <canvas :ref="onCanvasRef" />
+    <KStamp v-if="!hasData" icon="las la-exclamation-circle" icon-size="3rem"
+        :text="$t('KTimeSeriesChart.NO_DATA_AVAILABLE')" text-size="1rem"/>
   </div>
 </template>
 
@@ -47,41 +49,38 @@ const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-click'])
 let canvas = null
 let chart = null
 const unit2axis = new Map()
+const hasData = ref(false)
 const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
 const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
 let min = null
 let max = null
 
 // Watch
-watch(() => props.timeSeries, update)
-watch(() => props.xAxisKey, update)
-watch(() => props.yAxisKey, update)
-watch(() => props.startTime, update)
-watch(() => props.endTime, update)
-watch(() => props.zoomable, update)
-watch(() => props.logarithmic, update)
-watch(() => props.currentTime, update)
-watch(() => props.options, update)
+// We use debounce here to avoid pultiple refresh when initializing props
+const requestUpdate = _.debounce(() => update(), 500)
+watch(() => props.timeSeries, requestUpdate)
+watch(() => props.xAxisKey, requestUpdate)
+watch(() => props.yAxisKey, requestUpdate)
+watch(() => props.startTime, requestUpdate)
+watch(() => props.endTime, requestUpdate)
+watch(() => props.zoomable, requestUpdate)
+watch(() => props.logarithmic, requestUpdate)
+watch(() => props.currentTime, requestUpdate)
+watch(() => props.options, requestUpdate)
 
 // Functions
 async function onCanvasRef (ref) {
-  if (ref) {
-    if (!chart) {
-      const config = await makeChartConfig()
-      chart = new Chart(ref.getContext('2d'), config)
-    }
-  } else {
-    if (chart) {
-      chart.destroy()
-      chart = null
-    }
-  }
   canvas = ref
+  update()
 }
 function getUnit (timeSerie) {
-  // Falback to base unit
-  const unit = _.get(timeSerie, 'variable.unit')
-  return unit
+  return _.get(timeSerie, 'variable.unit')
+}
+function getTargetUnit (timeSerie) {
+  return _.get(timeSerie, 'variable.targetUnit')
+}
+function setUnit (timeserie, targetUnit) {
+  _.set(timeserie, 'variable.unit', targetUnit)
 }
 function getZoom () {
   const start = moment.utc(_.get(chart, 'scales.x.min'))
@@ -108,7 +107,9 @@ function computeScaleBound (scale, property, min, max) {
 async function makeChartConfig () {
   // Order matters as we compute internals like data time range
   const datasets = await makeDatasets()
-  const scales = makeScales()
+  // No data ?
+  if (_.isEmpty(datasets)) return null
+  const scales = makeScales(datasets)
   const annotation = makeAnnotation()
   const config = {
     type: 'line',
@@ -135,9 +136,9 @@ async function makeChartConfig () {
               return (x ? `${Time.format(x, 'date.short')} - ${Time.format(x, 'time.long')}` : '')
             },
             label: (context) => {
-              const { unit, label } = context.dataset
+              const { unit, targetUnit, label } = context.dataset
               const y = _.get(context, 'parsed.y')
-              return label + ': ' + Units.format(y, unit)
+              return label + ': ' + Units.format(y, targetUnit?.name || unit.name, targetUnit?.name || unit.name)
             }
           }
         },
@@ -158,7 +159,7 @@ async function makeChartConfig () {
                   backgroundColor: getCssVar('secondary') + '88'
                 },
                 mode: 'x',
-                onZoomStart: onZoomStart,
+                onZoomStart,
                 onZoom: onZoomEnd
               }
             }
@@ -190,7 +191,7 @@ async function makeChartConfig () {
   computeScaleBound(scales.x, 'suggestedMax', startTime.value, endTime.value)
   return config
 }
-function makeScales () {
+function makeScales (datasets) {
   // Setup time ticks unit
   const hours = endTime.value.diff(startTime.value, 'hours')
   const days = endTime.value.diff(startTime.value, 'days')
@@ -243,21 +244,26 @@ function makeScales () {
   let axisId = 0
   for (const timeSerie of props.timeSeries) {
     const unit = getUnit(timeSerie)
-    if (!unit2axis.has(unit)) {
+    const targetUnit = getTargetUnit(timeSerie) || unit
+    if (!unit2axis.has(targetUnit.name)) {
+      // Ensure a related dataset does exist
+      const dataset = _.find(datasets, dataset => (_.get(dataset, 'targetUnit.name', _.get(dataset, 'unit.name')) === targetUnit.name))
+      if (!dataset) continue
       const axis = `y${axisId}`
-      unit2axis.set(unit, axis)
+      unit2axis.set(targetUnit.name, axis)
       scales[axis] = _.merge({
-        unit,
+        targetUnit: targetUnit.name,
         type: props.logarithmic ? 'logarithmic' : 'linear',
         position: (axisId + 1) % 2 ? 'left' : 'right',
         title: {
           display: true,
-          text: unit
+          text: i18n.tie(targetUnit.symbol)
         },
         ticks: {
           callback: function (value, index, values) {
             if (values[index] !== undefined) {
-              return Units.format(values[index].value, unit, null, { symbol: false })
+              // We do not convert using units here as data should have already be converted
+              return Units.format(values[index].value, null, null, { symbol: false })
             }
           }
         }
@@ -276,27 +282,40 @@ async function makeDatasets () {
   for (const timeSerie of props.timeSeries) {
     const label = _.get(timeSerie, 'variable.label')
     const unit = getUnit(timeSerie)
+    const targetUnit = getTargetUnit(timeSerie)
+    if (targetUnit) setUnit(timeSerie, targetUnit)
     const data = await timeSerie.data
+    // No data ?
+    if (_.isEmpty(data)) continue
     const dataset = Object.assign({
       label,
       data,
       unit,
-      yAxisID: unit2axis.get(unit)
+      targetUnit,
+      yAxisID: unit2axis.get(unit.name)
     }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
     const xAxisKey = _.get(dataset, 'parsing.xAxisKey', props.xAxisKey)
     const yAxisKey = _.get(dataset, 'parsing.yAxisKey', props.yAxisKey)
     // Update time/value range
     data.forEach(item => {
       const time = moment.utc(_.get(item, xAxisKey))
-
-      const value = _.get(item, yAxisKey)
-      if (_.isNil(min) || (value < min)) min = value
-      if (_.isNil(max) || (value > max)) max = value
-      if (!props.startTime) {
-        if (!startTime.value || time.isBefore(startTime.value)) startTime.value = time
-      }
-      if (!props.endTime) {
-        if (!endTime.value || time.isAfter(endTime.value)) endTime.value = time
+      // Take zero into account
+      if (_.has(item, yAxisKey)) {
+        let value = _.get(item, yAxisKey)
+        if (_.isFinite(value)) {
+          if (targetUnit) {
+            value = Units.convert(value, unit.name, targetUnit.name)
+            _.set(item, yAxisKey, value)
+          }
+          if (_.isNil(min) || (value < min)) min = value
+          if (_.isNil(max) || (value > max)) max = value
+        }
+        if (!props.startTime) {
+          if (!startTime.value || time.isBefore(startTime.value)) startTime.value = time
+        }
+        if (!props.endTime) {
+          if (!endTime.value || time.isAfter(endTime.value)) endTime.value = time
+        }
       }
     })
     // Check for individual chartjs properties if any
@@ -389,8 +408,15 @@ async function update () {
   max = null
 
   const config = await makeChartConfig()
+  if (!config) {
+    if (chart) chart.destroy()
+    chart = null
+    hasData.value = false
+    return
+  }
   if (!chart) {
     chart = new Chart(canvas.getContext('2d'), config)
+    hasData.value = true
   } else {
     Object.assign(chart, config)
     chart.update()

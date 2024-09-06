@@ -18,6 +18,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.userIsDragging = false
     this.userIsZooming = false
     this.pendingStationUpdates = []
+    this.pendingRequests = []
 
     this.getFeatureKey = (feature) => {
       return getFeatureId(feature, this.layer)
@@ -60,18 +61,18 @@ const TiledFeatureLayer = L.GridLayer.extend({
   getEvents () {
     const events = L.GridLayer.prototype.getEvents.call(this)
 
-    // dragstart sets userIsDragging flag
-    const onDragStart = events.dragstart
-    events.dragstart = (event) => {
+    // movestart sets userIsDragging flag
+    const onMoveStart = events.movestart
+    events.movestart = (event) => {
       this.userIsDragging = true
-      if (onDragStart) onDragStart.call(this, event)
+      if (onMoveStart) onMoveStart.call(this, event)
     }
 
-    // dragstart clears userIsDragging flag
-    const onDragEnd = events.dragend
-    events.dragend = (event) => {
+    // moveend clears userIsDragging flag
+    const onMoveEnd = events.moveend
+    events.moveend = (event) => {
       this.userIsDragging = false
-      if (onDragEnd) onDragEnd.call(this, event)
+      if (onMoveEnd) onMoveEnd.call(this, event)
     }
 
     // zoomstart records zoomStartLevel
@@ -269,6 +270,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
   _update (center) {
     L.GridLayer.prototype._update.call(this)
 
+    // cleanup pending requests, ie only keep those still pending
+    this.pendingRequests = this.pendingRequests.filter((r) => r.status.pending)
+
     // No update while dragging
     if (this.userIsDragging) return
 
@@ -370,7 +374,13 @@ const TiledFeatureLayer = L.GridLayer.extend({
         if (this.enableDebug) tile.div.innerHTML += '</br>features request issued'
       })
 
+      // keep track of pending request
+      promise.status = { cancelled: false, pending: true }
+      this.pendingRequests.push(promise)
+
       promise.then((data) => {
+        if (promise.status.cancelled) return
+
         // Gather all associated tiles, taking children tiles into account
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.featuresChildren.length) allTiles.push(tile.featuresChildren) })
@@ -424,6 +434,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
         if (this.enableDebug) logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
       }).catch((err) => {
+        if (promise.status.cancelled) return
+
         // Gather all associated tiles, taking children tiles into account
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.featuresChildren.length) allTiles.push(tile.featuresChildren) })
@@ -440,6 +452,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
         })
 
         if (this.enableDebug) logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
+      }).finally(() => {
+        promise.status.pending = false
       })
     })
 
@@ -455,9 +469,15 @@ const TiledFeatureLayer = L.GridLayer.extend({
         if (this.enableDebug) tile.div.innerHTML += '</br>measures request issued'
       })
 
+      // keep track of pending request
+      promise.status = { cancelled: false, pending: true }
+      this.pendingRequests.push(promise)
+
       // When stations are fetched, we flag them with a 'measureRequestIssued' property that we
       // may use in dynamic styling
       Promise.all(stationPromises).then(() => {
+        if (promise.status.cancelled) return
+
         const flaggedStations = []
         r.tiles.forEach((tile) => {
           tile.features.forEach((id) => {
@@ -473,6 +493,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
       })
 
       promise.then((data) => {
+        if (promise.status.cancelled) return
+
         // Gather all associated tiles, taking children tiles into account
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.measuresChildren.length) allTiles.push(tile.measuresChildren) })
@@ -498,6 +520,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
           if (okMeasures.length) this.updateStations(featureCollection(okMeasures))
         })
       }).catch((err) => {
+        if (promise.status.cancelled) return
+
         const allTiles = [r.tiles]
         r.tiles.forEach((tile) => { if (tile.measuresChildren.length) allTiles.push(tile.measuresChildren) })
         const tiles = allTiles.flat()
@@ -508,6 +532,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
             tile.div.innerHTML += `</br>measures request failed: ${err}`
           }
         })
+      }).finally(() => {
+        promise.status.pending = false
       })
     })
 
@@ -563,6 +589,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.allFeatures.clear()
 
     this.pendingStationUpdates.length = 0
+
+    // 'cancel' all pending requests so we'll ignore their results
+    // when they'll finish (see _update)
+    this.pendingRequests.forEach((r) => { r.status.cancelled = true })
 
     // request grid layer redraw
     L.GridLayer.prototype.redraw.call(this)

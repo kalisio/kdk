@@ -32,10 +32,10 @@
 </template>
 
 <script setup>
-import { toRefs } from 'vue'
+import { ref, watch } from 'vue'
 import KLocationMap from './KLocationMap.vue'
 
-// props
+// Props
 const props = defineProps({
   location: {
     type: Object,
@@ -55,7 +55,11 @@ const props = defineProps({
   }
 })
 
-// data
-const { location: feature } = toRefs(props)
+// Data
+const feature = ref(null)
 
+// Watch
+watch(() => props.location, (value) => {
+  feature.value = value
+}, { immediate: true })
 </script>

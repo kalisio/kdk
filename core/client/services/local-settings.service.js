@@ -1,8 +1,7 @@
 import _ from 'lodash'
-import config from 'config'
 import { Store } from '../store.js'
 import { Events } from '../events.js'
-import { LocalStorage } from '../local-storage.js'
+import { LocalStorage } from '../local-storage.js'
 
 export default function (name, api, options) {
   const mapping = options.propertyMapping
@@ -43,7 +42,7 @@ export default function (name, api, options) {
           _.set(data, key, Store.get(value))
         }
       })
-       LocalStorage.set(settingsKey, data)
+      LocalStorage.set(settingsKey, data)
     },
 
     restoreSettings () {
@@ -58,6 +57,10 @@ export default function (name, api, options) {
           Store.set(value, _.get(settings, key))
         }
       })
+    },
+
+    getSchema () {
+      return options.settingsSchema
     },
 
     getSettingsMapping () {

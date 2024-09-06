@@ -42,7 +42,7 @@ export default {
       const start = moment(Time.getCurrentTime()).add(duration)
       // Revert range if duration in past
       if (duration.asMilliseconds() > 0) Time.patchRange({ start: end, end: start })
-      else Time.patchRange({ start: start, end: end })
+      else Time.patchRange({ start, end })
     }
   },
   created () {
@@ -186,6 +186,21 @@ export default {
         id: 'next-year',
         label: 'KRelativeTimeRanges.NEXT_YEAR_LABEL',
         handler: () => this.rangeTriggered(moment.duration(1, 'years'))
+      },
+      {
+        id: 'last-2-years',
+        label: 'KRelativeTimeRanges.LAST_2_YEARS_LABEL',
+        handler: () => this.rangeTriggered(moment.duration(-2, 'years'))
+      },
+      {
+        id: 'last-3-years',
+        label: 'KRelativeTimeRanges.LAST_3_YEARS_LABEL',
+        handler: () => this.rangeTriggered(moment.duration(-3, 'years'))
+      },
+      {
+        id: 'last-5-years',
+        label: 'KRelativeTimeRanges.LAST_5_YEARS_LABEL',
+        handler: () => this.rangeTriggered(moment.duration(-5, 'years'))
       }
     ]
   }

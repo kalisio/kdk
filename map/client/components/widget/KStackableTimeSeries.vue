@@ -1,5 +1,5 @@
 <template>
-  <div id="stacked-time-series" class="column justify-start no-wrap" v-if="components.length > 0">
+  <div id="stacked-time-series" v-if="components.length > 0" class="column justify-start no-wrap">
     <!-- Pinned charts first -->
     <template v-for="(timeSerie, index) in timeSeries">
       <div v-if="timeSerie.pinned" class="col column justify-start no-wrap">
@@ -29,6 +29,7 @@
           class="col q-pl-sm q-pr-sm"
           :schema="schema"
           :tables="getTables(timeSerie)"
+          :formatters="tableFormatters"
         />
       </div>
     </template>
@@ -61,6 +62,7 @@
           class="col q-pl-sm q-pr-sm"
           :schema="schema"
           :tables="getTables(timeSerie)"
+          :formatters="tableFormatters"
         />
       </div>
     </template>
@@ -96,6 +98,7 @@ const props = defineProps({
   schema: { type: [String, Object], default: null },
   actions: { type: Array, default: () => [] },
   chartOptions: { type: Object, default: () => ({}) },
+  tableFormatters: { type: Object, defaul: () => null },
   exportOptions: { type: Object, default: () => ({}) }
 })
 

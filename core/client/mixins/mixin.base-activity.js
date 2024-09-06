@@ -8,6 +8,18 @@ export function baseActivity (name) {
       getAppName () {
         return this.$config('appName')
       },
+      configureHeader () {
+        Layout.setHeader(_.get(this.activityOptions, 'header'), this)
+      },
+      clearHeader () {
+        Layout.setHeader(null)
+      },
+      configureFooter () {
+        Layout.setFooter(_.get(this.activityOptions, 'footer'), this)
+      },
+      clearFooter () {
+        Layout.setFooter(null)
+      },
       getTopPane () {
         return Layout.getPane('top')
       },
@@ -119,6 +131,21 @@ export function baseActivity (name) {
       clearPage () {
         Layout.setPage(null)
       },
+      getStickies () {
+        return Layout.getPage()
+      },
+      setStickies (content, mode, filter, sticky) {
+        Layout.setStickies({ content, mode, filter, sticky }, this)
+      },
+      setStickiesMode (mode) {
+        Layout.setStickiesMode(mode)
+      },
+      configureStickies () {
+        Layout.setStickies(_.get(this.activityOptions, 'stickies'), this)
+      },
+      clearStickies () {
+        Layout.clearStickies()
+      },
       getFab () {
         return Layout.getFab()
       },
@@ -157,37 +184,36 @@ export function baseActivity (name) {
         return (window && window.visible)
       },
       openWidget (widget) {
-        const { placement, window } = this.findWindow(widget)
-        if (!placement) {
-          logger.warn(`[KDK] Cannot find widget ${widget}`)
-          return
-        }
-        if (window.current !== widget) Layout.setWindowCurrent(placement, widget)
-        Layout.setWindowVisible(placement, true)
+        Layout.openWidget(widget)
       },
       closeWidget (widget) {
-        const result = this.findWindow(widget)
-        if (!result.placement) {
-          logger.warn(`Cannot find widget ${widget}`)
-          return
-        }
-        Layout.setWindowVisible(result.placement, false)
+        Layout.closeWidget(widget)
+      },
+      clearFocus () {
+        Layout.clearFocus()
       },
       clearActivity () {
+        this.clearFocus()
+        this.clearHeader()
+        this.clearFooter()
         this.clearTopPane()
         this.clearBottomPane()
         this.clearLeftPane()
         this.clearRightPane()
         this.clearPage()
+        this.clearStickies()
         this.clearFab()
         this.clearWindows()
       },
       configureActivity () {
+        this.configureHeader()
+        this.configureFooter()
         this.configureTopPane()
         this.configureLeftPane()
         this.configureBottomPane()
         this.configureRightPane()
         this.configurePage()
+        this.configureStickies()
         this.configureFab()
         this.configureWindows()
       },

@@ -1,11 +1,11 @@
 import _ from 'lodash'
-import Cesium from 'cesium/Source/Cesium.js'
+import { viewerDragDropMixin } from 'cesium'
 import logger from 'loglevel'
 
 export const fileLayers = {
   mounted () {
     this.$engineEvents.on('globe-ready', () => {
-      this.viewer.extend(Cesium.viewerDragDropMixin,
+      this.viewer.extend(viewerDragDropMixin,
         // For activities
         _.get(this, 'activityOptions.engine.fileLayers', {
           clearOnDrop: false,
