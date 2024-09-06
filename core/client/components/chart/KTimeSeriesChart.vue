@@ -50,10 +50,12 @@ let canvas = null
 let chart = null
 const unit2axis = new Map()
 const hasData = ref(false)
+// Min/Max time (ie for x axis)
 const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
 const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
-let min = null
-let max = null
+// Min/max value by unit (ie for y axes)
+let min = {}
+let max = {}
 
 // Watch
 // We use debounce here to avoid pultiple refresh when initializing props
@@ -245,14 +247,17 @@ function makeScales (datasets) {
   for (const timeSerie of props.timeSeries) {
     const unit = getUnit(timeSerie)
     const targetUnit = getTargetUnit(timeSerie) || unit
-    if (!unit2axis.has(targetUnit.name)) {
+    const unitName = targetUnit.name
+    if (!unit2axis.has(unitName)) {
       // Ensure a related dataset does exist
-      const dataset = _.find(datasets, dataset => (_.get(dataset, 'targetUnit.name', _.get(dataset, 'unit.name')) === targetUnit.name))
-      if (!dataset) continue
+      const axisDatasets = _.filter(datasets, dataset => (_.get(dataset, 'targetUnit.name', _.get(dataset, 'unit.name')) === unitName))
+      if (axisDatasets.length === 0) continue
       const axis = `y${axisId}`
-      unit2axis.set(targetUnit.name, axis)
+      // Set axis to related datasets
+      axisDatasets.forEach(dataset => Object.assign(dataset, { yAxisID: axis }))
+      unit2axis.set(unitName, axis)
       scales[axis] = _.merge({
-        targetUnit: targetUnit.name,
+        targetUnit: unitName,
         type: props.logarithmic ? 'logarithmic' : 'linear',
         position: (axisId + 1) % 2 ? 'left' : 'right',
         title: {
@@ -268,10 +273,10 @@ function makeScales (datasets) {
           }
         }
       }, _.get(timeSerie.variable.chartjs, 'yAxis', {}))
-      computeScaleBound(scales[axis], 'min', min, max)
-      computeScaleBound(scales[axis], 'max', min, max)
-      computeScaleBound(scales[axis], 'suggestedMin', min, max)
-      computeScaleBound(scales[axis], 'suggestedMax', min, max)
+      computeScaleBound(scales[axis], 'min', min[unitName], max[unitName])
+      computeScaleBound(scales[axis], 'max', min[unitName], max[unitName])
+      computeScaleBound(scales[axis], 'suggestedMin', min[unitName], max[unitName])
+      computeScaleBound(scales[axis], 'suggestedMax', min[unitName], max[unitName])
       ++axisId
     }
   }
@@ -287,12 +292,12 @@ async function makeDatasets () {
     const data = await timeSerie.data
     // No data ?
     if (_.isEmpty(data)) continue
+    const unitName = (targetUnit ? targetUnit.name : unit.name)
     const dataset = Object.assign({
       label,
       data,
       unit,
-      targetUnit,
-      yAxisID: unit2axis.get(unit.name)
+      targetUnit
     }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
     const xAxisKey = _.get(dataset, 'parsing.xAxisKey', props.xAxisKey)
     const yAxisKey = _.get(dataset, 'parsing.yAxisKey', props.yAxisKey)
@@ -307,8 +312,8 @@ async function makeDatasets () {
             value = Units.convert(value, unit.name, targetUnit.name)
             _.set(item, yAxisKey, value)
           }
-          if (_.isNil(min) || (value < min)) min = value
-          if (_.isNil(max) || (value > max)) max = value
+          if (_.isNil(min[unitName]) || (value < min[unitName])) min[unitName] = value
+          if (_.isNil(max[unitName]) || (value > max[unitName])) max[unitName] = value
         }
         if (!props.startTime) {
           if (!startTime.value || time.isBefore(startTime.value)) startTime.value = time
@@ -404,8 +409,8 @@ async function update () {
   // Reset time/value range
   startTime.value = (props.startTime ? moment.utc(props.startTime) : null)
   endTime.value = (props.endTime ? moment.utc(props.endTime) : null)
-  min = null
-  max = null
+  min = {}
+  max = {}
 
   const config = await makeChartConfig()
   if (!config) {
