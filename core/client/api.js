@@ -11,7 +11,6 @@ import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
 import { Events } from './events.js'
-import { LocalStorage } from './local-storage.js'
 import { makeServiceSnapshot } from '../common/utils.js'
 
 // Disable default feathers behaviour of reauthenticating on disconnect
