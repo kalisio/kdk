@@ -409,7 +409,10 @@ async function update () {
 
   const config = await makeChartConfig()
   if (!config) {
-    if (chart) chart.destroy()
+    if (chart) {
+      chart.clear()
+      chart.destroy()
+    }
     chart = null
     hasData.value = false
     return
