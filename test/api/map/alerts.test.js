@@ -151,6 +151,8 @@ describe('map:alerts', () => {
     .timeout(60000)
 
   it('creates weather active alert at specific location', async () => {
+    // Wait long enough to be sure the distribution is effective
+    await utility.promisify(setTimeout)(10000)
     const now = moment.utc()
     alertObject = await alertService.create({
       cron: '*/5 * * * * *',
@@ -196,7 +198,7 @@ describe('map:alerts', () => {
     expect(results[0].status.checkedAt.isSameOrAfter(results[0].status.triggeredAt.format())).beTrue()
   })
   // Let enough time to process
-    .timeout(15000)
+    .timeout(30000)
 
   it('removes active weather alert at specific location', async () => {
     await alertService.remove(alertObject._id.toString())
