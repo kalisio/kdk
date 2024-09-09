@@ -81,9 +81,6 @@ function getUnit (timeSerie) {
 function getTargetUnit (timeSerie) {
   return _.get(timeSerie, 'variable.targetUnit')
 }
-function setUnit (timeserie, targetUnit) {
-  _.set(timeserie, 'variable.unit', targetUnit)
-}
 function getZoom () {
   const start = moment.utc(_.get(chart, 'scales.x.min'))
   const end = moment.utc(_.get(chart, 'scales.x.max'))
@@ -246,8 +243,8 @@ function makeScales (datasets) {
   let axisId = 0
   for (const timeSerie of props.timeSeries) {
     const unit = getUnit(timeSerie)
-    const targetUnit = getTargetUnit(timeSerie) || unit
-    const unitName = targetUnit.name
+    const targetUnit = getTargetUnit(timeSerie)
+    const unitName = (targetUnit ? targetUnit.name : unit.name)
     if (!unit2axis.has(unitName)) {
       // Ensure a related dataset does exist
       const axisDatasets = _.filter(datasets, dataset => (_.get(dataset, 'targetUnit.name', _.get(dataset, 'unit.name')) === unitName))
@@ -257,12 +254,11 @@ function makeScales (datasets) {
       axisDatasets.forEach(dataset => Object.assign(dataset, { yAxisID: axis }))
       unit2axis.set(unitName, axis)
       scales[axis] = _.merge({
-        targetUnit: unitName,
         type: props.logarithmic ? 'logarithmic' : 'linear',
         position: (axisId + 1) % 2 ? 'left' : 'right',
         title: {
           display: true,
-          text: i18n.tie(targetUnit.symbol)
+          text: i18n.tie(targetUnit ? targetUnit.symbol : unit.symbol)
         },
         ticks: {
           callback: function (value, index, values) {
@@ -288,7 +284,6 @@ async function makeDatasets () {
     const label = _.get(timeSerie, 'variable.label')
     const unit = getUnit(timeSerie)
     const targetUnit = getTargetUnit(timeSerie)
-    if (targetUnit) setUnit(timeSerie, targetUnit)
     const data = await timeSerie.data
     // No data ?
     if (_.isEmpty(data)) continue
@@ -308,10 +303,6 @@ async function makeDatasets () {
       if (_.has(item, yAxisKey)) {
         let value = _.get(item, yAxisKey)
         if (_.isFinite(value)) {
-          if (targetUnit) {
-            value = Units.convert(value, unit.name, targetUnit.name)
-            _.set(item, yAxisKey, value)
-          }
           if (_.isNil(min[unitName]) || (value < min[unitName])) min[unitName] = value
           if (_.isNil(max[unitName]) || (value > max[unitName])) max[unitName] = value
         }

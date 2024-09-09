@@ -286,15 +286,25 @@ export const Units = {
   },
   // Get unit definition by name
   getUnit (unit) {
-    return _.find(this.getUnits(), { name: unit })
+    // Not optimized
+    //return _.find(this.getUnits(), { name: unit })
+    let definition
+    _.forOwn(this.get(), (units, quantity) => {
+      // Already found ?
+      if (definition) return
+      else if (_.has(units, unit)) definition = Object.assign({ name: unit, quantity }, _.get(units, unit))
+    })
+    return definition
   },
-  // Get unit symbol by unit name
+  // Get unit symbol by unit name/definition
   getUnitSymbol (unit) {
-    const definition = this.getUnit(unit)
+    const definition = (typeof unit === 'object' ? unit : this.getUnit(unit))
     return (definition ? i18n.tie(definition.symbol) : unit)
   },
-  // Get default unit definition (if any) for a given quantity/unit name
+  // Get default unit definition (if any) for a given quantity/unit name/definition
   getDefaultUnit (quantityOrUnit) {
+    if (!quantityOrUnit) return null
+    if (typeof quantityOrUnit === 'object') quantityOrUnit = quantityOrUnit.name
     // Check for quantity first
     let defaultUnit = Store.get(`units.default.${quantityOrUnit}`)
     // If not check by matching quantity based on given unit
@@ -302,44 +312,50 @@ export const Units = {
       const baseUnit = this.getUnit(quantityOrUnit)
       // Get default unit for this quantity instead
       if (baseUnit) defaultUnit = this.getDefaultUnit(baseUnit.quantity)
+    } else {
+      // Jump from name to definition
+      defaultUnit = this.getUnit(defaultUnit)
     }
     return defaultUnit
   },
+  // Set default unit name for a quantity
   setDefaultUnit (quantity, unit) {
     Store.set(`units.default.${quantity}`, unit)
   },
-  // Get symbol of default unit (if any) for a given quantity/unit name
+  // Get symbol of default unit (if any) for a given quantity/unit name/definition
   getDefaultUnitSymbol (quantityOrUnit) {
     return this.getUnitSymbol(this.getDefaultUnit(quantityOrUnit))
   },
-  // Get target unit for a source unit, will be default unit (if any) or source unit
+  // Get target unit definition for a source unit name/definition, will be default unit (if any) or source unit
   getTargetUnit (sourceUnit) {
-    return this.getDefaultUnit(sourceUnit) || sourceUnit
+    return this.getDefaultUnit(sourceUnit) || (typeof sourceUnit === 'object' ? sourceUnit : this.getUnit(sourceUnit))
   },
-  // Get target unit symbol for a source unit, will be default unit symbol (if any) or source unit symbol
+  // Get target unit symbol for a source unit name/definition, will be default unit symbol (if any) or source unit symbol
   getTargetUnitSymbol (sourceUnit) {
     return this.getUnitSymbol(this.getTargetUnit(sourceUnit))
   },
-  // Convert between units by names
+  // Convert between units by names/definitions
   // If target unit is not specified will use default unit (if any) for source unit
   convert (value, sourceUnit, targetUnit) {
-    if (_.isNil(value)) {
-      logger.warn('[KDK] cannont convert a nil value')
-      return
-    }
+    if (_.isNil(value) || !_.isFinite(value)) return value
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
-    // If target unit is same as source unit does nothing
-    if (targetUnit === sourceUnit) return value
+    if (typeof sourceUnit === 'string') sourceUnit = this.getUnit(sourceUnit)
+    if (typeof targetUnit === 'string') targetUnit = this.getUnit(targetUnit)
     // If target unit is not given use default one
     if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
-    // Check if the target unit does exist
-    if (!targetUnit) return value
-    // Check if the source unit does exist
-    if (!math.Unit.isValuelessUnit(sourceUnit)) return value
-    let n = math.unit(value, sourceUnit)
-    n = n.toNumber(targetUnit)
+    // Check if the source/target unit does exist
+    if (!sourceUnit || !targetUnit) return value
+    // If target unit is same as source unit does nothing
+    if (sourceUnit && targetUnit && (targetUnit.name === sourceUnit.name)) return value
+    // Check if the source unit is declared in the units system
+    if (!math.Unit.isValuelessUnit(sourceUnit.name)) return value
+    // Check if the value is a valid number
+    if (!_.isFinite(value)) return value
+    // Now convert
+    let n = math.unit(value, sourceUnit.name)
+    n = n.toNumber(targetUnit.name)
     // Remap from [-180,+180[ to [0,360[ for angles
-    n = (targetUnit === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
+    n = (targetUnit.name === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
     return n
   },
   // Format display of source value in target unit, converting from source unit

@@ -16,7 +16,10 @@ async function getDataForVariable(data, variable, forecastLevel, runTime) {
   // Aggregated variable available for feature ?
   if (properties[name] && Array.isArray(properties[name])) {
     // Build data structure as expected by visualisation
-    values = properties[name].map((value, index) => ({ time: moment.utc(times[name][index]).valueOf(), [name]: value }))
+    values = properties[name].map((value, index) => {
+      value = Units.convert(value, variable.unit, variable.targetUnit)
+      return { time: moment.utc(times[name][index]).valueOf(), [name]: value }
+    })
     // Keep only selected value if multiple are provided for the same time (eg different forecasts)
     if (variable.runTimes && runTime && !_.isEmpty(_.get(runTimes, name))) {
       values = values.filter((value, index) => (runTimes[name][index] === runTime.toISOString()))
@@ -86,6 +89,7 @@ export function getTimeSeries({
     const baseUnit = _.get(properties, 'unit', variable.unit)
     // Known by the unit system ?
     const unit = Units.getUnit(baseUnit) || { name: baseUnit }
+    const targetUnit = Units.getTargetUnit(baseUnit)
     const serie = {
       probedLocation: data,
       data: getDataForVariable(data, variable, forecastLevel),
@@ -93,7 +97,7 @@ export function getTimeSeries({
         name: variable.name,
         label: `${i18n.tie(variable.label)} (${Units.getTargetUnitSymbol(baseUnit)})`,
         unit,
-        targetUnit: Units.getTargetUnit(unit),
+        targetUnit,
         chartjs: Object.assign({
           parsing: {
             xAxisKey: 'time',
