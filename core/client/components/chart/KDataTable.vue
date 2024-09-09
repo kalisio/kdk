@@ -30,7 +30,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import Papa from 'papaparse'
 import { ref, watch } from 'vue'
-import { downloadAsBlob, convertTimeSerie } from '../../utils'
+import { downloadAsBlob } from '../../utils'
 import { useSchema } from '../../composables'
 import { Units } from '../../units.js'
 import { Time } from '../../time.js'
@@ -71,7 +71,6 @@ const height = ref(0)
 // Used to store template compilers per field
 const compilers = {}
 const exportCompilers = {}
-let propertiesToConvert = []
 
 // Watch
 watch(() => props.tables, update)
@@ -82,14 +81,11 @@ async function update () {
   await compile(props.schema)
   columns.value = []
   const invisibleColumns = []
-  propertiesToConvert = []
   _.forOwn(schema.value.properties, (value, key) => {
     const type = _.get(value, 'type')
     // FIXME: allow for custom representation of complex objects
     if (type === 'object') return
     const label = _.get(value, 'field.label', _.get(value, 'field.helper', key))
-    const convertToDefaultUnit = _.get(value, 'field.defaultUnit', false)
-    if (convertToDefaultUnit) propertiesToConvert.push(key)
     const visible = _.get(value, 'field.visible', true)
     if (!visible) invisibleColumns.push(key)
     const formatter = _.has(value, 'field.formatter') ? _.get(props.formatters, value.field.formatter) : null
@@ -135,7 +131,6 @@ async function update () {
   rows.value = []
   for (const table of props.tables) {
     const data = await table.data
-    convertTimeSerie(data, table.variable, propertiesToConvert)
     rows.value = rows.value.concat(data)
   }
 }
@@ -148,7 +143,6 @@ async function exportData (options = {}) {
   for (let i = 0; i < props.tables.length; i++) {
     const table = props.tables[i]
     const data = await table.data
-    await convertTimeSerie(data, table.variable, propertiesToConvert)
     for (const item of data) {
       const row = {}
       _.forOwn(schema.value.properties, (value, key) => {
