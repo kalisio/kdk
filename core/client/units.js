@@ -291,8 +291,7 @@ export const Units = {
     let definition
     _.forOwn(this.get(), (units, quantity) => {
       // Already found ?
-      if (definition) return
-      else if (_.has(units, unit)) definition = Object.assign({ name: unit, quantity }, _.get(units, unit))
+      if (!definition && _.has(units, unit)) definition = Object.assign({ name: unit, quantity }, _.get(units, unit))
     })
     return definition
   },
