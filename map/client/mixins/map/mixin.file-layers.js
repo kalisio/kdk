@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import path from 'path-browserify'
 import { Reader } from '../../../../core/client/reader.js'
 
@@ -28,6 +29,7 @@ export const fileLayers = {
       dropFileInput.type = 'file'
       dropFileInput.style.display = 'none'
       dropFileInput.addEventListener('change', async (event) => {
+        logger.debug('[KDK] processing dropped files: ', event.target.files)
         await this.importFiles(event.target.files)
       })
       container.appendChild(dropFileInput)
@@ -39,6 +41,7 @@ export const fileLayers = {
         event.preventDefault()
       }, false)
       this.map._container.addEventListener('drop', async (event) => {
+        logger.debug('[KDK] processing dropped files: ', event.dataTransfer.files)
         event.stopPropagation()
         event.preventDefault()
         await this.importFiles(event.dataTransfer.files)
