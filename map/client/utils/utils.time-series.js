@@ -7,8 +7,8 @@ import { getForecastForLocation, getForecastProbe, getForecastForFeature } from 
 
 async function getDataForVariable(data, variable, forecastLevel, runTime) {
   data = await data
-  const times = _.get(data, 'time', _.get(data, 'forecastTime'))
-  const runTimes = _.get(data, 'runTime')
+  const times = _.get(data, 'time', _.get(data, 'forecastTime', {}))
+  const runTimes = _.get(data, 'runTime', {})
   const properties = _.get(data, 'properties', {})
   // Check if we are targetting a specific variable at level (forecast model case)
   const name = (forecastLevel ? `${variable.name}-${forecastLevel}` : variable.name)
@@ -112,6 +112,7 @@ export function getTimeSeries({
     serie.fetch = () => {
       serie.probedLocation = fetch()
       serie.data = getDataForVariable(serie.probedLocation, variable, forecastLevel, runTime)
+      return serie.data
     }
     return serie
   })

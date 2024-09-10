@@ -398,7 +398,7 @@ export default {
     },
     onExportSeries () {
       let times = []
-      const time = this.probedLocation.time || this.probedLocation.forecastTime
+      const time = _.get(this.probedLocation, 'time', _.get(this.probedLocation, 'forecastTime'))
       this.probedVariables.forEach(variable => {
         // Check if we are targetting a specific level
         const name = (this.kActivity.forecastLevel ? `${variable.name}-${this.kActivity.forecastLevel}` : variable.name)
