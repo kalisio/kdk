@@ -269,11 +269,7 @@ export async function getMeasureForFeatureQuery (layer, feature, startTime, endT
 
 export async function getMeasureForFeatureFromQuery (layer, feature, query) {
   const result = await getFeaturesFromQuery(layer, query)
-  if (result.features.length > 0) {
-    return result.features[0]
-  } else {
-    return _.cloneDeep(feature)
-  }
+  return _.get(result, 'features[0]')
 }
 
 export async function getMeasureForFeature (layer, feature, startTime, endTime, level) {
