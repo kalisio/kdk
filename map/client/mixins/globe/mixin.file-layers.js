@@ -5,14 +5,12 @@ import { viewerDragDropMixin } from 'cesium'
 export const fileLayers = {
   mounted () {
     this.$engineEvents.on('globe-ready', () => {
-      this.viewer.extend(viewerDragDropMixin,
-        // For activities
-        _.get(this, 'activityOptions.engine.fileLayers', {
-          clearOnDrop: false,
-          flyToOnDrop: true,
-          clampToGround: true
-        })
-      )
+      const fileLayersOptions = _.defaults(_.get(this, 'activityOptions.engine.fileLayers', {}), {
+        clearOnDrop: false,
+        flyToOnDrop: true,
+        clampToGround: true
+      })
+      this.viewer.extend(viewerDragDropMixin, fileLayersOptions)
       this.viewer.dropError.addEventListener((viewerArg, source, error) => {
         logger.error(error)
       })
@@ -31,7 +29,8 @@ export const fileLayers = {
           cesium: {
             type: 'geoJson',
             isVisible: true,
-            cluster: { pixelRange: 50 },
+            cluster: _.get(fileLayersOptions, 'cluster', { pixelRange: 50 }),
+            entityStyle: _.get(fileLayersOptions, 'entityStyle'),
             source: source.name // Set the data source name instead of URL in this case
           }
         })
