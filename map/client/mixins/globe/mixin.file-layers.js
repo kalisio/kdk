@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { viewerDragDropMixin } from 'cesium'
 import logger from 'loglevel'
+import { viewerDragDropMixin } from 'cesium'
 
 export const fileLayers = {
   mounted () {
@@ -21,6 +21,7 @@ export const fileLayers = {
         // Check if source has not been dropped, otherwise add it as layer
         if (source.notFromDrop) return
         if (!source.name) source.name = this.$t('mixins.fileLayers.IMPORTED_DATA_NAME')
+        logger.debug('[KDK] processing dropped file: ', source.name)
         // Create an empty layer used as a container
         this.addLayer({
           name: source.name,
