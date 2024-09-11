@@ -53,7 +53,7 @@ export default {
     mode: {
       // [!] cannot be immediate as it is required that the activity is configured first
       handler (value) {
-        logger.debug(`[KDK] Setting layout un '${value}' mode`)
+        logger.debug(`[KDK] Setting layout on '${value}' mode`)
         if (value) this.setLayoutMode(value)
       }
     }
