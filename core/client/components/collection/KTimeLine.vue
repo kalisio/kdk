@@ -361,6 +361,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .q-timeline__heading-title {
+  padding-top: 8px;
   padding-bottom: 8px;
 }
 .k-timeline-heading {
