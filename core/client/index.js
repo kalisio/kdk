@@ -55,7 +55,7 @@ export default async function initialize () {
 
   logger.debug('[KDK] initializing core module')
 
-  // Declare the module intiaization states
+  // Declare the module initialization states
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
 
   // Initialize singletons that might be used globally first
