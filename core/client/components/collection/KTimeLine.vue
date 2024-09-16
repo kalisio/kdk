@@ -23,8 +23,8 @@
       class="col scroll"
     >
       <q-timeline
-        color="primary"
         :layout="layout"
+        color="grey-7"
       >
         <q-infinite-scroll
           @load="onLoad"
