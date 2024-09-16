@@ -73,7 +73,7 @@ const refresh = _.debounce(() => {
   else {
     const ratio = clamp(qScrollUtils.getVerticalScrollPosition(targetElement) / diff, 0, 1)
     const percent = Math.round(ratio * 10000) / 10000
-    isVisible.value = percent < 1
+    isVisible.value = percent < 0.99
   }
   logger.trace(`[KDK] (KScrollDown) Refreshed with visibility: ${isVisible.value}`)
 }, 100)
