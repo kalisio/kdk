@@ -4,11 +4,10 @@
     <!--
       Header section
      -->
-    <div v-if="!hideHeader" class="row full-width items-center no-wrap" style="min-height: 30px">
+    <div v-if="!hideHeader" class="row full-width justify-between items-center no-wrap">
       <span class="text-grey-7 text-body-2 ellipsis">
         {{ title }}
       </span>
-      <q-space />
       <KPanel
         v-if="actions"
         :content="actions"
