@@ -374,6 +374,8 @@ onBeforeUnmount(() => {
 .q-timeline__subtitle {
   margin-bottom: 0px;
   opacity: 0.9;
+  text-transform: capitalize;
+  font-weight: 500;
 }
 .q-timeline__content {
   padding-bottom: 16px;
