@@ -138,10 +138,10 @@ export const baseItem = {
             flat: true
           }
         }).onOk(() => {
-          this.$api.getService(this.service).remove(this.item._id)
+          this.$api.getService(this.service, this.contextId).remove(this.item._id)
         })
       } else {
-        this.$api.getService(this.service).remove(this.item._id)
+        this.$api.getService(this.service, this.contextId).remove(this.item._id)
       }
     },
     exportItem () {
