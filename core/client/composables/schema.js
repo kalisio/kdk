@@ -18,7 +18,7 @@ export function useSchema () {
       // load the schema file
       logger.trace('[KDK] Loading schema ', schemaNameOrObject)
       const schemaModule = await import(`@schemas/${schemaNameOrObject}.json`)
-      schema.value = schemaModule.default
+      schema.value = _.cloneDeep(schemaModule.default)
     } else {
       // clone the schema object
       logger.trace('setting schema ', schemaNameOrObject.$id)
