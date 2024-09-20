@@ -10,18 +10,18 @@
     <Suspense>
       <!-- component with v-model -->
       <component
-        v-if="_.has(attrs, 'v-model')"
+        v-if="model"
         ref="componentRef"
         :is="computedComponent"
         v-model="computedModel"
-        v-bind="computedProps"
+        v-bind="attrs"
       />
       <!-- component without v-model -->
       <component
         v-else
         ref="componentRef"
         :is="computedComponent"
-        v-bind="computedProps"
+        v-bind="attrs"
       />
     </Suspense>
   </KModal>
@@ -97,7 +97,7 @@ const computedButtons = computed(() => {
       const cancelButton = _.clone(props.cancelAction)
       if (cancelButton.handler) {
         cancelButton.handler = async () => {
-          // ! call the origonal handler to avoid recurcive call
+          // ! call the original handler to avoid recursive call
           const result = await callHandler(props.cancelAction.handler)
           // close dialog whatever the result of the handler
           onDialogCancel(result)
@@ -140,9 +140,6 @@ const computedModel = computed({
     model.value = value
     emit('update:modelValue', value)
   }
-})
-const computedProps = computed(() => {
-  return _.omit(attrs, ['v-model'])
 })
 
 // Functions

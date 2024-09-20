@@ -41,8 +41,11 @@ export const baseItem = {
     }
   },
   watch: {
+    // Make configured actions reactive as item actions are built from
+    item: function () {
+      this.configureActions()
+    },
     actions: function () {
-      // Make configured actions reactive as item actions are built from
       this.configureActions()
     }
   },
