@@ -20,11 +20,11 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Filter, Sorter, utils, i18n } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n, api } from '../../../../core/client'
 import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 import { useProject } from '../../composables'
-import { createOfflineServiceForView, uncacheView } from '../../utils/utils.offline.js'
-import { Notify } from 'quasar'
+import { cacheView, uncacheView } from '../../utils/utils.offline.js'
+import { Dialog, Notify } from 'quasar'
 import localforage from 'localforage'
 
 export default {
@@ -94,6 +94,9 @@ export default {
     }
   },
   methods: {
+    getProjectLayers () {
+      return (this.project ? this.project.layers.map(layer => (layer._id ? this.kActivity.getLayerById(layer._id) : this.kActivity.getLayerByName(layer.name))) : [])
+    },
     async onViewSelected (view, action) {
       switch (action) {
         case 'apply-view': {
@@ -103,61 +106,52 @@ export default {
         case 'set-home-view': {
           if (!this.$can('update', 'catalog', this.kActivity.contextId)) return
           // Get current home view
-          const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
+          const response = await api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
           const currentHomeView = (response.data.length > 0 ? response.data[0] : null)
           // Unset it
-          if (currentHomeView) await this.$api.getService('catalog').patch(currentHomeView._id, { isDefault: false })
+          if (currentHomeView) await api.getService('catalog').patch(currentHomeView._id, { isDefault: false })
           // Then set new one if it's really a new one
           if (!currentHomeView || (view._id !== currentHomeView._id)) {
-            await this.$api.getService('catalog').patch(view._id, { isDefault: true })
+            await api.getService('catalog').patch(view._id, { isDefault: true })
           }
           break
         }
         case 'cache-view': {
-          let dismiss = null
-          dismiss = Notify.create({
-            group: 'views',
-            icon: 'las la-hourglass-half',
-            message: i18n.t('KViewsPanel.CACHING_VIEW'),
-            color: 'primary',
-            timeout: 0,
-            spinner: true
-          })
-          const views = await localforage.getItem('views')
-          if (views) {
-            views[view._id] = true
-            await localforage.setItem('views', views)
-          } else {
-            await localforage.setItem('views', { [view._id]: true })
-          }
-          // We need at least catalog/project offline services
-          // Take care that catalog only returns items of layer types by default
-          const catalogQueries = [{ type: { $nin: ['Context', 'Service', 'Category'] } }, { type: { $in: ['Context', 'Service', 'Category'] } }]
-          if (!this.$api.getOfflineService('catalog')) {
-            await createOfflineServiceForView('catalog', view._id, {
-              baseQueries: catalogQueries
-            })
-            if (this.kActivity.contextId) {
-              await createOfflineServiceForView('catalog', view._id, {
-                baseQueries: catalogQueries,
-                context: this.kActivity.contextId
-              })
+          // Select cache options
+          Dialog.create({
+            title: i18n.t('KViewsPanel.CACHE_VIEW_DIALOG_TITLE'),
+            message: i18n.t('KViewsPanel.CACHE_VIEW_DIALOG_MESSAGE'),
+            html: true,
+            component: 'KDialog',
+            componentProps: {
+              component: 'catalog/KCreateOfflineView',
+              okAction: {
+                id: 'ok-button',
+                label: 'OK',
+                handler: 'apply',
+                flat: true
+              },
+              cancelAction: {
+                id: 'cancel-button',
+                label: 'CANCEL',
+                flat: true
+              }
             }
-          }
-          // Take care that projects are not populated by default
-          if (!this.$api.getOfflineService('projects')) {
-            const projectQuery = { populate: true }
-            await createOfflineServiceForView('projects', view._id, {
-              baseQuery: projectQuery
+          }).onOk(async (values) => {
+            const dismiss = Notify.create({
+              group: 'views',
+              icon: 'las la-hourglass-half',
+              message: i18n.t('KViewsPanel.CACHING_VIEW'),
+              color: 'primary',
+              timeout: 0,
+              spinner: true
             })
-          }
-          // Then data layer
-          const layers = this.project.layers
-          for (let i = 0; i < layers.length; i++) {
-            const layer = (layers[i]._id ? this.kActivity.getLayerById(layers[i]._id) : this.kActivity.getLayerByName(layers[i].name))
-            await this.kActivity.setLayerCached(layer, view._id, { bounds: [[view.south, view.west], [view.north, view.east]] })
-          }
-          dismiss()
+            await cacheView(view, this.getProjectLayers(), {
+              contextId: this.kActivity.contextId,
+              ...values
+            })
+            dismiss()
+          })
           break
         }
         case 'uncache-view': {
@@ -168,7 +162,7 @@ export default {
             color: 'primary',
             timeout: 3000
           })
-          uncacheView(view, this.project, this.kActivity)
+          await uncacheView(view, this.getProjectLayers())
           break
         }
         default:
@@ -190,8 +184,8 @@ export default {
         }
       })
       if (!result.ok) return false
-      await uncacheView(view, this.project, this.kActivity)
-      await this.$api.getService('catalog').remove(view._id)
+      await uncacheView(view, this.getProjectLayers())
+      await api.getService('catalog').remove(view._id)
     }
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront

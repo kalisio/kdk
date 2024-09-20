@@ -3,11 +3,10 @@ import logger from 'loglevel'
 import { Notify, Loading } from 'quasar'
 import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
-import { i18n, api, LocalCache, utils as kCoreUtils } from '../../../core/client/index.js'
+import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
-import { createOfflineServiceForView } from './utils.offline.js'
 import localforage from 'localforage'
-import { removeServerSideParameters, referenceCountCreateHook, referenceCountRemoveHook, geoJsonPaginationHook, tiledLayerHook } from '../../../core/client/hooks/hooks.offline.js'
+import * as kMapHooks from '../hooks/index.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
@@ -104,12 +103,12 @@ async function setServiceLayerCached (layer, view, options) {
   const bounds = options.bounds
   const tiled = _.get(layer, 'leaflet.tiled', false)
 
-  let afterFindHooks = [geoJsonPaginationHook]
+  let afterFindHooks = [kMapHooks.geoJsonPaginationHook]
   if (tiled) {
-    afterFindHooks.push(tiledLayerHook)
+    afterFindHooks.push(kMapHooks.tiledLayerHook)
   }
   
-  const offlineService = await createOfflineServiceForView(layer.service, view, {
+  const offlineService = await api.createOfflineServiceForView(layer.service, view, {
     baseQuery: {
       south: bounds[0][0],
       north: bounds[1][0],
@@ -122,9 +121,9 @@ async function setServiceLayerCached (layer, view, options) {
     tiledService: tiled,
     hooks: {
       before: {
-        all: removeServerSideParameters,
-        create: referenceCountCreateHook,
-        remove: referenceCountRemoveHook
+        all: [kCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
+        create: kMapHooks.referenceCountCreateHook,
+        remove: kMapHooks.referenceCountRemoveHook
       },
       after: {
         find: afterFindHooks

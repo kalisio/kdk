@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import localforage from 'localforage'
 import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
@@ -26,6 +27,22 @@ export function setupApi (configuration) {
   }
   api.getForecastTime = () => {
     return api.forecastTime
+  }
+  // We also add some features related to offline mode
+  api.createOfflineServiceForView = async function (serviceName, view, options = {}) {
+    const services = await localforage.getItem('services') || {}
+
+    const service = services[serviceName] || {}
+    let views = _.get(service, 'views', [])
+    views.push(view)
+    _.set(service, 'views', views)
+    _.set(service, 'layerService', _.get(options, 'layerService', false))
+    _.set(service, 'tiledService', _.get(options, 'tiledService', false))
+    _.set(services, serviceName, service)
+    await localforage.setItem('services', services)
+    
+    const offlineService = await api.createOfflineService(serviceName, options)
+    return offlineService
   }
   return api
 }

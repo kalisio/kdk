@@ -449,9 +449,16 @@
     "UNCACHE_VIEW": "Make available online",
     "CACHING_VIEW": "Downloading view in progress",
     "UNCACHING_VIEW": "Memory space successfully freed",
+    "CACHE_VIEW_DIALOG_TITLE": "Make available offline",
+    "CACHE_VIEW_DIALOG_MESSAGE": "Configure data download",
     "SET_HOME_VIEW": "Set as default view",
     "REMOVE_DIALOG_TITLE": "Remove {view} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{view}</b> from your workspace ?"
+  },
+  "KCreateOfflineView": {
+    "MIN_ZOOM_FIELD_LABEL": "Zoom level from which data will be downloaded, increase will reduce data size",
+    "MAX_ZOOM_FIELD_LABEL": "Zoom level until which data will be downloaded, increase will increase data size",
+    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Number of concurrent requests sued to download, increase will speed up download but load the device and the server"
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Sort projects",
