@@ -46,7 +46,7 @@
       v-bind="actions[0]"
       size="1.15rem"
       renderer="fab"
-      v-on="action.on ? { [action.on.event]: action.on.listener } : {}"
+      v-on="actions[0].on ? { [actions[0].on.event]: actions[0].on.listener } : {}"
     />
   </div>
 </template>
