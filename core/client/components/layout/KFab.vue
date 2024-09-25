@@ -52,7 +52,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { Layout } from '../../layout'
 import KAction from '../action/KAction.vue'
