@@ -85,8 +85,8 @@
         <KAction
           id="expand-action"
           icon="las la-angle-down"
-          tooltip="KCard.MORE_ACTION"
-          :toggle="{ icon: 'las la-angle-up', tooltip: 'KCard.LESS_ACTION', color: 'grey-7' }"
+          tooltip="KCard.MORE_DETAILS"
+          :toggle="{ icon: 'las la-angle-up', tooltip: 'KCard.LESS_DETAILS', color: 'grey-7' }"
           :size="dense ? 'xs' : 'sm'"
           dense
           @triggered="onExpandTriggered"
