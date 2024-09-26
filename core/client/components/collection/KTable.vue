@@ -18,6 +18,29 @@
           :display-value="$t('KTable.TABLE_COLUMNS')" emit-value map-options
           :options="selectableColumns" option-value="name" style="min-width: 150px"/>
       </template>
+      <template v-slot:body="props" v-if="hasRenderer">
+        <q-tr :props="props">
+          <q-td :props="props" key="actions" v-if="hasSelection">
+            <q-checkbox :model-value="props.selected" @update:model-value="(val) => props.selected = val" />
+          </q-td>
+          <q-td v-for="(item, index) in renderer" :key="item.key" :props="props">
+            <component
+              v-if="item.component"
+              :item="item"
+              :row="props.row"
+              :is="loadComponent(item.component)"
+            />
+            <p v-else>{{ props.row.properties[`${item.key}`] }}</p>
+          </q-td>
+          <q-td :props="props" key="actions">
+            <KPanel
+              id="item-actions"
+              :content="itemActions"
+              :context="{ item: props.row }"
+            />
+          </q-td>
+        </q-tr>
+      </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <KPanel
@@ -47,17 +70,16 @@ import KStamp from '../KStamp.vue'
 import { Events } from '../../events.js'
 import { i18n } from '../../i18n.js'
 import { useCollection, useSchema } from '../../composables'
+import { loadComponent } from '../../utils/index.js'
 
 const emit = defineEmits(['selection-changed', 'collection-refreshed'])
 
 // Props
 const props = defineProps({
   renderer: {
-    type: Object,
+    type: Array,
     default: () => {
-      return {
-        component: 'collection/KItem'
-      }
+      return []
     }
   },
   itemActions: {
@@ -127,6 +149,9 @@ const pagination = ref({
 // Remove special column used for actions
 const selectableColumns = computed(() => columns.value.filter(column => column.name !== 'actions'))
 const filterQuery = computed(() => Object.assign({}, props.filterQuery, tableQuery.value))
+const renderer = computed(() => props.renderer)
+const hasRenderer = computed(() => !_.isEmpty(props.renderer))
+const hasSelection = computed(() => !_.isString(props.selection))
 
 const { schema, compile } = useSchema()
 // Add sort query into collection options
@@ -135,10 +160,6 @@ const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetColle
 
 // Functions
 function processSchema () {
-  columns.value = [{
-    name: 'actions',
-    align: 'center'
-  }]
   _.forOwn(schema.value.properties, (value, key) => {
     const type = _.get(value, 'type')
     // FIXME: allow for custom representation of complex objects
@@ -171,20 +192,27 @@ function processSchema () {
       }
     })
   })
+  columns.value.push({
+    name: 'actions',
+    align: 'center'
+  })
   visibleColumns.value = columns.value.map(column => column.name)
 }
 function onRequest (props) {
   const { page, rowsPerPage, sortBy, descending } = props.pagination
   const geoJson = (_.get(items.value, '[0].type') === 'Feature')
   currentPage.value = page
-  tableQuery.value.$sort = { [geoJson ? `properties.${sortBy}` : sortBy]: (descending ? -1 : 1) }
+  if (pagination.value.descending !== descending || pagination.value.sortBy !== sortBy) {
+    sortBy === null? tableQuery.value.$sort = { _id: 1 } : tableQuery.value.$sort = { [geoJson ? `properties.${sortBy}` : sortBy]: (descending ? -1 : 1) }
+    options.filterQuery.value = Object.assign({}, props.filterQuery, tableQuery.value)
+  } else {
+    refreshCollection()
+  }
   // Don't forget to update local pagination object
   pagination.value.page = page
   pagination.value.rowsPerPage = rowsPerPage
   pagination.value.sortBy = sortBy
   pagination.value.descending = descending
-  // This will trigger a collection refresh, take care composable options are refs
-  options.filterQuery.value = Object.assign({}, props.filterQuery, tableQuery.value)
 }
 function onSelectionChanged (data) {
   if (props.selection === 'single') {
