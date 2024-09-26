@@ -557,11 +557,13 @@
   "KColumn": {
     "EMPTY_COLUMN": "@:NO_ITEM"
   },
-  "KCard": {
-    "DESCRIPTION_SECTION": "Description",
-    "NO_DESCRIPTION_LABEL": "Aucune description",
-    "MORE_ACTION": "Plus de détails",
-    "LESS_ACTION": "Moins de détails"    
+  "KCard": {    
+    "MORE_DETAILS": "Plus de détails",
+    "LESS_DETAILS": "Moins de détails"    
+  },
+  "KDescriptionCardSection": {
+    "TITLE": "Description",
+    "NO_DESCRIPTION": "Aucune description"
   },
   "KColorChooser": {
     "CANCEL_BUTTON": "@:CANCEL",
