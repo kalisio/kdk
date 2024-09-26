@@ -287,7 +287,7 @@ export const Units = {
   // Get unit definition by name
   getUnit (unit) {
     // Not optimized
-    //return _.find(this.getUnits(), { name: unit })
+    // return _.find(this.getUnits(), { name: unit })
     let definition
     _.forOwn(this.get(), (units, quantity) => {
       // Already found ?

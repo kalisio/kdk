@@ -15,8 +15,10 @@ import { actionProps } from '../../utils/utils.actions'
 import { useVersion } from '../../composables'
 import KAction from './KAction.vue'
 
-// Data
+// Props
 const props = defineProps(_.omit(actionProps, ['toggle', 'url', 'handler', 'route', 'dialog']))
+
+// Data
 const { clientVersionName, apiVersionName } = useVersion()
 const platform = getPlatform()
 
