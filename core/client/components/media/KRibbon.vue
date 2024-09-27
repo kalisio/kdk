@@ -5,6 +5,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
 import { getHtmlColor } from '../../utils/utils.colors.js'
 const width = 500
@@ -17,7 +18,7 @@ const props = defineProps({
   },
   size: {
     type: Number,
-    default: 28
+    default: 32
   },
   color: {
     type: String,
@@ -27,6 +28,10 @@ const props = defineProps({
     type: String,
     default: 'white'
   },
+  letterSpacing: {
+    type: Number,
+    default: 2
+  },
   position: {
     type: String,
     default: 'top-left',
@@ -35,12 +40,11 @@ const props = defineProps({
     }
   },
   origin: {
-    type: Number,
-    default: 80
-  },
-  letterSpacing: {
-    type: Number,
-    default: 2
+    type: Array,
+    default: [50, 50],
+    validator: (value) => {
+      return _.isArray(value) && _.size(value) === 2
+    }
   }
 })
 
@@ -61,10 +65,10 @@ const computedLetterSpacing = computed(() => {
   return `${props.letterSpacing}px`
 })
 const translation = computed(() => {
-  if (props.position === 'top-left') return `${props.origin - (width / 2)}px, ${props.origin - (props.size / 2)}px`
-  if (props.position === 'top-right') return `${(width / 2) - props.origin}px, ${props.origin - (props.size / 2)}px`
-  if (props.position === 'bottom-right') return `${(width / 2) - props.origin}px, ${(props.size / 2) - props.origin}px`
-  if (props.position === 'bottom-left') return `${props.origin - (width / 2)}px, ${(props.size / 2) - props.origin}px`
+  if (props.position === 'top-left') return `${props.origin[0] - (width / 2)}px, ${props.origin[1] - (props.size / 2)}px`
+  if (props.position === 'top-right') return `${(width / 2) - props.origin[0]}px, ${props.origin[1] - (props.size / 2)}px`
+  if (props.position === 'bottom-right') return `${(width / 2) - props.origin[0]}px, ${(props.size / 2) - props.origin[1]}px`
+  if (props.position === 'bottom-left') return `${props.origin[0] - (width / 2)}px, ${(props.size / 2) - props.origin[1]}px`
 })
 const rotation = computed(() => {
   if (props.position === 'top-left' || props.position === 'bottom-right') return '-45deg'
