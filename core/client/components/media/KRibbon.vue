@@ -34,9 +34,13 @@ const props = defineProps({
       return ['top-left', 'top-right', 'bottom-right', 'bottom-left'].includes(value)
     }
   },
-  offset: {
+  origin: {
     type: Number,
     default: 80
+  },
+  letterSpacing: {
+    type: Number,
+    default: 2
   }
 })
 
@@ -53,11 +57,14 @@ const computedColor = computed(() => {
 const computedTextColor = computed(() => {
   return getHtmlColor(props.textColor)
 })
+const computedLetterSpacing = computed(() => {
+  return `${props.letterSpacing}px`
+})
 const translation = computed(() => {
-  if (props.position === 'top-left') return `${props.offset - (width / 2)}px, ${props.offset - (props.size / 2)}px`
-  if (props.position === 'top-right') return `${(width / 2) - props.offset}px, ${props.offset - (props.size / 2)}px`
-  if (props.position === 'bottom-right') return `${(width / 2) - props.offset}px, ${(props.size / 2) - props.offset}px`
-  if (props.position === 'bottom-left') return `${props.offset - (width / 2)}px, ${(props.size / 2) - props.offset}px`
+  if (props.position === 'top-left') return `${props.origin - (width / 2)}px, ${props.origin - (props.size / 2)}px`
+  if (props.position === 'top-right') return `${(width / 2) - props.origin}px, ${props.origin - (props.size / 2)}px`
+  if (props.position === 'bottom-right') return `${(width / 2) - props.origin}px, ${(props.size / 2) - props.origin}px`
+  if (props.position === 'bottom-left') return `${props.origin - (width / 2)}px, ${(props.size / 2) - props.origin}px`
 })
 const rotation = computed(() => {
   if (props.position === 'top-left' || props.position === 'bottom-right') return '-45deg'
@@ -75,5 +82,6 @@ const rotation = computed(() => {
   transform: translate(v-bind(translation)) rotate(v-bind(rotation));
   background-color: v-bind(computedColor);
   color: v-bind(computedTextColor);
+  letter-spacing: v-bind(computedLetterSpacing);
 }
 </style>
