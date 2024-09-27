@@ -37,9 +37,13 @@ import KLocationMap from './KLocationMap.vue'
 
 // Props
 const props = defineProps({
-  location: {
+  item: {
     type: Object,
     default: () => null
+  },
+  locationPath: {
+    type: String,
+    default: 'location'
   },
   actions: {
     type: [Object, Array],
@@ -59,7 +63,7 @@ const props = defineProps({
 const feature = ref(null)
 
 // Watch
-watch(() => props.location, (value) => {
-  feature.value = value
+watch(() => [props.item, props.location], () => {
+  feature.value = _.get(props.item, props.locationPath)
 }, { immediate: true })
 </script>
