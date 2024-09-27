@@ -203,7 +203,7 @@ function onRequest (props) {
   const geoJson = (_.get(items.value, '[0].type') === 'Feature')
   currentPage.value = page
   if (pagination.value.descending !== descending || pagination.value.sortBy !== sortBy) {
-    sortBy === null? tableQuery.value.$sort = { _id: 1 } : tableQuery.value.$sort = { [geoJson ? `properties.${sortBy}` : sortBy]: (descending ? -1 : 1) }
+    sortBy === null ? tableQuery.value.$sort = { _id: 1 } : tableQuery.value.$sort = { [geoJson ? `properties.${sortBy}` : sortBy]: (descending ? -1 : 1) }
     options.filterQuery.value = Object.assign({}, props.filterQuery, tableQuery.value)
   } else {
     refreshCollection()
