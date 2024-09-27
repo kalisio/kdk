@@ -37,7 +37,7 @@
           />
         </div>
         <div v-if="!dense" class="q-pl-sm q-pb-sm col-4">
-          <div v-if="item.location" class="fit column">
+          <div v-if="item.location" class="fit column" style="position: relative;">
             <KLocationMap
               v-model="item.location"
               :tools="[]"
@@ -46,6 +46,10 @@
             <div class="full-width ellipsis text-caption k-location-map-caption">
               {{ item.location.properties.name }}
             </div>
+            <KPanel 
+              :content="locationActions"
+              style="position: absolute; top: 0; right: 0;  z-index: 401;"
+            />
           </div>
           <div v-else class="fit column k-location-map" style="position: relative;">
             <div class="absolute-center" >
@@ -54,6 +58,10 @@
                 text="KLocationCardSection.NO_LOCATION"
               />
             </div>
+            <KPanel 
+              :content="locationActions"
+              style="position: absolute; top: 0; right: 0;  z-index: 401;"
+            />
           </div>
         </div>
       </div>
@@ -103,6 +111,9 @@ export default {
   computed: {
     descriptionActions () {
       return _.filter(this.itemActions, { scope: 'description' })
+    },
+    locationActions () {
+      return _.filter(this.itemActions, { scope: 'location' })
     }
   }
 }
