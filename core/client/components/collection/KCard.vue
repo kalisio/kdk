@@ -80,21 +80,23 @@
           class="full-width no-wrap"
         />
       </div>
-      <!-- Expand action -->
-      <div v-if="isExpandable" class="row justify-center">
-        <KAction
-          id="expand-action"
-          icon="las la-angle-down"
-          tooltip="KCard.MORE_DETAILS"
-          :toggle="{ icon: 'las la-angle-up', tooltip: 'KCard.LESS_DETAILS', color: 'grey-7' }"
-          :size="dense ? 'xs' : 'sm'"
-          dense
-          @triggered="onExpandTriggered"
-        />
-      </div>
-      <!-- Extra bottom padding if no expand action -->
-      <div v-else :class="{ 'q-pt-xs': dense, 'q-pt-sm': !dense }" />
     </div>
+    <!-- 
+      Expand action 
+    -->
+    <div v-if="isExpandable" class="row justify-center">
+      <KAction
+        id="expand-action"
+        icon="las la-angle-down"
+        tooltip="KCard.MORE_DETAILS"
+        :toggle="{ icon: 'las la-angle-up', tooltip: 'KCard.LESS_DETAILS', color: 'grey-7' }"
+        :size="dense ? 'xs' : 'sm'"
+        dense
+        @triggered="onExpandTriggered"
+      />
+    </div>
+    <!-- Extra bottom padding if no expand action -->
+    <div v-else :class="{ 'q-pt-xs': dense, 'q-pt-sm': !dense }" />
   </q-card>
 </template>
 
