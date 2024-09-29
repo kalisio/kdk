@@ -150,7 +150,7 @@ const pagination = ref({
 const selectableColumns = computed(() => columns.value.filter(column => column.name !== 'actions'))
 const filterQuery = computed(() => Object.assign({}, props.filterQuery, tableQuery.value))
 const renderer = computed(() => props.renderer)
-const hasRenderer = computed(() => !_.isEmpty(props.renderer))
+const hasRenderer = computed(() => _.isArray(props.renderer) && !_.isEmpty(props.renderer))
 const hasSelection = computed(() => !_.isString(props.selection))
 
 const { schema, compile } = useSchema()
