@@ -37,7 +37,7 @@
           />
         </div>
         <div v-if="!dense" class="q-pl-sm q-pb-sm col-4">
-          <div v-if="item.location" class="fit column" style="position: relative;">
+          <div v-if="item.location" class="fit column relative-position">
             <KLocationMap
               v-model="item.location"
               :tools="[]"
@@ -47,11 +47,11 @@
               {{ item.location.properties.name }}
             </div>
             <KPanel 
-              :content="locationActions"
-              style="position: absolute; top: 0; right: 0;  z-index: 401;"
+              :content="locationActions" 
+              class="k-location-actions" 
             />
           </div>
-          <div v-else class="fit column k-location-map" style="position: relative;">
+          <div v-else class="fit column k-location-map relative-position">
             <div class="absolute-center" >
               <KStamp
                 icon="las la-map-marker"
@@ -60,7 +60,7 @@
             </div>
             <KPanel 
               :content="locationActions"
-              style="position: absolute; top: 0; right: 0;  z-index: 401;"
+              class="k-location-actions"
             />
           </div>
         </div>
@@ -135,5 +135,13 @@ export default {
   background-color: #EEEEEE;
   border-radius: 0px 0px 5px 5px;
   border: 1px solid lightgrey;
+}
+.k-location-actions {
+  position: absolute;
+  top: 2px; 
+  right: 2px;  
+  background-color: #ffffffaa; 
+  border-radius: 10px;
+  z-index: 401; 
 }
 </style>
