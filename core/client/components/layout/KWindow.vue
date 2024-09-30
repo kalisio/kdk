@@ -207,7 +207,7 @@ const headerControls = computed(() => {
     size: 'sm',
     tooltip: 'KWindow.RESTORE_ACTION',
     visible: currentWindow.controls.restore && currentWindow.state === 'maximized',
-    handler: () => Layout.setWindowState(props.placement, LocalStorage.get(getStorageKey('restore-state')))
+    handler: () => Layout.setWindowState(props.placement, LocalStorage.get(getStorageKey('restore-state')) || 'pinned')
   }, {
     id: `close-${props.placement}-window`,
     icon: 'las la-times',
@@ -408,8 +408,9 @@ function onFooterResized (size) {
 }
 
 // restore the state
+const currentState = currentWindow.state
 const fallbackState = readState() || 'pinned'
-Layout.setWindowState(props.placement, fallbackState)
+refresh(currentState || fallbackState)
 </script>
 
 <style lang="scss" scoped>
