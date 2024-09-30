@@ -32,6 +32,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, watch } from 'vue'
 import KLocationMap from './KLocationMap.vue'
 
