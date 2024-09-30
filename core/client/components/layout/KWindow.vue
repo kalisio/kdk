@@ -409,8 +409,11 @@ function onFooterResized (size) {
 
 // restore the state
 const currentState = currentWindow.state
-const fallbackState = readState() || 'pinned'
-refresh(currentState || fallbackState)
+if (currentState) refresh(currentState)
+else {
+  const fallbackState = readState() || 'pinned'
+  Layout.setWindowState(props.placement, fallbackState)
+}
 </script>
 
 <style lang="scss" scoped>
