@@ -83,6 +83,7 @@ export const Layout = {
     },
     focus: layoutPath + '.focus'
   },
+  defaults,
   initialize () {
     // create the store structure for each element with their configuration
     Store.set(this.paths.view, this.getElementDefaults('view'))
@@ -349,9 +350,9 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowControls (placement, controls) {
-    for (const key in _.keys(windowsDefaultControls)) {
+    for (const key of _.keys(windowsDefaultControls)) {
       if (!_.has(controls, key)) {
-        logger.warn(`[KDK] Invalid window controls ${controls}`)
+        logger.warn(`[KDK] Invalid window control key ${key}`)
         return
       }
     }
