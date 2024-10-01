@@ -15,7 +15,7 @@
     <div v-else :style="`height: 44px; position: relative`">
       <KStamp
         text="KDescriptionCardSection.NO_DESCRIPTION"
-        icon="las la-comment-alt"
+        icon="las la-exclamation-circle"
         iconSize="24px"
         direction="horizontal"
         class="absolute-center"
