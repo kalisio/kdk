@@ -102,11 +102,6 @@ export async function setBaseLayerCached (layer, view, options) {
 async function setServiceLayerCached (layer, view, options) {
   const bounds = options.bounds
   const tiled = _.get(layer, 'leaflet.tiled', false)
-
-  let afterFindHooks = [kMapHooks.geoJsonPaginationHook]
-  if (tiled) {
-    afterFindHooks.push(kMapHooks.tiledLayerHook)
-  }
   
   const offlineService = await api.createOfflineServiceForView(layer.service, view, {
     baseQuery: {
@@ -126,7 +121,7 @@ async function setServiceLayerCached (layer, view, options) {
         remove: kMapHooks.referenceCountRemoveHook
       },
       after: {
-        find: afterFindHooks
+        find: [kMapHooks.geoJsonPaginationHook, kMapHooks.intersectBBoxHook]
       }
     }
   })
@@ -196,8 +191,7 @@ async function setServiceLayerUncached (layer, view, options) {
     await localforage.setItem('services', services)
 
     const offlineService = api.getOfflineService(layer.service)
-
-    const collection = await offlineService.find({
+    await offlineService.remove(null, {
       query: {
         south: bounds[0][0],
         north: bounds[1][0],
@@ -205,8 +199,6 @@ async function setServiceLayerUncached (layer, view, options) {
         east: bounds[1][1]
       }
     })
-
-    await offlineService.remove(collection.features)
   }
 }
 

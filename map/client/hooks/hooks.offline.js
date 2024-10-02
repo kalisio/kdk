@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import intersect from '@turf/intersect'
 import { featureCollection } from '@turf/helpers'
 
@@ -13,37 +14,49 @@ export function removeServerSideParameters(context) {
     _.unset(context, 'params.query.south')
 }
 
+async function updateReferenceCount(service, id, increment) {
+    const feature = await service._get(id)
+    const count = _.get(feature, 'referenceCount', 0) + increment
+    const data = await service._patch(id, { referenceCount: count })
+    return data
+}
 export async function referenceCountCreateHook(context) {
     const service = context.service
-    for (let feature of context.data) {
-        const request = await service._find({
-            query : {
-                _id : feature._id
-            }
-        })
-        if (_.get(request, 'data.length') !== 0)  {
-            const count = _.get(request, 'data[0].referenceCount') + 1
-            feature.referenceCount = count
-            service._update(feature._id, feature)
-        } else {
+    const features = (Array.isArray(context.data) ? context.data : [context.data])
+    for (let i = 0; i < features.length; i++) {
+        const feature = features[i]
+        try {
+            // This will raise if feature does not exist
+            await updateReferenceCount(service, feature._id, +1)
+        } catch (error) {
             feature.referenceCount = 1
-            service._create(feature)
+            await service._create(feature)
         }
     }
     context.result = context.data
 }
 
-export function referenceCountRemoveHook(context) {
+export async function referenceCountRemoveHook(context) {
     const service = context.service
-    for (let feature of context.arguments[0]) {
-        feature.referenceCount--
-        if (feature.referenceCount !== 0) {
-            service._update(feature._id, feature)
-        } else {
-            service._remove(feature._id)
+    // By ID or by query ?
+    if (!context.id) {
+        context.result = await service._find(Object.assign(context.params, { paginate: false }))
+        for (let i = 0; i < context.result.length; i++) {
+            const feature = context.result[i]
+            try {
+                const { referenceCount } = await updateReferenceCount(service, feature._id, -1)
+                // Skip removing if still used
+                if (referenceCount <= 0) await service._remove(feature._id)
+            } catch (error) {
+                logger.debug('[KDK] reference count update failed: ', error)
+            }
         }
+    } else {
+        const feature = await updateReferenceCount(service, context.id, -1)
+        // Skip removing if still used
+        if (feature.referenceCount <= 0) await service._remove(context.id)
+        context.result = feature
     }
-    context.result = context.data
 }
 
 export function geoJsonPaginationHook(context) {
@@ -56,14 +69,15 @@ export function geoJsonPaginationHook(context) {
     }, _.pick(result, ['total', 'skip', 'limit']))
 }
 
-export async function tiledLayerHook(context) {
+export async function intersectBBoxHook(context) {
+    if (!_.has(params, 'east') || !_.has(params, 'west') || !_.has(params, 'north') || !_.has(params, 'south')) return context
     const service = context.service
     const params = context.params
-    const query = await service._find({})
+    const query = await service._find(_.omit(params, ['east', 'west', 'north', 'south']))
     const features = query.data
+    const bbox = [params.east, params.west, params.north, params.south]
     let result = []
     for (let feature of features) {
-        const bbox = [params.east, params.west, params.north, params.south]
         const featurePolygon = _.get(feature, 'geometry.coordinates')
         var intersection = intersect(featureCollection([bbox, featurePolygon]));
         if (intersection) {
