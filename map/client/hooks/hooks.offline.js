@@ -4,14 +4,22 @@ import intersect from '@turf/intersect'
 import { featureCollection } from '@turf/helpers'
 
 export function removeServerSideParameters(context) {
-    _.set(context, 'params.east', _.get(context, 'params.query.east'))
-    _.set(context, 'params.west', _.get(context, 'params.query.west'))
-    _.set(context, 'params.north', _.get(context, 'params.query.north'))
-    _.set(context, 'params.south', _.get(context, 'params.query.south'))
-    _.unset(context, 'params.query.east')
-    _.unset(context, 'params.query.west')
-    _.unset(context, 'params.query.north')
-    _.unset(context, 'params.query.south')
+    if (_.has(context, 'params.query.east')) {
+        _.set(context, 'params.east', _.get(context, 'params.query.east'))
+        _.unset(context, 'params.query.east')
+    }
+    if (_.has(context, 'params.query.west')) {
+        _.set(context, 'params.west', _.get(context, 'params.query.west'))
+        _.unset(context, 'params.query.west')
+    }
+    if (_.has(context, 'params.query.north')) {
+        _.set(context, 'params.north', _.get(context, 'params.query.north'))
+        _.unset(context, 'params.query.north')
+    }
+    if (_.has(context, 'params.query.south')) {
+        _.set(context, 'params.south', _.get(context, 'params.query.south'))
+        _.unset(context, 'params.query.south')
+    }
 }
 
 async function updateReferenceCount(service, id, increment) {
@@ -70,9 +78,9 @@ export function geoJsonPaginationHook(context) {
 }
 
 export async function intersectBBoxHook(context) {
+    const params = context.params
     if (!_.has(params, 'east') || !_.has(params, 'west') || !_.has(params, 'north') || !_.has(params, 'south')) return context
     const service = context.service
-    const params = context.params
     const query = await service._find(_.omit(params, ['east', 'west', 'north', 'south']))
     const features = query.data
     const bbox = [params.east, params.west, params.north, params.south]
