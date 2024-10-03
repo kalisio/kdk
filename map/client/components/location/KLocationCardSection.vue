@@ -9,18 +9,18 @@
     <div v-if="feature" class="full-width column">
       <!-- Description -->
       <KTextArea
-        :text="feature.properties.name"
-        :minHeight="44"
+        :text="feature.properties[namePath]"
+        :minHeight="24"
         :maxHeight="204"
         :dense="true"
       />
       <!-- Map  -->
       <KLocationMap
         v-model="feature"
-        style="min-height: 140px"
+        style="min-height: 120px"
       />
     </div>
-    <div v-else style="height: 184px">
+    <div v-else style="height: 142px">
       <div class="absolute-center">
         <KStamp
           icon="las la-map-marker"
@@ -46,6 +46,10 @@ const props = defineProps({
     type: String,
     default: 'location'
   },
+  namePath: {
+    type: String,
+    default: 'name'
+  },
   actions: {
     type: [Object, Array],
     default: () => null
@@ -64,7 +68,8 @@ const props = defineProps({
 const feature = ref(null)
 
 // Watch
-watch(() => [props.item, props.location], () => {
-  feature.value = _.get(props.item, props.locationPath)
+watch(() => [props.item, props.locationPath], () => {
+  if (_.get(props.item, 'type') === 'Feature') feature.value = _.cloneDeep(props.item)
+  else feature.value = _.get(props.item, props.locationPath)
 }, { immediate: true })
 </script>
