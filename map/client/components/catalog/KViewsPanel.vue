@@ -25,7 +25,6 @@ import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 import { useProject } from '../../composables'
 import { cacheView, uncacheView } from '../../utils/utils.offline.js'
 import { Dialog, Notify } from 'quasar'
-import localforage from 'localforage'
 
 export default {
   name: 'k-views-panel',
