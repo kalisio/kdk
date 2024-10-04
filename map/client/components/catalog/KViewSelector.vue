@@ -22,7 +22,6 @@
       :color="item.isDefault ? 'primary' : 'grey-5'"
       :tooltip="$t('KViewsPanel.SET_HOME_VIEW')"
       :propagate="false"
-      @views-status-changed="refreshViews"
       @triggered="$emit('item-selected', item, 'set-home-view')" />
     <!-- View actions -->
     <KPanel
@@ -34,7 +33,6 @@
 
 <script>
 import _ from 'lodash'
-import localforage from 'localforage'
 import { KPanel, KAction } from '../../../../core/client/components'
 import { baseItem } from '../../../../core/client/mixins'
 
@@ -44,19 +42,12 @@ export default {
     KPanel,
     KAction
   },
-  emits: ['views-status-changed'],
   mixins: [baseItem],
-  async setup () {
-    const cachedViews = await localforage.getItem('views')
-    return {
-      cachedViews
-    }
-  },
   computed: {
     viewActions () {
       const itemActions = _.cloneDeep(this.itemActions)
       const viewActions = _.get(itemActions, '[0].content', [])
-      if (this.cachedViews && this.cachedViews[this.item._id]) {
+      if (this.item.isCached) {
         viewActions.push({
           id: 'uncache-view',
           icon: 'wifi',
@@ -71,14 +62,7 @@ export default {
           handler: (item) => this.$emit('item-selected', item, 'cache-view')
         })
       }
-      this.$emit('views-status-changed')
       return itemActions
-    }
-  },
-  methods: {
-    async refreshViews () {
-      const cachedViews = await localforage.getItem('views')
-      return cachedViews
     }
   }
 }

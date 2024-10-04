@@ -11,6 +11,7 @@
       :scrollToTop="false"
       :header="toolbar"
       header-class="full-width no-wrap"
+      @collection-refreshed="onCollectionRefreshed"
       @selection-changed="onViewSelected"
       class="fit q-px-sm"
     />
@@ -20,6 +21,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
+import { LocalForage } from '@kalisio/feathers-localforage'
 import { Filter, Sorter, utils, i18n, api } from '../../../../core/client'
 import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 import { useProject } from '../../composables'
@@ -93,6 +95,13 @@ export default {
     }
   },
   methods: {
+    async onCollectionRefreshed (items) {
+      const cachedViews = await LocalForage.getItem('views')
+      // Update 
+      _.forEach(items, (item) => {
+        item.isCached = cachedViews.includes(item._id)
+      })
+    },
     getProjectLayers () {
       return (this.project ? this.project.layers.map(layer => (layer._id ? this.kActivity.getLayerById(layer._id) : this.kActivity.getLayerByName(layer.name))) : [])
     },
@@ -149,6 +158,7 @@ export default {
               contextId: this.kActivity.contextId,
               ...values
             })
+            view.isCached = true
             dismiss()
           })
           break
@@ -162,6 +172,7 @@ export default {
             timeout: 3000
           })
           await uncacheView(view, this.getProjectLayers())
+          view.isCached = false
           break
         }
         default:
