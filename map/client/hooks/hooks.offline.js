@@ -4,21 +4,22 @@ import intersect from '@turf/intersect'
 import { featureCollection } from '@turf/helpers'
 
 export function removeServerSideParameters(context) {
-    if (_.has(context, 'params.query.east')) {
-        _.set(context, 'params.east', _.get(context, 'params.query.east'))
-        _.unset(context, 'params.query.east')
+    const params = context.params
+    if (_.has(params, 'query.east')) {
+        _.set(params, 'east', _.get(params, 'query.east'))
+        _.unset(params, 'query.east')
     }
-    if (_.has(context, 'params.query.west')) {
-        _.set(context, 'params.west', _.get(context, 'params.query.west'))
-        _.unset(context, 'params.query.west')
+    if (_.has(params, 'query.west')) {
+        _.set(params, 'west', _.get(params, 'query.west'))
+        _.unset(params, 'query.west')
     }
-    if (_.has(context, 'params.query.north')) {
-        _.set(context, 'params.north', _.get(context, 'params.query.north'))
-        _.unset(context, 'params.query.north')
+    if (_.has(params, 'query.north')) {
+        _.set(params, 'north', _.get(params, 'query.north'))
+        _.unset(params, 'query.north')
     }
-    if (_.has(context, 'params.query.south')) {
-        _.set(context, 'params.south', _.get(context, 'params.query.south'))
-        _.unset(context, 'params.query.south')
+    if (_.has(params, 'query.south')) {
+        _.set(params, 'south', _.get(params, 'query.south'))
+        _.unset(params, 'query.south')
     }
 }
 
