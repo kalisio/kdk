@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import localforage from 'localforage'
+import { LocalForage } from '@kalisio/feathers-localforage'
 import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
@@ -30,7 +30,7 @@ export function setupApi (configuration) {
   }
   // We also add some features related to offline mode
   api.createOfflineServiceForView = async function (serviceName, view, options = {}) {
-    const services = await localforage.getItem('services') || {}
+    const services = await LocalForage.getItem('services') || {}
 
     const service = services[serviceName] || {}
     let views = _.get(service, 'views', [])
@@ -39,7 +39,7 @@ export function setupApi (configuration) {
     _.set(service, 'layerService', _.get(options, 'layerService', false))
     _.set(service, 'tiledService', _.get(options, 'tiledService', false))
     _.set(services, serviceName, service)
-    await localforage.setItem('services', services)
+    await LocalForage.setItem('services', services)
     
     const offlineService = await api.createOfflineService(serviceName, options)
     return offlineService

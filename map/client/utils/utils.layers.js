@@ -5,7 +5,7 @@ import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
-import localforage from 'localforage'
+import { LocalForage } from '@kalisio/feathers-localforage'
 import * as kMapHooks from '../hooks/index.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
@@ -166,7 +166,7 @@ async function setBaseLayerUncached (layer, view, options) {
 async function setServiceLayerUncached (layer, view, options) {
   const bounds = options.bounds
 
-  const services = await localforage.getItem('services')
+  const services = await LocalForage.getItem('services')
   if (services && services[layer.service]) {
     let views = _.get(services[layer.service], 'views')
     const index = views.indexOf(view)
@@ -175,7 +175,7 @@ async function setServiceLayerUncached (layer, view, options) {
       delete services[layer.service]
     }
     _.set(services, '[layer.service].views', views)
-    await localforage.setItem('services', services)
+    await LocalForage.setItem('services', services)
 
     const offlineService = api.getOfflineService(layer.service)
     await offlineService.remove(null, {

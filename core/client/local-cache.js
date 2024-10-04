@@ -1,4 +1,5 @@
 import logger from 'loglevel'
+import _ from 'lodash'
 import { LocalForage } from '@kalisio/feathers-localforage'
 
 export const LocalCache = {
