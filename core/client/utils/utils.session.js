@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'debug'
-import localforage from 'localforage'
+import { LocalForage } from '@kalisio/feathers-localforage'
 import { Store } from '../store.js'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
@@ -8,7 +8,7 @@ import { defineAbilities } from '../../common/permissions.js'
 
 async function authenticate(authentication) {
   // Store latest authentication data for offline mode
-  await localforage.setItem('authentication', authentication)
+  await LocalForage.setItem('authentication', authentication)
   // Anonymous user or user account ?
   const user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
   Store.set('user', user)
@@ -33,7 +33,7 @@ export async function register (user) {
 
 export async function logout () {
   try {
-    await localforage.removeItem('authentication')
+    await LocalForage.removeItem('authentication')
     await api.logout()
     Store.set('user', null)
   } catch (error) {
@@ -49,7 +49,7 @@ export async function restoreSession () {
   try {
     let authentication
     if (api.isDisconnected) {
-      authentication = await localforage.getItem('authentication')
+      authentication = await LocalForage.getItem('authentication')
     } else {
       authentication = await api.reAuthenticate()
     }

@@ -1,10 +1,10 @@
 import logger from 'loglevel'
-import localforage from 'localforage'
+import { LocalForage } from '@kalisio/feathers-localforage'
 
 export const LocalCache = {
   initialize () {
     logger.debug('[KDK] initializing local cache')
-    localforage.config({
+    LocalForage.config({
       name: 'offline_views',
       storeName: 'cache_entries'
     })
@@ -21,42 +21,31 @@ export const LocalCache = {
     await caches.delete(cacheName)
   },
   async has (key) {
-    const url = await localforage.getItem(key)
-    return url
+    return !_.isNil(this.getCount(key))
   },
-  async set (cacheName, key, url, tag) {
-    const cache = await this.getCache(cacheName)
-    const response = await fetch(url)
-    await cache.put(key, response)
-    await localforage.setItem(key, [tag])
+  async getCount (key) {
+    return await LocalForage.getItem(key)
   },
-  async getTags (key) {
-    return await localforage.getItem(key)
-  },
-  async addTag (key, tag) {
-    if (this.has(key)) {
-      const tags = await this.getTags(key)
-      if (tags && !tags.contains(tag)) {
-        tags.push(tag)
-        await localforage.setItem(key, tags)
-      }
-    }
-  },
-  async removeTag (key, tag) {
-    if (this.has(key)) {
-      const tags = await this.getTags(key)
-      if (tags) {
-        const index = tags.indexOf(tag)
-        tags.splice(index, 1)
-        await localforage.setItem(key, tags)
-      }
-    }
-  },
-  async clear (cacheName, key) {
-    if (this.has(key)) {
+  async set (cacheName, key, url) {
+    const count = await this.getCount(key)
+    if (!_.isNil(count)) {
+      await LocalForage.setItem(key, count + 1)
+    } else {
       const cache = await this.getCache(cacheName)
+      const response = await fetch(url)
+      await cache.put(key, response)
+      await LocalForage.setItem(key, 1)
+    }
+  },
+  async unset (cacheName, key, url) {
+    const cache = await this.getCache(cacheName)
+    const count = await this.getCount(key)
+    if (_.isNil(count)) return
+    if (count <= 1) {
       cache.delete(key)
-      localforage.removeItem(key)
+      LocalForage.removeItem(key)
+    } else {
+      await LocalForage.setItem(key, count - 1)
     }
   }
 }

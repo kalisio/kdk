@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import { Store, LocalCache, utils as kCoreUtils } from '../../../core/client/index.js'
+import { Store, utils as kCoreUtils } from '../../../core/client/index.js'
 import { Geolocation } from '../geolocation.js'
 import { setEngineJwt, getLayers, getCategories } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
@@ -62,9 +62,6 @@ export const activity = {
         // Check for Weacast API availability
         const isWeacastLayer = _.get(layer, `${this.engine}.type`, '').startsWith('weacast.')
         if (isWeacastLayer && (!this.getWeacastApi() || !this.forecastModel)) return
-        // Restore any cached layer state
-        const isCached = await LocalCache.has('layers', _.get(layer, 'leaflet.source'))
-        _.set(layer, 'isCached', isCached)
         await this.addLayer(layer)
       }
       // Filter layers with variables, not just visible ones because we might want to
