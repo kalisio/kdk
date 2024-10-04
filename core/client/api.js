@@ -26,8 +26,16 @@ if (_.get(configuration, 'logs.level')) {
 export function createClient (config) {
   // Initiate the client
   const api = feathers()
-  // Initialize connection state
+  // Initialize connection state/listeners
   api.isDisconnected = !navigator.onLine
+  addEventListener('online', () => {
+    api.isDisconnected = false
+    Events.emit('navigator-reconnected')
+  })
+  addEventListener('offline', () => {
+    api.isDisconnected = true
+    Events.emit('navigator-disconnected')
+  })
 
   // Matchers that can be added to customize route guards
   let matchers = []

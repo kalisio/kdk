@@ -78,7 +78,7 @@ export function useSession (options = {}) {
     // Display it only the first time the error appears because multiple attempts will be tried
     if (!pendingReconnection && !ignoreReconnectionError) {
       api.isDisconnected = true
-      Events.emit('disconnected')
+      Events.emit('websocket-disconnected')
       logger.error(new Error('Socket has been disconnected'))
       // Disconnect prompt can be avoided, eg in tests
       if (!LocalStorage.get(disconnectKey, true)) return
@@ -123,7 +123,7 @@ export function useSession (options = {}) {
     // Display it only the first time the reconnection occurs because multiple attempts will be tried
     if (!pendingReload) {
       api.isDisconnected = false
-      Events.emit('reconnected')
+      Events.emit('websocket-reconnected')
       // Reconnect prompt can be avoided, eg in tests
       if (!LocalStorage.get(reconnectKey, true)) return
       pendingReload = $q.dialog({
