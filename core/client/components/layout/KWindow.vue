@@ -11,6 +11,7 @@
       <q-resize-observer @resize="onHeaderResized" />
       <!-- window menu -->
       <KPanel
+        v-if="currentWindow.controls.menu"
         :id="`${placement}-window-menu`"
         :content="menu"
         @touchstart.passive.stop

@@ -17,7 +17,7 @@ export const DefaultZIndex = {
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
-const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
+const windowsDefaultControls = { menu: true, pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls, zIndex: 980 }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
