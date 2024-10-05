@@ -2,9 +2,9 @@
   <KCardSection
     :title="$t('KLocationCardSection.TITLE')"
     :actions="actions"
-    :context="context"
+    :actionsFilter="actionsFilter"
+    :hideHeader="hideHeader"
     :dense="dense"
-    style="position: relative"
   >
     <div v-if="feature" class="full-width column">
       <!-- Description -->
@@ -34,14 +34,11 @@
 <script setup>
 import _ from 'lodash'
 import { ref, watch } from 'vue'
+import { utils as coreUtils } from '../../../../core.client'
 import KLocationMap from './KLocationMap.vue'
 
 // Props
 const props = defineProps({
-  item: {
-    type: Object,
-    default: () => null
-  },
   locationPath: {
     type: String,
     default: 'location'
@@ -50,18 +47,7 @@ const props = defineProps({
     type: String,
     default: 'name'
   },
-  actions: {
-    type: [Object, Array],
-    default: () => null
-  },
-  context: {
-    type: Object,
-    default: () => null
-  },
-  dense: {
-    type: Boolean,
-    default: false
-  }
+  ...coreUtils.CardSectionProps
 })
 
 // Data
