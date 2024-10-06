@@ -18,6 +18,7 @@
           <template v-for="action in actions" :key="action.id">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
               <KAction
+                color="primary"
                 v-bind="action"
                 renderer="item"
                 v-on="action.on ? { [action.on.event]: action.on.listener } : {}"
@@ -31,6 +32,7 @@
       <div v-else>
         <template v-for="action in actions" :key="action.id">
           <KAction
+            color="primary"
             v-bind="action"
             renderer="fab-action"
             v-on="action.on ? { [action.on.event]: action.on.listener } : {}"
@@ -43,6 +45,7 @@
       Render a non expandable fab if a single action is provided
      -->
     <KAction v-else-if="actions.length === 1"
+      color="primary"
       v-bind="actions[0]"
       size="1.15rem"
       renderer="fab"
