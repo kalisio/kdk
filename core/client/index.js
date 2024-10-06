@@ -17,6 +17,7 @@ import { Exporter } from './exporter.js'
 import { Reader } from './reader.js'
 import services from './services/index.js'
 import * as utils from './utils/index.js'
+import * as directives from './directives/index.js'
 import * as composables from './composables/index.js'
 import * as mixins from './mixins/index.js'
 import * as hooks from './hooks/index.js'
@@ -40,6 +41,7 @@ export { Exporter }
 export { Reader }
 export { services }
 export { utils }
+export { directives }
 export { composables }
 export { mixins }
 export { hooks }
