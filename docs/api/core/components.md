@@ -121,6 +121,9 @@ The **k-table** component is powered by [Quasar lists](https://quasar.dev/vue-co
 
 The same properties as with the **k-grid** component can be used to customize it. There is no specific component to be used to render items as it relies on the rows of the table. As a consequence, the `item-actions` property has to be directly set on the **k-table** component.
 
+
+## [Items](./components/items.md)
+
 ## Forms 
 
 The **k-form** is a generic form component capable of building HTML forms from of a [JSON schema](https://json-schema.org/). Moreover **k-form** validates that the data is conformed to the schema using [AJV validator](https://github.com/epoberezkin/ajv). 

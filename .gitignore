@@ -33,8 +33,9 @@ lib/
 # dotenv environment variables file
 .env
 
-# gitbook build
-_book/
+# draw.io backup
+*.bkp
+*.dtmp
 
 # vitepress
 docs/.vitepress/cache
