@@ -61,6 +61,9 @@ export default async function initialize () {
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
 
   // Initialize singletons that might be used globally first
+  LocalStorage.initialize()
+  LocalCache.initialize()
+  Storage.initialize()
   Theme.initialize()
   Time.initialize()
   Units.initialize()
@@ -70,9 +73,6 @@ export default async function initialize () {
   // Last, create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
   // It is generally done by activity based componentq or through a local settings service
-  LocalStorage.initialize()
-  LocalCache.initialize()
-  Storage.initialize()
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()
