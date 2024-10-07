@@ -99,10 +99,25 @@ export const Layout = {
     })
     Store.set(this.paths.focus, this.getElementDefaults('focus'))
     // debug message
-    logger.debug(`[KDK] Layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
+    logger.debug('[KDK] Layout set up with the following configuration:', this.get())
   },
   get () {
     return Store.get(this.paths.layout)
+  },
+  set (layout) {
+    if (layout.view) this.setView(layout.view)
+    if (layout.padding) this.setPadding(layout.padding)
+    if (layout.header) this.setHeader(layout.header)
+    if (layout.footer) this.setFooter(layout.footer)
+    if (layout.page) this.setPage(layout.page)
+    if (layout.stickies) this.setStickies(layout.stickies)      
+    if (layout.fab) this.setFab(layout.fab)
+    this.placements.forEach(placement => {
+      if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
+      if (_.has(layout, `windows.${placement}`)) this.setWindows(placement, _.get(layout, `windows.${placement}`))
+    })
+    if (layout.mode) this.setMode(layout.mode)
+    if (layout.focus) this.setFocus(layout.focus)
   },
   setView (view) {
     Store.patch(this.paths.layout, { view })
@@ -120,8 +135,8 @@ export const Layout = {
     this.setHeaderMode(mode)
     this.setFooterMode(mode)
     this.setPageMode(mode)
-    this.setStickiesMode(mode)
     this.setFabMode(mode)
+    this.setStickiesMode(mode)
     this.placements.forEach(placement => {
       this.setPaneMode(placement, mode)
       this.setWindowMode(placement, mode)
