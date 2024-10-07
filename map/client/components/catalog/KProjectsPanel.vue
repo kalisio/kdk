@@ -12,7 +12,6 @@
       :header="toolbar"
       header-class="full-width no-wrap"
       @selection-changed="onProjectSelected"
-      class="fit q-px-sm"
     />
   </div>
 </template>
@@ -86,7 +85,7 @@ export default {
       sorter: Sorter.get(),
       projectRenderer: {
         component: 'catalog/KProjectSelector',
-        class: 'q-px-xs col-12',
+        class: 'col-12',
         actions: projectActions
       }
     }

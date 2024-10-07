@@ -12,7 +12,6 @@
       :header="toolbar"
       header-class="full-width no-wrap"
       @selection-changed="onViewSelected"
-      class="fit q-px-sm"
     />
   </div>
 </template>
@@ -55,7 +54,7 @@ export default {
       sorter: Sorter.get(),
       viewRenderer: {
         component: 'catalog/KViewSelector',
-        class: 'q-px-xs col-12',
+        class: 'col-12',
         actions: viewActions
       }
     }
