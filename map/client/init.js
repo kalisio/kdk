@@ -4,7 +4,8 @@ import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
 import { memory } from '@feathersjs/memory'
-import { Store, Reader, utils as kCoreUtils } from '../../core/client/index.js'
+import { Store, Reader, utils as kCoreUtils, hooks as kCoreHooks } from '../../core/client/index.js'
+import * as kMapHooks from './hooks/index.js'
 import { Geolocation } from './geolocation.js'
 import { Planets } from './planets.js'
 import * as readers from './readers/index.js'
@@ -29,17 +30,23 @@ export function setupApi (configuration) {
     return api.forecastTime
   }
   // We also add some features related to offline mode
-  api.createOfflineServiceForView = async function (serviceName, view, options = {}) {
-    const services = await LocalForage.getItem('services') || {}
-
-    const service = services[serviceName] || {}
-    let views = _.get(service, 'views', [])
-    views.push(view)
-    _.set(service, 'views', views)
-    _.set(service, 'layerService', _.get(options, 'layerService', false))
-    _.set(service, 'tiledService', _.get(options, 'tiledService', false))
-    _.set(services, serviceName, service)
-    await LocalForage.setItem('services', services)
+  api.createOfflineFeaturesService = async function (serviceName, options = {}) {
+    options = Object.assign(_.omit(options, ['hooks', 'dataPath']), {
+      // Set required default hooks and data path for snapshot as the service responds in GeoJson format
+      hooks: _.defaultsDeep(_.get(options, 'hooks'), {
+        before: {
+          all: [kCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
+          create: kMapHooks.referenceCountCreateHook,
+          remove: kMapHooks.referenceCountRemoveHook
+        },
+        after: {
+          find: [kMapHooks.geoJsonPaginationHook, kMapHooks.intersectBBoxHook]
+        }
+      }),
+      dataPath: 'features',
+      // Here are service options used to manage offline features services
+      features: true
+    })
     
     const offlineService = await api.createOfflineService(serviceName, options)
     return offlineService

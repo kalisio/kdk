@@ -6,11 +6,12 @@ import jwtdecode from 'jwt-decode'
 import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
-import createOfflineService from '@kalisio/feathers-localforage'
+import createOfflineService, { LocalForage } from '@kalisio/feathers-localforage'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
 import { Events } from './events.js'
+import * as hooks from './hooks/index.js'
 import { makeServiceSnapshot } from '../common/utils.js'
 
 // Disable default feathers behaviour of reauthenticating on disconnect
@@ -180,10 +181,15 @@ export function createClient (config) {
   // based on an online service name, will snapshot service data by default
   api.createOfflineService = async function (serviceName, options = {}) {
     const offlineServiceName = `${serviceName}-offline`
-
     let offlineService = api.getOfflineService(serviceName)
 
     if (!offlineService) {
+      // Pass options not used internally for offline management as service options and store it along with service
+      const serviceOptions = _.omit(options, ['hooks', 'snapshot', 'clear', 'baseQuery', 'baseQueries', 'dataPath'])
+      const services = await LocalForage.getItem('services') || {}
+      const service = services[serviceName] || {}
+      _.set(services, serviceName, serviceOptions)
+      await LocalForage.setItem('services', services)
       offlineService = api.createService(offlineServiceName, {
         service: createOfflineService({
           id: '_id',
@@ -196,10 +202,16 @@ export function createClient (config) {
           // does not explicitely set the limit it will get a lot of data
           paginate: { default: 5000, max: 5000 }
         }),
-        // FIXME: this should not be hard-coded as it depends on the service
-        hooks: _.get(options, 'hooks', {})
+        // Set required default hooks
+        hooks: _.defaultsDeep(_.get(options, 'hooks'), {
+          before: {
+            all: [hooks.removeServerSideParameters]
+          }
+        }),
+        ...serviceOptions
       })
     }
+
     if (_.get(options, 'snapshot', true)) {
       const service = api.getService(serviceName)
       await makeServiceSnapshot(service, Object.assign({ offlineService }, options))

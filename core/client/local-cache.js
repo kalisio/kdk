@@ -38,13 +38,13 @@ export const LocalCache = {
       await LocalForage.setItem(key, 1)
     }
   },
-  async unset (cacheName, key, url) {
+  async unset (cacheName, key) {
     const cache = await this.getCache(cacheName)
     const count = await this.getCount(key)
     if (_.isNil(count)) return
     if (count <= 1) {
       cache.delete(key)
-      LocalForage.removeItem(key)
+      await LocalForage.removeItem(key)
     } else {
       await LocalForage.setItem(key, count - 1)
     }

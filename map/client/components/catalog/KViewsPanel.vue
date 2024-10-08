@@ -97,9 +97,10 @@ export default {
   methods: {
     async onCollectionRefreshed (items) {
       const cachedViews = await LocalForage.getItem('views')
+      if (!cachedViews) return
       // Update 
       _.forEach(items, (item) => {
-        item.isCached = cachedViews.includes(item._id)
+        item.isCached = _.has(cachedViews, item._id)
       })
     },
     getProjectLayers () {
@@ -164,15 +165,18 @@ export default {
           break
         }
         case 'uncache-view': {
-          Notify.create({
+          const dismiss = Notify.create({
             group: 'views',
             icon: 'las la-trash-alt',
             message: i18n.t('KViewsPanel.UNCACHING_VIEW'),
             color: 'primary',
             timeout: 3000
           })
-          await uncacheView(view, this.getProjectLayers())
+          await uncacheView(view, this.getProjectLayers(), {
+            contextId: this.kActivity.contextId
+          })
           view.isCached = false
+          dismiss()
           break
         }
         default:

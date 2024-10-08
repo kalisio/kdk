@@ -448,7 +448,7 @@
     "CACHE_VIEW": "Add to offline cache",
     "UNCACHE_VIEW": "Remove from offline cache",
     "CACHING_VIEW": "Downloading view in progress",
-    "UNCACHING_VIEW": "Memory space successfully freed",
+    "UNCACHING_VIEW": "Data removal for view in progress",
     "CACHE_VIEW_DIALOG_TITLE": "Add to offline cache",
     "CACHE_VIEW_DIALOG_MESSAGE": "Configure data download",
     "SET_HOME_VIEW": "Set as default view",
