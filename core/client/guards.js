@@ -63,7 +63,7 @@ export function permissionsGuard (user, to, from) {
 }
 
 // Guard based on route definition
-export function routeGuard (user, to, from) {
+export function publicRouteGuard (user, to, from) {
   // Retrieves routes corresponding to the destination
   const matchedRoute = _.get(to, 'matched', [])
   // Retrieves the last corresponding route
