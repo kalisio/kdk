@@ -342,7 +342,7 @@ export const activity = {
     // Merge the engine options using defaults
     const defaultOptions = _.get(config, `engines.${this.engine}`)
     if (defaultOptions) {
-      logger.debug(`[KDK] ${this.engine} engine use defaults: ${JSON.stringify(defaultOptions, null, 2)}`)
+      logger.debug(`[KDK] Configuring '${this.engine}' engine with options:`, defaultOptions)
       // Take care that if we only use the default options the specific options will be undefined
       this.activityOptions.engine = _.defaultsDeep(_.get(this.activityOptions, 'engine', {}), defaultOptions)
     }

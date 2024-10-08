@@ -99,7 +99,7 @@ export const Layout = {
     })
     Store.set(this.paths.focus, this.getElementDefaults('focus'))
     // debug message
-    logger.debug('[KDK] Layout set up with the following configuration:', this.get())
+    logger.debug('[KDK] Configuring layout with options:', this.get())
   },
   get () {
     return Store.get(this.paths.layout)

@@ -9,7 +9,7 @@ import { i18n } from './i18n.js'
 const ExporterQueue = {
   initialize (maxConcurrentRequests) {
     this.maxConcurrentRequests = maxConcurrentRequests
-    logger.debug(`[KDK] Exporter initialized with ${maxConcurrentRequests} maxConcurrentRequests`)
+    logger.debug(`[KDK] Configuring exporter with '${maxConcurrentRequests}' maxConcurrentRequests`)
     this.pendingRequests = []
     this.runningRequests = []
     this.exportService = api.getService('import-export')

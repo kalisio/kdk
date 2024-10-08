@@ -33,7 +33,7 @@ export function setupApi (configuration) {
 export default async function init () {
   const api = this
 
-  logger.debug('[KDK] initializing map module')
+  logger.debug('[KDK] Initializing map module')
 
   // Declare the built-in services, others are optional
   api.declareService('geocoder')
@@ -89,7 +89,7 @@ export default async function init () {
 
   // Register the readers
   _.forEach(_.get(config, 'readers.map', []), entry => {
-    logger.debug(`[KDK] registering mime types [${entry.mimeTypes}] to reader ${entry.reader}`)
+    logger.debug(`[KDK] Registering mime types [${entry.mimeTypes}] to reader ${entry.reader}`)
     Reader.register(entry.mimeTypes, readers[entry.reader])
   })
 

@@ -55,7 +55,7 @@ export * from '../common/index.js'
 export default async function initialize () {
   const api = this
 
-  logger.debug('[KDK] initializing core module')
+  logger.debug('[KDK] Initializing core module')
 
   // Declare the module initialization states
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
