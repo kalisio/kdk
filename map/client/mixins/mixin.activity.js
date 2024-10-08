@@ -245,7 +245,7 @@ export const activity = {
       this.catalogService = this.$api.getService('catalog')
       // Keep track of binded listeners as we use the same function with different contexts
       this.catalogListeners = {}
-      if (this.globalCatalogService.events !== undefined) {
+      if (this.globalCatalogService.events) {
         this.globalCatalogService.events.forEach(event => {
           // Avoid reentrance
           if (!this.catalogListeners[event]) {
@@ -262,7 +262,7 @@ export const activity = {
       // Stop listening about changes in global/contextual catalog services
       if (!this.globalCatalogService) this.globalCatalogService = this.$api.getService('catalog', '')
       if (!this.catalogService) this.catalogService = this.$api.getService('catalog')
-      if (this.globalCatalogService.events !== undefined) {
+      if (this.globalCatalogService.events) {
         this.globalCatalogService.events.forEach(event => {
           // Avoid reentrance
           if (this.catalogListeners[event]) {
