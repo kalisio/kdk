@@ -114,7 +114,7 @@ export const Layout = {
     if (layout.fab) this.setFab(layout.fab)
     this.placements.forEach(placement => {
       if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
-      if (_.has(layout, `windows.${placement}`)) this.setWindows(placement, _.get(layout, `windows.${placement}`))
+      if (_.has(layout, `windows.${placement}`)) this.setWindow(placement, _.get(layout, `windows.${placement}`))
     })
     if (layout.mode) this.setMode(layout.mode)
     if (layout.focus) this.setFocus(layout.focus)
