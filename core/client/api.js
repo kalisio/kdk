@@ -187,7 +187,6 @@ export function createClient (config) {
       // Pass options not used internally for offline management as service options and store it along with service
       const serviceOptions = _.omit(options, ['hooks', 'snapshot', 'clear', 'baseQuery', 'baseQueries', 'dataPath'])
       const services = await LocalForage.getItem('services') || {}
-      const service = services[serviceName] || {}
       _.set(services, serviceName, serviceOptions)
       await LocalForage.setItem('services', services)
       offlineService = api.createService(offlineServiceName, {
@@ -205,7 +204,8 @@ export function createClient (config) {
         // Set required default hooks
         hooks: _.defaultsDeep(_.get(options, 'hooks'), {
           before: {
-            all: [hooks.removeServerSideParameters]
+            all: [hooks.removeServerSideParameters],
+            create: [hooks.generateId]
           }
         }),
         ...serviceOptions
