@@ -204,7 +204,7 @@ export function createClient (config) {
         // Set required default hooks
         hooks: _.defaultsDeep(_.get(options, 'hooks'), {
           before: {
-            all: [hooks.removeServerSideParameters],
+            all: [hooks.ensureSerializable, hooks.removeServerSideParameters],
             create: [hooks.generateId]
           }
         }),

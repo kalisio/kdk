@@ -70,6 +70,13 @@ export async function setLayerCached (layer, options) {
   }
 }
 
+async function cacheLayerTile(urlTemplate, x, y, z) {
+  const url = urlTemplate.replace('{z}', z).replace('{x}', x).replace('{y}', y)
+  const key = new URL(url)
+  key.searchParams.delete('jwt')
+  await LocalCache.set('layers', key.href, url)
+}
+
 export async function setBaseLayerCached (layer, options) {
   const bounds = options.bounds
   const minZoom = options.minZoom || 3
@@ -78,15 +85,15 @@ export async function setBaseLayerCached (layer, options) {
 
   const urlTemplate = _.get(layer, 'leaflet.source')
   let promises = []
-  for (let zoom = minZoom; zoom <= maxZoom; zoom++) {
+  for (let z = minZoom; z <= maxZoom; z++) {
     let sm =  new SphericalMercator()
-    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], zoom, _.get(layer, 'leaflet.tms'))
+    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], z, _.get(layer, 'leaflet.tms'))
     for (let y = tilesBounds.minY; y <= tilesBounds.maxY; y++) {
       for (let x = tilesBounds.minX; x <= tilesBounds.maxX; x++) {
-        let url = urlTemplate.replace('{z}', zoom).replace('{x}', x).replace('{y}', y)
+        let url = urlTemplate.replace('{z}', z).replace('{x}', x).replace('{y}', y)
         let key = new URL(url)
         key.searchParams.delete('jwt')
-        promises.push(LocalCache.set('layers', key.href, url))
+        promises.push(cacheLayerTile(urlTemplate, x, y, z))
         if (promises.length === nbConcurrentRequests) {
           await Promise.all(promises)
           promises = []
@@ -94,6 +101,8 @@ export async function setBaseLayerCached (layer, options) {
       }
     }
   }
+  // Always download top-level image as we use it as thumbnail
+  promises.push(cacheLayerTile(urlTemplate, 0, 0, 0))
   await Promise.all(promises)
 }
 
@@ -127,24 +136,30 @@ export async function setLayerUncached (layer, options) {
   }
 }
 
+async function uncacheLayerTile(urlTemplate, x, y, z) {
+  const url = urlTemplate.replace('{z}', z).replace('{x}', x).replace('{y}', y)
+  const key = new URL(url)
+  key.searchParams.delete('jwt')
+  await LocalCache.unset('layers', key.href)
+}
+
 async function setBaseLayerUncached (layer, options) {
   const bounds = options.bounds
   const minZoom = options.minZoom || 3
   const maxZoom = options.maxZoom || _.get(layer, 'leaflet.maxNativeZoom')
 
   const urlTemplate = _.get(layer, 'leaflet.source')
-  for (let zoom = minZoom; zoom <= maxZoom; zoom++) {
+  for (let z = minZoom; z <= maxZoom; z++) {
     let sm =  new SphericalMercator()
-    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], zoom, _.get(layer, 'leaflet.tms'))
+    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], z, _.get(layer, 'leaflet.tms'))
     for (let y = tilesBounds.minY; y <= tilesBounds.maxY; y++) {
       for (let x = tilesBounds.minX; x <= tilesBounds.maxX; x++) {
-        let url = urlTemplate.replace('{z}', zoom).replace('{x}', x).replace('{y}', y)
-        let key = new URL(url)
-        key.searchParams.delete('jwt')
-        await LocalCache.unset('layers', key.href)
+        await uncacheLayerTile(urlTemplate, x, y, z)
       }
     }
   }
+  // Always remove top-level image as we use it as thumbnail
+  await uncacheLayerTile(urlTemplate, 0, 0, 0)
 }
 
 async function setServiceLayerUncached (layer, options) {

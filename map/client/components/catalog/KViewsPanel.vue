@@ -170,7 +170,7 @@ export default {
             icon: 'las la-trash-alt',
             message: i18n.t('KViewsPanel.UNCACHING_VIEW'),
             color: 'primary',
-            timeout: 3000
+            timeout: 0
           })
           await uncacheView(view, this.getProjectLayers(), {
             contextId: this.kActivity.contextId

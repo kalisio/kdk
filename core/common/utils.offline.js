@@ -15,7 +15,7 @@ export async function makeServiceSnapshot (service, options) {
     let result = await service.find({ query })
     let data = _.get(result, dataPath) || result
     // No pagination or first page
-    if (offlineService) await offlineService.create(data)
+    if (offlineService) await offlineService.create(data, { addId: false, snapshot: true })
     items = items.concat(data)
     // No pagination => stop here
     if (!_.get(result, dataPath)) return items
@@ -28,7 +28,7 @@ export async function makeServiceSnapshot (service, options) {
       result = await service.find({ query })
       data = _.get(result, dataPath)
       if (offlineService) {
-        await offlineService.create(data)
+        await offlineService.create(data, { addId: false, snapshot: true })
       } else {
         items = items.concat(data)
       }

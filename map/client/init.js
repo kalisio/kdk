@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { LocalForage } from '@kalisio/feathers-localforage'
 import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
@@ -35,8 +34,8 @@ export function setupApi (configuration) {
       // Set required default hooks and data path for snapshot as the service responds in GeoJson format
       hooks: _.defaultsDeep(_.get(options, 'hooks'), {
         before: {
-          all: [kCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
-          create: kMapHooks.referenceCountCreateHook,
+          all: [kCoreHooks.ensureSerializable, kCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
+          create: [kCoreHooks.generateId, kMapHooks.referenceCountCreateHook],
           remove: kMapHooks.referenceCountRemoveHook
         },
         after: {

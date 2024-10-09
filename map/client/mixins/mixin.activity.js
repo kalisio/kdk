@@ -245,34 +245,32 @@ export const activity = {
       this.catalogService = this.$api.getService('catalog')
       // Keep track of binded listeners as we use the same function with different contexts
       this.catalogListeners = {}
-      if (this.globalCatalogService.events) {
-        this.globalCatalogService.events.forEach(event => {
-          // Avoid reentrance
-          if (!this.catalogListeners[event]) {
-            this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
-            this.globalCatalogService.on(event, this.catalogListeners[event])
-            if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
-              this.catalogService.on(event, this.catalogListeners[event])
-            }
+      const events = ['created', 'updated', 'patched', 'removed']
+      events.forEach(event => {
+        // Avoid reentrance
+        if (!this.catalogListeners[event]) {
+          this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
+          this.globalCatalogService.on(event, this.catalogListeners[event])
+          if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
+            this.catalogService.on(event, this.catalogListeners[event])
           }
-        })
-      }
+        }
+      })
     },
     unlistenToCatalogServiceEvents () {
       // Stop listening about changes in global/contextual catalog services
       if (!this.globalCatalogService) this.globalCatalogService = this.$api.getService('catalog', '')
       if (!this.catalogService) this.catalogService = this.$api.getService('catalog')
-      if (this.globalCatalogService.events) {
-        this.globalCatalogService.events.forEach(event => {
-          // Avoid reentrance
-          if (this.catalogListeners[event]) {
-            this.globalCatalogService.removeListener(event, this.catalogListeners[event])
-            if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
-              this.catalogService.removeListener(event, this.catalogListeners[event])
-            }
+      const events = ['created', 'updated', 'patched', 'removed']
+      events.forEach(event => {
+        // Avoid reentrance
+        if (this.catalogListeners[event]) {
+          this.globalCatalogService.removeListener(event, this.catalogListeners[event])
+          if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
+            this.catalogService.removeListener(event, this.catalogListeners[event])
           }
-        })
-      }
+        }
+      })
       this.catalogListeners = {}
     },
     resetCatalogServiceEventsListeners () {

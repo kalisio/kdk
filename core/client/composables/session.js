@@ -80,11 +80,15 @@ export function useSession (options = {}) {
       api.isDisconnected = true
       Events.emit('websocket-disconnected')
       logger.error(new Error('Socket has been disconnected'))
-      // Disconnect prompt can be avoided, eg in tests
-      if (!LocalStorage.get(disconnectKey, true)) return
       // This will ensure any operation in progress will not keep a "dead" loading indicator
       // as this error might appear under-the-hood without notifying service operations
       Loading.hide()
+      // Disconnect prompt can be avoided, eg in tests
+      if (!LocalStorage.get(disconnectKey, true)) {
+        // We flag however that we are waiting for reconnection to avoid emitting the event multiple times
+        pendingReconnection = true
+        return
+      }
       pendingReconnection = $q.dialog({
         title: i18n.t('composables.session.ALERT'),
         message: i18n.t('composables.session.DISCONNECT'),
@@ -116,7 +120,8 @@ export function useSession (options = {}) {
   function onReconnect () {
     // Dismiss pending reconnection error message if any
     if (pendingReconnection) {
-      pendingReconnection.hide()
+      // If reconnection prompt is avoided we simply have a boolean flag instead of a dismiss dialog function
+      if (typeof pendingReconnection.hide === 'function') pendingReconnection.hide()
       pendingReconnection = null
     }
     ignoreReconnectionError = false

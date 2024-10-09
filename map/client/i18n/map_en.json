@@ -458,7 +458,7 @@
   "KCreateOfflineView": {
     "MIN_ZOOM_FIELD_LABEL": "Zoom level from which data will be downloaded, increase will reduce data size",
     "MAX_ZOOM_FIELD_LABEL": "Zoom level until which data will be downloaded, increase will increase data size",
-    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Number of concurrent requests sued to download, increase will speed up download but load the device and the server"
+    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Number of concurrent requests issued to download, increase will speed up download but load the device and the server"
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Sort projects",
