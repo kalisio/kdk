@@ -42,6 +42,7 @@
       v-if="hasHeaderComponents"
       v-model="isHeaderVisible"
     >
+      <q-resize-observer @resize="onHeaderResized" />
       <KPanel
         id="header-panel"
         :content="header.components"
@@ -54,6 +55,7 @@
       v-if="hasFooterComponents"
       v-model="isFooterVisible"
     >
+      <q-resize-observer @resize="onFooterResized" />
       <KPanel
         id="footer-panel"
         :content="footer.components"
@@ -144,6 +146,12 @@ function clickOutsideLeftPanelListener (event) {
   const leftOpenerElement = document.getElementById('left-opener')
   if (leftOpenerElement && leftOpenerElement.contains(event.target)) return
   Layout.setPaneVisible('left', false)
+}
+function onHeaderResized (size) {
+  Layout.setElementSize('header', [size.width, size.height])
+}
+function onFooterResized (size) {
+  Layout.setElementSize('footer', [size.width, size.height])
 }
 </script>
 
