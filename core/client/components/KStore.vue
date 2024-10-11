@@ -18,10 +18,8 @@ Events.on('store-changed', (path, value) => updateLazy(path, value))
 
 // functions
 function onLazyLoad ({ node, key, done, fail }) {
-  setTimeout(() => {
-    done(convertStore(_.get(Store, key), 1))
-    lazy.value = addPath(lazy.value)
-  }, 1000)
+  done(convertStore(_.get(Store, key), 1))
+  lazy.value = addPath(lazy.value)
 }
 function convertStore (node, maxDepth = -1, depth = 0) {
   if (maxDepth >= 0 && maxDepth === depth) return

@@ -6,13 +6,10 @@
       'column items-center q-gutter-y-sm': direction === 'vertical',
       'row items-center no-wrap q-gutter-x-sm': direction === 'horizontal'
     }">
-      <div>
-        <q-icon v-if="canShowIcon" :size="iconSize" :name="icon" />
-          <q-tooltip v-if="!canShowText">
-            {{ $tie(text) }}
-          </q-tooltip>
+      <div v-if="canShowIcon">
+        <q-icon :size="iconSize" :name="icon" />
       </div>
-      <div v-if="canShowText" class="ellipsis" :style="`font-size: ${textSize};`"
+      <div class="ellipsis" :style="`font-size: ${textSize};`"
         v-bind:class="{'text-center': direction === 'vertical' }"
       >
          {{ $tie(text) }}
@@ -58,8 +55,5 @@ const $q = useQuasar()
 // computed
 const canShowIcon = computed(() => {
   return !_.isEmpty(props.icon)
-})
-const canShowText = computed(() => {
-  return props.direction === 'vertical' || _.isEmpty(props.icon) || $q.screen.gt.xs
 })
 </script>

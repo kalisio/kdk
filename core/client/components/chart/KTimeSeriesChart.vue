@@ -301,7 +301,7 @@ async function makeDatasets () {
       const time = moment.utc(_.get(item, xAxisKey))
       // Take zero into account
       if (_.has(item, yAxisKey)) {
-        let value = _.get(item, yAxisKey)
+        const value = _.get(item, yAxisKey)
         if (_.isFinite(value)) {
           if (_.isNil(min[unitName]) || (value < min[unitName])) min[unitName] = value
           if (_.isNil(max[unitName]) || (value > max[unitName])) max[unitName] = value

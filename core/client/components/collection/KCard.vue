@@ -9,22 +9,22 @@
     -->
     <div v-if="hasHeader">
       <div v-bind:class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }">
-        <slot name="card-header">
-          <KPanel
-            id="card-header-panel"
-            :content="computedHeader"
-            :context="$props"
-            class="full-width no-wrap"
-          />
-        </slot>
+        <KPanel
+          id="card-header-panel"
+          :content="computedHeader"
+          :context="$props"
+          class="full-width no-wrap"
+        />
       </div>
     </div>
     <!--
-      Title section
+      Heading section
     -->
-    <div class="column full-width"
-      v-bind:class="{ 'q-px-sm q-pt-xs q-gutter-y-xs': dense, 'q-px-md q-pt-sm q-gutter-y-sm': !dense }">
-      <slot name="card-title">
+    <div
+      class="column full-width"
+      v-bind:class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }"
+    >
+      <slot name="card-heading">
         <div class="row full-width items-center no-wrap">
           <div
             v-if="avatar"
@@ -47,54 +47,56 @@
           </div>
         </div>
       </slot>
-      <slot name="card-description">
-        <!-- Description -->
-        <KCardSection
-          :title="$t('KCard.DESCRIPTION_SECTION')"
-          :actions="descriptionActions"
-          :hideHeader="!isExpanded"
-          :dense="dense"
-        >
-          <div class="q-pb-xs">
-            <KTextArea
-              :text="description || $tie('KCard.NO_DESCRIPTION_LABEL')"
-              :minHeight="44"
-              :dense="dense"
-            />
-          </div>
-        </KCardSection>
-      </slot>
     </div>
     <!--
       Content section
     -->
     <div v-bind:class="{ 'q-px-sm': dense, 'q-px-md': !dense }">
-      <slot name="card-content" />
+      <slot name="card-content">
+        <!-- Visible sections -->
+        <KPanel
+          :content="visibleSections"
+          :context="$props"
+          direction="vertical"
+        />
+        <!-- Expansion sections -->
+        <KPanel v-if="isExpanded"
+          :content="expandableSections"
+          :context="$props"
+          direction="vertical"
+        />
+      </slot>
     </div>
     <!--
       Footer section
     -->
     <div v-if="hasFooter">
       <q-separator />
-      <div v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }">
-        <slot name="card-footer">
-          <k-panel id="card-footer-panel" :content="computedFooter" :context="$props" class="full-width no-wrap" />
-        </slot>
+      <div :class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }">
+        <KPanel
+          id="card-footer-panel"
+          :content="computedFooter"
+          :context="$props"
+          class="full-width no-wrap"
+        />
       </div>
     </div>
-    <!--
-      Expand action
+    <!-- 
+      Expand action 
     -->
-    <div v-if="expandable">
-      <div class="row justify-center">
-        <k-action
-          id="expand-action"
-          :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'"
-          :tooltip="isExpanded ? 'KCard.LESS_ACTION' : 'KCard.MORE_ACTION'"
-          size="sm"
-          @triggered="onExpandTriggered" />
-      </div>
+    <div v-if="isExpandable" class="row justify-center">
+      <KAction
+        id="expand-action"
+        icon="las la-angle-down"
+        tooltip="KCard.MORE_DETAILS"
+        :toggle="{ icon: 'las la-angle-up', tooltip: 'KCard.LESS_DETAILS', color: 'grey-7' }"
+        :size="dense ? 'xs' : 'sm'"
+        dense
+        @triggered="onExpandTriggered"
+      />
     </div>
+    <!-- Extra bottom padding if no expand action -->
+    <div v-else :class="{ 'q-pt-xs': dense, 'q-pt-sm': !dense }" />
   </q-card>
 </template>
 
@@ -102,18 +104,16 @@
 import _ from 'lodash'
 import KAction from '../action/KAction.vue'
 import KPanel from '../KPanel.vue'
-import KTextArea from '../KTextArea.vue'
 import KAvatar from '../KAvatar.vue'
-import KCardSection from './KCardSection.vue'
+import KDescriptionCardSection from './KDescriptionCardSection.vue'
 import { baseItem } from '../../mixins'
 
 export default {
   components: {
     KPanel,
     KAvatar,
-    KTextArea,
     KAction,
-    KCardSection
+    KDescriptionCardSection
   },
   mixins: [baseItem],
   emits: [
@@ -125,13 +125,13 @@ export default {
       type: [Object, Array],
       default: () => null
     },
+    sections: {
+      type: Object,
+      default: () => null
+    },
     footer: {
       type: [Object, Array],
       default: () => null
-    },
-    expandable: {
-      type: Boolean,
-      default: false
     },
     avatar: {
       type: Boolean,
@@ -163,11 +163,26 @@ export default {
     hasHeader () {
       return !_.isEmpty(this.computedHeader)
     },
-    hasDescription () {
-      return !_.isEmpty(this.description)
+    computedSections () {
+      return _.map(this.sections, (value, key) => {
+        return {
+          ...value,
+          item: this.item,
+          actions: _.filter(this.itemActions, { scope: key }),
+          dense: this.dense
+        }
+      })
     },
-    descriptionActions () {
-      return _.filter(this.itemActions, { scope: 'description' })
+    visibleSections () {
+      return _.filter(this.computedSections, section => {
+        return section.scope !== 'expansion'
+      })
+    },
+    expandableSections () {
+      return _.filter(this.computedSections, { scope: 'expansion' })
+    },
+    isExpandable () {
+      return !_.isEmpty(this.expandableSections)
     },
     computedFooter () {
       if (this.footer) return this.footer
@@ -182,7 +197,7 @@ export default {
   },
   data () {
     return {
-      isExpanded: !this.expandable
+      isExpanded: false
     }
   },
   methods: {

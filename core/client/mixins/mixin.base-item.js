@@ -41,8 +41,11 @@ export const baseItem = {
     }
   },
   watch: {
+    // Make configured actions reactive as item actions are built from
+    item: function () {
+      this.configureActions()
+    },
     actions: function () {
-      // Make configured actions reactive as item actions are built from
       this.configureActions()
     }
   },
@@ -138,10 +141,10 @@ export const baseItem = {
             flat: true
           }
         }).onOk(() => {
-          this.$api.getService(this.service).remove(this.item._id)
+          this.$api.getService(this.service, this.contextId).remove(this.item._id)
         })
       } else {
-        this.$api.getService(this.service).remove(this.item._id)
+        this.$api.getService(this.service, this.contextId).remove(this.item._id)
       }
     },
     exportItem () {

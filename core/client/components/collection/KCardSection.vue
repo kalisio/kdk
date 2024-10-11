@@ -9,9 +9,8 @@
         {{ title }}
       </span>
       <KPanel
-        v-if="actions"
-        :content="actions"
-        :context="context"
+        v-if="filteredActions"
+        :content="filteredActions"
         class="no-wrap"
       />
     </div>
@@ -25,15 +24,21 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
+import { computed } from 'vue'
 
 // Props
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: ''
   },
   actions: {
     type: Array,
+    default: () => null
+  },
+  actionsFilter: {
+    type: [String, Array],
     default: () => null
   },
   hideHeader: {
@@ -43,10 +48,16 @@ defineProps({
   dense: {
     type: Boolean,
     default: false
-  },
-  context: {
-    type: Object,
-    default: () => null
   }
+})
+
+// Computed
+const filteredActions = computed(() => {
+  if (!props.actionsFilter) return props.actions
+  let filter = props.actionsFilter
+  if (_.isString(filter)) filter=[filter]
+  return _.filter(props.actions, action => {
+    return _.indexOf(filter, action.id) >= 0
+  })
 })
 </script>

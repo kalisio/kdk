@@ -23,7 +23,7 @@ export const Document = {
       },
       mdConverter: {}
     })
-    logger.debug('[KDK] Document options:', JSON.stringify(this.options, null, 4))
+    logger.debug('[KDK] Configuring documents with options:', this.options)
   },
   register (mimeTypes, viewer) {
     if (!_.isArray(mimeTypes)) mimeTypes = [mimeTypes]

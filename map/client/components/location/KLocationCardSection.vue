@@ -2,25 +2,25 @@
   <KCardSection
     :title="$t('KLocationCardSection.TITLE')"
     :actions="actions"
-    :context="context"
+    :actionsFilter="actionsFilter"
+    :hideHeader="hideHeader"
     :dense="dense"
-    style="position: relative"
   >
     <div v-if="feature" class="full-width column">
       <!-- Description -->
       <KTextArea
-        :text="feature.properties.name"
-        :minHeight="44"
+        :text="feature.properties[namePath]"
+        :minHeight="24"
         :maxHeight="204"
         :dense="true"
       />
       <!-- Map  -->
       <KLocationMap
         v-model="feature"
-        style="min-height: 140px"
+        style="min-height: 120px"
       />
     </div>
-    <div v-else style="height: 184px">
+    <div v-else style="height: 142px">
       <div class="absolute-center">
         <KStamp
           icon="las la-map-marker"
@@ -32,34 +32,30 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, watch } from 'vue'
+import { utils as coreUtils } from '../../../../core.client'
 import KLocationMap from './KLocationMap.vue'
 
 // Props
 const props = defineProps({
-  location: {
-    type: Object,
-    default: () => null
+  locationPath: {
+    type: String,
+    default: 'location'
   },
-  actions: {
-    type: [Object, Array],
-    default: () => null
+  namePath: {
+    type: String,
+    default: 'name'
   },
-  context: {
-    type: Object,
-    default: () => null
-  },
-  dense: {
-    type: Boolean,
-    default: false
-  }
+  ...coreUtils.CardSectionProps
 })
 
 // Data
 const feature = ref(null)
 
 // Watch
-watch(() => props.location, (value) => {
-  feature.value = value
+watch(() => [props.item, props.locationPath], () => {
+  if (_.get(props.item, 'type') === 'Feature') feature.value = _.cloneDeep(props.item)
+  else feature.value = _.get(props.item, props.locationPath)
 }, { immediate: true })
 </script>

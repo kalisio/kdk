@@ -8,9 +8,10 @@
       class="k-window-header full-width row items-center"
       v-touch-pan.prevent.mouse="onMoved"
     >
-      <q-resize-observer @resize="onHeaderResized" />
+      <q-resize-observer @resize="onWindowHeaderResized" />
       <!-- window menu -->
       <KPanel
+        v-if="currentWindow.controls.menu"
         :id="`${placement}-window-menu`"
         :content="menu"
         @touchstart.passive.stop
@@ -78,7 +79,7 @@
       :id="`${placement}-window-footer`"
       class="k-window-footer full-width row justify-end"
     >
-      <q-resize-observer @resize="onFooterResized" />
+      <q-resize-observer @resize="onWindowFooterResized" />
       <!-- window grip -->
       <q-icon
         v-if="currentWindow.controls.resize && currentWindow.state !== 'maximized'"
@@ -121,10 +122,12 @@ const props = defineProps({
 
 // Data
 const $q = useQuasar()
+const header = Layout.getHeader()
+const footer = Layout.getFooter()
 const currentWindow = Layout.getWindow(props.placement)
+const windowHeaderHeight = ref(0)
+const windowFooterHeight = ref(0)
 const widgetRef = ref(null)
-const headerHeight = ref(0)
-const footerHeight = ref(0)
 const pinIcons = {
   left: 'las la-angle-left',
   right: 'las la-angle-right',
@@ -207,7 +210,7 @@ const headerControls = computed(() => {
     size: 'sm',
     tooltip: 'KWindow.RESTORE_ACTION',
     visible: currentWindow.controls.restore && currentWindow.state === 'maximized',
-    handler: () => Layout.setWindowState(props.placement, LocalStorage.get(getStorageKey('restore-state')))
+    handler: () => Layout.setWindowState(props.placement, LocalStorage.get(getStorageKey('restore-state')) || 'pinned')
   }, {
     id: `close-${props.placement}-window`,
     icon: 'las la-times',
@@ -245,7 +248,7 @@ const widgetWidth = computed(() => {
   return currentWindow.size[0] - border
 })
 const widgetHeight = computed(() => {
-  return currentWindow.size[1] - headerHeight.value - footerHeight.value
+  return currentWindow.size[1] - windowHeaderHeight.value - windowFooterHeight.value
 })
 
 // Watch
@@ -312,7 +315,10 @@ function setPinnedGeometry () {
   updateGeometry([x, y], size)
 }
 function setMaximizedGeometry () {
-  updateGeometry([0, 0], [$q.screen.width, $q.screen.height])
+  let height = $q.screen.height
+  if (header.visible) height -= header.size[1]
+  if (footer.visible) height -= footer.size[1]
+  updateGeometry([0, 0], [$q.screen.width, height])
 }
 function updateGeometry (position, size, check = false) {
   // check geometry
@@ -400,16 +406,20 @@ const onScreenResized = _.throttle(() => {
   else if (currentWindow.state === 'maximized') setMaximizedGeometry()
   else updateGeometry(currentWindow.position, currentWindow.size, true)
 }, 50)
-function onHeaderResized (size) {
-  headerHeight.value = size.height
+function onWindowHeaderResized (size) {
+  windowHeaderHeight.value = size.height
 }
-function onFooterResized (size) {
-  footerHeight.value = size.height
+function onWindowFooterResized (size) {
+  windowFooterHeight.value = size.height
 }
 
 // restore the state
-const fallbackState = readState() || 'pinned'
-Layout.setWindowState(props.placement, fallbackState)
+const currentState = currentWindow.state
+if (currentState) refresh(currentState)
+else {
+  const fallbackState = readState() || 'pinned'
+  Layout.setWindowState(props.placement, fallbackState)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -432,7 +442,7 @@ Layout.setWindowState(props.placement, fallbackState)
     background-color: $window-header-hover-background;
   }
   .k-window-footer {
-    height: v-bind(footerHeight)px;
+    height: v-bind(windowFooterHeight)px;
     border-radius: 0 0 $window-border-radius $window-border-radius;
   }
   .k-window-grip:hover {

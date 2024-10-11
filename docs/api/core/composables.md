@@ -62,3 +62,7 @@ The composable exposes the following:
 * **state**: the store object for current activity state
 * **options**: the store object for current activity options
 * elements exposed by the [selection composable](./composables#useselection) associated to the activity
+
+## useCollection
+
+_TODO_

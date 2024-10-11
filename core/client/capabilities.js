@@ -13,7 +13,7 @@ export const Capabilities = {
     } else {
       const capabilities = await window.fetch(api.getConfig('domain') + _.get(config, 'apiPath') + '/capabilities')
       const content = await capabilities.json()
-      logger.debug('[KDK] Fetched capabilities:', JSON.stringify(content, null, 4))
+      logger.debug('[KDK] Fetched capabilities:', content)
       this.content = content
       // Store latest capabilities data for offline mode
       await LocalForage.setItem('capabilities', content)

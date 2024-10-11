@@ -112,6 +112,10 @@
     label-class="bg-primary text-white text-caption k-fab-action"
     :disable="computedDisabled"
     @click="onClicked">
+    <!-- tooltip -->
+    <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
+      {{ computedTooltip }}
+    </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge">
       <q-icon v-if="badge.icon" v-bind="badge.icon" />
@@ -164,11 +168,13 @@ import { i18n } from '../../i18n.js'
 import { actionProps } from '../../utils/utils.actions'
 import { bindParams } from '../../utils/utils.content.js'
 
+// Props
+const props = defineProps(actionProps)
+
 // Data
 const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
-const props = defineProps(actionProps)
 const isToggled = _.has(props, 'toggle.value') ? toRef(props.toggle, 'value') : ref(props.toggled)
 
 // Emit

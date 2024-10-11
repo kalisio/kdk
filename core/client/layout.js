@@ -17,7 +17,7 @@ export const DefaultZIndex = {
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
-const windowsDefaultControls = { pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
+const windowsDefaultControls = { menu: true, pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
 const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls, zIndex: 980 }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
@@ -83,6 +83,7 @@ export const Layout = {
     },
     focus: layoutPath + '.focus'
   },
+  defaults,
   initialize () {
     // create the store structure for each element with their configuration
     Store.set(this.paths.view, this.getElementDefaults('view'))
@@ -98,10 +99,25 @@ export const Layout = {
     })
     Store.set(this.paths.focus, this.getElementDefaults('focus'))
     // debug message
-    logger.debug(`[KDK] Layout initialized with: ${JSON.stringify(this.get(), null, 4)}`)
+    logger.debug('[KDK] Configuring layout with options:', this.get())
   },
   get () {
     return Store.get(this.paths.layout)
+  },
+  set (layout) {
+    if (layout.view) this.setView(layout.view)
+    if (layout.padding) this.setPadding(layout.padding)
+    if (layout.header) this.setHeader(layout.header)
+    if (layout.footer) this.setFooter(layout.footer)
+    if (layout.page) this.setPage(layout.page)
+    if (layout.stickies) this.setStickies(layout.stickies)      
+    if (layout.fab) this.setFab(layout.fab)
+    this.placements.forEach(placement => {
+      if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
+      if (_.has(layout, `windows.${placement}`)) this.setWindow(placement, _.get(layout, `windows.${placement}`))
+    })
+    if (layout.mode) this.setMode(layout.mode)
+    if (layout.focus) this.setFocus(layout.focus)
   },
   setView (view) {
     Store.patch(this.paths.layout, { view })
@@ -119,8 +135,8 @@ export const Layout = {
     this.setHeaderMode(mode)
     this.setFooterMode(mode)
     this.setPageMode(mode)
-    this.setStickiesMode(mode)
     this.setFabMode(mode)
+    this.setStickiesMode(mode)
     this.placements.forEach(placement => {
       this.setPaneMode(placement, mode)
       this.setWindowMode(placement, mode)
@@ -349,9 +365,9 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowControls (placement, controls) {
-    for (const key in _.keys(windowsDefaultControls)) {
+    for (const key of _.keys(windowsDefaultControls)) {
       if (!_.has(controls, key)) {
-        logger.warn(`[KDK] Invalid window controls ${controls}`)
+        logger.warn(`[KDK] Invalid window control key ${key}`)
         return
       }
     }
