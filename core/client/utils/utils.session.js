@@ -50,6 +50,9 @@ export async function restoreSession () {
     let authentication
     if (api.isDisconnected) {
       authentication = await LocalForage.getItem('authentication')
+      // In this specific case as we bypass actual authentication the events will not be emitted
+      api.emit('login', authentication)
+      api.emit('authenticated', authentication)
     } else {
       authentication = await api.reAuthenticate()
     }
