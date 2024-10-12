@@ -15,7 +15,7 @@ export function usePwa () {
 
   // Functions
   function install () {
-    if (window.matchMedia('(display-mode: standalone)').matches) return
+    if (config.buildMode !== 'pwa' || window.matchMedia('(display-mode: standalone)').matches) return
     // Install prompt can be avoided, eg in tests
     if (!LocalStorage.get(installKey, true)) return
     // Take care of install prompt
