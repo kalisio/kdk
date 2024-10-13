@@ -7,6 +7,6 @@ export function getPlatform () {
     storage: Platform.has.webStorage,
     iframe: Platform.within.frame,
     agent: Platform.userAgent,
-    isPwa: config.buildMode === 'pwa'
+    pwa: config.buildMode === 'pwa'
   })
 }
