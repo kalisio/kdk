@@ -568,6 +568,20 @@ export const baseMap = {
       }
       return this.map.getBearing()
     },
+    setCompassBearingTrackingEnabled (enabled) {
+      if (enabled) {
+        if (!this.map.compassBearing.enabled()) this.map.compassBearing.enable()
+      } else if (this.map.compassBearing.enabled()) {
+        this.map.compassBearing.disable()
+      }
+    },
+    setTouchRotateEnabled (enabled) {
+      if (enabled) {
+        if (!this.map.touchRotate.enabled()) this.map.touchRotate.enable()
+      } else if (this.map.touchRotate.enabled()) {
+        this.map.touchRotate.disable()
+      }
+    },
     getBounds () {
       this.viewBounds = this.map.getBounds()
       const south = this.viewBounds.getSouth()
