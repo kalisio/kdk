@@ -338,23 +338,21 @@ export const Units = {
   convert (value, sourceUnit, targetUnit) {
     if (_.isNil(value) || !_.isFinite(value)) return value
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
-    if (typeof sourceUnit === 'string') sourceUnit = this.getUnit(sourceUnit)
-    if (typeof targetUnit === 'string') targetUnit = this.getUnit(targetUnit)
+    let sourceUnitDef = (typeof sourceUnit === 'string') ? this.getUnit(sourceUnit) : sourceUnit
+    let targetUnitDef = (typeof targetUnit === 'string') ? this.getUnit(targetUnit) : targetUnit
+    // Check if that's a mathjs unit
+    if (!sourceUnitDef && math.Unit.isValuelessUnit(sourceUnit)) sourceUnitDef = { name: sourceUnit }
     // If target unit is not given use default one
-    if (!targetUnit) targetUnit = this.getDefaultUnit(sourceUnit)
+    if (!targetUnitDef) targetUnitDef = this.getDefaultUnit(sourceUnitDef)
     // Check if the source/target unit does exist
-    if (!sourceUnit || !targetUnit) return value
+    if (!sourceUnitDef || !targetUnitDef) return value
     // If target unit is same as source unit does nothing
-    if (sourceUnit && targetUnit && (targetUnit.name === sourceUnit.name)) return value
-    // Check if the source unit is declared in the units system
-    if (!math.Unit.isValuelessUnit(sourceUnit.name)) return value
-    // Check if the value is a valid number
-    if (!_.isFinite(value)) return value
+    if (targetUnitDef.name === sourceUnitDef.name) return value
     // Now convert
-    let n = math.unit(value, sourceUnit.name)
-    n = n.toNumber(targetUnit.name)
+    let n = math.unit(value, sourceUnitDef.name)
+    n = n.toNumber(targetUnitDef.name)
     // Remap from [-180,+180[ to [0,360[ for angles
-    n = (targetUnit.name === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
+    n = (targetUnitDef.name === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
     return n
   },
   // Format display of source value in target unit, converting from source unit
