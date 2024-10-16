@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md">
     <q-icon
-      name="img:kdk/extras/icons/attribution.png"
+      name="img:icons/kdk/attribution.png"
       size="24px"
     >
       <q-popup-proxy
