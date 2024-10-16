@@ -563,7 +563,6 @@ export const baseMap = {
     },
     getBearing () {
       if (typeof this.map.getBearing !== 'function') {
-        logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
         return 0
       }
       return this.map.getBearing()

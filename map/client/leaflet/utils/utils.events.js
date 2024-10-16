@@ -28,7 +28,7 @@ export const LeafletEvents = {
   Map: ['baselayerchange', 'overlayadd', 'overlayremove', 'layeradd', 'layerremove', 'zoomlevelschange',
     'resize', 'unload', 'viewreset', 'load',
     'zoomstart', 'boxzoomstart', 'boxselectionstart', 'movestart',
-    'zoom', 'move',
+    'zoom', 'move', 'rotate',
     'zoomend', 'boxzoomend', 'boxselectionend', 'moveend',
     'click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'contextmenu',
     'keypress', 'preclick', 'moveend', 'zoomanim', 'fullscreenchange'],
