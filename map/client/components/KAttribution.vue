@@ -1,9 +1,8 @@
 <template>
   <div class="q-pa-md">
     <q-icon
-      name="info"
+      name="img:icons/kdk/attribution.png"
       size="24px"
-      class="text-primary cursor-pointer"
     >
       <q-popup-proxy
         id="attributionsPopup"
