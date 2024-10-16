@@ -28,9 +28,9 @@ import { Document } from '../../../core/client/document.js'
 // Data
 const attributionsHtmlContent = `
   <div>
-    <a href="https://leafletjs.com">Leaflet</a> 
-    | OpenMapTiles © <a href="https://openmaptiles.com">OpenMapTiles</a> 
-    & OpenStreetMap © <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors
+    <a href="https://leafletjs.com" target="_blank">Leaflet</a> 
+    | OpenMapTiles © <a href="https://openmaptiles.com" target="_blank">OpenMapTiles</a> 
+    & OpenStreetMap © <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> contributors
   </div>
 `
 // Computed
@@ -53,9 +53,9 @@ const props = defineProps({
 // Data
 const staticAttributionsHtmlContent = `
   <div>
-    <a href="https://leafletjs.com">Leaflet</a> 
-    | OpenMapTiles © <a href="https://openmaptiles.com">OpenMapTiles</a> 
-    & OpenStreetMap © <a href="https://www.openstreetmap.org">OpenStreetMap</a> contributors
+    <a href="https://leafletjs.com" target="_blank">Leaflet</a> 
+    | OpenMapTiles © <a href="https://openmaptiles.com" target="_blank">OpenMapTiles</a> 
+    & OpenStreetMap © <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> contributors
   </div>
 `
 const attributionsHtmlContent = ref(staticAttributionsHtmlContent)
