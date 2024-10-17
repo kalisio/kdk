@@ -4,6 +4,9 @@
       name="img:icons/kdk/attribution.png"
       size="24px"
     >
+      <q-tooltip>
+        {{ $t('KAttribution.ATTRIBUTION') }}
+      </q-tooltip>
       <q-popup-proxy
         id="attributionsPopup"
         transition-show="scale"

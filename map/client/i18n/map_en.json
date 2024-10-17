@@ -697,5 +697,8 @@
   },
   "KDirectionField": {
     "COMPASS": "Compass"
+  },
+  "KAttribution": {
+    "ATTRIBUTION": "Attribution"
   }
 }

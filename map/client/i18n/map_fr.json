@@ -703,5 +703,8 @@
   },
   "KDirectionField": {
     "COMPASS": "Boussole"
+  },
+  "KAttribution": {
+    "ATTRIBUTION": "Attribution"
   }
 }
