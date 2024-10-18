@@ -10,17 +10,17 @@
           width: '2'
         },
         text: {
-            label: 'i',
-            color: 'primary'
-          }
-        }"
+          label: 'i',
+          color: 'primary'
+        }
+      }"
       :tooltip="$t('KAttribution.ATTRIBUTION')"
     />
     <q-popup-proxy
       id="attributionsPopup"
       transition-show="scale"
       transition-hide="scale"
-      anchor="middle left"
+      anchor="bottom left"
       self="bottom right"
     >
       <div
