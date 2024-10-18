@@ -2,7 +2,18 @@
   <div class="q-pa-md">
     <KShape
       class="text-weight-bold"
-      :options="{ shape: 'circle', color: 'white', stroke: { color: 'primary', width: '2' }, text: { label: 'i', color: 'primary'} }"
+      :options="{
+        shape: 'circle',
+        color: 'white',
+        stroke: {
+          color: 'primary',
+          width: '2'
+        },
+        text: {
+            label: 'i',
+            color: 'primary'
+          }
+        }"
       :tooltip="$t('KAttribution.ATTRIBUTION')"
     />
     <q-popup-proxy
