@@ -1,33 +1,31 @@
 <template>
   <div class="q-pa-md">
-    <q-icon
-      name="img:icons/kdk/attribution.png"
-      size="24px"
+    <KShape
+      class="text-weight-bold"
+      :options="{ shape: 'circle', color: 'white', stroke: { color: 'primary', width: '2' }, text: { label: 'i', color: 'primary'} }"
+      :tooltip="$t('KAttribution.ATTRIBUTION')"
+    />
+    <q-popup-proxy
+      id="attributionsPopup"
+      transition-show="scale"
+      transition-hide="scale"
+      anchor="middle left"
+      self="bottom right"
     >
-      <q-tooltip>
-        {{ $t('KAttribution.ATTRIBUTION') }}
-      </q-tooltip>
-      <q-popup-proxy
-        id="attributionsPopup"
-        transition-show="scale"
-        transition-hide="scale"
-        anchor="bottom left"
-        self="bottom right"
+      <div
+        id="attributionsBanner" class="bg-white text-primary text-center q-pa-xs"
       >
-        <div
-          id="attributionsBanner" class="bg-white text-primary text-center q-pa-xs"
-        >
-          <div id="attributionsContent" v-html="sanitizedAttributionsContent" />
-        </div>
-      </q-popup-proxy>
-    </q-icon>
+        <div id="attributionsContent" v-html="sanitizedAttributionsContent" />
+      </div>
+    </q-popup-proxy>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { Document } from '../../../core/client/document.js'
-// Data
+import { KShape } from '../../../core/client/components/media'
+
 const attributionsHtmlContent = `
   <div>
     <a href="https://leafletjs.com" target="_blank">Leaflet</a> 
