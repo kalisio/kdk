@@ -56,6 +56,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { uid } from 'quasar'
 import { Layout } from '../../layout'
 import KAction from '../action/KAction.vue'
 
@@ -90,7 +91,17 @@ const icon = computed(() => {
   return fab.icon || 'las la-ellipsis-v'
 })
 const actions = computed(() => {
-  return fab.components
+  const actions = []
+  // Apply filtering
+  _.forEach(fab.components, (action) => {
+    let isVisible = _.get(action, 'visible', true)
+    // Can be a functional call
+    if (typeof isVisible === 'function') {
+      isVisible = isVisible()
+    }
+    if (isVisible) actions.push(action)
+  })
+  return actions
 })
 </script>
 
