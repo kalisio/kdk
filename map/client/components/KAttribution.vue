@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div class="q-pa-sm">
     <KShape
       class="text-weight-bold"
       :options="{
@@ -19,7 +19,7 @@
       id="attributions-popup"
       transition-show="scale"
       transition-hide="scale"
-      anchor="bottom left"
+      anchor="center left"
       self="bottom right"
     >
       <div
@@ -27,8 +27,9 @@
         class="bg-white text-primary text-center q-pa-xs"
       >
         <div 
-          id="attributions-content" 
+          id="attributions-content"
           v-html="sanitizedAttributions" 
+          class="text-caption"
         />
       </div>
     </q-popup-proxy>
@@ -88,13 +89,3 @@ function onHideLayer (layer) {
   }
 }
 </script>
-
-<style>
-#attributionsPopup {
-  min-width: fit-content;
-}
-#attributionsBanner {
-  min-height: fit-content;
-  font-size: 11px;
-}
-</style>
