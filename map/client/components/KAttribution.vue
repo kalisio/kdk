@@ -14,80 +14,80 @@
           color: 'primary'
         }
       }"
-      :tooltip="$t('KAttribution.ATTRIBUTION')"
     />
     <q-popup-proxy
-      id="attributionsPopup"
+      id="attributions-popup"
       transition-show="scale"
       transition-hide="scale"
       anchor="bottom left"
       self="bottom right"
     >
       <div
-        id="attributionsBanner" class="bg-white text-primary text-center q-pa-xs"
+        id="attributions-banner" 
+        class="bg-white text-primary text-center q-pa-xs"
       >
-        <div id="attributionsContent" v-html="sanitizedAttributionsContent" />
+        <div 
+          id="attributions-content" 
+          v-html="sanitizedAttributions" 
+        />
       </div>
     </q-popup-proxy>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { Document } from '../../../core/client/document.js'
-import { KShape } from '../../../core/client/components/media'
-
-const attributionsHtmlContent = `
-  <div>
-    <a href="https://leafletjs.com" target="_blank">Leaflet</a> 
-    | OpenMapTiles © <a href="https://openmaptiles.com" target="_blank">OpenMapTiles</a> 
-    & OpenStreetMap © <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> contributors
-  </div>
-`
-// Computed
-const sanitizedAttributionsContent = computed(() => {
-  return Document.sanitizeHtml(attributionsHtmlContent)
-})
-</script>
-<!--<script setup>
+import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
 import { Document } from '../../../core/client/document.js'
-
-// Props
-const props = defineProps({
-  url: {
-    type: String,
-    default: null
-  }
-})
+import { KShape } from '../../../core/client/components/media'
+import { useCurrentActivity } from '../composables'
 
 // Data
-const staticAttributionsHtmlContent = `
-  <div>
-    <a href="https://leafletjs.com" target="_blank">Leaflet</a> 
-    | OpenMapTiles © <a href="https://openmaptiles.com" target="_blank">OpenMapTiles</a> 
-    & OpenStreetMap © <a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap</a> contributors
-  </div>
-`
-const attributionsHtmlContent = ref(staticAttributionsHtmlContent)
+const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
+const attributions = ref({})
+
+// Computed
+const sanitizedAttributions = computed(() => {
+  let content = ''
+  _.forEach(attributions.value, (attribution, layer) => {
+    content += `${attribution}<br>`
+  })
+  return Document.sanitizeHtml(content)
+})
 
 // Watch
-watch(() => props.url, async (newUrl) => {
-  if (newUrl) {
-    const response = await Document.fetchUrl(newUrl)
-    if (response?.ok) {
-      attributionsHtmlContent.value = await response.text()
-    }
-  } else {
-    attributionsHtmlContent.value = staticAttributionsHtmlContent
+watch(CurrentActivity, (newActivity, oldActivity) => {
+  if (oldActivity) {
+    // remove listeners
+    oldActivity.value.$engineEvents.off('layer-shown', onShowLayer)
+    oldActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
+  }
+  if (newActivity) {
+    // setup attribution
+    newActivity.getLayers().forEach((layer) => {
+      if (newActivity.isLayerVisible(layer.name)) {
+        onShowLayer(layer)
+      }
+    })
+    // install listeners
+    newActivity.$engineEvents.on('layer-shown', onShowLayer)
+    newActivity.$engineEvents.on('layer-hidden', onHideLayer)
   }
 }, { immediate: true })
 
-// Computed
-const sanitizedAttributionsContent = computed(() => {
-  return Document.sanitizeHtml(attributionsHtmlContent.value)
-})
-</script>-->
+// Functions
+function onShowLayer (layer, engine) {
+  if (layer.attribution) { 
+    _.set(attributions.value, _.kebabCase(layer.name), layer.attribution)
+  }
+  console.log(attributions.value)
+}
+function onHideLayer (layer) {
+  if (layer.attribution) {
+    _.unset(attributions.value, _.kebabCase(layer.name))
+  }
+}
+</script>
 
 <style>
 #attributionsPopup {
