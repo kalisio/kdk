@@ -132,11 +132,8 @@ export default {
     }
   },
   setup (props) {
-    // Data
-    const height = ref(0)
     // Expose
     return {
-      height,
       ...useCurrentActivity(),
       ...useHighlight('information-box', props.highlight)
     }
