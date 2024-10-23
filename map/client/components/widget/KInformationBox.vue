@@ -22,7 +22,6 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { ref } from 'vue'
 import { copyToClipboard, exportFile } from 'quasar'
 import { KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
