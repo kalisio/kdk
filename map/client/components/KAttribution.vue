@@ -81,7 +81,6 @@ function onShowLayer (layer, engine) {
   if (layer.attribution) { 
     _.set(attributions.value, _.kebabCase(layer.name), layer.attribution)
   }
-  console.log(attributions.value)
 }
 function onHideLayer (layer) {
   if (layer.attribution) {
