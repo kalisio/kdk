@@ -55,6 +55,9 @@ const computedWidth = computed(() => {
 const computedHeight = computed(() => {
   return `${props.size}px`
 })
+const computedFontSize = computed(() => {
+  return `${props.size - 8}px`
+})
 const computedColor = computed(() => {
   return getHtmlColor(props.color)
 })
@@ -86,6 +89,7 @@ const rotation = computed(() => {
   transform: translate(v-bind(translation)) rotate(v-bind(rotation));
   background-color: v-bind(computedColor);
   color: v-bind(computedTextColor);
+  font-size: v-bind(computedFontSize);
   letter-spacing: v-bind(computedLetterSpacing);
 }
 </style>

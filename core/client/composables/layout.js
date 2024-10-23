@@ -7,7 +7,6 @@ export function useLayout () {
     if (configuration.view) Layout.setView(configuration.view)
     if (configuration.padding) Layout.setPadding(configuration.padding)
     if (configuration.header) Layout.setHeader(configuration.header, context)
-    if (configuration.header) Layout.setHeader(configuration.header, context)
     if (configuration.footer) Layout.setFooter(configuration.footer, context)
     if (configuration.page) Layout.setPage(configuration.page, context)
     if (configuration.stickies) Layout.setStickies(configuration.stickies, context)

@@ -1,8 +1,8 @@
 <template>
-  <div class="fit">
+  <div class="fit position-relative">
     <canvas :ref="onCanvasRef" />
     <KStamp v-if="!hasData" icon="las la-exclamation-circle" icon-size="3rem"
-        :text="$t('KTimeSeriesChart.NO_DATA_AVAILABLE')" text-size="1rem"/>
+        :text="$t('KTimeSeriesChart.NO_DATA_AVAILABLE')" text-size="1rem" class="absolute-center" />
   </div>
 </template>
 

@@ -1,10 +1,10 @@
-/*
-<div v-hover="{ enter: (e) => {}, leave: (e) => {} }"></div>
-*/
+import { getPlatform } from '../utils/utils.platform.js'
+const Platform = getPlatform()
 
 export const vHover = {
 
   mounted (el, binding) {
+    if (Platform.touch) return
     el.__vHoverEnter__ = binding.value.enter || (() => {})
     el.__vHoverLeave__ = binding.value.leave || (() => {})
 

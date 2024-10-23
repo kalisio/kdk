@@ -108,40 +108,6 @@ const zoom = ref()
 // Computed
 const layersBySublegend = computed(() => getLayersBySublegend(layers.value, sublegends.value))
 
-// Functions
-function onShowLayer (layer, engine) {
-  const layerLegend = layer.legend
-  // Check whether the layer has a legend
-  if (!layerLegend) return
-  // Check wehther the legend is already registered for that layer
-  if (_.find(layers.value, { name: layer.name })) {
-    logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
-    return
-  }
-  logger.debug(`[KDK] Register '${layer.name}' legend`)
-  layers.value.push(layer)
-}
-function onHideLayer (layer) {
-  if (!layer.legend) return
-  logger.debug(`[KDK] Unregister '${layer.name}' legend`)
-  _.remove(layers.value, { name: layer.name })
-}
-function onZoomChanged () {
-  zoom.value = CurrentActivity.value.getCenter().zoomLevel
-}
-function getHelperIcon (helper) {
-  return _.get(helper, 'icon', undefined)
-}
-function getHelperTooltip (helper) {
-  return _.get(helper, 'tooltip', '')
-}
-function getHelperUrl (helper) {
-  return _.get(helper, 'url', null)
-}
-function getHelperDialog (helper) {
-  return _.get(helper, 'dialog', null)
-}
-
 // Watch
 watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
   // Retrieve the legends from catalog if required
@@ -189,4 +155,38 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     newActivity.$engineEvents.on('zoomend', onZoomChanged)
   }
 }, { immediate: true })
+
+// Functions
+function onShowLayer (layer, engine) {
+  const layerLegend = layer.legend
+  // Check whether the layer has a legend
+  if (!layerLegend) return
+  // Check wehther the legend is already registered for that layer
+  if (_.find(layers.value, { name: layer.name })) {
+    logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
+    return
+  }
+  logger.debug(`[KDK] Register '${layer.name}' legend`)
+  layers.value.push(layer)
+}
+function onHideLayer (layer) {
+  if (!layer.legend) return
+  logger.debug(`[KDK] Unregister '${layer.name}' legend`)
+  _.remove(layers.value, { name: layer.name })
+}
+function onZoomChanged () {
+  zoom.value = CurrentActivity.value.getCenter().zoomLevel
+}
+function getHelperIcon (helper) {
+  return _.get(helper, 'icon', undefined)
+}
+function getHelperTooltip (helper) {
+  return _.get(helper, 'tooltip', '')
+}
+function getHelperUrl (helper) {
+  return _.get(helper, 'url', null)
+}
+function getHelperDialog (helper) {
+  return _.get(helper, 'dialog', null)
+}
 </script>

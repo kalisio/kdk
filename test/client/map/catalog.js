@@ -254,7 +254,7 @@ export async function clickProject (page, tabId, name) {
 
 export async function switchProject (page, name, wait = 2000) {
   await core.click(page, '#project-menu', 2000)
-  await core.clickXPath(page, `//div[contains(@component, "collection/KItem") and contains(., "${name}")]`, 1000)
+  await core.clickXPath(page, `//div[contains(@component, "collection/KCard") and contains(., "${name}")]`, 1000)
   await page.waitForNetworkIdle()
   await page.waitForTimeout(wait)
 }

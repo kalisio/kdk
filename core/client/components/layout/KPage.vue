@@ -33,11 +33,12 @@
      -->
     <!-- Bottom pane -->
     <q-page-sticky
+      v-show="hasBottomPaneComponents"
       position="bottom"
       class="k-bottom-pane-sticky"
       @click="onClicked('panes.bottom')"
     >
-      <div id="bottom-pane" v-show="hasBottomPaneComponents" class="column items-center">
+      <div id="bottom-pane" class="column items-center">
         <KOpener id="bottom-opener" v-if="bottomPane.opener" v-model="isBottomPaneOpened" position="bottom" />
         <div>
           <KPanel
@@ -54,11 +55,12 @@
     </q-page-sticky>
     <!-- Right pane -->
     <q-page-sticky
+      v-show="hasRightPaneComponents"
       position="right"
       class="k-right-pane-sticky"
       @click="onClicked('panes.right')"
     >
-      <div id="right-pane" v-show="hasRightPaneComponents" class="row items-center">
+      <div id="right-pane" class="row items-center">
         <KOpener id="right-opener" v-if="rightPane.opener" v-model="isRightPaneOpened" position="right" />
         <div>
           <KPanel
@@ -76,11 +78,12 @@
     </q-page-sticky>
     <!-- Top pane -->
     <q-page-sticky
+      v-show="hasTopPaneComponents"
       position="top"
       class="k-top-pane-sticky"
       @click="onClicked('panes.top')"
     >
-      <div id="top-pane" v-show="hasTopPaneComponents" class="column items-center">
+      <div id="top-pane" class="column items-center">
         <div>
           <KPanel
             id="top-panel"
@@ -111,6 +114,7 @@
     </q-page-sticky>
     <!-- left Window -->
     <q-page-sticky
+      v-if="hasLeftWindowComponents && leftWindow.visible"
       position="top-left"
       :offset="leftWindow.position"
       class="k-left-window-sticky"
@@ -118,7 +122,6 @@
     >
       <KWindow
         id="left-window"
-        v-if="leftWindow.visible"
         placement="left"
         :layout-offset="layoutOffset"
         :style="leftWindowStyle"
@@ -126,6 +129,7 @@
     </q-page-sticky>
     <!-- top Window -->
     <q-page-sticky
+      v-if="hasTopWindowComponents && topWindow.visible"
       position="top-left"
       :offset="topWindow.position"
       class="k-top-window-sticky"
@@ -133,7 +137,6 @@
     >
       <KWindow
         id="top-window"
-        v-if="topWindow.visible"
         placement="top"
         :layout-offset="layoutOffset"
         :style="topWindowStyle"
@@ -141,6 +144,7 @@
     </q-page-sticky>
     <!-- right Window -->
     <q-page-sticky
+      v-if="hasRightWindowComponents && rightWindow.visible"
       position="top-left"
       :offset="rightWindow.position"
       class="k-right-window-sticky"
@@ -148,7 +152,6 @@
     >
       <KWindow
         id="right-window"
-        v-if="rightWindow.visible"
         placement="right"
         :layout-offset="layoutOffset"
         :style="rightWindowStyle"
@@ -156,6 +159,7 @@
     </q-page-sticky>
     <!-- bottom Window -->
     <q-page-sticky
+      v-if="hasBottomWindowComponents && bottomWindow.visible"
       position="top-left"
       :offset="bottomWindow.position"
       class="k-bottom-window-sticky"
@@ -163,7 +167,6 @@
     >
       <KWindow
         id="bottom-window"
-        v-if="bottomWindow.visible"
         placement="bottom"
         :layout-offset="layoutOffset"
         :style="bottomWindowStyle"
@@ -275,11 +278,17 @@ const bottomPaneSize = computed(() => {
 const bottomPaneStyle = computed(() => {
   return bottomPaneSize.value ? { width: bottomPaneSize.value + 'px' } : {}
 })
+const hasLeftWindowComponents = computed(() => {
+  return !_.isEmpty(leftWindow.components)
+})
 const leftWindowSize = computed(() => {
   return leftWindow.size || leftWindow.sizePolicy.minSize
 })
 const leftWindowStyle = computed(() => {
   return { maxWidth: leftWindowSize[0] + 'px', maxHeight: leftWindowSize[1] + 'px' }
+})
+const hasTopWindowComponents = computed(() => {
+  return !_.isEmpty(topWindow.components)
 })
 const topWindowSize = computed(() => {
   return topWindow.size || topWindow.sizePolicy.minSize
@@ -287,11 +296,17 @@ const topWindowSize = computed(() => {
 const topWindowStyle = computed(() => {
   return { maxWidth: topWindowSize[0] + 'px', maxHeight: topWindowSize[1] + 'px' }
 })
+const hasRightWindowComponents = computed(() => {
+  return !_.isEmpty(rightWindow.components)
+})
 const rightWindowSize = computed(() => {
   return rightWindow.size || rightWindow.sizePolicy.minSize
 })
 const rightWindowStyle = computed(() => {
   return { maxWidth: rightWindowSize[0] + 'px', maxHeight: rightWindowSize[1] + 'px' }
+})
+const hasBottomWindowComponents = computed(() => {
+  return !_.isEmpty(bottomWindow.components)
 })
 const bottomWindowSize = computed(() => {
   return bottomWindow.size || bottomWindow.sizePolicy.minSize

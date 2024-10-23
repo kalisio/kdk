@@ -563,10 +563,23 @@ export const baseMap = {
     },
     getBearing () {
       if (typeof this.map.getBearing !== 'function') {
-        logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
         return 0
       }
       return this.map.getBearing()
+    },
+    setCompassBearingTrackingEnabled (enabled) {
+      if (enabled) {
+        if (!this.map.compassBearing.enabled()) this.map.compassBearing.enable()
+      } else if (this.map.compassBearing.enabled()) {
+        this.map.compassBearing.disable()
+      }
+    },
+    setTouchRotateEnabled (enabled) {
+      if (enabled) {
+        if (!this.map.touchRotate.enabled()) this.map.touchRotate.enable()
+      } else if (this.map.touchRotate.enabled()) {
+        this.map.touchRotate.disable()
+      }
     },
     getBounds () {
       this.viewBounds = this.map.getBounds()

@@ -22,7 +22,6 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { ref } from 'vue'
 import { copyToClipboard, exportFile } from 'quasar'
 import { KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
@@ -132,11 +131,8 @@ export default {
     }
   },
   setup (props) {
-    // Data
-    const height = ref(0)
     // Expose
     return {
-      height,
       ...useCurrentActivity(),
       ...useHighlight('information-box', props.highlight)
     }
