@@ -140,10 +140,7 @@ function onClicked (event) {
 }
 </script>
 
-<style lang="scss" scoped>
-.q-btn {
-  padding: 4px 6px 4px 2px;
-}
+<style lang="scss">
 .q-btn-dropdown__arrow {
   margin-left: 0px !important;
 }
