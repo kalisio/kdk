@@ -8,9 +8,10 @@ import { Store } from './store.js'
 // Export singleton
 export const Capabilities = {
   async initialize () {
-    if (api.isDisconnected) {
+    if (api.isDisconnected || api.useLocalFirst) {
       this.content = await LocalForage.getItem('capabilities')
-    } else {
+    }
+    if (!this.content) {
       const capabilities = await window.fetch(api.getConfig('domain') + _.get(config, 'apiPath') + '/capabilities')
       const content = await capabilities.json()
       logger.debug('[KDK] Fetched capabilities:', content)

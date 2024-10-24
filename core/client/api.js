@@ -37,6 +37,11 @@ export function createClient (config) {
     api.isDisconnected = true
     Events.emit('navigator-disconnected')
   })
+  // This can force to use offline services it they exist even if connected
+  api.useLocalFirst = config.useLocalFirst
+  api.setLocalFirstEnabled = function (enabled) {
+    api.useLocalFirst = enabled
+  }
 
   // Matchers that can be added to customize route guards
   let matchers = []
@@ -106,15 +111,31 @@ export function createClient (config) {
     return path
   }
 
+  api.getOnlineService = function (name, context) {
+    const servicePath = api.getServicePath(name, context)
+    const service = api.service(servicePath)
+    // Store the path on first call
+    if (service && !service.path) service.path = servicePath
+    return service
+  }
+
+  api.getOfflineService = function (name, context) {
+    let servicePath = `${api.getServicePath(name, context)}-offline`
+    if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
+    // We don't directly use service() here as it will create a new service wrapper even if it does not exist
+    const service = api.services[servicePath]
+    // Store the path on first call
+    if (service && !service.path) service.path = servicePath
+    return service
+  }
+
   api.getService = function (name, context) {
-    let servicePath, service
+    let service
     // When offline try to use offline service version if any
-    if (api.isDisconnected) {
-      // We don't directly use service() here as it will create a new service wrapper even if it does not exist
-      servicePath = `${api.getServicePath(name, context)}-offline`
-      if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
-      service = api.services[servicePath]
-      if (!service) {
+    if (api.isDisconnected || api.useLocalFirst) {
+      service = api.getOfflineService(name, context)
+      // In local first mode we allow to use remote service if offline one doesn't exist
+      if (!service && !api.useLocalFirst) {
         // Do not throw as a lot of components expect services to be available at initialization, eg
         // api.getService('xxx').on('event', () => ...)
         // In this case we simply warn and return the wrapper to the online service.
@@ -124,14 +145,11 @@ export function createClient (config) {
       }
     }
     if (!service) {
-      servicePath = api.getServicePath(name, context)
-      service = api.service(servicePath)
+      service = api.getOnlineService(name, context)
       if (!service) {
         throw new Error('Cannot retrieve service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
       }
     }
-    // Store the path on first call
-    if (!service.path) service.path = servicePath
     return service
   }
   // Used to register an existing backend service with its options
@@ -171,12 +189,6 @@ export function createClient (config) {
     return service
   }
 
-  api.getOfflineService = function (name, context) {
-    let servicePath = `${api.getServicePath(name, context)}-offline`
-    if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
-    return api.services[servicePath]
-  }
-
   // Used to create a frontend only service to be used in offline mode
   // based on an online service name, will snapshot service data by default
   api.createOfflineService = async function (serviceName, options = {}) {
@@ -213,7 +225,7 @@ export function createClient (config) {
     }
 
     if (_.get(options, 'snapshot', true)) {
-      const service = api.getService(serviceName)
+      const service = api.getOnlineService(serviceName)
       await makeServiceSnapshot(service, Object.assign({ offlineService }, options))
     }
 
