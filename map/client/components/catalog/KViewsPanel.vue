@@ -127,6 +127,7 @@ export default {
         }
         case 'cache-view': {
           // Select cache options
+          const center = this.kActivity.getCenter()
           Dialog.create({
             title: i18n.t('KViewsPanel.CACHE_VIEW_DIALOG_TITLE'),
             message: i18n.t('KViewsPanel.CACHE_VIEW_DIALOG_MESSAGE'),
@@ -134,17 +135,15 @@ export default {
             component: 'KDialog',
             componentProps: {
               component: 'catalog/KCreateOfflineView',
+              zoomLevel: center.zoomLevel,
+              view,
               okAction: {
                 id: 'ok-button',
                 label: 'OK',
                 handler: 'apply',
                 flat: true
               },
-              cancelAction: {
-                id: 'cancel-button',
-                label: 'CANCEL',
-                flat: true
-              }
+              cancelAction: 'CANCEL'
             }
           }).onOk(async (values) => {
             const dismiss = Notify.create({
@@ -170,7 +169,8 @@ export default {
             icon: 'las la-trash-alt',
             message: i18n.t('KViewsPanel.UNCACHING_VIEW'),
             color: 'primary',
-            timeout: 0
+            timeout: 0,
+              spinner: true
           })
           await uncacheView(view, this.getProjectLayers(), {
             contextId: this.kActivity.contextId

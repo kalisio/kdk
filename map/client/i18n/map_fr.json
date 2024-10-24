@@ -457,7 +457,8 @@
   "KCreateOfflineView": {
     "MIN_ZOOM_FIELD_LABEL": "Niveau de zoom à partir duquel les données vont être téléchargées, l'augmenter réduira la taille des données",
     "MAX_ZOOM_FIELD_LABEL": "Niveau de zoom jusqu'auquel les données vont être téléchargées, l'augmenter augmentera la taille des données",
-    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Nombre de requêtes concurrentes utilisées pour le téléchargement, l'augmenter accélèrera le processus mais pourra surcharger la machine et le serveur"
+    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Nombre de requêtes concurrentes utilisées pour le téléchargement, l'augmenter accélèrera le processus mais pourra surcharger la machine et le serveur",
+    "NUMBER_OF_TILES": "Estimation du nombre de tuiles à télécharger pour chaque couche: "
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Trier les projets",
