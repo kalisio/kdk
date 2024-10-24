@@ -27,7 +27,7 @@
       <!-- View actions -->
       <KPanel
         :id="`${item.name}-actions`"
-        :content="itemActions"
+        :content="viewActions"
         :context="item" />
     </div>
   </div>

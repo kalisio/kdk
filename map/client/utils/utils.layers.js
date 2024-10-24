@@ -6,6 +6,8 @@ import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
 import { LocalForage } from '@kalisio/feathers-localforage'
+import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
+import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
@@ -51,7 +53,8 @@ export function isLayerEditable (layer) {
 }
 
 export function isLayerCachable (layer) {
-  return _.get(layer, 'isCachable', _.has(layer, 'leaflet.source') || _.has(layer, 'service'))
+  return _.get(layer, 'isCachable', (layer.type === 'BaseLayer') || _.has(layer, 'service') ||
+    (_.get(layer, 'leaflet.type') === 'pmtiles') || (_.get(layer, 'leaflet.type') === 'geoJson'))
 }
 
 export async function isLayerCached (layer) {
@@ -65,8 +68,10 @@ export async function setLayerCached (layer, options) {
     await setBaseLayerCached(layer, options)
   } else if (layer.service) {
     await setServiceLayerCached(layer, options)
-  } else {
+  } else if (_.get(layer, 'leaflet.type') === 'geoJson') {
     await setGeojsonLayerCached (layer)
+  } else if (_.get(layer, 'leaflet.type') === 'pmtiles') {
+    await setPMTilesLayerCached(layer, options)
   }
 }
 
@@ -90,9 +95,6 @@ export async function setBaseLayerCached (layer, options) {
     let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], z, _.get(layer, 'leaflet.tms'))
     for (let y = tilesBounds.minY; y <= tilesBounds.maxY; y++) {
       for (let x = tilesBounds.minX; x <= tilesBounds.maxX; x++) {
-        let url = urlTemplate.replace('{z}', z).replace('{x}', x).replace('{y}', y)
-        let key = new URL(url)
-        key.searchParams.delete('jwt')
         promises.push(cacheLayerTile(urlTemplate, x, y, z))
         if (promises.length === nbConcurrentRequests) {
           await Promise.all(promises)
@@ -125,14 +127,96 @@ export async function setGeojsonLayerCached (layer) {
   await LocalCache.set('layers', key.href, url)
 }
 
+async function getPMTileRange(pmtiles, x, y, z, directoryRanges) {
+  const tileId = zxyToTileId(z, x, y)
+  const header = await pmtiles.getHeader()
+  let dO = header.rootDirectoryOffset
+  let dL = header.rootDirectoryLength
+  for (let depth = 0; depth <= 3; depth++) {
+    directoryRanges.add(`${dO}-${dO + dL - 1}`)
+    const directory = await pmtiles.cache.getDirectory(pmtiles.source, dO, dL, header)
+    const entry = findTile(directory, tileId)
+    if (entry) {
+      if (entry.runLength > 0) {
+        return {
+          start: header.tileDataOffset + entry.offset,
+          end: header.tileDataOffset + entry.offset + entry.length - 1
+        }
+      }
+      dO = header.leafDirectoryOffset + entry.offset
+      dL = entry.length
+    } else {
+      return
+    }
+  }
+}
+
+async function cacheLayerPMTile(url, pmtiles, x, y, z, directoryRanges) {
+  const key = new URL(url)
+  key.searchParams.delete('jwt')
+  const data = await pmtiles.getZxy(z, x, y)
+  if (!data) return
+  // Need to take range request into account
+  const range = await getPMTileRange(pmtiles, x, y, z, directoryRanges)
+  // Actually we can simply store the base URL suffixed by tile to know what has been downloaded
+  await LocalCache.set('layers', `${key.href}/${range.start}/${range.end}`, url, { headers: { Range: `bytes=${range.start}-${range.end}`} })
+}
+
+async function cachePMTilesHeaderAndDirectory(url, pmtiles, directory) {
+  const key = new URL(url)
+  key.searchParams.delete('jwt')
+  // First cache header
+  await LocalCache.set('layers', `${key.href}/0/16383`, url, { headers: { Range: `bytes=0-16383`} })
+  // Always download directory as well as used by the underlying library
+  directory = Array.from(directory)
+  for (let i = 0; i < directory.length; i++) {
+    const entry = directory[i]
+    await LocalCache.set('layers', `${key.href}/${entry.replace('-', '/')}`, url, { headers: { Range: `bytes=${entry}`} })
+  }
+}
+
+export async function setPMTilesLayerCached (layer, options) {
+  const bounds = options.bounds
+  const minZoom = options.minZoom || 3
+  const maxZoom = options.maxZoom || _.get(layer, 'leaflet.maxDataZoom')
+  const nbConcurrentRequests = options.nbConcurrentRequests || 10
+
+  const url = _.get(layer, 'leaflet.url')
+  const pmtiles = new PMTiles(url)
+  const directory = new Set()
+  const views = sourcesToViews(layer.leaflet)
+  let promises = []
+  for (let z = minZoom; z <= maxZoom; z++) {
+    let sm =  new SphericalMercator()
+    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], z, _.get(layer, 'leaflet.tms'))
+    for (let y = tilesBounds.minY; y <= tilesBounds.maxY; y++) {
+      for (let x = tilesBounds.minX; x <= tilesBounds.maxX; x++) {
+        for (const [k, v] of views) {
+          const dt = v.dataTileForDisplayTile({ x, y, z })
+          promises.push(cacheLayerPMTile(url, pmtiles, dt.dataTile.x, dt.dataTile.y, dt.dataTile.z, directory))
+          if (promises.length === nbConcurrentRequests) {
+            await Promise.all(promises)
+            promises = []
+          }
+        }
+      }
+    }
+  }
+  // Always download header/directory as used by the underlying library
+  await cachePMTilesHeaderAndDirectory(url, pmtiles, directory)
+  await Promise.all(promises)
+}
+
 export async function setLayerUncached (layer, options) {
   if (!isLayerCachable(layer)) return
   if (layer.type === 'BaseLayer') {
     await setBaseLayerUncached(layer, options)
   } else if (layer.service) {
     await setServiceLayerUncached(layer, options)
-  } else {
+  } else if (_.get(layer, 'leaflet.type') === 'geoJson') {
     await setGeojsonLayerUncached (layer)
+  } else if (_.get(layer, 'leaflet.type') === 'pmtiles') {
+    await setPMTilesLayerUncached(layer, options)
   }
 }
 
@@ -183,6 +267,54 @@ async function setGeojsonLayerUncached (layer) {
   let key = new URL(url)
   key.searchParams.delete('jwt')
   await LocalCache.unset('layers', key.href)
+}
+
+async function uncacheLayerPMTile(url, pmtiles, x, y, z, directoryRanges) {
+  const key = new URL(url)
+  key.searchParams.delete('jwt')
+  const data = await pmtiles.getZxy(z, x, y)
+  if (!data) return
+  // Need to take range request into account
+  const range = await getPMTileRange(pmtiles, x, y, z, directoryRanges)
+  await LocalCache.unset('layers', `${key.href}/${range.start}/${range.end}`)
+}
+
+async function uncachePMTilesHeaderAndDirectory(url, pmtiles, directory) {
+  const key = new URL(url)
+  key.searchParams.delete('jwt')
+  // First cache header
+  await LocalCache.unset('layers', `${key.href}/0/16383`)
+  // Always download directory as well as used by the underlying library
+  directory = Array.from(directory)
+  for (let i = 0; i < directory.length; i++) {
+    const entry = directory[i]
+    await LocalCache.unset('layers', `${key.href}/${entry.replace('-', '/')}`)
+  }
+}
+
+async function setPMTilesLayerUncached (layer, options) {
+  const bounds = options.bounds
+  const minZoom = options.minZoom || 3
+  const maxZoom = options.maxZoom || _.get(layer, 'leaflet.maxDataZoom')
+
+  const url = _.get(layer, 'leaflet.url')
+  const pmtiles = new PMTiles(url)
+  const directory = new Set()
+  const views = sourcesToViews(layer.leaflet)
+  for (let z = minZoom; z <= maxZoom; z++) {
+    let sm =  new SphericalMercator()
+    let tilesBounds = sm.xyz([bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]], z, _.get(layer, 'leaflet.tms'))
+    for (let y = tilesBounds.minY; y <= tilesBounds.maxY; y++) {
+      for (let x = tilesBounds.minX; x <= tilesBounds.maxX; x++) {
+        for (const [k, v] of views) {
+          const dt = v.dataTileForDisplayTile({ x, y, z })
+          await uncacheLayerPMTile(url, pmtiles, dt.dataTile.x, dt.dataTile.y, dt.dataTile.z, directory)
+        }
+      }
+    }
+  }
+  // Always remove header/directory as used by the underlying library
+  await uncachePMTilesHeaderAndDirectory(url, pmtiles, directory)
 }
 
 export function isLayerRemovable (layer) {

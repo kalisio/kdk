@@ -25,7 +25,7 @@ export async function cacheView (view, layers, options = {}) {
     views[view._id] = true
     await LocalForage.setItem('views', views)
   } else {
-    await LocalForage.setItem('views', { [view._id]: true })
+    await LocalForage.setItem('views', { [view._id]: options })
   }
   // We need at least catalog/project/features offline services
   // If they already exist this will update internal data
@@ -58,9 +58,11 @@ export async function cacheView (view, layers, options = {}) {
 
 export async function uncacheView (view, layers, options = {}) {
   const views = await LocalForage.getItem('views') || {}
+  // Retrieve stored options in cache
+  Object.assign(options, views[view._id] || {})
   for (let i = 0; i < layers.length; i++) {
     const layer = layers[i]
-    await setLayerUncached(layer, { bounds: [[view.south, view.west], [view.north, view.east]] })
+    await setLayerUncached(layer, Object.assign({ bounds: [[view.south, view.west], [view.north, view.east]] }, options))
   }
   delete views[view._id]
   // FIXME: we should clear catalog/project services as well but it's harder to know if they are still required by some other view.
@@ -68,7 +70,7 @@ export async function uncacheView (view, layers, options = {}) {
   // So for now we only clear it when no views remain
   if (_.isEmpty(views)) {
     await LocalForage.removeItem('views')
-    const services = await LocalForage.getItem('services')
+    const services = await LocalForage.getItem('services') || {}
     const serviceNames = Object.keys(services)
     for (let i = 0; i < serviceNames.length; i++) {
       const serviceName = serviceNames[i]
