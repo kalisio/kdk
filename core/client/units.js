@@ -342,6 +342,7 @@ export const Units = {
     let targetUnitDef = (typeof targetUnit === 'string') ? this.getUnit(targetUnit) : targetUnit
     // Check if that's a mathjs unit
     if (!sourceUnitDef && math.Unit.isValuelessUnit(sourceUnit)) sourceUnitDef = { name: sourceUnit }
+    if (!targetUnitDef && math.Unit.isValuelessUnit(targetUnit)) targetUnitDef = { name: targetUnit }
     // If target unit is not given use default one
     if (!targetUnitDef) targetUnitDef = this.getDefaultUnit(sourceUnitDef)
     // Check if the source/target unit does exist
