@@ -60,7 +60,8 @@ export default {
       viewRenderer: {
         component: 'catalog/KViewSelector',
         class: 'col-12',
-        actions: viewActions
+        actions: viewActions,
+        cachable: !_.isNil(this.project)
       }
     }
   },

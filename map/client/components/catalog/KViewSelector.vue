@@ -27,7 +27,7 @@
       <!-- View actions -->
       <KPanel
         :id="`${item.name}-actions`"
-        :content="viewActions"
+        :content="cachable ? viewActions : itemActions"
         :context="item" />
     </div>
   </div>
@@ -45,6 +45,12 @@ export default {
     KAction
   },
   mixins: [baseItem],
+  props: {
+    cachable: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     viewActions () {
       const itemActions = _.cloneDeep(this.itemActions)
