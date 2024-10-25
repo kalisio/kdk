@@ -567,42 +567,42 @@ export const geojsonLayers = {
         }
       }
     },
-    onDefaultUnitChangedGeoJsonLayers (path, value) {
-      if (!path.startsWith('units.default')) return
-      const quantity = path.replace('units.default.', '')
-      const units = _.map(Units.getUnits(quantity), 'name')
-      // Need to update layers with variables affected by the unit change,
-      // ie which style depends on it
-      let geoJsonlayers = _.values(this.layers).filter(sift({
-        'leaflet.type': 'geoJson',
-        'leaflet.realtime': true,
-        // Not sure why but this does not seem to work with sift
-        //'variables': { $elemMatch: { unit: { $in: units } } },
-        'variables': { $exists: true },
-        isVisible: true,
-        'leaflet.style': { $exists: true },
-        'leaflet.template': { $exists: true }
-      }))
-      // Check for each layer if it uses the target unit and templated style uses the unit system or not
-      geoJsonlayers = geoJsonlayers.filter(layer => {
-        const unit = _.intersection(units, _.map(layer.variables, 'unit'))
-        if (_.isEmpty(unit)) return false
-        for (const template of layer.leaflet.template) {
-          if (template.startsWith('style.')) {
-            const style = _.get(layer.leaflet, template)
-            if ((typeof style === 'string') && style.includes('Units')) return true
+    onDefaultUnitChangedGeoJsonLayers (units) {
+      _.forOwn(units.default, (unit, quantity) => {
+        const units = _.map(Units.getUnits(quantity), 'name')
+        // Need to update layers with variables affected by the unit change,
+        // ie which style depends on it
+        let geoJsonlayers = _.values(this.layers).filter(sift({
+          'leaflet.type': 'geoJson',
+          'leaflet.realtime': true,
+          // Not sure why but this does not seem to work with sift
+          //'variables': { $elemMatch: { unit: { $in: units } } },
+          'variables': { $exists: true },
+          isVisible: true,
+          'leaflet.style': { $exists: true },
+          'leaflet.template': { $exists: true }
+        }))
+        // Check for each layer if it uses the target unit and templated style uses the unit system or not
+        geoJsonlayers = geoJsonlayers.filter(layer => {
+          const unit = _.intersection(units, _.map(layer.variables, 'unit'))
+          if (_.isEmpty(unit)) return false
+          for (const template of layer.leaflet.template) {
+            if (template.startsWith('style.')) {
+              const style = _.get(layer.leaflet, template)
+              if ((typeof style === 'string') && style.includes('Units')) return true
+            }
           }
-        }
-        return false
-      })
-      // Then retrieve the engine layers and update
-      geoJsonlayers.forEach(layer => {
-        layer = this.getLeafletLayerByName(layer.name)
-        if (layer.tiledLayer) {
-          layer.tiledLayer.redraw()
-        } else {
-          layer.update()
-        }
+          return false
+        })
+        // Then retrieve the engine layers and update
+        geoJsonlayers.forEach(layer => {
+          layer = this.getLeafletLayerByName(layer.name)
+          if (layer.tiledLayer) {
+            layer.tiledLayer.redraw()
+          } else {
+            layer.update()
+          }
+        })
       })
     },
     onMapZoomChangedGeoJsonLayers () {
@@ -666,7 +666,7 @@ export const geojsonLayers = {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
-    this.$events.on('store-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    this.$events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
@@ -677,7 +677,7 @@ export const geojsonLayers = {
   beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
-    this.$events.off('store-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    this.$events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
