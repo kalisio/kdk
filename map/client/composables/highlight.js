@@ -20,10 +20,10 @@ export function useHighlight (name, options = {}) {
   let activity = unref(kActivity)
 
   // Data
-  // hightligh store for context
-  const { store, clear, set, get, unset, has } = composables.useStore(`hightlighs.${name}`)
+  // highlight store for context
+  const { store, clear, set, get, unset, has } = composables.useStore(`highlights.${name}`)
   // global highlight store
-  const { forOwn } = composables.useStore('hightlighs')
+  const { forOwn } = composables.useStore('highlights')
 
   // functions
   function setCurrentActivity (newActivity) {
