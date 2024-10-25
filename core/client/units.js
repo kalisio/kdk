@@ -293,12 +293,19 @@ export const Units = {
       // Already found ?
       if (!definition && _.has(units, unit)) definition = Object.assign({ name: unit, quantity }, _.get(units, unit))
     })
+    if (!definition) {
+      // Check if that's a mathjs unit ? This will actually enforce a unit to be known by either our systelm or mathjs.
+      // We'd like to be able to mange unknown unit without braking the system just to perform unit display
+      //if (math.Unit.isValuelessUnit(unit)) definition = { name: unit, symbol: unit, label: unit }
+      // Create a fake unit definition for unknown units so tht it does not break others methods
+      definition = { name: unit, symbol: unit, label: unit }
+    }
     return definition
   },
   // Get unit symbol by unit name/definition
   getUnitSymbol (unit) {
     const definition = (typeof unit === 'object' ? unit : this.getUnit(unit))
-    return (definition ? i18n.tie(definition.symbol) : unit)
+    return (definition && definition.symbol ? i18n.tie(definition.symbol) : unit)
   },
   // Get default unit definition (if any) for a given quantity/unit name/definition
   getDefaultUnit (quantityOrUnit) {
@@ -340,15 +347,14 @@ export const Units = {
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
     let sourceUnitDef = (typeof sourceUnit === 'string') ? this.getUnit(sourceUnit) : sourceUnit
     let targetUnitDef = (typeof targetUnit === 'string') ? this.getUnit(targetUnit) : targetUnit
-    // Check if that's a mathjs unit
-    if (!sourceUnitDef && math.Unit.isValuelessUnit(sourceUnit)) sourceUnitDef = { name: sourceUnit }
-    if (!targetUnitDef && math.Unit.isValuelessUnit(targetUnit)) targetUnitDef = { name: targetUnit }
     // If target unit is not given use default one
-    if (!targetUnitDef) targetUnitDef = this.getDefaultUnit(sourceUnitDef)
+    if (!targetUnitDef && sourceUnitDef) targetUnitDef = this.getDefaultUnit(sourceUnitDef)
     // Check if the source/target unit does exist
     if (!sourceUnitDef || !targetUnitDef) return value
     // If target unit is same as source unit does nothing
     if (targetUnitDef.name === sourceUnitDef.name) return value
+    // If target unit or source unit is unknown by unit system does nothing
+    if (!math.Unit.isValuelessUnit(sourceUnitDef.name) || !math.Unit.isValuelessUnit(targetUnitDef.name)) return value
     // Now convert
     let n = math.unit(value, sourceUnitDef.name)
     n = n.toNumber(targetUnitDef.name)
