@@ -15,7 +15,7 @@ export const Store = Object.assign(store, {
     set(path, value)
     const eventName = _.kebabCase(`${path}-changed`)
     Events.emit(eventName, value, previousValue)
-    Events.emit('store-changed', path, value)
+    Events.emit('store-changed', path, value, previousValue)
   },
   patch (path, value) {
     // Patching should not change the object reference to maintain reactivity

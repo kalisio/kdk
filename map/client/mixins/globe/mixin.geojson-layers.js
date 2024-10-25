@@ -3,7 +3,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { uid } from 'quasar'
-import { Time } from '../../../../core/client/time.js'
+import { Time, Units } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
@@ -386,6 +386,41 @@ export const geojsonLayers = {
         }
       })
     },
+    onDefaultUnitChangedGeoJsonLayers (path, value) {
+      if (!path.startsWith('units.default')) return
+      const quantity = path.replace('units.default.', '')
+      const units = _.map(Units.getUnits(quantity), 'name')
+      // Need to update layers with variables affected by the unit change,
+      // ie which style depends on it
+      let geoJsonlayers = _.values(this.layers).filter(sift({
+        'cesium.type': 'geoJson',
+        'cesium.realtime': true,
+        // Not sure why but this does not seem to work with sift
+        //'variables': { $elemMatch: { unit: { $in: units } } },
+        'variables': { $exists: true },
+        isVisible: true,
+        'cesium.style': { $exists: true },
+        'cesium.template': { $exists: true }
+      }))
+      // Check for each layer if it uses the target unit and templated style uses the unit system or not
+      geoJsonlayers = geoJsonlayers.filter(layer => {
+        const unit = _.intersection(units, _.map(layer.variables, 'unit'))
+        if (_.isEmpty(unit)) return false
+        for (const template of layer.cesium.template) {
+          if (template.startsWith('style.')) {
+            const style = _.get(layer.cesium, template)
+            if ((typeof style === 'string') && style.includes('Units')) return true
+          }
+        }
+        return false
+      })
+      // Then retrieve the engine layers and update
+      geoJsonlayers.forEach(layer => {
+        // Retrieve the layer
+        const dataSource = this.getCesiumLayerByName(geoJsonlayer.name)
+        dataSource.updateGeoJson()
+      })
+    },
     onLayerShownGeoJsonLayers (layer, engineLayer) {
       // Check if we have cached geojson data for this layer
       const cachedGeojson = this.geojsonCache[layer.name]
@@ -409,6 +444,7 @@ export const geojsonLayers = {
   created () {
     this.registerCesiumConstructor(this.createCesiumGeoJsonLayer)
     this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$events.on('store-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
     // Map of currently updated layers to avoid reentrance with real-time events as
@@ -419,6 +455,7 @@ export const geojsonLayers = {
   },
   beforeUnmount () {
     this.$events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    this.$events.off('store-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
 
