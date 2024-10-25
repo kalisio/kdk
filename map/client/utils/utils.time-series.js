@@ -88,7 +88,7 @@ export function getTimeSeries({
     // Base unit could be either directly the unit or the property of the measure storing the unit
     const baseUnit = _.get(properties, 'unit', variable.unit)
     // Known by the unit system ?
-    const unit = Units.getUnit(baseUnit) || { name: baseUnit }
+    const unit = Units.getUnit(baseUnit)
     const targetUnit = Units.getTargetUnit(baseUnit)
     const serie = {
       probedLocation: data,
