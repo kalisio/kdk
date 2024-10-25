@@ -58,8 +58,8 @@ let min = {}
 let max = {}
 
 // Watch
-// We use debounce here to avoid pultiple refresh when initializing props
-const requestUpdate = _.debounce(() => update(), 500)
+// We use debounce here to avoid multiple refresh when initializing props
+const requestUpdate = _.debounce(() => update(), 250)
 watch(() => props.timeSeries, requestUpdate)
 watch(() => props.xAxisKey, requestUpdate)
 watch(() => props.yAxisKey, requestUpdate)
@@ -437,6 +437,7 @@ onBeforeUnmount(() => {
 // Expose
 defineExpose({
   update,
+  requestUpdate,
   getZoom,
   exportSeries
 })

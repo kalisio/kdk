@@ -117,6 +117,7 @@ const exposed = {
   zoomToData,
   restorePreviousZoom,
   update,
+  requestUpdate,
   exportData,
   exportSeries
 }
@@ -198,6 +199,12 @@ function update () {
   _.forEach(components.value, component => {
     if (component.chart) component.chart.update()
     if (component.table) component.table.update()
+  })
+}
+function requestUpdate () {
+  _.forEach(components.value, component => {
+    if (component.chart) component.chart.requestUpdate()
+    if (component.table) component.table.requestUpdate()
   })
 }
 function exportData (timeSerie) {

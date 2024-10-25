@@ -73,8 +73,10 @@ const compilers = {}
 const exportCompilers = {}
 
 // Watch
-watch(() => props.tables, update)
-watch(() => props.schema, update)
+// We use debounce here to avoid multiple refresh when initializing props
+const requestUpdate = _.debounce(() => update(), 250)
+watch(() => props.tables, requestUpdate)
+watch(() => props.schema, requestUpdate)
 
 // Functions
 async function update () {
@@ -181,6 +183,7 @@ update()
 // Exposed
 defineExpose({
   update,
+  requestUpdate,
   exportData
 })
 </script>
