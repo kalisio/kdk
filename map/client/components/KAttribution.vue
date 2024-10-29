@@ -38,6 +38,7 @@
 
 <script setup>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
 import { Document } from '../../../core/client/document.js'
 import { KShape } from '../../../core/client/components/media'
@@ -50,7 +51,7 @@ const attributions = ref({})
 // Computed
 const sanitizedAttributions = computed(() => {
   let content = ''
-  _.forEach(attributions.value, (attribution, layer) => {
+  _.forOwn(attributions.value, (attribution, layer) => {
     content += `${attribution}<br>`
   })
   return Document.sanitizeHtml(content)
@@ -79,11 +80,13 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
 // Functions
 function onShowLayer (layer, engine) {
   if (layer.attribution) { 
+    logger.debug(`[KDK] Add ${layer.name} to attribution`)
     _.set(attributions.value, _.kebabCase(layer.name), layer.attribution)
   }
 }
 function onHideLayer (layer) {
   if (layer.attribution) {
+    logger.debug(`[KDK] Remove ${layer.name} from attribution`)
     _.unset(attributions.value, _.kebabCase(layer.name))
   }
 }
