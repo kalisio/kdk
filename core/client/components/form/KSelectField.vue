@@ -109,7 +109,8 @@ export default {
       handler (opts) {
         if (_.isEmpty(this.filter) && opts.length === 1 && this.required) {
           this.$nextTick(() => {
-            this.model = opts[0].value
+            this.fill(opts[0].value)
+            this.onChanged(opts[0].value)
           })
         }
       }
