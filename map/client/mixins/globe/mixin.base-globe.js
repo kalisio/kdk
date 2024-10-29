@@ -230,7 +230,7 @@ export const baseGlobe = {
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
-      this.onLayerShown('layer-shown', layer, cesiumLayer)
+      this.onLayerShown(layer, cesiumLayer)
     },
     onLayerShown (layer, cesiumLayer) {
       this.$emit('layer-shown', layer, cesiumLayer)
