@@ -44,7 +44,6 @@ import { mixins as kCoreMixins } from '../../../../core/client'
 import { KModal, KGrid, KAction, KPanel, KForm } from '../../../../core/client/components'
 
 export default {
-  name: 'k-layer-categories',
   components: {
     KModal,
     KGrid,
@@ -199,7 +198,7 @@ export default {
       filter: this.$store.get('filter'),
       sorter: this.$store.get('sorter'),
       mode: 'list',
-      count: 0,
+      count: undefined,
       savingCategory: false,
       categoryRenderer: {
         component: 'collection/KItem',
@@ -259,7 +258,7 @@ export default {
           if (!_.isEmpty(category.layers)) category.description = category.layers.join(',')
         })
       } else {
-        if (!this.filter.pattern) this.mode = 'add'
+        if (this.count === 0 && _.isEmpty(this.filter.pattern)) this.mode = 'add'
       }
     },
     onAddFormCreated (ref) {
