@@ -1,5 +1,6 @@
 <template>
-  <div v-if="items.length > 0">
+  <!-- Content -->  
+  <div v-if="items && items.length > 0">
     <q-table
       :title="title"
       :rows="items"
@@ -52,12 +53,32 @@
       </template>
     </q-table>
   </div>
-  <div v-else>
-    <div slot="empty-section">
+  <!-- Empty slot -->  
+  <div v-else-if="items && items.length === 0"
+    id="table-empty"
+  >
+    <slot name="empty">
       <div class="row justify-center">
-        <KStamp icon="las la-exclamation-circle" icon-size="1.6rem" :text="$t('KTable.EMPTY_TABLE')" direction="horizontal" />
+        <KStamp
+          icon="las la-exclamation-circle"
+          icon-size="1.6rem"
+          :text="$t('KTable.EMPTY_TABLE')"
+          direction="horizontal"
+          class="q-pa-md"
+        />
       </div>
-    </div>
+    </slot>
+  </div>
+  <!-- Initializing slot -->
+  <div v-else id="grid-initializing">
+    <slot name="initializing">
+      <div class="row justify-center">
+        <q-spinner 
+          color="primary"
+          size="2rem"
+        />
+      </div>
+    </slot>
   </div>
 </template>
 
@@ -158,6 +179,20 @@ const { schema, compile } = useSchema()
 const options = Object.assign({ filterQuery }, _.omit(toRefs(props), ['filterQuery']))
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(options)
 
+// Watch
+watch(items, onCollectionRefreshed)
+watch(schema, () => {
+  processSchema()
+  resetCollection()
+})
+watch(() => props.schema, async (value) => {
+  await compile(props.schema || `${props.service}.get`)
+})
+watch(nbTotalItems, () => {
+  // Update pagination for table
+  pagination.value.rowsNumber = nbTotalItems.value
+})
+
 // Functions
 function processSchema () {
   _.forOwn(schema.value.properties, (value, key) => {
@@ -227,29 +262,14 @@ function onCollectionRefreshed () {
   emit('collection-refreshed', items.value)
 }
 
-// Lifecycle hooks
-
-// Emit events so that embbeding components can be aware of it
-watch(items, onCollectionRefreshed)
-watch(schema, () => {
-  processSchema()
-  resetCollection()
-})
-watch(() => props.schema, async (value) => {
-  await compile(props.schema || `${props.service}.get`)
-})
-watch(nbTotalItems, () => {
-  // Update pagination for table
-  pagination.value.rowsNumber = nbTotalItems.value
-})
-
+// Hooks
 onBeforeMount(async () => {
   // This will launch collection refresh
   await compile(props.schema || `${props.service}.get`)
+  refreshCollection()
   // Whenever the user abilities are updated, update collection as well
   Events.on('user-abilities-changed', refreshCollection)
 })
-
 onBeforeUnmount(() => {
   Events.off('user-abilities-changed', refreshCollection)
 })

@@ -14,7 +14,7 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0"
+    <div v-if="items && items.length > 0"
       id="timeline-content"
       ref="contentRef"
       class="col scroll"
@@ -97,7 +97,9 @@
       </q-timeline>
     </div>
     <!-- Empty slot -->
-    <div v-else id="timeline-content">
+    <div v-else-if="items && items.length === 0" 
+      id="timeline-content"
+    >
       <slot name="empty">
         <KStamp
           icon="las la-exclamation-circle"
@@ -107,6 +109,18 @@
           direction="vertical"
           class="absolute-center"
         />
+      </slot>
+    </div>
+    <!-- Initializing slot -->
+    <div v-else id="timeline-initializing">
+      <slot name="initializing">
+        <div class="row justify-center">
+          <q-spinner 
+            color="primary"
+            size="4rem"
+            class="absolute-center"
+          />
+        </div>
       </slot>
     </div>
     <!--

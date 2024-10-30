@@ -20,7 +20,7 @@ export function useCollection (options) {
   })
 
   // Data
-  const items = ref([])
+  const items = ref(null)
   const nbTotalItems = ref(0)
   const currentPage = ref(1)
   let itemListener = null
@@ -118,6 +118,8 @@ export function useCollection (options) {
   }, options.refreshThrottle.value, { leading: false })
 
   function resetCollection () {
+    // Do not reset the collection since it is initializing 
+    if (_.isNil(items.value)) return
     // Reset pagination and start again refreshing the collection
     if (options.appendItems.value) setCollectionItems([])
     currentPage.value = 1

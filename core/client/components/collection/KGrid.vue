@@ -11,7 +11,7 @@
     <!--
       Content
     -->
-    <div v-if="items.length > 0"
+    <div v-if="items && items.length > 0"
       id="grid-content"
       ref="contentRef"
       class="col scroll"
@@ -62,7 +62,9 @@
       </div>
     </div>
     <!-- Empty slot -->
-    <div v-else id="grid-content">
+    <div v-else-if="items && items.length === 0"
+       id="grid-empty"
+    >
       <slot name="empty">
         <div class="row justify-center">
           <KStamp
@@ -71,6 +73,17 @@
             :text="$t('KGrid.EMPTY_LABEL')"
             direction="horizontal"
             class="q-pa-md"
+          />
+        </div>
+      </slot>
+    </div>
+    <!-- Initializing slot -->
+    <div v-else id="grid-initializing">
+      <slot name="initializing">
+        <div class="row justify-center">
+          <q-spinner 
+            color="primary"
+            size="2rem"
           />
         </div>
       </slot>
