@@ -284,3 +284,9 @@ defineExpose({
   resetCollection
 })
 </script>
+
+<style lang="scss" scoped>
+p {
+  margin: 0;
+}
+</style>
