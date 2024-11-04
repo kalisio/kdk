@@ -24,13 +24,22 @@
     >
       <div
         id="attributions-banner" 
-        class="bg-white text-primary text-center q-pa-xs"
+        class="bg-white text-primary text-center q-col-gutter-y-xs"
       >
+        <!-- Header Content -->
+        <div v-if="header">
+          <KContent :content="header" :class="headerClass" />
+        </div>
+        <!-- Main Content -->
         <div 
           id="attributions-content"
           v-html="sanitizedAttributions" 
-          class="text-caption"
+          class="text-caption q-py-none q-px-sm"
         />
+        <!-- Footer Content -->
+        <div v-if="footer">
+          <KContent :content="footer" :class="footerClass" />
+        </div>
       </div>
     </q-popup-proxy>
   </div>
@@ -39,14 +48,20 @@
 <script setup>
 import _ from 'lodash'
 import logger from 'loglevel'
+import config from 'config'
 import { ref, computed, watch } from 'vue'
 import { Document } from '../../../core/client/document.js'
 import { KShape } from '../../../core/client/components/media'
 import { useCurrentActivity } from '../composables'
+import KContent from '../../../core/client/components/KContent.vue'
 
 // Data
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const attributions = ref({})
+const header = ref(_.get(config, 'attribution.header', []))
+const headerClass = ref(_.get(config, 'attribution.headerClass', []))
+const footer = ref(_.get(config, 'attribution.footer', []))
+const footerClass = ref(_.get(config, 'attribution.footerClass', []))
 
 // Computed
 const sanitizedAttributions = computed(() => {
@@ -78,7 +93,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
 }, { immediate: true })
 
 // Functions
-function onShowLayer (layer, engine) {
+function onShowLayer (layer) {
   if (layer.attribution) { 
     logger.debug(`[KDK] Add ${layer.name} to attribution`)
     _.set(attributions.value, _.kebabCase(layer.name), layer.attribution)
