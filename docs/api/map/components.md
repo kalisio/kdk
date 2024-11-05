@@ -241,6 +241,13 @@ It is also possible to add your own type of legend. You must implement the compo
 
 * **Kattribution** : a component that dynamically displays visible layer attributions (credits and copyright information) in map activities. This component guarantees compliance with copyright rules for data displayed on the map.
 
+Here are views of the component :
+
+![Attribution closed](../../.vitepress/public/images/attributionClosed.png)
+*Attribution closed*
+![Attribution opened](../../.vitepress/public/images/attributionOpened.png)
+*Attribution opened*
+
 ### How it works ###
 
 The component listens to layer visibility events to add or remove attributions as layers are displayed or hidden. The main allocation is displayed in a popup that the user can open by clicking on a circle with the *"i ”* symbol.
