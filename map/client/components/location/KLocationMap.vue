@@ -94,6 +94,7 @@ export default {
             icon: 'las la-project-diagram',
             tooltip: 'KLocationMap.DRAW_LINE',
             propagate: false,
+
             handler: () => this.startDraw('Line')
           })
         }
