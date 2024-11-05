@@ -81,7 +81,7 @@
     <div v-else id="grid-initializing">
       <slot name="initializing">
         <div class="row justify-center">
-          <q-spinner 
+          <q-spinner
             color="primary"
             size="2rem"
           />

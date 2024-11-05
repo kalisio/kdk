@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     v-ripple:primary
     class="k-project-selector"
   >

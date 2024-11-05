@@ -81,8 +81,8 @@
         />
       </div>
     </div>
-    <!-- 
-      Expand action 
+    <!--
+      Expand action
     -->
     <div v-if="isExpandable" class="row justify-center">
       <KAction

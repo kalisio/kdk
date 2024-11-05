@@ -46,9 +46,9 @@
             <div class="full-width ellipsis text-caption k-location-map-caption">
               {{ item.location.properties.name }}
             </div>
-            <KPanel 
-              :content="locationActions" 
-              class="k-location-actions" 
+            <KPanel
+              :content="locationActions"
+              class="k-location-actions"
             />
           </div>
           <div v-else class="fit column k-location-map relative-position">
@@ -58,7 +58,7 @@
                 text="KLocationCardSection.NO_LOCATION"
               />
             </div>
-            <KPanel 
+            <KPanel
               :content="locationActions"
               class="k-location-actions"
             />
@@ -138,10 +138,10 @@ export default {
 }
 .k-location-actions {
   position: absolute;
-  top: 2px; 
-  right: 2px;  
-  background-color: #ffffffaa; 
+  top: 2px;
+  right: 2px;
+  background-color: #ffffffaa;
   border-radius: 10px;
-  z-index: 401; 
+  z-index: 401;
 }
 </style>
