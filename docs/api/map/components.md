@@ -237,4 +237,71 @@ legend: [
 It is also possible to add your own type of legend. You must implement the component responsible of the rendering and register it to the **KLegend** through the `renderers` prop. The component must overload the abstract **KLegendRenderer** component.
 :::
 
+## Attribution ##
 
+* **Kattribution** : a component that dynamically displays visible layer attributions (credits and copyright information) in map activities. This component guarantees compliance with copyright rules for data displayed on the map.
+
+### How it works ###
+
+The component listens to layer visibility events to add or remove attributions as layers are displayed or hidden. The main allocation is displayed in a popup that the user can open by clicking on a circle with the *"i ”* symbol.
+
+This popup has several sections:
+
+1.  **Header**: Optional, configured via the ‘header’ section in configuration.
+
+2.  **Dynamic body**: Generates and displays allocations based on visible layers.
+
+3.  **Footer**: Optional, configured via the `footer` section.
+
+### Configuration ###
+
+**KAttribution** is configured in `config/default.js`. It must be configured as a sticky in `mapActivity` and `globeActivity`, and is systematically positioned bottom-right (`position: 'bottom-right'`) offset (`offset: [80, 24]`) to the left of the FAB.
+
+Example configuration :
+
+```js
+module.exports = {
+  mapActivity: {
+  ...
+    stickies: {
+    content: [
+      { id: 'attribution', position: 'bottom-right', offset: [80, 24], component: 'KAttribution' },
+      // Other components if required
+    ]
+    },
+  }
+}
+```
+
+::: tip
+If the FAB does not exist, the offset must be adjusted: (`offset: [24, 24]`).
+:::
+
+You can also customize the header and footer sections :
+
+- *header* and *footer*: allow you to add additional information (for example, a `KStamp` component to display a specific text).
+
+- *headerClass* and *footerClass*: define CSS classes to style the header and footer.
+
+Example configuration:
+
+```js
+attribution: {
+  header: [
+    {
+    id: 'attribution-header',
+    component: 'KStamp',
+    text: 'Map credits'
+    }
+  ],
+  headerClass: ['bg-secondary'],
+  footer: [
+    {
+    id: 'attribution-footer',
+    component: 'KStamp',
+    text: 'Please respect copyright'
+    }
+  ],
+  footerClass: ['bg-secondary'],
+}
+```
