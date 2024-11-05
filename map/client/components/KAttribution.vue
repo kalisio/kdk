@@ -59,9 +59,9 @@ import KContent from '../../../core/client/components/KContent.vue'
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const attributions = ref({})
 const header = ref(_.get(config, 'attribution.header', []))
-const headerClass = ref(_.get(config, 'attribution.headerClass', []))
+const headerClass = ref(_.get(config, 'attribution.headerClass', ''))
 const footer = ref(_.get(config, 'attribution.footer', []))
-const footerClass = ref(_.get(config, 'attribution.footerClass', []))
+const footerClass = ref(_.get(config, 'attribution.footerClass', ''))
 
 // Computed
 const sanitizedAttributions = computed(() => {

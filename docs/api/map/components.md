@@ -296,19 +296,19 @@ Example configuration:
 attribution: {
   header: [
     {
-    id: 'attribution-header',
-    component: 'KStamp',
-    text: 'Map credits'
+      id: 'attribution-header',
+      component: 'KStamp',
+      text: 'Map credits'
     }
   ],
-  headerClass: ['bg-secondary'],
+  headerClass: 'bg-secondary',
   footer: [
     {
-    id: 'attribution-footer',
-    component: 'KStamp',
-    text: 'Please respect copyright'
+      id: 'attribution-footer',
+      component: 'KStamp',
+      text: 'Please respect copyright'
     }
   ],
-  footerClass: ['bg-secondary'],
+  footerClass: 'bg-secondary'
 }
 ```
