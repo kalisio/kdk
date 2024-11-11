@@ -7,46 +7,52 @@ const { getItems, replaceItems } = common
 const sift = siftModule.default
 const debug = makeDebug('kdk:map:catalog:hooks')
 
+function isQueryForType(query, type) {
+  // Use sift to support MongoDB operators like $in, $nin, etc.
+  const filter = [{ type }].filter(sift(_.pick(query, ['type'])))
+  return !_.isEmpty(filter)
+}
+
+function addDefaultItems(query, type, items, defaultItems) {
+  // Add implicit type as not provided in default items config
+  defaultItems = _.map(defaultItems, item => Object.assign(item, { type }))
+  // Then filter according to query
+  defaultItems = defaultItems.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
+  return items.concat(defaultItems.map(item => Object.assign(item, { type })))
+}
+
 // By default we only return default categories
 export function getDefaultCategories (hook) {
   const query = _.get(hook, 'params.query', {})
-  if ((query.type === 'Category') && (query.$limit !== 0)) {
+  const type = 'Category'
+  if ((query.$limit !== 0) && isQueryForType(query, type)) {
     const service = hook.service
     // Read default category config
     const catalogConfig = hook.app.get('catalog') || { categories: [] }
     // Check for specific service override (e.g. contextual catalog different from global catalog)
-    let defaultCategories = _.get(service, 'options.categories', catalogConfig.categories)
-    // Add implicit type
-    defaultCategories = _.map(defaultCategories, category => Object.assign(category, { type: 'Category' }))
-    // Then filter according to query
-    defaultCategories = defaultCategories.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
-    const item = getItems(hook)
-    replaceItems(hook, item.concat(defaultCategories.map(category => Object.assign(category, { type: 'Category' }))))
+    const defaultCategories = _.get(service, 'options.categories', catalogConfig.categories)
+    replaceItems(hook, addDefaultItems(query, type, getItems(hook), defaultCategories))
   }
 }
 
 // By default we only return default sublegends
 export function getDefaultSublegends (hook) {
   const query = _.get(hook, 'params.query', {})
-  if ((query.type === 'Sublegend') && (query.$limit !== 0)) {
+  const type = 'Sublegend'
+  if ((query.$limit !== 0) && isQueryForType(query, type)) {
     const service = hook.service
     // Read default sublegends config
     const catalogConfig = hook.app.get('catalog') || { sublegends: [] }
     // Check for specific service override (e.g. contextual catalog different from global catalog)
-    let defaultSublegends = _.get(service, 'options.sublegends', catalogConfig.sublegends)
-    // Add implicit type
-    defaultSublegends = _.map(defaultSublegends, sublegend => Object.assign(sublegend, { type: 'Sublegend' }))
-    // Then filter according to query
-    defaultSublegends = defaultSublegends.filter(sift(_.omit(query, ['$sort', '$limit', '$skip'])))
-    const item = getItems(hook)
-    replaceItems(hook, item.concat(defaultSublegends.map(sublegend => Object.assign(sublegend, { type: 'Sublegend' }))))
+    const defaultSublegends = _.get(service, 'options.sublegends', catalogConfig.sublegends)
+    replaceItems(hook, addDefaultItems(query, type, getItems(hook), defaultSublegends))
   }
 }
 
 // By default we only return layers and not other objects in catalog
 export function filterLayers (hook) {
   const query = _.get(hook, 'params.query', {})
-  if (!query.type) query.type = { $nin: ['Context', 'Service', 'Category'] }
+  if (!query.type) query.type = { $nin: ['Context', 'Service', 'Category', 'Sublegend'] }
   _.set(hook, 'params.query', query)
 }
 

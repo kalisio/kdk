@@ -3,7 +3,8 @@ import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
 import { memory } from '@feathersjs/memory'
-import { Store, Reader, utils as kCoreUtils } from '../../core/client/index.js'
+import { Store, Reader, utils as kCoreUtils, hooks as kCoreHooks } from '../../core/client/index.js'
+import * as kMapHooks from './hooks/index.js'
 import { Geolocation } from './geolocation.js'
 import { Planets } from './planets.js'
 import * as readers from './readers/index.js'
@@ -27,6 +28,28 @@ export function setupApi (configuration) {
   api.getForecastTime = () => {
     return api.forecastTime
   }
+  // We also add some features related to offline mode
+  api.createOfflineFeaturesService = async function (serviceName, options = {}) {
+    options = Object.assign(_.omit(options, ['hooks', 'dataPath']), {
+      // Set required default hooks and data path for snapshot as the service responds in GeoJson format
+      hooks: _.defaultsDeep(_.get(options, 'hooks'), {
+        before: {
+          all: [kCoreHooks.ensureSerializable, kCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
+          create: [kCoreHooks.generateId, kMapHooks.referenceCountCreateHook],
+          remove: kMapHooks.referenceCountRemoveHook
+        },
+        after: {
+          find: [kMapHooks.geoJsonPaginationHook, kMapHooks.intersectBBoxHook]
+        }
+      }),
+      dataPath: 'features',
+      // Here are service options used to manage offline features services
+      features: true
+    })
+    
+    const offlineService = await api.createOfflineService(serviceName, options)
+    return offlineService
+  }
   return api
 }
 
@@ -36,7 +59,9 @@ export default async function init () {
   logger.debug('[KDK] Initializing map module')
 
   // Declare the built-in services, others are optional
-  api.declareService('geocoder')
+  api.declareService('catalog')
+  api.declareService('projects')
+  api.declareService('features')
   // Declare our matcher
   api.registerMatcher(siftMatcher)
   // Service to support in memory features edition

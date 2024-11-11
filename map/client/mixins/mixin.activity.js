@@ -121,6 +121,10 @@ export const activity = {
     },
     isLayerProbable: layers.isLayerProbable,
     isLayerStorable: layers.isLayerStorable,
+    isLayerCached: layers.isLayerCached,
+    isLayerCachable: layers.isLayerCachable,
+    setLayerCached: layers.setLayerCached,
+    setLayerUncached: layers.setLayerUncached,
     isLayerEditable: layers.isLayerEditable,
     isLayerRemovable: layers.isLayerRemovable,
     isLayerStyleEditable: layers.isLayerStyleEditable,
@@ -235,6 +239,44 @@ export const activity = {
       if (!this.$q.fullscreen.isActive) this.$q.fullscreen.request()
       else this.$q.fullscreen.exit()
     },
+    listenToCatalogServiceEvents () {
+      // Listen about changes in global/contextual catalog services
+      this.globalCatalogService = this.$api.getService('catalog', '')
+      this.catalogService = this.$api.getService('catalog')
+      // Keep track of binded listeners as we use the same function with different contexts
+      this.catalogListeners = {}
+      const events = ['created', 'updated', 'patched', 'removed']
+      events.forEach(event => {
+        // Avoid reentrance
+        if (!this.catalogListeners[event]) {
+          this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
+          this.globalCatalogService.on(event, this.catalogListeners[event])
+          if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
+            this.catalogService.on(event, this.catalogListeners[event])
+          }
+        }
+      })
+    },
+    unlistenToCatalogServiceEvents () {
+      // Stop listening about changes in global/contextual catalog services
+      if (!this.globalCatalogService) this.globalCatalogService = this.$api.getService('catalog', '')
+      if (!this.catalogService) this.catalogService = this.$api.getService('catalog')
+      const events = ['created', 'updated', 'patched', 'removed']
+      events.forEach(event => {
+        // Avoid reentrance
+        if (this.catalogListeners[event]) {
+          this.globalCatalogService.removeListener(event, this.catalogListeners[event])
+          if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
+            this.catalogService.removeListener(event, this.catalogListeners[event])
+          }
+        }
+      })
+      this.catalogListeners = {}
+    },
+    resetCatalogServiceEventsListeners () {
+      this.unlistenToCatalogServiceEvents()
+      this.listenToCatalogServiceEvents()
+    },
     async initialize () {
       // Check if the activity is using context restoration
       const hasContext = (typeof this.restoreContext === 'function')
@@ -267,40 +309,10 @@ export const activity = {
         await Geolocation.update()
         if (Geolocation.hasLocation()) this.center(Geolocation.getLongitude(), Geolocation.getLatitude())
       }
-      // Listen about changes in global/contextual catalog services
-      const globalCatalogService = this.$api.getService('catalog', '')
-      const catalogService = this.$api.getService('catalog')
-      // Keep track of binded listeners as we use the same function with different contexts
-      this.catalogListeners = {}
-      if (globalCatalogService.events !== undefined) {
-        globalCatalogService.events.forEach(event => {
-          // Avoid reentrance
-          if (!this.catalogListeners[event]) {
-            this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
-            globalCatalogService.on(event, this.catalogListeners[event])
-            if (catalogService && (catalogService !== globalCatalogService)) {
-              catalogService.on(event, this.catalogListeners[event])
-            }
-          }
-        })
-      }
+      this.listenToCatalogServiceEvents()
     },
     finalize () {
-      // Stop listening about changes in global/contextual catalog services
-      const globalCatalogService = this.$api.getService('catalog', '')
-      const catalogService = this.$api.getService('catalog')
-      if (globalCatalogService.events !== undefined) {
-        globalCatalogService.events.forEach(event => {
-          // Avoid reentrance
-          if (this.catalogListeners[event]) {
-            globalCatalogService.removeListener(event, this.catalogListeners[event])
-            if (catalogService && (catalogService !== globalCatalogService)) {
-              catalogService.removeListener(event, this.catalogListeners[event])
-            }
-          }
-        })
-      }
-      this.catalogListeners = {}
+      this.unlistenToCatalogServiceEvents()
     },
     async onCatalogUpdated (event, object) {
       switch (object.type) {
@@ -351,11 +363,16 @@ export const activity = {
     this.$engineEvents.on('map-ready', this.onEngineReady)
     this.$engineEvents.on('globe-ready', this.onEngineReady)
     this.$engineEvents.on('layer-added', this.configureLayerActions)
+    // Target online/offline service depending on status
+    this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
   },
   beforeUnmount () {
     this.$engineEvents.off('map-ready', this.onEngineReady)
     this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.configureLayerActions)
+    this.$events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    this.$events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
     this.finalize()
   }
 }

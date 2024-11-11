@@ -444,9 +444,21 @@
   "KViewsPanel": {
     "SORT_VIEWS": "Trier les vues",
     "REMOVE_VIEW": "@:REMOVE",
+    "CACHE_VIEW": "Ajouter au cache hors-ligne",
+    "UNCACHE_VIEW": "Supprimer du cache hors-ligne",
+    "CACHING_VIEW": "Téléchargement de la vue en cours",
+    "UNCACHING_VIEW": "Libération de la vue en cours",
+    "CACHE_VIEW_DIALOG_TITLE": "Ajouter au cache hors-ligne",
+    "CACHE_VIEW_DIALOG_MESSAGE": "Configurez le téléchargement des données",
     "SET_HOME_VIEW": "Définir comme vue par défaut",
     "REMOVE_DIALOG_TITLE": "Supprimer {view} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {view} de votre espace de travail ?"
+  },
+  "KCreateOfflineView": {
+    "MIN_ZOOM_FIELD_LABEL": "Niveau de zoom à partir duquel les données vont être téléchargées, l'augmenter réduira la taille des données",
+    "MAX_ZOOM_FIELD_LABEL": "Niveau de zoom jusqu'auquel les données vont être téléchargées, l'augmenter augmentera la taille des données",
+    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Nombre de requêtes concurrentes utilisées pour le téléchargement, l'augmenter accélèrera le processus mais pourra surcharger la machine et le serveur",
+    "NUMBER_OF_TILES": "Estimation du nombre de tuiles à télécharger pour chaque couche: "
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Trier les projets",

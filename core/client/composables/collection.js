@@ -131,7 +131,7 @@ export function useCollection (options) {
     // In this case we need to reset the full collection as Rx only tracks changes on the current page
     updatedItems = (Array.isArray(updatedItems) ? updatedItems : [updatedItems])
     // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
-    updatedItems = _.intersectionWith(items.value, updatedItems, (item1, item2) => (item1._id.toString() === item2._id.toString()))
+    updatedItems = _.intersectionWith(items.value, updatedItems, (item1, item2) => item1._id && item2._id && (item1._id.toString() === item2._id.toString()))
     if (updatedItems.length > 0) resetCollection()
   }
 

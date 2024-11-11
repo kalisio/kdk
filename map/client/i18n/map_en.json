@@ -86,6 +86,8 @@
       "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
       "CAPTURE_VIEW": "Capture the view",
       "SAVE_LABEL": "Save layer",
+      "OFFLINE_LABEL": "Make available offline",
+      "ONLINE_LABEL": "Make available online",
       "REMOVE_LABEL": "Remove"
     },
     "timeseries": {
@@ -443,9 +445,21 @@
   "KViewsPanel": {
     "SORT_VIEWS": "Sort views",
     "REMOVE_VIEW": "@:REMOVE",
+    "CACHE_VIEW": "Add to offline cache",
+    "UNCACHE_VIEW": "Remove from offline cache",
+    "CACHING_VIEW": "Downloading view in progress",
+    "UNCACHING_VIEW": "Data removal for view in progress",
+    "CACHE_VIEW_DIALOG_TITLE": "Add to offline cache",
+    "CACHE_VIEW_DIALOG_MESSAGE": "Configure data download",
     "SET_HOME_VIEW": "Set as default view",
     "REMOVE_DIALOG_TITLE": "Remove {view} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{view}</b> from your workspace ?"
+  },
+  "KCreateOfflineView": {
+    "MIN_ZOOM_FIELD_LABEL": "Zoom level from which data will be downloaded, increase will reduce data size",
+    "MAX_ZOOM_FIELD_LABEL": "Zoom level until which data will be downloaded, increase will increase data size",
+    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Number of concurrent requests issued to download, increase will speed up download but load the device and the server",
+    "NUMBER_OF_TILES": "Estimated number of tiles to download per layer: "
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Sort projects",

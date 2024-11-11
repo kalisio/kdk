@@ -1,9 +1,19 @@
 import _ from 'lodash'
 import logger from 'debug'
+import { LocalForage } from '@kalisio/feathers-localforage'
 import { Store } from '../store.js'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
 import { defineAbilities } from '../../common/permissions.js'
+
+async function authenticate(authentication) {
+  // Store latest authentication data for offline mode
+  await LocalForage.setItem('authentication', authentication)
+  // Anonymous user or user account ?
+  const user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
+  Store.set('user', user)
+  await updateAbilities()
+}
 
 export async function login (email, password) {
   const payload = {
@@ -11,11 +21,8 @@ export async function login (email, password) {
     email: email,
     password: password
   }
-  const response = await api.authenticate(payload)
-  // Anonymous user or service account ?
-  const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
-  Store.set('user', user)
-  await updateAbilities()
+  const authentication = await api.authenticate(payload)
+  await authenticate(authentication)
 }
 
 export async function register (user) {
@@ -26,6 +33,7 @@ export async function register (user) {
 
 export async function logout () {
   try {
+    await LocalForage.removeItem('authentication')
     await api.logout()
     Store.set('user', null)
   } catch (error) {
@@ -39,10 +47,20 @@ export async function logout () {
 
 export async function restoreSession () {
   try {
-    const response = await api.reAuthenticate()
-    const user = response.user ? response.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
-    Store.set('user', user)
-    await updateAbilities()
+    let authentication
+    if (api.isDisconnected) {
+      authentication = await LocalForage.getItem('authentication')
+      if (authentication) {
+        // In this specific case as we bypass actual authentication the events will not be emitted
+        api.emit('login', authentication)
+        api.emit('authenticated', authentication)
+      }
+    } 
+    // In local first mode we allow to use remote service if offline information doesn't exist
+    if (!authentication) {
+      authentication = await api.reAuthenticate()
+    }
+    await authenticate(authentication)
   } catch (error) {
     // This ensure an old token is not kept e.g. when the user has been deleted
     // await logout()

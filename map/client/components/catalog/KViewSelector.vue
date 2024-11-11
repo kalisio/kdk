@@ -27,13 +27,14 @@
       <!-- View actions -->
       <KPanel
         :id="`${item.name}-actions`"
-        :content="itemActions"
+        :content="cachable ? viewActions : itemActions"
         :context="item" />
     </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import { KPanel, KAction } from '../../../../core/client/components'
 import { baseItem } from '../../../../core/client/mixins'
 
@@ -43,8 +44,37 @@ export default {
     KPanel,
     KAction
   },
-  mixins: [baseItem]
+  mixins: [baseItem],
+  props: {
+    cachable: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    viewActions () {
+      const itemActions = _.cloneDeep(this.itemActions)
+      const viewActions = _.get(itemActions, '[0].content', [])
+      if (this.item.isCached) {
+        viewActions.push({
+          id: 'uncache-view',
+          icon: 'wifi',
+          label: 'KViewsPanel.UNCACHE_VIEW',
+          handler: (item) => this.$emit('item-selected', item, 'uncache-view')
+        })
+      } else {
+        viewActions.push({
+          id: 'cache-view',
+          icon: 'wifi_off',
+          label: 'KViewsPanel.CACHE_VIEW',
+          handler: (item) => this.$emit('item-selected', item, 'cache-view')
+        })
+      }
+      return itemActions
+    }
+  }
 }
+
 </script>
 
 <style lang="scss" scoped>
