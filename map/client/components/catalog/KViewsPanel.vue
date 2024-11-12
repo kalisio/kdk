@@ -98,7 +98,7 @@ export default {
     async onCollectionRefreshed (items) {
       const cachedViews = await LocalForage.getItem('views')
       if (!cachedViews) return
-      // Update 
+      // Update
       _.forEach(items, (item) => {
         item.isCached = _.has(cachedViews, item._id)
       })
@@ -170,7 +170,7 @@ export default {
             message: i18n.t('KViewsPanel.UNCACHING_VIEW'),
             color: 'primary',
             timeout: 0,
-              spinner: true
+            spinner: true
           })
           await uncacheView(view, this.getProjectLayers(), {
             contextId: this.kActivity.contextId

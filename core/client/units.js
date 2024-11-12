@@ -296,7 +296,7 @@ export const Units = {
     if (!definition) {
       // Check if that's a mathjs unit ? This will actually enforce a unit to be known by either our systelm or mathjs.
       // We'd like to be able to mange unknown unit without braking the system just to perform unit display
-      //if (math.Unit.isValuelessUnit(unit)) definition = { name: unit, symbol: unit, label: unit }
+      // if (math.Unit.isValuelessUnit(unit)) definition = { name: unit, symbol: unit, label: unit }
       // Create a fake unit definition for unknown units so tht it does not break others methods
       definition = { name: unit, symbol: unit, label: unit }
     }
@@ -345,7 +345,7 @@ export const Units = {
   convert (value, sourceUnit, targetUnit) {
     if (_.isNil(value) || !_.isFinite(value)) return value
     if (value === Number.MIN_VALUE || value === Number.MAX_VALUE) return value
-    let sourceUnitDef = (typeof sourceUnit === 'string') ? this.getUnit(sourceUnit) : sourceUnit
+    const sourceUnitDef = (typeof sourceUnit === 'string') ? this.getUnit(sourceUnit) : sourceUnit
     let targetUnitDef = (typeof targetUnit === 'string') ? this.getUnit(targetUnit) : targetUnit
     // If target unit is not given use default one
     if (!targetUnitDef && sourceUnitDef) targetUnitDef = this.getDefaultUnit(sourceUnitDef)

@@ -96,7 +96,6 @@
     "@kalisio/feathers-s3": "^1.4.0",
     "@kalisio/feathers-webpush": "^1.0.1",
     "@turf/bbox": "^6.0.1",
-    "@mapbox/sphericalmercator": "^1.2.0",
     "@weacast/core": "^2.1.5",
     "abort-controller": "^3.0.0",
     "ajv": "^8.12.0",

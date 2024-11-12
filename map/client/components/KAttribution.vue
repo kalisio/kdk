@@ -23,7 +23,7 @@
       self="bottom right"
     >
       <div
-        id="attributions-banner" 
+        id="attributions-banner"
         class="bg-white text-primary text-center q-col-gutter-y-xs"
       >
         <!-- Header Content -->
@@ -31,9 +31,9 @@
           <KContent :content="header" :class="headerClass" />
         </div>
         <!-- Main Content -->
-        <div 
+        <div
           id="attributions-content"
-          v-html="sanitizedAttributions" 
+          v-html="sanitizedAttributions"
           class="text-caption q-py-none q-px-sm"
         />
         <!-- Footer Content -->
@@ -94,7 +94,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
 
 // Functions
 function onShowLayer (layer) {
-  if (layer.attribution) { 
+  if (layer.attribution) {
     logger.debug(`[KDK] Add ${layer.name} to attribution`)
     _.set(attributions.value, _.kebabCase(layer.name), layer.attribution)
   }

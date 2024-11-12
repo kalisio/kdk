@@ -97,7 +97,7 @@
       </q-timeline>
     </div>
     <!-- Empty slot -->
-    <div v-else-if="items && items.length === 0" 
+    <div v-else-if="items && items.length === 0"
       id="timeline-content"
     >
       <slot name="empty">
@@ -115,7 +115,7 @@
     <div v-else id="timeline-initializing">
       <slot name="initializing">
         <div class="row justify-center">
-          <q-spinner 
+          <q-spinner
             color="primary"
             size="4rem"
             class="absolute-center"

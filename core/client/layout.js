@@ -110,7 +110,7 @@ export const Layout = {
     if (layout.header) this.setHeader(layout.header)
     if (layout.footer) this.setFooter(layout.footer)
     if (layout.page) this.setPage(layout.page)
-    if (layout.stickies) this.setStickies(layout.stickies)      
+    if (layout.stickies) this.setStickies(layout.stickies)
     if (layout.fab) this.setFab(layout.fab)
     this.placements.forEach(placement => {
       if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))

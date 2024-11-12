@@ -9,8 +9,8 @@
     class="q-pa-sm"
   />
   {{ $t('KCreateOfflineView.NUMBER_OF_TILES') + n }}
-  
 </template>
+
 <script setup>
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { ref, computed } from 'vue'
@@ -73,12 +73,12 @@ const schema = computed(() => {
 function updateNumberOfTiles (minZoom, maxZoom) {
   n.value = 0
   for (let z = minZoom; z <= maxZoom; z++) {
-    let sm =  new SphericalMercator()
+    const sm = new SphericalMercator()
     const tilesBounds = sm.xyz([props.view.west, props.view.south, props.view.east, props.view.north], z)
     n.value += (tilesBounds.maxX - tilesBounds.minX + 1) * (tilesBounds.maxY - tilesBounds.minY + 1)
   }
 }
-function onFieldChanged() {
+function onFieldChanged () {
   const { minZoom, maxZoom } = form.value.values()
   updateNumberOfTiles(minZoom, maxZoom)
 }

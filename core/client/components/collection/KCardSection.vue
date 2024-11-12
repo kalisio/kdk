@@ -55,7 +55,7 @@ const props = defineProps({
 const filteredActions = computed(() => {
   if (!props.actionsFilter) return props.actions
   let filter = props.actionsFilter
-  if (_.isString(filter)) filter=[filter]
+  if (_.isString(filter)) filter = [filter]
   return _.filter(props.actions, action => {
     return _.indexOf(filter, action.id) >= 0
   })

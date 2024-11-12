@@ -1,5 +1,5 @@
 <template>
-  <!-- Content -->  
+  <!-- Content -->
   <div v-if="items && items.length > 0">
     <q-table
       :title="title"
@@ -53,7 +53,7 @@
       </template>
     </q-table>
   </div>
-  <!-- Empty slot -->  
+  <!-- Empty slot -->
   <div v-else-if="items && items.length === 0"
     id="table-empty"
   >
@@ -73,7 +73,7 @@
   <div v-else id="grid-initializing">
     <slot name="initializing">
       <div class="row justify-center">
-        <q-spinner 
+        <q-spinner
           color="primary"
           size="2rem"
         />
