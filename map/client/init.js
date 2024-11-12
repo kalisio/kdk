@@ -46,7 +46,7 @@ export function setupApi (configuration) {
       // Here are service options used to manage offline features services
       features: true
     })
-    
+
     const offlineService = await api.createOfflineService(serviceName, options)
     return offlineService
   }

@@ -81,8 +81,8 @@
         />
       </div>
     </div>
-    <!-- 
-      Expand action 
+    <!--
+      Expand action
     -->
     <div v-if="isExpandable" class="row justify-center">
       <KAction
@@ -155,10 +155,7 @@ export default {
     },
     computedHeader () {
       if (this.header) return this.header
-      const actions = _.filter(this.itemActions, { scope: 'header' })
-      if (_.isEmpty(actions)) return []
-      actions.splice(0, 0, { component: 'QSpace' })
-      return actions
+      return _.filter(this.itemActions, { scope: 'header' })
     },
     hasHeader () {
       return !_.isEmpty(this.computedHeader)
@@ -186,10 +183,7 @@ export default {
     },
     computedFooter () {
       if (this.footer) return this.footer
-      const actions = _.filter(this.itemActions, { scope: 'footer' })
-      if (_.isEmpty(actions)) return []
-      actions.splice(0, 0, { component: 'QSpace' })
-      return actions
+      return _.filter(this.itemActions, { scope: 'footer' })
     },
     hasFooter () {
       return !_.isEmpty(this.computedFooter)
