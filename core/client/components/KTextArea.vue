@@ -67,6 +67,10 @@ const props = defineProps({
   isExpanded: {
     type: Boolean,
     default: false
+  },
+  sanitizeOptions: {
+    type: Object,
+    default: () => null
   }
 })
 
@@ -79,7 +83,7 @@ const isScrollable = ref(false)
 
 // computed
 const sanitizedText = computed(() => {
-  return sanitizeHtml(props.text)
+  return _.get(props, 'sanitizeOptions') ? sanitizeHtml(props.text, props.sanitizeOptions) : sanitizeHtml(props.text)
 })
 const cssCursor = computed(() => {
   return isExpandable.value ? 'pointer' : 'default'
