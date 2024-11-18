@@ -25,12 +25,12 @@ export async function sendNewSubscriptionEmail (hook) {
 
   // Data
   const app = hook.app
+  console.log(app)
   const mailerService = app.getService('mailer')
   const domainPath = app.get('domain') + '/#/'
   const email = {
     subject: 'Security alert - new browser detected',
     from: mailerService.options.from || mailerService.options.auth.user,
-    // When changing email send to the new one so that it can be verified
     to: updatedUser.email,
     link: domainPath,
     domainPath

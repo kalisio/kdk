@@ -17,7 +17,7 @@ export async function verifyGuest (hook) {
   if (!user) return hook
   debug('verifyGuest hook called on ', user._id)
 
-  // Check whether the user has been inivted. If not, nothing to do
+  // Check whether the user has been invited. If not, nothing to do
   if (!user.sponsor) {
     debug('Logged user is not a guest')
     return hook
