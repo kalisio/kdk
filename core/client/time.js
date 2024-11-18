@@ -18,7 +18,7 @@ export const Time = {
     const end = now.clone().endOf('day')
     // Try to guess user timezone
     const timezone = moment.tz.guess() || ''
-    Store.set('time', _.merge(config.time || {}, {
+    Store.set('time', _.defaultsDeep(config.time || {}, {
       range: {
         start,
         end,
