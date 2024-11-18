@@ -3,7 +3,7 @@
     <!-- Start dateTime -->
     <KDateTime
       v-model="startModel"
-      :options="props.options"
+      :options="props.options.dateTime || props.options"
       :min="props.min"
       :max="props.max"
       :disabled="disabled"
@@ -15,7 +15,7 @@
     <!-- End dateTime -->
     <KDateTime
       v-model="endModel"
-      :options="props.options"
+      :options="props.options.dateTime || props.options"
       :min="startDateTime ? startDateTime.toISOString() : null"
       :max="props.max"
       :disabled="disabled || startDateTime === null"
