@@ -46,7 +46,7 @@ export const Navigator = {
     Store.set('navigator.default', name)
   },
 
-  navigate (lat, lon) {
+  navigateTo (lat, lon) {
     // Retrieve the default app
     const defaultApp = this.getDefault()
     if (_.isEmpty(defaultApp)) {
