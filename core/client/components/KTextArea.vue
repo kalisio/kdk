@@ -37,6 +37,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
 import sanitizeHtml from 'sanitize-html'
 import KExpandable from './KExpandable.vue'
