@@ -37,7 +37,7 @@ export async function subscribeToPushNotifications () {
       return subscription
     })
     userService.patch(Store.user._id, { subscriptions: subscriptions })
-    logger.debug(`New connection date registered on ${date} with subscription endpoint: ${currentSubscription.endpoint}`)
+    logger.debug(`[KDK] New connection with subscription endpoint: ${currentSubscription.endpoint}`)
     return
   }
   // Subscribe to web webpush notifications
@@ -49,5 +49,5 @@ export async function subscribeToPushNotifications () {
   // Patch user subscriptions
   await addSubscription(user, subscription, 'subscriptions')
   userService.patch(Store.user._id, { subscriptions: user.subscriptions })
-  logger.debug(`New webpush subscription registered with endpoint: ${subscription.endpoint}`)
+  logger.debug(`[KDK] New webpush subscription registered with endpoint: ${subscription.endpoint}`)
 }
