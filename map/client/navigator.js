@@ -9,18 +9,18 @@ export const Navigator = {
   initialize () {
     // Sets the available apps
     Store.set('navigator.apps', _.defaultsDeep(config.navigator, {
-      waze: { 
-        label: "waze",
+      waze: {
+        label: 'waze',
         icon: 'las la-waze',
         url: 'https://waze.com/ul?q=<%= lat %>,<%= lon %>'
       },
-      'google-maps': { 
-        label: "Google Maps",
+      'google-maps': {
+        label: 'Google Maps',
         icon: 'las la-google',
         url: 'https://www.google.com/maps/dir/?api=1&destination=<%= lat %>,<%= lon %>'
       },
-      'apple-plan': { 
-        label: "Apple Plan",
+      'apple-plan': {
+        label: 'Apple Plan',
         icon: 'las la-apple',
         url: 'https://maps.apple.com/place?ll=<%= lat %>,<%= lon %>'
       }
@@ -41,7 +41,7 @@ export const Navigator = {
   getDefault () {
     return Store.get('navigator.default')
   },
-  
+
   setDefault (name) {
     Store.set('navigator.default', name)
   },
