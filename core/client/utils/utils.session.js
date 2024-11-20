@@ -7,10 +7,13 @@ import { i18n } from '../i18n.js'
 import { defineAbilities } from '../../common/permissions.js'
 
 async function authenticate(authentication) {
+  // Do not update data twice in any case
+  let user = Store.get('user')
+  if (user) return
   // Store latest authentication data for offline mode
   await LocalForage.setItem('authentication', authentication)
   // Anonymous user or user account ?
-  const user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
+  user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
   Store.set('user', user)
   await updateAbilities()
 }
