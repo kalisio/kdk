@@ -7,6 +7,7 @@ import { Store, Reader, utils as kCoreUtils, hooks as kCoreHooks } from '../../c
 import * as kMapHooks from './hooks/index.js'
 import { Geolocation } from './geolocation.js'
 import { Planets } from './planets.js'
+import { Navigator } from './navigator.js'
 import * as readers from './readers/index.js'
 
 function siftMatcher (originalQuery) {
@@ -55,8 +56,7 @@ export function setupApi (configuration) {
 
 export default async function init () {
   const api = this
-
-  logger.debug('[KDK] Initializing map module')
+  logger.debug('[KDK] Initializing Map module...')
 
   // Declare the built-in services, others are optional
   api.declareService('catalog')
@@ -77,10 +77,11 @@ export default async function init () {
   // Initialize singletons that might be used globally first
   Geolocation.initialize()
   Planets.initialize()
+  Navigator.initialize()
 
   // Then, create the models listened by the different components
   // You must use the patch method on the store to update those models
-  // It is generally done by activity based componentq or through a local settings service
+  // It is generally done by activity based component or through a local settings service
 
   // Default time formatting settings
   Store.set('timeFormat', reactive({
@@ -118,6 +119,7 @@ export default async function init () {
     Reader.register(entry.mimeTypes, readers[entry.reader])
   })
 
-  // Store the intiaization state
+  // Store the initialization state
   Store.set('kdk.map.initialized', true)
+  logger.debug('[KDK] Map module initialized')
 }

@@ -8,6 +8,7 @@ const mixins = Object.assign({}, commonMixins, { globe: globeMixins })
 
 export * from './geolocation.js'
 export * from './planets.js'
+export * from './navigator.js'
 export { hooks }
 export { utils }
 export { mixins }

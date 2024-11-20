@@ -11,6 +11,7 @@ const mixins = Object.assign({}, commonMixins, { map: mapMixins, globe: globeMix
 export * from './geolocation.js'
 export * from './capture.js'
 export * from './planets.js'
+export * from './navigator.js'
 export * from './canvas-draw-context.js'
 export { hooks }
 export { utils }

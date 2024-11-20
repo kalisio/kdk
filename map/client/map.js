@@ -9,6 +9,7 @@ const mixins = Object.assign({}, commonMixins, { map: mapMixins })
 
 export * from './geolocation.js'
 export * from './planets.js'
+export * from './navigator.js'
 export { hooks }
 export { utils }
 export { composables }
