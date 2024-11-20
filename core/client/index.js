@@ -56,8 +56,7 @@ export * from '../common/index.js'
 
 export default async function initialize () {
   const api = this
-
-  logger.debug('[KDK] Initializing core module')
+  logger.debug('[KDK] Initializing Core module...')
 
   // Declare the module initialization states
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
@@ -74,7 +73,7 @@ export default async function initialize () {
   api.configure(services)
   // Last, create the models listened by the main layout/pages components
   // You must use the patch method on the store to update those models
-  // It is generally done by activity based componentq or through a local settings service
+  // It is generally done by activity based component or through a local settings service
   Layout.initialize()
   Filter.initialize()
   Sorter.initialize()
@@ -91,6 +90,7 @@ export default async function initialize () {
     Reader.register(entry.mimeTypes, readers[entry.reader])
   })
 
-  // Store the intiaization state
+  // Store the initialization state
   Store.set('kdk.core.initialized', true)
+  logger.debug('[KDK] Core module initialized')
 }

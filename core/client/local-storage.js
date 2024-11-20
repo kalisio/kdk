@@ -5,7 +5,7 @@ import config from 'config'
 export const LocalStorage = {
   initialize () {
     this.prefix = _.kebabCase(_.get(config, 'appName', 'kdk'))
-    logger.debug(`[KDK] Configuring local storage with prefix: '${this.prefix}'`)
+    logger.debug(`[KDK] LocalStorage initialized with prefix: '${this.prefix}'`)
   },
   localKey (key) {
     const keyPrefix = `${this.prefix}-`
