@@ -22,6 +22,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { computed } from 'vue'
+import { Time } from '../../time.js'
 
 // Props
 const props = defineProps({
@@ -66,7 +67,9 @@ const model = computed({
   }
 })
 const format = computed(() => {
-  return _.get(props.options, 'format', mask)
+  const dateDateFormat = _.get(Time.getFormat(), 'date.short')
+  const defaultYearFormat = _.get(Time.getFormat(), 'year.long')
+  return _.get(props.options, 'format', `${dateDateFormat}/${defaultYearFormat}`)
 })
 const picker = computed(() => {
   return _.merge({}, _.get(props.options, 'picker'), { mask })

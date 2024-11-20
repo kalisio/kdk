@@ -22,6 +22,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { computed } from 'vue'
+import { Time } from '../../time.js'
 
 // Props
 const props = defineProps({
@@ -66,7 +67,8 @@ const model = computed({
   }
 })
 const format = computed(() => {
-  return _.get(props.options, 'format', mask.substring(0, 5))
+  const defaultFormat = _.get(Time.getFormat(), 'time.long')
+  return _.get(props.options, 'format', defaultFormat)
 })
 const picker = computed(() => {
   return _.merge({}, _.get(props.options, 'picker'), { mask })
