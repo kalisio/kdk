@@ -5,7 +5,7 @@ import local from '@feathersjs/authentication-local'
 const debug = makeDebug('kdk:core:authentication:hooks')
 const { discard } = common
 
-// Make it more easy to acces
+// Make it more easy to access
 export const hashPassword = local.hooks.hashPassword
 
 export async function verifyGuest (hook) {
