@@ -192,7 +192,7 @@ export function isObjectID (id) {
 }
 
 // Helper function to load a schema
-// @schema alias shoud be added in the quasar.config build section
+// @schema alias should be added in the quasar.config build section
 export async function loadSchema (schemaName) {
   try {
     const schemaModule = await import(`@schemas/${schemaName}.json`)
@@ -204,7 +204,7 @@ export async function loadSchema (schemaName) {
 
 // Helper function to load a component
 // https://vuejs.org/guide/components/async.html
-// @components alias shoud be added in the quasar.config build section
+// @components alias should be added in the quasar.config build section
 export function loadComponent (componentName) {
   try {
     return markRaw(defineAsyncComponent(() => import(`@components/${componentName}.vue`)))
