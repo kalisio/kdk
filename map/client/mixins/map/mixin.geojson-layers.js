@@ -198,7 +198,8 @@ export const geojsonLayers = {
           leafletOptions.removeMissing = false
           // Fetching is managed by tiles but even for manual update leaflet realtime require a src
           _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {})
-          // Generate fetch function for tiled feature layer
+          // Generate fetch functions for tiled feature layer
+          leafletOptions.probeSource = (baseQuery) => this.getProbeFeatures(_.merge({ baseQuery }, options))
           leafletOptions.featureSource = (baseQuery) => this.getFeatures(_.merge({ baseQuery }, options))
         } else {
           leafletOptions.removeMissing = !options.probeService
