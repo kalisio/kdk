@@ -24,6 +24,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
       return getFeatureId(feature, this.layer)
     }
 
+    this.probeSource = options.probeSource
     this.featureSource = options.featureSource
 
     this.flyingTiles = new Map()
@@ -365,9 +366,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     // may have children tiles too, these will get updated also.
     const featureRequests = this.mergeRequests(tilesWithFeaturesRequest)
     featureRequests.forEach((r) => {
-      const promise = this.layer.probeService
-        ? this.activity.getProbeFeatures(_.merge({ baseQuery: r.query }, this.layer))
-        : this.featureSource(r.query)
+      const promise = this.layer.probeService ? this.probeSource(r.query) : this.featureSource(r.query)
       r.tiles.forEach((tile) => {
         tile.featuresRequest = promise
 
