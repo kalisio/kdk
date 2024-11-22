@@ -43,6 +43,16 @@ export function getFeatureId (feature, layer) {
   return featureId.map(id => _.get(feature, 'properties.' + id, _.get(feature, id))).join('-')
 }
 
+export function getFeatureLabel (feature, layer) {
+  // Support compound labels
+  let featureLabel = layer.featureLabel || 'name'
+  featureLabel = (Array.isArray(featureLabel) ? featureLabel : [featureLabel])
+  return featureLabel.reduce((result, label) => {
+    label = _.get(feature, `properties.${label}`)
+    return (result ? result + ` - ${label}` : label)
+  }, '')
+}
+
 export function formatUserCoordinates (lat, lon, format, options) {
   if (format === 'aeronautical') {
     const coords = formatcoords(lat, lon)
