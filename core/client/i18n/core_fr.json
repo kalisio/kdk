@@ -674,7 +674,7 @@
   "KFileField": {
     "INVALID_FILE_TYPE": "Type de fichier invalide, veuillez sélectionner un fichier du bon type",
     "INVALID_FILE_SIZE": "Taille du fichier invalide, le fichier est trop volumineux",
-    "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succés",
+    "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succès",
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
   },
   "KCronField": {
