@@ -19,6 +19,10 @@ const props = defineProps({
     type: String,
     default: null
   },
+  mimeType: {
+    type: String,
+    default: null
+  },
   localize: {
     type: Boolean,
     default: true
@@ -31,7 +35,7 @@ const props = defineProps({
 
 // Computed
 const viewer = computed(() => {
-  const mimeType = guessMimeType()
+  const mimeType = props.mimeType || guessMimeType()
   if (!mimeType) return null
   const viewer = _.get(Document.options, `viewers.${mimeType}`)
   if (!viewer) return null

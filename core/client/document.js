@@ -12,11 +12,16 @@ export const Document = {
       viewers: {
         htm: 'document/KHtml',
         html: 'document/KHtml',
+        'text/html': 'document/KHtml',
         md: 'document/KMarkdown',
+        'text/markdown': 'document/KMarkdown',
         pdf: 'document/KPdf',
+        'application/pdf': 'document/KPdf',
         jpg: 'document/KImage',
         jpeg: 'document/KImage',
-        png: 'document/KImage'
+        'image/jpeg': 'document/KImage',
+        png: 'document/KImage',
+        'image/png': 'document/KImage',
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img'])
