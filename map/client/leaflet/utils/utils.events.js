@@ -24,6 +24,10 @@ export function unbindLeafletEvents (object, events) {
   }
 }
 
+// Leaflet does not really manage touch events, it provides compatibility mapping with mouse events
+// but it will not really trigger touch event from the map object, as a consequence we manage this by ourselves
+export const TouchEvents = ['touchstart', 'touchmove', 'touchend' ,'touchcancel']
+
 export const LeafletEvents = {
   Map: ['baselayerchange', 'overlayadd', 'overlayremove', 'layeradd', 'layerremove', 'zoomlevelschange',
     'resize', 'unload', 'viewreset', 'load',
@@ -31,11 +35,12 @@ export const LeafletEvents = {
     'zoom', 'move', 'rotate',
     'zoomend', 'boxzoomend', 'boxselectionend', 'moveend',
     'click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'contextmenu',
-    'keypress', 'preclick', 'moveend', 'zoomanim', 'fullscreenchange'],
+    'keypress', 'preclick', 'moveend', 'zoomanim', 'fullscreenchange'].concat(TouchEvents),
   Popup: ['add', 'remove'],
   Tooltip: ['add', 'remove'],
   Layer: ['add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'],
   Feature: ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'contextmenu',
-    'dragstart', 'dragend', 'drag', 'movestart', 'moveend', 'move'],
+    'dragstart', 'dragend', 'drag', 'movestart', 'moveend', 'move'].concat(TouchEvents),
   Cluster: ['spiderfied', 'unspiderfied']
 }
+

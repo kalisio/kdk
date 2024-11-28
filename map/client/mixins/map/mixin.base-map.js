@@ -29,7 +29,7 @@ import { getAppLocale } from '../../../../core/client/utils/index.js'
 import { uid } from 'quasar'
 import '../../leaflet/BoxSelection.js'
 import { Geolocation } from '../../geolocation.js'
-import { LeafletEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
+import { LeafletEvents, TouchEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
@@ -87,6 +87,9 @@ export const baseMap = {
         L.PM.reInitLayer(this.map)
         this.map.pm.setLang(getAppLocale())
       }
+      // Leaflet does not really manage touch events, it provides compatibility mapping with mouse events
+      // but it will not really trigger touch event from the map object, as a consequence we manage this by ourselves
+      L.DomEvent.on(this.map._container, TouchEvents.join(' '), this.onTouchEvent, this)
       bindLeafletEvents(this.map, LeafletEvents.Map, this, viewerOptions)
       const scale = _.get(viewerOptions, 'scale', true)
       if (scale) this.setupScaleControl(scale)
@@ -96,6 +99,53 @@ export const baseMap = {
       const hiddenPane = this.map.createPane('kdk-hidden-features')
       hiddenPane.style.display = 'none'
       this.onMapReady()
+    },
+    convertTouches (touches) {
+      const convertedTouches = []
+      if (touches.length) {
+        for (let i = 0; i < touches.length; i++) {
+          const touch = touches.item(i)
+          const data = {
+            containerPoint: this.map.mouseEventToContainerPoint(touch)
+          }
+          if (data.containerPoint) {
+            data.layerPoint = this.map.containerPointToLayerPoint(data.containerPoint)
+            data.latlng = this.map.layerPointToLatLng(data.layerPoint)
+          }
+          convertedTouches.push(data)
+        }
+      }
+      return convertedTouches
+    },
+    onTouchEvent (event) {
+      // This code is largely based on Leaflet map _fireDOMEvent handler
+      const type = event.type
+      // Find the layer the event is propagating from and its parents.
+      let targets = this.map._findEventTargets(event, type)
+      if (!targets.length) return
+
+      // Convert all touches to container/map coordinates
+      const touches = this.convertTouches(event.touches)
+      const changedTouches = this.convertTouches(event.changedTouches)
+      const targetTouches = this.convertTouches(event.targetTouches)
+      
+      for (let i = 0; i < targets.length; i++) {
+        const target = targets[i]
+        const data = {
+          originalEvent: event,
+          touches, changedTouches, targetTouches
+        }
+        // For touchend we need to use changesTouches to know where the touch leaves the surface
+        const touchesForTarget = (_.isEmpty(touches) ? (_.isEmpty(changedTouches) ? [] : changedTouches) : touches)
+        const isMarker = target.getLatLng && (!target._radius || target._radius <= 10)
+        data.containerPoint = (isMarker ? this.map.latLngToContainerPoint(target.getLatLng()) : _.get(touchesForTarget, '[0].containerPoint'))
+        if (data.containerPoint) {
+          data.layerPoint = this.map.containerPointToLayerPoint(data.containerPoint)
+          data.latlng = (isMarker ? target.getLatLng() : this.map.layerPointToLatLng(data.layerPoint))
+        }
+        target.fire(type, data, true)
+        if (data.originalEvent._stopped) return
+      }
     },
     onMapReady () {
       this.$emit('map-ready', 'leaflet')
@@ -649,19 +699,10 @@ export const baseMap = {
     this.$engineEvents = new Emitter()
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
     this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
-
-    /*
-    console.log('***** KDK ****')
-    console.log(L.Icon.Default.prototype._getIconUrl())
-
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: await loadIcon('marker-icon-2x.png'),
-      iconUrl: await loadIcon('marker-icon.png'),
-      shadowUrl: await loadIcon('marker-shadow.png')
-    }) */
   },
   beforeUnmount () {
     this.clearLayers()
+    L.DomEvent.off(this.map._container, TouchEvents.join(' '), this.onTouchEvent, this)
     this.$engineEvents.off('zoomend', this.onMapZoomChanged)
     this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
