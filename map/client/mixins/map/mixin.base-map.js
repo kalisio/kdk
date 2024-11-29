@@ -102,9 +102,9 @@ export const baseMap = {
     },
     convertTouches (touches) {
       const convertedTouches = []
-      if (touches.length) {
+      if (touches && touches.length) {
         for (let i = 0; i < touches.length; i++) {
-          const touch = touches.item(i)
+          const touch = (typeof touches.item === 'function' ? touches.item(i) : touches[i])
           const data = {
             containerPoint: this.map.mouseEventToContainerPoint(touch)
           }
@@ -118,8 +118,19 @@ export const baseMap = {
       return convertedTouches
     },
     onTouchEvent (event) {
-      // This code is largely based on Leaflet map _fireDOMEvent handler
-      const type = event.type
+      // Some browsers like firefox rely on pointer events, in this case Leaflet automatically
+      // manages mapping with mouse/touch events but then this listener will be called by mouse pointer events
+      if (event.pointerType === 'mouse') return
+
+      // This code is largely based on Leaflet map _fireDOMEvent handler and DomEvent.Pointer for pointer event management
+      const pointerEventsMapping = {
+        pointerdown: 'touchstart',
+        pointermove: 'touchmove',
+        pointerup: 'touchend',
+        pointercancel: 'touchcancel'
+      }
+      const pointerEvent = pointerEventsMapping[event.type]
+      const type = pointerEvent || event.type
       // Find the layer the event is propagating from and its parents.
       let targets = this.map._findEventTargets(event, type)
       if (!targets.length) return
