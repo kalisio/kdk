@@ -168,7 +168,8 @@ export function createShape (options) {
   }
   // Set div container vars
   const extraStyle = _.get(options, 'extraStyle', '')
-  const beginDivTag = `<div style="position: relative; width: ${size.width}px; height: ${size.height}px; ${extraStyle}">`
+  const idAttr = _.get(options, 'id') ? `id=${options.id}`: ''
+  const beginDivTag = `<div ${idAttr} style="position: relative; width: ${size.width}px; height: ${size.height}px; ${extraStyle}">`
   const endDivTag = '</div>'
   // Render shape
   let beginSvgTag = ''
