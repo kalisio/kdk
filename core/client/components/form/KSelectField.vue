@@ -11,9 +11,6 @@
     v-model="model"
     :label="label"
     :multiple="multiple"
-    :toggle="toggle"
-    :radio="radio"
-    :use-chips="chips"
     :options="options"
     emit-value
     map-options
@@ -40,7 +37,12 @@
     </template>
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
-      <span :class="selectedClass()">
+      <q-chip v-if="chips">
+        <span :class="selectedClass()">
+          {{ scope.opt.label }}
+        </span>
+      </q-chip>
+      <span v-else :class="selectedClass()">
         {{ scope.opt.label }}
       </span>
     </template>
@@ -74,12 +76,6 @@ export default {
     },
     clearable () {
       return _.get(this.properties, 'field.clearable', true)
-    },
-    toggle () {
-      return _.get(this.properties, 'field.toggle', false)
-    },
-    radio () {
-      return _.get(this.properties, 'field.radio', false)
     },
     chips () {
       return _.get(this.properties, 'field.chips', false)
