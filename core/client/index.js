@@ -6,6 +6,7 @@ import { Theme } from './theme.js'
 import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
 import { LocalCache } from './local-cache.js'
+import { Broadcaster } from './broadcaster.js'
 import { Storage } from './storage.js'
 import { TemplateContext } from './template-context.js'
 import { Time } from './time.js'
@@ -32,6 +33,7 @@ export { Theme }
 export { Capabilities }
 export { LocalStorage }
 export { LocalCache }
+export { Broadcaster }
 export { Storage }
 export { TemplateContext }
 export { Time }
@@ -62,13 +64,14 @@ export default async function initialize () {
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
 
   // Initialize singletons that might be used globally first
+  await Capabilities.initialize()
   LocalStorage.initialize()
   LocalCache.initialize()
+  Broadcaster.initialize()
   Storage.initialize()
   Theme.initialize()
   Time.initialize()
   Units.initialize()
-  await Capabilities.initialize()
   // Then services
   api.configure(services)
   // Last, create the models listened by the main layout/pages components
