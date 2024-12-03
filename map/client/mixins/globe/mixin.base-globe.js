@@ -9,6 +9,8 @@ import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceE
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
 import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
+import { generateLayerDefinition } from '../../utils/utils.layers.js'
+
 // The URL on our server where CesiumJS's static files are hosted
 window.CESIUM_BASE_URL = '/Cesium/'
 buildModuleUrl.setBaseUrl('/Cesium/')
@@ -276,6 +278,16 @@ export const baseGlobe = {
     onLayerAdded (layer) {
       this.$emit('layer-added', layer)
       this.$engineEvents.emit('layer-added', layer)
+    },
+    async addGeoJsonLayer (layerSpec, geoJson){
+      if(!generateLayerDefinition(layerSpec, geoJson)) return;
+      // Create an empty layer
+      await this.addLayer(layerSpec);
+      // Update the layer with the geoJson content
+      await this.updateLayer(layerSpec.name, geoJson);
+      // Zoom to the layer
+      if(geoJson.bbox) this.zoomToBBox(geoJson.bbox);
+      else this.zoomToLayer(layerSpec.name);
     },
     renameLayer (previousName, newName) {
       const layer = this.getLayerByName(previousName)

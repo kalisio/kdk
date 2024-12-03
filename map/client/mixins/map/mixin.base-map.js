@@ -26,10 +26,10 @@ import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import { Time } from '../../../../core/client/time.js'
 import { getAppLocale } from '../../../../core/client/utils/index.js'
-import { uid } from 'quasar'
 import '../../leaflet/BoxSelection.js'
 import { Geolocation } from '../../geolocation.js'
 import { LeafletEvents, TouchEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
+import { generateLayerDefinition } from '../../utils/utils.layers.js'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
@@ -481,43 +481,7 @@ export const baseMap = {
       this.$engineEvents.emit('layer-added', layer)
     },
     async addGeoJsonLayer (layerSpec, geoJson) {
-      // Check wther the geoJson content is a valid geoJson
-      if (geoJson.type !== 'FeatureCollection' && geoJson.type !== 'Feature') {
-        logger.error('invalid geoJson content')
-        return
-      }
-      const engine = {
-        type: 'geoJson',
-        isVisible: true,
-        realtime: true
-      }
-      const defaultLayer = {
-        type: 'OverlayLayer',
-        scope: 'user',
-        isDataEditable: true,
-        leaflet: engine,
-        // Avoid sharing reference to the same object although options are similar
-        // otherwise updating one will automatically update the other one
-        cesium: Object.assign({}, engine)
-      }
-      _.defaults(layerSpec, defaultLayer)
-      if (!layerSpec.schema) {
-        const schema = generatePropertiesSchema(geoJson, layerSpec.name)
-        layerSpec.schema = { name: layerSpec.name, content: schema }
-      }
-      if (!layerSpec.featureId) {
-        if (geoJson.type === 'FeatureCollection') _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
-        else geoJson._id = uid().toString()
-      }
-      // Check for panes to be created
-      const panes = []
-      _.forEach(geoJson.features, feature => {
-        const pane = _.get(feature, 'style.pane')
-        if (pane) panes.push({
-          name: pane
-        })
-      })
-      if (!_.isEmpty(panes)) _.set(layerSpec, 'leaflet.panes', panes)
+      if(!generateLayerDefinition(layerSpec, geoJson)) return;
       // Create an empty layer used as a container
       await this.addLayer(layerSpec)
       // Set the content
