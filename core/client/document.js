@@ -21,7 +21,7 @@ export const Document = {
         jpeg: 'document/KImage',
         'image/jpeg': 'document/KImage',
         png: 'document/KImage',
-        'image/png': 'document/KImage',
+        'image/png': 'document/KImage'
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img'])

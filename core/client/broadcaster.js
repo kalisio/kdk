@@ -4,7 +4,7 @@ import config from 'config'
 
 export const Broadcaster = {
   initialize () {
-    this.channelName =  _.kebabCase(_.get(config, 'appName', 'kdk'))
+    this.channelName = _.kebabCase(_.get(config, 'appName', 'kdk'))
     this.channel = new BroadcastChannel(this.channelName)
     logger.debug(`[KDK] Broadcaster initialized with channel '${this.channelName}'`)
   },
