@@ -110,7 +110,7 @@ export const geojsonLayers = {
           entitiesToRemove.push(entity)
         }
         // Walls
-        const wall = _.get(properties, 'wall')
+        const wall = _.get(properties, 'wall') || _.get(properties, 'entityStyle.wall');
         if (wall && entity.polyline) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
@@ -132,7 +132,7 @@ export const geojsonLayers = {
           })
         }
         // Corridors
-        const corridor = _.get(properties, 'corridor')
+        const corridor = _.get(properties, 'corridor') || _.get(properties, 'entityStyle.corridor');
         if (corridor && entity.polyline) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like width be set using styling options
@@ -159,7 +159,8 @@ export const geojsonLayers = {
           entitiesToRemove.push(entity)
         }
         // Labels
-        const text = _.get(properties, 'icon-text')
+        const text = _.get(properties, 'icon-text') || _.get(properties, 'entityStyle.label.text');
+        const billboardImage = _.get(properties, 'entityStyle.billboard.image');
         if (text) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
@@ -175,7 +176,8 @@ export const geojsonLayers = {
               fillColor: new ConstantProperty(fill),
               outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth
-            }
+            },
+            billboard: billboardImage ? { image: billboardImage } : undefined
           })
           entitiesToRemove.push(entity)
         }
@@ -248,7 +250,7 @@ export const geojsonLayers = {
         const text = _.get(feature, 'style.text.label')
         if (text) simpleStyle['icon-text'] = text
         if (!feature.properties) feature.properties = simpleStyle
-        else Object.assign(feature.properties, simpleStyle)
+        else feature.properties = Object.assign(simpleStyle, feature.properties);
       }
       // For activities
       if (_.has(this, 'activityOptions.engine.cluster')) {
@@ -346,7 +348,9 @@ export const geojsonLayers = {
       // Retrieve the layer
       const layer = this.getCesiumLayerByName(name)
       if (!layer) return // Cannot update invisible layer
-      if (typeof layer.updateGeoJson === 'function') layer.updateGeoJson(geoJson, updateOptions)
+      // Update the geoJson layer
+      // Need to await to make zoomToLayer work properly on load
+      if (typeof layer.updateGeoJson === 'function') await layer.updateGeoJson(geoJson, updateOptions)
 
       // We keep geojson data for in memory layer in a cache since
       // these layers will be destroyed when hidden. We need to be able to restore

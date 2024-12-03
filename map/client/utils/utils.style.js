@@ -27,6 +27,7 @@ export const SimpleStyleToPointStyle = {
   'stroke-color': 'stroke.color',
   'stroke-opacity': 'stroke.opacity',
   'stroke-width': 'stroke.width',
+  'icon': 'icon.url',
   'icon-url': 'icon.url',
   'icon-html': 'html',
   'icon-color': 'icon.color',

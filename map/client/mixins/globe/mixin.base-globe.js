@@ -46,7 +46,8 @@ export const baseGlobe = {
           vrButton: false,
           fullscreenButton: false,
           animation: false,
-          timeline: false
+          timeline: false,
+          depthTestAgainstTerrain: false
         })
       if (token) Ion.defaultAccessToken = token
       // If we don't need ion
@@ -57,6 +58,7 @@ export const baseGlobe = {
         terrainProviderViewModels: []
       })
       this.viewer = new Viewer(domEl, this.viewerOptions)
+      this.viewer.scene.globe.depthTestAgainstTerrain = _.get(this.viewerOptions, 'depthTestAgainstTerrain', false);
       const backgroundColor = _.get(this.viewerOptions, 'backgroundColor')
       this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Color.BLACK)
       if (this.viewer.scene.globe) {
