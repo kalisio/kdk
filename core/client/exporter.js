@@ -72,7 +72,7 @@ const ExporterQueue = {
     }
     // close the notification
     request.notification()
-    // donwload the file
+    // download the file
     if (params.SignedUrl) {
       // Use an iframe to download the file
       // see https://github.com/socketio/socket.io/issues/4436
