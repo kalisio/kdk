@@ -17,14 +17,13 @@ import { makeServiceSnapshot } from '../common/utils.js'
 // Disable default feathers behaviour of reauthenticating on disconnect
 feathers.authentication.AuthenticationClient.prototype.handleSocket = () => {}
 
-// Setup log level
-if (_.get(configuration, 'logs.level')) {
-  logger.setLevel(_.get(configuration, 'logs.level'), false)
-} else {
-  logger.setLevel('info')
-}
-
 export function createClient (config) {
+  // Setup log level
+  if (_.get(configuration, 'logs.level')) {
+    logger.setLevel(_.get(configuration, 'logs.level'), false)
+  } else {
+    logger.setLevel('info')
+  }
   // Initiate the client
   const api = feathers()
   // Initialize connection state/listeners
