@@ -141,7 +141,7 @@ function onFieldRefCreated (reference) {
     // Check whether the form is ready
     nbReadyFields.value++
     if (nbReadyFields.value === fields.value.length) {
-      logger.debug(`schema ${schema.value.$id} ready`)
+      logger.debug(`[KDK] schema ${schema.value.$id} ready`)
       isReady.value = true
       emit('form-ready')
     }

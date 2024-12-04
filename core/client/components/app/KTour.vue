@@ -180,7 +180,7 @@ function getTarget (target) {
         // Then retrieve the right index
         if (index < elements.length) element = elements[index]
       } catch (error) {
-        logger.debug('Looking for tour target', error)
+        logger.debug('[KDK] Looking for tour target', error)
       }
     }
   }
@@ -189,7 +189,7 @@ function getTarget (target) {
     try {
       element = document.querySelector(target)
     } catch (error) {
-      logger.debug('Looking for tour target', error)
+      logger.debug('[KDK] Looking for tour target', error)
     }
     // Do not return invisible target
     // FIXME: does not work when element is hidden by parent

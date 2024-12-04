@@ -121,7 +121,7 @@ export const Time = {
   },
   startRealtime () {
     if (this.isRealtime()) {
-      logger.warn('Realtime mode is already active')
+      logger.warn('[KDK] Realtime mode is already active')
       return
     }
     Store.patch('time', { realtime: true })
@@ -132,7 +132,7 @@ export const Time = {
   },
   stopRealtime () {
     if (!this.isRealtime()) {
-      logger.warn('Realtime mode is alrady inactive')
+      logger.warn('[KDK] Realtime mode is alrady inactive')
       return
     }
     Store.patch('time', { realtime: false })

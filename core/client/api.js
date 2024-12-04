@@ -272,9 +272,9 @@ export function createClient (config) {
     if (_.has(resource, 'abilities')) resource = undefined
 
     const abilities = (hasUser ? _.get(user, 'abilities') : Store.get('user.abilities'))
-    logger.debug('Check for abilities ', operation, service, context, resource, abilities)
+    logger.debug('[KDK] Check for abilities ', operation, service, context, resource, abilities)
     if (!abilities) {
-      logger.debug('Access denied without abilities')
+      logger.debug('[KDK] Access denied without abilities')
       return false
     }
     let result
@@ -284,7 +284,7 @@ export function createClient (config) {
       const path = api.getServicePath(service, context, false)
       result = permissions.hasServiceAbilities(abilities, path)
       if (!result) {
-        logger.debug('Access to service path ' + path + ' denied')
+        logger.debug('[KDK] Access to service path ' + path + ' denied')
         return false
       } else if (operation === 'service') {
         // When we only check for service-level access return
@@ -296,9 +296,9 @@ export function createClient (config) {
       result = abilities.can(operation)
     }
     if (!result) {
-      logger.debug('Access to resource denied')
+      logger.debug('[KDK] Access to resource denied')
     } else {
-      logger.debug('Access to resource granted')
+      logger.debug('[KDK] Access to resource granted')
     }
     return result
   }

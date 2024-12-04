@@ -169,7 +169,7 @@ export const baseEditor = {
           const response = await this.getService().create(object, { query })
           onServiceResponse(response)
         } else {
-          logger.warn('Invalid editor mode')
+          logger.warn('[KDK] Invalid editor mode')
         }
       } catch (error) {
         // User error message on operation should be raised by error hook, otherwise this is more a coding error

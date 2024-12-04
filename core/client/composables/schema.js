@@ -21,7 +21,7 @@ export function useSchema () {
       schema.value = _.cloneDeep(schemaModule.default)
     } else {
       // clone the schema object
-      logger.trace('setting schema ', schemaNameOrObject.$id)
+      logger.trace('[KDK] setting schema ', schemaNameOrObject.$id)
       schema.value = _.cloneDeep(schemaNameOrObject)
     }
     // filter ther schema
