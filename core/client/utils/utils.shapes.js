@@ -80,6 +80,9 @@ export const Shapes = {
       translation: ['-50%', '-60%']
     },
     anchor: 'bottom-center'
+  },
+  add (name, shape) {
+    this[name] = shape
   }
 }
 
