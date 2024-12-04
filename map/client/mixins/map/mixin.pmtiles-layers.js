@@ -37,7 +37,7 @@ export const pmtilesLayers = {
         rules = mapbox_style(style, {})
       } else {
         // Manage templating
-        leafletOptions.template.forEach(entry => {
+        _.get(leafletOptions, 'template', []).forEach(entry => {
           // protomaps allows property functions with zomm/feature as input
           const f = (zoom, feature) => {
             const context = Object.assign({ properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }, TemplateContext.get())
@@ -45,15 +45,17 @@ export const pmtilesLayers = {
           }
           _.set(leafletOptions, entry.property, f)
         })
-        const styleRules = _.map(style, rule => Object.assign(_.omit(rule, ['symbolizer']), {
-            symbolizer: new protomaps[rule.symbolizer.type](rule.symbolizer)
-          })
-        )
-        const isLabelSymbolizer = (rule) => typeof rule.symbolizer.place === 'function'
-        const isNotLabelSymbolizer = (rule) => !isLabelSymbolizer(rule)
-        // Support v1.x as well as v2.x
-        rules.paint_rules = rules.paintRules = _.filter(styleRules, isNotLabelSymbolizer)
-        rules.label_rules = rules.labelRules = _.filter(styleRules, isLabelSymbolizer)
+        if (style) {
+          const styleRules = _.map(style, rule => Object.assign(_.omit(rule, ['symbolizer']), {
+              symbolizer: new protomaps[rule.symbolizer.type](rule.symbolizer)
+            })
+          )
+          const isLabelSymbolizer = (rule) => typeof rule.symbolizer.place === 'function'
+          const isNotLabelSymbolizer = (rule) => !isLabelSymbolizer(rule)
+          // Support v1.x as well as v2.x
+          rules.paint_rules = rules.paintRules = _.filter(styleRules, isNotLabelSymbolizer)
+          rules.label_rules = rules.labelRules = _.filter(styleRules, isLabelSymbolizer)
+        }
       }
       
       return this.createLeafletLayer({
