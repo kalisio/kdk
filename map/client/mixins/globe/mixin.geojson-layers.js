@@ -44,7 +44,7 @@ export const geojsonLayers = {
       const cesiumOptions = options.cesium
       // Remove mode
       if (_.get(updateOptions, 'remove', false)) {
-        let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+        const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         features.forEach(feature => {
           const id = getFeatureId(feature, options)
           CustomTypes.forEach(type => {
@@ -110,7 +110,7 @@ export const geojsonLayers = {
           entitiesToRemove.push(entity)
         }
         // Walls
-        const wall = _.get(properties, 'wall') || _.get(properties, 'entityStyle.wall');
+        const wall = _.get(properties, 'wall') || _.get(properties, 'entityStyle.wall')
         if (wall && entity.polyline) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
@@ -132,7 +132,7 @@ export const geojsonLayers = {
           })
         }
         // Corridors
-        const corridor = _.get(properties, 'corridor') || _.get(properties, 'entityStyle.corridor');
+        const corridor = _.get(properties, 'corridor') || _.get(properties, 'entityStyle.corridor')
         if (corridor && entity.polyline) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like width be set using styling options
@@ -159,8 +159,8 @@ export const geojsonLayers = {
           entitiesToRemove.push(entity)
         }
         // Labels
-        const text = _.get(properties, 'icon-text') || _.get(properties, 'entityStyle.label.text');
-        const billboardImage = _.get(properties, 'entityStyle.billboard.image');
+        const text = _.get(properties, 'icon-text') || _.get(properties, 'entityStyle.label.text')
+        const billboardImage = _.get(properties, 'entityStyle.billboard.image')
         if (text) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
@@ -250,7 +250,7 @@ export const geojsonLayers = {
         const text = _.get(feature, 'style.text.label')
         if (text) simpleStyle['icon-text'] = text
         if (!feature.properties) feature.properties = simpleStyle
-        else feature.properties = Object.assign(simpleStyle, feature.properties);
+        else feature.properties = Object.assign(simpleStyle, feature.properties)
       }
       // For activities
       if (_.has(this, 'activityOptions.engine.cluster')) {

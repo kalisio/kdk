@@ -58,7 +58,7 @@ export const baseGlobe = {
         terrainProviderViewModels: []
       })
       this.viewer = new Viewer(domEl, this.viewerOptions)
-      this.viewer.scene.globe.depthTestAgainstTerrain = _.get(this.viewerOptions, 'depthTestAgainstTerrain', false);
+      this.viewer.scene.globe.depthTestAgainstTerrain = _.get(this.viewerOptions, 'depthTestAgainstTerrain', false)
       const backgroundColor = _.get(this.viewerOptions, 'backgroundColor')
       this.viewer.scene.backgroundColor = (backgroundColor ? createCesiumObject('Color', ...backgroundColor) : Color.BLACK)
       if (this.viewer.scene.globe) {
@@ -281,26 +281,26 @@ export const baseGlobe = {
       this.$emit('layer-added', layer)
       this.$engineEvents.emit('layer-added', layer)
     },
-    async addGeoJsonLayer (layerSpec, geoJson){
-      if(!generateLayerDefinition(layerSpec, geoJson)) return;
+    async addGeoJsonLayer (layerSpec, geoJson) {
+      if (!generateLayerDefinition(layerSpec, geoJson)) return
       const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
       _.forEach(features, feature => {
-        const cesiumStyle = convertToCesiumFromStyle(feature);
+        const cesiumStyle = convertToCesiumFromStyle(feature)
         _.mergeWith(feature, _.get(cesiumStyle, 'convertedStyle', {}), (objValue, srcValue) => {
-          if (_.isArray(objValue)) return srcValue;
-        });
+          if (_.isArray(objValue)) return srcValue
+        })
 
-        for(const feature of _.get(cesiumStyle, 'additionalFeatures', [])){
-          geoJson.features.push(feature);
+        for (const feature of _.get(cesiumStyle, 'additionalFeatures', [])) {
+          geoJson.features.push(feature)
         }
-      });
+      })
       // Create an empty layer
-      await this.addLayer(layerSpec);
+      await this.addLayer(layerSpec)
       // Update the layer with the geoJson content
-      await this.updateLayer(layerSpec.name, geoJson);
+      await this.updateLayer(layerSpec.name, geoJson)
       // Zoom to the layer
-      if(geoJson.bbox) this.zoomToBBox(geoJson.bbox);
-      else this.zoomToLayer(layerSpec.name);
+      if (geoJson.bbox) this.zoomToBBox(geoJson.bbox)
+      else this.zoomToLayer(layerSpec.name)
     },
     renameLayer (previousName, newName) {
       const layer = this.getLayerByName(previousName)
@@ -415,7 +415,7 @@ export const baseGlobe = {
       if (this.viewerOptions.debug) {
         const baseQuaternion = Transforms.headingPitchRollQuaternion(destination, orientation, Ellipsoid.WGS84, Transforms.eastNorthUpToFixedFrame)
         const cameraQuaternion = Transforms.headingPitchRollQuaternion(this.viewer.camera.positionWC,
-        new HeadingPitchRoll(this.viewer.camera.heading, this.viewer.camera.pitch, this.viewer.camera.roll), Ellipsoid.WGS84, Transforms.eastNorthUpToFixedFrame)
+          new HeadingPitchRoll(this.viewer.camera.heading, this.viewer.camera.pitch, this.viewer.camera.roll), Ellipsoid.WGS84, Transforms.eastNorthUpToFixedFrame)
         if (this.baseFrameDebug) {
           this.baseFrameDebug.modelMatrix = Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(baseQuaternion), destination)
           this.finalFrameDebug.modelMatrix = Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(cameraQuaternion), this.viewer.camera.positionWC)

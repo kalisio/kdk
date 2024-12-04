@@ -1,5 +1,5 @@
 import logger from 'loglevel'
-import _ from 'lodash';
+import _ from 'lodash'
 import { kml } from '@tmcw/togeojson'
 import { i18n } from '../../../core/client/i18n.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../utils/utils.style.js'
@@ -17,7 +17,7 @@ export const KMLReader = {
       reader.onloadend = () => {
         let content = reader.result
         try {
-          content = convertKMLStyleToKDKStyle(new DOMParser().parseFromString(content, 'text/xml'));
+          content = convertKMLStyleToKDKStyle(new DOMParser().parseFromString(content, 'text/xml'))
         } catch (error) {
           logger.debug(error)
           reject(new Error(i18n.t('errors.INVALID_KML_FILE', { file: file.name }), { errors: error }))
@@ -37,58 +37,58 @@ export const KMLReader = {
   }
 }
 
-function getExtraPropertiesFromKMLByName(document){
-  const properties = {};
-  const propertiesToAdd = ['extrude', 'altitudeMode'];
-  const placemarks = document.getElementsByTagName('Placemark');
+function getExtraPropertiesFromKMLByName (document) {
+  const properties = {}
+  const propertiesToAdd = ['extrude', 'altitudeMode']
+  const placemarks = document.getElementsByTagName('Placemark')
   _.forEach(placemarks, placemark => {
-    const nameElements = placemark.getElementsByTagName('name');
-    if(!nameElements.length) return;
-    const name = nameElements[0].textContent;
+    const nameElements = placemark.getElementsByTagName('name')
+    if (!nameElements.length) return
+    const name = nameElements[0].textContent
     _.forEach(propertiesToAdd, property => {
-      const propertyElements = placemark.getElementsByTagName(property);
-      if(!propertyElements.length) return;
+      const propertyElements = placemark.getElementsByTagName(property)
+      if (!propertyElements.length) return
 
-      let value = propertyElements[0].textContent;
-      if(['0', '1'].includes(value)){
-        value = value === '1' ? true : false;
+      let value = propertyElements[0].textContent
+      if (['0', '1'].includes(value)) {
+        value = value === '1'
       }
-      _.set(properties, [name, property].join('.'), value);
-    });
-  });
-  return properties;
+      _.set(properties, [name, property].join('.'), value)
+    })
+  })
+  return properties
 }
 
-function convertKMLStyleToKDKStyle(document) {
-  const extraProperties = getExtraPropertiesFromKMLByName(document);
+function convertKMLStyleToKDKStyle (document) {
+  const extraProperties = getExtraPropertiesFromKMLByName(document)
 
-  const geoJson = kml(document);
+  const geoJson = kml(document)
 
   _.forEach(_.get(geoJson, 'features', []), feature => {
-    const name = _.get(feature, 'properties.name', false);
-    if(!name || !feature.geometry) return;
-    let style = {};
-    switch(feature.geometry.type){
+    const name = _.get(feature, 'properties.name', false)
+    if (!name || !feature.geometry) return
+    let style = {}
+    switch (feature.geometry.type) {
       case 'Point':
-        style = convertSimpleStyleToPointStyle(feature.properties);
-        break;
+        style = convertSimpleStyleToPointStyle(feature.properties)
+        break
       case 'LineString':
-        style = convertSimpleStyleToLineStyle(feature.properties);
-        break;
+        style = convertSimpleStyleToLineStyle(feature.properties)
+        break
       case 'Polygon':
-        style = convertSimpleStyleToPolygonStyle(feature.properties);
-        break;
+        style = convertSimpleStyleToPolygonStyle(feature.properties)
+        break
       default:
         logger.debug(`Unsupported geometry type ${feature.geometry.type}`)
-        break;
+        break
     }
 
-    if(_.has(extraProperties, name)){
-      _.merge(style, extraProperties[name]);
+    if (_.has(extraProperties, name)) {
+      _.merge(style, extraProperties[name])
     }
 
-    _.set(feature, 'style', style);
-  });
+    _.set(feature, 'style', style)
+  })
 
-  return geoJson;
+  return geoJson
 }

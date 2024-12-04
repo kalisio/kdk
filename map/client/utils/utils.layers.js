@@ -372,13 +372,15 @@ export function generateLayerDefinition(layerSpec, geoJson){
   const panes = []
   _.forEach(geoJson.features, feature => {
     const pane = _.get(feature, 'style.pane')
-    if (pane) panes.push({
-      name: pane
-    })
+    if (pane) {
+      panes.push({
+        name: pane
+      })
+    }
   })
   if (!_.isEmpty(panes)) _.set(layerSpec, 'leaflet.panes', panes)
 
-  return true;
+  return true
 }
 
 export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {

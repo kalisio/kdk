@@ -139,7 +139,7 @@ export const baseMap = {
       const touches = this.convertTouches(event.touches)
       const changedTouches = this.convertTouches(event.changedTouches)
       const targetTouches = this.convertTouches(event.targetTouches)
-      
+
       for (let i = 0; i < targets.length; i++) {
         const target = targets[i]
         const data = {
@@ -481,7 +481,7 @@ export const baseMap = {
       this.$engineEvents.emit('layer-added', layer)
     },
     async addGeoJsonLayer (layerSpec, geoJson) {
-      if(!generateLayerDefinition(layerSpec, geoJson)) return;
+      if (!generateLayerDefinition(layerSpec, geoJson)) return
       // Create an empty layer used as a container
       await this.addLayer(layerSpec)
       // Set the content
