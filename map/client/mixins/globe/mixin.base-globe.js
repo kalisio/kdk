@@ -8,7 +8,7 @@ import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceE
          exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, Matrix3, Matrix4, DebugCameraPrimitive, DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
-import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
+import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject, convertToCesiumFromStyle } from '../../utils.globe.js'
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
 
 // The URL on our server where CesiumJS's static files are hosted
@@ -283,6 +283,17 @@ export const baseGlobe = {
     },
     async addGeoJsonLayer (layerSpec, geoJson){
       if(!generateLayerDefinition(layerSpec, geoJson)) return;
+      const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+      _.forEach(features, feature => {
+        const cesiumStyle = convertToCesiumFromStyle(feature);
+        _.mergeWith(feature, _.get(cesiumStyle, 'convertedStyle', {}), (objValue, srcValue) => {
+          if (_.isArray(objValue)) return srcValue;
+        });
+
+        for(const feature of _.get(cesiumStyle, 'additionalFeatures', [])){
+          geoJson.features.push(feature);
+        }
+      });
       // Create an empty layer
       await this.addLayer(layerSpec);
       // Update the layer with the geoJson content

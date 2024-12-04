@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { kml } from '@tmcw/togeojson'
 import { i18n } from '../../../core/client/i18n.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../utils/utils.style.js'
-import { convertToCesiumFromStyle } from '../cesium/utils/utils.style.js'
 
 export const KMLReader = {
   read (files, options) {
@@ -89,15 +88,6 @@ function convertKMLStyleToKDKStyle(document) {
     }
 
     _.set(feature, 'style', style);
-
-    const cesiumStyle = convertToCesiumFromStyle(feature);
-    _.mergeWith(feature, _.get(cesiumStyle, 'convertedStyle', {}), (objValue, srcValue) => {
-      if (_.isArray(objValue)) return srcValue;
-    });
-
-    for(const feature of _.get(cesiumStyle, 'additionalFeatures', [])){
-      geoJson.features.push(feature);
-    }
   });
 
   return geoJson;
