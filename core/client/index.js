@@ -3,6 +3,7 @@ import logger from 'loglevel'
 import config from 'config'
 import { Store } from './store.js'
 import { Theme } from './theme.js'
+import { Platform } from './platform.js'
 import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
 import { LocalCache } from './local-cache.js'
@@ -30,6 +31,7 @@ import { Schema } from '../common/index.js'
 // export * from './components'
 export { Store }
 export { Theme }
+export { Platform }
 export { Capabilities }
 export { LocalStorage }
 export { LocalCache }
@@ -64,6 +66,7 @@ export default async function initialize () {
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
 
   // Initialize singletons that might be used globally first
+  await Platform.initialize()
   await Capabilities.initialize()
   LocalStorage.initialize()
   LocalCache.initialize()

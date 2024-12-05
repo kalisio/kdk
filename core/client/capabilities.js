@@ -13,12 +13,11 @@ export const Capabilities = {
     }
     if (!this.content) {
       const capabilities = await window.fetch(api.getConfig('domain') + _.get(config, 'apiPath') + '/capabilities')
-      const content = await capabilities.json()
-      logger.debug('[KDK] Fetched capabilities:', content)
-      this.content = content
+      this.content = await capabilities.json()
       // Store latest capabilities data for offline mode
-      await LocalForage.setItem('capabilities', content)
+      await LocalForage.setItem('capabilities', this.content)
     }
+    logger.debug('[KDK] Capabilities initialized:', this.content)
     if (!this.content) return
     // Backend might override some defaults in client config
     _.forOwn(_.pick(this.content, ['gateway']), (value, key) => {
