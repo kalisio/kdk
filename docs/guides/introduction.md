@@ -16,3 +16,11 @@ In these guides you will learn step-by-step how the setup your development envir
 * [Configure your app](./development/configure.md)
 * [Deploy your app](./development/deploy.md)
 * [Publish your app](./development/publish.md)
+
+
+## How To
+
+### ** Work In Progress **
+Example for some common configurations
+
+* [Create a service](./howTo/createService.md)

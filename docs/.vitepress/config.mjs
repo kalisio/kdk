@@ -75,7 +75,8 @@ function getGuidesSidebar () {
         { text: 'Deploy your app', link: '/guides/development/deploy' },
         { text: 'Publish with KDK', link: '/guides/development/publish' }
       ]
-    }
+    },
+    { text: 'How To', collapsed: true, items: [{ text: 'Create a service', link: '/guides/howTo/createService' }]},
   ]
 }
 
