@@ -3,8 +3,8 @@
     User agent && copy action
   -->
   <div>
-    <div class="full-width row justify-between items-center">
-      <div class="q-pa-sm col-11 bg-grey-3">{{ $t('KPlatform.USER_AGENT') }}</div>
+    <div class="full-width row justify-between items-center q-gutter-x-sm">
+      <div class="q-pa-sm col bg-grey-3">{{ $t('KPlatform.USER_AGENT') }}</div>
 
         <KAction
           id="copy-clipboard"
@@ -13,7 +13,6 @@
           tooltip="KPlatform.COPY_INFO"
           renderer="fab"
           color="primary"
-          class="col-1"
         />
     </div>
     <div class="q-px-md q-py-sm full-width text-caption">{{ Platform.getData().userAgent }}</div>
@@ -66,7 +65,6 @@
       expand-separator
       dense
       header-class="bg-grey-2"
-      default-opened
       class="q-pa-sm"
     >
       <q-list class="q-pa-sm" separator dense>
