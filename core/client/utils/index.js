@@ -18,7 +18,6 @@ export * from './utils.shapes.js'
 export * from './utils.session.js'
 export * from './utils.time.js'
 
-
 Notify.setDefaults({
   position: 'bottom-left',
   timeout: 5000,
