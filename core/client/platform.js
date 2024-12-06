@@ -9,7 +9,7 @@ export const Platform = {
   async initialize () {
     // use Quasar platform data
     _.merge(this, _.omit(QPlatform, ['install', '__installed']))
-    // use fingerprint data 
+    // use fingerprint data
     this.fingerprint = await getFingerprint()
     this.fingerprintData = await getFingerprintData()
     // use locale
@@ -19,14 +19,14 @@ export const Platform = {
     logger.debug('[KDK] Platform initialized with:', this)
   },
   getData () {
-    return { 
+    return {
       userAgent: this.userAgent,
       application: {
         mode: this.is.pwa ? 'PWA' : 'SPA',
         iframe: this.within.iframe,
         permissions: _.get(this.fingerprintData, 'permissions')
       },
-      browser: Object.assign({}, 
+      browser: Object.assign({},
         _.get(this.fingerprintData, 'system.browser'),
         { locale: _.get(this.fingerprintData, 'locales') },
         { webgl: _.get(this.fingerprintData, 'hardware.videocard') }

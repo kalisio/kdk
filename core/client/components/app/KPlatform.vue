@@ -1,5 +1,5 @@
 <template>
-  <!-- 
+  <!--
     User agent && copy action
   -->
   <div>
@@ -18,8 +18,8 @@
     </div>
     <div class="q-px-md q-py-sm full-width text-caption">{{ Platform.getData().userAgent }}</div>
   </div>
-  <!-- 
-    Application 
+  <!--
+    Application
   -->
   <div>
     <div class="full-width q-pa-sm bg-grey-3">{{ $t('KPlatform.APPLICATION') }}</div>
@@ -31,7 +31,7 @@
         </q-item>
       </template>
     </q-list>
-    <q-expansion-item 
+    <q-expansion-item
       :label="$t('KPlatform.PERMISSIONS')"
       expand-separator
       dense
@@ -48,8 +48,8 @@
       </q-list>
   </q-expansion-item>
   </div>
-  <!-- 
-    Browser  
+  <!--
+    Browser
   -->
   <div>
     <div class="full-width q-pa-sm bg-grey-3">{{ $t('KPlatform.BROWSER') }}</div>
@@ -61,7 +61,7 @@
         </q-item>
       </template>
     </q-list>
-    <q-expansion-item 
+    <q-expansion-item
       :label="$t('KPlatform.LOCALE')"
       expand-separator
       dense
@@ -78,7 +78,7 @@
         </template>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item 
+    <q-expansion-item
       :label="$t('KPlatform.WEBGL')"
       expand-separator
       dense
@@ -110,6 +110,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { Notify, copyToClipboard } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { Platform } from '../../platform.js'
