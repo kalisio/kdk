@@ -415,9 +415,16 @@
     "MORE_ABOUT_KALISIO": "More about Kalisio"
   },
   "KPlatform": {
-    "PROPERTY": "Property",
-    "VALUE": "Value",
-    "COPY_INFO": "Copy info",
+    "USER_AGENT": "User agent",
+    "APPLICATION": "Application",
+    "PERMISSIONS": "Permissions",
+    "PERMISSION_GRANTED": "Granted",
+    "PERMISSION_PROMPT": "Prompt",
+    "BROWSER": "Browser",
+    "LOCALE": "Locale",
+    "WEBGL": "WebGL support",
+    "SYSTEM": "System",
+    "COPY_INFO": "Copy info to clipboard",
     "INFO_COPIED": "Platform info copied",
     "CANNOT_COPY_INFO": "Cannot copy platform info"
   },

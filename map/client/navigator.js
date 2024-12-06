@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
+import { Platform } from '../../core/client/platform.js'
 import { Store } from '../../core/client/store.js'
-import { getPlatform } from '../../core/client/utils/utils.platform.js'
 
 export const Navigator = {
 
@@ -27,9 +27,8 @@ export const Navigator = {
     }))
     // Define the default app
     let defaultApp = 'google-maps'
-    const platform = getPlatform()
-    if (platform.ios) defaultApp = 'apple-plan'
-    if (platform.android) defaultApp = 'google-maps'
+    if (Platform.ios) defaultApp = 'apple-plan'
+    if (Platform.android) defaultApp = 'google-maps'
     Store.set('navigator.default', defaultApp)
     logger.debug('[KDK] Navigator initialized with configuration:', Store.get('navigator'))
   },
