@@ -106,7 +106,7 @@ export function useHighlight (name, options = {}) {
           }
         }
         // If highlight size is based on a shape with a radius use it, otherwise go for size
-        if (radius) Object.assign(highlightStyle, { radius: radius + HighlightMargin }) 
+        if (radius) Object.assign(highlightStyle, { radius: radius + 0.5 * HighlightMargin }) 
         else if (size) Object.assign(highlightStyle, { size: [size[0] + HighlightMargin, size[1] + HighlightMargin] })
       }
       Object.assign(highlight, { style: highlightStyle })
