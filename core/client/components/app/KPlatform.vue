@@ -116,7 +116,7 @@ import KAction from '../action/KAction.vue'
 
 // Functions
 function applicationProperties () {
-  return _.pick(Platform.getData('application') ['mode', 'iframe'])
+  return _.pick(Platform.getData('application'), ['mode', 'iframe'])
 }
 function browserProperties () {
   return _.pick(Platform.getData('browser'), ['name', 'version'])
