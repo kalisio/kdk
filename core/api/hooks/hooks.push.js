@@ -14,35 +14,41 @@ export async function sendNewSubscriptionEmail (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'sendNewSubscriptionEmail\' hook should only be used as a \'after\' hook.')
   }
-
   // Check for a new subscription if any
-  const updatedUser = hook.result
+  const currentUser = hook.result
   const previousUser = hook.params.user
   // If we can't compare abort, eg f-a-m might patch user to update tokens
-  if (!updatedUser || !previousUser) return hook
-  const newSubscription = _.differenceBy(_.get(updatedUser, 'subscriptions', []), _.get(previousUser, 'subscriptions', []), 'endpoint')
-  if (_.size(newSubscription) !== 1) return
-
-  // Data
+  if (!currentUser || !previousUser) return 
+  // Retrieve the last subscription
+  const lastSubscription = _.last(_.get(currentUser, 'subscriptions', []))
+  if (!lastSubscription) return
+  // Check whether the subscription has an existing fingerprint
+  const existingSubscription = _.find(_.get(previousUser, 'subscriptions', []), subscription => {
+    return _.isEqual(subscription.fingerprint, lastSubscription.fingerprint)
+  })
+  if (existingSubscription) {
+    debug('Last subscription uses an existing fingerprint')
+    return
+  }
+  debug('Last subscription uses uses a new fingerprint')
+  // Send an email to notify the user
   const app = hook.app
-  console.log(app)
   const mailerService = app.getService('mailer')
   const domainPath = app.get('domain') + '/#/'
   const email = {
     subject: 'Security alert - new browser detected',
     from: mailerService.options.from || mailerService.options.auth.user,
-    to: updatedUser.email,
+    to: currentUser.email,
     link: domainPath,
     domainPath
   }
-
   // Build the subject & link to the app to perform the different actions
   const templateDir = path.join(mailerService.options.templateDir, 'newSubscription')
   const template = new emails.EmailTemplate(templateDir)
   // Errors does not seem to be correctly catched by the caller
   // so we catch them here to avoid any problem
   try {
-    const emailContent = await template.render({ email, user: updatedUser, subscription: _.first(newSubscription) }, updatedUser.locale || 'en-us')
+    const emailContent = await template.render({ email, user: currentUser, subscription: lastSubscription }, currentUser.locale || 'en-us')
     // Update compiled content
     email.html = emailContent.html
     debug('Sending email ', email)
@@ -51,6 +57,4 @@ export async function sendNewSubscriptionEmail (hook) {
     debug('Sending email failed', error)
     app.logger.error(error)
   }
-
-  return hook
 }
