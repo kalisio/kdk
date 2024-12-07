@@ -299,7 +299,8 @@ defineExpose({
 
 <style lang="scss" scoped>
 .k-action-fab, .k-action-fab-action {
-  border: 2px solid var(--q-secondary);
+  border: 2px solid;
+  border-color: v-bind(computedColor) - 75%; 
 }
 .k-action-tab-active {
   border-bottom: solid 2px;
