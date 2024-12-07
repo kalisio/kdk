@@ -18,8 +18,8 @@ export const Platform = {
     this.is.pwa = _.get(config, 'buildMode', 'spa') === 'pwa'
     logger.debug('[KDK] Platform initialized with:', this)
   },
-  getData () {
-    return {
+  getData (scope) {
+    const data = {
       userAgent: this.userAgent,
       application: {
         mode: this.is.pwa ? 'PWA' : 'SPA',
@@ -38,5 +38,7 @@ export const Platform = {
         touch: this.is.touch || false
       }
     }
+    if (_.isEmpty(scope)) return data
+    return _.get(data, scope)
   }
 }

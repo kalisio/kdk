@@ -10,9 +10,9 @@
           id="copy-clipboard"
           icon="las la-copy"
           :handler="copy"
-          tooltip="KPlatform.COPY_INFO"
+          label="KPlatform.COPY_INFO"
           renderer="fab"
-          color="primary"
+          color="grey-7"
         />
     </div>
     <div class="q-px-md q-py-sm full-width text-caption">{{ Platform.getData().userAgent }}</div>
@@ -116,13 +116,13 @@ import KAction from '../action/KAction.vue'
 
 // Functions
 function applicationProperties () {
-  return _.pick(Platform.getData().application, ['mode', 'iframe'])
+  return _.pick(Platform.getData('application') ['mode', 'iframe'])
 }
 function browserProperties () {
-  return _.pick(Platform.getData().browser, ['name', 'version'])
+  return _.pick(Platform.getData('browser'), ['name', 'version'])
 }
 function systemProperties () {
-  return Platform.getData().system
+  return Platform.getData('system')
 }
 async function copy () {
   try {
