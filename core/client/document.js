@@ -21,7 +21,15 @@ export const Document = {
         jpeg: 'document/KImage',
         'image/jpeg': 'document/KImage',
         png: 'document/KImage',
-        'image/png': 'document/KImage'
+        'image/png': 'document/KImage',
+        apng: 'document/KImage',
+        'image/apng': 'document/KImage',        
+        gif: 'document/KImage',
+        'image/gif': 'document/KImage',        
+        webp: 'document/KImage',
+        'image/webp': 'document/KImage',  
+        svg: 'document/KImage',
+        'image/svg+xml': 'document/KImage'
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img'])
@@ -30,12 +38,13 @@ export const Document = {
     })
     logger.debug('[KDK] Configuring documents with options:', this.options)
   },
-  register (mimeTypes, viewer) {
-    if (!_.isArray(mimeTypes)) mimeTypes = [mimeTypes]
-    _.forEach(mimeTypes, mimeType => {
+  register (type, viewer) {
+    if (!_.isArray(type)) type = [type]
+    _.forEach(type, mimeType => {
       _.set(this.options, `viewers.${mimeType}`, viewer)
     })
   },
+
   sanitizeHtml (html) {
     if (_.isNil(html)) return null
     return sanitize(html, this.options.htmlSanitizer)

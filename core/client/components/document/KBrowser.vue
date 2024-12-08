@@ -1,5 +1,5 @@
 <template>
-  <div class="fit column bg-black">
+  <div class="fit column">
     <div class="full-width row justify-between items-center">
       <div
         v-if="document"
