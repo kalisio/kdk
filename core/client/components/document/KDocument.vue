@@ -19,7 +19,7 @@ const props = defineProps({
     type: String,
     default: null
   },
-  mimeType: {
+  type: {
     type: String,
     default: null
   },
@@ -35,15 +35,15 @@ const props = defineProps({
 
 // Computed
 const viewer = computed(() => {
-  const mimeType = props.mimeType || guessMimeType()
-  if (!mimeType) return null
-  const viewer = _.get(Document.options, `viewers.${mimeType}`)
+  const type = props.type || guessType()
+  if (!type) return null
+  const viewer = _.get(Document.options, `viewers.${type}`)
   if (!viewer) return null
   return loadComponent(viewer)
 })
 
 // Function
-function guessMimeType () {
+function guessType () {
   if (!props.url) return null
   const index = _.lastIndexOf(props.url, '.')
   if (!index) return null

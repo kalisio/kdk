@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="fit column">
     <div v-if="interactive === true" class="fit" >
       <pinch-zoom class="pinch-zoom-controller fit row justify-center items-center" @change="$emit('image-transformed')">
-        <img :src="url" class="fit" :onload="onLoaded" />
+        <img :src="url"  :onload="onLoaded" />
       </pinch-zoom>
 
     </div>
     <div v-else class="fit row justify-center items-center">
-      <img :src="url" class="fit" :onload="onLoaded" />
+      <img :src="url" :onload="onLoaded" />
     </div>
     <q-spinner
       class="absolute-center"
