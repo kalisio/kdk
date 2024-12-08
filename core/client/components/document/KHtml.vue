@@ -4,7 +4,7 @@
       v-if="html"
       v-html="html"
     />
-  </q-scroll-area>  
+  </q-scroll-area>
 </template>
 
 <script setup>

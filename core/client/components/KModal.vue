@@ -33,10 +33,10 @@
         Content section
        -->
       <div id="modal-content" class="full-width col">
-        <KScrollArea 
-          v-if="scrollable" 
+        <KScrollArea
+          v-if="scrollable"
           :maxHeight="scrollAreaMaxHeight"
-          class="q-pl-xs q-pr-md" 
+          class="q-pl-xs q-pr-md"
         >
           <slot />
         </KScrollArea>

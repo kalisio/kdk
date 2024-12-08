@@ -1,7 +1,7 @@
 <template>
   <div class="fit column bg-black">
     <div class="full-width row justify-between items-center">
-      <div 
+      <div
         v-if="document"
         class="text-subtitle1"
       >
@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="full-width col row justify-between items-center">
-      <div 
+      <div
         v-if="hasPrevious"
         class="full-height column justify-center"
       >
@@ -22,13 +22,13 @@
         />
       </div>
       <div class="full-height col column justify-center items-center">
-        <KDocument 
-          v-bind="document" 
+        <KDocument
+          v-bind="document"
           :localize="false"
           class="fit"
         />
       </div>
-      <div 
+      <div
         v-if="hasNext"
         class="full-height column justify-center"
       >
@@ -48,7 +48,7 @@ import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
 import { Storage } from '../../storage.js'
 import KDocument from './KDocument.vue'
-import KAction from '../action/KAction.vue';
+import KAction from '../action/KAction.vue'
 
 // Props
 const props = defineProps({
@@ -94,10 +94,10 @@ async function next () {
 }
 async function refresh () {
   document.value = props.documents[index.value]
-  document.value.url = await Storage.getPresignedUrl({ 
-    key: document.value.key, 
-    context: document.value.contextId, 
-    expiresIn: 60 
+  document.value.url = await Storage.getPresignedUrl({
+    key: document.value.key,
+    context: document.value.contextId,
+    expiresIn: 60
   })
 }
 </script>
