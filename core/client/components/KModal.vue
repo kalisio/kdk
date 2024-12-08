@@ -6,11 +6,7 @@
   >
     <q-card
       id="modal-card"
-      v-bind:class="{
-        'column full-height': maximized,
-        'q-pa-sm': $q.screen.gt.xs,
-        'q-pa-xs': $q.screen.lt.sm
-      }"
+      :class="computedClass"
       :style="computedStyle">
       <!--
          Header section
@@ -99,6 +95,14 @@ const props = defineProps({
   scrollable: {
     type: Boolean,
     default: true
+  },
+  backgroundColor: {
+    type: String,
+    default: 'white'
+  },
+  textColor: {
+    type: String,
+    default: 'black'
   }
 })
 
@@ -118,6 +122,13 @@ const lgMinWidths = { wide: 92, medium: 65, narrow: 35 }
 const xlMinWidths = { wide: 90, medium: 55, narrow: 25 }
 
 // Computed
+const computedClass = computed(() => {
+  let result = `bg-${props.backgroundColor} text-${props.textColor}`
+  if (props.maximized) result += ' column full-height'
+  if ($q.screen.gt.xs) result += ' q-pa-sm'
+  if ($q.screen.lt.sm) result += ' q-pa-xs'
+  return result
+})
 const computedStyle = computed(() => {
   // compute the modal max height
   const screenHeight = $q.screen.height
