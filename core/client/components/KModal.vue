@@ -32,10 +32,15 @@
       <!--
         Content section
        -->
-      <div id="modal-content" class="col">
-        <KScrollArea class="q-pl-xs q-pr-md" :maxHeight="scrollAreaMaxHeight">
+      <div id="modal-content" class="full-width col">
+        <KScrollArea 
+          v-if="scrollable" 
+          :maxHeight="scrollAreaMaxHeight"
+          class="q-pl-xs q-pr-md" 
+        >
           <slot />
         </KScrollArea>
+        <slot v-else />
       </div>
       <!--
         Footer section
@@ -64,6 +69,10 @@ import KPanel from './KPanel.vue'
 
 // Props
 const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
   title: {
     type: String,
     default: ''
@@ -87,9 +96,9 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  modelValue: {
+  scrollable: {
     type: Boolean,
-    default: false
+    default: true
   }
 })
 
@@ -133,7 +142,7 @@ const computedStyle = computed(() => {
   if ($q.screen.lt.md) return `min-width: ${smMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
   if ($q.screen.lt.lg) return `min-width: ${mdMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
   if ($q.screen.lt.xl) return `min-width: ${lgMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
-  return `min-width: ${xlMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
+  return `min-width: ${xlMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px;`
 })
 
 // Watch
