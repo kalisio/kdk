@@ -5,7 +5,6 @@
         v-if="document"
         class="text-subtitle1"
       >
-
         {{ document.name }}
       </div>
     </div>
@@ -18,6 +17,7 @@
           id="previous-button"
           icon="las la-angle-left"
           size="1rem"
+          color="white"
           :handler="previous"
         />
       </div>
@@ -36,6 +36,7 @@
           id="next-button"
           icon="las la-angle-right"
           size="1rem"
+          color="white"
           :handler="next"
         />
       </div>
@@ -76,7 +77,6 @@ const hasNext = computed(() => {
 
 // Watch
 watch(() => [props.documents, props.default], async () => {
-  console.log('[DEBUG] Props changed')
   index.value = _.findIndex(props.documents, { name: props.default })
   if (index.value > -1) await refresh()
 }, { immediate: true })

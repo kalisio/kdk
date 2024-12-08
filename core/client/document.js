@@ -7,8 +7,7 @@ import { i18n } from './i18n.js'
 
 export const Document = {
   initialize () {
-    this.options = _.get(config, 'document')
-    this.options = _.defaultsDeep(this.options, {
+    this.options = _.defaultsDeep(_.get(config, 'document'), {
       viewers: {
         htm: 'document/KHtml',
         html: 'document/KHtml',
@@ -38,13 +37,15 @@ export const Document = {
     })
     logger.debug('[KDK] Configuring documents with options:', this.options)
   },
-  register (type, viewer) {
-    if (!_.isArray(type)) type = [type]
-    _.forEach(type, mimeType => {
-      _.set(this.options, `viewers.${mimeType}`, viewer)
+  register (types, viewer) {
+    if (!_.isArray(types)) types = [types]
+    _.forEach(types, type => {
+      _.set(this.options, `viewers.${type}`, viewer)
     })
   },
-
+  hasViewer (type) {
+    return _.get(this.options, `viewers.${type}`) ? true: false
+  },
   sanitizeHtml (html) {
     if (_.isNil(html)) return null
     return sanitize(html, this.options.htmlSanitizer)

@@ -43,6 +43,7 @@ export { Units }
 export { Layout }
 export { Filter }
 export { Sorter }
+export { Document }
 export { Exporter }
 export { Reader }
 export { services }
