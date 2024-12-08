@@ -28,7 +28,9 @@ export const Document = {
         webp: 'document/KImage',
         'image/webp': 'document/KImage',  
         svg: 'document/KImage',
-        'image/svg+xml': 'document/KImage'
+        'image/svg+xml': 'document/KImage',
+        txt: 'document/KHtml',
+        'text/plain': 'document/KHtml'
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img'])
