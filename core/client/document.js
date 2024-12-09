@@ -30,7 +30,15 @@ export const Document = {
         svg: 'document/KImage',
         'image/svg+xml': 'document/KImage',
         txt: 'document/KHtml',
-        'text/plain': 'document/KHtml'
+        'text/plain': 'document/KHtml',
+        'mp4': 'document/KVideo',
+        'video/mp4': 'document/KVideo',
+        'mkv': 'document/KVideo',
+        'video/x-matroska': 'document/KVideo',
+        'mov': 'document/KVideo',
+        'video/quicktime': 'document/KVideo',
+        webm: 'document/KVideo',
+        'video/webm': 'document/KVideo'
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img'])
