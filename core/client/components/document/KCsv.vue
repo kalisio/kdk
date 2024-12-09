@@ -1,15 +1,20 @@
 <template>
   <q-scroll-area class="fit">
-    <div
-      v-if="html"
-      v-html="html"
-    />
+    <table v-if="data">
+      <template v-for="(row, index) in data" :key="index">
+        <tr>
+        <template v-for="cell in row" :key="cell">
+          <td>{{ cell }}</td>
+        </template>
+        </tr>
+      </template>
+    </table>
   </q-scroll-area>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
-import showdown from 'showdown'
+import Papa from 'papaparse'
 import { Document } from '../../document.js'
 
 // Props
@@ -29,16 +34,22 @@ const props = defineProps({
 })
 
 // Data
-const html = ref(null)
+const data = ref(null)
 
 // Watch
 watch(() => props.url, async (value) => {
   const response = await Document.fetchUrl(value, props.localize)
   if (response?.ok) {
-    const markdown = await response.text()
-    const converter = new showdown.Converter(props.options || Document.options.mdConverter)
-    html.value = Document.sanitizeHtml(converter.makeHtml(markdown))
+    const csv = await response.text()
+    data.value = Papa.parse(csv, props.options).data
   }
-  else html.value = null
+  else data.value = null
 }, { immediate: true })
 </script>
+
+<style lang="scss">
+td {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+</style>

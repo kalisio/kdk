@@ -2,7 +2,6 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
 import sanitize from 'sanitize-html'
-import showdown from 'showdown'
 import { i18n } from './i18n.js'
 
 export const Document = {
@@ -12,6 +11,10 @@ export const Document = {
         htm: 'document/KHtml',
         html: 'document/KHtml',
         'text/html': 'document/KHtml',
+        txt: 'document/KHtml',
+        'text/plain': 'document/KHtml',
+        csv: 'document/KCsv',
+        'text/csv': 'document/KCsv',
         md: 'document/KMarkdown',
         'text/markdown': 'document/KMarkdown',
         pdf: 'document/KPdf',
@@ -27,16 +30,14 @@ export const Document = {
         'image/gif': 'document/KImage',        
         svg: 'document/KImage',
         'image/svg+xml': 'document/KImage',
-        txt: 'document/KHtml',
-        'text/plain': 'document/KHtml',
+        webp: 'document/KImage',
+        'image/webp': 'document/KImage',        
         'mp4': 'document/KVideo',
         'video/mp4': 'document/KVideo',
         'mkv': 'document/KVideo',
         'video/x-matroska': 'document/KVideo',
         'mov': 'document/KVideo',
         'video/quicktime': 'document/KVideo',
-        webp: 'document/KImage',
-        'image/webp': 'document/KImage',
         webm: 'document/KVideo',
         'video/webm': 'document/KVideo'
       },
@@ -59,11 +60,6 @@ export const Document = {
   sanitizeHtml (html) {
     if (_.isNil(html)) return null
     return sanitize(html, this.options.htmlSanitizer)
-  },
-  convertMdToHtml (md) {
-    if (_.isNil(md)) return null
-    const converter = new showdown.Converter(this.options.mdConverter)
-    return converter.makeHtml(md)
   },
   async fetchUrl (url, localize) {
     if (_.isEmpty(url)) return null

@@ -1,12 +1,11 @@
 <template>
-  <div v-if="url" class="fit">
-    <video 
-      :src="url" 
-      :controls="controls"
-      :autoplay="autoplay"
-      class="fit" 
-    />
-  </div>
+  <video 
+    v-if="url"
+    :src="url" 
+    :controls="controls"
+    :autoplay="autoplay"
+    class="fit" 
+  />
 </template>
 
 <script setup>
