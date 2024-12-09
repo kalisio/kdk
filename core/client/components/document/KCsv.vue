@@ -42,8 +42,7 @@ watch(() => props.url, async (value) => {
   if (response?.ok) {
     const csv = await response.text()
     data.value = Papa.parse(csv, props.options).data
-  }
-  else data.value = null
+  } else data.value = null
 }, { immediate: true })
 </script>
 

@@ -38,7 +38,6 @@ watch(() => props.url, async (value) => {
     const markdown = await response.text()
     const converter = new showdown.Converter(props.options || Document.options.mdConverter)
     html.value = Document.sanitizeHtml(converter.makeHtml(markdown))
-  }
-  else html.value = null
+  } else html.value = null
 }, { immediate: true })
 </script>

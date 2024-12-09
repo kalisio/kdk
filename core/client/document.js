@@ -25,18 +25,18 @@ export const Document = {
         png: 'document/KImage',
         'image/png': 'document/KImage',
         apng: 'document/KImage',
-        'image/apng': 'document/KImage',        
+        'image/apng': 'document/KImage',
         gif: 'document/KImage',
-        'image/gif': 'document/KImage',        
+        'image/gif': 'document/KImage',
         svg: 'document/KImage',
         'image/svg+xml': 'document/KImage',
         webp: 'document/KImage',
-        'image/webp': 'document/KImage',        
-        'mp4': 'document/KVideo',
+        'image/webp': 'document/KImage',
+        mp4: 'document/KVideo',
         'video/mp4': 'document/KVideo',
-        'mkv': 'document/KVideo',
+        mkv: 'document/KVideo',
         'video/x-matroska': 'document/KVideo',
-        'mov': 'document/KVideo',
+        mov: 'document/KVideo',
         'video/quicktime': 'document/KVideo',
         webm: 'document/KVideo',
         'video/webm': 'document/KVideo'
@@ -55,7 +55,7 @@ export const Document = {
     })
   },
   hasViewer (type) {
-    return _.get(this.options, `viewers.${type}`) ? true: false
+    return !!_.get(this.options, `viewers.${type}`)
   },
   sanitizeHtml (html) {
     if (_.isNil(html)) return null

@@ -1,10 +1,10 @@
 <template>
-  <video 
+  <video
     v-if="url"
-    :src="url" 
+    :src="url"
     :controls="controls"
     :autoplay="autoplay"
-    class="fit" 
+    class="fit"
   />
 </template>
 
