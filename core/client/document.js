@@ -25,8 +25,6 @@ export const Document = {
         'image/apng': 'document/KImage',        
         gif: 'document/KImage',
         'image/gif': 'document/KImage',        
-        webp: 'document/KImage',
-        'image/webp': 'document/KImage',  
         svg: 'document/KImage',
         'image/svg+xml': 'document/KImage',
         txt: 'document/KHtml',
@@ -37,6 +35,8 @@ export const Document = {
         'video/x-matroska': 'document/KVideo',
         'mov': 'document/KVideo',
         'video/quicktime': 'document/KVideo',
+        webp: 'document/KImage',
+        'image/webp': 'document/KImage',
         webm: 'document/KVideo',
         'video/webm': 'document/KVideo'
       },
