@@ -16,7 +16,7 @@
         <KAction
           id="previous-button"
           icon="las la-angle-left"
-          size="1rem"
+          :size="$q.screen.gt.xs ? '1rem' : '0.8rem'"
           color="white"
           :handler="previous"
         />
@@ -35,7 +35,7 @@
         <KAction
           id="next-button"
           icon="las la-angle-right"
-          size="1rem"
+          :size="$q.screen.gt.xs ? '1.2rem' : '0.8rem'"
           color="white"
           :handler="next"
         />
