@@ -14,7 +14,7 @@ import { Events } from './events.js'
 import * as hooks from './hooks/index.js'
 import { makeServiceSnapshot } from '../common/utils.js'
 
-// Disable default feathers behaviour of reauthenticating on disconnect
+// Disable default feathers behavior of re-authenticating on disconnect
 feathers.authentication.AuthenticationClient.prototype.handleSocket = () => {}
 
 export function createClient (config) {
@@ -209,7 +209,7 @@ export function createClient (config) {
           storage: ['IndexedDB'],
           // FIXME: this should not be hard-coded as it depends on the service
           // For now we set it at the max value but if a component
-          // does not explicitely set the limit it will get a lot of data
+          // does not explicitly set the limit it will get a lot of data
           paginate: { default: 5000, max: 5000 }
         }),
         // Set required default hooks
@@ -235,7 +235,7 @@ export function createClient (config) {
     if (path.startsWith('/')) path = path.substr(1)
     api.unuse(path)
   }
-  // Helper fonctions to access/alter config used at creation time
+  // Helper functions to access/alter config used at creation time
   api.getConfig = function (path) {
     return (path ? _.get(config, path) : config)
   }
@@ -315,10 +315,10 @@ export function createClient (config) {
     api.configure(api.transporter)
     // Retrieve our specific errors on rate-limiting
     api.socket.on('rate-limit', (error) => Events.emit('error', error))
-    // Disable default socketio behaviour of buffering messages when disconnected
+    // Disable default socketio behavior of buffering messages when disconnected
     api.socket.io.on('reconnect', function () {
       api.socket.sendBuffer = []
-      // Reauthenticate on reconnect
+      // Re-authenticate on reconnect
       api.reAuthenticate(true)
     })
   }
@@ -367,7 +367,7 @@ export function createClient (config) {
 // We don't create a default client based on app configuration here
 // as we don't know when the file will be imported first,
 // eg it might be imported before another one updating the config.
-// It is up to the application to instanciate the client when required.
+// It is up to the application to instantiate the client when required.
 export let api
 export function initializeApi (fn) {
   api = createClient(configuration)
