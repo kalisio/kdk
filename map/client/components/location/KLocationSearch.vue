@@ -4,6 +4,7 @@
     id="location-search"
     v-model="location"
     :label="computedLabel"
+    :autofocus="autofocus"
     clearable
     use-input
     hide-dropdown-icon
@@ -106,6 +107,10 @@ const props = defineProps({
   editor: {
     type: Object,
     default: () => null
+  },
+  autofocus: {
+    type: Boolean,
+    default: false
   },
   disabled: {
     type: Boolean,

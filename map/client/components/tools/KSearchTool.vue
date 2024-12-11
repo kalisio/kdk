@@ -2,6 +2,7 @@
   <KLocationSearch
     v-model="location"
     :geocoders="geocoders"
+    :autofocus="autofocus"
     :style="computedStyle"
   />
 </template>
@@ -24,6 +25,10 @@ defineProps({
   geocoders: {
     type: Array,
     default: () => []
+  },
+  autofocus: {
+    type: Boolean,
+    default: false
   }
 })
 
