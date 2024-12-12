@@ -9,6 +9,7 @@ import { LocalForage } from '@kalisio/feathers-localforage'
 import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
+import { generatePropertiesSchema } from '../utils.map.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 

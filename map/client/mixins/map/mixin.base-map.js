@@ -28,7 +28,7 @@ import { Time } from '../../../../core/client/time.js'
 import { getAppLocale } from '../../../../core/client/utils/index.js'
 import '../../leaflet/BoxSelection.js'
 import { Geolocation } from '../../geolocation.js'
-import { LeafletEvents, TouchEvents, bindLeafletEvents, generatePropertiesSchema } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
+import { LeafletEvents, TouchEvents, bindLeafletEvents } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
