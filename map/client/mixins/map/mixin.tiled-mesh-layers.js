@@ -15,11 +15,10 @@ export const tiledMeshLayers = {
       const colorMap = _.get(options, 'variables[0].chromajs', null)
       if (colorMap) Object.assign(layerOptions, { chromajs: colorMap })
 
-      const apiToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
-
       // Build grid source
       const [gridKey, gridConf] = extractGridSourceConfig(options)
       const weacastApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
+      const apiToken = (weacastApi.hasConfig('gatewayJwt') ? await weacastApi.get('storage').getItem(weacastApi.getConfig('gatewayJwt')) : null)
       const gridSource = makeGridSource(gridKey, { weacastApi, apiToken })
       gridSource.setup(gridConf)
       if (gridSource.updateCtx) {
