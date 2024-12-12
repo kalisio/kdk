@@ -52,8 +52,8 @@ Under-the-hood, highlights are managed using a [GeoJson layer](./map-mixins.md#g
 ## useProject
 
 Used to manage a map project, call **useProject()** with the following arguments:
-* **route** flag indicating if project should be extracted from route otherwise it should be loaded manually
-* **context** context ID for the project service
+* **route**: flag indicating if project should be extracted from route otherwise it should be loaded manually
+* **context**: context ID for the project service
 * **updateActivity**: defaults to `true`
 * **planetApi**: target api object
 
@@ -66,6 +66,28 @@ The composable exposes the following:
 * **isProjectLoaded()**: check if current project is loaded
 * **loadProject()**: load project if any specified
 * **catalogProjectQuery**: get query to retrieve layers from catalog for current project
+
+## useCatalog
+
+Used to manage data coming from a catalog, possibly defined through a map project, call **useCatalog()** with the following arguments:
+* **layers**: default filter query applied when retrieving layers from catalog (defaults to `{}`)
+* **categories**: default filter query applied when retrieving categories from catalog (defaults to `{}`)
+* **sublegends**: default filter query applied when retrieving sublegends from catalog (defaults to `{}`)
+* **views**: default filter query applied when retrieving views from catalog (defaults to `{}`)
+* **context**: context ID for the project service (defaults to empty)
+* **planetApi**: the [client](../core/application.md#client-setup) to be used to retrieve catalog data (defaults to application client)
+
+The composable exposes the following:
+* **getLayers()**: function to retrieved the set of layers from the catalog
+* **layers**: the retrieved set of layers from the catalog
+* **getCategories()**: function to retrieved the set of categories from the catalog
+* **categories**: the retrieved set of categories from the catalog
+* **getSublegends()**: function to retrieved the set of sublegends from the catalog
+* **sublegends**: the retrieved set of sublegends from the catalog
+* **layersByCategory**: the retrieved set of layers organized by category, i.e. keys are category names and values associated layers list
+* **orphanLayers**: the retrieved set of layers not belonging to any category
+* **getViews()**: function to retrieved the set of views from the catalog
+* **views**: the retrieved set of views from the catalog
 
 ## Activity
 

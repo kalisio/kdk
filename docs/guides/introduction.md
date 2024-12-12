@@ -17,10 +17,13 @@ In these guides you will learn step-by-step how the setup your development envir
 * [Deploy your app](./development/deploy.md)
 * [Publish your app](./development/publish.md)
 
+## Howto
 
-## How To
+**Work In Progress**
 
-### ** Work In Progress **
-Example for some common configurations
-
-* [Create a service](./howTo/createService.md)
+Here are some howtos to help you start developing your application with the KDK:
+* How to [create a service](./howto/create-service.md)
+* How to [distribute a service](./howto/distribute-service.md)
+* How to [manage permissions](./howto/manage-permissions.md)
+* How to [manage collection](./howto/manage-collection.md)
+* How to [connect to a planet](./howto/connect-planet.md)

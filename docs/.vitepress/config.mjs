@@ -76,7 +76,17 @@ function getGuidesSidebar () {
         { text: 'Publish with KDK', link: '/guides/development/publish' }
       ]
     },
-    { text: 'How To', collapsed: true, items: [{ text: 'Create a service', link: '/guides/howTo/createService' }]},
+    {
+      text: 'Howtos',
+      collapsed: true,
+      items: [
+        { text: 'Create a service', link: '/guides/howtos/create-service' },
+        { text: 'Distribute a service', link: '/guides/howtos/distribute-service' },
+        { text: 'Manage permissions', link: '/guides/howtos/manage-permissions' },
+        { text: 'Manage collection', link: '/guides/howtos/manage-collection' },
+        { text: 'Connect to a planet', link: '/guides/howtos/connect-planet' }
+      ]
+    },
   ]
 }
 
