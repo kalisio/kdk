@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import 'leaflet-velocity'
 import { Time } from '../../../../core/client/time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
