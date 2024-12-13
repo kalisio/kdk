@@ -25,5 +25,5 @@ Here are some howtos to help you start developing your application with the KDK:
 * How to [create a service](./howtos/create-service.md)
 * How to [distribute a service](./howtos/distribute-service.md)
 * How to [manage permissions](./howtos/manage-permissions.md)
-* How to [manage collection](./howtos/manage-collection.md)
+* How to [manage a collection](./howtos/manage-collection.md)
 * How to [connect to a planet](./howtos/connect-planet.md)
