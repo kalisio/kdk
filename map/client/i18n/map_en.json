@@ -528,6 +528,7 @@
     "POINT_SHAPE": " shape",
     "WHEN_PROPERTY_IS_POINT_STYLE": "when {property}",
     "POINT_CLUSTERING": "Cluster until level",
+    "CLUSTERING_PIXEL_RANGE": "Clustering range",
     "ADD_POINT_STYLE": "Add a style for a value of",
     "REMOVE_POINT_STYLE": "Remove style for this value",
     "DEFAULT_LINE_STYLE": "Default line style",

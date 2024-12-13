@@ -185,10 +185,13 @@ export function getHtmlColor (color, defaultColor) {
   return colors.getPaletteColor(color)
 }
 
-export function getPaletteFromColor (color) {
+export function getPaletteFromColor (color, nearestIfNotFound = false) {
   // Check if already a color of the palette
   if (Colors[color]) return color
-  else return _.findKey(Colors, item => item === color) || 'white'
+  const colorName = _.findKey(Colors, item => item === color)
+  if (colorName) return colorName
+  if (nearestIfNotFound) return findClosestColor(color) || 'white'
+  return 'white'
 }
 
 export function getColorFromPalette (color) {
@@ -202,7 +205,7 @@ export function buildColorScale (options) {
     logger.warn(`[KDK] buildColorScale: 'options' argument must be defined`)
     return
   }
-  let colors = options.colors 
+  let colors = options.colors
   if (!colors)  {
     // For backward compatibility
     if (options.scale) {
@@ -229,4 +232,17 @@ export function buildColorScale (options) {
     if (options.domain) scale = scale.domain(options.domain)
   }
   return scale
+}
+
+function findClosestColor (color) {
+  let minDistance = Number.MAX_VALUE
+  let closestColor = null
+  for (const key in Colors) {
+    const d = chroma.deltaE(color, Colors[key])
+    if (d < minDistance) {
+      minDistance = d
+      closestColor = key
+    }
+  }
+  return closestColor
 }

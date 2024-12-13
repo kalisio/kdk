@@ -7,7 +7,7 @@
     v-model="isModalOpened">
     <div>
       <k-layer-style-form :class="{ 'light-dimmed': inProgress }" :ref="onFormCreated"
-        :options="options" :layer="layer"/>
+        :options="options" :layer="layer" :is3D="is3D"/>
       <q-spinner-cube color="primary" class="fixed-center" v-if="inProgress" size="4em"/>
     </div>
   </k-modal>
@@ -56,6 +56,9 @@ export default {
     },
     options () {
       return this.kActivity.activityOptions.engine
+    },
+    is3D () {
+      return this.kActivity.is3D()
     }
   },
   data () {
@@ -69,7 +72,7 @@ export default {
       if (ref && !this.form) {
         this.form = ref
         // Pick engine-based and generic styling options
-        this.form.fill(_.pick(this.layer, ['leaflet', 'isSelectable']))
+        this.form.fill(_.pick(this.layer, ['leaflet', 'cesium', 'isSelectable']))
       }
     },
     async onApply () {
@@ -91,7 +94,7 @@ export default {
       // but as we might have in-memory only layer or not always use sockets we should perform it explicitely in this case
       if (!this.layer._id || (config.transport !== 'websocket')) {
         // Keep track of data as we will reset the layer
-        const geoJson = this.kActivity.toGeoJson(this.layer.name)
+        const geoJson = await this.kActivity.toGeoJson(this.layer.name)
         // Reset layer with new setup
         await this.kActivity.resetLayer(this.layer)
         // Update data only when in memory as reset has lost it

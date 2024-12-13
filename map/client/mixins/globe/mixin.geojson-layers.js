@@ -245,12 +245,24 @@ export const geojsonLayers = {
         // As a consequence we copy back any style information inside
         // We need to convert to simple-style spec as cesium manages this only
         // We also need to merge all styling properties as some entities requires eg both line/polygon style (wall polylines or corridor polygons)
-        const simpleStyle = Object.assign(getPointSimpleStyle(feature, options, engine), getLineSimpleStyle(feature, options, engine), getPolygonSimpleStyle(feature, options, engine))
+
+        const stylePerType = {
+          Point: getPointSimpleStyle(feature, options, engine),
+          LineString: getLineSimpleStyle(feature, options, engine),
+          Polygon: getPolygonSimpleStyle(feature, options, engine)
+        }
+
+        let type = _.get(feature, 'geometry.type')
+        if (_.get(feature, 'properties.entityStyle.wall', false)) type = 'Polygon'
+
+        // Apply the style according to the feature type to the end to prevent overriding
+        const simpleStyle = Object.assign(...Object.values(stylePerType), stylePerType[type])
+
         // Manage our extended simple-style spec
         const text = _.get(feature, 'style.text.label')
         if (text) simpleStyle['icon-text'] = text
         if (!feature.properties) feature.properties = simpleStyle
-        else feature.properties = Object.assign(simpleStyle, feature.properties)
+        else Object.assign(feature.properties, simpleStyle)
       }
       // For activities
       if (_.has(this, 'activityOptions.engine.cluster')) {

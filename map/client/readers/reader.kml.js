@@ -17,7 +17,7 @@ export const KMLReader = {
       reader.onloadend = () => {
         let content = reader.result
         try {
-          content = convertKMLStyleToKDKStyle(new DOMParser().parseFromString(content, 'text/xml'))
+          content = convertToGeoJsonWithStyle(new DOMParser().parseFromString(content, 'text/xml'))
         } catch (error) {
           logger.debug(error)
           reject(new Error(i18n.t('errors.INVALID_KML_FILE', { file: file.name }), { errors: error }))
@@ -59,35 +59,25 @@ function getExtraPropertiesFromKMLByName (document) {
   return properties
 }
 
-function convertKMLStyleToKDKStyle (document) {
+export function convertToGeoJsonWithStyle (document) {
   const extraProperties = getExtraPropertiesFromKMLByName(document)
 
   const geoJson = kml(document)
 
   _.forEach(_.get(geoJson, 'features', []), feature => {
     const name = _.get(feature, 'properties.name', false)
-    if (!name || !feature.geometry) return
-    let style = {}
-    switch (feature.geometry.type) {
-      case 'Point':
-        style = convertSimpleStyleToPointStyle(feature.properties)
-        break
-      case 'LineString':
-        style = convertSimpleStyleToLineStyle(feature.properties)
-        break
-      case 'Polygon':
-        style = convertSimpleStyleToPolygonStyle(feature.properties)
-        break
-      default:
-        logger.debug(`Unsupported geometry type ${feature.geometry.type}`)
-        break
-    }
-
-    if (_.has(extraProperties, name)) {
+    // Apply all styles to prevent them for being overridden by the default ones
+    const style = _.merge(convertSimpleStyleToPointStyle(feature.properties), convertSimpleStyleToLineStyle(feature.properties), convertSimpleStyleToPolygonStyle(feature.properties))
+    if (name && _.has(extraProperties, name)) {
       _.merge(style, extraProperties[name])
     }
-
     _.set(feature, 'style', style)
+
+    // Trim all string properties
+    const trimmedProperties = _.mapValues(_.get(feature, 'properties', {}), value => {
+      return typeof value === 'string' ? value.trim() : value
+    })
+    _.set(feature, 'properties', trimmedProperties)
   })
 
   return geoJson

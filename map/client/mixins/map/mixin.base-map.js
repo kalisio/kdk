@@ -520,6 +520,9 @@ export const baseMap = {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
     },
     toGeoJson (name) {
+      const cachedGeojson = this.geojsonCache[name]
+      if (cachedGeojson) return cachedGeojson
+
       const layer = this.getLeafletLayerByName(name)
       if (!layer || (typeof layer.toGeoJSON !== 'function')) return
       return layer.toGeoJSON()

@@ -4,7 +4,7 @@ import moment from 'moment'
 import { Color } from 'cesium'
 import { Time, Units, TemplateContext } from '../../../../core/client/index.js'
 import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
-         convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
+  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
 import { Cesium } from './utils.cesium.js'
 
@@ -111,8 +111,10 @@ export function convertToCesiumFromStyle (feature) {
     // Cesium does not support outlines for clamped to ground polygons, so we convert them to polylines
     // In the case of a clamped to ground filled polygon with outline, the outline will not display
     if (_.get(style, 'opacity') === 0) {
+      geometryType = 'polyline'
       _.set(convertedStyle, 'geometry.type', 'LineString')
       _.set(convertedStyle, 'geometry.coordinates', _.get(feature, 'geometry.coordinates[0]'))
+      _.set(convertedStyle, 'style.opacity', _.get(style, 'stroke.opacity', 1))
       _.set(entityStyle, 'clampToGround', true)
     } else {
       // Create new feature for oultine
@@ -124,7 +126,7 @@ export function convertToCesiumFromStyle (feature) {
     }
   }
 
-  _.set(convertedStyle, ['properties', 'entityStyle', geometryType].join('.'), entityStyle)
+  _.set(convertedStyle, ['properties', 'entityStyle', geometryType], entityStyle)
 
   if (['point', 'billboard'].includes(geometryType)) {
     _.set(convertedStyle, 'properties.entityStyle.label', {
@@ -148,7 +150,7 @@ function processStyle (style, feature, options, mappings) {
   if (cesiumOptions.template) {
     // Create the map of variables
     if (options.variables) context.variables = _.reduce(options.variables,
-      (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
+        (result, variable) => Object.assign(result, { [variable.name]: variable }), {})
     cesiumOptions.template.forEach(entry => {
       _.set(style, _.get(mappings, _.kebabCase(entry.property), entry.property), entry.compiler(context))
     })

@@ -527,6 +527,7 @@
     "POINT_SHAPE": " forme",
     "WHEN_PROPERTY_IS_POINT_STYLE": "lorsque {property}",
     "POINT_CLUSTERING": "Regrouper jusqu'au niveau",
+    "CLUSTERING_PIXEL_RANGE": "Distance de regroupement",
     "ADD_POINT_STYLE": "Ajouter un style pour une valeur de",
     "REMOVE_POINT_STYLE": "Supprimer le style associé à cette valeur",
     "DEFAULT_LINE_STYLE": "Style de ligne par défaut",
