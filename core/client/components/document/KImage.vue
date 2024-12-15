@@ -2,12 +2,20 @@
   <div class="fit column">
     <div v-if="interactive === true" class="fit" >
       <pinch-zoom class="pinch-zoom-controller fit row justify-center items-center" @change="$emit('image-transformed')">
-        <img :src="url"  :onload="onLoaded" />
+        <img 
+          :src="url"
+          :onload="onLoaded" 
+          class="full-width"
+        />
       </pinch-zoom>
 
     </div>
     <div v-else class="fit row justify-center items-center">
-      <img :src="url" :onload="onLoaded" />
+      <img 
+          :src="url"
+          :onload="onLoaded" 
+          class="full-width"
+        />
     </div>
     <q-spinner
       class="absolute-center"
@@ -76,3 +84,4 @@ defineExpose({
   restore
 })
 </script>
+
