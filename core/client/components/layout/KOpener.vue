@@ -3,15 +3,15 @@
     class="row justify-center items-center"
     v-bind:class="{
       'k-opener-left': position === 'left',
-      'k-opener-left-hovered': (position === 'left') && isHovered && !hasTouch,
+      'k-opener-left-hovered': (position === 'left') && isHovered && !Platform.has.touch,
       'k-opener-right': position === 'right',
-      'k-opener-right-hovered': (position === 'right') && isHovered && !hasTouch,
+      'k-opener-right-hovered': (position === 'right') && isHovered && !Platform.has.touch,
       'k-opener-top': position === 'top',
-      'k-opener-top-hovered': (position === 'top') && isHovered && !hasTouch,
+      'k-opener-top-hovered': (position === 'top') && isHovered && !Platform.has.touch,
       'k-opener-bottom': position === 'bottom',
-      'k-opener-bottom-hovered': (position === 'bottom') && isHovered && !hasTouch
+      'k-opener-bottom-hovered': (position === 'bottom') && isHovered && !Platform.has.touch
     }"
-    v-on="!hasTouch ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
+    v-on="!Platform.has.touch ? { mouseover: onMouseOver, mouseleave: onMouseLeave } : {}"
     v-touch-swipe.mouse="onSwipe"
     @click="onClick"
   >
@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useQuasar } from 'quasar'
+import { Platform } from '../../platform.js'
 
 // Props
 const props = defineProps({
@@ -42,14 +42,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
-const $q = useQuasar()
-const hasTouch = $q.platform.has.touch
 const isHovered = ref(false)
 const icon = ref(null)
 
 // Functions
 function onMouseOver () {
-  if (hasTouch) return
+  if (Platform.has.touch) return
   isHovered.value = true
   switch (props.position) {
     case 'left':
@@ -66,7 +64,7 @@ function onMouseOver () {
   }
 }
 function onMouseLeave () {
-  if (hasTouch) return
+  if (Platform.has.touch) return
   isHovered.value = false
   icon.value = null
 }
