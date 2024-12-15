@@ -925,6 +925,9 @@
     "NEXT_DAY": "Next day",
     "NEXT_HOUR": "Next hour",
     "NEXT_STEP": "Next step"
+  },
+  "KImage": {
+    "RESET": "Reset"
   }
 }
 
