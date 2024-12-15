@@ -44,6 +44,7 @@
 import _ from 'lodash'
 import { ref, computed } from 'vue'
 import 'pinch-zoom-element/dist/pinch-zoom.js'
+import { DefaultZIndex } from '../../layout.js'
 import KAction from '../action/KAction.vue'
 
 // Props
@@ -68,6 +69,7 @@ const emit = defineEmits(['image-transformed'])
 // Data
 const loading = ref(true)
 const transformed = ref(false)
+const toolbarZIndex = DefaultZIndex.stickies
 
 // Computed
 const interactive = computed(() => {
@@ -102,7 +104,7 @@ function onLoaded () {
   bottom: 16px;
   left: 50%; transform: translate(-50%, 0);
   border-radius: 24px;
-  z-index: 1000;
+  z-index: v-bind(toolbarZIndex);
 }
 </style>
 
