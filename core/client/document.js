@@ -46,7 +46,7 @@ export const Document = {
       },
       mdConverter: {}
     })
-    logger.debug('[KDK] Configuring documents with options:', this.options)
+    logger.debug('[KDK] Document initialized with options:', this.options)
   },
   register (types, viewer) {
     if (!_.isArray(types)) types = [types]

@@ -17,7 +17,7 @@ export const Capabilities = {
       // Store latest capabilities data for offline mode
       await LocalForage.setItem('capabilities', this.content)
     }
-    logger.debug('[KDK] Capabilities initialized:', this.content)
+    logger.debug('[KDK] Capabilities initialized with content:', this.content)
     if (!this.content) return
     // Backend might override some defaults in client config
     _.forOwn(_.pick(this.content, ['gateway']), (value, key) => {

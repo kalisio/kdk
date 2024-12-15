@@ -4,11 +4,9 @@ import { LocalForage } from '@kalisio/feathers-localforage'
 
 export const LocalCache = {
   initialize () {
-    logger.debug('[KDK] initializing local cache')
-    LocalForage.config({
-      name: 'offline_cache',
-      storeName: 'cache_entries'
-    })
+    const config = { name: 'offline_cache', storeName: 'cache_entries' }
+    LocalForage.config(config)
+    logger.debug('[KDK] LocalForage initialized with configuration:', config)
   },
   async createCache (cacheName) {
     const cache = await caches.open(cacheName)
