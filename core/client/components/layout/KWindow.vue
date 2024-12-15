@@ -6,7 +6,7 @@
     <div
       :id="`${placement}-window-header`"
       class="k-window-header full-width row items-center"
-      
+
     >
       <q-resize-observer @resize="onWindowHeaderResized" />
       <!-- window menu -->
@@ -18,7 +18,7 @@
         @mousedown.passive.stop
       />
       <!-- widget header -->
-      <div 
+      <div
         class="col"
         v-touch-pan.prevent.mouse="onMoved"
       >
