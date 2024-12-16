@@ -145,7 +145,7 @@ export default {
       if (this.isMultiselect() && _.isNil(value)) {
         this.clear()
       }
-      baseField.methods.apply.call(this, onChanged)
+      baseField.methods.onChanged.call(this, value)
     },
     onFilter (pattern, update) {
       if (pattern === '') {
