@@ -75,7 +75,7 @@ const props = defineProps({
   },
   toolbar: {
     type: Array,
-    default: () => ['download']
+    default: () => null
   }
 })
 
@@ -116,11 +116,12 @@ async function refresh () {
     expiresIn: 60
   })
 }
+/* TODO
 function download (document) {
-  Storage.export({ 
-    file: document.name, 
-    key: document.key,
-    context: document.value.contextId, 
+  Storage.export({
+    file: document.value.name,
+    key: document.value.key,
+    context: document.value.contextId
   })
-}
+}*/
 </script>

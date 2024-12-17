@@ -1,13 +1,13 @@
 <template>
   <div class="fit column">
     <div v-if="interactive === true" class="fit" style="position: relative;">
-      <pinch-zoom 
-        class="pinch-zoom-controller fit row justify-center items-center" 
+      <pinch-zoom
+        class="pinch-zoom-controller fit row justify-center items-center"
         @change="onTransformed"
       >
-        <img 
+        <img
           :src="url"
-          :onload="onLoaded" 
+          :onload="onLoaded"
           class="full-width"
         />
       </pinch-zoom>
@@ -15,7 +15,7 @@
         v-if="transformed"
         class="bg-grey-9 k-toolbar"
       >
-        <KAction 
+        <KAction
           id="restore-image"
           icon="las la-compress-arrows-alt"
           label="KImage.RESET"
@@ -25,9 +25,9 @@
       </div>
     </div>
     <div v-else class="fit row justify-center items-center">
-      <img 
+      <img
         :src="url"
-        :onload="onLoaded" 
+        :onload="onLoaded"
         class="full-width"
       />
     </div>
@@ -107,4 +107,3 @@ function onLoaded () {
   z-index: v-bind(toolbarZIndex);
 }
 </style>
-

@@ -2,7 +2,7 @@
   <KModal
     ref="dialogRef"
     :title="title"
-    :toolbar="toolbar"    
+    :toolbar="toolbar"
     :buttons="computedButtons"
     :width-policy="widthPolicy"
     :maximized="maximized"
