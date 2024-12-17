@@ -1,13 +1,25 @@
 <template>
   <div class="fit column">
+    <!--
+      Header
+     -->
     <div class="full-width row justify-between items-center">
       <div
         v-if="document"
+        id="browser-title"
         class="text-subtitle1"
       >
         {{ document.name }}
       </div>
+      <KPanel
+        id="browser-toolbar"
+        :content="toolbar"
+        :class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-xs': $q.screen.lt.sm }"
+      />
     </div>
+    <!--
+      Content
+     -->
     <div class="full-width col row justify-between items-center">
       <div
         v-if="hasPrevious"
@@ -60,6 +72,10 @@ const props = defineProps({
   default: {
     type: String,
     default: undefined
+  },
+  toolbar: {
+    type: Array,
+    default: () => ['download']
   }
 })
 
@@ -98,6 +114,13 @@ async function refresh () {
     key: document.value.key,
     context: document.value.contextId,
     expiresIn: 60
+  })
+}
+function download (document) {
+  Storage.export({ 
+    file: document.name, 
+    key: document.key,
+    context: document.value.contextId, 
   })
 }
 </script>
