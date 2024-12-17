@@ -60,6 +60,7 @@
                     <KPanel
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
+                      class="q-gutter-x-xs"
                     />
                   </div>
                   <div v-else class="column items-end">
@@ -72,7 +73,8 @@
                     <KPanel
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
-                      class="justify-end"
+                      direction="horizontal"
+                      class="justify-end q-gutter-x-xs"
                     />
                   </div>
                 </slot>
@@ -376,7 +378,7 @@ onBeforeUnmount(() => {
   padding-bottom: 8px;
 }
 .k-timeline-heading {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: bold;
 }
 .q-timeline__title {
@@ -384,13 +386,16 @@ onBeforeUnmount(() => {
 }
 .q-timeline__subtitle {
   margin-bottom: 0px;
-  opacity: 0.9;
+  opacity: 1.0; // override default opacity
   text-transform: capitalize;
   font-weight: 500;
 }
 .q-timeline__content {
   padding-bottom: 16px;
   width: 100%;
+}
+.q-timeline__entry {
+  line-height: 16px;
 }
 .q-timeline--comfortable .q-timeline__subtitle {
   width: v-bind(comfortSize);
