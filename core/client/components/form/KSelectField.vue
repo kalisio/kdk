@@ -72,13 +72,13 @@ export default {
   mixins: [baseField],
   computed: {
     multiple () {
-      return _.get(this.properties, 'multiselect', false)
+      return this.isMultiselect()
     },
     clearable () {
-      return _.get(this.properties, 'field.clearable', true)
+      return this.isClearable()
     },
     chips () {
-      return _.get(this.properties, 'field.chips', false)
+      return this.hasChips()
     },
     options () {
       let opts = _.map(_.get(this.properties, 'field.options', []), option => {
@@ -113,6 +113,15 @@ export default {
     }
   },
   methods: {
+    isMultiselect () {
+      return _.get(this.properties, 'multiselect', false)
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
+    },
+    hasChips () {
+      return _.get(this.properties, 'field.chips', false)
+    },
     getId (option) {
       let id = option.value
       // Complex object ?
@@ -128,8 +137,15 @@ export default {
       return _.kebabCase(id)
     },
     emptyModel () {
-      if (this.multiple) return []
+      if (this.isMultiselect()) return []
       return null
+    },
+    async onChanged (value) {
+      // Quasar resets the model to null when clearing but in the multiple case it should be set to en empty array
+      if (this.isMultiselect() && _.isNil(value)) {
+        this.clear()
+      }
+      baseField.methods.onChanged.call(this, value)
     },
     onFilter (pattern, update) {
       if (pattern === '') {
