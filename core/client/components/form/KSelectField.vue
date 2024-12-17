@@ -140,13 +140,6 @@ export default {
       if (this.isMultiselect()) return []
       return null
     },
-    async onChanged (value) {
-      // Quasar resets the model to null when clearing but in the multiple case it should be set to en empty array
-      if (this.isMultiselect() && _.isNil(value)) {
-        this.clear()
-      }
-      baseField.methods.onChanged.call(this, value)
-    },
     onFilter (pattern, update) {
       if (pattern === '') {
         update(() => {
