@@ -395,7 +395,7 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 .q-timeline__entry {
-  line-height: 16px;
+  line-height: 18px;
 }
 .q-timeline--comfortable .q-timeline__subtitle {
   width: v-bind(comfortSize);
