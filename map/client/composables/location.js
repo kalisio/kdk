@@ -11,6 +11,7 @@ export function useLocation () {
   // Data
   const availableGeocoders = ref([])
   const selectedGeocoders = ref([])
+  const selectedViewbox = ref([])
 
   // Functions
   // Input geocoders if given should be like { source: xxx, selected: true }
@@ -38,6 +39,14 @@ export function useLocation () {
       }
     }
   }
+  // Input viewbox if given should be like [lon1,lat1,lon2,lat2]
+  async function setViewbox (viewbox) {
+    if (_.isNull(viewbox)) {
+      selectedViewbox.value = []
+    } else {
+      selectedViewbox.value = viewbox
+    }
+  }
   async function geolocate () {
     await Geolocation.update()
     const error = Store.get('geolocation.error')
@@ -47,13 +56,17 @@ export function useLocation () {
   async function search (pattern) {
     const project = getActivityProject()
     const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())
-    return searchLocation(planet, pattern, { geocoders: selectedGeocoders.value })
+    return searchLocation(planet, pattern, {
+      geocoders: selectedGeocoders.value,
+      viewbox: selectedViewbox.value
+    })
   }
   // Expose
   return {
     availableGeocoders,
     selectedGeocoders,
     setGeocoders,
+    setViewbox,
     geolocate,
     search
   }

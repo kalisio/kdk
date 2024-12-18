@@ -184,7 +184,7 @@ export default {
   },
   setup () {
     // Data
-    const { availableGeocoders, selectedGeocoders, setGeocoders, search, geolocate } = useLocation()
+    const { availableGeocoders, selectedGeocoders, setGeocoders, setViewbox, search, geolocate } = useLocation()
     const locations = ref([])
     // Expose
     return {
@@ -192,12 +192,14 @@ export default {
       availableGeocoders,
       selectedGeocoders,
       setGeocoders,
+      setViewbox,
       geolocate,
       search
     }
   },
   mounted () {
     this.setGeocoders(_.get(this.properties, 'field.geocoders', []))
+    this.setViewbox(_.get(this.properties, 'field.viewbox', []))
   }
 }
 </script>
