@@ -19,7 +19,7 @@
     <!--
       Content
      -->
-    <div 
+    <div
       v-if="files && file"
       class="full-width col row justify-between items-center"
     >
@@ -42,7 +42,7 @@
           :localize="false"
           class="fit"
         />
-        <q-icon 
+        <q-icon
           v-else
           name="las la-eye-slash"
           size="3rem"
@@ -109,7 +109,7 @@ const hasNext = computed(() => {
 })
 const tools = computed(() => {
   if (_.isEmpty(props.toolbar)) return []
-  let components = []
+  const components = []
   if (props.toolbar.includes('download')) {
     components.push({
       id: 'download-file',
@@ -195,10 +195,10 @@ function downloadFile () {
   })
 }
 function deleteFile () {
-  /*Storage.export({
+  /* Storage.export({
     file: file.value.name,
     key: getDocumentKey(file.value.name)
-  })*/
+  }) */
 }
 function onFilesUploaded (uploadedFiles) {
   files.value = _.concat(files.value, _.map(uploadedFiles, file => {

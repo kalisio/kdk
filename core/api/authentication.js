@@ -50,7 +50,7 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
   }
 
   async getEntityQuery (profile) {
-    // Ensure the profile is right before requesting based on it 
+    // Ensure the profile is right before requesting based on it
     // as when an error is raised the profile will not contain any ID or email
     // and we might build a request retrieving any user
     if (!_.has(profile, 'id') && !_.has(profile, 'sub') && !_.has(profile, this.emailFieldInProfile || 'email')) {

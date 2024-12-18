@@ -51,7 +51,7 @@ const bToMb = 0.00000095367432
 function checkFilesSize (files) {
   return _.filter(files, file => {
     if (file.size === 0) {
-      Notify.create({ type: 'negative', message: i18n.t('KUploader.EMPTY_FILE', { file: file.name })})
+      Notify.create({ type: 'negative', message: i18n.t('KUploader.EMPTY_FILE', { file: file.name }) })
       return false
     }
     if (file.size > props.maxFileSize) {
@@ -75,21 +75,19 @@ async function upload (path) {
       key,
       blob: file
     })
-    .then(() => {
-      Notify.create({
-        type: 'positive',
-        message: i18n.t('KUploader.UPLOAD_FILE_SUCCEEDED',
-          { file: file.name })
+      .then(() => {
+        Notify.create({
+          type: 'positive',
+          message: i18n.t('KUploader.UPLOAD_FILE_SUCCEEDED', { file: file.name })
+        })
       })
-    })
-    .catch(error => {
-      logger.error('[KDK] Uploading file ${file.name} failed:', error)
-      Notify.create({
-        type: 'negative',
-        message: i18n.t('KUploader.UPLOAD_FILE_ERRORED',
-          { file: file.name })
+      .catch(error => {
+        logger.error(`[KDK] Uploading file ${file.name} failed:`, error)
+        Notify.create({
+          type: 'negative',
+          message: i18n.t('KUploader.UPLOAD_FILE_ERRORED', { file: file.name })
+        })
       })
-    })
   }
   uploading.value = false
   emit('files-uploaded', files.value)
