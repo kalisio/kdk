@@ -928,6 +928,19 @@
   },
   "KImage": {
     "RESET": "Reset"
+  },
+  "KBrowser": {
+    "UPLOAD_FILES": "Upload files",
+    "DOWNLOAD_FILE": "Download file",
+    "DELETE_FILE": "Delete file",
+    "UPLOAD": "Upload"
+  },
+  "KUploader": {
+    "ADD_FILES": "Add files...",
+    "EMPTY_FILE": "File {file] is empty or corrupted !",
+    "FILE_TOO_LARGE": "File {file} is too large. The size must be less than {size}Mb",
+    "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
+    "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
   }
 }
 

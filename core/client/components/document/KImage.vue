@@ -8,7 +8,7 @@
         <img
           :src="url"
           :onload="onLoaded"
-          class="full-width"
+          style="max-width: 100%;"
         />
       </pinch-zoom>
       <div
@@ -28,7 +28,7 @@
       <img
         :src="url"
         :onload="onLoaded"
-        class="full-width"
+        style="max-width: 100%;"
       />
     </div>
     <q-spinner
