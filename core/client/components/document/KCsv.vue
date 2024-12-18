@@ -4,7 +4,7 @@
       <template v-for="(row, index) in data" :key="index">
         <tr>
         <template v-for="cell in row" :key="cell">
-          <td>{{ cell }}</td>
+          <td class="text-caption">{{ cell }}</td>
         </template>
         </tr>
       </template>
