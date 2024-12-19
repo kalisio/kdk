@@ -42,10 +42,12 @@
           :localize="false"
           class="fit"
         />
-        <q-icon
-          v-else
-          name="las la-eye-slash"
-          size="3rem"
+        <KStamp v-else
+          icon="las la-eye-slash"
+          icon-size="3rem"
+          :text="$t('KBrowser.CANNOT_BE_VIEWED')"
+          direction="vertical"
+          class="q-pa-md"
         />
       </div>
       <div
@@ -61,22 +63,39 @@
         />
       </div>
     </div>
+    <KStamp v-else
+      icon="las la-exclamation-circle"
+      icon-size="4rem"
+      :text="$t('KBrowser.NO_FILES')"
+      text-size="1rem"
+      direction="vertical"
+      class="fixed-center"
+    />
   </div>
 </template>
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watch } from 'vue'
+import logger from 'loglevel'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { Dialog } from 'quasar'
 import { Storage } from '../../storage.js'
+import { Events } from '../../events.js'
 import { Document } from '../../document.js'
+import { i18n } from '../../i18n.js'
 import KDocument from './KDocument.vue'
 import KAction from '../action/KAction.vue'
+import KStamp from '../KStamp.vue'
 
 // Props
 const props = defineProps({
+  contextId: {
+    type: String,
+    default: undefined
+  },
   path: {
     type: String,
-    default: ''
+    default: undefined
   },
   documents: {
     type: Array,
@@ -110,7 +129,7 @@ const hasNext = computed(() => {
 const tools = computed(() => {
   if (_.isEmpty(props.toolbar)) return []
   const components = []
-  if (props.toolbar.includes('download')) {
+  if (props.toolbar.includes('download')  && file.value) {
     components.push({
       id: 'download-file',
       icon: 'las la-download',
@@ -127,14 +146,14 @@ const tools = computed(() => {
       tooltip: 'KBrowser.UPLOAD_FILES',
       dialog: {
         component: 'document/KUploader',
+        'component.contextId': props.contextId,
         'component.path': props.path,
-        handlers: { 'files-uploaded': onFilesUploaded },
         cancelAction: 'CANCEL',
         okAction: { id: 'upload-button', label: 'KBrowser.UPLOAD', handler: 'upload' }
       }
     })
   }
-  if (props.toolbar.includes('delete')) {
+  if (props.toolbar.includes('delete')  && file.value) {
     components.push({
       id: 'delete-file',
       icon: 'las la-trash',
@@ -161,7 +180,6 @@ watch(() => [props.documents, props.default], async () => {
   files.value = props.documents
   index.value = _.findIndex(files.value, { name: props.default })
   if (index.value > -1) await refresh()
-  console.log(files.value)
 }, { immediate: true })
 
 // Functions
@@ -182,31 +200,83 @@ async function next () {
   await refresh()
 }
 async function refresh () {
+  logger.debug('[KDK] Browser refreshed', files.value, index.value)
   file.value = files.value[index.value]
   file.value.url = await Storage.getPresignedUrl({
     key: getDocumentKey(file.value.name),
+    context: props.contextId,
     expiresIn: 60
   })
 }
 function downloadFile () {
   Storage.export({
     file: file.value.name,
-    key: getDocumentKey(file.value.name)
+    key: getDocumentKey(file.value.name),
+    context: props.contextId
   })
 }
 function deleteFile () {
-  /* Storage.export({
-    file: file.value.name,
-    key: getDocumentKey(file.value.name)
-  }) */
-}
-function onFilesUploaded (uploadedFiles) {
-  files.value = _.concat(files.value, _.map(uploadedFiles, file => {
-    return {
-      name: file.name,
-      type: file.type
+  Dialog.create({
+    message: i18n.t('KBrowser.DELETE_FILE_MESSAGE', { name: file.value.name }),
+    persistent: true,
+    ok: {
+      label: i18n.t('YES'),
+      flat: true
+    },
+    cancel: {
+      label: i18n.t('NO'),
+      flat: true
     }
-  }))
-  console.log(uploadedFiles, files.value)
+  }).onOk(() => {
+    Storage.remove({
+      file: file.value.name,
+      key: getDocumentKey(file.value.name),
+      context: props.contextId
+    })
+  })
 }
+async function onFileUploaded (data) {
+  const { name, key, type, context } = data
+  logger.debug(`[KDK] File ${name} of type ${type} uploaded:`, key, context)
+  // filter event
+  if (context !== props.contextId) return
+  if (!key.includes(props.path)) return
+  // add the file
+  files.value.push({ name, type })
+  // refresh the browser
+  if (index.value === -1) {
+    index.value = 0
+    await refresh()
+  }
+}
+async function onFileRemoved (data) {
+  const { name, key, context } = data
+  logger.debug(`[KDK] File ${name} removed:`, key, context)
+  // filter event
+  if (context !== props.contextId) return
+  if (!key.includes(props.path)) return
+  // remove the file
+  _.remove(files.value, file => {
+    return file.name === name
+  })
+  // refresh the browser
+  if (_.size(files.value) === 0) {
+    file.value = null
+    index.value = -1
+  } else {
+    if (index.value < _.size(files.value) - 1) index.value = index.value + 1
+    else index.value = 0
+    await refresh()
+  }
+}
+
+// Hooks
+onMounted(() => {
+  Events.on('file-uploaded', onFileUploaded)
+  Events.on('file-removed', onFileRemoved)
+})
+onBeforeUnmount(() => {
+  Events.off('file-uploaded', onFileUploaded)
+  Events.off('file-removed', onFileRemoved)
+})
 </script>

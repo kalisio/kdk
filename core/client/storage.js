@@ -104,6 +104,17 @@ export const Storage = {
       logger.error(`[KDK] Cannot export ${file} with key '${key}'`)
     }
   },
+  async remove (options) {
+    const { file, key, context } = options
+    const service = this.getService(context)
+    try {
+      await service.remove(key)
+      Events.emit('file-removed', { name: file, key, context })
+    } catch (error) {
+      logger.error(`[KDK] Cannot remove ${file} with key '${key}'`, error)
+      throw error
+    }
+  },
   async getObjectUrl (options) {
     const { key, context } = options
     // Ensure service is created

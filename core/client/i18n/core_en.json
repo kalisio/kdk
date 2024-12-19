@@ -930,10 +930,13 @@
     "RESET": "Reset"
   },
   "KBrowser": {
-    "UPLOAD_FILES": "Upload files",
     "DOWNLOAD_FILE": "Download file",
+    "UPLOAD_FILES": "Upload files",
+    "UPLOAD": "Upload",
     "DELETE_FILE": "Delete file",
-    "UPLOAD": "Upload"
+    "DELETE_FILE_MESSAGE": "Are you sure you want to delete {name} ?",
+    "CANNOT_BE_VIEWED": "This file cannot be viewed",
+    "NO_FILES": "No files"
   },
   "KUploader": {
     "ADD_FILES": "Add files...",

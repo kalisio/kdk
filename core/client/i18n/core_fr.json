@@ -930,10 +930,13 @@
     "RESET": "Réinitialiser"
   },  
   "KBrowser": {
-    "UPLOAD_FILES": "Transférer des fichiers",
     "DOWNLOAD_FILE": "Télécharger le fichier",
+    "UPLOAD_FILES": "Transférer des fichiers",
+    "UPLOAD": "Transférer",
     "DELETE_FILE": "Supprimer le fichier",
-    "UPLOAD": "Transférer"
+    "DELETE_FILE_MESSAGE": "Etes vous sûr de vouloir supprimer {name} ?",
+    "CANNOT_BE_VIEWED": "Ce fichier ne peut pas être visualisé",
+    "NO_FILES": "Aucun fichier"
   },
   "KUploader": {
     "ADD_FILES": "Ajouter des fichiers...",
