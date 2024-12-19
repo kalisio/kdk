@@ -401,7 +401,8 @@
     "NO_RESULT": "No result found",
     "FILTER": "Filter search services",
     "GEOLOCATE": "Locate me",
-    "DRAW": "Draw on a map"
+    "DRAW": "Draw on a map",
+    "VIEWBOX": "Restrict search to defined area"
   },
   "KLocationMap": {
     "RECENTER_MAP": "Recenter map",

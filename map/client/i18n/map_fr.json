@@ -400,7 +400,8 @@
     "NO_RESULT": "Aucun résultat trouvé",
     "FILTER": "Filtrer les services de recherche",
     "GEOLOCATE": "Me localiser",
-    "DRAW": "Dessiner sur une carte"
+    "DRAW": "Dessiner sur une carte",
+    "VIEWBOX": "Limiter la recherche dans la zone définie"
   },
   "KLocationMap": {
     "RECENTER_MAP": "Recentrer la carte",
