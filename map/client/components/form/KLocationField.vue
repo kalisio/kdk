@@ -165,7 +165,7 @@ export default {
       return _.get(this.properties, 'field.map')
     },
     switchViewboxUsage () {
-      return _.get(this.properties, 'field.viewbox.selectable',false)
+      return _.get(this.properties, 'field.viewbox.selectable', false)
     }
   },
   methods: {
@@ -194,7 +194,7 @@ export default {
       return true
     },
     changeViewboxUsage () {
-      this.setViewbox(this.useViewbox ? _.get(this.properties, 'field.viewbox.coordinates', []): [])
+      this.setViewbox(this.useViewbox ? _.get(this.properties, 'field.viewbox.coordinates', []) : [])
     }
   },
   setup () {

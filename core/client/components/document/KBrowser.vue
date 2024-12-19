@@ -129,7 +129,7 @@ const hasNext = computed(() => {
 const tools = computed(() => {
   if (_.isEmpty(props.toolbar)) return []
   const components = []
-  if (props.toolbar.includes('download')  && file.value) {
+  if (props.toolbar.includes('download') && file.value) {
     components.push({
       id: 'download-file',
       icon: 'las la-download',
@@ -153,7 +153,7 @@ const tools = computed(() => {
       }
     })
   }
-  if (props.toolbar.includes('delete')  && file.value) {
+  if (props.toolbar.includes('delete') && file.value) {
     components.push({
       id: 'delete-file',
       icon: 'las la-trash',
