@@ -464,10 +464,12 @@
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Sort projects",
-    "EDIT_PROJECT": "@:EDIT",
-    "REMOVE_PROJECT": "@:REMOVE",
     "REMOVE_DIALOG_TITLE": "Remove {project} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{project}</b> from your workspace ?"
+  },
+  "KProjectSelector": {
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
   },
   "KProjectEditor": {
     "BACKGROUND_LAYER_REQUIRED": "A project at least requires a background layer."

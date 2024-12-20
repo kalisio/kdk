@@ -463,10 +463,12 @@
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Trier les projets",
-    "EDIT_PROJECT": "@:EDIT",
-    "REMOVE_PROJECT": "@:REMOVE",
     "REMOVE_DIALOG_TITLE": "Supprimer {project} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {project} de votre espace de travail ?"
+  },
+  "KProjectSelector": {
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
   },
   "KProjectEditor": {
     "BACKGROUND_LAYER_REQUIRED": "Un projet doit au moins contenir un fond cartographique."

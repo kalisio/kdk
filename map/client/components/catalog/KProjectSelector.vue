@@ -19,7 +19,7 @@
       <!-- Project actions -->
       <KPanel
         :id="`${item.name}-actions`"
-        :content="itemActions"
+        :content="projectActions"
         :context="item" />
     </div>
   </div>
@@ -35,7 +35,38 @@ export default {
     KPanel,
     KAction
   },
-  mixins: [baseItem]
+  mixins: [baseItem],
+  computed: {
+    projectActions () {
+      const projectActions = []
+      if (this.$can('update', 'projects', this.contextId, this.item)) {
+        const content = [{
+          id: 'edit-project',
+          icon: 'las la-file-alt',
+          label: 'KProjectSelector.EDIT_PROJECT',
+          handler: (item) => this.$emit('item-selected', item, 'edit-project')
+        }]
+        if (this.$can('remove', 'projects', this.contextId, this.item)) {
+          content.push({
+            id: 'remove-project',
+            icon: 'las la-trash',
+            label: 'KProjectSelector.REMOVE_PROJECT',
+            handler: (item) => this.$emit('item-selected', item, 'remove-project')
+          })
+        }
+        projectActions.push({
+          id: 'project-overflowmenu',
+          component: 'menu/KMenu',
+          dropdownIcon: 'las la-ellipsis-v',
+          actionRenderer: 'item',
+          propagate: false,
+          dense: true,
+          content
+        })
+      }
+      return projectActions
+    }
+  }
 }
 </script>
 
