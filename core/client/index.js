@@ -67,10 +67,11 @@ export default async function initialize () {
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
 
   // Initialize singletons that might be used globally first
-  await Platform.initialize()
-  await Capabilities.initialize()
+  // Take care that order matters as some singletons might use others
   LocalStorage.initialize()
   LocalCache.initialize()
+  await Platform.initialize()
+  await Capabilities.initialize()
   Broadcaster.initialize()
   Storage.initialize()
   Theme.initialize()

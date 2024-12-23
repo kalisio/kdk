@@ -20,8 +20,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { LocalForage } from '@kalisio/feathers-localforage'
-import { Filter, Sorter, utils, i18n, api } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n, api, LocalCache } from '../../../../core/client'
 import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 import { useProject } from '../../composables'
 import { cacheView, uncacheView } from '../../utils/utils.offline.js'
@@ -96,7 +95,7 @@ export default {
   },
   methods: {
     async onCollectionRefreshed (items) {
-      const cachedViews = await LocalForage.getItem('views')
+      const cachedViews = await LocalCache.getItem('views')
       if (!cachedViews) return
       // Update
       _.forEach(items, (item) => {

@@ -6,10 +6,11 @@ import jwtdecode from 'jwt-decode'
 import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
-import createOfflineService, { LocalForage } from '@kalisio/feathers-localforage'
+import createOfflineService from '@kalisio/feathers-localforage'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
+import { LocalCache } from './local-cache.js'
 import { Events } from './events.js'
 import * as hooks from './hooks/index.js'
 import { makeServiceSnapshot } from '../common/utils.js'
@@ -30,11 +31,11 @@ export function createClient (config) {
   api.isDisconnected = !navigator.onLine
   addEventListener('online', () => {
     api.isDisconnected = false
-    Events.emit('navigator-reconnected')
+    Events.emit('navigator-reconnected', api)
   })
   addEventListener('offline', () => {
     api.isDisconnected = true
-    Events.emit('navigator-disconnected')
+    Events.emit('navigator-disconnected', api)
   })
   // This can force to use offline services it they exist even if connected
   api.useLocalFirst = config.useLocalFirst
@@ -197,9 +198,9 @@ export function createClient (config) {
     if (!offlineService) {
       // Pass options not used internally for offline management as service options and store it along with service
       const serviceOptions = _.omit(options, ['hooks', 'snapshot', 'clear', 'baseQuery', 'baseQueries', 'dataPath'])
-      const services = await LocalForage.getItem('services') || {}
+      const services = await LocalCache.getItem('services') || {}
       _.set(services, serviceName, serviceOptions)
-      await LocalForage.setItem('services', services)
+      await LocalCache.setItem('services', services)
       offlineService = api.createService(offlineServiceName, {
         service: createOfflineService({
           id: '_id',
@@ -316,10 +317,19 @@ export function createClient (config) {
     // Retrieve our specific errors on rate-limiting
     api.socket.on('rate-limit', (error) => Events.emit('error', error))
     // Disable default socketio behavior of buffering messages when disconnected
-    api.socket.io.on('reconnect', function () {
+    // Also keep track of connection state with the server
+    api.socket.io.on('reconnect', async () => {
+      api.isDisconnected = false
       api.socket.sendBuffer = []
       // Re-authenticate on reconnect
-      api.reAuthenticate(true)
+      await api.reAuthenticate(true)
+      Events.emit('websocket-reconnected', api)
+      logger.info('[KDK] Socket has been reconnected')
+    })
+    api.socket.io.on('reconnect_error', () => {
+      api.isDisconnected = true
+      Events.emit('websocket-disconnected', api)
+      logger.error(new Error('[KDK] Socket has been disconnected'))
     })
   }
   api.configure(feathers.authentication({

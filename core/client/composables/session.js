@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar, Loading } from 'quasar'
@@ -77,9 +76,6 @@ export function useSession (options = {}) {
     }
     // Display it only the first time the error appears because multiple attempts will be tried
     if (!pendingReconnection && !ignoreReconnectionError) {
-      api.isDisconnected = true
-      Events.emit('websocket-disconnected')
-      logger.error(new Error('Socket has been disconnected'))
       // This will ensure any operation in progress will not keep a "dead" loading indicator
       // as this error might appear under-the-hood without notifying service operations
       Loading.hide()
@@ -127,8 +123,6 @@ export function useSession (options = {}) {
     ignoreReconnectionError = false
     // Display it only the first time the reconnection occurs because multiple attempts will be tried
     if (!pendingReload) {
-      api.isDisconnected = false
-      Events.emit('websocket-reconnected')
       // Reconnect prompt can be avoided, eg in tests
       if (!LocalStorage.get(reconnectKey, true)) return
       pendingReload = $q.dialog({

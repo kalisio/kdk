@@ -5,7 +5,6 @@ import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
-import { LocalForage } from '@kalisio/feathers-localforage'
 import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
@@ -248,7 +247,7 @@ async function setBaseLayerUncached (layer, options) {
 }
 
 async function setServiceLayerUncached (layer, options) {
-  const services = await LocalForage.getItem('services') || {}
+  const services = await LocalCache.getItem('services') || {}
   const serviceOptions = services[layer.service]
   if (serviceOptions) {
     const offlineService = api.getOfflineService(layer.service, serviceOptions.context)

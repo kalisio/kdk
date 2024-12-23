@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'debug'
-import { LocalForage } from '@kalisio/feathers-localforage'
+import { LocalCache } from '../local-cache.js'
 import { Store } from '../store.js'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
@@ -11,7 +11,7 @@ async function authenticate(authentication) {
   let user = Store.get('user')
   if (user) return
   // Store latest authentication data for offline mode
-  await LocalForage.setItem('authentication', authentication)
+  await LocalCache.setItem('authentication', authentication)
   // Anonymous user or user account ?
   user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
   Store.set('user', user)
@@ -36,7 +36,7 @@ export async function register (user) {
 
 export async function logout () {
   try {
-    await LocalForage.removeItem('authentication')
+    await LocalCache.removeItem('authentication')
     await api.logout()
     Store.set('user', null)
   } catch (error) {
@@ -52,7 +52,7 @@ export async function restoreSession () {
   try {
     let authentication
     if (api.isDisconnected) {
-      authentication = await LocalForage.getItem('authentication')
+      authentication = await LocalCache.getItem('authentication')
       if (authentication) {
         // In this specific case as we bypass actual authentication the events will not be emitted
         api.emit('login', authentication)
