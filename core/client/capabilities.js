@@ -8,9 +8,11 @@ import { Store } from './store.js'
 // Export singleton
 export const Capabilities = {
   async initialize () {
+    // Try to fetch cached data if any
+    const content = await LocalCache.getItem('capabilities')
     // If browser has detected an offline state then go for cached data
-    if (api.isDisconnected || api.useLocalFirst) {
-      this.content = await LocalCache.getItem('capabilities')
+    if (api.isDisconnected || (api.useLocalFirst && content)) {
+      this.content = content
     } else {
       // Otherwise try to fetch capabilities from server, no response will assume an offline state as well
       try {
@@ -19,8 +21,7 @@ export const Capabilities = {
         // Store latest capabilities data for offline mode
         await LocalCache.setItem('capabilities', this.content)
       } catch (error) {
-        // Try to fetch cached data if any
-        this.content = await LocalCache.getItem('capabilities')
+        this.content = content
       }
     }
     logger.debug('[KDK] Capabilities initialized with content:', this.content)
