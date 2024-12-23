@@ -38,6 +38,7 @@ export function decorateDistributedService (service) {
   remoteService.getContextId = function () {
     return contextId
   }
+  return remoteService
 }
 
 export function createTagService (options = {}) {
