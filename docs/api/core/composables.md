@@ -31,6 +31,24 @@ The composable exposes the following:
 * **unselectItem(path)**: unselect an item
 * **has/getSelectedItem()**, **has/getSelectedItems()**: check for selected item(s) depending on selection mode
 
+## Layout
+
+### useLayout
+
+Used to manipulate the layout, call **useLayout()** without arguments.
+
+The composable exposes the following (**{Placement}** can be **Top**, **Bottom**, **Left**, **Right**):
+* **configureLayout(configuration, context)**: apply the layout configuration with provided binding context (i.e. `this`)
+* **clearLayout()**: reset layout content
+* **setLayoutMode(mode)**: change current layout mode
+* **set{Placement}Pane(configuration, context)**: apply the layout configuration to target placement with provided binding context (i.e. `this`)
+* **set{Placement}PaneMode(mode)**: change current layout mode of target placement
+* **set{Placement}PaneFilter(filter)**: change filter applied on elements of target placement
+* **set{Placement}PaneVisible(visible)**: change the visibility of target placement
+* **set{Placement}PaneOpener(opener)**: change the visibility of target placement's opener
+* **clear{Placement}Layout()**: reset layout content of target placement
+
+
 ## Activity
 
 ### useActivity
