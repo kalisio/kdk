@@ -103,8 +103,9 @@ export async function setBaseLayerCached (layer, options) {
       }
     }
   }
-  // Always download top-level image as we use it as thumbnail
+  // Always download top-level image or icon as we use it as thumbnail
   promises.push(cacheLayerTile(urlTemplate, 0, 0, 0))
+  if (layer.iconUrl) promises.push(cacheLayerTile(layer.iconUrl))
   await Promise.all(promises)
 }
 
@@ -242,8 +243,9 @@ async function setBaseLayerUncached (layer, options) {
       }
     }
   }
-  // Always remove top-level image as we use it as thumbnail
+  // Always remove top-level image or icon as we use it as thumbnail
   await uncacheLayerTile(urlTemplate, 0, 0, 0)
+  if (layer.iconUrl) promises.push(uncacheLayerTile(layer.iconUrl))
 }
 
 async function setServiceLayerUncached (layer, options) {
