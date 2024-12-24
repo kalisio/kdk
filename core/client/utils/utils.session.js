@@ -51,7 +51,7 @@ export async function logout () {
 export async function restoreSession () {
   try {
     let authentication
-    if (api.isDisconnected) {
+    if (api.isDisconnected || api.useLocalFirst) {
       authentication = await LocalCache.getItem('authentication')
       if (authentication) {
         // In this specific case as we bypass actual authentication the events will not be emitted
