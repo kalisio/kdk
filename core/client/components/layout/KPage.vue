@@ -216,8 +216,8 @@ const contentStyleFunction = computed(() => {
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
   return {
-    paddingTop: `${topPane.size[1]}px`,
-    paddingBottom: `${bottomPane.size[1]}px`,
+    paddingTop: props.padding ? `${topPane.size[1]}px` : 0,
+    paddingBottom: props.padding ? `${bottomPane.size[1]}px` : 0,
     width: `calc(100vw - ${widthOffset}px)`,
     height: `calc(100vh - ${heightOffset}px)`,
     maxWidth: `calc(100vw - ${widthOffset}px)`,

@@ -105,19 +105,19 @@ export const Layout = {
     return Store.get(this.paths.layout)
   },
   set (layout) {
-    if (layout.view) this.setView(layout.view)
-    if (layout.padding) this.setPadding(layout.padding)
-    if (layout.header) this.setHeader(layout.header)
-    if (layout.footer) this.setFooter(layout.footer)
-    if (layout.page) this.setPage(layout.page)
-    if (layout.stickies) this.setStickies(layout.stickies)
-    if (layout.fab) this.setFab(layout.fab)
+    if (_.has(layout, 'view')) this.setView(layout.view)
+    if (_.has(layout, 'padding')) this.setPadding(layout.padding)
+    if (_.has(layout, 'header')) this.setHeader(layout.header)
+    if (_.has(layout, 'footer')) this.setFooter(layout.footer)
+    if (_.has(layout, 'page')) this.setPage(layout.page)
+    if (_.has(layout, 'stickies')) this.setStickies(layout.stickies)
+    if (_.has(layout, 'fab')) this.setFab(layout.fab)
     this.placements.forEach(placement => {
       if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
       if (_.has(layout, `windows.${placement}`)) this.setWindow(placement, _.get(layout, `windows.${placement}`))
     })
-    if (layout.mode) this.setMode(layout.mode)
-    if (layout.focus) this.setFocus(layout.focus)
+    if (_.has(layout, 'mode')) this.setMode(layout.mode)
+    if (_.has(layout, 'focus')) this.setFocus(layout.focus)
   },
   setView (view) {
     Store.patch(this.paths.layout, { view })
@@ -126,7 +126,7 @@ export const Layout = {
     Store.patch(this.paths.layout, { view: this.getElementDefaults('view') })
   },
   setPadding (padding) {
-    Store.patch(this.paths.padding, { padding })
+    Store.patch(this.paths.layout, { padding })
   },
   clearPadding () {
     Store.patch(this.paths.layout, { padding: this.getElementDefaults('padding') })

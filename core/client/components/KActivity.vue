@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     padding () {
-      return this.Layout.padding
+      return this.Layout.get().padding
     }
   },
   watch: {
