@@ -15,8 +15,8 @@ import config from 'config'
 import { ref } from 'vue'
 
 // Data
-const appName = _.get(config, 'appName')
-const logo = ref(_.get(config, 'appLogo', _.toLower(appName) + '-logo.png'))
+const appSlug = _.get(config, 'appSlug', _.kebabCase(_.get(config, 'appName')))
+const logo = _.get(config, 'appLogo', `${appSlug}-logo.png`)
 
 // Props
 defineProps({
