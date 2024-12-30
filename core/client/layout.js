@@ -120,6 +120,10 @@ export const Layout = {
     if (_.has(layout, 'focus')) this.setFocus(layout.focus)
   },
   setView (view) {
+    if (_.isNil(view)) {
+      logger.warn(`[KDK] Undefined 'view' argument`)
+      return
+    }
     Store.patch(this.paths.layout, { view })
   },
   clearView () {
@@ -129,6 +133,10 @@ export const Layout = {
     return this.get().padding
   },
   setPadding (padding) {
+    if (_.isNil(padding)) {
+      logger.warn(`[KDK] Undefined 'padding' argument`)
+      return
+    }
     Store.patch(this.paths.layout, { padding })
   },
   clearPadding () {
