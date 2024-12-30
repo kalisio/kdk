@@ -125,6 +125,9 @@ export const Layout = {
   clearView () {
     Store.patch(this.paths.layout, { view: this.getElementDefaults('view') })
   },
+  getPadding () {
+    return this.get().padding
+  },
   setPadding (padding) {
     Store.patch(this.paths.layout, { padding })
   },

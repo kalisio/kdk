@@ -1,5 +1,5 @@
 <template>
-  <q-page :padding="padding" :style-fn="layoutOffsetListener">
+  <q-page :padding="Layout.getPadding()" :style-fn="layoutOffsetListener">
     <!--
       Specific page content: can be provided as slot or/and by configuration
      -->
@@ -49,7 +49,7 @@
             :style="bottomPaneStyle"
             class="k-pane"
           />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onBottomPaneResized" />
+          <q-resize-observer v-if="Layout.getPadding()" debounce="200" @resize="onBottomPaneResized" />
         </div>
       </div>
     </q-page-sticky>
@@ -72,7 +72,7 @@
             :style="rightPaneStyle"
             class="k-pane"
           />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onRightPaneResized" />
+          <q-resize-observer v-if="Layout.getPadding()" debounce="200" @resize="onRightPaneResized" />
         </div>
       </div>
     </q-page-sticky>
@@ -93,7 +93,7 @@
             :style="topPaneStyle"
             class="k-pane"
           />
-          <q-resize-observer v-if="padding" debounce="200" @resize="onTopPaneResized" />
+          <q-resize-observer v-if="Layout.getPadding()" debounce="200" @resize="onTopPaneResized" />
         </div>
         <KOpener id="top-opener" v-if="topPane.opener" v-model="isTopPaneOpened" position="top" />
       </div>
@@ -187,14 +187,6 @@ import KOpener from './KOpener.vue'
 import KWindow from './KWindow.vue'
 import KFab from './KFab.vue'
 
-// Props
-const props = defineProps({
-  padding: {
-    type: Boolean,
-    default: true
-  }
-})
-
 // Data
 const $q = useQuasar()
 const { Layout } = useLayout()
@@ -208,16 +200,17 @@ const leftWindow = Layout.getWindow('left')
 const topWindow = Layout.getWindow('top')
 const rightWindow = Layout.getWindow('right')
 const bottomWindow = Layout.getWindow('bottom')
-const layoutOffset = ref(0)
+const layoutOffset = ref(0)   
 
 // Computed
 const contentStyleFunction = computed(() => {
-  const layoutPadding = props.padding ? $q.screen.xs ? 16 : $q.screen.lt.lg ? 32 : 48 : 0
+  const hasPadding = Layout.getPadding()
+  const layoutPadding = hasPadding ? $q.screen.xs ? 16 : $q.screen.lt.lg ? 32 : 48 : 0
   const widthOffset = layoutPadding
   const heightOffset = layoutOffset.value + layoutPadding
   return {
-    paddingTop: props.padding ? `${topPane.size[1]}px` : 0,
-    paddingBottom: props.padding ? `${bottomPane.size[1]}px` : 0,
+    paddingTop: hasPadding ? `${topPane.size[1]}px` : 0,
+    paddingBottom: hasPadding ? `${bottomPane.size[1]}px` : 0,
     width: `calc(100vw - ${widthOffset}px)`,
     height: `calc(100vh - ${heightOffset}px)`,
     maxWidth: `calc(100vw - ${widthOffset}px)`,
