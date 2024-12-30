@@ -8,6 +8,12 @@ export function baseActivity (name) {
       getAppName () {
         return this.$config('appName')
       },
+      configurePadding () {
+        Layout.setPadding(_.get(this.activityOptions, 'padding'), true)
+      },
+      clearPadding () {
+        Layout.setPadding(true)
+      },
       configureHeader () {
         Layout.setHeader(_.get(this.activityOptions, 'header'), this)
       },
@@ -193,6 +199,7 @@ export function baseActivity (name) {
         Layout.clearFocus()
       },
       clearActivity () {
+        this.clearPadding()
         this.clearFocus()
         this.clearHeader()
         this.clearFooter()
@@ -206,6 +213,7 @@ export function baseActivity (name) {
         this.clearWindows()
       },
       configureActivity () {
+        this.configurePadding()
         this.configureHeader()
         this.configureFooter()
         this.configureTopPane()
