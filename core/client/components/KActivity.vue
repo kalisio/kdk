@@ -1,5 +1,5 @@
 <template>
-  <KPage :padding="Layout.getPadding()">
+  <KPage>
     <slot />
   </KPage>
 </template>
