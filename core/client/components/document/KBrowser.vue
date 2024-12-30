@@ -1,5 +1,8 @@
 <template>
-  <div class="fit column">
+  <div 
+    class="fit column"
+    :class="{ 'bg-dark text-grey-3': dark }"
+  >
     <!--
       Header
      -->
@@ -31,7 +34,7 @@
           id="previous-button"
           icon="las la-angle-left"
           :size="$q.screen.gt.xs ? '1rem' : '0.8rem'"
-          color="white"
+
           :handler="previous"
         />
       </div>
@@ -58,7 +61,7 @@
           id="next-button"
           icon="las la-angle-right"
           :size="$q.screen.gt.xs ? '1.2rem' : '0.8rem'"
-          color="white"
+
           :handler="next"
         />
       </div>
@@ -108,6 +111,10 @@ const props = defineProps({
   toolbar: {
     type: Array,
     default: () => null
+  },
+  dark: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -133,7 +140,7 @@ const tools = computed(() => {
     components.push({
       id: 'download-file',
       icon: 'las la-download',
-      color: 'white',
+      color: props.dark ? 'grey-3' : 'grey-8',
       tooltip: 'KBrowser.DOWNLOAD_FILE',
       handler: downloadFile
     })
@@ -142,7 +149,7 @@ const tools = computed(() => {
     components.push({
       id: 'upload-file',
       icon: 'las la-upload',
-      color: 'white',
+      color: props.dark ? 'grey-3' : 'grey-8',
       tooltip: 'KBrowser.UPLOAD_FILES',
       dialog: {
         component: 'document/KUploader',
@@ -157,7 +164,7 @@ const tools = computed(() => {
     components.push({
       id: 'delete-file',
       icon: 'las la-trash',
-      color: 'white',
+      color: props.dark ? 'grey-3' : 'grey-8',
       tooltip: 'KBrowser.DELETE_FILE',
       handler: deleteFile
     })
