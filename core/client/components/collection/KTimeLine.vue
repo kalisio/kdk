@@ -60,7 +60,7 @@
                     <KPanel
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
-                      class="q-gutter-x-xs"
+                      class="q-gutter-xs"
                     />
                   </div>
                   <div v-else class="column items-end">
@@ -74,7 +74,7 @@
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
                       direction="horizontal"
-                      class="justify-end q-gutter-x-xs"
+                      class="justify-end q-gutter-xs"
                     />
                   </div>
                 </slot>
