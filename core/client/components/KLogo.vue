@@ -12,7 +12,6 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref } from 'vue'
 
 // Data
 const appSlug = _.get(config, 'appSlug', _.kebabCase(_.get(config, 'appName')))

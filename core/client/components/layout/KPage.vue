@@ -200,7 +200,7 @@ const leftWindow = Layout.getWindow('left')
 const topWindow = Layout.getWindow('top')
 const rightWindow = Layout.getWindow('right')
 const bottomWindow = Layout.getWindow('bottom')
-const layoutOffset = ref(0)   
+const layoutOffset = ref(0)
 
 // Computed
 const contentStyleFunction = computed(() => {

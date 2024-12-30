@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
 import { Layout } from '../layout.js'
 
 export function baseActivity (name) {

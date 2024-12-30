@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="fit column"
     :class="{ 'bg-dark text-grey-3': dark }"
   >
