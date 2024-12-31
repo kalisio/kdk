@@ -1,7 +1,7 @@
 <template>
-  <div
+  <div 
     class="fit column"
-    :class="{ 'bg-dark text-grey-3': dark }"
+    :class="{ 'q-dark': dark }"
   >
     <!--
       Header
@@ -34,7 +34,7 @@
           id="previous-button"
           icon="las la-angle-left"
           :size="$q.screen.gt.xs ? '1rem' : '0.8rem'"
-
+          :color="dark ? 'grey-3' : 'grey-8'"
           :handler="previous"
         />
       </div>
@@ -61,7 +61,7 @@
           id="next-button"
           icon="las la-angle-right"
           :size="$q.screen.gt.xs ? '1.2rem' : '0.8rem'"
-
+          :color="dark ? 'grey-3' : 'grey-8'"
           :handler="next"
         />
       </div>
