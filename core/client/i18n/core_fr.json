@@ -534,7 +534,7 @@
   },
   "KSubscription": {
     "UNSUBSCRIBE_LABEL": "Se désabonner",
-    "LAST_ACTIVITY": "Dernière activité",
+    "LAST_ACTIVITY": "Dernière activité le {date} à {time}",
     "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },

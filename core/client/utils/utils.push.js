@@ -15,6 +15,12 @@ import { api } from '../api.js'
 import { Platform } from '../platform.js'
 
 export async function subscribeToPushNotifications () {
+  // Check whether the app runs in PWA mode
+  const mode = _.get(Platform.getData('application'), 'mode')
+  if (mode !== 'PWA') {
+    logger.error('[KDK] Cannot subscribe to push notification: the application must run in PWA mode')
+    return
+  }
   // Check prerequisites & notification permission
   try {
     await checkPrerequisites()
