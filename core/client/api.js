@@ -18,7 +18,7 @@ import { makeServiceSnapshot } from '../common/utils.js'
 // Disable default feathers behavior of re-authenticating on disconnect
 feathers.authentication.AuthenticationClient.prototype.handleSocket = () => {}
 
-export function createClient (config) {
+export async function createClient (config) {
   // Setup log level
   if (_.get(configuration, 'logs.level')) {
     logger.setLevel(_.get(configuration, 'logs.level'), false)
@@ -371,6 +371,22 @@ export function createClient (config) {
   // Define domain in config if not forced
   if (!api.getConfig('domain')) api.setConfig('domain', window.location.origin)
 
+  // It appears that navigator.onLine is not reliable so that
+  // we perform an actual request to the domain in order to ensure we are online.
+  // We avoid CORS errors with a request to your own origin.
+  // We also add a random query parameter to prevent cached responses.
+  if (!api.isDisconnected) {
+    try {
+      const url = new URL(api.getConfig('domain'))
+      url.searchParams.set('random', Math.random().toFixed(18).substring(2, 18))
+      await window.fetch(url.toString(), { method: 'HEAD' })
+    } catch (error) {
+      api.isDisconnected = true
+      Events.emit('navigator-disconnected', api)
+      logger.warn(`[KDK] Cannot request target domain ${api.getConfig('domain')}, setting state to offline`, error)
+    }
+  }
+
   return api
 }
 
@@ -379,8 +395,8 @@ export function createClient (config) {
 // eg it might be imported before another one updating the config.
 // It is up to the application to instantiate the client when required.
 export let api
-export function initializeApi (fn) {
-  api = createClient(configuration)
+export async function initializeApi (fn) {
+  api = await createClient(configuration)
   if (fn) fn.call(api, configuration)
   return api
 }

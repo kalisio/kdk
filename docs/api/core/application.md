@@ -23,7 +23,7 @@ KDK [core](https://github.com/kalisio/kdk/core) provides a helper to quickly ini
 import { initializeApi } from '@kalisio/kdk/core.client'
 
 // Initialize API wrapper
-let api = initializeApi()
+let api = await initializeApi()
 // Retrieve a given service
 let users = api.getService('users')
 ```
@@ -34,7 +34,7 @@ import { initializeApi } from '@kalisio/kdk/core.client'
 import { setupApi } from '@kalisio/kdk/map.client'
 
 // Initialize API wrapper with extension function
-let api = initializeApi(setupApi)
+let api = await initializeApi(setupApi)
 ```
 
 ### Isomorphic features
