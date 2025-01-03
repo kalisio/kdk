@@ -11,6 +11,7 @@ import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
 import { api, Time } from '../../../core/client/index.js'
+import chroma from 'chroma-js'
 
 export function processFeatures (geoJson, processor) {
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
@@ -50,6 +51,89 @@ export function transformFeatures (geoJson, transform) {
     }
   })
 }
+
+
+
+export async function constructFeatures (geoJson, options) {
+  const construct = options.construct;
+  const variable = options.variables[0]; // for now we only support one variable
+  const chromajs = {
+    range: variable.chromajs?.range || ['red', 'yellow', 'green'],
+    domain: variable.chromajs?.domain || [0, 100],
+  };
+
+
+  // Initial validation
+  if (!geoJson || geoJson.type !== 'FeatureCollection') return;
+  if (!construct || typeof construct?.type !== 'string') return;
+
+  const { features } = geoJson;
+  if (!Array.isArray(features) || features.length < 2) return;
+
+  // Group features by featureId (featureId is in the properties of each feature)
+  const groupedFeatures = _.groupBy(features, f => _.get(f, 'properties.' + options.featureId));
+
+  // Calculate the color scale
+  const colorScale = chroma.scale(chromajs.range).domain(chromajs.domain);
+
+  // For each group of features, create a lineString feature
+  const newFeatures = Object.entries(groupedFeatures).map(([featureId, group]) => {
+    // Sort the group by time (if the "time" property exists), NECESARY or else the line will be messed up
+    const sortedGroup = group.sort((a, b) => new Date(a.properties.time) - new Date(b.properties.time));
+
+    // valueName is either at the root of the feature or in the properties
+    const valueName = _.has(sortedGroup[0], variable.name) ? variable.name : 'properties.' + variable.name;
+
+    // if the value is time, we need to convert all the values to a number and generate a domain from the min to the max
+    if (valueName === 'time') {
+      // get the first and last time values
+      chromajs.minTime = new Date(sortedGroup[sortedGroup.length - 1].time).getTime();
+      chromajs.maxTime = new Date(sortedGroup[0].time).getTime();
+    }
+
+    // Prepare data for coordinates and gradients
+    const { coordinates, gradients, name } = sortedGroup.reduce(
+      (acc, feature) => {
+        acc.coordinates.push(feature.geometry.coordinates);
+
+        // get the value from the feature, if it's time, convert it as a percentage of the min and max time
+        let value = _.get(feature, valueName);
+        if (valueName === 'time') {
+            const timeValue = new Date(value).getTime();
+            value = ((timeValue - chromajs.minTime) / (chromajs.maxTime - chromajs.minTime)) * 100;
+        } 
+        const  gradient = colorScale(value).hex();
+        acc.gradients.push(gradient);
+        return acc;
+      },
+      { coordinates: [], gradients: [], name : '' }
+    );
+
+    // Create the new feature
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates,
+      },
+      properties: {
+        gradient: gradients,
+        [options.featureId]: featureId,
+        name : sortedGroup[0].properties.name || sortedGroup[0].properties[options.featureId],
+        ...(construct.properties || {}),
+      },
+    };
+  });
+
+  // Replace the original features with the newly created ones
+  geoJson.features = newFeatures;
+  geoJson.type = 'FeatureCollection';
+  geoJson.total = newFeatures.length;
+}
+
+
+
+
 
 export async function getBaseQueryForFeatures (options) {
   // Any base query to process ?
@@ -163,20 +247,31 @@ export async function getFeaturesQuery (options, queryInterval, queryLevel) {
   let query = await getBaseQueryForFeatures(options)
   // Request features with at least one data available during last query interval
   if (queryInterval) {
+    // Check if we are in construct mode 
+    if (options.construct) {
+
+      // for now don't do anything special
+
+      // query = Object.assign({
+      // }, query)
+    }
     // Check if we have variables to be aggregated in time or not
-    if (options.variables) {
+    else if (options.variables) {
       query = Object.assign({
         $groupBy: options.featureId,
         // Take care we might have multiple variables targetting the same value name
         // but that differentiate using others properties (compound feature ID)
         $aggregate: _.uniq(options.variables.map(variable => variable.name))
       }, query)
+
     } else if (options.featureId) {
       query = Object.assign({
         $groupBy: options.featureId,
         $aggregate: ['geometry']
       }, query)
+
     }
+
     const now = Time.getCurrentTime()
     if (moment.isDuration(queryInterval)) {
       // Depending on the duration format we might have negative or positive values
@@ -192,7 +287,7 @@ export async function getFeaturesQuery (options, queryInterval, queryLevel) {
         }
       })
       // If we can aggregate then keep track of last element of each aggregation
-      if (options.featureId) query.$limit = 1
+      if (options.featureId && !_.has(options, "construct")) query.$limit = 1
     } else if (typeof queryInterval === 'object') {
       query.time = queryInterval
     } else {
@@ -201,7 +296,7 @@ export async function getFeaturesQuery (options, queryInterval, queryLevel) {
         time: { $lte: now.toISOString() }
       })
       // If we can aggregate then keep track of last element of each aggregation
-      if (options.featureId) query.$limit = 1
+      if (options.featureId && !_.has(options, "construct")) query.$limit = 1
     }
   }
   if (!_.isNil(queryLevel)) {
@@ -212,7 +307,6 @@ export async function getFeaturesQuery (options, queryInterval, queryLevel) {
   const sortQuery = await getSortQueryForFeatures(options)
   // Take care to not erase possible existing sort options
   _.merge(query, filterQuery, sortQuery)
-
   return query
 }
 
@@ -240,6 +334,7 @@ export async function getFeaturesFromQuery (options, query) {
   const response = await planetApi.getService(options.service).find(Object.assign({ query }, options.baseParams))
   if (options.processor) processFeatures(response, options.processor)
   if (options.transform) transformFeatures(response, options.transform)
+  if (options.construct) await constructFeatures(response, options)
   return response
 }
 
@@ -252,7 +347,7 @@ export function getMeasureForFeatureBaseQuery (layer, feature) {
   featureId = (Array.isArray(featureId) ? featureId : [featureId])
   const query = featureId.reduce((result, id) =>
     Object.assign(result, { ['properties.' + id]: _.get(feature, 'properties.' + id) }),
-  {})
+    {})
   query.$groupBy = featureId
   return query
 }
