@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import {
   marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson,
-  simplifyResult, simplifyEvents, skipEvents, fuzzySearch, formatGeoJSON
+  simplifyResult, simplifyEvents, skipEvents, fuzzySearch
 } from '../../hooks/index.js'
 
 // Allow to control real-time events emission if required
