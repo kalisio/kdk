@@ -31,6 +31,7 @@
             </div>
           </div>
           <KDescriptionCardSection
+            v-if="!dense  || hasDescription || hasDescriptionActions"
             :item="item"
             :actions="descriptionActions"
             :dense="dense"
@@ -109,8 +110,14 @@ export default {
     }
   },
   computed: {
+    hasDescription () {
+      return !_.isEmpty(this.item.description)
+    },
     descriptionActions () {
       return _.filter(this.itemActions, { scope: 'description' })
+    },
+    hasDescriptionActions () {
+      return !_.isEmpty(this.descriptionActions)
     },
     locationActions () {
       return _.filter(this.itemActions, { scope: 'location' })

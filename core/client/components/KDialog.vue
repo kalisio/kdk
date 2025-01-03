@@ -2,10 +2,10 @@
   <KModal
     ref="dialogRef"
     :title="title"
-    :maximized="maximized"
-    :buttons="computedButtons"
     :toolbar="toolbar"
+    :buttons="computedButtons"
     :width-policy="widthPolicy"
+    :maximized="maximized"
   >
     <Suspense>
       <!-- component with v-model -->
@@ -14,14 +14,16 @@
         ref="componentRef"
         :is="computedComponent"
         v-model="computedModel"
-        v-bind="attrs"
+        v-bind="computedAttrs"
+        v-on="computedHandlers"
       />
       <!-- component without v-model -->
       <component
         v-else
         ref="componentRef"
         :is="computedComponent"
-        v-bind="attrs"
+        v-bind="computedAttrs"
+        v-on="computedHandlers"
       />
     </Suspense>
   </KModal>
@@ -47,6 +49,10 @@ const props = defineProps({
   },
   component: {
     type: String,
+    default: null
+  },
+  handlers: {
+    type: Object,
     default: null
   },
   okAction: {
@@ -132,6 +138,10 @@ const computedButtons = computed(() => {
 const computedComponent = computed(() => {
   return loadComponent(props.component)
 })
+const computedHandlers = computed(() => {
+  if (_.isEmpty(props.handlers)) return {}
+  return props.handlers
+})
 const computedModel = computed({
   get: function () {
     return model.value
@@ -140,6 +150,11 @@ const computedModel = computed({
     model.value = value
     emit('update:modelValue', value)
   }
+})
+const computedAttrs = computed(() => {
+  return _.mapKeys(attrs, (value, key) => {
+    return _.replace(key, 'component.', '')
+  })
 })
 
 // Functions

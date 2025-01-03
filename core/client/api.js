@@ -6,36 +6,36 @@ import jwtdecode from 'jwt-decode'
 import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
-import createOfflineService, { LocalForage } from '@kalisio/feathers-localforage'
+import createOfflineService from '@kalisio/feathers-localforage'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
+import { LocalCache } from './local-cache.js'
 import { Events } from './events.js'
 import * as hooks from './hooks/index.js'
 import { makeServiceSnapshot } from '../common/utils.js'
 
-// Disable default feathers behaviour of reauthenticating on disconnect
+// Disable default feathers behavior of re-authenticating on disconnect
 feathers.authentication.AuthenticationClient.prototype.handleSocket = () => {}
 
-// Setup log level
-if (_.get(configuration, 'logs.level')) {
-  logger.setLevel(_.get(configuration, 'logs.level'), false)
-} else {
-  logger.setLevel('info')
-}
-
-export function createClient (config) {
+export async function createClient (config) {
+  // Setup log level
+  if (_.get(configuration, 'logs.level')) {
+    logger.setLevel(_.get(configuration, 'logs.level'), false)
+  } else {
+    logger.setLevel('info')
+  }
   // Initiate the client
   const api = feathers()
   // Initialize connection state/listeners
   api.isDisconnected = !navigator.onLine
   addEventListener('online', () => {
     api.isDisconnected = false
-    Events.emit('navigator-reconnected')
+    Events.emit('navigator-reconnected', api)
   })
   addEventListener('offline', () => {
     api.isDisconnected = true
-    Events.emit('navigator-disconnected')
+    Events.emit('navigator-disconnected', api)
   })
   // This can force to use offline services it they exist even if connected
   api.useLocalFirst = config.useLocalFirst
@@ -198,9 +198,9 @@ export function createClient (config) {
     if (!offlineService) {
       // Pass options not used internally for offline management as service options and store it along with service
       const serviceOptions = _.omit(options, ['hooks', 'snapshot', 'clear', 'baseQuery', 'baseQueries', 'dataPath'])
-      const services = await LocalForage.getItem('services') || {}
+      const services = await LocalCache.getItem('services') || {}
       _.set(services, serviceName, serviceOptions)
-      await LocalForage.setItem('services', services)
+      await LocalCache.setItem('services', services)
       offlineService = api.createService(offlineServiceName, {
         service: createOfflineService({
           id: '_id',
@@ -210,7 +210,7 @@ export function createClient (config) {
           storage: ['IndexedDB'],
           // FIXME: this should not be hard-coded as it depends on the service
           // For now we set it at the max value but if a component
-          // does not explicitely set the limit it will get a lot of data
+          // does not explicitly set the limit it will get a lot of data
           paginate: { default: 5000, max: 5000 }
         }),
         // Set required default hooks
@@ -236,7 +236,7 @@ export function createClient (config) {
     if (path.startsWith('/')) path = path.substr(1)
     api.unuse(path)
   }
-  // Helper fonctions to access/alter config used at creation time
+  // Helper functions to access/alter config used at creation time
   api.getConfig = function (path) {
     return (path ? _.get(config, path) : config)
   }
@@ -272,9 +272,9 @@ export function createClient (config) {
     if (_.has(resource, 'abilities')) resource = undefined
 
     const abilities = (hasUser ? _.get(user, 'abilities') : Store.get('user.abilities'))
-    logger.debug('Check for abilities ', operation, service, context, resource, abilities)
+    logger.debug('[KDK] Check for abilities ', operation, service, context, resource, abilities)
     if (!abilities) {
-      logger.debug('Access denied without abilities')
+      logger.debug('[KDK] Access denied without abilities')
       return false
     }
     let result
@@ -284,7 +284,7 @@ export function createClient (config) {
       const path = api.getServicePath(service, context, false)
       result = permissions.hasServiceAbilities(abilities, path)
       if (!result) {
-        logger.debug('Access to service path ' + path + ' denied')
+        logger.debug('[KDK] Access to service path ' + path + ' denied')
         return false
       } else if (operation === 'service') {
         // When we only check for service-level access return
@@ -296,9 +296,9 @@ export function createClient (config) {
       result = abilities.can(operation)
     }
     if (!result) {
-      logger.debug('Access to resource denied')
+      logger.debug('[KDK] Access to resource denied')
     } else {
-      logger.debug('Access to resource granted')
+      logger.debug('[KDK] Access to resource granted')
     }
     return result
   }
@@ -316,11 +316,20 @@ export function createClient (config) {
     api.configure(api.transporter)
     // Retrieve our specific errors on rate-limiting
     api.socket.on('rate-limit', (error) => Events.emit('error', error))
-    // Disable default socketio behaviour of buffering messages when disconnected
-    api.socket.io.on('reconnect', function () {
+    // Disable default socketio behavior of buffering messages when disconnected
+    // Also keep track of connection state with the server
+    api.socket.io.on('reconnect', async () => {
+      api.isDisconnected = false
       api.socket.sendBuffer = []
-      // Reauthenticate on reconnect
-      api.reAuthenticate(true)
+      // Re-authenticate on reconnect
+      await api.reAuthenticate(true)
+      Events.emit('websocket-reconnected', api)
+      logger.info('[KDK] Socket has been reconnected')
+    })
+    api.socket.io.on('reconnect_error', () => {
+      api.isDisconnected = true
+      Events.emit('websocket-disconnected', api)
+      logger.error(new Error('[KDK] Socket has been disconnected'))
     })
   }
   api.configure(feathers.authentication({
@@ -362,16 +371,32 @@ export function createClient (config) {
   // Define domain in config if not forced
   if (!api.getConfig('domain')) api.setConfig('domain', window.location.origin)
 
+  // It appears that navigator.onLine is not reliable so that
+  // we perform an actual request to the domain in order to ensure we are online.
+  // We avoid CORS errors with a request to your own origin.
+  // We also add a random query parameter to prevent cached responses.
+  if (!api.isDisconnected) {
+    try {
+      const url = new URL(api.getConfig('domain'))
+      url.searchParams.set('random', Math.random().toFixed(18).substring(2, 18))
+      await window.fetch(url.toString(), { method: 'HEAD' })
+    } catch (error) {
+      api.isDisconnected = true
+      Events.emit('navigator-disconnected', api)
+      logger.warn(`[KDK] Cannot request target domain ${api.getConfig('domain')}, setting state to offline`, error)
+    }
+  }
+
   return api
 }
 
 // We don't create a default client based on app configuration here
 // as we don't know when the file will be imported first,
 // eg it might be imported before another one updating the config.
-// It is up to the application to instanciate the client when required.
+// It is up to the application to instantiate the client when required.
 export let api
-export function initializeApi (fn) {
-  api = createClient(configuration)
+export async function initializeApi (fn) {
+  api = await createClient(configuration)
   if (fn) fn.call(api, configuration)
   return api
 }

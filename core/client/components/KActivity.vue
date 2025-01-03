@@ -1,5 +1,5 @@
 <template>
-  <KPage :padding="padding">
+  <KPage>
     <slot />
   </KPage>
 </template>
@@ -42,11 +42,6 @@ export default {
       configureLayout,
       clearLayout,
       setLayoutMode
-    }
-  },
-  computed: {
-    padding () {
-      return this.Layout.padding
     }
   },
   watch: {

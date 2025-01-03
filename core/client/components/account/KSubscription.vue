@@ -1,17 +1,21 @@
 <template>
   <q-item>
-    <!-- Icon -->
+    <!-- Fingerprint -->
     <q-item-section avatar>
-      <q-icon :name="icon" />
+      <q-icon 
+        :name="icon" 
+        size="2.5rem"
+      />
     </q-item-section>
     <!-- Label -->
     <q-item-section>
-      {{ label }}
+      <q-item-label class="text-subtitle2">{{ label }}</q-item-label>
+      <q-item-label caption>{{ lastActivity }}</q-item-label>
     </q-item-section>
     <!-- Actions -->
-    <KPanel
-      :content="bindedActions"
-    />
+    <q-item-section side>
+      <KPanel :content="bindedActions" />
+    </q-item-section>
   </q-item>
 </template>
 
@@ -20,7 +24,7 @@ import _ from 'lodash'
 import { removeSubscription } from '@kalisio/feathers-webpush/client.js'
 import { computed } from 'vue'
 import { Dialog } from 'quasar'
-import { Store, i18n, api, utils } from '../..'
+import { Store, i18n, api, Time, utils } from '../..'
 import KPanel from '../KPanel.vue'
 
 // Props
@@ -37,10 +41,16 @@ const props = defineProps({
 
 // Computed
 const icon = computed(() => {
-  return 'lab la-' + _.get(props.subscription, 'browser.name')
+  return `lab la-${_.lowerCase(_.get(props.subscription, 'browser.name'))}`
 })
 const label = computed(() => {
-  return _.capitalize(_.get(props.subscription, 'browser.name')) + ' (' + _.get(props.subscription, 'browser.version') + ') - ' + _.capitalize(_.get(props.subscription, 'platform'))
+  return _.capitalize(_.get(props.subscription, 'browser.name')) + 
+    ' (' + _.get(props.subscription, 'browser.version') + ') - ' + 
+    _.capitalize(_.get(props.subscription, 'system.os'))
+})
+const lastActivity = computed(() => {
+  const timestamp = _.get(props.subscription, 'lastActivity')
+  return i18n.t('KSubscription.LAST_ACTIVITY', { date: Time.format(timestamp, 'date.short'), time: Time.format(timestamp, 'time.long') })
 })
 const bindedActions = computed(() => {
   return utils.bindContent(_.cloneDeep(props.actions), { unsubscribe })

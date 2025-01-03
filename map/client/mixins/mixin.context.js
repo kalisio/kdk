@@ -181,10 +181,13 @@ export const context = {
             }
           }
         } else {
-          // Check for a home context
-          const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
-          const homeContext = (response.data.length > 0 ? response.data[0] : null)
-          if (homeContext) targetParameters = homeContext
+          // Check for a home context if not already retrieved
+          // Use undefined here to check for a first try as if we find none we set it to null
+          if (_.isUndefined(this.homeContext)) {
+            const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
+            this.homeContext = (response.data.length > 0 ? response.data[0] : null)
+          }
+          if (this.homeContext) targetParameters = this.homeContext
         }
       }
       // Restore context if possible

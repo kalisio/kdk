@@ -41,6 +41,15 @@
               v-model="selectedGeocoders"
               :geocoders="availableGeocoders"
             />
+            <div class="q-pl-sm q-pr-md" v-if="switchViewboxUsage">
+              <q-separator inset class=" q-mt-md q-mb-md"/>
+              <q-toggle
+                  v-model="useViewbox"
+                  size="xs"
+                  :label="$t('KLocationField.VIEWBOX')"
+                  @update:model-value="changeViewboxUsage"
+              />
+            </div>
           </q-popup-proxy>
         </KAction>
         <!-- geolocation -->
@@ -154,6 +163,9 @@ export default {
     },
     map () {
       return _.get(this.properties, 'field.map')
+    },
+    switchViewboxUsage () {
+      return _.get(this.properties, 'field.viewbox.selectable', false)
     }
   },
   methods: {
@@ -180,24 +192,31 @@ export default {
     onLocationChanged (context, location) {
       this.model = location
       return true
+    },
+    changeViewboxUsage () {
+      this.setViewbox(this.useViewbox ? _.get(this.properties, 'field.viewbox.coordinates', []) : [])
     }
   },
   setup () {
     // Data
-    const { availableGeocoders, selectedGeocoders, setGeocoders, search, geolocate } = useLocation()
+    const { availableGeocoders, selectedGeocoders, setGeocoders, setViewbox, search, geolocate } = useLocation()
     const locations = ref([])
+    const useViewbox = ref(true)
     // Expose
     return {
       locations,
+      useViewbox,
       availableGeocoders,
       selectedGeocoders,
       setGeocoders,
+      setViewbox,
       geolocate,
       search
     }
   },
   mounted () {
     this.setGeocoders(_.get(this.properties, 'field.geocoders', []))
+    this.setViewbox(_.get(this.properties, 'field.viewbox.coordinates', []))
   }
 }
 </script>

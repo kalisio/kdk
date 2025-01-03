@@ -22,7 +22,7 @@ export const Planets = {
       renewJwt: false
     })
 
-    const client = createClient(options)
+    const client = await createClient(options)
     setupApi.bind(client)(options)
     client.on('authenticated', (data) => {
       // Store API gateway token if any

@@ -6,6 +6,5 @@ The **Kalisio Development Kit** (**KDK**) aims to simplify the development of ge
 
 Our objective is to propose a microservice based platform. Each building block has the responsibility to deliver specific and limited functionalities. Such an architectural approach plays a key role in helping us face the challenge of maintaining several mature products that need scalability within multiple contexts in terms of processing, storage, and features delivery.
 
-If you'd like more information on how this documentation is built please refer to our [tools section](../tools/documentation.md#documentation).
 
 

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import 'leaflet-velocity'
 import { Time } from '../../../../core/client/time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
@@ -25,7 +26,7 @@ export const tiledWindLayers = {
       vSource.setup(gridConf)
       if (uSource.updateCtx) {
         // define variables for source's dynamic properties
-        const gatewayToken = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+        const gatewayToken = (weacastApi.hasConfig('gatewayJwt') ? await weacastApi.get('storage').getItem(weacastApi.getConfig('gatewayJwt')) : null)
         if (gatewayToken) {
           uSource.updateCtx.jwtToken = gatewayToken
           vSource.updateCtx.jwtToken = gatewayToken

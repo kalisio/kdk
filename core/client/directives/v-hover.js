@@ -1,5 +1,4 @@
-import { getPlatform } from '../utils/utils.platform.js'
-const Platform = getPlatform()
+import { Platform } from '../platform.js'
 
 export const vHover = {
 

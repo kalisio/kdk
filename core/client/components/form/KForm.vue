@@ -141,7 +141,7 @@ function onFieldRefCreated (reference) {
     // Check whether the form is ready
     nbReadyFields.value++
     if (nbReadyFields.value === fields.value.length) {
-      logger.debug(`schema ${schema.value.$id} ready`)
+      logger.debug(`[KDK] schema ${schema.value.$id} ready`)
       isReady.value = true
       emit('form-ready')
     }
@@ -205,11 +205,11 @@ async function build () {
   buildInProgress = false
 }
 function values () {
-  const val = {}
+  const values = {}
   _.forEach(fields.value, field => {
-    if (!field.reference.isEmpty()) val[field.name] = field.reference.value()
+    if (!field.reference.isEmpty()) values[field.name] = field.reference.value()
   })
-  return val
+  return values
 }
 function fill (values) {
   if (!isReady.value) throw new Error('Cannot fill the form while not ready')
@@ -231,8 +231,8 @@ function clear () {
 function validate () {
   if (!isReady.value) throw new Error('Cannot validate the form while not ready')
   logger.debug('[KDK] Validating form', schema.value.$id)
-  const val = values()
-  const { isValid, errors } = validateSchema(val)
+  const fieldValues = values()
+  const { isValid, errors } = validateSchema(fieldValues)
   if (!isValid) {
     _.forEach(fields.value, field => {
       const error = hasFieldError(field.name, errors)
@@ -242,10 +242,10 @@ function validate () {
         field.reference.validate()
       }
     })
-    return { isValid, values: val }
+    return { isValid, values: fieldValues }
   }
   _.forEach(fields.value, field => field.reference.validate())
-  return { isValid, values: val }
+  return { isValid, values: fieldValues }
 }
 async function apply (object) {
   if (!isReady.value) throw new Error('[KDK] Cannot apply the form while not ready')

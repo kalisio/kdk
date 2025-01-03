@@ -21,7 +21,8 @@ export function useStore (name, initialStore) {
     _.set(store, path, value)
   }
   function get (path, defaultValue) {
-    return _.get(store, path, defaultValue)
+    // If no path is given return the whole store object
+    return (path ? _.get(store, path, defaultValue) : store)
   }
   function unset (path) {
     _.unset(store, path)

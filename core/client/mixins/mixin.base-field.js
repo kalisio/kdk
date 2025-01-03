@@ -105,6 +105,11 @@ export const baseField = {
       this.error = error
     },
     async onChanged () {
+      // Quasar resets the model to null when clearing but in the schema an empty model might be a different value
+      const nullable = _.get(this.properties, 'nullable', false)
+      if (_.isNil(this.model) && !nullable) {
+        this.clear()
+      }
       // Tell the form that this field has a new value.
       // Consequently the form will validate or invalidate the field
       // Warning: This method must be called once the form is mounted

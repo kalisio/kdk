@@ -1,48 +1,135 @@
 <template>
-  <q-markup-table>
-    <thead class="bg-grey-3">
-      <tr>
-        <th class="text-left">{{ $t('KPlatform.PROPERTY') }}</th>
-        <th>
-          <div class="row items-center">
-            <div>{{ $t('KPlatform.VALUE') }}</div>
-            <q-space />
-            <KAction
-              id="copy-info"
-              icon="las la-copy"
-              tooltip="KPlatform.COPY_INFO"
-              :handler="copy"
-            />
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(value, prop) in platform" :key="prop">
-        <td>{{ prop }}</td>
-        <td>{{ value === true ? $t('YES') : value === false ? $t('NO') : value }}</td>
-      </tr>
-    </tbody>
-  </q-markup-table>
+  <!--
+    User agent && copy action
+  -->
+  <div>
+    <div class="full-width row justify-between items-center q-gutter-x-sm">
+      <div class="q-pa-sm col bg-grey-3">{{ $t('KPlatform.USER_AGENT') }}</div>
+
+        <KAction
+          id="copy-clipboard"
+          icon="las la-copy"
+          :handler="copy"
+          label="KPlatform.COPY_INFO"
+          renderer="fab"
+          color="grey-7"
+        />
+    </div>
+    <div class="q-px-md q-py-sm full-width text-caption">{{ Platform.getData().userAgent }}</div>
+  </div>
+  <!--
+    Application
+  -->
+  <div>
+    <div class="full-width q-pa-sm bg-grey-3">{{ $t('KPlatform.APPLICATION') }}</div>
+    <q-list class="q-pa-sm" separator dense>
+      <template v-for="(value, prop) in applicationProperties()" :key="prop">
+        <q-item>
+          <q-item-section class="text-caption">{{ prop }}</q-item-section>
+          <q-item-section class="text-caption">{{ value === true ? $t('YES') : value === false ? $t('NO') : value }}</q-item-section>
+        </q-item>
+      </template>
+    </q-list>
+    <q-expansion-item
+      :label="$t('KPlatform.PERMISSIONS')"
+      expand-separator
+      dense
+      header-class="bg-grey-2"
+      class="q-pa-sm"
+    >
+      <q-list class="q-pa-sm" separator dense>
+        <template v-for="(value, prop) in Platform.getData().application.permissions" :key="prop">
+          <q-item>
+            <q-item-section class="text-caption">{{ prop }}</q-item-section>
+            <q-item-section class="text-caption">{{ value === 'granted' ? $t('KPlatform.PERMISSION_GRANTED') : $t('KPlatform.PERMISSION_PROMPT') }}</q-item-section>
+          </q-item>
+        </template>
+      </q-list>
+  </q-expansion-item>
+  </div>
+  <!--
+    Browser
+  -->
+  <div>
+    <div class="full-width q-pa-sm bg-grey-3">{{ $t('KPlatform.BROWSER') }}</div>
+    <q-list class="q-pa-sm" separator dense>
+      <template v-for="(value, prop) in browserProperties()" :key="prop">
+        <q-item>
+          <q-item-section class="text-caption">{{ prop }}</q-item-section>
+          <q-item-section class="text-caption">{{ value === true ? $t('YES') : value === false ? $t('NO') : value }}</q-item-section>
+        </q-item>
+      </template>
+    </q-list>
+    <q-expansion-item
+      :label="$t('KPlatform.LOCALE')"
+      expand-separator
+      dense
+      header-class="bg-grey-2"
+      class="q-pa-sm"
+    >
+      <q-list class="q-pa-sm" separator dense>
+        <template v-for="(value, prop) in Platform.getData().browser.locale" :key="prop">
+          <q-item>
+            <q-item-section class="text-caption">{{ prop }}</q-item-section>
+            <q-item-section class="text-caption">{{ value }}</q-item-section>
+          </q-item>
+        </template>
+      </q-list>
+    </q-expansion-item>
+    <q-expansion-item
+      :label="$t('KPlatform.WEBGL')"
+      expand-separator
+      dense
+      header-class="bg-grey-2"
+      class="q-pa-sm"
+    >
+      <q-list class="q-pa-sm" separator dense>
+        <template v-for="(value, prop) in Platform.getData().browser.webgl" :key="prop">
+          <q-item>
+            <q-item-section class="text-caption">{{ prop }}</q-item-section>
+            <q-item-section class="text-caption">{{ value }}</q-item-section>
+          </q-item>
+        </template>
+      </q-list>
+    </q-expansion-item>
+  </div>
+  <!-- System  -->
+  <div>
+    <div class="full-width q-pa-sm bg-grey-3">{{ $t('KPlatform.SYSTEM') }}</div>
+    <q-list class="q-pa-sm" separator dense>
+      <template v-for="(value, prop) in systemProperties()" :key="prop">
+        <q-item>
+          <q-item-section class="text-caption">{{ prop }}</q-item-section>
+          <q-item-section class="text-caption">{{ value === true ? $t('YES') : value === false ? $t('NO') : value }}</q-item-section>
+        </q-item>
+      </template>
+    </q-list>
+  </div>
 </template>
 
 <script setup>
-import { useQuasar, copyToClipboard } from 'quasar'
+import _ from 'lodash'
+import { Notify, copyToClipboard } from 'quasar'
 import { i18n } from '../../i18n.js'
-import { getPlatform } from '../../utils/utils.platform'
+import { Platform } from '../../platform.js'
 import KAction from '../action/KAction.vue'
 
-// data
-const $q = useQuasar()
-const platform = getPlatform()
-
-// function
+// Functions
+function applicationProperties () {
+  return _.pick(Platform.getData('application'), ['mode', 'iframe'])
+}
+function browserProperties () {
+  return _.pick(Platform.getData('browser'), ['name', 'version'])
+}
+function systemProperties () {
+  return Platform.getData('system')
+}
 async function copy () {
   try {
-    await copyToClipboard(JSON.stringify(platform, null, 2))
-    $q.notify({ type: 'positive', message: i18n.t('KPlatform.INFO_COPIED') })
+    await copyToClipboard(JSON.stringify(Platform.getData(), null, 2))
+    Notify.create({ type: 'positive', message: i18n.t('KPlatform.INFO_COPIED') })
   } catch (error) {
-    $q.notify({ type: 'negative', message: i18n.t('KPositionIndicator.CANNOT_COPY_INFO') })
+    Notify.create({ type: 'negative', message: i18n.t('KPositionIndicator.CANNOT_COPY_INFO') })
   }
 }
 </script>

@@ -45,7 +45,7 @@ export const Storage = {
       return response
     } catch (error) {
       dismiss()
-      logger.error(`Cannot upload ${key} on ${service.path}`, error)
+      logger.error(`[KDK] Cannot upload ${file} with key '${key}'`, error)
       throw error
     }
   },
@@ -78,7 +78,40 @@ export const Storage = {
       })
     } catch (error) {
       dismiss()
-      logger.error(`Cannot download ${key} on ${service.path}`, error)
+      logger.error(`[KDK] Cannot download '${file}' with key '${key}'`, error)
+      throw error
+    }
+  },
+  async export (options) {
+    const { file, key, context } = options
+    const service = this.getService(context)
+    const response = await service.create({
+      id: key,
+      command: 'GetObject',
+      expiresIn: 60,
+      ResponseContentDisposition: `attachment; filename="${file}"`
+    })
+    if (response.SignedUrl) {
+      let iframe = document.getElementById('export-hidden-frame')
+      if (!iframe) {
+        iframe = document.createElement('iframe')
+        iframe.id = 'export-hidden-frame'
+        iframe.style.display = 'none'
+        document.body.appendChild(iframe)
+      }
+      iframe.src = response.SignedUrl
+    } else {
+      logger.error(`[KDK] Cannot export ${file} with key '${key}'`)
+    }
+  },
+  async remove (options) {
+    const { file, key, context } = options
+    const service = this.getService(context)
+    try {
+      await service.remove(key)
+      Events.emit('file-removed', { name: file, key, context })
+    } catch (error) {
+      logger.error(`[KDK] Cannot remove ${file} with key '${key}'`, error)
       throw error
     }
   },

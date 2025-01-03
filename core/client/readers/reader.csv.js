@@ -5,11 +5,11 @@ import { i18n } from '../i18n.js'
 export const CSVReader = {
   read (files, options) {
     if (files.length !== 1) {
-      logger.debug('invalid \'files\' arguments')
+      logger.debug('[KDK] invalid \'files\' arguments')
       return
     }
     const file = files[0]
-    logger.debug(`reading CSV file ${file.name}`)
+    logger.debug(`[KDK] reading CSV file ${file.name}`)
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onloadend = () => {

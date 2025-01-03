@@ -8,10 +8,10 @@ KDK [core](https://github.com/kalisio/kdk/core) offers a thin layer on top of th
 
 KDK [core](https://github.com/kalisio/kdk/core) provides a helper to quickly initialize what is required for your [server application](https://docs.feathersjs.com/api/application.html). The core module provides the ability to initialize a new KDK application instance, attach it to the configured database and setup authentication:
 ```javascript
-import { kalisio } from '@kalisio/kdk/core.api'
+import { kdk } from '@kalisio/kdk/core.api'
 
 // Initialize app
-let app = kalisio()
+let app = kdk()
 // Connect to DB
 await app.db.connect()
 ```
@@ -20,12 +20,21 @@ await app.db.connect()
 
 KDK [core](https://github.com/kalisio/kdk/core) provides a helper to quickly initialize what is required for your [client application](https://docs.feathersjs.com/api/client.html).
 ```javascript
-import { kalisio } from '@kalisio/kdk/core.client'
+import { initializeApi } from '@kalisio/kdk/core.client'
 
 // Initialize API wrapper
-let api = kalisio()
+let api = await initializeApi()
 // Retrieve a given service
 let users = api.getService('users')
+```
+
+You can provide the API initialization with an optional function that could be used to extend the wrapper object with additional features (i.e. properties or methods). This is typically used by the KDK [map](https://github.com/kalisio/kdk/core) submodule:
+```javascript
+import { initializeApi } from '@kalisio/kdk/core.client'
+import { setupApi } from '@kalisio/kdk/map.client'
+
+// Initialize API wrapper with extension function
+let api = await initializeApi(setupApi)
 ```
 
 ### Isomorphic features
@@ -66,23 +75,23 @@ Retrieve the given service by name, should replace [Feathers service method](htt
 ### createService(name, options)
 
 ::: tip
-backend only
+backend/client
 :::
 
-Create a new service attached to the application by name and given a set of options:
+Create a new service attached to the application by name and given a set of options in the backend:
 * **context**: the context object the service will be contextual to, if given the internal service path will be `contextId/serviceName`
 * **modelsPath**: directory where to find model declaration (optional), if provided will initiate a DB service based on the model file
+* **modelName**: name of the model file is not named after the service
 * **servicesPath**: directory where to find service declaration (optional), if provided for a non-DB service will initiate a service based on the returned object or constructor function from the service module, for a DB service it will apply the provided mixin object coming from the service module
 * **fileName**: by default the function will look to a model/service file named after the service name, this option allows to override it
-* **events**: [service events](https://docs.feathersjs.com/api/events.html#service-events) to be used by the service
-* **perspectives**: the *perspectives* of the model that will not be retrieved by default except if [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) is used
+* **events**: [service events](https://feathersjs.com/api/application.html#options) to be used by the service
+* **methods**: [service methods](https://feathersjs.com/api/application.html#options) typically useful for [custom methods](https://feathersjs.com/api/services.html#custom-methods)
 * **proxy**: options for a service to be proxied by the created service
   * **service**: the name of the proxied service
   * **params**: the parameters to be used when calling the proxied service, either an object or a function returning the object and applied on the input parameters
   * **id**: the id map function to be used when calling the proxied service, will be applied on the input id
   * **data**: the data map function to be used when calling the proxied service, will be applied on the input the object
   * **result**: the result map to be used when calling the proxied service, will be applied on the returning the object(s)
-* **memory**: instead of generating a DB adapter service will create a mock with a [@feathersjs/memory](https://github.com/feathersjs/feathers/tree/dove/packages/memory) service instead with provided options
 
 Depending on the options you have to create a *models* and *services* directories containing the required files to declare your services, e.g. your folder/file hierarchy should look like this:
 * *index.js*: contains a default function instantiating all the services
@@ -95,7 +104,32 @@ Depending on the options you have to create a *models* and *services* directorie
     * *serviceName.hooks.js* : exporting the [hooks](https://docs.feathersjs.com/api/hooks.html) of your service, 
     * *serviceName.filters.js* : exporting the [filters](https://docs.feathersjs.com/api/events.html#event-filtering) of your service, 
     * *serviceName.service.js* : exporting the specific mixin or mixin constructor function associated to your service (optional)
-    
+
+By default client-side services related to backend services don't have to be explicitely created as Feathers will automatically generate a wrapper on first call.
+However, the `declareService()` might be called to declare any specific options like the fact a service is a contextual one:
+```js
+api.declareService('catalog', { context: true })
+```
+
+Otherwise, you can create a new service attached to the application by name and given a set of options in the frontend:
+* **context**: the context object the service will be contextual to, if given the internal service path will be `contextId/serviceName`
+* **events**: [service events](https://feathersjs.com/api/application.html#options) to be used by the service
+* **methods**: [service methods](https://feathersjs.com/api/application.html#options) typically useful for [custom methods](https://feathersjs.com/api/client/rest.html#custom-methods)
+* **hooks**: object defining client-side hooks
+* **service**: service object or function like `fn(name, app, options)` generating a serive object
+
+For instance this creates a in-memory service o nthe frontend:
+```js
+import { memory } from '@feathersjs/memory'
+
+api.createService('myService', {
+  service: memory({
+    id: 'name',
+    paginate: { default: 12 }
+  })
+})
+```
+
 ## Application Hooks
 
 The following [hooks](./HOOKS.MD) are usually globally executed on the application:

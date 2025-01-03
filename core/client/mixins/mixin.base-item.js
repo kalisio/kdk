@@ -29,6 +29,10 @@ export const baseItem = {
       type: Object,
       default: () => {}
     },
+    handlerContext: {
+      type: Object,
+      default: () => null
+    },
     options: {
       type: Object,
       default: function () {
@@ -66,7 +70,7 @@ export const baseItem = {
     setActions (actions) {
       // As context is different for each item we need to clone the global action configuration
       // otheriwse context will always reference the last processed item
-      this.itemActions = (this.bindActions ? bindContent(_.cloneDeep(actions), this) : actions)
+      this.itemActions = (this.bindActions ? bindContent(_.cloneDeep(actions), this.handlerContext || this) : actions)
     },
     clearActions () {
       this.itemActions = null

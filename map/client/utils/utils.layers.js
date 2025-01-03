@@ -1,14 +1,14 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Notify, Loading } from 'quasar'
+import { Notify, Loading, uid } from 'quasar'
 import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
 import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
-import { LocalForage } from '@kalisio/feathers-localforage'
 import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
+import { generatePropertiesSchema } from '../utils.map.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
@@ -103,8 +103,9 @@ export async function setBaseLayerCached (layer, options) {
       }
     }
   }
-  // Always download top-level image as we use it as thumbnail
+  // Always download top-level image or icon as we use it as thumbnail
   promises.push(cacheLayerTile(urlTemplate, 0, 0, 0))
+  if (layer.iconUrl) promises.push(cacheLayerTile(layer.iconUrl))
   await Promise.all(promises)
 }
 
@@ -242,12 +243,13 @@ async function setBaseLayerUncached (layer, options) {
       }
     }
   }
-  // Always remove top-level image as we use it as thumbnail
+  // Always remove top-level image or icon as we use it as thumbnail
   await uncacheLayerTile(urlTemplate, 0, 0, 0)
+  if (layer.iconUrl) promises.push(uncacheLayerTile(layer.iconUrl))
 }
 
 async function setServiceLayerUncached (layer, options) {
-  const services = await LocalForage.getItem('services') || {}
+  const services = await LocalCache.getItem('services') || {}
   const serviceOptions = services[layer.service]
   if (serviceOptions) {
     const offlineService = api.getOfflineService(layer.service, serviceOptions.context)
@@ -337,6 +339,50 @@ export function isTerrainLayer (layer) {
 
 export function isMeasureLayer (layer) {
   return layer.variables && layer.service
+}
+
+export function generateLayerDefinition(layerSpec, geoJson){
+  // Check wether the geoJson content is a valid geoJson
+  if (geoJson.type !== 'FeatureCollection' && geoJson.type !== 'Feature') {
+    logger.error('invalid geoJson content')
+    return
+  }
+  const engine = {
+    type: 'geoJson',
+    isVisible: true,
+    realtime: true
+  }
+  const defaultLayer = {
+    type: 'OverlayLayer',
+    scope: 'user',
+    isDataEditable: true,
+    leaflet: engine,
+    // Avoid sharing reference to the same object although options are similar
+    // otherwise updating one will automatically update the other one
+    cesium: Object.assign({}, engine)
+  }
+  _.defaults(layerSpec, defaultLayer)
+  if (!layerSpec.schema) {
+    const schema = generatePropertiesSchema(geoJson, layerSpec.name)
+    layerSpec.schema = { name: layerSpec.name, content: schema }
+  }
+  if (!layerSpec.featureId) {
+    if (geoJson.type === 'FeatureCollection') _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
+    else geoJson._id = uid().toString()
+  }
+  // Check for panes to be created
+  const panes = []
+  _.forEach(geoJson.features, feature => {
+    const pane = _.get(feature, 'style.pane')
+    if (pane) {
+      panes.push({
+        name: pane
+      })
+    }
+  })
+  if (!_.isEmpty(panes)) _.set(layerSpec, 'leaflet.panes', panes)
+
+  return true
 }
 
 export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {

@@ -1,10 +1,9 @@
 import _ from 'lodash'
-import { LocalForage } from '@kalisio/feathers-localforage'
-import { api } from '../../../core/client/index.js'
+import { api, LocalCache } from '../../../core/client/index.js'
 import { setLayerCached, setLayerUncached } from './utils.layers.js'
 
 export async function createOfflineServices () {
-  const services = await LocalForage.getItem('services')
+  const services = await LocalCache.getItem('services')
   if (services) {
     const serviceNames = Object.keys(services)
     for (let i = 0; i < serviceNames.length; i++) {
@@ -20,12 +19,12 @@ export async function createOfflineServices () {
 }
 
 export async function cacheView (view, layers, options = {}) {
-  const views = await LocalForage.getItem('views')
+  const views = await LocalCache.getItem('views')
   if (views) {
     views[view._id] = true
-    await LocalForage.setItem('views', views)
+    await LocalCache.setItem('views', views)
   } else {
-    await LocalForage.setItem('views', { [view._id]: options })
+    await LocalCache.setItem('views', { [view._id]: options })
   }
   // We need at least catalog/project/features offline services
   // If they already exist this will update internal data
@@ -57,7 +56,7 @@ export async function cacheView (view, layers, options = {}) {
 }
 
 export async function uncacheView (view, layers, options = {}) {
-  const views = await LocalForage.getItem('views') || {}
+  const views = await LocalCache.getItem('views') || {}
   // Retrieve stored options in cache
   Object.assign(options, views[view._id] || {})
   for (let i = 0; i < layers.length; i++) {
@@ -69,8 +68,8 @@ export async function uncacheView (view, layers, options = {}) {
   // For instance categories are indirectly related to layers by filtering options, a project might contains multiple views so one still cached, etc.
   // So for now we only clear it when no views remain
   if (_.isEmpty(views)) {
-    await LocalForage.removeItem('views')
-    const services = await LocalForage.getItem('services') || {}
+    await LocalCache.removeItem('views')
+    const services = await LocalCache.getItem('services') || {}
     const serviceNames = Object.keys(services)
     for (let i = 0; i < serviceNames.length; i++) {
       const serviceName = serviceNames[i]
@@ -79,10 +78,10 @@ export async function uncacheView (view, layers, options = {}) {
       await offlineService.remove(null, { query: {} })
       api.removeService(serviceName, serviceOptions.context)
     }
-    await LocalForage.removeItem('services')
+    await LocalCache.removeItem('services')
   }
   else {
-    await LocalForage.setItem('views', views)
+    await LocalCache.setItem('views', views)
   }
 }
 

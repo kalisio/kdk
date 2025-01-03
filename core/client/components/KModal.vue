@@ -6,11 +6,7 @@
   >
     <q-card
       id="modal-card"
-      v-bind:class="{
-        'column full-height': maximized,
-        'q-pa-sm': $q.screen.gt.xs,
-        'q-pa-xs': $q.screen.lt.sm
-      }"
+      :class="computedClass"
       :style="computedStyle">
       <!--
          Header section
@@ -32,10 +28,15 @@
       <!--
         Content section
        -->
-      <div id="modal-content" class="col">
-        <KScrollArea class="q-pl-xs q-pr-md" :maxHeight="scrollAreaMaxHeight">
+      <div id="modal-content" class="full-width col">
+        <KScrollArea
+          v-if="scrollable"
+          :maxHeight="scrollAreaMaxHeight"
+          class="q-pl-xs q-pr-md"
+        >
           <slot />
         </KScrollArea>
+        <slot v-else />
       </div>
       <!--
         Footer section
@@ -64,6 +65,10 @@ import KPanel from './KPanel.vue'
 
 // Props
 const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
   title: {
     type: String,
     default: ''
@@ -87,9 +92,17 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  modelValue: {
+  scrollable: {
     type: Boolean,
-    default: false
+    default: true
+  },
+  backgroundColor: {
+    type: String,
+    default: 'white'
+  },
+  textColor: {
+    type: String,
+    default: 'black'
   }
 })
 
@@ -109,6 +122,13 @@ const lgMinWidths = { wide: 92, medium: 65, narrow: 35 }
 const xlMinWidths = { wide: 90, medium: 55, narrow: 25 }
 
 // Computed
+const computedClass = computed(() => {
+  let result = `bg-${props.backgroundColor} text-${props.textColor}`
+  if (props.maximized) result += ' column full-height'
+  if ($q.screen.gt.xs) result += ' q-pa-sm'
+  if ($q.screen.lt.sm) result += ' q-pa-xs'
+  return result
+})
 const computedStyle = computed(() => {
   // compute the modal max height
   const screenHeight = $q.screen.height
@@ -133,7 +153,7 @@ const computedStyle = computed(() => {
   if ($q.screen.lt.md) return `min-width: ${smMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
   if ($q.screen.lt.lg) return `min-width: ${mdMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
   if ($q.screen.lt.xl) return `min-width: ${lgMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
-  return `min-width: ${xlMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px`
+  return `min-width: ${xlMinWidths[props.widthPolicy]}vw; max-height: ${modalMaxHeight}px;`
 })
 
 // Watch

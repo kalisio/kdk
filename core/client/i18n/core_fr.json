@@ -413,9 +413,16 @@
     "MORE_ABOUT_KALISIO": "En savoir plus sur Kalisio"
   },
   "KPlatform": {
-    "PROPERTY": "Propriété",
-    "VALUE": "Valeur",
-    "COPY_INFO": "Copier les informations",
+    "USER_AGENT": "Agent utilisateur",
+    "APPLICATION": "Application",
+    "PERMISSIONS": "Permissions",
+    "PERMISSION_GRANTED": "Autorisé",
+    "PERMISSION_PROMPT": "Sur demande",
+    "BROWSER": "Navigateur",
+    "LOCALE": "Locale",
+    "WEBGL": "Support WebGL",
+    "SYSTEM": "Système",
+    "COPY_INFO": "Copier les informations en mémoire",
     "INFO_COPIED": "Informations système copiées",
     "CANNOT_COPY_INFO": "Impossible de copier les informations systèmes"
   },
@@ -527,7 +534,7 @@
   },
   "KSubscription": {
     "UNSUBSCRIBE_LABEL": "Se désabonner",
-    "LAST_ACTIVITY": "Dernière activité",
+    "LAST_ACTIVITY": "Dernière activité le {date} à {time}",
     "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
@@ -918,5 +925,24 @@
     "NEXT_DAY": "Jour suivant",
     "NEXT_HOUR": "Heure suivante",
     "NEXT_STEP": "Pas suivant"
+  },
+  "KImage": {
+    "RESET": "Réinitialiser"
+  },  
+  "KBrowser": {
+    "DOWNLOAD_FILE": "Télécharger le fichier",
+    "UPLOAD_FILES": "Transférer des fichiers",
+    "UPLOAD": "Transférer",
+    "DELETE_FILE": "Supprimer le fichier",
+    "DELETE_FILE_MESSAGE": "Etes vous sûr de vouloir supprimer {name} ?",
+    "CANNOT_BE_VIEWED": "Ce fichier ne peut pas être visualisé",
+    "NO_FILES": "Aucun fichier"
+  },
+  "KUploader": {
+    "ADD_FILES": "Ajouter des fichiers...",
+    "EMPTY_FILE": "Le fichier {file} est vide ou corrompu !",
+    "FILE_TOO_LARGE": "Le fichier {file} est trop volumineux. La taille doit être inférieure à {size}Mo",  
+    "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été trasnféré avec succès",
+    "UPLOAD_FILE_ERRORED": "Impossible de trasnférer le fichier {file} !"
   }
 }

@@ -81,12 +81,12 @@ const GradientPath = L.PixiOverlay.extend({
   },
 
   getObjectUnderPointer (event) {
-    const interaction = this.renderer.plugins.interaction
     const point = new PIXI.Point()
     // get global click position
-    interaction.mapPositionToPoint(point, event.originalEvent.clientX, event.originalEvent.clientY)
+    this.renderer.events.mapPositionToPoint(point, event.originalEvent.clientX, event.originalEvent.clientY)
+    const boundary = new PIXI.EventBoundary(this.container)
     // get what is below the click if any
-    return interaction.hitTest(point, this.container)
+    return boundary.hitTest(point.x, point.y)
   },
 
   handleClickEvent (event) {

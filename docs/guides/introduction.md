@@ -11,8 +11,8 @@ The goal of this guide is to get you to the "A-ha!" moment as efficiently as pos
 In these guides you will learn step-by-step how the setup your development environment. You'll also learn how to create, develop and publish your own app and modules, which is also how we develop the KDK.
 
 * [Setup your environment](./development/setup.md)
-* [Develop your app](./development/develop.md)
-* [Test your app](./development/test.md)
+* [Develop with KDK](./development/develop.md)
+* [Test with KDK](./development/test.md)
+* [Publish with KDK](./development/publish.md)
 * [Configure your app](./development/configure.md)
 * [Deploy your app](./development/deploy.md)
-* [Publish your app](./development/publish.md)

@@ -19,17 +19,13 @@ export default withMermaid(
         { text: 'About', link: '/about/introduction' },
         { text: 'Guides', link: '/guides/introduction' },
         { text: 'Architecture', link: '/architecture/introduction' },
-        { text: 'API', link: '/api/introduction' },
-        { text: 'Tips', link: '/tips/introduction' },
-        { text: 'Tools', link: '/tools/introduction' }
+        { text: 'API', link: '/api/introduction' }
       ],
       sidebar: {
         '/about/': getAboutSidebar(),
         '/guides/': getGuidesSidebar(),
         '/architecture/': getArchitectureSidebar(),
-        '/api/': getAPISidebar(),
-        '/tips/': getTipsSidebar(),
-        '/tools/': getToolsSidebar()
+        '/api/': getAPISidebar()
       },
       trustLogos: [
         { imageLink: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/logos/airbus.png', link: 'https://www.airbus.com/' },
@@ -119,23 +115,5 @@ function getAPISidebar () {
         { text: 'Composables', link: '/api/map/composables' }
       ]
     }
-  ]
-}
-
-function getTipsSidebar () {
-  return [
-    { text: 'Tips', link: '/tips/introduction' },
-    { text: 'Application development', link: '/tips/app-development' },
-    { text: 'Mobile configuration', link: '/tips/mobile-configuration' }
-  ]
-}
-
-function getToolsSidebar () {
-  return [
-    { text: 'Tools', link: '/tools/introduction' },
-    { text: 'Command-line tools', link: '/tools/cli' },
-    { text: 'Browser-based tools', link: '/tools/browsers' },
-    { text: 'Documentation', link: '/tools/documentation' },
-    { text: 'Infrastructure', link: '/tools/infrastructure' }
   ]
 }

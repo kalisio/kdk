@@ -400,7 +400,8 @@
     "NO_RESULT": "Aucun résultat trouvé",
     "FILTER": "Filtrer les services de recherche",
     "GEOLOCATE": "Me localiser",
-    "DRAW": "Dessiner sur une carte"
+    "DRAW": "Dessiner sur une carte",
+    "VIEWBOX": "Limiter la recherche dans la zone définie"
   },
   "KLocationMap": {
     "RECENTER_MAP": "Recentrer la carte",
@@ -462,10 +463,12 @@
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Trier les projets",
-    "EDIT_PROJECT": "@:EDIT",
-    "REMOVE_PROJECT": "@:REMOVE",
     "REMOVE_DIALOG_TITLE": "Supprimer {project} ?",
     "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {project} de votre espace de travail ?"
+  },
+  "KProjectSelector": {
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
   },
   "KProjectEditor": {
     "BACKGROUND_LAYER_REQUIRED": "Un projet doit au moins contenir un fond cartographique."
@@ -527,6 +530,7 @@
     "POINT_SHAPE": " forme",
     "WHEN_PROPERTY_IS_POINT_STYLE": "lorsque {property}",
     "POINT_CLUSTERING": "Regrouper jusqu'au niveau",
+    "CLUSTERING_PIXEL_RANGE": "Distance de regroupement",
     "ADD_POINT_STYLE": "Ajouter un style pour une valeur de",
     "REMOVE_POINT_STYLE": "Supprimer le style associé à cette valeur",
     "DEFAULT_LINE_STYLE": "Style de ligne par défaut",

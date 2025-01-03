@@ -85,7 +85,7 @@ export function beforeGuard (to, from, next) {
   for (const guard of guards) {
     const result = guard(user, to, from)
     if (typeof result === 'string') {
-      logger.debug('Navigation guard would redirect to route ' + result)
+      logger.debug('[KDK] Navigation guard would redirect to route ' + result)
       if (typeof next === 'function') {
         // Guard are used to check if a route is reachable when the user navigate
         // but redirection should be handled at the app level to avoid concurrence
@@ -96,7 +96,7 @@ export function beforeGuard (to, from, next) {
         return result
       }
     } else if (!result) {
-      logger.debug('Navigation aborted by guard')
+      logger.debug('[KDK] Navigation aborted by guard')
       if (typeof next === 'function') {
         return next(false)
       } else {
@@ -105,7 +105,7 @@ export function beforeGuard (to, from, next) {
     }
   }
 
-  logger.debug('Navigation guards passed')
+  logger.debug('[KDK] Navigation guards passed')
   if (typeof next === 'function') {
     return next()
   } else {

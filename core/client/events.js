@@ -1,3 +1,3 @@
-import Emitter from 'tiny-emitter'
+import { EventBus } from 'quasar'
 
-export const Events = new Emitter()
+export const Events = new EventBus()

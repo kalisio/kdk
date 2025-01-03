@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
 import { Layout } from '../layout.js'
 
 export function baseActivity (name) {
@@ -8,14 +7,20 @@ export function baseActivity (name) {
       getAppName () {
         return this.$config('appName')
       },
+      configurePadding () {
+        if (_.has(this.activityOptions, 'padding')) Layout.setPadding(_.get(this.activityOptions, 'padding'))
+      },
+      clearPadding () {
+        Layout.setPadding(true)
+      },
       configureHeader () {
-        Layout.setHeader(_.get(this.activityOptions, 'header'), this)
+        if (_.has(this.activityOptions, 'header')) Layout.setHeader(_.get(this.activityOptions, 'header'), this)
       },
       clearHeader () {
         Layout.setHeader(null)
       },
       configureFooter () {
-        Layout.setFooter(_.get(this.activityOptions, 'footer'), this)
+        if (_.has(this.activityOptions, 'footer')) Layout.setFooter(_.get(this.activityOptions, 'footer'), this)
       },
       clearFooter () {
         Layout.setFooter(null)
@@ -39,7 +44,7 @@ export function baseActivity (name) {
         Layout.setPaneVisible('top', visible)
       },
       configureTopPane () {
-        Layout.setPane('top', _.get(this.activityOptions, 'topPane'), this)
+        if (_.has(this.activityOptions, 'topPane')) Layout.setPane('top', _.get(this.activityOptions, 'topPane'), this)
       },
       clearTopPane () {
         Layout.setPane('top', null)
@@ -63,7 +68,7 @@ export function baseActivity (name) {
         Layout.setPaneVisible('left', visible)
       },
       configureLeftPane () {
-        Layout.setPane('left', _.get(this.activityOptions, 'leftPane'), this)
+        if (_.has(this.activityOptions, 'leftPane')) Layout.setPane('left', _.get(this.activityOptions, 'leftPane'), this)
       },
       clearLeftPane () {
         Layout.setPane('left', null)
@@ -87,7 +92,7 @@ export function baseActivity (name) {
         Layout.setPaneMode('bottom', visible)
       },
       configureBottomPane () {
-        Layout.setPane('bottom', _.get(this.activityOptions, 'bottomPane'), this)
+        if (_.has(this.activityOptions, 'bottomPane')) Layout.setPane('bottom', _.get(this.activityOptions, 'bottomPane'), this)
       },
       clearBottomPane () {
         Layout.setPane('bottom', null)
@@ -111,7 +116,7 @@ export function baseActivity (name) {
         Layout.setPaneMode('right', visible)
       },
       configureRightPane () {
-        Layout.setPane('right', _.get(this.activityOptions, 'rightPane'), this)
+        if (_.has(this.activityOptions, 'rightPane')) Layout.setPane('right', _.get(this.activityOptions, 'rightPane'), this)
       },
       clearRightPane () {
         Layout.setPane('right', null)
@@ -126,7 +131,7 @@ export function baseActivity (name) {
         Layout.setPageMode(mode)
       },
       configurePage () {
-        Layout.setPage(_.get(this.activityOptions, 'page'), this)
+        if (_.has(this.activityOptions, 'page')) Layout.setPage(_.get(this.activityOptions, 'page'), this)
       },
       clearPage () {
         Layout.setPage(null)
@@ -141,7 +146,7 @@ export function baseActivity (name) {
         Layout.setStickiesMode(mode)
       },
       configureStickies () {
-        Layout.setStickies(_.get(this.activityOptions, 'stickies'), this)
+        if (_.has(this.activityOptions, 'stickies')) Layout.setStickies(_.get(this.activityOptions, 'stickies'), this)
       },
       clearStickies () {
         Layout.clearStickies()
@@ -153,12 +158,13 @@ export function baseActivity (name) {
         Layout.setFab({ content, mode, filter }, this)
       },
       configureFab () {
-        Layout.setFab(_.get(this.activityOptions, 'fab'), this)
+        if (_.has(this.activityOptions, 'fab')) Layout.setFab(_.get(this.activityOptions, 'fab'), this)
       },
       clearFab () {
         Layout.setFab(null)
       },
       configureWindows () {
+        if (!_.has(this.activityOptions, 'windows')) return
         const windows = _.get(this.activityOptions, 'windows', null)
         _.forOwn(windows, (window, placement) => {
           Layout.setWindow(placement, window, this)
@@ -193,6 +199,7 @@ export function baseActivity (name) {
         Layout.clearFocus()
       },
       clearActivity () {
+        this.clearPadding()
         this.clearFocus()
         this.clearHeader()
         this.clearFooter()
@@ -206,6 +213,7 @@ export function baseActivity (name) {
         this.clearWindows()
       },
       configureActivity () {
+        this.configurePadding()
         this.configureHeader()
         this.configureFooter()
         this.configureTopPane()

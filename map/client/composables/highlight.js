@@ -10,6 +10,8 @@ import * as composables from '../../../core/client/composables/index.js'
 export const HighlightsLayerName = uid()
 // This ensure it is on top of everything else
 export const HighlightsZIndex = 999
+// This ensure highlight encompasses the target feature
+export const HighlightMargin = 8
 
 export function useHighlight (name, options = {}) {
   // Set default options
@@ -90,24 +92,22 @@ export function useHighlight (name, options = {}) {
       let highlightStyle = _.cloneDeep(_.get(config, selectionStylePath, {}))
       if (activity.is2D()) {
         // adapt the size to the marker using feature style
+        let radius = _.get(feature, 'style.radius')
         let size = _.get(feature, 'style.size')
-        if (size) {
-          if (!Array.isArray(size)) size = [size, size]
-        } else {
-          let radius = _.get(feature, 'style.radius')
-          if (radius) size = [radius * 2, radius * 2]
+        if (size && !Array.isArray(size)) {
+          size = [size, size]
         }
         // adapt the size to the marker using layer style
-        if (!size) {
+        if (!size && !radius) {
           size = _.get(layer, `${activity.engine}.style.point.size`)
-          if (size) {
-            if (!Array.isArray(size)) size = [size, size]
-          } else {
-            let radius = _.get(layer, `${activity.engine}.style.point.radius`)
-            if (radius) size = [radius * 2, radius * 2]
+          radius = _.get(layer, `${activity.engine}.style.point.radius`)
+          if (size && !Array.isArray(size)) {
+            size = [size, size]
           }
         }
-        if (size) Object.assign(highlightStyle, { size: [size[0] + 8, size[1] + 8] }) 
+        // If highlight size is based on a shape with a radius use it, otherwise go for size
+        if (radius) Object.assign(highlightStyle, { radius: radius + 0.5 * HighlightMargin }) 
+        else if (size) Object.assign(highlightStyle, { size: [size[0] + HighlightMargin, size[1] + HighlightMargin] })
       }
       Object.assign(highlight, { style: highlightStyle })
     } else {

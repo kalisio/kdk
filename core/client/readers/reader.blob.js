@@ -5,11 +5,11 @@ import { i18n } from '../i18n.js'
 export const BLOBReader = {
   read (files, options) {
     if (files.length !== 1) {
-      logger.debug('invalid \'files\' arguments')
+      logger.debug('[KDK] invalid \'files\' arguments')
       return
     }
     const file = files[0]
-    logger.debug(`reading Blob file ${file.name}`)
+    logger.debug(`[KDK] reading Blob file ${file.name}`)
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -28,7 +28,7 @@ export const BLOBReader = {
       if (expectedType === 'dataUrl') {
         reader.readAsDataURL(file)
       } else {
-        if (expectedType !== 'arrayBuffer') logger.error(`Undefined expected type ${expectedType}. Read as Array buffer.`)
+        if (expectedType !== 'arrayBuffer') logger.error(`[KDK] Undefined expected type ${expectedType}. Read as Array buffer.`)
         reader.readAsArrayBuffer(file)
       }
     })

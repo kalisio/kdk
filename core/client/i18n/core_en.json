@@ -415,9 +415,16 @@
     "MORE_ABOUT_KALISIO": "More about Kalisio"
   },
   "KPlatform": {
-    "PROPERTY": "Property",
-    "VALUE": "Value",
-    "COPY_INFO": "Copy info",
+    "USER_AGENT": "User agent",
+    "APPLICATION": "Application",
+    "PERMISSIONS": "Permissions",
+    "PERMISSION_GRANTED": "Granted",
+    "PERMISSION_PROMPT": "Prompt",
+    "BROWSER": "Browser",
+    "LOCALE": "Locale",
+    "WEBGL": "WebGL support",
+    "SYSTEM": "System",
+    "COPY_INFO": "Copy info to clipboard",
     "INFO_COPIED": "Platform info copied",
     "CANNOT_COPY_INFO": "Cannot copy platform info"
   },
@@ -529,7 +536,7 @@
   },
   "KSubscription": {
     "UNSUBSCRIBE_LABEL": "Unsubscribe",
-    "LAST_ACTIVITY": "Last activity",
+    "LAST_ACTIVITY": "Last activity on {date} at {time}",
     "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
     "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
   },
@@ -918,6 +925,25 @@
     "NEXT_DAY": "Next day",
     "NEXT_HOUR": "Next hour",
     "NEXT_STEP": "Next step"
+  },
+  "KImage": {
+    "RESET": "Reset"
+  },
+  "KBrowser": {
+    "DOWNLOAD_FILE": "Download file",
+    "UPLOAD_FILES": "Upload files",
+    "UPLOAD": "Upload",
+    "DELETE_FILE": "Delete file",
+    "DELETE_FILE_MESSAGE": "Are you sure you want to delete {name} ?",
+    "CANNOT_BE_VIEWED": "This file cannot be viewed",
+    "NO_FILES": "No files"
+  },
+  "KUploader": {
+    "ADD_FILES": "Add files...",
+    "EMPTY_FILE": "File {file] is empty or corrupted !",
+    "FILE_TOO_LARGE": "File {file} is too large. The size must be less than {size}Mb",
+    "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
+    "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
   }
 }
 

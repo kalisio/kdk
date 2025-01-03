@@ -401,7 +401,8 @@
     "NO_RESULT": "No result found",
     "FILTER": "Filter search services",
     "GEOLOCATE": "Locate me",
-    "DRAW": "Draw on a map"
+    "DRAW": "Draw on a map",
+    "VIEWBOX": "Restrict search to defined area"
   },
   "KLocationMap": {
     "RECENTER_MAP": "Recenter map",
@@ -463,10 +464,12 @@
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Sort projects",
-    "EDIT_PROJECT": "@:EDIT",
-    "REMOVE_PROJECT": "@:REMOVE",
     "REMOVE_DIALOG_TITLE": "Remove {project} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{project}</b> from your workspace ?"
+  },
+  "KProjectSelector": {
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
   },
   "KProjectEditor": {
     "BACKGROUND_LAYER_REQUIRED": "A project at least requires a background layer."
@@ -528,6 +531,7 @@
     "POINT_SHAPE": " shape",
     "WHEN_PROPERTY_IS_POINT_STYLE": "when {property}",
     "POINT_CLUSTERING": "Cluster until level",
+    "CLUSTERING_PIXEL_RANGE": "Clustering range",
     "ADD_POINT_STYLE": "Add a style for a value of",
     "REMOVE_POINT_STYLE": "Remove style for this value",
     "DEFAULT_LINE_STYLE": "Default line style",

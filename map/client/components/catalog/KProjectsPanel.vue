@@ -55,39 +55,13 @@ export default {
     }
   },
   data () {
-    const projectActions = []
-    if (this.$can('update', 'projects', this.kActivity.contextId)) {
-      const content = [{
-        id: 'edit-project',
-        icon: 'las la-file-alt',
-        label: 'KProjectsPanel.EDIT_PROJECT',
-        handler: (item) => this.editProject(item)
-      }]
-      if (this.$can('remove', 'projects', this.kActivity.contextId)) {
-        content.push({
-          id: 'remove-project',
-          icon: 'las la-trash',
-          label: 'KProjectsPanel.REMOVE_PROJECT',
-          handler: (item) => this.removeProject(item)
-        })
-      }
-      projectActions.push({
-        id: 'project-overflowmenu',
-        component: 'menu/KMenu',
-        dropdownIcon: 'las la-ellipsis-v',
-        actionRenderer: 'item',
-        propagate: false,
-        dense: true,
-        content
-      })
-    }
     return {
       filter: Filter.get(),
       sorter: Sorter.get(),
       projectRenderer: {
         component: 'catalog/KProjectSelector',
         class: 'col-12',
-        actions: projectActions
+        contextId: this.kActivity.contextId
       }
     }
   },
@@ -100,6 +74,14 @@ export default {
             query: Object.assign({ project: project._id }, this.$route.query),
             params: Object.assign({}, this.$route.params)
           })
+          break
+        }
+        case 'edit-project': {
+          this.editProject(project)
+          break
+        }
+        case 'remove-project': {
+          this.removeProject(project)
           break
         }
         default:

@@ -8,7 +8,7 @@
           <q-item-section class="col-1"><q-toggle v-model="isVisible"/></q-item-section>
           <q-item-section>{{$t('KLayerStyleForm.DEFAULT_VISIBILITY')}}</q-item-section>
         </q-item>
-        <q-item class="row justify-start">
+        <q-item v-if="!is3D" class="row justify-start">
           <q-item-section class="col-1"><q-toggle id="style-toggle-minzoom" v-model="hasMinZoom"/></q-item-section>
           <q-item-section avatar>{{$t('KLayerStyleForm.MIN_ZOOM')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
           <q-item-section class="col-2">
@@ -17,7 +17,7 @@
               label label-always :label-value="minZoom"/>
           </q-item-section>
         </q-item>
-        <q-item class="row justify-start">
+        <q-item v-if="!is3D" class="row justify-start">
           <q-item-section class="col-1"><q-toggle id="style-toggle-maxzoom" v-model="hasMaxZoom"/></q-item-section>
           <q-item-section avatar>{{$t('KLayerStyleForm.MAX_ZOOM')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
           <q-item-section class="col-2">
@@ -28,11 +28,14 @@
         </q-item>
         <q-item class="row justify-start">
           <q-item-section class="col-1"><q-toggle id="style-toggle-clustering" v-model="clustering"/></q-item-section>
-          <q-item-section avatar>{{$t('KLayerStyleForm.POINT_CLUSTERING')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
+          <q-item-section avatar>{{$t('KLayerStyleForm.CLUSTERING_PIXEL_RANGE')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
           <q-item-section class="col-2">
-            <q-slider id="style-set-clustering" v-model="disableClusteringAtZoom" :disable="!clustering"
+            <q-slider v-if="!is3D" id="style-set-clustering" v-model="disableClusteringAtZoom" :disable="!clustering"
               :min="minViewerZoom" :max="maxViewerZoom" :step="1"
               label label-always :label-value="disableClusteringAtZoom"/>
+            <q-slider v-else id="style-set-clustering" v-model="clusteringPixelRange" :disable="!clustering"
+              :min="5" :max="200" :step="1"
+              label label-always :label-value="clusteringPixelRange + 'px'"/>
           </q-item-section>
         </q-item>
         <q-item class="row justify-start" v-if="isVectorLayer">
@@ -50,7 +53,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="isVectorLayer" id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
+    <q-expansion-item v-if="isVectorLayer && !is3D" id="style-point-group" icon="las la-map-marker-alt" :label="$t('KLayerStyleForm.POINTS')" group="group">
       <q-list dense class="q-pa-md">
         <q-item class="row justify-start">
           <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_ICON_STYLE')}}</q-item-section>
@@ -195,7 +198,7 @@
         </q-item>
       </q-list>
     </q-expansion-item>
-    <q-expansion-item v-if="hasFeatureSchema" ref="popup" id="style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
+    <q-expansion-item v-if="hasFeatureSchema && !is3D" ref="popup" id="style-popup-group" icon="las la-comment-alt" :label="$t('KLayerStyleForm.POPUP')" group="group">
       <q-list dense class="q-pa-md">
         <q-item class="row justify-start">
           <q-item-section class="col-1"><q-toggle id="style-toggle-popup" v-model="popup"/></q-item-section>
@@ -261,7 +264,7 @@ import logger from 'loglevel'
 import { uid } from 'quasar'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../core/client'
 import { KIconChooser, KColorChooser, KShape } from '../../../core/client/components'
-import { processStyleTemplates, generateStyleTemplates } from '../utils/utils.style.js'
+import { processStyleTemplates, generateStyleTemplates, DefaultStyle } from '../utils/utils.style.js'
 
 export default {
   name: 'k-layer-style-form',
@@ -278,7 +281,8 @@ export default {
   ],
   props: {
     layer: { type: Object, required: true },
-    options: { type: Object, required: true } // Contains default style options
+    options: { type: Object, required: true }, // Contains default style options
+    is3D: { type: Boolean, default: false }
   },
   computed: {
     hasFeatureSchema () {
@@ -333,6 +337,7 @@ export default {
       infoboxProperties: [],
       clustering: true,
       disableClusteringAtZoom: 18,
+      clusteringPixelRange: 80,
       defaultPoint: {},
       iconStyles: [],
       defaultLine: {},
@@ -426,19 +431,21 @@ export default {
       }
     },
     fillBaseStyle (values) {
-      this.isVisible = _.get(values, 'leaflet.isVisible', true)
+      this.isVisible = _.get(values, 'leaflet.isVisible', _.get(DefaultStyle, 'isVisible'))
       this.hasMinZoom = !!_.get(values, 'leaflet.minZoom')
       if (this.hasMinZoom) this.minZoom = _.get(values, 'leaflet.minZoom')
       this.hasMaxZoom = !!_.get(values, 'leaflet.maxZoom')
       if (this.hasMaxZoom) this.maxZoom = _.get(values, 'leaflet.maxZoom')
       this.hasOpacity = _.has(values, 'leaflet.opacity')
       if (this.hasOpacity) this.opacity = _.get(values, 'leaflet.opacity')
-      this.isSelectable = _.get(values, 'isSelectable', true)
+      this.isSelectable = _.get(values, 'isSelectable', _.get(DefaultStyle, 'isSelectable'))
     },
     fillClusteringStyle (values) {
-      this.clustering = (!!_.get(values, 'leaflet.cluster', _.get(this.options, 'cluster')))
+      this.clustering = (!!_.get(values, (this.is3D ? 'cesium.cluster' : 'leaflet.cluster'), _.get(this.options, 'cluster')))
       this.disableClusteringAtZoom = _.get(values, 'leaflet.cluster.disableClusteringAtZoom',
-        _.get(this.options, 'cluster.disableClusteringAtZoom', 18))
+        _.get(this.options, 'cluster.disableClusteringAtZoom', _.get(DefaultStyle, 'leaflet.cluster.disableClusteringAtZoom')))
+      this.clusteringPixelRange = _.get(values, 'cesium.cluster.pixelRange',
+        _.get(this.options, 'cluster.pixelRange', _.get(DefaultStyle, 'cesium.cluster.pixelRange')))
     },
     async fillIconStyles (values) {
       this.iconStyles = []
@@ -448,19 +455,19 @@ export default {
         // Conversion from palette to RGB color is required for markers
         this.defaultPoint.color = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.point.color',
-            _.get(this.options, 'style.point.color', kCoreUtils.getColorFromPalette('red'))))
+            _.get(this.options, 'style.point.color', kCoreUtils.getColorFromPalette(_.get(DefaultStyle, 'point.color')))))
         this.defaultPoint.size = _.get(values, 'leaflet.style.point.size',
-          _.get(this.options, 'style.point.size', 24))
+          _.get(this.options, 'style.point.size', _.get(DefaultStyle, 'point.size')))
         this.defaultPoint.shape = _.get(values, 'leaflet.style.point.shape',
-          _.get(this.options, 'style.point.shape', 'circle'))
+          _.get(this.options, 'style.point.shape', _.get(DefaultStyle, 'point.shape')))
         this.defaultPoint['icon.classes'] =
           _.get(values, 'leaflet.style.point.icon.classes',
-            _.get(this.options, 'style.point.icon.classes', ''))
+            _.get(this.options, 'style.point.icon.classes', _.get(DefaultStyle, 'point.icon.classes')))
         this.defaultPoint['icon.color'] = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.point.icon.color',
-            _.get(this.options, 'style.point.icon.color', kCoreUtils.getColorFromPalette('black'))))
+            _.get(this.options, 'style.point.icon.color', kCoreUtils.getColorFromPalette(_.get(DefaultStyle, 'point.icon.color')))))
         this.defaultPoint['icon.size'] = _.get(values, 'leaflet.style.point.icon.size',
-          _.get(this.options, 'style.point.icon.size', 12))
+          _.get(this.options, 'style.point.icon.size', _.get(DefaultStyle, 'point.icon.size')))
       } else {
         await this.processTemplates(values, ['color', 'size', 'shape', 'icon.classes', 'icon.color', 'icon.size'], 'point', this.defaultPoint, this.iconStyles)
       }
@@ -473,13 +480,13 @@ export default {
         // Conversion from palette to RGB color is required for path style
         this.defaultLine.color = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.line.color',
-            _.get(this.options, 'style.line.color'), kCoreUtils.getColorFromPalette('red')))
+            _.get(this.options, 'style.line.color'), kCoreUtils.getColorFromPalette(_.get(DefaultStyle, 'line.color'))))
         this.defaultLine.width =
           _.get(values, 'leaflet.style.line.width',
-            _.get(this.options, 'style.line.width', 3))
+            _.get(this.options, 'style.line.width', _.get(DefaultStyle, 'line.width')))
         this.defaultLine.opacity =
           _.get(values, 'leaflet.style.line.opacity',
-            _.get(this.options, 'style.line.opacity', 1))
+            _.get(this.options, 'style.line.opacity', _.get(DefaultStyle, 'line.opacity')))
       } else {
         await this.processTemplates(values, ['color', 'width', 'opacity'], 'line', this.defaultLine, this.lineStyles)
       }
@@ -492,19 +499,19 @@ export default {
         // Conversion from palette to RGB color is required for path style
         this.defaultPolygon.color = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.polygon.color',
-            _.get(this.options, 'style.polygon.color', kCoreUtils.getColorFromPalette('red'))))
+            _.get(this.options, 'style.polygon.color', kCoreUtils.getColorFromPalette(_.get(DefaultStyle, 'polygon.color')))))
         this.defaultPolygon.opacity =
           _.get(values, 'leaflet.style.polygon.opacity',
-            _.get(this.options, 'style.polygon.opacity', 1))
+            _.get(this.options, 'style.polygon.opacity', _.get(DefaultStyle, 'polygon.opacity')))
         this.defaultPolygon['stroke.color'] = kCoreUtils.getPaletteFromColor(
           _.get(values, 'leaflet.style.polygon.stroke.color',
-            _.get(this.options, 'style.polygon.stroke.color', kCoreUtils.getColorFromPalette('red'))))
+            _.get(this.options, 'style.polygon.stroke.color', kCoreUtils.getColorFromPalette(_.get(DefaultStyle, 'polygon.stroke.color')))))
         this.defaultPolygon['stroke.width'] =
           _.get(values, 'leaflet.style.polygon.stroke.width',
-            _.get(this.options, 'style.polygon.stroke.width', 3))
+            _.get(this.options, 'style.polygon.stroke.width', _.get(DefaultStyle, 'polygon.stroke.width')))
         this.defaultPolygon['stroke.opacity'] =
           _.get(values, 'leaflet.style.polygon.stroke.opacity',
-            _.get(this.options, 'style.polygon.stroke.opacity', 1))
+            _.get(this.options, 'style.polygon.stroke.opacity', _.get(DefaultStyle, 'polygon.stroke.opacity')))
       } else {
         await this.processTemplates(values, ['color', 'opacity', 'stroke.color', 'stroke.width', 'stroke.opacity'], 'polygon', this.defaultPolygon, this.polygonStyles)
       }
@@ -595,7 +602,8 @@ export default {
     },
     clusteringValues () {
       return {
-        'leaflet.cluster': (this.clustering ? { disableClusteringAtZoom: this.disableClusteringAtZoom } : false)
+        'leaflet.cluster': (this.clustering ? { disableClusteringAtZoom: this.disableClusteringAtZoom } : false),
+        'cesium.cluster': (this.clustering ? { pixelRange: this.clusteringPixelRange } : false)
       }
     },
     iconStylesValues () {

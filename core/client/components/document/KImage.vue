@@ -1,13 +1,35 @@
 <template>
-  <div>
-    <div v-if="interactive === true" class="fit" >
-      <pinch-zoom class="pinch-zoom-controller fit row justify-center items-center" @change="$emit('image-transformed')">
-        <img :src="url" class="fit" :onload="onLoaded" />
+  <div class="fit column">
+    <div v-if="interactive === true" class="fit" style="position: relative;">
+      <pinch-zoom
+        class="pinch-zoom-controller fit row justify-center items-center"
+        @change="onTransformed"
+      >
+        <img
+          :src="url"
+          :onload="onLoaded"
+          style="max-width: 100%;"
+        />
       </pinch-zoom>
-
+      <div
+        v-if="transformed"
+        class="bg-grey-9 k-toolbar"
+      >
+        <KAction
+          id="restore-image"
+          icon="las la-compress-arrows-alt"
+          label="KImage.RESET"
+          color="white"
+          :handler="reset"
+        />
+      </div>
     </div>
     <div v-else class="fit row justify-center items-center">
-      <img :src="url" class="fit" :onload="onLoaded" />
+      <img
+        :src="url"
+        :onload="onLoaded"
+        style="max-width: 100%;"
+      />
     </div>
     <q-spinner
       class="absolute-center"
@@ -20,8 +42,10 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import 'pinch-zoom-element/dist/pinch-zoom.js'
+import { DefaultZIndex } from '../../layout.js'
+import KAction from '../action/KAction.vue'
 
 // Props
 const props = defineProps({
@@ -40,10 +64,12 @@ const props = defineProps({
 })
 
 // Emit
-defineEmits(['image-transformed'])
+const emit = defineEmits(['image-transformed'])
 
 // Data
 const loading = ref(true)
+const transformed = ref(false)
+const toolbarZIndex = DefaultZIndex.stickies
 
 // Computed
 const interactive = computed(() => {
@@ -51,7 +77,7 @@ const interactive = computed(() => {
 })
 
 // Functions
-function restore () {
+function reset () {
   const controller = document.querySelector('.pinch-zoom-controller')
   if (controller) {
     controller.setTransform({
@@ -60,19 +86,24 @@ function restore () {
       y: 0,
       allowChangeEvent: true
     })
+    transformed.value = false
   }
+}
+function onTransformed () {
+  transformed.value = true
+  emit('image-transformed')
 }
 function onLoaded () {
   loading.value = false
 }
-
-// Hooks
-onMounted(() => {
-  restore()
-})
-
-// Expose
-defineExpose({
-  restore
-})
 </script>
+
+<style lang="scss" scoped>
+.k-toolbar {
+  position: absolute;
+  bottom: 16px;
+  left: 50%; transform: translate(-50%, 0);
+  border-radius: 24px;
+  z-index: v-bind(toolbarZIndex);
+}
+</style>

@@ -73,10 +73,10 @@ const availableComponents = computed(() => {
     component.isHidden = getVisibility(component, 'hidden', false)
     component.isVisible = getVisibility(component, 'visible', true)
     if (!_.startsWith(component.name, 'Q')) {
-      logger.trace(`Loading component ${component.name}`)
+      logger.trace(`[KDK] Loading component ${component.name}`)
       component.instance = loadComponent(component.name)
     } else {
-      logger.trace(`Using component ${component.name}`)
+      logger.trace(`[KDK] Using component ${component.name}`)
       component.instance = component.name
     }
   }

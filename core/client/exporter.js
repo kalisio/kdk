@@ -9,12 +9,12 @@ import { i18n } from './i18n.js'
 const ExporterQueue = {
   initialize (maxConcurrentRequests) {
     this.maxConcurrentRequests = maxConcurrentRequests
-    logger.debug(`[KDK] Configuring exporter with '${maxConcurrentRequests}' maxConcurrentRequests`)
     this.pendingRequests = []
     this.runningRequests = []
     this.exportService = api.getService('import-export')
     this.exportService.on('export-created', params => this.onRequestCreated(params))
     this.exportService.on('export-completed', params => this.onRequestCompleted(params))
+    logger.debug(`[KDK] Exported initialized with '${maxConcurrentRequests}' maxConcurrentRequests`)
   },
   push (request) {
     this.pendingRequests.push(request)
@@ -72,7 +72,7 @@ const ExporterQueue = {
     }
     // close the notification
     request.notification()
-    // donwload the file
+    // download the file
     if (params.SignedUrl) {
       // Use an iframe to download the file
       // see https://github.com/socketio/socket.io/issues/4436

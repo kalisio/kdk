@@ -3,9 +3,11 @@ import logger from 'loglevel'
 import config from 'config'
 import { Store } from './store.js'
 import { Theme } from './theme.js'
+import { Platform } from './platform.js'
 import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
 import { LocalCache } from './local-cache.js'
+import { Broadcaster } from './broadcaster.js'
 import { Storage } from './storage.js'
 import { TemplateContext } from './template-context.js'
 import { Time } from './time.js'
@@ -29,9 +31,11 @@ import { Schema } from '../common/index.js'
 // export * from './components'
 export { Store }
 export { Theme }
+export { Platform }
 export { Capabilities }
 export { LocalStorage }
 export { LocalCache }
+export { Broadcaster }
 export { Storage }
 export { TemplateContext }
 export { Time }
@@ -39,6 +43,7 @@ export { Units }
 export { Layout }
 export { Filter }
 export { Sorter }
+export { Document }
 export { Exporter }
 export { Reader }
 export { services }
@@ -62,13 +67,16 @@ export default async function initialize () {
   Store.set('kdk', { core: { initialized: false }, map: { initialized: false } })
 
   // Initialize singletons that might be used globally first
+  // Take care that order matters as some singletons might use others
   LocalStorage.initialize()
   LocalCache.initialize()
+  await Platform.initialize()
+  await Capabilities.initialize()
+  Broadcaster.initialize()
   Storage.initialize()
   Theme.initialize()
   Time.initialize()
   Units.initialize()
-  await Capabilities.initialize()
   // Then services
   api.configure(services)
   // Last, create the models listened by the main layout/pages components

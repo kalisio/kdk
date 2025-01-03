@@ -11,9 +11,6 @@
     v-model="model"
     :label="label"
     :multiple="multiple"
-    :toggle="toggle"
-    :radio="radio"
-    :use-chips="chips"
     :options="options"
     emit-value
     map-options
@@ -40,7 +37,12 @@
     </template>
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
-      <span :class="selectedClass()">
+      <q-chip v-if="chips">
+        <span :class="selectedClass()">
+          {{ scope.opt.label }}
+        </span>
+      </q-chip>
+      <span v-else :class="selectedClass()">
         {{ scope.opt.label }}
       </span>
     </template>
@@ -70,19 +72,13 @@ export default {
   mixins: [baseField],
   computed: {
     multiple () {
-      return _.get(this.properties, 'multiselect', false)
+      return this.isMultiselect()
     },
     clearable () {
-      return _.get(this.properties, 'field.clearable', true)
-    },
-    toggle () {
-      return _.get(this.properties, 'field.toggle', false)
-    },
-    radio () {
-      return _.get(this.properties, 'field.radio', false)
+      return this.isClearable()
     },
     chips () {
-      return _.get(this.properties, 'field.chips', false)
+      return this.hasChips()
     },
     options () {
       let opts = _.map(_.get(this.properties, 'field.options', []), option => {
@@ -117,6 +113,15 @@ export default {
     }
   },
   methods: {
+    isMultiselect () {
+      return _.get(this.properties, 'multiselect', false)
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
+    },
+    hasChips () {
+      return _.get(this.properties, 'field.chips', false)
+    },
     getId (option) {
       let id = option.value
       // Complex object ?
@@ -132,7 +137,7 @@ export default {
       return _.kebabCase(id)
     },
     emptyModel () {
-      if (this.multiple) return []
+      if (this.isMultiselect()) return []
       return null
     },
     onFilter (pattern, update) {

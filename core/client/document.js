@@ -2,43 +2,64 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
 import sanitize from 'sanitize-html'
-import showdown from 'showdown'
 import { i18n } from './i18n.js'
 
 export const Document = {
   initialize () {
-    this.options = _.get(config, 'document')
-    this.options = _.defaultsDeep(this.options, {
+    this.options = _.defaultsDeep(_.get(config, 'document'), {
       viewers: {
         htm: 'document/KHtml',
         html: 'document/KHtml',
+        'text/html': 'document/KHtml',
+        txt: 'document/KHtml',
+        'text/plain': 'document/KHtml',
+        csv: 'document/KCsv',
+        'text/csv': 'document/KCsv',
         md: 'document/KMarkdown',
+        'text/markdown': 'document/KMarkdown',
         pdf: 'document/KPdf',
+        'application/pdf': 'document/KPdf',
         jpg: 'document/KImage',
         jpeg: 'document/KImage',
-        png: 'document/KImage'
+        'image/jpeg': 'document/KImage',
+        png: 'document/KImage',
+        'image/png': 'document/KImage',
+        apng: 'document/KImage',
+        'image/apng': 'document/KImage',
+        gif: 'document/KImage',
+        'image/gif': 'document/KImage',
+        svg: 'document/KImage',
+        'image/svg+xml': 'document/KImage',
+        webp: 'document/KImage',
+        'image/webp': 'document/KImage',
+        mp4: 'document/KVideo',
+        'video/mp4': 'document/KVideo',
+        mkv: 'document/KVideo',
+        'video/x-matroska': 'document/KVideo',
+        mov: 'document/KVideo',
+        'video/quicktime': 'document/KVideo',
+        webm: 'document/KVideo',
+        'video/webm': 'document/KVideo'
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img'])
       },
       mdConverter: {}
     })
-    logger.debug('[KDK] Configuring documents with options:', this.options)
+    logger.debug('[KDK] Document initialized with options:', this.options)
   },
-  register (mimeTypes, viewer) {
-    if (!_.isArray(mimeTypes)) mimeTypes = [mimeTypes]
-    _.forEach(mimeTypes, mimeType => {
-      _.set(this.options, `viewers.${mimeType}`, viewer)
+  register (types, viewer) {
+    if (!_.isArray(types)) types = [types]
+    _.forEach(types, type => {
+      _.set(this.options, `viewers.${type}`, viewer)
     })
+  },
+  hasViewer (type) {
+    return !!_.get(this.options, `viewers.${type}`)
   },
   sanitizeHtml (html) {
     if (_.isNil(html)) return null
     return sanitize(html, this.options.htmlSanitizer)
-  },
-  convertMdToHtml (md) {
-    if (_.isNil(md)) return null
-    const converter = new showdown.Converter(this.options.mdConverter)
-    return converter.makeHtml(md)
   },
   async fetchUrl (url, localize) {
     if (_.isEmpty(url)) return null

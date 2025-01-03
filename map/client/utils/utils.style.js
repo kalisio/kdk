@@ -27,6 +27,7 @@ export const SimpleStyleToPointStyle = {
   'stroke-color': 'stroke.color',
   'stroke-opacity': 'stroke.opacity',
   'stroke-width': 'stroke.width',
+  'icon': 'icon.url',
   'icon-url': 'icon.url',
   'icon-html': 'html',
   'icon-color': 'icon.color',
@@ -140,6 +141,41 @@ export const PolygonStyleTemplateMappings = {
 
 export const SimpleStyleNumbers = ['marker-size', 'stroke-width', 'stroke-opacity', 'fill-opacity']
 
+export const DefaultStyle = {
+  isVisible: true,
+  isSelectable: true,
+  point: {
+    color: 'red',
+    size: 24,
+    shape: 'circle',
+    icon: {
+      classes: '',
+      color: 'black',
+      size: 12
+    }
+  },
+  line: {
+    color: 'red',
+    width: 3,
+    opacity: 1
+  },
+  polygon: {
+    color: 'red',
+    opacity: 1,
+    stroke: {
+      color: 'red',
+      width: 3,
+      opacity: 1
+    }
+  },
+  leaflet: {
+    cluster: { disableClusteringAtZoom: 18 }
+  },
+  cesium: {
+    cluster: { pixelRange: 80 }
+  }
+}
+
 // Map properties of a given style according to given mapping, performing number conversion if required
 export function convertStyle (style, mapping, asNumber = []) {
   let convertedStyle = {}
@@ -248,7 +284,7 @@ export function processStyleTemplates (options, properties, styleType, defaultSt
       const value = (match ? match[1].trim() : '')
       // Conversion from palette to RGB color is required
       style[property] = (property.includes('color')
-        ? kdkCoreUtils.getPaletteFromColor(value)
+        ? kdkCoreUtils.getPaletteFromColor(value, true)
         : (_.isNumber(value) ? Number(value) : value))
     })
     styles.push(style)

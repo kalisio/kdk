@@ -16,24 +16,36 @@
       Content
     -->
     <q-scroll-area class="col">
-      <!--q-list dense-->
-        <!-- Orphan layers -->
-        <KLayersSelector
-          :layers="orphanLayers"
-          :options="orphanLayersOptions"
+      <!-- Custom content -->
+      <slot name="before-content">
+        <KPanel
+          :content="beforeContent"
+          :class="beforeContentClass"
         />
-        <!-- Categorized layers -->
-        <template v-for="category in filteredCategories">
-          <KCategoryItem
-            v-if="isCategoryVisible(category)"
-            :key="getCategoryId(category)"
-            :id="getCategoryId(category)"
-            :category="category"
-            :layers="layersByCategory[category.name]"
-            :forecastModels="forecastModels"
-          />
-        </template>
-      <!--/q-list-->
+      </slot>
+      <!-- Orphan layers -->
+      <KLayersSelector
+        :layers="orphanLayers"
+        :options="orphanLayersOptions"
+      />
+      <!-- Categorized layers -->
+      <template v-for="category in filteredCategories">
+        <KCategoryItem
+          v-if="isCategoryVisible(category)"
+          :key="getCategoryId(category)"
+          :id="getCategoryId(category)"
+          :category="category"
+          :layers="layersByCategory[category.name]"
+          :forecastModels="forecastModels"
+        />
+      </template>
+      <!-- Custom content -->
+      <slot name="after-content">
+        <KPanel
+          :content="afterContent"
+          :class="afterContentClass"
+        />
+      </slot>
     </q-scroll-area>
     <!--
       Footer
@@ -95,6 +107,22 @@ const props = defineProps({
     default: () => null
   },
   headerClass: {
+    type: String,
+    default: undefined
+  },
+  beforeContent: {
+    type: [Array, Object],
+    default: () => null
+  },
+  beforeContentClass: {
+    type: String,
+    default: undefined
+  },
+  afterContent: {
+    type: [Array, Object],
+    default: () => null
+  },
+  afterContentClass: {
     type: String,
     default: undefined
   },

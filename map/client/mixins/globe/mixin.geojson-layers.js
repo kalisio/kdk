@@ -44,7 +44,7 @@ export const geojsonLayers = {
       const cesiumOptions = options.cesium
       // Remove mode
       if (_.get(updateOptions, 'remove', false)) {
-        let features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+        const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
         features.forEach(feature => {
           const id = getFeatureId(feature, options)
           CustomTypes.forEach(type => {
@@ -110,7 +110,7 @@ export const geojsonLayers = {
           entitiesToRemove.push(entity)
         }
         // Walls
-        const wall = _.get(properties, 'wall')
+        const wall = _.get(properties, 'wall') || _.get(properties, 'entityStyle.wall')
         if (wall && entity.polyline) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
@@ -132,7 +132,7 @@ export const geojsonLayers = {
           })
         }
         // Corridors
-        const corridor = _.get(properties, 'corridor')
+        const corridor = _.get(properties, 'corridor') || _.get(properties, 'entityStyle.corridor')
         if (corridor && entity.polyline) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like width be set using styling options
@@ -159,7 +159,8 @@ export const geojsonLayers = {
           entitiesToRemove.push(entity)
         }
         // Labels
-        const text = _.get(properties, 'icon-text')
+        const text = _.get(properties, 'icon-text') || _.get(properties, 'entityStyle.label.text')
+        const billboardImage = _.get(properties, 'entityStyle.billboard.image')
         if (text) {
           const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties)
           // Simply push the entity, other options like font will be set using styling options
@@ -175,7 +176,8 @@ export const geojsonLayers = {
               fillColor: new ConstantProperty(fill),
               outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth
-            }
+            },
+            billboard: billboardImage ? { image: billboardImage } : undefined
           })
           entitiesToRemove.push(entity)
         }
@@ -243,7 +245,19 @@ export const geojsonLayers = {
         // As a consequence we copy back any style information inside
         // We need to convert to simple-style spec as cesium manages this only
         // We also need to merge all styling properties as some entities requires eg both line/polygon style (wall polylines or corridor polygons)
-        const simpleStyle = Object.assign(getPointSimpleStyle(feature, options, engine), getLineSimpleStyle(feature, options, engine), getPolygonSimpleStyle(feature, options, engine))
+
+        const stylePerType = {
+          Point: getPointSimpleStyle(feature, options, engine),
+          LineString: getLineSimpleStyle(feature, options, engine),
+          Polygon: getPolygonSimpleStyle(feature, options, engine)
+        }
+
+        let type = _.get(feature, 'geometry.type')
+        if (_.get(feature, 'properties.entityStyle.wall', false)) type = 'Polygon'
+
+        // Apply the style according to the feature type to the end to prevent overriding
+        const simpleStyle = Object.assign(...Object.values(stylePerType), stylePerType[type])
+
         // Manage our extended simple-style spec
         const text = _.get(feature, 'style.text.label')
         if (text) simpleStyle['icon-text'] = text
@@ -346,7 +360,9 @@ export const geojsonLayers = {
       // Retrieve the layer
       const layer = this.getCesiumLayerByName(name)
       if (!layer) return // Cannot update invisible layer
-      if (typeof layer.updateGeoJson === 'function') layer.updateGeoJson(geoJson, updateOptions)
+      // Update the geoJson layer
+      // Need to await to make zoomToLayer work properly on load
+      if (typeof layer.updateGeoJson === 'function') await layer.updateGeoJson(geoJson, updateOptions)
 
       // We keep geojson data for in memory layer in a cache since
       // these layers will be destroyed when hidden. We need to be able to restore

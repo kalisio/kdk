@@ -73,8 +73,13 @@ export async function searchLocation (planetConfig, pattern, options) {
     let filter = ''
     if (!_.isEmpty(options.geocoders)) {
       // only request geocoder results from specified sources
-      filter = '&sources=*(' + options.geocoders.join('|') + ')'
+      filter += '&sources=*(' + options.geocoders.join('|') + ')'
     }
+    if (!_.isEmpty(options.viewbox)) {
+      filter += '&viewbox=' + options.viewbox.join(',')
+    }
+
+
     const results = await queryGeocoder(planetConfig, 'forward', `q=${pattern}${filter}`)
     results.forEach(result => {
       locations.push(

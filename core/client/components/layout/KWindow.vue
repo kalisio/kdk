@@ -6,7 +6,7 @@
     <div
       :id="`${placement}-window-header`"
       class="k-window-header full-width row items-center"
-      v-touch-pan.prevent.mouse="onMoved"
+
     >
       <q-resize-observer @resize="onWindowHeaderResized" />
       <!-- window menu -->
@@ -18,18 +18,23 @@
         @mousedown.passive.stop
       />
       <!-- widget header -->
-      <KPanel
-        v-if="widgetHeader"
-        id="widget-header"
-        :content="widgetHeader"
-      />
       <div
-        v-else-if="widgetLabel"
-        class="q-px-sm text-subtitle1 ellipsis"
+        class="col"
+        v-touch-pan.prevent.mouse="onMoved"
       >
-        {{ $tie(widgetLabel) }}
+        <KPanel
+          v-if="widgetHeader"
+          id="widget-header"
+          :content="widgetHeader"
+        />
+        <div
+          v-else-if="widgetLabel"
+          class="q-px-sm text-subtitle1 ellipsis"
+        >
+          {{ $tie(widgetLabel) }}
+        </div>
+        <q-space />
       </div>
-      <q-space />
       <!-- window controls -->
       <KMenu
         v-if="currentWindow.xs"

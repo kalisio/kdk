@@ -1,7 +1,7 @@
 <template>
-  <div class="q-pa-md column">
+  <div class="column">
     <div v-if="subscriptions.length > 0">
-      <q-list>
+      <q-list separator dense>
         <template v-for="subscription in subscriptions" :key="subscription.endpoint">
           <KSubscription
             :subscription="subscription"
@@ -10,14 +10,13 @@
         </template>
       </q-list>
     </div>
-    <div v-else class="row col justify-center">
-      <KStamp
-        icon="las la-exclamation-circle"
-        icon-size="1.6rem"
-        :text="$t('KSubscriptionsManager.EMPTY')"
-        direction="horizontal"
-      />
-    </div>
+    <KStamp v-else
+      icon="las la-exclamation-circle"
+      icon-size="1.6rem"
+      :text="$t('KSubscriptionsManager.EMPTY')"
+      direction="horizontal"
+      class="fixed-center"
+    />
   </div>
 </template>
 

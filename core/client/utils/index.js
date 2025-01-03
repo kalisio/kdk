@@ -11,14 +11,12 @@ export * from './utils.content.js'
 export * from './utils.items.js'
 export * from './utils.locale.js'
 export * from './utils.math.js'
-export * from './utils.platform.js'
 export * from './utils.push.js'
 export * from './utils.pwa.js'
 export * from './utils.screen.js'
 export * from './utils.shapes.js'
 export * from './utils.session.js'
 export * from './utils.time.js'
-
 
 Notify.setDefaults({
   position: 'bottom-left',

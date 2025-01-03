@@ -9,6 +9,38 @@ const servicesPath = path.join(__dirname, '..', 'services')
 
 const debug = makeDebug('kdk:core:services')
 
+export function getServiceNameAndContext (servicePath) {
+  const app = this
+  // Get name from service path without api prefix
+  let name = servicePath.replace(app.get('apiPath').substring(1) + '/', '')
+  // Then without context if any
+  const lastSlash = name.lastIndexOf('/')
+  const contextId = (lastSlash >= 0 ? name.substring(0, lastSlash) : '')
+  name = name.replace(contextId + '/', '')
+  return { name, contextId }
+}
+
+export function decorateDistributedService (service) {
+  const app = this
+  // Remote service are registered according to their path, ie with API prefix (but without trailing /)
+  const remoteService = app.service(service.path)
+  const { name, contextId } = getServiceNameAndContext.call(app, service.path)
+  remoteService.name = name
+  remoteService.context = contextId
+  // As remote services have no context, from the internal point of view path = name
+  // Unfortunately this property is already set and used by feathers-distributed and should not be altered
+  // remoteService.path = name
+  remoteService.app = app
+  remoteService.getPath = function (withApiPrefix) {
+    const path = (contextId ? contextId + '/' + name : name)
+    return (withApiPrefix ? app.get('apiPath') + '/' + path : path)
+  }
+  remoteService.getContextId = function () {
+    return contextId
+  }
+  return remoteService
+}
+
 export function createTagService (options = {}) {
   const app = this
   return app.createService('tags', Object.assign({

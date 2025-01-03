@@ -30,6 +30,7 @@
               :item="item"
               :row="props.row"
               :is="loadComponent(item.component)"
+              v-bind="item"
             />
             <p v-else>{{ props.row.properties[`${item.key}`] }}</p>
           </q-td>

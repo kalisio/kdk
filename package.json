@@ -131,7 +131,6 @@
     "sanitize-html": "^2.13.0",
     "sift": "^8.0.0",
     "superagent": "^5.1.0",
-    "tiny-emitter": "^2.1.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0",
     "xml2js": "^0.4.22"
