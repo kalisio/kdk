@@ -25,7 +25,7 @@ export function createFeaturesService (options = {}) {
     // FIXME: no real-time events for now since we create big batches,
     // does not seem to be sufficient also require a hook (see https://github.com/feathersjs/feathers/issues/922)
     events: ['features'],
-    methods: ['find', 'get', 'create', 'update', 'patch', 'remove', 'heatmap']
+    methods: ['find', 'get', 'create', 'update', 'patch', 'remove', 'heatmap', 'formatGeoJSON']
   }, options))
 }
 

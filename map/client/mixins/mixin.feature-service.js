@@ -127,6 +127,7 @@ export const featureService = {
       const onFeaturesRemoved = (feature) => this.onFeaturesRemoved(feature, layer._id)
       this.layerServiceEventListeners[layer._id] = { service, onFeaturesUpdated, onFeaturesRemoved }
       service.on('created', onFeaturesUpdated)
+      service.on('updated', onFeaturesUpdated)
       service.on('patched', onFeaturesUpdated)
       service.on('removed', onFeaturesRemoved)
     },
@@ -145,6 +146,7 @@ export const featureService = {
       if (!this.layerServiceEventListeners[layer._id]) return
       const { service, onFeaturesUpdated, onFeaturesRemoved } = this.layerServiceEventListeners[layer._id]
       service.off('created', onFeaturesUpdated)
+      service.off('updated', onFeaturesUpdated)
       service.off('patched', onFeaturesUpdated)
       service.off('removed', onFeaturesRemoved)
       delete this.layerServiceEventListeners[layer._id]
@@ -153,6 +155,7 @@ export const featureService = {
       _.forOwn(this.layerServiceEventListeners, listeners => {
         const { service, onFeaturesUpdated, onFeaturesRemoved } = listeners
         service.off('created', onFeaturesUpdated)
+        service.off('updated', onFeaturesUpdated)
         service.off('patched', onFeaturesUpdated)
         service.off('removed', onFeaturesRemoved)
       })
