@@ -308,17 +308,17 @@ export function checkFeatures (geoJson, options = {
   return { kinks: kinksFeatures }
 }
 
-export async function createFeatures (geoJson, layerId, chunkSize = 5000, processCallback) {
-  if (!layerId) return
+export async function createFeatures (geoJson, layer, chunkSize = 5000, processCallback) {
+  if (!layer) return
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
   features.forEach(feature => {
     // Remove any temporary ID as we will use the one from MongoDB
     delete feature._id
-    feature.layer = layerId
+    feature.layer = layer._id
   })
   // Single edition mode
   if (features.length === 1) {
-    const feature = await api.getService('features').create(features[0])
+    const feature = await api.getService(layer.service).create(features[0])
     return feature
   } else {
     // Create chunks to avoid reaching some limits (upload size, timeout, etc.)
@@ -352,47 +352,47 @@ export async function createFeatures (geoJson, layerId, chunkSize = 5000, proces
     }
     // Write the chunks
     for (let i = 0; i < chunks.length; i++) {
-      await api.getService('features').create(chunks[i])
+      await api.getService(layer.service).create(chunks[i])
       if (typeof processCallback === 'function') await processCallback(i, chunks[i])
     }
   }
 }
 
-export async function editFeaturesGeometry (geoJson) {
+export async function editFeaturesGeometry (geoJson, layer) {
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
     if (feature._id) {
-      const updatedFeature = await api.getService('features').patch(feature._id, _.pick(feature, ['geometry']))
+      const updatedFeature = await api.getService(layer.service).patch(feature._id, _.pick(feature, ['geometry']))
       updatedFeatures.push(updatedFeature)
     }
   }
   return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: updatedFeatures }) : updatedFeatures)
 }
 
-export async function editFeaturesProperties (geoJson) {
+export async function editFeaturesProperties (geoJson, layer) {
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
     if (feature._id) {
-      const updatedFeature = await api.getService('features').patch(feature._id, _.pick(feature, ['properties']))
+      const updatedFeature = await api.getService(layer.service).patch(feature._id, _.pick(feature, ['properties']))
       updatedFeatures.push(updatedFeature)
     }
   }
   return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: updatedFeatures }) : updatedFeatures)
 }
 
-export async function removeFeatures (geoJsonOrLayerId) {
+export async function removeFeatures (geoJson, layer) {
   // Remove all features of a given layer
-  if (typeof geoJsonOrLayerId === 'string') {
-    await api.getService('features').remove(null, { query: { layer: geoJsonOrLayerId } })
+  if (!geoJson) {
+    await api.getService(layer.service).remove(null, { query: { layer: layer._id } })
   } else {
-    const features = (geoJsonOrLayerId.type === 'FeatureCollection' ? geoJsonOrLayerId.features : [geoJsonOrLayerId])
+    const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
     for (let i = 0; i < features.length; i++) {
       const feature = features[i]
-      if (feature._id) await api.getService('features').remove(feature._id)
+      if (feature._id) await api.getService(layer.service).remove(feature._id)
     }
   }
 }

@@ -181,7 +181,7 @@ export const editLayers = {
         }
       } else {
         // Listen to layer changes
-        const featuresService = this.$api.getService('features')
+        const featuresService = this.$api.getService(this.editedLayer.service)
         featuresService.on('created', this.onEditedFeaturesCreated)
         featuresService.on('patched', this.onEditedFeaturesUpdated)
         featuresService.on('removed', this.onEditedFeaturesRemoved)
@@ -248,7 +248,7 @@ export const editLayers = {
         await Promise.all(features.map((f) => service.remove(f._id)))
       } else {
         // Clear listeners to layer changes
-        const featuresService = this.$api.getService('features')
+        const featuresService = this.$api.getService(this.editedLayer.service)
         featuresService.off('created', this.onEditedFeaturesCreated)
         featuresService.off('patched', this.onEditedFeaturesUpdated)
         featuresService.off('removed', this.onEditedFeaturesRemoved)
@@ -314,7 +314,7 @@ export const editLayers = {
       _.set(geoJson, idProp, idValue)
       // Save changes to DB, we use the layer DB ID as layer ID on features
       if (this.editedLayer._id) {
-        geoJson = await this.createFeatures(geoJson, this.editedLayer._id)
+        geoJson = await this.createFeatures(geoJson, this.editedLayer)
       } else {
         // Generate in memory service _id as string to match what's done with mongo
         geoJson._id = idValue
@@ -336,7 +336,7 @@ export const editLayers = {
       // Avoid reentrance from realtime events as also raised when we are the initiator
       if (this.updatedFeature && this.updatedFeature._id === geoJson._id) return
       if (this.editedLayer._id) {
-        await this.editFeaturesGeometry(geoJson)
+        await this.editFeaturesGeometry(geoJson, this.editedLayer)
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         const service = this.$api.getService('features-edition')
@@ -364,7 +364,7 @@ export const editLayers = {
       if (this.removedFeature && this.removedFeature._id === geoJson._id) return
 
       if (this.editedLayer._id) {
-        await this.removeFeatures(geoJson)
+        await this.removeFeatures(geoJson, this.editedLayer)
       } else {
         const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
         const service = this.$api.getService('features-edition')
@@ -393,7 +393,7 @@ export const editLayers = {
       }).onOk(async () => {
         const parentLeafletLayer = this.getLeafletLayerByName(layer.name)
         if (!parentLeafletLayer) return
-        await this.removeFeatures(feature)
+        await this.removeFeatures(feature, layer)
         parentLeafletLayer.removeLayer(leafletLayer)
       })
     },

@@ -60,7 +60,7 @@ export default {
     async onFeatureEdited (updatedFeature) {
       // Save in DB or in memory
       if (this.layer._id) {
-        await this.kActivity.editFeaturesProperties(updatedFeature)
+        await this.kActivity.editFeaturesProperties(updatedFeature, this.layer)
       } else {
         await this.$api.getService(this.service).patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
       }
@@ -80,7 +80,7 @@ export default {
     // If not injected load it
     if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
     else this.layer = await this.$api.getService('catalog').get(this.layerId)
-    this.service = _.get(this.layer, '_id') ? 'features' : 'features-edition'
+    this.service = _.get(this.layer, '_id') ? _.get(this.layer, 'service') : 'features-edition'
   },
   setup (props) {
     return {

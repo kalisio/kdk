@@ -440,7 +440,7 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
       .create(_.omit(layer, InternalLayerProperties))
     let nbFeatures = 0
     // We use the generated DB ID as layer ID on features
-    await createFeatures(geoJson, createdLayer._id, chunkSize, (i, chunk) => {
+    await createFeatures(geoJson, createdLayer, chunkSize, (i, chunk) => {
       // Update saving message according to new chunk data
       nbFeatures += chunk.length
       Loading.show({
@@ -486,7 +486,7 @@ export async function removeLayer (layer) {
     if (layer._id) {
       // If persistent feature layer remove features as well
       if (isFeatureLayer(layer)) {
-        await removeFeatures(layer._id)
+        await removeFeatures(null, layer)
       }
       await api.getService('catalog').remove(layer._id)
     }
