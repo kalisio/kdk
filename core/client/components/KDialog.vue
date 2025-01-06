@@ -10,7 +10,7 @@
     <Suspense>
       <!-- component with v-model -->
       <component
-        v-if="model"
+        v-if="useModel"
         ref="componentRef"
         :is="computedComponent"
         v-model="computedModel"
@@ -83,6 +83,7 @@ const emit = defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'
 const { dialogRef, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 const componentRef = ref()
 const attrs = useAttrs()
+const useModel = _.has(attrs, 'v-model')
 const model = ref(attrs['v-model'])
 
 // Computed
