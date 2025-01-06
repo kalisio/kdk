@@ -245,7 +245,7 @@ async function setBaseLayerUncached (layer, options) {
   }
   // Always remove top-level image or icon as we use it as thumbnail
   await uncacheLayerTile(urlTemplate, 0, 0, 0)
-  if (layer.iconUrl) promises.push(uncacheLayerTile(layer.iconUrl))
+  if (layer.iconUrl) await uncacheLayerTile(layer.iconUrl)
 }
 
 async function setServiceLayerUncached (layer, options) {
