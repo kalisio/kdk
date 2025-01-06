@@ -103,7 +103,12 @@ export default {
       })
     },
     getProjectLayers () {
-      return (this.project ? this.project.layers.map(layer => (layer._id ? this.kActivity.getLayerById(layer._id) : this.kActivity.getLayerByName(layer.name))) : [])
+      const layers = (this.project ?
+        this.project.layers.map(layer => (layer._id ?
+          this.kActivity.getLayerById(layer._id) :
+          this.kActivity.getLayerByName(layer.name))) :
+        [])
+      return layers.filter(layer => !_.isNil(layer))
     },
     async onViewSelected (view, action) {
       switch (action) {
