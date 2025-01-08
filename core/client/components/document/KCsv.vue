@@ -1,15 +1,13 @@
 <template>
-  <q-scroll-area class="fit">
-    <table v-if="data">
-      <template v-for="(row, index) in data" :key="index">
-        <tr>
-        <template v-for="cell in row" :key="cell">
-          <td class="text-caption">{{ cell }}</td>
-        </template>
-        </tr>
+  <table v-if="data">
+    <template v-for="(row, index) in data" :key="index">
+      <tr>
+      <template v-for="cell in row" :key="cell">
+        <td class="text-caption">{{ cell }}</td>
       </template>
-    </table>
-  </q-scroll-area>
+      </tr>
+    </template>
+  </table>
 </template>
 
 <script setup>

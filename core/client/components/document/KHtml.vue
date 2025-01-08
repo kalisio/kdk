@@ -1,10 +1,8 @@
 <template>
-  <q-scroll-area class="fit">
-    <div
-      v-if="html"
-      v-html="html"
-    />
-  </q-scroll-area>
+  <div
+    v-if="html"
+    v-html="html"
+  />
 </template>
 
 <script setup>

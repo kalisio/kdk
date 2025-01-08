@@ -41,6 +41,9 @@ export const Document = {
         webm: 'document/KVideo',
         'video/webm': 'document/KVideo'
       },
+      browser: {
+        scrollableViewers: ['document/KHtml', 'document/KMarkdown', 'document/KCsv']
+      },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img'])
       },
@@ -54,8 +57,11 @@ export const Document = {
       _.set(this.options, `viewers.${type}`, viewer)
     })
   },
+  getViewer (type) {
+    return _.get(this.options, `viewers.${type}`)
+  },
   hasViewer (type) {
-    return !!_.get(this.options, `viewers.${type}`)
+    return !_.isNil(this.getViewer(type))
   },
   sanitizeHtml (html) {
     if (_.isNil(html)) return null

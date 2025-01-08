@@ -40,9 +40,10 @@
       </div>
       <div class="full-height col column justify-center items-center">
         <KDocument
-          v-if="hasDocumentViewer(file)"
+          v-if="viewer"
           v-bind="file"
           :localize="false"
+          :scrollable="isViewerScrollable"
           class="fit"
         />
         <KStamp v-else
@@ -122,10 +123,14 @@ const props = defineProps({
 const index = ref(null)
 const files = ref([])
 const file = ref(null)
+const viewer = ref(null)
 
 // Computed
 const title = computed(() => {
   return file.value ? file.value.name : ''
+})
+const isViewerScrollable = computed(() => {
+  return Document.options.browser.scrollableViewers.includes(viewer.value)
 })
 const hasPrevious = computed(() => {
   return _.size(files.value) > 1
@@ -182,6 +187,7 @@ watch(() => [props.documents, props.default], async () => {
   } else {
     files.value = []
     file.value = null
+    viewer.value = null
     index.value = -1
   }
   files.value = props.documents
@@ -190,9 +196,6 @@ watch(() => [props.documents, props.default], async () => {
 }, { immediate: true })
 
 // Functions
-function hasDocumentViewer (file) {
-  return Document.hasViewer(file.type)
-}
 function getDocumentKey (name) {
   return _.isEmpty(props.path) ? name : `${props.path}/${name}`
 }
@@ -214,6 +217,7 @@ async function refresh () {
     context: props.contextId,
     expiresIn: 60
   })
+  viewer.value = Document.getViewer(file.value.type)
 }
 function downloadFile () {
   Storage.export({

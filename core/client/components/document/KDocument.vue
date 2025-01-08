@@ -1,6 +1,12 @@
 <template>
   <div v-if="viewer">
-    <component
+    <q-scroll-area v-if="scrollable" class="fit">
+      <component
+      :is="viewer"
+      v-bind="$props"
+    />
+    </q-scroll-area>
+    <component v-else
       :is="viewer"
       v-bind="$props"
     />
@@ -26,6 +32,10 @@ const props = defineProps({
   localize: {
     type: Boolean,
     default: true
+  },
+  scrollable: {
+    type: Boolean,
+    default: false
   },
   options: {
     type: Object,
