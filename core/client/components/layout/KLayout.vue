@@ -33,6 +33,7 @@
             :content="leftPane.components"
             :mode="leftPane.mode"
             :filter="leftPane.filter"
+            @triggered="closeLeftPane"
           />
         </q-scroll-area>
       </q-drawer>
@@ -140,6 +141,9 @@ watch(leftPaneSize, () => {
 })
 
 // Functions
+function closeLeftPane () {
+  Layout.setPaneVisible('left', false)
+}
 function clickOutsideLeftPanelListener (event) {
   const leftPanelElement = document.getElementById('left-panel')
   if (leftPanelElement && leftPanelElement.contains(event.target)) return

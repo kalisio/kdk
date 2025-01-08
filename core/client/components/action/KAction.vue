@@ -247,7 +247,6 @@ async function onClicked (event) {
       if (props.toggle) toggle()
       throw error
     }
-    return
   }
   // handle the route case
   if (props.route) {
@@ -261,7 +260,6 @@ async function onClicked (event) {
         params: bindRouteParams('params')
       }, _.omit(props.route, ['query', 'params']))).catch(() => {})
     }
-    return
   }
   // handle the dialog case
   if (props.dialog) {
