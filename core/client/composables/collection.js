@@ -75,12 +75,12 @@ export function useCollection (options) {
           setCollectionItems(response.features)
         } else if (options.appendItems.value) {
           // Append the response ensuring there is no duplicates
-          setCollectionItems(_.unionBy(response.data, items.value, '_id'))
+          const newItems = _.unionBy(response.data, items.value, '_id')
           // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
           const sortQuery = _.get(getCollectionBaseQuery(), '$sort')
           if (sortQuery) {
             // By default orderBy is case sensitive while using collation we want to perform case insensitive sort
-            setCollectionItems(_.orderBy(items.value,
+            setCollectionItems(_.orderBy(newItems,
               // Sort function for each sort property
               _.map(_.keys(sortQuery), property => {
                 return item => {
@@ -90,6 +90,8 @@ export function useCollection (options) {
               }),
               // Sort order for each sort property
               _.map(_.values(sortQuery), value => { return value > 0 ? 'asc' : 'desc' })))
+          } else {
+            setCollectionItems(newItems)
           }
         } else {
           setCollectionItems(response.data)
