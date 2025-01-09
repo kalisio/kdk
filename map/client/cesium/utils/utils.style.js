@@ -11,7 +11,7 @@ import { Cesium } from './utils.cesium.js'
 export const CesiumStyleMappings = {
   stroke: 'stroke',
   'stroke-color': 'stroke',
-  'stroke-opaciy': 'stroke.alpha',
+  'stroke-opacity': 'stroke.alpha',
   'stroke-width': 'strokeWidth',
   fill: 'fill',
   'fill-color': 'fill',
@@ -49,12 +49,13 @@ export function convertToCesiumFromSimpleStyle (style, inPlace) {
   _.forOwn(style, (value, key) => {
     if (_.has(CesiumStyleMappings, key)) {
       const mapping = _.get(CesiumStyleMappings, key)
-      _.set(convertedStyle, mapping, value)
-      if (inPlace) _.unset(style, key)
       // Convert from string to color object as required by cesium
       if ((typeof value === 'string') && ['markerColor', 'fill', 'stroke'].includes(mapping)) {
-        _.set(convertedStyle, mapping, Color.fromCssColorString(value))
+        _.set(convertedStyle, mapping, Color.fromCssColorString(chroma(value).alpha(_.get(convertedStyle, [mapping, 'alpha'], 1)).css()))
+      } else {
+        _.set(convertedStyle, mapping, value)
       }
+      if (inPlace) _.unset(style, key)
     }
   })
   return convertedStyle
