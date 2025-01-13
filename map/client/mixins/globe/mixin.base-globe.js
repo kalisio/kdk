@@ -78,6 +78,8 @@ export const baseGlobe = {
       this.registerCesiumHandler(this.getDefaultPickHandler, 'MOUSE_MOVE')
       this.registerCesiumHandler(this.getDefaultPickHandler, 'LEFT_CLICK')
       this.registerCesiumHandler(this.getDefaultPickHandler, 'RIGHT_CLICK')
+      this.viewer.camera.moveStart.addEventListener(this.onCameraMoveStart)
+      this.viewer.camera.moveEnd.addEventListener(this.onCameraMoveEnd)
       // Remove default Cesium handlers
       this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK)
       this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
@@ -692,6 +694,25 @@ export const baseGlobe = {
       }
       // Mimic Leaflet events
       this.$engineEvents.emit(event.originalEvent.name, options, emittedEvent)
+    },
+    getCameraEllipsoidTarget () {
+      const windowPosition = new Cesium.Cartesian2(this.viewer.container.clientWidth / 2, this.viewer.container.clientHeight / 2)
+      const pickedPosition = this.viewer.camera.pickEllipsoid(windowPosition)
+      if (!pickedPosition) return null
+      const pickedPositionCartographic = this.viewer.scene.globe.ellipsoid.cartesianToCartographic(pickedPosition)
+      return {
+        longitude: CesiumMath.toDegrees(pickedPositionCartographic.longitude),
+        latitude: CesiumMath.toDegrees(pickedPositionCartographic.latitude),
+        altitude: pickedPositionCartographic.height
+      }
+    },
+    onCameraMoveStart () {
+      // Mimic Leaflet events
+      this.$engineEvents.emit('movestart', this.getCameraEllipsoidTarget())
+    },
+    onCameraMoveEnd () {
+      // Mimic Leaflet events
+      this.$engineEvents.emit('moveend', this.getCameraEllipsoidTarget())
     }
   },
   created () {
@@ -704,6 +725,8 @@ export const baseGlobe = {
   },
   beforeUnmount () {
     this.clearLayers()
+    this.viewer.camera.moveStart.removeEventListener(this.onCameraMoveStart)
+    this.viewer.camera.moveEnd.removeEventListener(this.onCameraMoveEnd)
   },
   unmounted () {
     this.viewer.destroy()

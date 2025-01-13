@@ -427,7 +427,8 @@
     "COPY": "Copy the coordinates",
     "CLEAR": "Clear",
     "POSITION_COPIED":"Position copied to clipboard",
-    "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality"
+    "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
+    "OUTSIDE_MAP": "Indeterminated position"
   },
   "KTimeSeries": {
     "LABEL": "Time Series",

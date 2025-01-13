@@ -426,7 +426,8 @@
     "COPY": "Copier les coordonnées",
     "CLEAR": "Effacer",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",
-    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité"
+    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité",
+    "OUTSIDE_MAP": "Position indéterminée"
   },
   "KTimeSeries": {
     "LABEL": "Séries chronologiques",
