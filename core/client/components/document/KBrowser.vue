@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="fit column"
     :class="{ 'q-dark': dark }"
   >

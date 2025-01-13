@@ -2,8 +2,8 @@
   <q-item>
     <!-- Fingerprint -->
     <q-item-section avatar>
-      <q-icon 
-        :name="icon" 
+      <q-icon
+        :name="icon"
         size="2.5rem"
       />
     </q-item-section>
@@ -44,8 +44,8 @@ const icon = computed(() => {
   return `lab la-${_.lowerCase(_.get(props.subscription, 'browser.name'))}`
 })
 const label = computed(() => {
-  return _.capitalize(_.get(props.subscription, 'browser.name')) + 
-    ' (' + _.get(props.subscription, 'browser.version') + ') - ' + 
+  return _.capitalize(_.get(props.subscription, 'browser.name')) +
+    ' (' + _.get(props.subscription, 'browser.version') + ') - ' +
     _.capitalize(_.get(props.subscription, 'system.os'))
 })
 const lastActivity = computed(() => {

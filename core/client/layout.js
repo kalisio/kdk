@@ -121,7 +121,7 @@ export const Layout = {
   },
   setView (view) {
     if (_.isNil(view)) {
-      logger.warn(`[KDK] Undefined 'view' argument`)
+      logger.warn('[KDK] Undefined \'view\' argument')
       return
     }
     Store.patch(this.paths.layout, { view })
@@ -134,7 +134,7 @@ export const Layout = {
   },
   setPadding (padding) {
     if (_.isNil(padding)) {
-      logger.warn(`[KDK] Undefined 'padding' argument`)
+      logger.warn('[KDK] Undefined \'padding\' argument')
       return
     }
     Store.patch(this.paths.layout, { padding })

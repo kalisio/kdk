@@ -424,7 +424,7 @@ export default {
       }
       return operators
     },
-    formatOpacity(opacity) {
+    formatOpacity (opacity) {
       if (_.isNil(opacity)) return ''
       opacity = _.toNumber(opacity)
       return (_.isFinite(opacity) ? opacity.toFixed(1) : '')
