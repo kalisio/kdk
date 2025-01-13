@@ -132,10 +132,7 @@ export function convertToCesiumFromStyle (feature) {
   if (['point', 'billboard'].includes(geometryType)) {
     _.set(convertedStyle, 'properties.entityStyle.label', {
       text: _.get(feature, 'properties.name', '').trim(),
-      font: '11pt sans-serif',
-      heightReference: _.get(entityStyle, _.get(StyleToCesiumEntityStyleMappings, 'altitudeMode'), 'Cesium.HeightReference.CLAMP_TO_GROUND'),
-      // Draw label above billboard
-      eyeOffset: new Cesium.Cartesian3(0, 0, -100)
+      heightReference: _.get(entityStyle, _.get(StyleToCesiumEntityStyleMappings, 'altitudeMode'), 'Cesium.HeightReference.CLAMP_TO_GROUND')
     })
   }
 
