@@ -3,6 +3,9 @@
   "OK": "Ok",
   "YES": "Oui",
   "NO": "Non",
+  "ALERT": "Alerte",
+  "WARNING": "Avertissement",
+  "INFORMATION": "Information",
   "CANCEL": "Annuler",
   "UPDATE": "Mettre à jour",
   "CREATE": "Créer",
@@ -19,7 +22,7 @@
   "TAGS": "Etiquettes",
   "GROUPS": "Groupes",
   "REMOVE": "Supprimer",
-  "EDIT": "Editer",
+  "EDIT": "Éditer",
   "OWNER": "Propriétaire",  
   "MANAGER": "Gestionnaire",
   "MEMBER": "Membre",
@@ -163,11 +166,11 @@
     "VERSION_MISMATCH": "Discordance de version, merci d'installer la dernière version disponible ou de vérifier votre point d'accès",
     "session": {
       "DISCONNECT": "La connexion au serveur a été interrompue, merci de patienter jusqu'à la reconnexion...",
-      "RECONNECT": "La connexion au serveur a été rétablie, vous pouvez refraîchir l'application si des données ont été mises à jour.",
+      "RECONNECT": "La connexion au serveur a été rétablie, vous pouvez rafraîchir l'application si des données ont été mises à jour.",
       "RELOAD": "Rafraîchir",
       "REFUSED": "Votre connexion a été refusée par le serveur, vous avez été déconnecté...",
       "IGNORE": "Ignorer",
-      "RETRY": "Rééssayer",
+      "RETRY": "Réessayer",
       "ALERT": "Alerte",
       "INFORMATION": "Information"
     },
@@ -322,7 +325,7 @@
       "MEMBERS_LABEL": "Cette activité vous permet de gérer les <b>membres</b> au sein de votre organisation.",
       "MEMBER_DEFINITION_LABEL": "Un membre est un utilisateur ayant accès à l'espace de travail partagé offert par votre organisation.",
       "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
-      "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos membres au sein de la barre qui apparait pour effectuer une recherche.",
+      "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos membres au sein de la barre qui apparaît pour effectuer une recherche.",
       "SEARCH_MORE_LABEL": "Vous pouvez également taper un mot contenu dans le nom d'un groupe ou d'une étiquette portés par vos membres pour filtrer selon ce critère.",
       "FILTER_LABEL": "Filtrez vos membres selon leurs statut via ce bouton.",
       "SORT_LABEL": "Ordonnez vos membres par ordre alphabétique ascendant ou descendant via ce bouton.",
@@ -347,18 +350,18 @@
       "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL"
     },
     "add-member": {
-      "UNIQUE_TAB_LABEL": "Ajoutez une personne à votre organisaion.",
+      "UNIQUE_TAB_LABEL": "Ajoutez une personne à votre organisation.",
       "UNIQUE_EMAIL_LABEL": "Saisissez l'adresse mail de la personne à inviter.",
       "UNIQUE_CONTINUE_BUTTON_LABEL": "Cliquez ce bouton pour procéder à l'invitation ou à l'ajout de la personne si celle-ci possède déjà un compte.",
       "UNIQUE_NAME_LABEL": "Saisissez le nom de la personne.",
-      "UNIQUE_ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accés en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total.",
-      "UNIQUE_ADD_BUTTON_LABEL": "Clmiquez ce bouton pour lancer l'invitation.",
+      "UNIQUE_ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accès en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total.",
+      "UNIQUE_ADD_BUTTON_LABEL": "Cliquez ce bouton pour lancer l'invitation.",
       "MULTIPLE_TAB_LABEL": "Ajoutez plusieurs personnes à l'aide d'un fichier CSV.",
-      "MULTIPLE_FILE_LABEL": "Téléchargez le fichier contenant la liste des personnes à inviter. Chaque personne est réprésentée par une ligne contenant les champs <b>nom</b>, <b>adresse email</b> et <b>rôle</b> séparés par un <b>,</b>.",
+      "MULTIPLE_FILE_LABEL": "Téléchargez le fichier contenant la liste des personnes à inviter. Chaque personne est représentée par une ligne contenant les champs <b>nom</b>, <b>adresse email</b> et <b>rôle</b> séparés par un <b>,</b>.",
       "MULTIPLE_ADD_BUTTON_LABEL": "Cliquez ce bouton pour procéder aux invitations."
     },
     "role-member": {
-      "ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accés en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total.",
+      "ROLE_LABEL": "Choisissez son rôle au sein de votre organisation. Un <b>membre</b> à un accès en lecture seule alors qu'un <b>gestionnaire</b> peut l'éditer, et un <b>propriétaire</b> à l'accés total.",
       "UPDATE_ROLE_LABEL": "Confirmez la modification du <b>rôle</b> de votre membre"
     },
     "join-group": {
@@ -373,7 +376,7 @@
       "TAGS_LABEL": "Cette activité vous permet de gérer les <b>étiquettes</b> au sein de votre organisation.",
       "TAG_DEFINITION_LABEL": "Une étiquette vous permet de catégoriser un sous-ensemble des membres de votre organisation (e.g. une compétence ou un service).",
       "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
-      "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos étiquettes au sein de la barre qui apparait pour effectuer une recherche.",
+      "SEARCH_LABEL": "Tapez tout ou partie d'un mot contenu dans le nom de vos étiquettes au sein de la barre qui apparaît pour effectuer une recherche.",
       "SORT_LABEL": "Ordonnez vos étiquettes par ordre alphabétique ascendant ou descendant via ce bouton.",
       "NEW_TAG_LABEL": "Créez une <b>nouvelle étiquette</b> via ce bouton.",
       "TAG_CARD_LABEL": "Chaque étiquette est visible sous la forme d'une carte vous permettant d'accéder aux actions possibles.",
@@ -460,7 +463,7 @@
     "API_VERSION": "API v",
     "EMAIL_FIELD_LABEL": "Saisissez votre adresse mail",
     "CHANGE_ENDPOINT_LINK": "Modifier l'adresse du serveur",
-    "DEVELOPMENT_VERSION": "VERSION DE DEVELOPPEMENT",
+    "DEVELOPMENT_VERSION": "VERSION DE DÉVELOPPEMENT",
     "TEST_VERSION": "VERSION DE TEST"
   },
   "KErrorScreen": {
@@ -496,18 +499,18 @@
     "LOG_IN_AGAIN_LABEL": "Se reconnecter ?"
   },  
   "KProfile": {
-    "EDIT_PROFILE": "Editer mon profil",
+    "EDIT_PROFILE": "Éditer mon profil",
     "MANAGE_ACCOUNT": "Gérer mon compte"
   },
   "KDeleteAccountManager": {
     "TITLE": "Supprimer mon compte",
-    "QUESTION": "Etes vous sûr de vourloir supprimer votre compte ?",
+    "QUESTION": "Etes vous sûr de vouloir supprimer votre compte ?",
     "CONFIRMATION_TITLE": "Attention: la suppression de votre compte est irrévocable et toutes les données qui y sont attachées seront perdues",
-    "CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la suprression"
+    "CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la surpression"
   },
   "KPasswordManager": {
     "TITLE": "Modifier mon mot de passe",
-    "PASSWORD_CHANGED": "Votre mot de passe a été modifié avec succés",
+    "PASSWORD_CHANGED": "Votre mot de passe a été modifié avec succès",
     "OLD_PASSWORD_FIELD_LABEL": "Saisissez votre ancien mot de passe",
     "PASSWORD_FIELD_LABEL": "Saisissez votre nouveau mot de passe",
     "CONFIRM_PASSWORD_FIELD_LABEL": "Confirmez votre nouveau mot de passe"
@@ -539,7 +542,7 @@
     "UNSUBSCRIBE_LABEL": "Se désabonner",
     "LAST_ACTIVITY": "Dernière activité le {date} à {time}",
     "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
-    "UNSUBSCRIBE_DIALOG_MESSAGE": "Etes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
   },
   "KGrid": {
     "EMPTY_LABEL": "@:NO_ITEM"
@@ -643,7 +646,7 @@
       "religion"               : "religion",
       "science"                : "science",
       "science-fiction"        : "science-fiction",
-      "security"               : "securité",
+      "security"               : "sécurité",
       "shapes"                 : "forme",
       "shopping"               : "achats",
       "social"                 : "social",
@@ -696,7 +699,7 @@
     "RESTORE_IMAGE_ACTION": "Restaurer l'image",
     "REMOVE_MEDIA_ACTION": "Supprimer le média",    
     "REMOVE_DIALOG_TITLE": "Supprimer le média {media} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer le média <b>{media}</b> ?",
+    "REMOVE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer le média <b>{media}</b> ?",
     "ADD_MEDIA_LABEL": "Ajouter un média",
     "ADD_PHOTO_LABEL": "Ajouter une photo",
     "UPLOAD_TITLE": "Ajouter un média",
@@ -712,7 +715,7 @@
   },
   "KWindow": {
     "CLOSE_ACTION": "@:CLOSE",
-    "PIN_ACTION": "Epingler",
+    "PIN_ACTION": "Épingler",
     "RESTORE_ACTION": "Restaurer",
     "MAXIMIZE_ACTION": "Maximiser"
   },
@@ -732,7 +735,7 @@
   },
   "KAddMember": {
     "TITLE": "Ajouter une ou plusieurs personnes ?",
-    "EMAIL_FIELD_LABEL": "Saissisez l'adresse mail de la personne à ajouter",
+    "EMAIL_FIELD_LABEL": "Saisissez l'adresse mail de la personne à ajouter",
     "NAME_FIELD_LABEL": "Saisissez le nom de la personne",
     "ROLE_FIELD_LABEL": "Sélectionnez le rôle à attribuer à la personne",
     "ADD_MESSAGE": "<b>{email}</b> possède déjà un compte. Voulez vous l'ajouter à votre organisation ?",
@@ -757,10 +760,10 @@
     "GUEST_ADDED_MESSAGE": "Cette personne a été invitée"
   },
   "KAddTag": {
-    "TITLE": "Etiquetter {member} avec une étiquette existante ?",
+    "TITLE": "Étiqueter {member} avec une étiquette existante ?",
     "TAG_FIELD_LABEL": "Saisissez le nom de l'étiquette",
     "CLOSE_ACTION": "@:CLOSE_ACTION",
-    "ADD_BUTTON": "Etiquetter"
+    "ADD_BUTTON": "Étiqueter"
   },
   "KJoinGroup": {
     "TITLE": "Ajouter {member} à un groupe existant ?",
@@ -785,7 +788,7 @@
     "NO_TAGS_LABEL": "Aucune étiquette",
     "TAG_ACTION": "Ajouter une étiquette",
     "REMOVE_TAG_DIALOG_TITLE": "Supprimer l'étiquette {tag} ?",
-    "REMOVE_TAG_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'étiquette <b>{tag}</b> pour <b>{member}</b> ?",
+    "REMOVE_TAG_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer l'étiquette <b>{tag}</b> pour <b>{member}</b> ?",
     "GROUPS_SECTION": "Groupes",
     "NO_GROUPS_LABEL": "Aucun groupe",
     "JOIN_GROUP_ACTION": "Rejoindre un groupe",
@@ -793,9 +796,9 @@
     "CHANGE_ROLE_ACTION": "Changer de rôle",
     "RESEND_INVITATION_ACTION": "Renvoyer une invitation",
     "REMOVE_DIALOG_TITLE": "Supprimer {member} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer <b>{member}</b> de votre organisation ?",
+    "REMOVE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer <b>{member}</b> de votre organisation ?",
     "LEAVE_GROUP_DIALOG_TITLE": "Quitter le groupe {group} '?",
-    "LEAVE_GROUP_DIALOG_MESSAGE": "Etes vous sûr de vouloir enlever <b>{member}</b> du groupe <b>{group}</b> ?",
+    "LEAVE_GROUP_DIALOG_MESSAGE": "Êtes vous sûr de vouloir enlever <b>{member}</b> du groupe <b>{group}</b> ?",
     "RESEND_INVITATION_DIALOG_TITLE": "Renvoyer une invitation à {member} ?",
     "RESEND_INVITATION_DIALOG_MESSAGE": "L'adresse mail de <b>{member}</b> est-elle correcte ?"
   },
@@ -877,7 +880,7 @@
     "LAST_DAY_LABEL": "Dernier jour",
     "LAST_2_DAYS_LABEL": "2 derniers jours",
     "LAST_3_DAYS_LABEL": "3 derniers jours",
-    "LAST_WEEK_LABEL": "Derniere semaine",
+    "LAST_WEEK_LABEL": "Dernière semaine",
     "LAST_2_WEEKS_LABEL": "2 dernières semaines",
     "LAST_MONTH_LABEL": "Dernier mois",
     "LAST_3_MONTHS_LABEL": "3 derniers mois",
@@ -894,7 +897,7 @@
     "NEXT_DAY_LABEL": "Prochain jour",
     "NEXT_2_DAYS_LABEL": "2 prochains jours",
     "NEXT_3_DAYS_LABEL": "3 prochains jours",
-    "NEXT_WEEK_LABEL": "Derniere semaine",
+    "NEXT_WEEK_LABEL": "Dernière semaine",
     "NEXT_2_WEEKS_LABEL": "2 dernières semaines",
     "NEXT_MONTH_LABEL": "Prochain mois",
     "NEXT_3_MONTHS_LABEL": "3 prochains mois",
@@ -918,7 +921,7 @@
   }
   ,
   "KTimeControl": {
-    "PREVIOUS_STEP": "Pas précedent",
+    "PREVIOUS_STEP": "Pas précédent",
     "PREVIOUS_HOUR": "Heure précédente",
     "PREVIOUS_DAY": "Jour précédent",
     "START_REALTIME": "Activer le temps réel",
@@ -937,7 +940,7 @@
     "UPLOAD_FILES": "Transférer des fichiers",
     "UPLOAD": "Transférer",
     "DELETE_FILE": "Supprimer le fichier",
-    "DELETE_FILE_MESSAGE": "Etes vous sûr de vouloir supprimer {name} ?",
+    "DELETE_FILE_MESSAGE": "Êtes vous sûr de vouloir supprimer {name} ?",
     "CANNOT_BE_VIEWED": "Ce fichier ne peut pas être visualisé",
     "NO_FILES": "Aucun fichier"
   },
@@ -945,7 +948,7 @@
     "ADD_FILES": "Ajouter des fichiers...",
     "EMPTY_FILE": "Le fichier {file} est vide ou corrompu !",
     "FILE_TOO_LARGE": "Le fichier {file} est trop volumineux. La taille doit être inférieure à {size}Mo",  
-    "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été trasnféré avec succès",
-    "UPLOAD_FILE_ERRORED": "Impossible de trasnférer le fichier {file} !"
+    "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succès",
+    "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
   }
 }
