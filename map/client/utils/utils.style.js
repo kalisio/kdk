@@ -251,11 +251,7 @@ export function processStyleTemplates (options, properties, styleType, defaultSt
     const value = (property.includes('color') ? kdkCoreUtils.getPaletteFromColor(template) : template)
     // Convert to number whenever required
     const n = _.toNumber(value)
-    if (_.isFinite(n)) {
-      defaultStyle[property] = n
-    } else {
-      defaultStyle[property] = value
-    }
+    defaultStyle[property] = (_.isFinite(n) ? n : value)
   })
   // Then process all templated if statements
   // As all templates have the same conditional structure use the first template to extract property values
@@ -282,10 +278,12 @@ export function processStyleTemplates (options, properties, styleType, defaultSt
       // Match %> <% block to get style values, e.g. icon colors/names
       const match = /%>([^<%]+)<%/g.exec(templates[property][index])
       const value = (match ? match[1].trim() : '')
+      // Convert to number whenever required
+      const n = _.toNumber(value)
       // Conversion from palette to RGB color is required
       style[property] = (property.includes('color')
         ? kdkCoreUtils.getPaletteFromColor(value, true)
-        : (_.isNumber(value) ? Number(value) : value))
+        : (_.isFinite(n) ? n : value))
     })
     styles.push(style)
   }

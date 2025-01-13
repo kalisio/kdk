@@ -47,7 +47,7 @@
           <q-item-section avatar>{{$t('KLayerStyleForm.LAYER_OPACITY')}}&nbsp;&nbsp;&nbsp;&nbsp;</q-item-section>
           <q-item-section class="col-2">
             <q-slider v-model="opacity" :disable="!hasOpacity"
-              :min="0" :max="1" :step="0.1"
+              :min="0" :max="1" :step="opacityStep"
               label label-always :label-value="$t('KLayerStyleForm.OPACITY') + ' ' + opacity"/>
           </q-item-section>
         </q-item>
@@ -111,8 +111,8 @@
           <q-item-section class="col-1"><q-slider id="style-line-width" v-model="defaultLine['width']" :min="1" :max="20" :step="1"
               dense label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + defaultLine['width'] + 'px'"/>
           </q-item-section>
-          <q-item-section class="col-1"><q-slider id="style-line-opacity" v-model="defaultLine['opacity']" :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + defaultLine['opacity']"/>
+          <q-item-section class="col-1"><q-slider id="style-line-opacity" v-model="defaultLine['opacity']" :min="0" :max="1" :step="opacityStep"
+              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + formatOpacity(defaultLine['opacity'])"/>
           </q-item-section>
           <q-item-section class="col-1"><q-btn id="style-line-color" round style="max-width: 16px" :color="defaultLine['color']" @click="onColorClicked(defaultLine, 'color')"/></q-item-section>
         </q-item>
@@ -124,8 +124,8 @@
           <q-item-section class="col-1"><q-slider v-model="lineStyle['width']" :min="1" :max="20" :step="1"
               label label-always :label-value="$t('KLayerStyleForm.LINE_WIDTH') + lineStyle['width'] + 'px'"/>
           </q-item-section>
-          <q-item-section class="col-1"><q-slider v-model="lineStyle['opacity']" :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + lineStyle['opacity']"/>
+          <q-item-section class="col-1"><q-slider v-model="lineStyle['opacity']" :min="0" :max="1" :step="opacityStep"
+              label label-always :label-value="$t('KLayerStyleForm.LINE_OPACITY') + formatOpacity(lineStyle['opacity'])"/>
           </q-item-section>
           <q-item-section class="col-1"><q-btn round style="max-width: 16px" :color="lineStyle['color']" @click="onColorClicked(lineStyle, 'color')"/></q-item-section>
           <q-item-section class="col-2"><q-select v-if="lineStyle.operator" v-model="lineStyle.operator" dense :options="getOperators(lineStyle)" emit-value map-options>
@@ -151,14 +151,14 @@
           <q-item-section class="col-1"><q-slider id="style-polygon-line-width" v-model="defaultPolygon['stroke.width']" :min="1" :max="20" :step="1"
               label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_WIDTH') + defaultPolygon['stroke.width'] + 'px'"/>
           </q-item-section>
-          <q-item-section class="col-1"><q-slider id="style-polygon-line-opacity" v-model="defaultPolygon['stroke.opacity']" :min="0" :max="1" :step="0.1"
+          <q-item-section class="col-1"><q-slider id="style-polygon-line-opacity" v-model="defaultPolygon['stroke.opacity']" :min="0" :max="1" :step="opacityStep"
               label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_OPACITY') + defaultPolygon['stroke.opacity']"/>
           </q-item-section>
           <q-item-section class="col-1"><q-btn id="style-polygon-line-color" round style="max-width: 16px" :color="defaultPolygon['stroke.color']" @click="onColorClicked(defaultPolygon, 'stroke.color')"/>
           </q-item-section>
           <q-item-section avatar>{{$t('KLayerStyleForm.DEFAULT_POLYGON_FILL_STYLE')}}&nbsp;&nbsp;</q-item-section>
-          <q-item-section class="col-1"><q-slider id="style-polygon-opacity" v-model="defaultPolygon['opacity']" :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + defaultPolygon['opacity']"/>
+          <q-item-section class="col-1"><q-slider id="style-polygon-opacity" v-model="defaultPolygon['opacity']" :min="0" :max="1" :step="opacityStep"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + formatOpacity(defaultPolygon['opacity'])"/>
           </q-item-section>
           <q-item-section class="col-1"><q-btn id="style-polygon-color" round style="max-width: 16px" :color="defaultPolygon['color']" @click="onColorClicked(defaultPolygon, 'color')"/>
           </q-item-section>
@@ -171,14 +171,14 @@
           <q-item-section class="col-1"><q-slider v-model="polygonStyle['stroke.width']" :min="1" :max="20" :step="1"
               label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_WIDTH') + polygonStyle['stroke.width'] + 'px'"/>
           </q-item-section>
-          <q-item-section class="col-1"><q-slider v-model="polygonStyle['stroke.opacity']" :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_OPACITY') + polygonStyle['stroke.opacity']"/>
+          <q-item-section class="col-1"><q-slider v-model="polygonStyle['stroke.opacity']" :min="0" :max="1" :step="opacityStep"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_LINE_OPACITY') + formatOpacity(polygonStyle['stroke.opacity'])"/>
           </q-item-section>
           <q-item-section><q-btn round style="max-width: 16px" :color="polygonStyle['stroke.color']" @click="onColorClicked(polygonStyle, 'stroke.color')"/>
           </q-item-section>
           <q-item-section avatar>{{$t('KLayerStyleForm.PROPERTY_POLYGON_FILL_STYLE')}}&nbsp;&nbsp;</q-item-section>
-          <q-item-section class="col-1"><q-slider v-model="polygonStyle['opacity']" :min="0" :max="1" :step="0.1"
-              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + polygonStyle['opacity']"/>
+          <q-item-section class="col-1"><q-slider v-model="polygonStyle['opacity']" :min="0" :max="1" :step="opacityStep"
+              label label-always :label-value="$t('KLayerStyleForm.POLYGON_FILL_OPACITY') + formatOpacity(polygonStyle['opacity'])"/>
           </q-item-section>
           <q-item-section class="col-1"><q-btn round style="max-width: 16px" :color="polygonStyle['color']" @click="onColorClicked(polygonStyle, 'color')"/>
           </q-item-section>
@@ -329,6 +329,7 @@ export default {
       isSelectable: true,
       hasOpacity: false,
       opacity: 0.5,
+      opacityStep: 0.1,
       popup: false,
       popupProperties: [],
       tooltip: false,
@@ -422,6 +423,11 @@ export default {
         }])
       }
       return operators
+    },
+    formatOpacity(opacity) {
+      if (_.isNil(opacity)) return ''
+      opacity = _.toNumber(opacity)
+      return (_.isFinite(opacity) ? opacity.toFixed(1) : '')
     },
     async processTemplates (values, properties, styleType, defaultStyle, styles) {
       processStyleTemplates(values.leaflet, properties, styleType, defaultStyle, styles)
