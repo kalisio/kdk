@@ -46,7 +46,7 @@
     "429": "Operation cannot be performed: too many requests",
     "498": "This system or browser does not support web push notifications",
     "499": "Please change your application or browser settings to allow notifications",
-    "500": "Operation cannot be performed: an error occured",
+    "500": "Operation cannot be performed: an error occurred",
     "501": "Operation cannot be performed: not implemented",
     "502": "Operation cannot be performed: service unavailable",
     "503": "Operation cannot be performed: service unavailable",
@@ -65,8 +65,8 @@
     "WEAK_PASSWORD_ONEOF": "Not known as one of the most common passwords",
     "WEAK_PASSWORD_PREVIOUS": "Not one of your {history} last passwords",
     "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file",
-    "CANNOT_REMOVE_USER": "Your are not allowed to remove this accound.<br>Please remove the organisations owned by <b>{user}</b> first.",
-    "CANNOT_REMOVE_ORGANISATION": "You are not allowed to remove this organisation.<br>Please remove all the groups first.",
+    "CANNOT_REMOVE_USER": "Your are not allowed to remove this account.<br>Please remove the organizations owned by <b>{user}</b> first.",
+    "CANNOT_REMOVE_organization": "You are not allowed to remove this organization.<br>Please remove all the groups first.",
     "CANNOT_REMOVE_LAST_OWNER": "You are not allowed to remove the last owner of <b>{resource}</b>",
     "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {provider}, in order to switch to a local account reset your password first",
     "EMAIL_ALREADY_TAKEN": "A user with this email address seems to be already registered",
@@ -76,7 +76,7 @@
     "CANNOT_READ_FILE": "Unable to read the file {file}",
     "INVALID_JSON_FILE": "{file} is not a valid JSON file",
     "INVALID_CSV_FILE": "{file} is not a valid CSV file",
-    "NETWORK_ERROR": "Network or service error occured"
+    "NETWORK_ERROR": "Network or service error occurred"
   },
   "units": {
     "METER_SYMBOL": "m",
@@ -126,8 +126,8 @@
     "KILOMETER_PER_HOUR_LABEL": "Kilometers per hour",
     "MILES_PER_HOUR_LABEL": "Miles per hour",
     "KNOT_LABEL": "Knots",
-    "CELSIUS_LABEL": "Celcius degrees",
-    "FAHRENHEIT_LABEL": "Fahrenhiet degrees",
+    "CELSIUS_LABEL": "Celsius degrees",
+    "FAHRENHEIT_LABEL": "Fahrenheit degrees",
     "KELVIN_LABEL": "Kelvins",
     "DEGREE_LABEL": "Degrees",
     "RADIAN_LABEL": "Radians",
@@ -163,7 +163,7 @@
     "VERSION_MISMATCH": "Application version mismatch, please install the latest available version or check your end point",
     "session": {
       "DISCONNECT": "The server connection has been lost, please wait until reconnection...",
-      "RECONNECT": "The server connection has been restaured, you can refresh the application in case data has been updated during the disconnection.",
+      "RECONNECT": "The server connection has been restored, you can refresh the application in case data has been updated during the disconnection.",
       "RELOAD": "Refresh",
       "REFUSED": "Your connection have been refused by the server, you have been disconnected...",
       "IGNORE": "Ignore",
@@ -176,6 +176,9 @@
       "UPDATE_MESSAGE": "To find out more consult the <a href=\"{changelog}\" target=\"_\">release note</a>",
       "UPDATE": "Update",
       "IGNORE": "Ignore"
+    },
+    "context": {
+      "REMOVED_MESSAGE": "The context object has been removed. You will be redirected to the home page."
     }
   },
   "utils": {
@@ -193,10 +196,10 @@
     "AVATAR_FIELD_LABEL": "Select an avatar",
     "NAME_FIELD_LABEL": "Enter your name",
     "COLOR_FIELD_LABEL": "Pick a color",
-    "ORGANISATIONS_CREATE_TITLE": "Create a new organisation ?",
-    "ORGANISATIONS_NAME_FIELD_LABEL": "Enter the name of this organisation",
-    "ORGANISATIONS_DESCRIPTION_FIELD_LABEL": "Enter a description name of this organisation",
-    "MEMBERS_TAGS_FIELD_LABEL": "Add somes tags to qualify this member",
+    "organizationS_CREATE_TITLE": "Create a new organization ?",
+    "organizationS_NAME_FIELD_LABEL": "Enter the name of this organization",
+    "organizationS_DESCRIPTION_FIELD_LABEL": "Enter a description name of this organization",
+    "MEMBERS_TAGS_FIELD_LABEL": "Add some tags to qualify this member",
     "TAG_NAME": "{ object.value }",
     "TAGS_CREATE_TITLE": "Create a new tag ?",
     "TAGS_NAME_FIELD_LABEL": "Enter the name of this tag",
@@ -261,11 +264,11 @@
       "EMAIL_VERIFICATION_LABEL": "We will send you an email back containing a link to <b>verify your address</b>.",
       "LOGIN_LINK_LABEL": "You can now login whenever you want using your <b>personal identifiers</b>"
     },
-    "create-organisation": {
-      "ORGANISATION_NAME_LABEL": "Enter the organisation name as viewed by others users.",
-      "ORGANISATION_DESCRIPTION_LABEL": "Enter a detailed description.",
-      "ORGANISATION_AVATAR_LABEL": "Select the image or the logo of your organisation as seen by your members.",
-      "CREATE_ORGANISATION_LABEL": "Confirm the creation of your new organisation."
+    "create-organization": {
+      "organization_NAME_LABEL": "Enter the organization name as viewed by others users.",
+      "organization_DESCRIPTION_LABEL": "Enter a detailed description.",
+      "organization_AVATAR_LABEL": "Select the image or the logo of your organization as seen by your members.",
+      "CREATE_organization_LABEL": "Confirm the creation of your new organization."
     },
     "account": {
       "PROFILE_LABEL": "This activity allows to update your profile information",
@@ -294,7 +297,7 @@
       "DELETE_LABEL": "A manual confirmation will be required before final removal."
     },
     "groups": {
-      "GROUPS_LABEL": "This activity allows to manage the <b>groups</b> in your organisation.",
+      "GROUPS_LABEL": "This activity allows to manage the <b>groups</b> in your organization.",
       "GROUP_DEFINITION_LABEL": "A group allows to delegate the management of a shared workspace limited to its members.",
       "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
       "SEARCH_LABEL": "Type part of a word contained in the name of your groups in the arising bar to perform a search.",
@@ -316,23 +319,23 @@
       "CREATE_GROUP_LABEL": "Confirm the creation of your new group."
     },
     "members": {
-      "MEMBERS_LABEL": "This activity allows to manage the <b>members</b> in your organisation.",
-      "MEMBER_DEFINITION_LABEL": "A <b>member</b> is a user able to access the shared workspace offered by your organisation.",
+      "MEMBERS_LABEL": "This activity allows to manage the <b>members</b> in your organization.",
+      "MEMBER_DEFINITION_LABEL": "A <b>member</b> is a user able to access the shared workspace offered by your organization.",
       "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
       "SEARCH_LABEL": "Type part of a word contained in the name of your members in the arising bar to perform a search.",
       "SEARCH_MORE_LABEL": "Type also a word contained in the name of a group or a tag associated to your members to filter accordingly.",
       "FILTER_LABEL": "Filter your members according to their status using this button.",
       "SORT_LABEL": "Sort your members by ascending or descending alphabetical order this button.",
-      "ADD_INVITE_MEMBER_LABEL": "Add members to your organisation through this action.",
+      "ADD_INVITE_MEMBER_LABEL": "Add members to your organization through this action.",
       "ADD_MEMBER_LABEL": "If your future member <b>already has an account</b>, <b>add him</b> using this button.",
       "ADD_MEMBER_LINK_LABEL": "How to add a member",
       "INVITE_MEMBER_LABEL": "If your future member <b>does not yet have an account</b>, <b>invite him</b> using this button and we will create it .",
       "INVITE_MEMBER_LINK_LABEL": "How to invite a member",
       "MEMBER_CARD_LABEL": "Each member is viewed as a card providing available actions.",
-      "ROLE_LABEL": "Visualise the role of your member at a glance.",
-      "TAGS_LABEL": "Visualise tags of your member at a glance as well.",
+      "ROLE_LABEL": "Visualize the role of your member at a glance.",
+      "TAGS_LABEL": "Visualize tags of your member at a glance as well.",
       "TAGS_CONTENT_LABEL": "Use the cross to delete a tag.",
-      "GROUPS_LABEL": "Visualise groups of your member at a glance as well.",
+      "GROUPS_LABEL": "Visualize groups of your member at a glance as well.",
       "GROUPS_CONTENT_LABEL": "Select one of the member groups to show available actions.",
       "ADD_TAG_LABEL": "Add tag of your member through this action.",
       "ADD_TAG_LINK_LABEL": "How to manage tags",
@@ -340,22 +343,22 @@
       "JOIN_GROUP_LINK_LABEL": "How to manage groups",
       "CHANGE_ROLE_LABEL": "Update the role of your member through this action.",
       "CHANGE_ROLE_LINK_LABEL": "How to manage roles",
-      "REMOVE_MEMBER_LABEL": "Remove the member from your organisation through this action.",
+      "REMOVE_MEMBER_LABEL": "Remove the member from your organization through this action.",
       "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL"
     },
     "add-member": {
-      "UNIQUE_TAB_LABEL": "Add a unique person to your organisation using his email adress.",
+      "UNIQUE_TAB_LABEL": "Add a unique person to your organization using his email address.",
       "UNIQUE_EMAIL_LABEL": "Enter the email of the desired person",
-      "UNIQUE_CONTINUE_BUTTON_LABEL": "Click this button to procced with the invitation or to add the person if they already have an account.",
+      "UNIQUE_CONTINUE_BUTTON_LABEL": "Click this button to proceed with the invitation or to add the person if they already have an account.",
       "UNIQUE_NAME_LABEL": "Enter the name of the person.",
-      "UNIQUE_ROLE_LABEL": "Select its role within your organisation. A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
+      "UNIQUE_ROLE_LABEL": "Select its role within your organization. A <b>member</b> has a read-only access to your organization while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
       "UNIQUE_ADD_BUTTON_LABEL": "Click this button to send the invitation.",
-      "MULTIPLE_TAB_LABEL": "Add multiple persons to your organisation using a CSV file.",
+      "MULTIPLE_TAB_LABEL": "Add multiple persons to your organization using a CSV file.",
       "MULTIPLE_FILE_LABEL": "Upload the CSV file listing the persons to be invited. Each person is represented by a row containing the fields <b>name</b>, <b>email</b> and <b>role</b> separated using a <b>,</b> separator.",
       "MULTIPLE_ADD_BUTTON_LABEL": "Click this button to proceed with the invitations."
     },
     "role-member": {
-      "ROLE_LABEL": "Select its role within your organisation. A <b>member</b> has a read-only access to your organisation while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
+      "ROLE_LABEL": "Select its role within your organization. A <b>member</b> has a read-only access to your organization while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
       "UPDATE_ROLE_LABEL": "Update the role of your member"
     },
     "join-group": {
@@ -369,8 +372,8 @@
       "ADD_TAG_LABEL": "Confirm addition the tags on your members."
     },
     "tags": {
-      "TAGS_LABEL": "This activity allows to manage the <b>tags</b> in your organisation.",
-      "TAG_DEFINITION_LABEL": "A tag allows to classify a subset of your organisation members (e.g. a skill or a service).",
+      "TAGS_LABEL": "This activity allows to manage the <b>tags</b> in your organization.",
+      "TAG_DEFINITION_LABEL": "A tag allows to classify a subset of your organization members (e.g. a skill or a service).",
       "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
       "SEARCH_LABEL": "Type part of a word contained in the name of your tags in the arising bar to perform a search.",
       "SORT_LABEL": "Sort your tags by ascending or descending alphabetical order this button.",
@@ -431,7 +434,7 @@
   "KAbout": {
     "DOMAIN": "Hosted on",
     "FLAVOR": "Flavor",
-    "VIEW_CHANGELOG": "Changlog",
+    "VIEW_CHANGELOG": "Changelog",
     "BUG_REPORT": "Report a bug",
     "BUG_REPORT_SUBJECT": "[{appName}] Bug report - Client v{clientVersion} - API v{apiVersion}",
     "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
@@ -691,7 +694,7 @@
   },
   "KMediaBrowser": {
     "CLOSE_ACTION": "@:CLOSE",
-    "DOWNLOAD_MEDIA_ACTION": "Donwload media",
+    "DOWNLOAD_MEDIA_ACTION": "Download media",
     "RESTORE_IMAGE_ACTION": "Restore image",
     "REMOVE_MEDIA_ACTION": "Remove the media",
     "REMOVE_DIALOG_TITLE": "Remove the media {media} ?",
@@ -715,11 +718,11 @@
     "RESTORE_ACTION": "Restore",
     "MAXIMIZE_ACTION": "Maximize"
   },
-  "KOrganisationsActivity": {
-    "ORGANISATIONS_LABEL": "My organisations",
-    "CREATE_ORGANISATION_LABEL": "Create an organisation",
-    "SEARCH_ORGANISATIONS": "Rechercher des organisations",
-    "SORT_ORGANISATIONS": "Trier les organisations"
+  "KorganizationsActivity": {
+    "organizationS_LABEL": "My organizations",
+    "CREATE_organization_LABEL": "Create an organization",
+    "SEARCH_organizationS": "Rechercher des organizations",
+    "SORT_organizationS": "Trier les organizations"
   },
   "KMembersActivity": {
     "MEMBERS_LABEL": "@:MEMBERS",
@@ -734,7 +737,7 @@
     "EMAIL_FIELD_LABEL": "Enter the email address of the person to be added",
     "NAME_FIELD_LABEL": "Enter the name of this person",
     "ROLE_FIELD_LABEL": "Select the role granted to this person",
-    "ADD_MESSAGE": "<b>{email}</b> is already registered. Would you like to add this persion to your organisation ?",
+    "ADD_MESSAGE": "<b>{email}</b> is already registered. Would you like to add this persion to your organization ?",
     "INVITE_MESSAGE": "<b>{email}</b> is not registered. Would you like to invite this person ?",
     "FILE_FIELD_LABEL": "Select the CSV file you want to import",
     "OWNER_LABEL": "@:OWNER",
@@ -745,7 +748,7 @@
     "BACK_BUTTON": "Back",
     "ADD_BUTTON": "Add",
     "INVITE_BUTTON": "Invite",
-    "ALREADY_MEMBER_ERROR": "This person is already a member of your organisation",
+    "ALREADY_MEMBER_ERROR": "This person is already a member of your organization",
     "CONTENT_FILE_ERROR": "Are you sure your file is correclty formatted ?",
     "INVALID_FIELDS_VALUES_ERROR": "Invalid values",
     "INVALID_FIELDS_NUMBER_ERROR": "Invalid field number",
@@ -791,7 +794,7 @@
     "CHANGE_ROLE_ACTION": "Change role",
     "RESEND_INVITATION_ACTION": "Resend an invitation",
     "REMOVE_DIALOG_TITLE": "Remove {member} ?",
-    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{member}</b> from your organisation ?",
+    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{member}</b> from your organization ?",
     "LEAVE_GROUP_DIALOG_TITLE": "Leave the group {group} '?",
     "LEAVE_GROUP_DIALOG_MESSAGE": "Are you sure you want <b>{member}</b> to leave the group <b>{group}</b> ?",
     "RESEND_INVITATION_DIALOG_TITLE": "Resend the invitation for {member} ?",

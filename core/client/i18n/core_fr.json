@@ -176,6 +176,9 @@
       "UPDATE_MESSAGE": "Pour en savoir plus consultez la <a href=\"{changelog}\">note de version</a>",
       "UPDATE": "Mettre à jour",
       "IGNORE": "Ignorer"
+    },
+    "context": {
+      "REMOVED_MESSAGE": "L'objet contexte a été supprimé. Vous allez être redirigé vers la page d'accueil."
     }
   },
   "utils": {
