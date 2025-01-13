@@ -91,7 +91,7 @@
     <!--
       Controls
      -->
-    <div v-if="items.length > 0"
+    <div v-if="items && items.length > 0"
       id="grid-controls"
     >
       <div v-if="appendItems">
