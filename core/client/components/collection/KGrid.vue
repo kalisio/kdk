@@ -91,10 +91,12 @@
     <!--
       Controls
      -->
-    <div id="grid-controls">
+    <div v-if="items.length > 0"
+      id="grid-controls"
+    >
       <div v-if="appendItems">
         <!-- scroll -->
-        <div v-if="contentRef" class="row items-center">
+        <div class="row items-center">
           <div class="col-4"></div>
           <div class="col-4 row justify-center">
             <KScrollDown
@@ -124,7 +126,6 @@
           />
         </div>
       </div>
-
     </div>
     <!--
       Footer
