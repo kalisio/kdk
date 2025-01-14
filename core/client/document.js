@@ -45,7 +45,7 @@ export const Document = {
         scrollableViewers: ['document/KHtml', 'document/KMarkdown', 'document/KCsv']
       },
       htmlSanitizer: {
-        allowedTags: sanitize.defaults.allowedTags.concat(['img'])
+        allowedTags: sanitize.defaults.allowedTags.concat(['img', 'strike'])
       },
       mdConverter: {}
     })

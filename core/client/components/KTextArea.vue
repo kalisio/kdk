@@ -18,7 +18,7 @@
       <div
         class="q-pr-lg"
         :class="{ 'k-textarea-collapsed': !isExpanded, 'k-textarea-expanded': isExpanded }"
-        v-html="sanitizedText"
+        v-html="Document.sanitizeHtml(props.text)"
       />
     </KScrollArea>
     <div class="k-expandable-action">
@@ -39,7 +39,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
-import sanitizeHtml from 'sanitize-html'
+import { Document } from '../document.js'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
 
@@ -68,10 +68,6 @@ const props = defineProps({
   isExpanded: {
     type: Boolean,
     default: false
-  },
-  sanitizeOptions: {
-    type: Object,
-    default: () => null
   }
 })
 
@@ -83,9 +79,6 @@ const isExpanded = ref(props.isExpanded)
 const isScrollable = ref(false)
 
 // computed
-const sanitizedText = computed(() => {
-  return _.get(props, 'sanitizeOptions') ? sanitizeHtml(props.text, props.sanitizeOptions) : sanitizeHtml(props.text)
-})
 const cssCursor = computed(() => {
   return isExpandable.value ? 'pointer' : 'default'
 })
