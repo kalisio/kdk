@@ -3,6 +3,7 @@ import logger from 'loglevel'
 import config from 'config'
 import { Store } from './store.js'
 import { Theme } from './theme.js'
+import { Context } from './context.js'
 import { Platform } from './platform.js'
 import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
@@ -31,6 +32,7 @@ import { Schema } from '../common/index.js'
 // export * from './components'
 export { Store }
 export { Theme }
+export { Context }
 export { Platform }
 export { Capabilities }
 export { LocalStorage }
@@ -77,6 +79,7 @@ export default async function initialize () {
   Theme.initialize()
   Time.initialize()
   Units.initialize()
+  Context.initialize()
   // Then services
   api.configure(services)
   // Last, create the models listened by the main layout/pages components
