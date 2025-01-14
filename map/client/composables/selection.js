@@ -316,7 +316,7 @@ export function useSelection (name, options = {}) {
   // expose
   return {
     ...selection,
-    options: store.get('options'),
+    getSelectionOptions: () => store.get('options'),
     setCurrentActivity,
     hasSelectedFeature,
     getSelectedFeature,
