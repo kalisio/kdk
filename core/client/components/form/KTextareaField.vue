@@ -64,7 +64,6 @@ export default {
         clear: {
           tip: this.$t('KTextAreaField.CLEAR_TOOLTIP'),
           icon: 'cancel',
-          label: this.$t('KTextAreaField.CLEAR_LABEL'),
           handler: this.clear
         }
       },
@@ -77,7 +76,8 @@ export default {
             list: 'only-icons',
             options: ['left', 'center', 'right', 'justify']
           }],
-          ['undo', 'redo']
+          ['undo', 'redo'],
+          ['clear']
         ],
         'gt.xs': [
           ['bold', 'italic', 'underline', 'strike', 'unordered', 'ordered'],

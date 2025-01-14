@@ -668,8 +668,7 @@
     "CREATE_TAG": "Créer <b>{tag}</b>"
   },
   "KTextAreaField": {
-    "CLEAR_TOOLTIP": "Effacer le texte dans son intégralité",
-    "CLEAR_LABEL": "Effacer"
+    "CLEAR_TOOLTIP": "Effacer le contenu"
   }, 
   "KResolutionField": {
     "SD_LABEL": "Définition Standard",

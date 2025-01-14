@@ -670,8 +670,7 @@
     "CREATE_TAG": "Create <b>c</b>"
   },
   "KTextAreaField": {
-    "CLEAR_TOOLTIP": "Clear entire text",
-    "CLEAR_LABEL": "Clear"
+    "CLEAR_TOOLTIP": "Clear content"
   }, 
   "KResolutionField": {
     "SD_LABEL": "Standard Definition",
