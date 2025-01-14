@@ -1,5 +1,8 @@
 <template>
-  <k-text-area v-if="readOnly" :text="model"  :length="150" />
+  <KTextArea v-if="readOnly" 
+    :text="model"  
+    :length="150" 
+  />
   <q-field v-else
     :value="model"
     :label="label"
@@ -14,6 +17,7 @@
         <q-editor
           :id="properties.name + '-field'"
           v-model="model"
+          :definitions="definitions"
           :toolbar="editorToolbar"
           content-class="text-grey-8"
           min-height="5rem"
@@ -23,7 +27,7 @@
     </template>
     <!-- Helper -->
     <template v-if="hasHelper" v-slot:append>
-      <k-action
+      <KAction
         :id="properties.name + '-helper'"
         :label="helperLabel"
         :icon="helperIcon"
@@ -40,8 +44,8 @@
 
 <script>
 import _ from 'lodash'
-import KTextArea from '../KTextArea.vue'
 import { baseField } from '../../mixins'
+import KTextArea from '../KTextArea.vue'
 
 export default {
   mixins: [baseField],
@@ -56,6 +60,14 @@ export default {
   },
   data () {
     return {
+      definitions: {
+        clear: {
+          tip: this.$t('KTextAreaField.CLEAR_TOOLTIP'),
+          icon: 'cancel',
+          label: this.$t('KTextAreaField.CLEAR_LABEL'),
+          handler: this.clear
+        }
+      },
       defaultToolbar: {
         xs: [
           ['bold', 'italic', 'underline', 'strike', 'align'],
@@ -77,7 +89,8 @@ export default {
             list: 'only-icons',
             options: ['left', 'center', 'right', 'justify']
           }],
-          ['undo', 'redo']
+          ['undo', 'redo'],
+          ['clear']
         ]
       }
     }

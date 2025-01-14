@@ -667,6 +667,10 @@
   "KTagField": {
     "CREATE_TAG": "Créer <b>{tag}</b>"
   },
+  "KTextAreaField": {
+    "CLEAR_TOOLTIP": "Effacer le texte dans son intégralité",
+    "CLEAR_LABEL": "Effacer"
+  }, 
   "KResolutionField": {
     "SD_LABEL": "Définition Standard",
     "SD_DESCRIPTION": "4:3, 640 x 480",
