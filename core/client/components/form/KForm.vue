@@ -207,10 +207,7 @@ async function build () {
 function values () {
   const values = {}
   _.forEach(fields.value, field => {
-    if (!field.reference.isEmpty()) values[field.name] = field.reference.value()
-    /* if (field.required) {
-      if (!field.reference.isEmpty()) values[field.name] = field.reference.value()
-    } else values[field.name] = field.reference.value() */
+    if (!(field.required && field.reference.isEmpty())) values[field.name] = field.reference.value()
   })
   return values
 }
