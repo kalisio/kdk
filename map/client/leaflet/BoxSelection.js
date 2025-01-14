@@ -80,7 +80,7 @@ export const BoxSelection = L.Handler.extend({
       this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._container)
       L.DomUtil.addClass(this._container, 'leaflet-crosshair')
 
-      this._map.fire('boxselectionstart')
+      this._map.fire('boxselectionstart', Object.assign(e, { containerPoint: this._startPoint }))
     }
 
     this._point = this._map.mouseEventToContainerPoint(e)
@@ -127,7 +127,7 @@ export const BoxSelection = L.Handler.extend({
       this._map.containerPointToLatLng(this._point))
 
     this._map
-      .fire('boxselectionend', Object.assign(e, { bounds }))
+      .fire('boxselectionend', Object.assign(e, { bounds, containerPoint: this._map.mouseEventToContainerPoint(e) }))
   },
 
   _onKeyDown: function (e) {

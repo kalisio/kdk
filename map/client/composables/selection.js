@@ -249,7 +249,7 @@ export function useSelection (name, options = {}) {
     else handleSelection(items, clearSelection)
   }
   function onBoxSelection (map, event) {
-    lastBoxSelectionPosition = L.point(_.get(event, 'x'), _.get(event, 'y'))
+    lastBoxSelectionPosition = _.get(event, 'containerPoint')
     const { bounds } = event
     let items = getIntersectedItems(bboxPolygon([
       bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()
