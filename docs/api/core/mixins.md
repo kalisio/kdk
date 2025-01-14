@@ -6,7 +6,7 @@ Provide basic methods to **register(user)**, **login(email, password)**, **logou
 
 > Will make the currently authenticated user available in the `user` property of the [global store](./application.md#store).
 
-## Authorisation
+## Authorization
 
 Compute user' abilities and keeps it up-to-date on user' permissions changes.
 
