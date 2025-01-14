@@ -128,7 +128,7 @@
     <!--
       Controls
      -->
-    <div v-if="items && items.length > 0"
+    <div v-if="items && items.length > 0 && contentRef"
       id="timeline-controls"
       :class="dense ? 'q-px-sm' : 'q-px-md'"
       class="row items-center"
