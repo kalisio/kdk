@@ -47,19 +47,6 @@ Make it easier to setup items displayed by a collection:
 
 > Causes the item actions to be automatically refreshed on user' permissions changes.
 
-## Base Context
-
-Retrieve the current context of the application from the **contextId** props, usually set on the target route:
-* **clearContext()** clears actions set by the context and context in store
-* **refreshContext()** clears the current context if **contextId** is not set or retrieve it if different from current one
-* **getActionsForContext()** can be overridden in concrete context-aware components to provide actions required by the context to be set it in the [application bar](./components.md#layout), default behavior is to get the action list from the configuration `context.actions` property.
-
-The context service to be used is the one set in the `context.service` property of the [configuration](./application.md#configuration).
-
-> Causes the context to be automatically refreshed on route change.
-
-> Will make the context available in the `context` property of the [global store](./application.md#store).
-
 ## Service Proxy
 
 Make it easier to access an underlying service from the **contextId** and **service** props:

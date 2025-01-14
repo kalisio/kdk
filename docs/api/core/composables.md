@@ -15,6 +15,23 @@ The composable exposes the following:
 * **has(path)**: test if a store has a value by path
 * **forOwn(f)**: call function `f` on each `(value, key)` of the store
 
+## useContext
+
+Used to manage the current context of the application, call **useContext()** with the following arguments:
+* **fallbackRoute** the route used to redirect the application when the current context is removed or does not exist
+
+The composable exposes the following:
+* **Context**: the current context as a ref
+* **setContext(objectOrId)**: clears the current context and set the current context with the provided object or the object corresponding to the given id.
+* **clearContext()**: clears the current context
+* **getService()**: returns the service used to manage the context
+
+The context service to be used is the one set in the `context.service` property of the [configuration](./application.md#configuration).
+
+> Causes the context to be automatically refreshed on route change.
+
+> Will make the context available in the `context` property of the [global store](./application.md#store).
+
 ## useSelection
 
 Used to setup a reactive store for selection items, call **useSelection()** with the following arguments:

@@ -1,4 +1,3 @@
-export * from './mixin.base-context.js'
 export * from './mixin.base-activity.js'
 export * from './mixin.base-editor.js'
 export * from './mixin.base-item.js'
