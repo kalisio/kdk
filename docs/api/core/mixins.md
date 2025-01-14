@@ -27,16 +27,6 @@ Make it easier to update the application layout when the user changes his curren
 
 > Causes the activity to be automatically refreshed on user' permissions changes or route change.
 
-## Base Collection
-
-Used to retrieve items from a specific service and keep track of real-time updates using [RxJS](https://github.com/feathersjs-ecosystem/feathers-reactive):
-* **(un)subscribe()** causes the component to (un)subscribe to real-time events
-* **refreshCollection()** queries the service to retrieve items according to current pagination settings
-* **getCollectionBaseQuery()** should be overridden in concrete activities to implement any required parameter in the base query
-* **getCollectionFilterQuery()** should be overridden in concrete activities to provide any filtering parameter
-
-> To be used with the [service mixin](./mixins.md#service).
-
 ## Base Item
 
 Make it easier to setup items displayed by a collection:
