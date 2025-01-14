@@ -37,7 +37,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
 import { Document } from '../document.js'
 import KExpandable from './KExpandable.vue'
