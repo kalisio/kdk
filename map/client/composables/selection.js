@@ -11,8 +11,11 @@ import * as composables from '../../../core/client/composables/index.js'
 import { getFeatureId } from '../utils.js'
 
 export function useSelection (name, options = {}) {
+  // Selection store, as we store options inside check if already initialized
+  const store = composables.useStore(`selections.${name}`)
+
   // Set default options
-  options = Object.assign({
+  options = store.get('options', Object.assign({
     // Specific selection item comparator
     matches: (item1) => (item2) => {
       const layer1 = _.get(item1, 'layer.name')
@@ -44,9 +47,11 @@ export function useSelection (name, options = {}) {
     buffer: 10,
     boxSelection: true,
     clusterSelection: false
-  }, options)
-  // Retrieve selection
+  }, options))
+  // Retrieve core selection
   const selection = composables.useSelection(name, options)
+  // Track options in store if not already done
+  if (!store.has('options')) store.set('options', options)
   // Retrieve activity
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
@@ -72,6 +77,31 @@ export function useSelection (name, options = {}) {
       if (options.clusterSelection) newActivity.$engineEvents.on('spiderfied', onClusterSelection)
       newActivity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
     }
+  }
+  function setBoxSelectionEnabled (enabled) {
+    if (options.boxSelection === enabled) return
+    options.boxSelection = enabled
+    if (!activity) return
+    if (enabled) {
+      activity.$engineEvents.on('boxselectionend', onBoxSelection)
+      activity.map.boxSelection.enable()
+    } else {
+      activity.$engineEvents.off('boxselectionend', onBoxSelection)
+      activity.map.boxSelection.disable()
+    }
+  }
+  function setClusterSelectionEnabled (enabled) {
+    if (options.clusterSelection === enabled) return
+    options.clusterSelection = enabled
+    if (!activity) return
+    if (enabled) {
+      activity.$engineEvents.on('spiderfied', onClusterSelection)
+    } else {
+      activity.$engineEvents.off('spiderfied', onClusterSelection)
+    }
+  }
+  function setBufferWidth (width) {
+    options.buffer = width
   }
   // Single selection will rely on the lastly selected item only
   function hasSelectedFeature () {
@@ -286,6 +316,7 @@ export function useSelection (name, options = {}) {
   // expose
   return {
     ...selection,
+    options: store.get('options'),
     setCurrentActivity,
     hasSelectedFeature,
     getSelectedFeature,
@@ -295,6 +326,9 @@ export function useSelection (name, options = {}) {
     hasSelectedLocation,
     getSelectedLocation,
     getWidgetForSelection,
-    centerOnSelection
+    centerOnSelection,
+    setBoxSelectionEnabled,
+    setClusterSelectionEnabled,
+    setBufferWidth
   }
 }
