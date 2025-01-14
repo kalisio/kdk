@@ -40,6 +40,6 @@ const User = Store.get('user')
 
 // Computed
 const subscriptions = computed(() => {
-  return _.get(User, 'subscriptions', [])
+  return _.orderBy(_.get(User, 'subscriptions', []), subscription => subscription.lastActivity)
 })
 </script>
