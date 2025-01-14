@@ -4,8 +4,6 @@ import { ref, watchEffect, onBeforeMount, onBeforeUnmount } from 'vue'
 import { api } from '../api.js'
 
 export function useCounter (options) {
-  logger.trace(`[KDK] Counter created with options ${options}`)
-  
   // Data
   const counter = ref(0)
 
