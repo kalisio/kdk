@@ -110,7 +110,7 @@ watch(() => props.modelValue, (value) => {
   endDateTime.value = value ? moment.utc(value.end) : null
 })
 
-// Immedaite
+// Immediate
 if (props.modelValue) {
   startDateTime.value = moment.utc(props.modelValue.start)
   endDateTime.value = moment.utc(props.modelValue.end)
