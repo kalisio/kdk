@@ -14,6 +14,14 @@ import { ref, onMounted } from 'vue'
 import { api } from '../../api.js'
 import KForm from '../form/KForm.vue'
 
+// Props
+const props = defineProps({
+  filter: {
+    type: Object,
+    default: () => null
+  }
+})
+
 // Data
 const serviceSettings = api.getService('settings')
 const formRef = ref(null)
@@ -33,8 +41,11 @@ async function apply () {
 // Hooks
 onMounted(async () => {
   settings.value = await serviceSettings.get('settings')
-  const mapping = serviceSettings.getSettingsMapping()
-  schemaFilter.value = Object.keys(mapping).filter(value => _.get(mapping, value))
+  if (props.filter) schemaFilter.value = Object.keys(props.filter).filter(value => _.get(props.filter, value))
+  else {
+    const mapping = serviceSettings.getSettingsMapping()
+    schemaFilter.value = Object.keys(mapping).filter(value => _.get(mapping, value))
+  }
 })
 
 // Immediate
