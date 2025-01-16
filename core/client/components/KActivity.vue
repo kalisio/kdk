@@ -7,7 +7,6 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import config from 'config'
 import { useActivity, useLayout } from '../composables'
 import KPage from './layout/KPage.vue'
 
@@ -19,6 +18,13 @@ export default {
     name: {
       type: String,
       required: true
+    },
+    options: {
+      type: Object,
+      default: () => {},
+      validator: (value) => {
+        return _.isObject(value)
+      }
     },
     layout: {
       type: [Object, Function],
@@ -32,13 +38,11 @@ export default {
   setup (props) {
     const keyName = `${_.camelCase(props.name)}Activity`
     logger.debug(`[KDK] Reading '${props.name}' activity options with key ${keyName}`)
-    const options = _.get(config, keyName, {})
-    const { setCurrentActivity } = useActivity(keyName, options)
-    const { Layout, configureLayout, clearLayout, setLayoutMode } = useLayout()
+    const { setCurrentActivity, options: activityOptions } = useActivity(keyName, props.options)
+    const { configureLayout, clearLayout, setLayoutMode } = useLayout()
     return {
-      options,
+      activityOptions,
       setCurrentActivity,
-      Layout,
       configureLayout,
       clearLayout,
       setLayoutMode
@@ -64,14 +68,11 @@ export default {
         if (typeof this.layout === 'function') customLayout = await this.layout()
         else customLayout = this.layout
       }
-      this.configureLayout(_.merge({}, this.options, customLayout), concreteActivity)
+      this.configureLayout(_.merge({}, this.activityOptions, customLayout), concreteActivity)
       // set the current activity
       this.setCurrentActivity(concreteActivity)
       // apply the mode if needed
       if (this.mode) this.setLayoutMode(this.mode)
-    },
-    getOptions () {
-      return this.options
     }
   },
   async mounted () {
