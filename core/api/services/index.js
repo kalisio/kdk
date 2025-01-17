@@ -2,6 +2,7 @@ import _ from 'lodash'
 import path from 'path'
 import makeDebug from 'debug'
 import { fileURLToPath } from 'url'
+import { isObjectID } from '../db.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const modelsPath = path.join(__dirname, '..', 'models')
@@ -16,8 +17,12 @@ export function getServiceNameAndContext (servicePath) {
   // Then without context if any
   const lastSlash = name.lastIndexOf('/')
   const contextId = (lastSlash >= 0 ? name.substring(0, lastSlash) : '')
-  name = name.replace(contextId + '/', '')
-  return { name, contextId }
+  if (contextId && isObjectID(contextId)) {
+    name = name.replace(contextId + '/', '')
+    return { name, contextId }
+  } else {
+    return { name }
+  }
 }
 
 export function decorateDistributedService (service) {
