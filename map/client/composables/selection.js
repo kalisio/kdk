@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import config from 'config'
 import L from 'leaflet'
 import sift from 'sift'
 import centroid from '@turf/centroid'
@@ -9,6 +10,7 @@ import { featureEach } from '@turf/meta'
 import { unref } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 import { getFeatureId } from '../utils.js'
+import { convertPolygonStyleToLeafletPath } from '../leaflet/utils/index.js'
 
 export function useSelection (name, options = {}) {
   // Selection store, as we store options inside check if already initialized
@@ -45,6 +47,8 @@ export function useSelection (name, options = {}) {
     multiple: 'ctrlKey',
     // Buffer selection width (10px)
     buffer: 10,
+    showBuffer: false,
+    showBufferDelay: 250,
     boxSelection: true,
     clusterSelection: false
   }, options))
@@ -246,6 +250,11 @@ export function useSelection (name, options = {}) {
     // Retrieve the location
     const location = _.get(event, 'latlng')
     if (selection.getSelectionMode() === 'buffer') {
+      if (activity.is2D() && options.showBuffer) {
+        const highlightStyle = _.get(config, `engines.${activity.engine}.style.selection.polygon`, {})
+        const marker = L.circleMarker(location, Object.assign({ radius: options.buffer }, convertPolygonStyleToLeafletPath(highlightStyle))).addTo(activity.map)
+        setTimeout(() => marker.removeFrom(activity.map), options.showBufferDelay)
+      }
       const center = activity.getCenter()
       // https://wiki.openstreetmap.org/wiki/Zoom_levels
       const metresPerPixel = 40075016.686 * Math.abs(Math.cos(location.lat * Math.PI / 180)) / Math.pow(2, center.zoomLevel + 8)
