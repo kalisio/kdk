@@ -198,6 +198,9 @@ export function baseActivity (name) {
       clearFocus () {
         Layout.clearFocus()
       },
+      clearMode () {
+        Layout.clearMode()
+      },
       clearActivity () {
         this.clearPadding()
         this.clearFocus()
@@ -211,6 +214,7 @@ export function baseActivity (name) {
         this.clearStickies()
         this.clearFab()
         this.clearWindows()
+        this.clearMode()
       },
       configureActivity () {
         this.configurePadding()

@@ -142,7 +142,11 @@ export const Layout = {
   clearPadding () {
     Store.patch(this.paths.layout, { padding: this.getElementDefaults('padding') })
   },
+  getMode () {
+    return this.get().mode
+  },
   setMode (mode) {
+    if (this.getMode() === mode) return
     this.setHeaderMode(mode)
     this.setFooterMode(mode)
     this.setPageMode(mode)
@@ -154,8 +158,8 @@ export const Layout = {
     })
     Store.patch(this.paths.layout, { mode })
   },
-  getMode () {
-    return this.get().mode
+  clearMode () {
+    Store.patch(this.paths.layout, { mode: undefined })
   },
   getElement (element) {
     return Store.get(this.getElementPath(element))

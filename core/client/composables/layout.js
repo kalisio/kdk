@@ -20,6 +20,8 @@ export function useLayout () {
     if (_.has(configuration, 'rightPane')) Layout.setPane('right', configuration.rightPane, context)
     if (_.has(configuration, 'topPane')) Layout.setPane('top', configuration.topPane, context)
     if (_.has(configuration, 'bottomPane')) Layout.setPane('bottom', configuration.bottomPane, context)
+    // apply mode
+    if (_.has(configuration, 'mode')) Layout.setMode(configuration.mode)
   }
   function clearLayout () {
     Layout.clearFocus()
@@ -34,6 +36,7 @@ export function useLayout () {
       Layout.clearPane(placement)
       Layout.clearWindow(placement)
     })
+    Layout.clearMode()
   }
   function setLayoutMode (mode) {
     if (mode) Layout.setMode(mode)
