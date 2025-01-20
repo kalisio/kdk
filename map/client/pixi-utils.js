@@ -95,7 +95,7 @@ export const WEBGL_FUNCTIONS = {
 PIXI.TYPES.HALF_FLOAT_VERTEX = 0x140b
 
 export function buildShaderCode (features) {
-  let vtxCode = '#version 300 es'
+  let vtxCode = '#version 300 es\nprecision highp float;'
   let frgCode = '#version 300 es\nprecision highp float;'
   // attributes, uniforms and varyings
   vtxCode += '\n\n/// attributes, uniforms and varyings\n'
