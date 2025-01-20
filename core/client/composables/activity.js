@@ -18,15 +18,22 @@ export function useActivity (name, options = {}) {
 
   // functions
   function setCurrentActivity (activity) {
-    logger.debug('[KDK] Setting current activity to', activity)
     if (CurrentActivityContext.activity === activity) return
-    CurrentActivityContext.activity = activity ? activity : null
-    CurrentActivityContext.name = activity ? name : null
-    CurrentActivityContext.state = activity ? useStore(`store.${name}.state`, options.state).store : null
-    CurrentActivityContext.config = activity ? useStore(`store.${name}.options`, config[name]).store : null
-    CurrentActivity.value = activity ? activity : null
-    if (activity) logger.debug('[KDK] Current activity set to', name)
-    else logger.debug('[KDK] Current activity cleared')
+    if (activity) {
+      CurrentActivityContext.activity = activity
+      CurrentActivityContext.name = name
+      CurrentActivityContext.state = useStore(`store.${name}.state`, options.state).store
+      CurrentActivityContext.config = useStore(`store.${name}.options`, config[name]).store
+      CurrentActivity.value = activity
+      logger.debug('[KDK] Current activity set to', name)  
+    } else {
+      CurrentActivityContext.activity = null
+      CurrentActivityContext.name = null
+      CurrentActivityContext.state = null
+      CurrentActivityContext.config = null
+      CurrentActivity.value = null
+      logger.debug('[KDK] Current activity cleared')
+    }
   }
 
   // hooks

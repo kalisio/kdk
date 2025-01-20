@@ -57,6 +57,7 @@ export function useCurrentActivity (options = {}) {
 
   // data
   const coreActivity = composables.useCurrentActivity()
+  const { CurrentActivityContext } = coreActivity
 
   // functions
   function setActivityProject (project) {
@@ -72,22 +73,23 @@ export function useCurrentActivity (options = {}) {
     setActivityProject,
     getActivityProject
   }
-  if (coreActivity.name) {
+  if (CurrentActivityContext.name) {
     if (options.selection) {
       Object.assign(expose, {
-        ...useSelection(kActivityName.value, _.get(options, 'selection'))
+        ...useSelection(CurrentActivityContext.name, _.get(options, 'selection'))
       })
     }
     if (options.probe) {
       Object.assign(expose, {
-        ...useProbe(kActivityName.value, _.get(options, 'probe'))
+        ...useProbe(CurrentActivityContext.name, _.get(options, 'probe'))
       })
     }
     if (options.highlight) {
       Object.assign(expose, {
-        ...useHighlight(kActivityName.value, _.get(options, 'highlight'))
+        ...useHighlight(CurrentActivityContext.name, _.get(options, 'highlight'))
       })
     }
   }
+  
   return expose
 }
