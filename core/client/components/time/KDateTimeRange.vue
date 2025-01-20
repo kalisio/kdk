@@ -1,6 +1,6 @@
 <template>
-  <div class="row items-center q-gutter-x-sm no-wrap">
-
+  <div>
+    <div class="row items-center q-gutter-x-sm no-wrap">
       <!-- Start dateTime -->
       <KDateTime
           v-model="startModel"
@@ -25,15 +25,17 @@
           :dense="dense"
           :date-only="dateOnly"
       />
+    </div>
+    <div class="row items-center q-gutter-x-sm no-wrap" v-if="displaySlider">
+      <q-range
+          v-model="rangeModel"
+          v-bind="props.range"
+          @update:model-value="setRangeDate()"
+          @change="emitRangeChange()"
+      />
+    </div>
   </div>
-  <div class="row items-center q-gutter-x-sm no-wrap" v-if="displaySlider">
-    <q-range
-        v-model="rangeModel"
-        v-bind="props.range"
-        @update:model-value="setRangeDate()"
-        @change="emitRangeChange()"
-    />
-  </div>
+
 </template>
 
 <script setup>
