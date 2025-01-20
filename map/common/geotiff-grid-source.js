@@ -4,7 +4,8 @@ import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
 // pack r,g,b in an uint32
 function packRgb (r, g, b) {
-  return r | (g << 8) | (b << 16)
+  // Using 0x3E as high bits to make float interpretation (IEEE-754) of values between [0.125, 0.5]
+  return r | (g << 8) | (b << 16) | (0x3E << 24)
 }
 
 // return packed rgb as a float value
