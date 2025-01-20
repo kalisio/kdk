@@ -7,15 +7,18 @@
       :disabled="disabled"
       :dense="dense"
     />
-    <!-- Separator -->
-    <div v-if="separator">{{ separator }}</div>
-    <!-- Time -->
-    <KTime
-      v-model="timeModel"
-      :options="timeOptions"
-      :disabled="disabled || dateTime === null"
-      :dense="dense"
-    />
+    <template v-if="!props.dateOnly">
+      <!-- Separator -->
+      <div v-if="separator">{{ separator }}</div>
+      <!-- Time -->
+      <KTime
+          v-model="timeModel"
+          :options="timeOptions"
+          :disabled="disabled || dateTime === null"
+          :dense="dense"
+      />
+    </template>
+
   </div>
 </template>
 
@@ -74,6 +77,10 @@ const props = defineProps({
     default: false
   },
   dense: {
+    type: Boolean,
+    default: false
+  },
+  dateOnly: {
     type: Boolean,
     default: false
   }
