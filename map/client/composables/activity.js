@@ -1,7 +1,6 @@
 import _ from 'lodash'
-import { onBeforeUnmount, unref, shallowRef } from 'vue'
+import { unref, shallowRef } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
-import { api } from '../../../core/client/api.js'
 import { useSelection } from './selection.js'
 import { useProbe } from './probe.js'
 import { useHighlight } from './highlight.js'
