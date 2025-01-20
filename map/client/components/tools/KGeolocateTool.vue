@@ -1,5 +1,6 @@
 <template>
   <KAction
+    v-if="CurrentActivity"
     id="locate-user"
     icon="las la-crosshairs"
     tooltip="mixins.activity.SHOW_USER_LOCATION"
@@ -39,6 +40,7 @@ async function onToggled (context, toggled) {
 // Hooks
 onMounted(() => {
   if (CurrentActivity.value) isToggled.value = CurrentActivity.value.isUserLocationVisible()
+  
 })
 onBeforeUnmount(() => {
   if (CurrentActivity.value) CurrentActivity.value.hideUserLocation()

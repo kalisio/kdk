@@ -73,11 +73,11 @@ const sanitizedAttributions = computed(() => {
 })
 
 // Watch
-watch(CurrentActivity, (newActivity, oldActivity) => {
+watch(() => CurrentActivity.value, (newActivity, oldActivity) => {
   if (oldActivity) {
     // remove listeners
-    oldActivity.value.$engineEvents.off('layer-shown', onShowLayer)
-    oldActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
+    oldActivity.$engineEvents.off('layer-shown', onShowLayer)
+    oldActivity.$engineEvents.off('layer-hidden', onHideLayer)
   }
   if (newActivity) {
     // setup attribution

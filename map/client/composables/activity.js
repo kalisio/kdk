@@ -10,8 +10,17 @@ import { useHighlight } from './highlight.js'
 export function useActivity (name, options = {}) {
   _.defaults(options, { selection: true, probe: true, highlight: true })
 
+  // data
   const coreActivity = composables.useActivity(name, options)
   let selection, probe, highlight
+
+  // functions
+  function setCurrentActivity (activity) {
+    coreActivity.setCurrentActivity(activity)
+    if (selection) selection.setCurrentActivity(activity)
+    if (probe) probe.setCurrentActivity(activity)
+    if (highlight) highlight.setCurrentActivity(activity)
+  }
 
   // expose
   const expose = {
@@ -35,18 +44,6 @@ export function useActivity (name, options = {}) {
       ...highlight
     })
   }
-
-  // functions
-  function setCurrentActivity (activity) {
-    coreActivity.setCurrentActivity(activity)
-    if (selection) selection.setCurrentActivity(activity)
-    if (probe) probe.setCurrentActivity(activity)
-    if (highlight) highlight.setCurrentActivity(activity)
-  }
-
-  // Cleanup on destroy
-  onBeforeUnmount(() => setCurrentActivity(null))
-
   return Object.assign(expose, {
     setCurrentActivity
   })
@@ -58,7 +55,9 @@ const activityProject = shallowRef(null)
 export function useCurrentActivity (options = {}) {
   _.defaults(options, { selection: true, probe: true })
 
-  const { kActivity, kActivityName, state: activityState, options: activityOptions } = composables.useCurrentActivity()
+  // data
+  const coreActivity = composables.useCurrentActivity()
+
   // functions
   function setActivityProject (project) {
     activityProject.value = unref(project)
@@ -69,18 +68,11 @@ export function useCurrentActivity (options = {}) {
 
   // expose
   const expose = {
-    kActivity,
-    CurrentActivity: kActivity,
-    kActivityName,
-    CurrentActivityName: kActivityName,
+    ...coreActivity,
     setActivityProject,
     getActivityProject
   }
-  if (kActivityName.value) {
-    Object.assign(expose, {
-      state: activityState,
-      options: activityOptions
-    })
+  if (coreActivity.name) {
     if (options.selection) {
       Object.assign(expose, {
         ...useSelection(kActivityName.value, _.get(options, 'selection'))

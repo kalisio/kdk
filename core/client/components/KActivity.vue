@@ -36,12 +36,11 @@ export default {
     }
   },
   setup (props) {
-    const keyName = `${_.camelCase(props.name)}Activity`
-    logger.debug(`[KDK] Reading '${props.name}' activity options with key ${keyName}`)
-    const { setCurrentActivity, options: activityOptions } = useActivity(keyName, props.options)
+    const activityName = `${_.camelCase(props.name)}Activity`
+    const { CurrentActivityContext, setCurrentActivity } = useActivity(activityName, props.options)
     const { configureLayout, clearLayout, setLayoutMode } = useLayout()
     return {
-      activityOptions,
+      CurrentActivityContext,
       setCurrentActivity,
       configureLayout,
       clearLayout,
@@ -50,7 +49,7 @@ export default {
   },
   watch: {
     mode: {
-      // [!] cannot be immediate as it is required that the activity is configured first
+      // [!] It cannot be immediate because the activity must first be configured
       handler (value) {
         logger.debug(`[KDK] Setting layout on '${value}' mode`)
         if (value) this.setLayoutMode(value)
@@ -59,23 +58,23 @@ export default {
   },
   methods: {
     async configure () {
-      logger.debug(`[KDK] Configuring '${this.name}' activity`)
+      // set the current activity
       // because this component is wrapped within an AsyncComponent it returns the grand parent
       const concreteActivity = this.$parent.$parent
-      // configure the layout
+      this.setCurrentActivity(concreteActivity)
+      // configure the activity
+      logger.debug(`[KDK] Configuring '${this.name}' activity`)
       let customLayout = {}
       if (this.layout) {
         if (typeof this.layout === 'function') customLayout = await this.layout()
         else customLayout = this.layout
       }
-      this.configureLayout(_.merge({}, this.activityOptions, customLayout), concreteActivity)
-      // set the current activity
-      this.setCurrentActivity(concreteActivity)
+      this.configureLayout(_.merge({}, this.CurrentActivityContext.config, customLayout), concreteActivity)
       // apply the mode if needed
       if (this.mode) this.setLayoutMode(this.mode)
     }
   },
-  async mounted () {
+  async created () {
     await this.configure()
     // whenever the user abilities are updated, update activity as well
     this.$events.on('user-abilities-changed', this.configure)
@@ -83,8 +82,6 @@ export default {
   beforeUnmount () {
     logger.debug(`[KDK] Clearing '${this.name}' activity`)
     this.$events.off('user-abilities-changed', this.configure)
-    // clear the current activity
-    this.setCurrentActivity(null)
     // Clear the layout
     this.clearLayout()
   }

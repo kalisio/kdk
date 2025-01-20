@@ -1,32 +1,40 @@
 import _ from 'lodash'
+import logger from 'loglevel'
 import config from 'config'
-import { ref, shallowRef, readonly, onBeforeUnmount } from 'vue'
+import { shallowRef, toRef, shallowReactive, readonly, onBeforeUnmount } from 'vue'
 import { useStore } from './store.js'
 import { useSelection } from './selection.js'
 
+const CurrentActivityContext = shallowReactive({
+  activity: null,
+  name: null,
+  state: null,
+  config: null
+})
 const CurrentActivity = shallowRef(null)
-const CurrentActivityName = ref(null)
 
 export function useActivity (name, options = {}) {
   _.defaults(options, { selection: true })
 
-  // data
-  // state store
-  const activityState = useStore(`store.${name}.state`, options.state)
-  // options store
-  const activityOptions = useStore(`store.${name}.options`, config[name])
-
   // functions
   function setCurrentActivity (activity) {
-    if (CurrentActivity.value === activity) return
-    CurrentActivityName.value = activity ? name : null
-    CurrentActivity.value = activity
+    logger.debug('[KDK] Setting current activity to', activity)
+    if (CurrentActivityContext.activity === activity) return
+    CurrentActivityContext.activity = activity ? activity : null
+    CurrentActivityContext.name = activity ? name : null
+    CurrentActivityContext.state = activity ? useStore(`store.${name}.state`, options.state).store : null
+    CurrentActivityContext.config = activity ? useStore(`store.${name}.options`, config[name]).store : null
+    CurrentActivity.value = activity ? activity : null
+    if (activity) logger.debug('[KDK] Current activity set to', name)
+    else logger.debug('[KDK] Current activity cleared')
   }
+
+  // hooks
+  onBeforeUnmount(() => setCurrentActivity(null))
 
   // expose
   const expose = {
-    state: activityState.store,
-    options: activityOptions.store,
+    CurrentActivityContext,
     setCurrentActivity
   }
   if (options.selection) {
@@ -34,10 +42,6 @@ export function useActivity (name, options = {}) {
       ...useSelection(name)
     })
   }
-
-  // Cleanup on destroy
-  onBeforeUnmount(() => setCurrentActivity(null))
-
   return expose
 }
 
@@ -46,22 +50,15 @@ export function useCurrentActivity (options = {}) {
 
   // expose
   const expose = {
-    CurrentActivity: readonly(CurrentActivity),
+    CurrentActivityContext,
+    CurrentActivity,
     kActivity: readonly(CurrentActivity),
-    CurrentActivityName: readonly(CurrentActivityName),
-    kActivityName: readonly(CurrentActivityName)
+    kActivityName: readonly(toRef(CurrentActivityContext, 'name'))
   }
-  if (CurrentActivityName.value) {
-    const activityState = useStore(`store.${CurrentActivityName.value}.state`)
-    const activityOptions = useStore(`store.${CurrentActivityName.value}.options`)
-
-    Object.assign(expose, {
-      state: activityState.store,
-      options: readonly(activityOptions.store)
-    })
+  if (CurrentActivityContext.name) {
     if (options.selection) {
       Object.assign(expose, {
-        ...useSelection(CurrentActivityName.value)
+        ...useSelection(CurrentActivityContext.name)
       })
     }
   }
