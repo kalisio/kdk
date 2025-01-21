@@ -48,7 +48,7 @@ export default {
     async configure () {
       // set the current activity
       // because this component is wrapped within an AsyncComponent it returns the grand parent
-      const concreteActivity = this.$parent //.$parent
+      const concreteActivity = this.$parent.$parent
       // set the current activity
       this.setCurrentActivity(concreteActivity)
       // configure the activity
