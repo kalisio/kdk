@@ -35,18 +35,6 @@ export default {
       default: null
     }
   },
-  setup (props) {
-    const activityName = `${_.camelCase(props.name)}Activity`
-    const { CurrentActivityContext, setCurrentActivity } = useActivity(activityName, props.options)
-    const { configureLayout, clearLayout, setLayoutMode } = useLayout()
-    return {
-      CurrentActivityContext,
-      setCurrentActivity,
-      configureLayout,
-      clearLayout,
-      setLayoutMode
-    }
-  },
   watch: {
     mode: {
       // [!] It cannot be immediate because the activity must first be configured
@@ -60,18 +48,32 @@ export default {
     async configure () {
       // set the current activity
       // because this component is wrapped within an AsyncComponent it returns the grand parent
-      const concreteActivity = this.$parent.$parent
+      const concreteActivity = this.$parent //.$parent
+      // set the current activity
       this.setCurrentActivity(concreteActivity)
       // configure the activity
-      logger.debug(`[KDK] Configuring '${this.name}' activity`)
       let customLayout = {}
       if (this.layout) {
         if (typeof this.layout === 'function') customLayout = await this.layout()
         else customLayout = this.layout
       }
-      this.configureLayout(_.merge({}, this.CurrentActivityContext.config, customLayout), concreteActivity)
+      const configuration = _.merge({}, this.CurrentActivityContext.config, customLayout)
+      this.configureLayout(configuration, concreteActivity)
+      logger.debug(`[KDK] Activity ${this.name} configured with`, configuration)
       // apply the mode if needed
       if (this.mode) this.setLayoutMode(this.mode)
+    }
+  },
+  setup (props) {
+    const activityName = `${_.camelCase(props.name)}Activity`
+    const { CurrentActivityContext, setCurrentActivity } = useActivity(activityName, props.options)
+    const { configureLayout, clearLayout, setLayoutMode } = useLayout()
+    return {
+      CurrentActivityContext,
+      setCurrentActivity,
+      configureLayout,
+      clearLayout,
+      setLayoutMode
     }
   },
   async created () {

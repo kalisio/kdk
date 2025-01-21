@@ -16,28 +16,32 @@ const CurrentActivity = shallowRef(null)
 export function useActivity (name, options = {}) {
   _.defaults(options, { selection: true })
 
+  // configure the context
+  CurrentActivityContext.name = name
+  CurrentActivityContext.state = useStore(`store.${name}.state`, options.state).store
+  CurrentActivityContext.config = useStore(`store.${name}.options`, config[name]).store
+
   // functions
   function setCurrentActivity (activity) {
     if (CurrentActivityContext.activity === activity) return
     if (activity) {
       CurrentActivityContext.activity = activity
-      CurrentActivityContext.name = name
-      CurrentActivityContext.state = useStore(`store.${name}.state`, options.state).store
-      CurrentActivityContext.config = useStore(`store.${name}.options`, config[name]).store
       CurrentActivity.value = activity
-      logger.debug('[KDK] Current activity set to', name)  
+      logger.debug('[KDK] Current activity set to', activity)  
     } else {
       CurrentActivityContext.activity = null
-      CurrentActivityContext.name = null
-      CurrentActivityContext.state = null
-      CurrentActivityContext.config = null
       CurrentActivity.value = null
       logger.debug('[KDK] Current activity cleared')
     }
   }
 
   // hooks
-  onBeforeUnmount(() => setCurrentActivity(null))
+  onBeforeUnmount(() => {
+    CurrentActivityContext.name = null
+    CurrentActivityContext.state = null
+    CurrentActivityContext.config = null
+    setCurrentActivity(null)
+  })
 
   // expose
   const expose = {
