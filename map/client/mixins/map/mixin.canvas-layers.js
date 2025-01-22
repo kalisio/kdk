@@ -28,6 +28,7 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   // -- initialized is called on prototype
   initialize: function (options) {
     this._map = null
+    this._mapPaneOffset = null
     this._canvas = null
     this._frame = null
     this._delegate = null
@@ -82,9 +83,12 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
 
   latLonToCanvas: function (coords) {
-    const a = this._map.latLngToLayerPoint(L.latLng(coords.lat, coords.lon))
-    const b = L.DomUtil.getPosition(this._canvas)
-    return a.subtract(b)
+    let p = this._map.latLngToLayerPoint(L.latLng(coords.lat, coords.lon))
+    if (this._map._rotate) {
+      p = p.add(this._map._getRotatePanePos())
+           .rotateFrom(this._map._bearing, this._map._getRotatePanePos())
+    }
+    return p.add(this._mapPaneOffset)
   },
 
   clearClickableFeatures: function () {
@@ -152,8 +156,29 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
   },
   // -------------------------------------------------------------
   _onLayerDidMove: function () {
-    const topLeft = this._map.containerPointToLayerPoint([0, 0])
-    L.DomUtil.setPosition(this._canvas, topLeft)
+    // Here we make sure our canvas covers the whole map container
+    // With [0,0] canvas = [0,0] map container
+    this._mapPaneOffset = this._map._getMapPanePos()
+
+    if (this._map._rotate) {
+      const offset = this._mapPaneOffset.add(this._map._getRotatePanePos())
+      // NOTE: depending on whether zoomAnimation is enabled we compute a different transform :
+      //  - when zoomAnimation is set, it defines 'leaflet-zoom-animated' class on the canvas, defining transform-origin: 0 0 on the canvas
+      //  - when unset, transform-origin is not set and default 'center' is used
+      // In both cases, the transform we set here is to cancel the canvas rotation, then to get back to the map container origin.
+      // This way we make the canvas cover the same area as the map container.
+      // The canvas is child of the 'rotate pane' and has it's origin at the 'rotate pane' origin.
+      // We want to rotate around the canvas origin and not around it's center, hence the different transform according to the
+      // assumed transform-origin value.
+      this._canvas.style[L.DomUtil.TRANSFORM] =
+        // TODO: zoomAnimation is currently always off on the layer beacause of rotate plugin
+        // this._map.options.zoomAnimation ?
+        false ?
+        'rotate(' + -this._map._bearing + 'rad) translate3d(' + -offset.x + 'px,' + -offset.y + 'px, 0)' :
+        'translate(-50%, -50%) rotate(' + -this._map._bearing + 'rad) translate(50%, 50%) translate3d(' + -offset.x + 'px,' + -offset.y + 'px, 0)'
+    } else {
+      L.DomUtil.setPosition(this._canvas, L.point(0,0).subtract(this._mapPaneOffset))
+    }
     this.redrawNow()
   },
   // -------------------------------------------------------------
@@ -216,12 +241,18 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     }
   },
   // -------------------------------------------------------------
+  _onLayerDidRotate: function (event) {
+    this._onLayerDidMove()
+  },
+  // -------------------------------------------------------------
   getEvents: function () {
     const events = {
       resize: this._onLayerDidResize,
       moveend: this._onLayerDidMove,
-      zoom: this._onLayerDidMove
+      zoom: this._onLayerDidMove,
+      rotate: this._onLayerDidRotate
     }
+    // NOTE: disabled for now because of rotate plugin
     if (this._map.options.zoomAnimation && L.Browser.any3d) {
       events.zoomanim = this._animateZoom
     }
@@ -244,11 +275,14 @@ L.KanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
     this._canvas.width = size.x
     this._canvas.height = size.y
 
-    const topLeft = this._map.containerPointToLayerPoint([0, 0])
-    L.DomUtil.setPosition(this._canvas, topLeft)
+    this._mapPaneOffset = map._getMapPanePos()
+    L.DomUtil.setPosition(this._canvas, L.point(0,0).subtract(this._mapPaneOffset))
 
-    const animated = this._map.options.zoomAnimation && L.Browser.any3d
-    L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'))
+    // TODO: zoom animation is currently disabled because of rotate plugin
+    // Enabling it should be possible but _animateZoom need changes + zoomAnimation check in _onLayerDidMove
+    // const animated = this._map.options.zoomAnimation && L.Browser.any3d
+    // L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'))
+    L.DomUtil.addClass(this._canvas, 'leaflet-zoom-hide')
 
     const pane = this.options.pane ? map._panes[this.options.pane] : map._panes.overlayPane
     pane.appendChild(this._canvas)
