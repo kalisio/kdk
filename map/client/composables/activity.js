@@ -5,12 +5,15 @@ import { useSelection } from './selection.js'
 import { useProbe } from './probe.js'
 import { useHighlight } from './highlight.js'
 
+const ActivityComposables = {}
+
 // When creating an activity we are interested by all aspects
 export function useActivity (name, options = {}) {
   _.defaults(options, { selection: true, probe: true, highlight: true })
 
   // data
   const coreActivity = composables.useActivity(name, options)
+  const { CurrentActivityContext } = coreActivity
   let selection, probe, highlight
 
   // functions
@@ -26,26 +29,29 @@ export function useActivity (name, options = {}) {
     ...coreActivity
   }
   if (options.selection) {
-    selection = useSelection(name, _.get(coreActivity, 'options.selection'))
+    selection = useSelection(name, _.get(CurrentActivityContext, 'config.selection'))
     Object.assign(expose, {
       ...selection
     })
   }
   if (options.probe) {
-    probe = useProbe(name, _.get(coreActivity, 'options.probe'))
+    probe = useProbe(name, _.get(CurrentActivityContext, 'config.probe'))
     Object.assign(expose, {
       ...probe
     })
   }
   if (options.highlight) {
-    highlight = useHighlight(name, _.get(coreActivity, 'options.highlight'))
+    highlight = useHighlight(name, _.get(CurrentActivityContext, 'config.highlight'))
     Object.assign(expose, {
       ...highlight
     })
   }
-  return Object.assign(expose, {
+  Object.assign(expose, {
     setCurrentActivity
   })
+  // Store exposed data and functions so that useCurrentActicity() will return the same context
+  _.set(ActivityComposables, name, expose)
+  return expose
 }
 
 const activityProject = shallowRef(null)
@@ -73,21 +79,8 @@ export function useCurrentActivity (options = {}) {
     getActivityProject
   }
   if (CurrentActivityContext.name) {
-    if (options.selection) {
-      Object.assign(expose, {
-        ...useSelection(CurrentActivityContext.name, _.get(options, 'selection'))
-      })
-    }
-    if (options.probe) {
-      Object.assign(expose, {
-        ...useProbe(CurrentActivityContext.name, _.get(options, 'probe'))
-      })
-    }
-    if (options.highlight) {
-      Object.assign(expose, {
-        ...useHighlight(CurrentActivityContext.name, _.get(options, 'highlight'))
-      })
-    }
+    // Retrieved the same exposed data and function from useActivity()
+    Object.assign(expose, _.get(ActivityComposables, CurrentActivityContext.name))
   }
   
   return expose

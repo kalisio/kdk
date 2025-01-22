@@ -13,11 +13,13 @@ import { getFeatureId } from '../utils.js'
 import { convertPolygonStyleToLeafletPath } from '../leaflet/utils/index.js'
 
 export function useSelection (name, options = {}) {
+  // Retrieve core selection
+  const selection = composables.useSelection(name, options)
   // Selection store, as we store options inside check if already initialized
-  const store = composables.useStore(`selections.${name}`)
+  const { get, has, set } = composables.useStore(`selections.${name}`)
 
   // Set default options
-  options = store.get('options', Object.assign({
+  options = get('options', Object.assign({
     // Specific selection item comparator
     matches: (item1) => (item2) => {
       const layer1 = _.get(item1, 'layer.name')
@@ -52,10 +54,8 @@ export function useSelection (name, options = {}) {
     boxSelection: true,
     clusterSelection: false
   }, options))
-  // Retrieve core selection
-  const selection = composables.useSelection(name, options)
   // Track options in store if not already done
-  if (!store.has('options')) store.set('options', options)
+  if (!has('options')) set('options', options)
   // Retrieve activity
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
@@ -325,7 +325,7 @@ export function useSelection (name, options = {}) {
   // expose
   return {
     ...selection,
-    getSelectionOptions: () => store.get('options'),
+    getSelectionOptions: () => get('options'),
     setCurrentActivity,
     hasSelectedFeature,
     getSelectedFeature,

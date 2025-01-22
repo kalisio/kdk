@@ -12,6 +12,7 @@ const CurrentActivityContext = shallowReactive({
   config: null
 })
 const CurrentActivity = shallowRef(null)
+const ActivityComposables = {}
 
 export function useActivity (name, options = {}) {
   _.defaults(options, { selection: true })
@@ -53,6 +54,9 @@ export function useActivity (name, options = {}) {
       ...useSelection(name)
     })
   }
+
+  // Store exposed data and functions so that useCurrentActicity() will return the same context
+  _.set(ActivityComposables, name, expose)
   return expose
 }
 
@@ -66,12 +70,10 @@ export function useCurrentActivity (options = {}) {
     kActivity: readonly(CurrentActivity),
     kActivityName: readonly(toRef(CurrentActivityContext, 'name'))
   }
+
   if (CurrentActivityContext.name) {
-    if (options.selection) {
-      Object.assign(expose, {
-        ...useSelection(CurrentActivityContext.name)
-      })
-    }
+    // Retrieved the same exposed data and function from useActivity()
+    Object.assign(expose, _.get(ActivityComposables, CurrentActivityContext.name))
   }
   return expose
 }

@@ -62,7 +62,7 @@ export function useSelection (name, options = {}) {
   }
 
   // Initialize on first call
-  if (!_.has(store, 'items')) {
+  if (!has('items')) {
     // We set a new array so that deeply watch is not required
     set('items', [])
     set('mode', 'single')
