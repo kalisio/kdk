@@ -16,3 +16,9 @@ In these guides you will learn step-by-step how the setup your development envir
 * [Publish with KDK](./development/publish.md)
 * [Configure your app](./development/configure.md)
 * [Deploy your app](./development/deploy.md)
+
+## Migration
+
+In this guides you will find an overview of the most important new features or breaking changes for each KDK version.
+
+* [v2.5](./migration/v2.5.md) with related [milestone](https://github.com/kalisio/kdk/milestone/13) on GitHub.

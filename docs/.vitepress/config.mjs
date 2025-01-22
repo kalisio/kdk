@@ -71,6 +71,13 @@ function getGuidesSidebar () {
         { text: 'Deploy your app', link: '/guides/development/deploy' },
         { text: 'Publish with KDK', link: '/guides/development/publish' }
       ]
+    },
+    { 
+      text: 'Migration', 
+      collapsed: true, 
+      items: [
+        { text: 'v2.5', link: '/guides/migration/v2.5' }
+      ]
     }
   ]
 }
