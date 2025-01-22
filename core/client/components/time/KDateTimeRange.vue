@@ -112,11 +112,11 @@ const startModel = computed({
   },
   set: function (value) {
     if (endDateTime.value) {
-      if (moment.utc(value).isAfter(endDateTime.value)) endDateTime.value = value
+      if (moment.utc(value).isAfter(endDateTime.value)) endDateTime.value = moment(value)
     } else {
-      endDateTime.value = value
+      endDateTime.value = moment(value)
     }
-    emit('update:modelValue', { start: value, end: endDateTime.value })
+    emit('update:modelValue', { start: value, end: endDateTime.value.toISOString() })
   }
 })
 const endModel = computed({
@@ -131,7 +131,6 @@ const separator = computed(() => {
   return _.get(props.options, 'separator', '/')
 })
 const displaySlider = computed(() => {
-  // return false
   return !!(props.range && props.min && props.max)
 })
 
@@ -166,7 +165,7 @@ function setRangeDate () {
   endDateTime.value = moment(props.min).add(rangeStep.value * rangeModel.value.max, 'milliseconds')
 }
 function emitRangeChange () {
-  emit('update:modelValue', { start: startDateTime.value, end: endDateTime.value })
+  emit('update:modelValue', { start: startDateTime.value.toISOString(), end: endDateTime.value.toISOString() })
 }
 function setSliderPosition () {
   rangeModel.value.min = Math.floor((startDateTime.value.diff(moment(props.min))) / rangeStep.value)
