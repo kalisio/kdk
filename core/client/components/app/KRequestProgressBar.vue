@@ -9,7 +9,6 @@
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar'
 import { ref, onMounted } from 'vue'
 import { Events } from '../../events.js'
 
