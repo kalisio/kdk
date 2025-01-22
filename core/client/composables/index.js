@@ -1,5 +1,6 @@
 export * from './activity.js'
 export * from './collection.js'
+export * from './collection-timerange.js'
 export * from './context.js'
 export * from './counter.js'
 export * from './layout.js'
