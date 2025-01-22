@@ -31,15 +31,15 @@ export function useCollectionTimeRange (options) {
           {
             $group: {
               _id: null,
-              minCreatedAt: { $min: "$createdAt" },
-              maxCreatedAt: { $max: "$createdAt" }
+              minDate: { $min: `$${options.property ? options.property.value : 'createdAt'}` },
+              maxDate: { $max: `$${options.property ? options.property.value : 'createdAt'}` },
             }
           },
           {
             $project: {
               _id: 0,
-              minCreatedAt: 1,
-              maxCreatedAt: 1
+              minDate: 1,
+              maxDate: 1
             }
           }
         ]
@@ -49,7 +49,7 @@ export function useCollectionTimeRange (options) {
     const response = await getService().find({ query })
     let collectionDateRange = null
     if (response.length > 0) {
-      collectionDateRange = { start: response[0].minCreatedAt, end: response[0].maxCreatedAt }
+      collectionDateRange = { start: response[0].minDate, end: response[0].maxDate }
     }
     dateRange.value = collectionDateRange
   }
