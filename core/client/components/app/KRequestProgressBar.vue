@@ -14,7 +14,6 @@ import { ref, onMounted } from 'vue'
 import { Events } from '../../events.js'
 
 // Data
-const $q = useQuasar()
 const progessBarRef = ref(null)
 let nbRequests = 0
 let nbCompletedRequests = 0
