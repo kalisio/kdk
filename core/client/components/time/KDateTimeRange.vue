@@ -11,7 +11,18 @@
           :dense="dense"
           :date-only="dateOnly"
       />
-      <q-space v-if="displaySlider"/>
+
+      <div class="q-px-sm" v-if="displaySlider">
+        <Teleport to="#responsive-range-container" v-if="isMounted" :disabled="$q.screen.gt.sm">
+          <q-range
+              v-model="rangeModel"
+              v-bind="props.range"
+              @update:model-value="setRangeDate()"
+              @change="emitRangeChange()"
+              style="min-width: 200px"
+          />
+        </Teleport>
+      </div>
       <div v-else>
         {{ separator }}
       </div>
@@ -26,13 +37,8 @@
           :date-only="dateOnly"
       />
     </div>
-    <div class="row items-center q-gutter-x-sm no-wrap" v-if="displaySlider">
-      <q-range
-          v-model="rangeModel"
-          v-bind="props.range"
-          @update:model-value="setRangeDate()"
-          @change="emitRangeChange()"
-      />
+    <div class="row items-center q-px-sm q-gutter-x-sm no-wrap" id="responsive-range-container" v-if="displaySlider">
+
     </div>
   </div>
 
@@ -41,7 +47,7 @@
 <script setup>
 import _ from 'lodash'
 import moment from 'moment'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import KDateTime from './KDateTime.vue'
 
 // Props
@@ -97,6 +103,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
+const isMounted = ref(false)
 const startDateTime = ref(null)
 const endDateTime = ref(null)
 const rangeModel = ref({
@@ -171,5 +178,9 @@ function setSliderPosition () {
   rangeModel.value.min = Math.floor((startDateTime.value.diff(moment(props.min))) / rangeStep.value)
   rangeModel.value.max = Math.floor((endDateTime.value.diff(moment(props.min))) / rangeStep.value)
 }
+
+onMounted(() => {
+  isMounted.value = true
+})
 
 </script>

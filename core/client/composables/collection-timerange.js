@@ -58,12 +58,16 @@ export function useCollectionTimeRange (options) {
   onBeforeMount(async () => {
     const service = getService()
     service.on('created', refresh)
+    service.on('updated', refresh)
+    service.on('patched', refresh)
     service.on('removed', refresh)
   })
   onBeforeUnmount(() => {
     const service = getService()
     service.off('created', refresh)
-     service.off('removed', refresh)
+    service.off('updated', refresh)
+    service.off('patched', refresh)
+    service.off('removed', refresh)
   })
 
   return {
