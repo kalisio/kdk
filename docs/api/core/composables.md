@@ -65,7 +65,6 @@ The composable exposes the following (**{Placement}** can be **Top**, **Bottom**
 * **set{Placement}PaneOpener(opener)**: change the visibility of target placement's opener
 * **clear{Placement}Layout()**: reset layout content of target placement
 
-
 ## Activity
 
 ### useActivity
@@ -98,6 +97,33 @@ The composable exposes the following:
 * **options**: the store object for current activity options
 * elements exposed by the [selection composable](./composables#useselection) associated to the activity
 
-## useCollection
+## Collection
+
+### useCollection
+
+_TODO_
+
+### useCollectionCounter
+
+Used to count the items within a collection. Call **useCollectionCounter** with the following arguments:
+* **options** options to define the access to the service 
+  * **service** the service name
+  * **contextId** the context Id if the service is contextual
+  * **baseQuery** the base query to apply
+  * **filterQuery** the filter query to apply
+
+::: details Example
+```js
+import { composables as kdkComposables } from '@kalisio/kdk/core.client'
+...
+// Data
+const { counter } = kdkComposables.useCollectionCounter({ 
+  service: ref('missions'), 
+  contextId: ref(props.eventId) 
+})
+>
+:::
+
+### useCollectionTimeRange
 
 _TODO_

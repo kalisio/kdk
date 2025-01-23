@@ -3,7 +3,7 @@ import logger from 'loglevel'
 import { ref, watchEffect, onBeforeMount, onBeforeUnmount } from 'vue'
 import { api } from '../api.js'
 
-export function useCounter (options) {
+export function useCollectionCounter (options) {
   // Data
   const counter = ref(0)
 
@@ -26,7 +26,7 @@ export function useCounter (options) {
   }
   async function refresh () {
     const query = _.merge(getBaseQuery(), getFilterQuery(), { $limit: 0 })
-    logger.trace(`[KDK] Count service ${options.service.value} with query ${query}`)
+    logger.debug(`[KDK] Count service ${options.service.value} with query`, query)
     const response = await getService().find({ query })
     counter.value = response.total
   }
