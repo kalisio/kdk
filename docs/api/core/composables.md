@@ -121,7 +121,6 @@ const { counter } = kdkComposables.useCollectionCounter({
   service: ref('missions'), 
   contextId: ref(props.eventId) 
 })
->
 :::
 
 ### useCollectionTimeRange
