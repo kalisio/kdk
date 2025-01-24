@@ -169,25 +169,27 @@ export const context = {
       // Restore from local storage/catalog if no route parameters
       if (_.isEmpty(targetParameters)) {
         const savedParameters = LocalStorage.get(this.getContextKey(context))
-        if (this.shouldRestoreContext(context) && !_.isEmpty(savedParameters)) {
-          targetParameters = savedParameters
-          // Backward compatibility: we previously stored the bounds as an array
-          if (Array.isArray(targetParameters)) {
-            targetParameters = {
-              south: targetParameters[0][0],
-              west: targetParameters[0][1],
-              north: targetParameters[1][0],
-              east: targetParameters[1][1]
+        if (this.shouldRestoreContext(context)) {
+          if (!_.isEmpty(savedParameters)) {
+            targetParameters = savedParameters
+            // Backward compatibility: we previously stored the bounds as an array
+            if (Array.isArray(targetParameters)) {
+              targetParameters = {
+                south: targetParameters[0][0],
+                west: targetParameters[0][1],
+                north: targetParameters[1][0],
+                east: targetParameters[1][1]
+              }
             }
+          } else {
+            // Check for a home context if not already retrieved
+            // Use undefined here to check for a first try as if we find none we set it to null
+            if (_.isUndefined(this.homeContext)) {
+              const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
+              this.homeContext = (response.data.length > 0 ? response.data[0] : null)
+            }
+            if (this.homeContext) targetParameters = this.homeContext
           }
-        } else {
-          // Check for a home context if not already retrieved
-          // Use undefined here to check for a first try as if we find none we set it to null
-          if (_.isUndefined(this.homeContext)) {
-            const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
-            this.homeContext = (response.data.length > 0 ? response.data[0] : null)
-          }
-          if (this.homeContext) targetParameters = this.homeContext
         }
       }
       // Restore context if possible
