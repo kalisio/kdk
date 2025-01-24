@@ -1,9 +1,9 @@
 <template>
   <q-ajax-bar
-    ref="progessBarRef" 
-    position="bottom" 
-    size="8px" 
-    color="primary" 
+    ref="progessBarRef"
+    position="bottom"
+    size="8px"
+    color="primary"
     :delay="250">
   </q-ajax-bar>
 </template>

@@ -1,7 +1,7 @@
 <template>
-  <KTextArea v-if="readOnly" 
-    :text="model"  
-    :length="150" 
+  <KTextArea v-if="readOnly"
+    :text="model"
+    :length="150"
   />
   <q-field v-else
     :value="model"
