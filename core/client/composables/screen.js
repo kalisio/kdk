@@ -1,4 +1,4 @@
-import { ref, watch, readonly } from 'vue'
+import { ref, computed, readonly } from 'vue'
 import { useQuasar } from 'quasar'
 import { Fullscreen, toggleFullscreen } from '../utils/utils.screen.js'
 
@@ -8,15 +8,23 @@ export function useScreen () {
   // Data
   const $q = useQuasar()
 
-  // Watch
-  watch(() => [$q.screen.width, $q.screen.height], () => {
-    Orientation.value = $q.screen.width >= $q.screen.height ? 'landscape' : 'portrait'
-  }, { immediate: true})
+  // Computed
+  const dense = computed(() => {
+    return $q.screen.xs
+  })
+  const wide = computed(() => {
+    return $q.screen.gt.sm
+  })
+  const orientation = computed(() => {
+    return $q.screen.width >= $q.screen.height ? 'landscape' : 'portrait'
+  })
 
   // Expose
   return {
     Screen: readonly($q.screen),
-    Orientation: readonly(Orientation),
+    dense,
+    wide,
+    orientation,
     Fullscreen: readonly(Fullscreen),
     toggleFullscreen
   }

@@ -48,11 +48,22 @@ The composable exposes the following:
 * **unselectItem(path)**: unselect an item
 * **has/getSelectedItem()**, **has/getSelectedItems()**: check for selected item(s) depending on selection mode
 
-## Layout
+## Screen & Layout
+
+### useScreen
+
+Used to watch the screen properties, call **useScreen()** without arguments.
+
+The composable exposes the [properties provide by the Quasar screen plugin](https://quasar.dev/options/screen-plugin/), as well as the following capabilities:
+* **dense**: `true` if the screen size is `xs`
+* **wide**: `true` if the screen size is greater than `sm`
+* **orientation**: `portrait` or `landscape` according the screen orientation
+* **Fullscreen**: true if the screen is in fullscreen mode
+* **toggleFullscreen**: toggle the fullscreen mode
 
 ### useLayout
 
-Used to manipulate the layout, call **useLayout()** without arguments.
+Used to manipulate the **layout**, call **useLayout()** without arguments.
 
 The composable exposes the following (**{Placement}** can be **Top**, **Bottom**, **Left**, **Right**):
 * **configureLayout(configuration, context)**: apply the layout configuration with provided binding context (i.e. `this`)
