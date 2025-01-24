@@ -112,7 +112,7 @@ Used to count the items within a collection. Call **useCollectionCounter** with 
   * **baseQuery** the base query to apply
   * **filterQuery** the filter query to apply
 
-#### details Example
+::: details  Example
 ```js
 import { composables as kdkComposables } from '@kalisio/kdk/core.client'
 ...
@@ -122,6 +122,7 @@ const { counter } = kdkComposables.useCollectionCounter({
   contextId: ref(props.eventId) 
 })
 ```
+:::
 
 ### useCollectionTimeRange
 
@@ -136,7 +137,7 @@ Used to get min and max value from a collection. Call **useCollectionTimeRange**
   * **start** the min property value
   * **end** the max property value
 
-#### details Example 
+::: details Example 
 ```js
 import { composables as kdkComposables } from '@kalisio/kdk/core.client'
 ...
@@ -146,3 +147,4 @@ const { dateRange } = kdkComposables.useCollectionTimeRange({
   property: ref('updatedAt'),
 })
 ```
+:::
