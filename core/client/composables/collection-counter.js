@@ -26,7 +26,7 @@ export function useCollectionCounter (options = {}) {
   }
   async function refresh () {
     const query = _.merge(getBaseQuery(), getFilterQuery(), { $limit: 0 })
-    logger.debug(`[KDK] Count service ${options.service.value} with query`, query)
+    logger.debug(`[KDK] Count service '${options.service.value}' with query`, query)
     const response = await getService().find({ query })
     counter.value = response.total
   }

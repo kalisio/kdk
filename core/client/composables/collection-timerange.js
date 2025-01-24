@@ -29,12 +29,12 @@ export function useCollectionTimeRange (options = {}) {
     const timeProperty = options.property ? options.property.value : 'createdAt'
     // get start time
     const startQuery = { $sort: {[timeProperty]: 1 }, $limit: 1 }
-    logger.debug(`[KDK] Get min timestamp on service ${options.service.value} with query`, startQuery)
+    logger.debug(`[KDK] Get min timestamp on service '${options.service.value}' with query`, startQuery)
     const startResponse = await getService().find({ query: _.merge({}, getBaseQuery(), getFilterQuery(), startQuery) })
     if (_.size(startResponse.data) > 0) start = startResponse.data[0]
     // get end time
     const endQuery = { $sort: {[timeProperty]: -1 }, $limit: 1 }
-    logger.debug(`[KDK] Get max timestamp on service ${options.service.value} with query`, endQuery)
+    logger.debug(`[KDK] Get max timestamp on service '${options.service.value}' with query`, endQuery)
     const endResponse = await getService().find({ query: _.merge({}, getBaseQuery(), getFilterQuery(), endQuery) }) 
     if (_.size(endResponse.data) > 0) end = endResponse.data[0]
     dateRange.value = { start: _.get(start, timeProperty), end: _.get(end, timeProperty) }
