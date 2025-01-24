@@ -112,7 +112,7 @@ Used to count the items within a collection. Call **useCollectionCounter** with 
   * **baseQuery** the base query to apply
   * **filterQuery** the filter query to apply
 
-::: details Example
+#### details Example
 ```js
 import { composables as kdkComposables } from '@kalisio/kdk/core.client'
 ...
@@ -121,8 +121,28 @@ const { counter } = kdkComposables.useCollectionCounter({
   service: ref('missions'), 
   contextId: ref(props.eventId) 
 })
-:::
+```
 
 ### useCollectionTimeRange
 
-_TODO_
+Used to get min and max value from a collection. Call **useCollectionTimeRange** with the following arguments:
+* **options** options to define the access to the service
+  * **service** the service name
+  * **contextId** the context Id if the service is contextual
+  * **baseQuery** the base query to apply
+  * **filterQuery** the filter query to apply
+  * **property** the collection property to search on (default: ``createdAt``)
+* **return** Object 
+  * **start** the min property value
+  * **end** the max property value
+
+#### details Example 
+```js
+import { composables as kdkComposables } from '@kalisio/kdk/core.client'
+...
+// Data
+const { dateRange } = kdkComposables.useCollectionTimeRange({
+  service: ref('events'),
+  property: ref('updatedAt'),
+})
+```
