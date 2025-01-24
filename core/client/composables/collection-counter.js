@@ -3,7 +3,7 @@ import logger from 'loglevel'
 import { ref, watchEffect, onBeforeMount, onBeforeUnmount } from 'vue'
 import { api } from '../api.js'
 
-export function useCollectionCounter (options) {
+export function useCollectionCounter (options = {}) {
   // Data
   const counter = ref(0)
 
