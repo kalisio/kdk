@@ -60,6 +60,7 @@ The composable exposes the [properties provide by the Quasar screen plugin](http
 * **orientation**: `portrait` or `landscape` according the screen orientation
 * **Fullscreen**: true if the screen is in fullscreen mode
 * **toggleFullscreen**: toggle the fullscreen mode
+* **lockOrientation**: locks the screen orientation to either 'portrait' or 'landscape'
 
 ### useLayout
 

@@ -65,7 +65,7 @@ export function computeResponsiveSize (size) {
 }
 
 export function getOrientation () {
-    return Screen.width > Screen.height ? 'portrait' : 'landscape'
+  return Screen.width > Screen.height ? 'portrait' : 'landscape'
 }
 
 export async function toggleFullscreen () {
@@ -79,4 +79,8 @@ export async function toggleFullscreen () {
         reject(false)
       })
   })
+}
+
+export async function lockOrientation (orientation) {
+  if (screen.orientation && screen.orientation.lock && (typeof screen.orientation.lock === 'function')) await screen.orientation.lock(orientation)
 }

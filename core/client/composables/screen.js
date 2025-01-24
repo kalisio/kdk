@@ -1,6 +1,6 @@
 import { ref, computed, readonly } from 'vue'
 import { useQuasar } from 'quasar'
-import { Fullscreen, toggleFullscreen } from '../utils/utils.screen.js'
+import { Fullscreen, toggleFullscreen, lockOrientation } from '../utils/utils.screen.js'
 
 const Orientation = ref(null)
 
@@ -26,6 +26,7 @@ export function useScreen () {
     wide,
     orientation,
     Fullscreen: readonly(Fullscreen),
-    toggleFullscreen
+    toggleFullscreen,
+    lockOrientation
   }
 }
