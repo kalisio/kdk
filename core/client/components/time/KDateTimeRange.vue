@@ -5,8 +5,8 @@
       <KDateTime
           v-model="startModel"
           :options="props.options.dateTime || props.options"
-          :min="props.min"
-          :max="props.max"
+          :min="rangeMin"
+          :max="rangeMax"
           :disabled="disabled"
           :dense="dense"
           :date-only="dateOnly"
@@ -17,7 +17,7 @@
           <q-range
               v-model="rangeModel"
               v-bind="props.range"
-              @update:model-value="setRangeDate()"
+              @update:model-value="setDateTimeRangeFromSliderPosition()"
               @change="emitRangeChange()"
               style="min-width: 200px"
           />
@@ -31,7 +31,7 @@
           v-model="endModel"
           :options="props.options.dateTime || props.options"
           :min="startDateTime ? startDateTime.toISOString() : null"
-          :max="props.max"
+          :max="rangeMax"
           :disabled="disabled || startDateTime === null"
           :dense="dense"
           :date-only="dateOnly"
@@ -140,13 +140,19 @@ const separator = computed(() => {
 const displaySlider = computed(() => {
   return !!(props.range && props.min && props.max)
 })
+const rangeMin = computed(() => {
+  return moment(props.min).utcOffset(0).startOf('day').toISOString()
+})
+const rangeMax = computed(() => {
+  return moment(props.max).utcOffset(0).endOf('day').toISOString()
+})
 
 // Watch
 watch(() => props.modelValue, (value) => {
   startDateTime.value = value ? moment.utc(value.start) : null
   endDateTime.value = value ? moment.utc(value.end) : null
   if (displaySlider.value) {
-    setSliderPosition()
+    setSliderPositionFromDateTimeRAnge()
   }
 })
 
@@ -154,29 +160,24 @@ watch(() => props.modelValue, (value) => {
 if (props.modelValue) {
   startDateTime.value = moment.utc(props.modelValue.start)
   endDateTime.value = moment.utc(props.modelValue.end)
-}
-if (displaySlider.value) {
-  startDateTime.value = moment(props.min)
-  endDateTime.value = moment(props.max)
-  rangeStep.value = endDateTime.value.diff(startDateTime.value) / (props.range.max - props.range.min)
-  rangeModel.value = {
-    min: props.range.min,
-    max: props.range.max
+
+  if (displaySlider.value) {
+    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (props.range.max - props.range.min))
+    setSliderPositionFromDateTimeRAnge()
   }
-  setSliderPosition()
 }
 
 // Functions
-function setRangeDate () {
-  startDateTime.value = moment(props.min).add(rangeStep.value * rangeModel.value.min, 'milliseconds')
-  endDateTime.value = moment(props.min).add(rangeStep.value * rangeModel.value.max, 'milliseconds')
+function setDateTimeRangeFromSliderPosition () {
+  startDateTime.value = moment(rangeMin.value).add(rangeStep.value * rangeModel.value.min, 'milliseconds')
+  endDateTime.value = moment(rangeMin.value).add(rangeStep.value * rangeModel.value.max, 'milliseconds')
 }
 function emitRangeChange () {
   emit('update:modelValue', { start: startDateTime.value.toISOString(), end: endDateTime.value.toISOString() })
 }
-function setSliderPosition () {
-  rangeModel.value.min = Math.floor((startDateTime.value.diff(moment(props.min))) / rangeStep.value)
-  rangeModel.value.max = Math.floor((endDateTime.value.diff(moment(props.min))) / rangeStep.value)
+function setSliderPositionFromDateTimeRAnge () {
+  rangeModel.value.min = Math.floor((moment(props.modelValue.start).diff(moment(rangeMin.value))) / rangeStep.value)
+  rangeModel.value.max = Math.ceil((moment(props.modelValue.end).diff(moment(rangeMin.value))) / rangeStep.value)
 }
 
 onMounted(() => {
