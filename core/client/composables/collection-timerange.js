@@ -3,7 +3,7 @@ import logger from 'loglevel'
 import { ref, watchEffect, onBeforeMount, onBeforeUnmount } from 'vue'
 import { api } from '../api.js'
 
-export function useCollectionTimeRange (options) {
+export function useCollectionTimeRange (options = {}) {
   // Data
   const dateRange = ref(null)
 
@@ -25,33 +25,19 @@ export function useCollectionTimeRange (options) {
     return options.filterQuery ? options.filterQuery.value : {}
   }
   async function refresh () {
-    const query = _.merge(getBaseQuery(), getFilterQuery(), {
-      $aggregation: {
-        pipeline: [
-          {
-            $group: {
-              _id: null,
-              minDate: { $min: `$${options.property ? options.property.value : 'createdAt'}` },
-              maxDate: { $max: `$${options.property ? options.property.value : 'createdAt'}` },
-            }
-          },
-          {
-            $project: {
-              _id: 0,
-              minDate: 1,
-              maxDate: 1
-            }
-          }
-        ]
-      }
-    })
-    logger.trace(`[KDK] CollectionTimeRange service ${options.service.value} with query ${query}`)
-    const response = await getService().find({ query })
-    let collectionDateRange = null
-    if (response.length > 0) {
-      collectionDateRange = { start: response[0].minDate, end: response[0].maxDate }
-    }
-    dateRange.value = collectionDateRange
+    let start, end
+    const timeProperty = options.property ? options.property.value : 'createdAt'
+    // get start time
+    const startQuery = { $sort: {[timeProperty]: 1 }, $limit: 1 }
+    logger.debug(`[KDK] Get min timestamp on service ${options.service.value} with query`, startQuery)
+    const startResponse = await getService().find({ query: _.merge({}, getBaseQuery(), getFilterQuery(), startQuery) })
+    if (_.size(startResponse.data) > 0) start = startResponse.data[0]
+    // get end time
+    const endQuery = { $sort: {[timeProperty]: -1 }, $limit: 1 }
+    logger.debug(`[KDK] Get max timestamp on service ${options.service.value} with query`, endQuery)
+    const endResponse = await getService().find({ query: _.merge({}, getBaseQuery(), getFilterQuery(), endQuery) }) 
+    if (_.size(endResponse.data) > 0) end = endResponse.data[0]
+    dateRange.value = { start: _.get(start, timeProperty), end: _.get(end, timeProperty) }
   }
 
   // Hooks
