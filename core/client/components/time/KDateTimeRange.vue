@@ -3,23 +3,28 @@
     <div class="row items-center q-gutter-x-sm no-wrap">
       <!-- Start dateTime -->
       <KDateTime
-          v-model="startModel"
-          :options="props.options.dateTime || props.options"
-          :min="rangeMin"
-          :max="rangeMax"
-          :disabled="disabled"
-          :dense="dense"
-          :date-only="dateOnly"
+        v-model="startModel"
+        :options="options"
+        :min="rangeMin"
+        :max="rangeMax"
+        :disabled="disabled"
+        :dense="dense"
+        :date-only="dateOnly"
       />
-
-      <div class="q-px-sm" v-if="displaySlider">
-        <Teleport to="#responsive-range-container" v-if="isMounted" :disabled="$q.screen.gt.sm">
+      <div v-if="displaySlider"
+        class="q-px-sm"
+      >
+        <Teleport v-if="isMounted"
+          to="#responsive-range-container"
+          :disabled="$q.screen.gt.sm"
+        >
           <q-range
-              v-model="rangeModel"
-              v-bind="props.range"
-              @update:model-value="setDateTimeRangeFromSliderPosition()"
-              @change="emitRangeChange()"
-              style="min-width: 200px"
+            v-model="rangeModel"
+            v-bind="props.range"
+            @update:model-value="setDateTimeRangeFromSliderPosition()"
+            @change="emitRangeChange()"
+            style="min-width: 200px; padding-top: 4px;"
+            dense
           />
         </Teleport>
       </div>
@@ -28,20 +33,21 @@
       </div>
       <!-- End dateTime -->
       <KDateTime
-          v-model="endModel"
-          :options="props.options.dateTime || props.options"
-          :min="startDateTime ? startDateTime.toISOString() : null"
-          :max="rangeMax"
-          :disabled="disabled || startDateTime === null"
-          :dense="dense"
-          :date-only="dateOnly"
+        v-model="endModel"
+        :options="options"
+        :min="startDateTime ? startDateTime.toISOString() : null"
+        :max="rangeMax"
+        :disabled="disabled || startDateTime === null"
+        :dense="dense"
+        :date-only="dateOnly"
       />
     </div>
-    <div class="row items-center q-px-sm q-gutter-x-sm no-wrap" id="responsive-range-container" v-if="displaySlider">
-
+    <div v-if="displaySlider"
+      id="responsive-range-container"
+      class="row items-center q-px-sm q-gutter-x-sm no-wrap"
+    >
     </div>
   </div>
-
 </template>
 
 <script setup>
@@ -61,10 +67,6 @@ const props = defineProps({
       return true
     }
   },
-  options: {
-    type: Object,
-    default: () => {}
-  },
   min: {
     type: String,
     default: () => null,
@@ -80,6 +82,10 @@ const props = defineProps({
       if (value) return moment(value).isValid()
       return true
     }
+  },
+  options: {
+    type: Object,
+    default: () => {}
   },
   disabled: {
     type: Boolean,
@@ -157,21 +163,6 @@ watch(() => props.modelValue, (value) => {
   }
 })
 
-// Immediate
-if (props.modelValue) {
-  startDateTime.value = moment(props.modelValue.start).utc()
-  endDateTime.value = moment(props.modelValue.end).utc()
-
-  if (displaySlider.value) {
-    if (props.dateOnly) {
-      startDateTime.value = getDateWithoutTime(props.modelValue.start, 'start')
-      endDateTime.value = getDateWithoutTime(props.modelValue.end, 'end')
-    }
-    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (props.range.max - props.range.min))
-    setSliderPositionFromDateTimeRAnge()
-  }
-}
-
 // Functions
 function getDateWithoutTime (dateTime, type = 'start') {
   const date = moment.isMoment(dateTime) ? dateTime : moment(dateTime)
@@ -194,8 +185,22 @@ function setSliderPositionFromDateTimeRAnge () {
   }
 }
 
+// Hooks
 onMounted(() => {
   isMounted.value = true
 })
 
+// Immediate
+if (props.modelValue) {
+  startDateTime.value = moment(props.modelValue.start).utc()
+  endDateTime.value = moment(props.modelValue.end).utc()
+  if (displaySlider.value) {
+    if (props.dateOnly) {
+      startDateTime.value = getDateWithoutTime(props.modelValue.start, 'start')
+      endDateTime.value = getDateWithoutTime(props.modelValue.end, 'end')
+    }
+    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (props.range.max - props.range.min))
+    setSliderPositionFromDateTimeRAnge()
+  }
+}
 </script>
