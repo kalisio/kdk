@@ -52,7 +52,10 @@ The composable exposes the following:
 
 ### useScreen
 
-Used to watch the screen properties, call **useScreen()** without arguments.
+Used to watch the screen properties, call **useScreen()** without the following arguments:
+* **options** options to setup the `dense` and `wide` [breakpoints](https://quasar.dev/style/breakpoints#introduction)
+  * **denseBreakpoint** the breakpoint that sets the maximum screen width below which the `dense` property is true. Default value is `sm`.
+  * **wideBreakpoint** the breakpoint that specifies the minimum screen width at which the `wide` property becomes true. Default value is `sm`.
 
 The composable exposes the [properties provide by the Quasar screen plugin](https://quasar.dev/options/screen-plugin/), as well as the following capabilities:
 * **dense**: `true` if the screen size is `xs`
