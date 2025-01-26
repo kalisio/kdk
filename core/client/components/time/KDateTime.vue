@@ -6,16 +6,18 @@
       :options="dateOptions"
       :disabled="disabled"
       :dense="dense"
+      :class="dateOptions.class"
     />
     <template v-if="!props.dateOnly">
       <!-- Separator -->
       <div v-if="separator">{{ separator }}</div>
       <!-- Time -->
       <KTime
-          v-model="timeModel"
-          :options="timeOptions"
-          :disabled="disabled || dateTime === null"
-          :dense="dense"
+        v-model="timeModel"
+        :options="timeOptions"
+        :disabled="disabled || dateTime === null"
+        :dense="dense"
+        :class="timeOptions.class"
       />
     </template>
 
@@ -109,6 +111,7 @@ const dateModel = computed({
   }
 })
 const dateOptions = computed(() => {
+  console.log(props.options)
   return _.merge({}, _.get(props.options, 'date'), { picker: { options: checkDate } })
 })
 const timeModel = computed({
