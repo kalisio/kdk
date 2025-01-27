@@ -157,7 +157,7 @@ Used to get min and max value from a collection. Call **useCollectionTimeRange**
 import { composables as kdkComposables } from '@kalisio/kdk/core.client'
 ...
 // Data
-const { dateRange } = kdkComposables.useCollectionTimeRange({
+const { timeRange } = kdkComposables.useCollectionTimeRange({
   service: ref('events'),
   property: ref('updatedAt'),
 })

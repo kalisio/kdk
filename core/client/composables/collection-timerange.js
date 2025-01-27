@@ -5,7 +5,7 @@ import { api } from '../api.js'
 
 export function useCollectionTimeRange (options = {}) {
   // Data
-  const dateRange = ref(null)
+  const timeRange = ref(null)
 
   // Watch
   watchEffect(() => refresh())
@@ -37,7 +37,7 @@ export function useCollectionTimeRange (options = {}) {
     logger.debug(`[KDK] Get max timestamp on service '${options.service.value}' with query`, endQuery)
     const endResponse = await getService().find({ query: _.merge({}, getBaseQuery(), getFilterQuery(), endQuery) }) 
     if (_.size(endResponse.data) > 0) end = endResponse.data[0]
-    dateRange.value = { start: _.get(start, timeProperty), end: _.get(end, timeProperty) }
+    timeRange.value = { start: _.get(start, timeProperty), end: _.get(end, timeProperty) }
   }
 
   // Hooks
@@ -57,6 +57,6 @@ export function useCollectionTimeRange (options = {}) {
   })
 
   return {
-    dateRange
+    timeRange
   }
 }
