@@ -111,7 +111,6 @@ const dateModel = computed({
   }
 })
 const dateOptions = computed(() => {
-  console.log(props.options)
   return _.merge({}, _.get(props.options, 'date'), { picker: { options: checkDate } })
 })
 const timeModel = computed({
