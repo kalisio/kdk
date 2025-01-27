@@ -49,7 +49,7 @@ export function useActivity (name, options = {}) {
   Object.assign(expose, {
     setCurrentActivity
   })
-  // Store exposed data and functions so that useCurrentActicity() will return the same context
+  // Store exposed data and functions so that useCurrentActivity() will return the same context
   _.set(ActivityComposables, name, expose)
   return expose
 }
