@@ -2,7 +2,8 @@ import _ from 'lodash'
 import path from 'path'
 import makeDebug from 'debug'
 import { fileURLToPath } from 'url'
-import { isObjectID } from '../db.js'
+import mongodb from 'mongodb'
+const { ObjectID } = mongodb
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const modelsPath = path.join(__dirname, '..', 'models')
@@ -17,7 +18,7 @@ export function getServiceNameAndContext (servicePath) {
   // Then without context if any
   const lastSlash = name.lastIndexOf('/')
   const contextId = (lastSlash >= 0 ? name.substring(0, lastSlash) : '')
-  if (contextId && isObjectID(contextId)) {
+  if (contextId && ObjectID.isValid(contextId)) {
     name = name.replace(contextId + '/', '')
     return { name, contextId }
   } else {
