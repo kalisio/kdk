@@ -19,8 +19,8 @@
       />
       <!-- widget header -->
       <div
-        class="col"
         v-touch-pan.prevent.mouse="onMoved"
+        class="col k-widget-header"
       >
         <KPanel
           v-if="widgetHeader"
@@ -452,6 +452,9 @@ else {
   }
   .k-window-grip:hover {
     cursor: nwse-resize;
+  }
+  .k-widget-header {
+    min-height: 32px;
   }
   .q-icon.las.la-expand,
   .q-icon.las-la-compress,
