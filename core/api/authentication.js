@@ -83,6 +83,8 @@ export class AuthenticationProviderStrategy extends OAuthStrategy {
 export class JWTAuthenticationStrategy extends JWTStrategy {
   async authenticate (authentication, params) {
     const { accessToken } = authentication
+    const authConfig = this.authentication.configuration
+    const { identityFields } = authConfig
     const { entity } = this.configuration
     const renewJwt = _.get(this.configuration, 'renewJwt', true)
 
@@ -106,14 +108,31 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     // Second key trick
     // Return user attached to the token if any
     // Return basic information for a stateless token otherwise
-    // As we only target MongoDB now, check for a valid ID otherwise assume a stateless token as well
-    if (payload.sub && ObjectID.isValid(payload.sub)) {
-      const entityId = await this.getEntityId(result, params)
-      const value = await this.getEntity(entityId, params)
+    if (payload.sub) {
+      // Check for a valid MongoDB ID
+      if (ObjectID.isValid(payload.sub)) {
+        const entityId = await this.getEntityId(result, params)
+        const value = await this.getEntity(entityId, params)
 
-      return {
-        ...result,
-        [entity]: value
+        return {
+          ...result,
+          [entity]: value
+        }
+      } else if (identityFields) {
+        // Otherwise use others fields to identify the user if defined
+        const query = {
+          $or: _.reduce(identityFields, (or, field) => or.concat([{ [field]: payload.sub }]), []),
+          $limit: 1
+        }
+        const response = await this.entityService.find({ ...params, query })
+        const [value = null] = response.data ? response.data : response
+        // Otherwise assume a stateless token
+        if (value) {
+          return {
+            ...result,
+            [entity]: value
+          }
+        }
       }
     }
 

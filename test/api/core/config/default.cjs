@@ -19,6 +19,7 @@ module.exports = {
     path: API_PREFIX + '/authentication',
     service: API_PREFIX + '/users',
     entity: 'user',
+    identityFields: ['email', 'profile.phone'],
     authStrategies: [
       'jwt',
       'local'

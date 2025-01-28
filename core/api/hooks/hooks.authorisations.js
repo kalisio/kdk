@@ -25,7 +25,7 @@ export function createJWT (options = {}) {
     const accessTokens = await Promise.all(items.map(item => hook.app.getService('authentication').createAccessToken(
       // Provided function can be used to pick or omit properties in JWT payload
       (typeof options.payload === 'function' ? options.payload(user) : {}),
-      // Provided function can be used for custom options cdepending on the user,
+      // Provided function can be used for custom options depending on the user,
       // then we merge with default auth options for global properties like aud, iss, etc.
       _.merge({}, defaults, (typeof options.jwt === 'function' ? options.jwt(user) : options)))
     ))
