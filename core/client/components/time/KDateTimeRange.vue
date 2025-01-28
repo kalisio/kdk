@@ -156,20 +156,20 @@ const rangeMax = computed(() => {
 })
 const disableTeleport = computed(() => {
   let disable = false
-  if(props.slider) {
-    switch (props.slider.position){
+  if (props.slider) {
+    switch (props.slider.position) {
       case 'bottom':
         disable = false
-        break;
+        break
       case 'between':
         disable = true
-        break;
+        break
       case 'auto':
       default:
-        if($q.screen.gt.sm){
+        if ($q.screen.gt.sm) {
           disable = true
         }
-        break;
+        break
     }
   }
   return disable
