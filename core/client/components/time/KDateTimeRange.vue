@@ -16,11 +16,11 @@
       >
         <Teleport v-if="isMounted"
           to="#responsive-range-container"
-          :disabled="$q.screen.gt.sm"
+          :disabled="disableTeleport"
         >
           <q-range
             v-model="rangeModel"
-            v-bind="props.range"
+            v-bind="props.slider.range"
             @update:model-value="setDateTimeRangeFromSliderPosition()"
             @change="emitRangeChange()"
             style="min-width: 200px; padding-top: 4px;"
@@ -52,6 +52,7 @@
 
 <script setup>
 import _ from 'lodash'
+import { useQuasar } from 'quasar'
 import moment from 'moment'
 import { ref, computed, watch, onMounted } from 'vue'
 import KDateTime from './KDateTime.vue'
@@ -99,7 +100,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  range: {
+  slider: {
     type: Object,
     default: () => {}
   }
@@ -109,6 +110,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
+const $q = useQuasar()
 const isMounted = ref(false)
 const startDateTime = ref(null)
 const endDateTime = ref(null)
@@ -143,15 +145,34 @@ const endModel = computed({
 const separator = computed(() => {
   return _.get(props.options, 'separator', '/')
 })
-
 const displaySlider = computed(() => {
-  return !!(props.range && props.min && props.max)
+  return !!(props.slider.range && props.min && props.max)
 })
 const rangeMin = computed(() => {
   return props.dateOnly ? getDateWithoutTime(props.min, 'start').toISOString() : moment(props.min).utc().toISOString()
 })
 const rangeMax = computed(() => {
   return props.dateOnly ? getDateWithoutTime(props.max, 'end').toISOString() : moment(props.max).utc().toISOString()
+})
+const disableTeleport = computed(() => {
+  let disable = false
+  if(props.slider) {
+    switch (props.slider.position){
+      case 'bottom':
+        disable = false
+        break;
+      case 'between':
+        disable = true
+        break;
+      case 'auto':
+      default:
+        if($q.screen.gt.sm){
+          disable = true
+        }
+        break;
+    }
+  }
+  return disable
 })
 
 // Watch
@@ -199,7 +220,7 @@ if (props.modelValue) {
       startDateTime.value = getDateWithoutTime(props.modelValue.start, 'start')
       endDateTime.value = getDateWithoutTime(props.modelValue.end, 'end')
     }
-    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (props.range.max - props.range.min))
+    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (props.slider.range.max - props.slider.range.min))
     setSliderPositionFromDateTimeRAnge()
   }
 }
