@@ -3,25 +3,26 @@
     v-model="location"
     :geocoders="geocoders"
     :autofocus="autofocus"
+    :viewbox="viewbox"
     :style="computedStyle"
   />
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { uid, getCssVar, useQuasar } from 'quasar'
 import bbox from '@turf/bbox'
-import KLocationSearch from '../location/KLocationSearch.vue'
 import { useCurrentActivity } from '../../composables'
+import KLocationSearch from '../location/KLocationSearch.vue'
 
 // Data
 const $q = useQuasar()
-const { CurrentActivity } = useCurrentActivity()
+const { CurrentActivityContext, CurrentActivity } = useCurrentActivity()
 const location = ref(null)
 const LocationLayerName = uid()
 
 // Props
-defineProps({
+const props = defineProps({
   geocoders: {
     type: Array,
     default: () => []
@@ -31,6 +32,10 @@ defineProps({
     default: false
   }
 })
+
+
+// Data
+const viewbox = ref(null)
 
 // Computed
 const computedStyle = computed(() => {
@@ -42,7 +47,7 @@ const computedStyle = computed(() => {
 // Functions
 async function createLocationLayer () {
   // create the layer
-  const style = CurrentActivity.value.activityOptions.engine.style.location
+  const style = CurrentActivityContext.config.engine.style.location
   await CurrentActivity.value.addLayer({
     name: LocationLayerName,
     type: 'OverlayLayer',
@@ -85,19 +90,30 @@ async function createLocationLayer () {
     CurrentActivity.value.zoomToBBox(bbox(location.value))
   }
 }
-
 async function removeLocationLayer () {
   if (CurrentActivity.value) await CurrentActivity.value.removeLayer(LocationLayerName)
 }
+function onMoveEnd() {
+  const bounds = CurrentActivity.value.getBounds()
+  viewbox.value = [bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]]
+}
 
-// Watchers
+// Watch
 watch(location, async (newLocation, previousLocation) => {
   if (previousLocation) await removeLocationLayer()
   if (newLocation) await createLocationLayer()
 })
 
 // Hooks
+onMounted(() => {
+  // start listening moveend event to update the current viewbox
+  CurrentActivity.value.$engineEvents.on('moveend', onMoveEnd)
+  onMoveEnd()
+})
 onBeforeUnmount(async () => {
+  // stop listening moveend event
+  CurrentActivity.value.$engineEvents.off('moveend',onMoveEnd)
+  // remove the marker if any
   if (location.value) await removeLocationLayer()
 })
 </script>

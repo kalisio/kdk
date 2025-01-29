@@ -56,7 +56,7 @@ export const Geolocation = {
     try {
       location = await this.refresh()
       Store.patch('geolocation', { location, error: undefined })
-      logger.debug('[KDK] geolocation updated: ', JSON.stringify(location, null, 4))
+      logger.debug('[KDK] Geolocation updated:', location)
     } catch (error) {
       const code = error.code
       const geolocationError = new errors.KGeolocationError()

@@ -21,13 +21,21 @@
     <!-- Extra actions -->
     <template v-slot:append>
       <div class="q-pl-xs row items-center">
+        <!-- viewbox filtering -->
+        <KAction
+          id="viewbox-search"
+          icon="las la-expand"
+          tooltip="KLocationSearch.SEARCH_IN_VIEWBOX"
+          size="0.8rem"
+          :toggle="{ color: 'primary', tooltip: 'KLocationSearch.SEARCH_IN_MAPBOX' }"
+          @toggled="onViewboxToggled"
+        />
         <!-- geocoders filtering -->
         <KAction
           v-if="hasGeocoders"
           id="configure"
-          tooltip="KLocationSearch.FILTER"
           icon="las la-sliders-h"
-          color="grey-7"
+          tooltip="KLocationSearch.FILTER_GEOCODERS"
           size="0.8rem"
           dense
         >
@@ -100,9 +108,9 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  geolocation: {
-    type: Boolean,
-    default: false
+  viewbox: {
+    type: Array,
+    default: () => null
   },
   editor: {
     type: Object,
@@ -122,9 +130,10 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
+const { availableGeocoders, selectedGeocoders, setGeocoders, setViewbox, search: searchLocation } = useLocation()
 const location = ref(props.modelValue)
 const locations = ref([])
-const { availableGeocoders, selectedGeocoders, setGeocoders, search: searchLocation } = useLocation()
+const useViewbox = ref(false)
 
 // Computed
 const computedLabel = computed(() => {
@@ -148,6 +157,16 @@ async function onSearch (pattern, update, abort) {
     locations.value = result
   })
 }
+function onViewboxToggled () {
+  if (useViewbox.value) {
+    useViewbox.value = false
+    setViewbox(null)
+    
+  } else {
+    useViewbox.value = true
+    setViewbox(props.viewbox)
+  }
+}
 function onLocationChanged () {
   emit('update:modelValue', location.value)
 }
@@ -155,5 +174,9 @@ function onLocationChanged () {
 // Hooks
 watch(() => props.geocoders, (geocoders) => {
   setGeocoders(geocoders)
+}, { immediate: true })
+watch(() => props.viewbox, (viewbox) => {
+  if (useViewbox.value) setViewbox(viewbox)
+  else setViewbox(null)
 }, { immediate: true })
 </script>

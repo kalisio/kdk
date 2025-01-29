@@ -78,8 +78,6 @@ export async function searchLocation (planetConfig, pattern, options) {
     if (!_.isEmpty(options.viewbox)) {
       filter += '&viewbox=' + options.viewbox.join(',')
     }
-
-
     const results = await queryGeocoder(planetConfig, 'forward', `q=${pattern}${filter}`)
     results.forEach(result => {
       locations.push(

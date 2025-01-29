@@ -392,9 +392,9 @@
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "No result found",
-    "FILTER": "Filter search services",
-    "GEOLOCATE": "Locate me",
-    "EDIT": "Edit on a map"
+    "SEARCH_IN_VIEWBOX": "Limit search to current view",
+    "SEARCH_IN_MAPBOX": "Search the entire map",
+    "FILTER_GEOCODERS": "Filter search services"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",

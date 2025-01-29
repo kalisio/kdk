@@ -391,9 +391,9 @@
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "Aucun résultat trouvé",
-    "FILTER": "Filtrer les services de recherche",
-    "GEOLOCATE": "Me localiser",
-    "EDIT": "Editer sur une carte"
+    "SEARCH_IN_VIEWBOX": "Limiter la recherche à la vue courante",
+    "SEARCH_IN_MAPBOX": "Rechercher dans toute la carte",
+    "FILTER_GEOCODERS": "Filtrer les services de recherche"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
