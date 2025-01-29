@@ -27,7 +27,7 @@
           icon="las la-expand"
           tooltip="KLocationSearch.SEARCH_IN_VIEWBOX"
           size="0.8rem"
-          :toggle="{ color: 'primary', tooltip: 'KLocationSearch.SEARCH_IN_MAPBOX' }"
+          :toggle="{ tooltip: 'KLocationSearch.SEARCH_IN_MAPBOX' }"
           @toggled="onViewboxToggled"
         />
         <!-- geocoders filtering -->
