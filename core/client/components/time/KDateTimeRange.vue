@@ -20,7 +20,7 @@
         >
           <q-range
             v-model="rangeModel"
-            v-bind="props.slider.range"
+            v-bind="props.slider"
             @update:model-value="setDateTimeRangeFromSliderPosition()"
             @change="emitRangeChange()"
             style="min-width: 200px; padding-top: 4px;"
@@ -102,9 +102,7 @@ const props = defineProps({
   },
   slider: {
     type: Object,
-    default: () => {
-      return {show:false}
-    }
+    default: () => null
   }
 })
 
@@ -148,7 +146,7 @@ const separator = computed(() => {
   return _.get(props.options, 'separator', '/')
 })
 const displaySlider = computed(() => {
-  return !!(props.slider.show && props.min && props.max)
+  return !!(props.slider)
 })
 const rangeMin = computed(() => {
   return props.dateOnly ? getDateWithoutTime(props.min, 'start').toISOString() : moment(props.min).utc().toISOString()
@@ -218,11 +216,11 @@ if (props.modelValue) {
   startDateTime.value = moment(props.modelValue.start).utc()
   endDateTime.value = moment(props.modelValue.end).utc()
   if (displaySlider.value) {
-    if(props.slider.range && props.slider.range.min) {
-      rangeModel.value.min = props.slider.range.min
+    if(props.slider.min) {
+      rangeModel.value.min = props.slider.min
     }
-    if(props.slider.range && props.slider.range.max) {
-      rangeModel.value.max = props.slider.range.max
+    if(props.slider.max) {
+      rangeModel.value.max = props.slider.max
     }
     if (props.dateOnly) {
       startDateTime.value = getDateWithoutTime(props.modelValue.start, 'start')
