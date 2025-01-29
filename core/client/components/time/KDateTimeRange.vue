@@ -146,7 +146,7 @@ const separator = computed(() => {
   return _.get(props.options, 'separator', '/')
 })
 const displaySlider = computed(() => {
-  return !!(props.slider.range && props.min && props.max)
+  return !!(props.slider.show && props.min && props.max)
 })
 const rangeMin = computed(() => {
   return props.dateOnly ? getDateWithoutTime(props.min, 'start').toISOString() : moment(props.min).utc().toISOString()
@@ -216,11 +216,17 @@ if (props.modelValue) {
   startDateTime.value = moment(props.modelValue.start).utc()
   endDateTime.value = moment(props.modelValue.end).utc()
   if (displaySlider.value) {
+    if(props.slider.range && props.slider.range.min) {
+      rangeModel.value.min = props.slider.range.min
+    }
+    if(props.slider.range && props.slider.range.max) {
+      rangeModel.value.max = props.slider.range.max
+    }
     if (props.dateOnly) {
       startDateTime.value = getDateWithoutTime(props.modelValue.start, 'start')
       endDateTime.value = getDateWithoutTime(props.modelValue.end, 'end')
     }
-    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (props.slider.range.max - props.slider.range.min))
+    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (rangeModel.value.max - rangeModel.value.min))
     setSliderPositionFromDateTimeRAnge()
   }
 }
