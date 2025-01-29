@@ -161,7 +161,6 @@ function onViewboxToggled () {
   if (useViewbox.value) {
     useViewbox.value = false
     setViewbox(null)
-    
   } else {
     useViewbox.value = true
     setViewbox(props.viewbox)

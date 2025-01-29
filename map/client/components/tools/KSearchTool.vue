@@ -22,7 +22,7 @@ const location = ref(null)
 const LocationLayerName = uid()
 
 // Props
-const props = defineProps({
+defineProps({
   geocoders: {
     type: Array,
     default: () => []
@@ -32,7 +32,6 @@ const props = defineProps({
     default: false
   }
 })
-
 
 // Data
 const viewbox = ref(null)
@@ -93,7 +92,7 @@ async function createLocationLayer () {
 async function removeLocationLayer () {
   if (CurrentActivity.value) await CurrentActivity.value.removeLayer(LocationLayerName)
 }
-function onMoveEnd() {
+function onMoveEnd () {
   const bounds = CurrentActivity.value.getBounds()
   viewbox.value = [bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]]
 }
@@ -112,7 +111,7 @@ onMounted(() => {
 })
 onBeforeUnmount(async () => {
   // stop listening moveend event
-  CurrentActivity.value.$engineEvents.off('moveend',onMoveEnd)
+  CurrentActivity.value.$engineEvents.off('moveend', onMoveEnd)
   // remove the marker if any
   if (location.value) await removeLocationLayer()
 })
