@@ -102,7 +102,9 @@ const props = defineProps({
   },
   slider: {
     type: Object,
-    default: () => {}
+    default: () => {
+      return {show:false}
+    }
   }
 })
 
