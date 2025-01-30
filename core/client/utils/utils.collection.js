@@ -11,29 +11,27 @@ export function getCollectionService (serviceName, serviceContext) {
 }
 
 export async function getOldestItem (service, field = 'createdAt', filter = {}) {
-  const query = { $sort: {[field]: 1 }, $limit: 1 }
-  const response = await service.find({ query: _.merge({}, filter, query) })
+  const response = await service.find({ query: _.merge({}, filter, { $sort: {[field]: 1 }, $limit: 1 }) })
   return _.get(response, 'data[0]')
 }
 
 export async function getOldestTime (service, field = 'createdAt', filter = {}) {
-  const oldestItem = await getOldestItem (service, filter, field)
+  const oldestItem = await getOldestItem (service, field, filter)
   return _.get(oldestItem, field)
 }
 
 export async function getLatestItem (service, field = 'createdAt', filter = {}) {
-  const query = { $sort: {[field]: -1 }, $limit: 1 }
-  const response = await service.find({ query: _.merge({}, filter, query) })
+  const response = await service.find({ query: _.merge({}, filter, { $sort: {[field]: -1 }, $limit: 1 }) })
   return _.get(response, 'data[0]')
 }
 
 export async function getLatestTime (service, field = 'createdAt', filter = {}) {
-  const latestItem = await getLatestItem (service, filter, field)
+  const latestItem = await getLatestItem (service, field, filter)
   return _.get(latestItem, field)
 }
 
 export async function enumerateField (service, field, filter = {}) {
-  const query = _.merge({ $distinct: field }, filter)
+  const query = _.merge({}, filter, { $distinct: field })
   const values = await service.find({ query })
   if (Array.isArray(values)) return values
   return [values]
