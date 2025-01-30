@@ -216,10 +216,10 @@ if (props.modelValue) {
   startDateTime.value = moment(props.modelValue.start).utc()
   endDateTime.value = moment(props.modelValue.end).utc()
   if (displaySlider.value) {
-    if(props.slider.min) {
+    if (props.slider.min) {
       rangeModel.value.min = props.slider.min
     }
-    if(props.slider.max) {
+    if (props.slider.max) {
       rangeModel.value.max = props.slider.max
     }
     if (props.dateOnly) {
