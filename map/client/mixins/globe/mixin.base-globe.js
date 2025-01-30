@@ -69,6 +69,24 @@ export const baseGlobe = {
         const undergroundColor = _.get(this.viewerOptions, 'undergroundColor')
         this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Color.BLACK)
       }
+
+      // Update moving materials
+      this.viewer.scene.preRender.addEventListener(() => {
+        if(!this.cesiumMaterials) return
+        _.forEach(this.cesiumMaterials, m => {
+          if(!m.material.uniforms.offset) return
+          
+          m.material.uniforms.offset.x += m.speedX || 0;
+          m.material.uniforms.offset.y += m.speedY || 0;
+          if (m.material.uniforms.offset.x > 1.0) {
+            m.material.uniforms.offset.x = 0;
+          }
+          if (m.material.uniforms.offset.y > 1.0) {
+            m.material.uniforms.offset.y = 0;
+          }
+        });
+      });
+
       // Debug mode ?
       //this.viewerOptions.debug = true
       if (this.viewerOptions.debug) this.viewer.extend(viewerCesiumInspectorMixin)
@@ -261,6 +279,12 @@ export const baseGlobe = {
       } else if (cesiumLayer instanceof Cesium3DTileset) {
         cesiumLayer.show = false
       } else { // Entity data source otherwise
+        // Remove primitives before removing the data source
+        if(cesiumLayer.primitives){
+          for (let i = 0, j = cesiumLayer.primitives.length; i < j; i++) {
+            this.viewer.scene.primitives.remove(cesiumLayer.primitives.get(i))
+          }
+        }
         this.viewer.dataSources.remove(cesiumLayer, true)
       }
       this.onLayerHidden(layer, cesiumLayer)
@@ -718,6 +742,7 @@ export const baseGlobe = {
   created () {
     this.cesiumLayers = {}
     this.cesiumFactory = []
+    this.cesiumMaterials = []
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus

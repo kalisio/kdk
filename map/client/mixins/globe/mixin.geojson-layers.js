@@ -1,4 +1,4 @@
-import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty } from 'cesium'
+import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty, Primitive, GeometryInstance, MaterialAppearance, PrimitiveCollection } from 'cesium'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
@@ -7,6 +7,7 @@ import { Time, Units } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
+import { createWallGeometry, createMaterialWithMovingTexture } from '../../cesium/utils/utils.cesium.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
 const CustomTypes = ['wall', 'corridor']
@@ -54,6 +55,13 @@ export const geojsonLayers = {
             if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
           })
         })
+
+        if(dataSource.primitives) {
+          for(let i = 0, j = dataSource.primitives.length; i < j; i++) {
+            this.viewer.scene.primitives.remove(dataSource.primitives.get(i))
+          }
+        }
+
         return
       }
       // We use a separated source in order to load data otherwise Cesium will replace previous ones, causing flickering
@@ -79,6 +87,13 @@ export const geojsonLayers = {
           })
         })
       }
+
+      if(dataSource.primitives) {
+        for(let i = 0, j = dataSource.primitives.length; i < j; i++) {
+          this.viewer.scene.primitives.remove(dataSource.primitives.get(i))
+        }
+      }
+
       // Process specific entities
       entities = dataSource.entities.values
       const entitiesToAdd = []
@@ -116,20 +131,42 @@ export const geojsonLayers = {
           // Simply push the entity, other options like font will be set using styling options
           // This one will come in addition to the original line
           const wallId = getCustomEntityId(entity.id, 'wall')
-          entitiesToAdd.push({
-            id: wallId,
-            parent: entity,
-            name: entity.name ? entity.name : wallId,
-            description: entity.description.getValue(0),
-            properties: entity.properties.getValue(0),
-            wall: {
-              positions: entity.polyline.positions.getValue(0),
-              material: new ColorMaterialProperty(fill),
-              outlineColor: new ConstantProperty(stroke),
-              outlineWidth: strokeWidth,
-              outline: new ConstantProperty(true)
+
+          const texture = _.get(properties, 'entityStyle.wall.material.image')
+          if(texture && (_.get(properties, 'entityStyle.wall.material.speedX') != undefined || _.get(properties, 'entityStyle.wall.material.speedY') != undefined)) {
+            const primitive = this.createWallWithMovingTexture({
+              positions: entity.polyline.positions.getValue(0), // TODO : reverse positions if property 'reverse' is true ?
+              minimumHeights: _.get(properties, 'entityStyle.wall.minimumHeights', 0),
+              maximumHeights: _.get(properties, 'entityStyle.wall.maximumHeights', 0),
+              material: {
+                image: texture,
+                translucent: _.get(properties, 'entityStyle.wall.material.translucent', false),
+                speedX: _.get(properties, 'entityStyle.wall.material.speedX', 0),
+                speedY: _.get(properties, 'entityStyle.wall.material.speedY', 0),
+                repeatX: _.get(properties, 'entityStyle.wall.material.repeatX', 1),
+                repeatY: _.get(properties, 'entityStyle.wall.material.repeatY', 1)
+              }
+            })
+            if(primitive) {
+              dataSource.primitives.add(primitive)
+              this.viewer.scene.primitives.add(primitive)
             }
-          })
+          } else {
+            entitiesToAdd.push({
+              id: wallId,
+              parent: entity,
+              name: entity.name ? entity.name : wallId,
+              description: entity.description.getValue(0),
+              properties: entity.properties.getValue(0),
+              wall: {
+                positions: entity.polyline.positions.getValue(0),
+                material: new ColorMaterialProperty(fill),
+                outlineColor: new ConstantProperty(stroke),
+                outlineWidth: strokeWidth,
+                outline: new ConstantProperty(true)
+              }
+            })
+          }
         }
         // Corridors
         const corridor = _.get(properties, 'corridor') || _.get(properties, 'entityStyle.corridor')
@@ -328,6 +365,8 @@ export const geojsonLayers = {
       if (!dataSource || !dataSource.name) {
         dataSource = new GeoJsonDataSource()
         dataSource.notFromDrop = true
+
+        dataSource.primitives = new PrimitiveCollection()
         // Check for realtime layers
         if (cesiumOptions.realtime) {
           await this.createCesiumRealtimeGeoJsonLayer(dataSource, options)
@@ -455,6 +494,51 @@ export const geojsonLayers = {
       if (_.has(this.geojsonCache, layer.name)) {
         delete this.geojsonCache[layer.name]
       }
+    },
+    createWallWithMovingTexture (options) {
+      if(!options.positions || !_.get(options, 'material.image', false)) return
+      
+      options = {
+        positions: options.positions,
+        minimumHeights: _.get(options, 'minimumHeights', 0), // can be a single value
+        maximumHeights: _.get(options, 'maximumHeights', null), // can be a single value
+        material: {
+          image: options.material.image,
+          translucent: _.get(options, 'material.translucent', false),
+          speedX: _.get(options, 'material.speedX', 0),
+          speexY: _.get(options, 'material.speedY', 0),
+          repeatX: _.get(options, 'material.repeatX', 1),
+          repeatY: _.get(options, 'material.repeatY', 1)
+        }
+      }
+
+      const { geometry, dimensions } = createWallGeometry(options.positions, options.minimumHeights, options.maximumHeights)
+      
+      if(options.material.repeatY === 'fit' && options.material.repeatX !== 'fit') {
+        options.material.repeatY = 1
+        options.material.repeatX = dimensions.lineLength / dimensions.minHeight
+      } else if (options.material.repeatX === 'fit' && options.material.repeatY !== 'fit') {
+        options.material.repeatX = 1
+        options.material.repeatY = dimensions.minHeight / dimensions.lineLength
+      }
+
+      // Create material
+      const material = createMaterialWithMovingTexture(options.material)
+      if(!material) return
+
+      this.cesiumMaterials.push({ material, speedX: _.get(options, 'material.speedX'), speedY: _.get(options, 'material.speedY') })
+
+      // Create primitive
+      return new Primitive({
+        geometryInstances: new GeometryInstance({
+          geometry: geometry
+        }),
+        appearance: new MaterialAppearance({
+          material: material,
+          translucent: material.translucent
+        }),
+        asynchronous: false
+      })
     }
   },
   created () {
