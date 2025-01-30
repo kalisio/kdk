@@ -6,6 +6,7 @@ import { defineAsyncComponent, markRaw } from 'vue'
 
 export * from './utils.account.js'
 export * from './utils.actions.js'
+export * from './utils.collection.js'
 export * from './utils.colors.js'
 export * from './utils.content.js'
 export * from './utils.items.js'
