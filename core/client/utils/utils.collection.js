@@ -17,7 +17,6 @@ export async function getOldestItem (service, field = 'createdAt', filter = {}) 
 }
 
 export async function getOldestTime (service, field = 'createdAt', filter = {}) {
-  console.log(service, filter, field)
   const oldestItem = await getOldestItem (service, filter, field)
   return _.get(oldestItem, field)
 }
