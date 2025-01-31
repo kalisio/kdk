@@ -72,23 +72,23 @@ export const baseGlobe = {
 
       // Update moving materials
       this.viewer.scene.preRender.addEventListener(() => {
-        if(!this.cesiumMaterials) return
+        if (!this.cesiumMaterials) return
         _.forEach(this.cesiumMaterials, m => {
-          if(!m.material.uniforms.offset) return
-          
-          m.material.uniforms.offset.x += m.speedX || 0;
-          m.material.uniforms.offset.y += m.speedY || 0;
+          if (!m.material.uniforms.offset) return
+
+          m.material.uniforms.offset.x += m.speedX || 0
+          m.material.uniforms.offset.y += m.speedY || 0
           if (m.material.uniforms.offset.x > 1.0) {
-            m.material.uniforms.offset.x = 0;
+            m.material.uniforms.offset.x = 0
           }
           if (m.material.uniforms.offset.y > 1.0) {
-            m.material.uniforms.offset.y = 0;
+            m.material.uniforms.offset.y = 0
           }
-        });
-      });
+        })
+      })
 
       // Debug mode ?
-      //this.viewerOptions.debug = true
+      // this.viewerOptions.debug = true
       if (this.viewerOptions.debug) this.viewer.extend(viewerCesiumInspectorMixin)
       // Cesium always create a default provider when a globe is used
       if (this.viewer.scene.imageryLayers) this.viewer.scene.imageryLayers.removeAll()
@@ -280,7 +280,7 @@ export const baseGlobe = {
         cesiumLayer.show = false
       } else { // Entity data source otherwise
         // Remove primitives before removing the data source
-        if(cesiumLayer.primitives){
+        if (cesiumLayer.primitives) {
           for (let i = 0, j = cesiumLayer.primitives.length; i < j; i++) {
             this.viewer.scene.primitives.remove(cesiumLayer.primitives.get(i))
           }

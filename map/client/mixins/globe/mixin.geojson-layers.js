@@ -7,7 +7,7 @@ import { Time, Units } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
-import { createWallGeometry, createMaterialWithMovingTexture } from '../../cesium/utils/utils.cesium.js'
+import { createWallGeometry, createCorridorGeometry, createMaterialWithMovingTexture } from '../../cesium/utils/utils.cesium.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
 const CustomTypes = ['wall', 'corridor']
@@ -16,7 +16,7 @@ function getCustomEntityId (id, type) {
   return `${id}-${type}`
 }
 
-function updateGeoJsonEntity(source, destination) {
+function updateGeoJsonEntity (source, destination) {
   destination.position = source.position
   destination.orientation = source.orientation
   destination.properties = source.properties
@@ -56,8 +56,8 @@ export const geojsonLayers = {
           })
         })
 
-        if(dataSource.primitives) {
-          for(let i = 0, j = dataSource.primitives.length; i < j; i++) {
+        if (dataSource.primitives) {
+          for (let i = 0, j = dataSource.primitives.length; i < j; i++) {
             this.viewer.scene.primitives.remove(dataSource.primitives.get(i))
           }
         }
@@ -88,8 +88,8 @@ export const geojsonLayers = {
         })
       }
 
-      if(dataSource.primitives) {
-        for(let i = 0, j = dataSource.primitives.length; i < j; i++) {
+      if (dataSource.primitives) {
+        for (let i = 0, j = dataSource.primitives.length; i < j; i++) {
           this.viewer.scene.primitives.remove(dataSource.primitives.get(i))
         }
       }
@@ -133,21 +133,11 @@ export const geojsonLayers = {
           const wallId = getCustomEntityId(entity.id, 'wall')
 
           const texture = _.get(properties, 'entityStyle.wall.material.image')
-          if(texture && (_.get(properties, 'entityStyle.wall.material.speedX') != undefined || _.get(properties, 'entityStyle.wall.material.speedY') != undefined)) {
-            const primitive = this.createWallWithMovingTexture({
-              positions: entity.polyline.positions.getValue(0), // TODO : reverse positions if property 'reverse' is true ?
-              minimumHeights: _.get(properties, 'entityStyle.wall.minimumHeights', 0),
-              maximumHeights: _.get(properties, 'entityStyle.wall.maximumHeights', 0),
-              material: {
-                image: texture,
-                translucent: _.get(properties, 'entityStyle.wall.material.translucent', false),
-                speedX: _.get(properties, 'entityStyle.wall.material.speedX', 0),
-                speedY: _.get(properties, 'entityStyle.wall.material.speedY', 0),
-                repeatX: _.get(properties, 'entityStyle.wall.material.repeatX', 1),
-                repeatY: _.get(properties, 'entityStyle.wall.material.repeatY', 1)
-              }
-            })
-            if(primitive) {
+          if (texture && (_.isNil(_.get(properties, 'entityStyle.wall.material.speedX')) || _.isNil(_.get(properties, 'entityStyle.wall.material.speedY')))) {
+            const options = _.get(properties, 'entityStyle.wall')
+            options.positions = entity.polyline.positions.getValue(0)
+            const primitive = this.createPrimitiveWithMovingTexture('wall', options)
+            if (primitive) {
               dataSource.primitives.add(primitive)
               this.viewer.scene.primitives.add(primitive)
             }
@@ -175,21 +165,33 @@ export const geojsonLayers = {
           // Simply push the entity, other options like width be set using styling options
           // This one will come in replacement to the original line
           const corridorId = getCustomEntityId(entity.id, 'corridor')
-          entitiesToAdd.push({
-            id: corridorId,
-            parent: entity,
-            name: entity.name ? entity.name : corridorId,
-            description: entity.description.getValue(0),
-            properties: entity.properties.getValue(0),
-            corridor: {
-              positions: entity.polyline.positions.getValue(0),
-              material: new ColorMaterialProperty(fill),
-              outlineColor: new ConstantProperty(stroke),
-              outlineWidth: strokeWidth,
-              outline: new ConstantProperty(true)
+
+          const texture = _.get(properties, 'entityStyle.corridor.material.image')
+          if (texture && (!_.isNil(_.get(properties, 'entityStyle.corridor.material.speedX')) || _.isNil(_.get(properties, 'entityStyle.corridor.material.speedY')))) {
+            const options = _.get(properties, 'entityStyle.corridor')
+            options.positions = entity.polyline.positions.getValue(0)
+            const primitive = this.createPrimitiveWithMovingTexture('corridor', options)
+            if (primitive) {
+              dataSource.primitives.add(primitive)
+              this.viewer.scene.primitives.add(primitive)
             }
-          })
-          entitiesToRemove.push(entity)
+          } else {
+            entitiesToAdd.push({
+              id: corridorId,
+              parent: entity,
+              name: entity.name ? entity.name : corridorId,
+              description: entity.description.getValue(0),
+              properties: entity.properties.getValue(0),
+              corridor: {
+                positions: entity.polyline.positions.getValue(0),
+                material: new ColorMaterialProperty(fill),
+                outlineColor: new ConstantProperty(stroke),
+                outlineWidth: strokeWidth,
+                outline: new ConstantProperty(true)
+              }
+            })
+            entitiesToRemove.push(entity)
+          }
         }
         // Billboard with 'none' shape should be removed as Cesium creates it even if the maki icon id is unknown
         if (entity.billboard && (_.get(properties, 'marker-symbol') === 'none')) {
@@ -495,13 +497,11 @@ export const geojsonLayers = {
         delete this.geojsonCache[layer.name]
       }
     },
-    createWallWithMovingTexture (options) {
-      if(!options.positions || !_.get(options, 'material.image', false)) return
-      
-      options = {
-        positions: options.positions,
-        minimumHeights: _.get(options, 'minimumHeights', 0), // can be a single value
-        maximumHeights: _.get(options, 'maximumHeights', null), // can be a single value
+    createPrimitiveWithMovingTexture (type, options) {
+      if (!options.positions || !_.get(options, 'material.image', false)) return
+
+      const opt = {
+        positions: options.material.reverse === true ? options.positions.reverse() : options.positions,
         material: {
           image: options.material.image,
           translucent: _.get(options, 'material.translucent', false),
@@ -512,29 +512,52 @@ export const geojsonLayers = {
         }
       }
 
-      const { geometry, dimensions } = createWallGeometry(options.positions, options.minimumHeights, options.maximumHeights)
-      
-      if(options.material.repeatY === 'fit' && options.material.repeatX !== 'fit') {
-        options.material.repeatY = 1
-        options.material.repeatX = dimensions.lineLength / dimensions.minHeight
-      } else if (options.material.repeatX === 'fit' && options.material.repeatY !== 'fit') {
-        options.material.repeatX = 1
-        options.material.repeatY = dimensions.minHeight / dimensions.lineLength
+      let geometry = null
+      switch (type) {
+        case 'wall':
+          opt.minimumHeights = _.get(options, 'minimumHeights', 0) // can be a single value
+          opt.maximumHeights = _.get(options, 'maximumHeights', null) // can be a single value
+          geometry = createWallGeometry(opt.positions, opt.minimumHeights, opt.maximumHeights)
+          break
+        case 'corridor':
+          opt.width = _.get(options, 'width', 10)
+          opt.height = _.get(options, 'height', 0)
+          geometry = createCorridorGeometry(opt.positions, opt.width, opt.height)
+          break
+        default:
+          break
+      }
+
+      if (!geometry) return
+      const dimensions = geometry.dimensions
+      geometry = geometry.geometry
+
+      const fitOnX = _.get(opt, 'material.repeatX') === 'fit'
+      const fitOnY = _.get(opt, 'material.repeatY') === 'fit'
+      if (fitOnX || fitOnY) {
+        opt.material.repeatX = 1
+        opt.material.repeatY = 1
+
+        if (!fitOnX) {
+          opt.material.repeatX = dimensions.lineLength / (dimensions.minHeight || dimensions.width)
+        } else if (!fitOnY) {
+          opt.material.repeatY = (dimensions.minHeight || dimensions.width) / dimensions.lineLength
+        }
       }
 
       // Create material
-      const material = createMaterialWithMovingTexture(options.material)
-      if(!material) return
+      const material = createMaterialWithMovingTexture(opt.material)
+      if (!material) return
 
-      this.cesiumMaterials.push({ material, speedX: _.get(options, 'material.speedX'), speedY: _.get(options, 'material.speedY') })
+      this.cesiumMaterials.push({ material, speedX: _.get(opt, 'material.speedX'), speedY: _.get(opt, 'material.speedY') })
 
       // Create primitive
       return new Primitive({
         geometryInstances: new GeometryInstance({
-          geometry: geometry
+          geometry
         }),
         appearance: new MaterialAppearance({
-          material: material,
+          material,
           translucent: material.translucent
         }),
         asynchronous: false
