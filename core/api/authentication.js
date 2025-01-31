@@ -33,17 +33,17 @@ export class Authentication extends AuthenticationService {
 }
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
-  setAuthentication(auth) {
+  setAuthentication (auth) {
     super.setAuthentication(auth)
     const authConfig = this.authentication.configuration
     const { oauth } = authConfig
     // Single logout supported ?
-    const { logout_url, post_logout_url, key } = this.configuration
-    if (logout_url && key) {
+    const { logout_url: logoutUrl, post_logout_url: postLogoutUrl, key } = this.configuration
+    if (logoutUrl && key) {
       // Cannot use oauth/:provider/logout route as oauth/:provider is already intercepted by feathers and this causes an error
       this.app.get(`/oauth-logout/${this.name}`, (req, res) => {
-        return res.redirect(logout_url + '?' + qs.stringify({
-          post_logout_redirect_uri: post_logout_url || oauth.redirect,
+        return res.redirect(logoutUrl + '?' + qs.stringify({
+          post_logout_redirect_uri: postLogoutUrl || oauth.redirect,
           client_id: key
         }))
       })
