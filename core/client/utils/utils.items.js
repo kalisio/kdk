@@ -15,6 +15,10 @@ export const CardSectionProps = {
     type: [String, Array],
     default: () => null
   },
+  hideSeparator: {
+    type: Boolean,
+    default: false
+  },
   hideHeader: {
     type: Boolean,
     default: false
