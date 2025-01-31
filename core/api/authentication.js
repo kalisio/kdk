@@ -1,5 +1,6 @@
 import makeDebug from 'debug'
 import _ from 'lodash'
+import qs from 'qs'
 import 'winston-daily-rotate-file'
 // import { RateLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
@@ -32,6 +33,23 @@ export class Authentication extends AuthenticationService {
 }
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
+  setAuthentication(auth) {
+    super.setAuthentication(auth)
+    const authConfig = this.authentication.configuration
+    const { oauth } = authConfig
+    // Single logout supported ?
+    const { logout_url, post_logout_url, key } = this.configuration
+    if (logout_url && key) {
+      // Cannot use oauth/:provider/logout route as oauth/:provider is already intercepted by feathers and this causes an error
+      this.app.get(`/oauth-logout/${this.name}`, (req, res) => {
+        return res.redirect(logout_url + '?' + qs.stringify({
+          post_logout_redirect_uri: post_logout_url || oauth.redirect,
+          client_id: key
+        }))
+      })
+    }
+  }
+
   async getEntityData (profile, entity) {
     const createEntity = _.isNil(entity)
     // Add provider Id
