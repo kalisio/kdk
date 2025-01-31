@@ -75,14 +75,16 @@ export const baseGlobe = {
         if (!this.cesiumMaterials) return
         _.forEach(this.cesiumMaterials, m => {
           if (!m.material.uniforms.offset) return
+          if (!m.startTime) m.startTime = Date.now()
 
-          m.material.uniforms.offset.x += m.speedX || 0
-          m.material.uniforms.offset.y += m.speedY || 0
-          if (m.material.uniforms.offset.x > 1.0) {
-            m.material.uniforms.offset.x = 0
+          const elapsed = (Date.now() - m.startTime) * 0.001
+          if (m.speedX > 0) {
+            const loopDuration = m.length / m.speedX
+            m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
           }
-          if (m.material.uniforms.offset.y > 1.0) {
-            m.material.uniforms.offset.y = 0
+          if (m.speedY > 0) {
+            const loopDuration = m.length / m.speedY
+            m.material.uniforms.offset.y = (elapsed % loopDuration) / loopDuration
           }
         })
       })

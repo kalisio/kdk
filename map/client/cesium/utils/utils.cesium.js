@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 // We need to dynamically import cesium to dynamically get constructors
 export let Cesium
 
@@ -7,7 +9,7 @@ async function loadCesium() {
 
 loadCesium()
 
-export function createWallGeometry (positions, minimumHeights = [], maximumHeights = []) {
+function createWallGeometry (positions, minimumHeights = [], maximumHeights = []) {
   if (!positions || positions.length < 2) return
 
   minimumHeights = minimumHeights || Array(positions.length).fill(0)
@@ -99,7 +101,7 @@ export function createWallGeometry (positions, minimumHeights = [], maximumHeigh
   }
 }
 
-export function createCorridorGeometry (positions, width, height) {
+function createCorridorGeometry (positions, width, height) {
   if (!positions || positions.length < 2) return
 
   const setHeight = (cartesian, height) => {
@@ -203,12 +205,13 @@ export function createCorridorGeometry (positions, width, height) {
   }
 }
 
-export function createMaterialWithMovingTexture (options) {
+function createMaterialWithMovingTexture (options) {
   if (!options.image) return
 
   options = {
     image: options.image,
     translucent: options.translucent || false,
+    glow: options.glow || false,
     speedX: options.speedX || 0,
     speedY: options.speedY || 0,
     repeatX: options.repeatX || 1,
@@ -222,6 +225,7 @@ export function createMaterialWithMovingTexture (options) {
     material.uniforms.image = options.image
     material.uniforms.repeat = new Cesium.Cartesian2(options.repeatX, options.repeatY)
     material.uniforms.offset = new Cesium.Cartesian2(0.0, 0.0)
+    material.uniforms.speed = new Cesium.Cartesian2(options.speedX, options.speedY)
     material.translucent = options.translucent
     throw new Error('Load material from type is not working')
   } catch (e) {
@@ -232,23 +236,27 @@ export function createMaterialWithMovingTexture (options) {
         czm_material czm_getMaterial(czm_materialInput materialInput) {
             czm_material material = czm_getDefaultMaterial(materialInput);
 
-            // Décalage des coordonnées de texture
             vec2 st = materialInput.st * repeat + offset;
 
-            // Boucler la texture avec fract()
+            // Loop texture with fract
             st = fract(st);
 
-            // Application de la texture (WebGL 2.0 - texture au lieu de texture2D)
             vec4 color = texture(image, st);
 
-            material.diffuse = color.rgb;
+            if (glow) {
+              material.emission = color.rgb;
+            } else {
+              material.diffuse = color.rgb;
+            }
             material.alpha = color.a;
             return material;
         }`,
         uniforms: {
           image: options.image,
           repeat: new Cesium.Cartesian2(options.repeatX, options.repeatY),
-          offset: new Cesium.Cartesian2(0.0, 0.0)
+          offset: new Cesium.Cartesian2(0.0, 0.0),
+          speed: new Cesium.Cartesian2(options.speedX, options.speedY),
+          glow: options.glow
         }
       },
       translucent: options.translucent
@@ -256,4 +264,113 @@ export function createMaterialWithMovingTexture (options) {
   }
 
   return material
+}
+
+export function createPrimitiveWithMovingTexture (type, options) {
+  if (!options.positions || !_.get(options, 'material.image', false)) return
+
+  const geometryOptions = {
+    positions: options.material.reverse === true ? options.positions.reverse() : options.positions
+  }
+
+  let geometry = null
+  switch (type) {
+    case 'wall':
+      geometryOptions.minimumHeights = _.get(options, 'minimumHeights', 0) // can be a single value
+      geometryOptions.maximumHeights = _.get(options, 'maximumHeights', null) // can be a single value
+      geometry = createWallGeometry(geometryOptions.positions, geometryOptions.minimumHeights, geometryOptions.maximumHeights)
+      break
+    case 'corridor':
+      geometryOptions.width = _.get(options, 'width', 10)
+      geometryOptions.height = _.get(options, 'height', 0)
+      geometry = createCorridorGeometry(geometryOptions.positions, geometryOptions.width, geometryOptions.height)
+      break
+    default:
+      break
+  }
+
+  if (!geometry) return
+  const dimensions = geometry.dimensions
+  geometry = geometry.geometry
+
+  const fitOnX = _.get(options, 'material.repeatX') === 1
+  const fitOnY = _.get(options, 'material.repeatY') === 1
+  if (fitOnX && !fitOnY) {
+    options.material.repeatY = (dimensions.minHeight || dimensions.width) / dimensions.lineLength
+  } else if (!fitOnX && fitOnY) {
+    options.material.repeatX = dimensions.lineLength / (dimensions.minHeight || dimensions.width)
+  }
+
+  // Create material
+  const material = createMaterialWithMovingTexture(_.get(options, 'material'))
+  if (!material) return
+
+  // Create primitive
+  return {
+    primitive: new Cesium.Primitive({
+      geometryInstances: new Cesium.GeometryInstance({
+        geometry
+      }),
+      appearance: new Cesium.MaterialAppearance({
+        material,
+        translucent: material.translucent
+      }),
+      asynchronous: false
+    }),
+    material: {
+      material,
+      speedX: _.get(material, 'uniforms.speed.x'),
+      speedY: _.get(material, 'uniforms.speed.y'),
+      length: dimensions.lineLength
+    }
+  }
+}
+
+export function findPrimitiveForEntity (entity, viewer) {
+  const deepSearch = function (object, id, ids = []) {
+    if (object._id) {
+      if (object._id._id === id) return object
+      return null
+    }
+    if (object._guid) {
+      if (ids.includes(object._guid)) {
+        return null
+      }
+      ids.push(object._guid)
+    }
+    if (object._external) {
+      return deepSearch(object._external, id, ids)
+    }
+    if (object.collection) {
+      return deepSearch(object.collection, id, ids)
+    }
+
+    if (object._composites) {
+      for (const k in object._composites) {
+        const primitive = deepSearch(object._composites[k], id, ids)
+        if (primitive) return primitive
+      }
+    }
+
+    if (object._primitives) {
+      for (const o of object._primitives) {
+        if (o._guid) {
+          if (ids.includes(o._guid)) {
+            continue
+          }
+          ids.push(o._guid)
+        }
+        const primitive = deepSearch(o, id, ids)
+        if (primitive) return primitive
+      }
+    }
+  }
+
+  const primitives = viewer.scene.primitives
+  for (let i = 0; i < primitives.length; i++) {
+    const out = deepSearch(primitives.get(i), entity.id)
+    if (out) return out
+  }
+
+  return null
 }
