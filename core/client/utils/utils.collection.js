@@ -10,6 +10,10 @@ export function getCollectionService (serviceName, serviceContext) {
   return api.getService(serviceName, serviceContext)
 }
 
+export async function listItems (service, fields, filter= {}, limit = 50) {
+  return service.find({ query: _.merge({}, filter, { $limit: limit, $select: fields }) })
+}
+
 export async function getOldestItem (service, field = 'createdAt', filter = {}) {
   const response = await service.find({ query: _.merge({}, filter, { $sort: {[field]: 1 }, $limit: 1 }) })
   return _.get(response, 'data[0]')
