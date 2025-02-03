@@ -66,9 +66,9 @@ export async function restoreSession () {
     await authenticate(authentication)
   } catch (error) {
     // This ensure an old token is not kept e.g. when the user has been deleted
-    // await logout()
     // It actually causes a call to the remove method on the authentication service, which fails due to missing access token
     // See https://github.com/kalisio/kdk/issues/757, as a consequence we prefer to clean the token manually instead
+    // await logout()
     await api.authentication.removeAccessToken()
     // Rethrow for caller to handle
     throw error
@@ -97,14 +97,29 @@ export async function updateUser (user) {
   }
 }
 
+export async function logoutUser (user) {
+  // User has logout from another client session, logout here as well.
+  // No check required for user ID as only the target user should receive the logout event.
+  // We cannot use the logout route directly or api.logout() as this will trigger a new remove request to the authentication service.
+  // Here we just want to set the application state "as if" the user as requested a logout without doing it actually.
+  await LocalCache.removeItem('authentication')
+  await api.authentication.removeAccessToken()
+  await api.authentication.reset()
+  Store.set('user', null)
+  // In this specific case as we bypass actual authentication the events will not be emitted
+  api.emit('logout', user)
+}
+
 export function subscribeToUserChanges () {
-  // Listen to the 'patched' event on the users
+  // Listen to the 'patched'/'logout' event on the users
   const users = api.getService('users')
   users.on('patched', updateUser)
+  users.on('logout', logoutUser)
 }
 
 export function unsubscribeToUserChanges () {
-  // Listen to the 'patched' event on the users
+  // Listen to the 'patched'/'logout' event on the users
   const users = api.getService('users')
   users.off('patched', updateUser)
+  users.off('logout', logoutUser)
 }

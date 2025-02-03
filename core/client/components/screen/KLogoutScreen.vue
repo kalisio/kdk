@@ -11,10 +11,12 @@ import config from 'config'
 import { ref } from 'vue'
 import KScreen from './KScreen.vue'
 import { logout } from '../../utils/utils.session.js'
+import { Store } from '../../store.js'
 
 // Data
 const actions = ref(_.get(config, 'screens.logout.actions', []))
+const user = Store.get('user')
 
 // Immediate
-logout()
+if (user) logout()
 </script>

@@ -143,7 +143,7 @@ export default async function () {
 
   const authConfig = app.get('authentication')
   if (authConfig) {
-    await app.createService('users', { modelsPath, servicesPath })
+    await app.createService('users', { modelsPath, servicesPath, methods: ['logout'], events: ['logout'] })
     debug('\'users\' service created')
     await app.createService('account', {
       servicesPath,
