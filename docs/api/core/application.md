@@ -262,6 +262,12 @@ Events.on('myGlobal-changed', myCallback) // When updating a root object
 Events.on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
 
+### Guards
+
+[Navigation guards](https://router.vuejs.org/guide/advanced/navigation-guards.html) control access to [routes](https://quasar.dev/layout/routing-with-layouts-and-pages/) within an application. They allow you to define navigation rules in your app based on the user's status (authenticated or not), permissions, and route definitions.
+
+The **KDK** provides you with some built-in before guards and a mecanism to register your own ones, more details can be found in our [application template](https://kalisio.github.io/skeleton/guides/howtos/guards.html).
+
 ### Storage
 
 The **Storage** singleton provides you with high level functions to upload and download files using the [Storage service](./services.md#storage-service).

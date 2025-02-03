@@ -15,6 +15,16 @@ The composable exposes the following:
 * **has(path)**: test if a store has a value by path
 * **forOwn(f)**: call function `f` on each `(value, key)` of the store
 
+## useSession
+
+Used to manage user client session with the following options:
+* **redirect** function to override default redirection behaviour with the following arguments:
+  * `route` current route,
+  * `result` from before guard,
+  * `user` current user (null if none currently authentified).
+
+Rely on [global guards](./application.md#guards) to ensure redirection. It also manages the socket connection state and will display disconnection/reconnection dialogs accordingly.
+
 ## useContext
 
 Used to manage the current context of the application, call **useContext()** with the following arguments:
