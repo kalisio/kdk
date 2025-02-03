@@ -46,6 +46,7 @@ export const geojsonLayers = {
       // Remove mode
       if (_.get(updateOptions, 'remove', false)) {
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+
         features.forEach(feature => {
           const id = getFeatureId(feature, options)
           CustomTypes.forEach(type => {
@@ -53,14 +54,14 @@ export const geojsonLayers = {
             if (dataSource.entities.getById(id)) dataSource.entities.removeById(id)
             // Take care that in case of a custom entity we add it in addition to or instead the original line
             if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
+            // These are special primitives created to support animated walls & corridors
+            const prim = dataSource.primitives.get(customId)
+            if (prim) {
+              this.viewer.primitives.remove(prim)
+              dataSource.primitives.delete(customId)
+            }
           })
         })
-
-        if (dataSource.primitives) {
-          for (let i = 0, j = dataSource.primitives.length; i < j; i++) {
-            this.viewer.scene.primitives.remove(dataSource.primitives.get(i))
-          }
-        }
 
         return
       }
@@ -88,11 +89,10 @@ export const geojsonLayers = {
         })
       }
 
-      if (dataSource.primitives) {
-        for (let i = 0, j = dataSource.primitives.length; i < j; i++) {
-          this.viewer.scene.primitives.remove(dataSource.primitives.get(i))
-        }
-      }
+      // We always remove custom primitives (animated walls & corridors)
+      for (const [key, value] of dataSource.primitives)
+        this.viewer.scene.primitives.remove(value)
+      dataSource.primitives.clear()
 
       // Process specific entities
       entities = dataSource.entities.values
@@ -133,15 +133,16 @@ export const geojsonLayers = {
           const wallId = getCustomEntityId(entity.id, 'wall')
 
           const texture = _.get(properties, 'entityStyle.wall.material.image')
-          if (texture && (_.isNil(_.get(properties, 'entityStyle.wall.material.speedX')) || _.isNil(_.get(properties, 'entityStyle.wall.material.speedY')))) {
+          if (texture && _.get(properties, 'entityStyle.wall.animateMaterialAlongPath', false)) {
             const options = _.get(properties, 'entityStyle.wall')
             options.positions = entity.polyline.positions.getValue(0)
             const { primitive, material } = createPrimitiveWithMovingTexture('wall', options)
             if (primitive) {
-              dataSource.primitives.add(primitive)
+              dataSource.primitives.set(wallId, primitive)
               this.viewer.scene.primitives.add(primitive)
               this.cesiumMaterials.push(material)
             }
+            // entitiesToRemove.push(entity)
           } else {
             entitiesToAdd.push({
               id: wallId,
@@ -168,15 +169,16 @@ export const geojsonLayers = {
           const corridorId = getCustomEntityId(entity.id, 'corridor')
 
           const texture = _.get(properties, 'entityStyle.corridor.material.image')
-          if (texture && (!_.isNil(_.get(properties, 'entityStyle.corridor.material.speedX')) || _.isNil(_.get(properties, 'entityStyle.corridor.material.speedY')))) {
+          if (texture && _.get(properties, 'entityStyle.corridor.animateMaterialAlongPath', false)) {
             const options = _.get(properties, 'entityStyle.corridor')
             options.positions = entity.polyline.positions.getValue(0)
             const { primitive, material } = createPrimitiveWithMovingTexture('corridor', options)
             if (primitive) {
-              dataSource.primitives.add(primitive)
+              dataSource.primitives.set(corridorId, primitive)
               this.viewer.scene.primitives.add(primitive)
               this.cesiumMaterials.push(material)
             }
+           // entitiesToRemove.push(entity)
           } else {
             entitiesToAdd.push({
               id: corridorId,
@@ -370,7 +372,9 @@ export const geojsonLayers = {
         dataSource = new GeoJsonDataSource()
         dataSource.notFromDrop = true
 
-        dataSource.primitives = new PrimitiveCollection()
+        // This is where we'll store custom primitives used for animated walls/corridors.
+        // Key is feature id, value is associated primitive object
+        dataSource.primitives = new Map()
         // Check for realtime layers
         if (cesiumOptions.realtime) {
           await this.createCesiumRealtimeGeoJsonLayer(dataSource, options)

@@ -13,6 +13,8 @@ import { generateLayerDefinition } from '../../utils/utils.layers.js'
 import { generateStyleTemplates, DefaultStyle } from '../../utils/utils.style.js'
 import { utils as kdkCoreUtils } from '../../../../core/client/index.js'
 
+// import { findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
+
 // The URL on our server where CesiumJS's static files are hosted
 window.CESIUM_BASE_URL = '/Cesium/'
 buildModuleUrl.setBaseUrl('/Cesium/')
@@ -70,7 +72,7 @@ export const baseGlobe = {
         this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Color.BLACK)
       }
 
-      // Update moving materials
+      // Cesium pre-render callback used to update moving materials (animated walls/corridors)
       this.viewer.scene.preRender.addEventListener(() => {
         if (!this.cesiumMaterials) return
         _.forEach(this.cesiumMaterials, m => {
@@ -78,13 +80,9 @@ export const baseGlobe = {
           if (!m.startTime) m.startTime = Date.now()
 
           const elapsed = (Date.now() - m.startTime) * 0.001
-          if (m.speedX > 0) {
-            const loopDuration = m.length / m.speedX
+          if (m.animationSpeed) {
+            const loopDuration = m.length / m.animationSpeed
             m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
-          }
-          if (m.speedY > 0) {
-            const loopDuration = m.length / m.speedY
-            m.material.uniforms.offset.y = (elapsed % loopDuration) / loopDuration
           }
         })
       })
@@ -255,6 +253,8 @@ export const baseGlobe = {
         cesiumLayer.show = true
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
       } else { // Entity data source otherwise
+        for (const [id, primitive] of cesiumLayer.primitives)
+          primitive.show = true
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
@@ -281,12 +281,9 @@ export const baseGlobe = {
       } else if (cesiumLayer instanceof Cesium3DTileset) {
         cesiumLayer.show = false
       } else { // Entity data source otherwise
-        // Remove primitives before removing the data source
-        if (cesiumLayer.primitives) {
-          for (let i = 0, j = cesiumLayer.primitives.length; i < j; i++) {
-            this.viewer.scene.primitives.remove(cesiumLayer.primitives.get(i))
-          }
-        }
+        // Hide primitives before removing the data source
+        for (const [id, primitive] of cesiumLayer.primitives)
+          primitive.show = false
         this.viewer.dataSources.remove(cesiumLayer, true)
       }
       this.onLayerHidden(layer, cesiumLayer)
@@ -739,12 +736,63 @@ export const baseGlobe = {
     onCameraMoveEnd () {
       // Mimic Leaflet events
       this.$engineEvents.emit('moveend', this.getCameraEllipsoidTarget())
+    },
+    /*
+    enablePostProcessingEffect (effect) {
+      let stage = this.cesiumPostProcessStages[effect]
+      if (stage) return stage
+
+      if (effect === 'desaturation') {
+        const fs =`
+    uniform sampler2D colorTexture;
+    in vec2 v_textureCoordinates;
+    void main() {
+        vec4 color = texture(colorTexture, v_textureCoordinates);
+        if (czm_selected()) {
+            out_FragColor = color;
+        } else {
+            out_FragColor = vec4(czm_saturation(color.rgb, 0.0), color.a);
+        }
     }
+    `
+        stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({
+          fragmentShader: fs,
+          uniforms: {
+            scale: 1.1,
+            offset: function () {
+              return new Cesium.Cartesian3(0.1, 0.2, 0.3)
+            }
+          }
+        }))
+
+        this.cesiumPostProcessStages[effect] = stage
+      }
+
+      return stage
+    },
+    postProcessFeature (effect, layerName, featureId) {
+      const layer = this.getCesiumLayerByName(layerName)
+      if (!layer) return
+
+      // expect layer to be a datasource
+      if (!layer.entities) return
+      // lookup entity based on featureId
+      const entity = layer.entities.getById(featureId)
+      if (!entity) return
+      // lookup associated primitive
+      const primitive = findPrimitiveForEntity(entity, this.viewer)
+      if (!primitive) return
+
+      const stage = this.enablePostProcessingEffect(effect)
+      stage.selected = [ primitive ]
+    }
+    */
   },
   created () {
     this.cesiumLayers = {}
     this.cesiumFactory = []
     this.cesiumMaterials = []
+    // this.cesiumPostProcessStages = {}
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus

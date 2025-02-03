@@ -208,31 +208,17 @@ function createCorridorGeometry (positions, width, height) {
 function createMaterialWithMovingTexture (options) {
   if (!options.image) return
 
-  options = {
-    image: options.image,
-    translucent: options.translucent || false,
-    glow: options.glow || false,
-    speedX: options.speedX || 0,
-    speedY: options.speedY || 0,
-    repeatX: options.repeatX || 1,
-    repeatY: options.repeatY || 1
-  }
-
   let material = null
   try {
     // TODO : temporary throw to avoid to load material from type because it's not working
     material = Cesium.Material.fromType('MovingMaterial')
     material.uniforms.image = options.image
-    material.uniforms.repeat = new Cesium.Cartesian2(options.repeatX, options.repeatY)
+    material.uniforms.repeat = new Cesium.Cartesian2(1.0, 1.0)
     material.uniforms.offset = new Cesium.Cartesian2(0.0, 0.0)
-    material.uniforms.speed = new Cesium.Cartesian2(options.speedX, options.speedY)
     material.translucent = options.translucent
     throw new Error('Load material from type is not working')
   } catch (e) {
-    material = new Cesium.Material({
-      fabric: {
-        type: 'MovingMaterial',
-        source: `
+    const shaderSource = `
         czm_material czm_getMaterial(czm_materialInput materialInput) {
             czm_material material = czm_getDefaultMaterial(materialInput);
 
@@ -242,24 +228,22 @@ function createMaterialWithMovingTexture (options) {
             st = fract(st);
 
             vec4 color = texture(image, st);
-
-            if (glow) {
-              material.emission = color.rgb;
-            } else {
-              material.diffuse = color.rgb;
-            }
+            material.${options.useAsDiffuse ? 'diffuse' : 'emission'} = color.rgb;
             material.alpha = color.a;
             return material;
-        }`,
+        }`
+
+    material = new Cesium.Material({
+      fabric: {
+        type: 'MovingMaterial',
+        source: shaderSource,
         uniforms: {
           image: options.image,
-          repeat: new Cesium.Cartesian2(options.repeatX, options.repeatY),
-          offset: new Cesium.Cartesian2(0.0, 0.0),
-          speed: new Cesium.Cartesian2(options.speedX, options.speedY),
-          glow: options.glow
+          repeat: new Cesium.Cartesian2(1.0, 1.0),
+          offset: new Cesium.Cartesian2(0.0, 0.0)
         }
       },
-      translucent: options.translucent
+      translucent: _.get(options, 'translucent', false)
     })
   }
 
@@ -270,7 +254,7 @@ export function createPrimitiveWithMovingTexture (type, options) {
   if (!options.positions || !_.get(options, 'material.image', false)) return
 
   const geometryOptions = {
-    positions: options.material.reverse === true ? options.positions.reverse() : options.positions
+    positions: options.material.reverseAnimation === true ? options.positions.reverse() : options.positions
   }
 
   let geometry = null
@@ -293,17 +277,28 @@ export function createPrimitiveWithMovingTexture (type, options) {
   const dimensions = geometry.dimensions
   geometry = geometry.geometry
 
-  const fitOnX = _.get(options, 'material.repeatX') === 1
-  const fitOnY = _.get(options, 'material.repeatY') === 1
-  if (fitOnX && !fitOnY) {
-    options.material.repeatY = (dimensions.minHeight || dimensions.width) / dimensions.lineLength
-  } else if (!fitOnX && fitOnY) {
-    options.material.repeatX = dimensions.lineLength / (dimensions.minHeight || dimensions.width)
-  }
-
   // Create material
   const material = createMaterialWithMovingTexture(_.get(options, 'material'))
   if (!material) return
+
+  // By default, whole texture is mapped on the whole wall/corridor geometry
+  // Here we make it so texture keep it's aspect ratio, map 1 in the non animated
+  // direction, compute what goes in the other dimension
+  material.uniforms.repeat.x = dimensions.lineLength / (dimensions.minHeight || dimensions.width)
+  // Take potential scale into account
+  const scale = _.get(options, 'material.scale')
+  let animationSpeedScale = 1.0
+  if (scale) {
+    if (Array.isArray(scale)) {
+      material.uniforms.repeat.x *= scale[0]
+      material.uniforms.repeat.y *= scale[1]
+      animationSpeedScale = scale[0]
+    } else {
+      material.uniforms.repeat.x *= scale
+      material.uniforms.repeat.y *= scale
+      animationSpeedScale = scale
+    }
+  }
 
   // Create primitive
   return {
@@ -319,8 +314,7 @@ export function createPrimitiveWithMovingTexture (type, options) {
     }),
     material: {
       material,
-      speedX: _.get(material, 'uniforms.speed.x'),
-      speedY: _.get(material, 'uniforms.speed.y'),
+      animationSpeed: _.get(options, 'material.animationSpeed') * animationSpeedScale,
       length: dimensions.lineLength
     }
   }
