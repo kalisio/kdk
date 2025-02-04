@@ -179,7 +179,7 @@
 import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
-import { computeResponsiveWidth, computeResponsiveSize, loadComponent } from '../../utils'
+import { computeResponsiveWidth, computeResponsiveSize } from '../../utils'
 import { useLayout } from '../../composables'
 import KContent from '../KContent.vue'
 import KPanel from '../KPanel.vue'

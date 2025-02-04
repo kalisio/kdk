@@ -28,9 +28,9 @@
       >
         <!-- Header Content -->
         <div v-if="header">
-          <KContent 
-            :content="header" 
-            :class="headerClass" 
+          <KContent
+            :content="header"
+            :class="headerClass"
           />
         </div>
         <!-- Main Content -->
@@ -41,9 +41,9 @@
         />
         <!-- Footer Content -->
         <div v-if="footer">
-          <KContent 
-            :content="footer" 
-            :class="footerClass" 
+          <KContent
+            :content="footer"
+            :class="footerClass"
           />
         </div>
       </div>

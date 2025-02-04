@@ -61,14 +61,14 @@ const emit = defineEmits(['triggered'])
 
 // Computed
 const filteredComponents = computed(() => {
-  if (_.isEmpty(props.content)) return []  
+  if (_.isEmpty(props.content)) return []
   // Retrieve the components
   let components = props.content
   if (!Array.isArray(components)) components = _.get(components, props.mode, [])
   // Filter the components
   if (!_.isEmpty(props.filter)) components = filterContent(components, props.filter)
   // Configure the components
-  for (let component of components) {
+  for (const component of components) {
     component.name = _.get(component, 'component', 'action/KAction')
     component.uid = uid()
     component.isHidden = getVisibility(component, 'hidden', false)
@@ -94,5 +94,3 @@ function onTriggered (params) {
   emit('triggered', params)
 }
 </script>
-
-
