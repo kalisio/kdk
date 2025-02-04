@@ -78,7 +78,7 @@ export const baseItem = {
     filteredActions () {
       return (this.actions ? filterContent(this.actions, this.filter || {}) : [])
     },
-    // This method should be overriden in items
+    // This method should be overridden in items
     configureActions () {
       // Apply filtering
       const actions = this.filteredActions()
