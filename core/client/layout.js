@@ -13,7 +13,6 @@ export const DefaultZIndex = {
   stickies: 980,
   focus: 1010
 }
-
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
@@ -33,8 +32,8 @@ const defaults = {
   view: 'lHh LpR lFf',
   padding: true,
   mode: undefined,
-  header: { ...contentDefaults },
-  footer: { ...contentDefaults },
+  header: { ...contentDefaults, size: [undefined, 0] },
+  footer: { ...contentDefaults, size: [undefined, 0] },
   page: { ...contentDefaults, size: [0, 0] },
   stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: DefaultZIndex.fab },
@@ -237,6 +236,9 @@ export const Layout = {
   setHeaderVisible (visible) {
     this.setElementVisible('header', visible)
   },
+  setHeaderSize (size) {
+    this.setElementSize('header', size)
+  },
   clearHeader () {
     this.clearElement('header')
   },
@@ -254,6 +256,9 @@ export const Layout = {
   },
   setFooterVisible (visible) {
     this.setElementVisible('footer', visible)
+  },
+  setFooterSize (size) {
+    this.setElementSize('footer', size)
   },
   clearFooter () {
     this.clearElement('footer')

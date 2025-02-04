@@ -152,10 +152,10 @@ function clickOutsideLeftPanelListener (event) {
   Layout.setPaneVisible('left', false)
 }
 function onHeaderResized (size) {
-  Layout.setElementSize('header', [size.width, size.height])
+  Layout.setHeaderSize([size.width, size.height])
 }
 function onFooterResized (size) {
-  Layout.setElementSize('footer', [size.width, size.height])
+  Layout.setFooterSize([size.width, size.height])
 }
 </script>
 
