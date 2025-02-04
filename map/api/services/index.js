@@ -229,9 +229,6 @@ export default async function () {
   if (alertsConfig) {
     await createAlertsService.call(app)
   }
-
-
-
   const stylesConfig = app.get('styles')
   if (stylesConfig) {
     await createStylesService.call(app)

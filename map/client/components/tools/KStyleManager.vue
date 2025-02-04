@@ -15,10 +15,10 @@ import { computed } from 'vue'
 import { KGrid } from '../../../../core/client/components'
 import { Store } from '@kalisio/kdk/core.client'
 
-
+// Data
 const filter = Store.get('filter')
 
-// computed
+// Computed
 const baseQuery = computed(() => {
   // Filter the objets of type of table
   const query = { type: 'table' }
