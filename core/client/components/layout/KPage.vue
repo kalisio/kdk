@@ -17,14 +17,14 @@
     <!--
       Custom stickies
      -->
-    <template v-for="sticky in stickies.components" :key="sticky.id">
+    <template v-for="sticky in stickiesComponents" :key="sticky.id">
       <q-page-sticky
         :id="sticky.id"
         :position="getStickyPosition(sticky)"
         :offset="getStickyOffset(sticky)"
         class="k-sticky"
       >
-        <KContent :content="[sticky]" />
+        <KContent :content="sticky.content" />
       </q-page-sticky>
     </template>
     <!--
@@ -179,7 +179,7 @@
 import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
-import { computeResponsiveWidth, computeResponsiveSize } from '../../utils'
+import { computeResponsiveWidth, computeResponsiveSize, loadComponent } from '../../utils'
 import { useLayout } from '../../composables'
 import KContent from '../KContent.vue'
 import KPanel from '../KPanel.vue'
@@ -314,6 +314,11 @@ const fabBehavior = computed(() => {
     case 'top-right': return { direction: 'down', actionsAlign: 'left' }
     case 'top-left': return { direction: 'down', actionsAlign: 'right' }
   }
+})
+const stickiesComponents = computed(() => {
+  return _.map(stickies.components, sticky => {
+    return _.merge(sticky, { content: [{ component: sticky.component }] })
+  })
 })
 
 // Functions

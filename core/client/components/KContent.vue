@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-for="component in availableComponents" :key="component.uid">
+    <template v-for="component in filteredComponents" :key="component.uid">
       <Suspense v-if="component.suspense">
         <component
           v-if="component.isVisible && !component.isHidden"
@@ -25,7 +25,6 @@
 
 <script setup>
 import _ from 'lodash'
-import logger from 'loglevel'
 import { computed } from 'vue'
 import { uid } from 'quasar'
 import { filterContent, getBoundValue, loadComponent } from '../utils/index.js'
@@ -61,24 +60,21 @@ const props = defineProps({
 const emit = defineEmits(['triggered'])
 
 // Computed
-const availableComponents = computed(() => {
-  if (_.isEmpty(props.content)) return []
-  let components = filterContent(props.content, props.filter || {})
-  components = getComponents(components, props.mode, props.context)
-  for (let i = 0; i < components.length; ++i) {
-    const component = components[i]
-    // Check for hidden/visible handler or property
-    // If not a functional call the target property can be a reactive one
-    // so that we "bind" it to the component instead of "filter" the component here
+const filteredComponents = computed(() => {
+  if (_.isEmpty(props.content)) return []  
+  // Retrieve the components
+  let components = props.content
+  if (!Array.isArray(components)) components = _.get(components, props.mode, [])
+  // Filter the components
+  if (!_.isEmpty(props.filter)) components = filterContent(components, props.filter)
+  // Configure the components
+  for (let component of components) {
+    component.name = _.get(component, 'component', 'action/KAction')
+    component.uid = uid()
     component.isHidden = getVisibility(component, 'hidden', false)
     component.isVisible = getVisibility(component, 'visible', true)
-    if (!_.startsWith(component.name, 'Q')) {
-      logger.trace(`[KDK] Loading component ${component.name}`)
-      component.instance = loadComponent(component.name)
-    } else {
-      logger.trace(`[KDK] Using component ${component.name}`)
-      component.instance = component.name
-    }
+    if (!_.startsWith(component.name, 'Q')) component.instance = loadComponent(component.name)
+    else component.instance = component.name
   }
   return components
 })
@@ -94,22 +90,9 @@ function getVisibility (component, property, defaultValue) {
   }
   return isVisible
 }
-function getComponents (content, mode) {
-  let components = []
-  // Get component config for given mode if any
-  if (Array.isArray(content)) components = content
-  else components = _.get(content, mode)
-  const processedComponents = []
-  // Then create component objects
-  _.forEach(components, component => {
-    // Get the component and add the required props
-    component.name = _.get(component, 'component', 'action/KAction')
-    component.uid = uid()
-    processedComponents.push(component)
-  })
-  return processedComponents
-}
 function onTriggered (params) {
   emit('triggered', params)
 }
 </script>
+
+
