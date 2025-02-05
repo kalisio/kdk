@@ -177,7 +177,7 @@ export default {
         abort()
         return
       }
-      const locations = await this.search(pattern)
+      const locations = await this.search(pattern, _.get(this.properties, 'field.limit', 25))
       update(() => {
         this.locations = locations
       })

@@ -53,12 +53,13 @@ export function useLocation () {
     if (error) return
     return Store.get('geolocation.location')
   }
-  async function search (pattern) {
+  async function search (pattern, limit = 25) {
     const project = getActivityProject()
     const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())
     return searchLocation(planet, pattern, {
       geocoders: selectedGeocoders.value,
-      viewbox: selectedViewbox.value
+      viewbox: selectedViewbox.value,
+      limit
     })
   }
   // Expose
