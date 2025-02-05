@@ -268,6 +268,23 @@ Events.on('myGlobal-changed', myCallback) // When updating a root object
 Events.on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
 
+### Context
+
+You can define the currently active [context object](../introduction.md#context) by using either the **Context** singleton object or the [useContext](./composables.md#usecontext) composable, both actually sets it in the **Store** (`context` property). The composable will also track any change on the context business object by listening to the target service. Based on the current context, the `getService` method should return the appropriate service without the burden of providing the context as input parameter everywhere you need it:
+```js
+// Create a global/contextual service
+api.createService('catalog')
+api.createService('catalog', { context })
+// Set the context as current
+Context.set(context)
+// Here get the contextual service
+api.createService('catalog')
+// Clear the current context
+Context.set(null)
+// Here get the global service
+api.createService('catalog')
+```
+
 ### Guards
 
 [Navigation guards](https://router.vuejs.org/guide/advanced/navigation-guards.html) control access to [routes](https://quasar.dev/layout/routing-with-layouts-and-pages/) within an application. They allow you to define navigation rules in your app based on the user's status (authenticated or not), permissions, and route definitions.
