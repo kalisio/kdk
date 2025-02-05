@@ -115,7 +115,6 @@ export default {
       if (!result.ok) return false
       const catalogService = this.$api.getService('catalog')
       for (const viewId of project.views) {
-        console.log(viewId)
         const view = await catalogService.get(viewId._id)
         uncacheView(view, project, this.kActivity)
       }
