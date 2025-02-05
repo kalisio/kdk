@@ -37,11 +37,18 @@ export function removeFeaturesService (options = {}) {
 export function createCatalogService (options = {}) {
   const app = this
 
+  // Read default categories/sublegends config, which can be overriden by options
+  const catalogConfig = app.get('catalog') || {}
+  const categories = catalogConfig.categories
+  const sublegends = catalogConfig.sublegends
+
   debug('Creating catalog service with options', options)
   return app.createService('catalog', Object.assign({
     servicesPath,
     modelsPath,
-    paginate: { default: 1000, max: 1000 }
+    paginate: { default: 1000, max: 1000 },
+    categories,
+    sublegends
   }, options))
 }
 

@@ -45,8 +45,8 @@ export default {
       coreHooks.convertObjectIDs(['baseQuery.layer'])
     ],
     find: [
-      // Merge built-in categoriessublegends with user-defined ones for global catalog only
-      when(hook => !hook.service.getContextId(), getDefaultCategories, getDefaultSublegends)
+      // Merge built-in categories/sublegends (if provided) with user-defined ones
+      getDefaultCategories, getDefaultSublegends
     ],
     get: [],
     create: [],
