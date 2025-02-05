@@ -7,7 +7,7 @@ import { Time, Units } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
-import { createPrimitiveWithMovingTexture } from '../../cesium/utils/utils.cesium.js'
+import { createPrimitiveWithMovingTexture, findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
 const CustomTypes = ['wall', 'corridor']
@@ -502,6 +502,31 @@ export const geojsonLayers = {
       if (_.has(this.geojsonCache, layer.name)) {
         delete this.geojsonCache[layer.name]
       }
+    },
+    selectFeaturesForPostProcess (effect, layerName, featureIds) {
+      // Make sure post process is enabled
+      const stage = this.getPostProcessStage(effect)
+      if (!stage) return
+      // Make sure layer exists
+      const layer = this.getCesiumLayerByName(layerName)
+      if (!layer) return
+      // Expect layer to be a datasource
+      if (!layer.entities) return
+
+      const ids = Array.isArray(featureIds) ? featureIds : [ featureIds ]
+      const primitives = []
+      ids.forEach((id) => {
+        // Lookup entity based on featureId
+        const entity = layer.entities.getById(id)
+        if (!entity) return
+        // Lookup associated primitive
+        const primitive = findPrimitiveForEntity(entity, this.viewer)
+        if (!primitive) return
+
+        primitives.push(primitive)
+      })
+
+      stage.selected = primitives
     }
   },
   created () {

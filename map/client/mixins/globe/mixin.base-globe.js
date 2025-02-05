@@ -13,8 +13,6 @@ import { generateLayerDefinition } from '../../utils/utils.layers.js'
 import { generateStyleTemplates, DefaultStyle } from '../../utils/utils.style.js'
 import { utils as kdkCoreUtils } from '../../../../core/client/index.js'
 
-// import { findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
-
 // The URL on our server where CesiumJS's static files are hosted
 window.CESIUM_BASE_URL = '/Cesium/'
 buildModuleUrl.setBaseUrl('/Cesium/')
@@ -737,13 +735,15 @@ export const baseGlobe = {
       // Mimic Leaflet events
       this.$engineEvents.emit('moveend', this.getCameraEllipsoidTarget())
     },
-    /*
-    enablePostProcessingEffect (effect) {
+    getPostProcessStage (effect) {
+      return this.cesiumPostProcessStages[effect]
+    },
+    setupPostProcess (effect, options = { enabled: true }) {
       let stage = this.cesiumPostProcessStages[effect]
-      if (stage) return stage
-
-      if (effect === 'desaturation') {
-        const fs =`
+      if (options.enabled) {
+        if (!stage) {
+          if (effect === 'desaturation') {
+            const fs =`
     uniform sampler2D colorTexture;
     in vec2 v_textureCoordinates;
     void main() {
@@ -755,44 +755,23 @@ export const baseGlobe = {
         }
     }
     `
-        stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({
-          fragmentShader: fs,
-          uniforms: {
-            scale: 1.1,
-            offset: function () {
-              return new Cesium.Cartesian3(0.1, 0.2, 0.3)
-            }
+            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({ fragmentShader: fs }))
+            this.cesiumPostProcessStages[effect] = stage
           }
-        }))
-
-        this.cesiumPostProcessStages[effect] = stage
+        }
+      } else {
+        if (stage) {
+          this.viewer.scene.postProcessStages.remove(stage)
+          delete this.cesiumPostProcessStages[effect]
+        }
       }
-
-      return stage
-    },
-    postProcessFeature (effect, layerName, featureId) {
-      const layer = this.getCesiumLayerByName(layerName)
-      if (!layer) return
-
-      // expect layer to be a datasource
-      if (!layer.entities) return
-      // lookup entity based on featureId
-      const entity = layer.entities.getById(featureId)
-      if (!entity) return
-      // lookup associated primitive
-      const primitive = findPrimitiveForEntity(entity, this.viewer)
-      if (!primitive) return
-
-      const stage = this.enablePostProcessingEffect(effect)
-      stage.selected = [ primitive ]
     }
-    */
   },
   created () {
     this.cesiumLayers = {}
     this.cesiumFactory = []
     this.cesiumMaterials = []
-    // this.cesiumPostProcessStages = {}
+    this.cesiumPostProcessStages = {}
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus
