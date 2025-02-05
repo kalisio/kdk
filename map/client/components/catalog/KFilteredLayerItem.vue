@@ -1,31 +1,31 @@
 <template>
-  <KLayerItem v-if="!layer.filters" 
-    v-bind="$props" 
+  <KLayerItem v-if="!layer.filters"
+    v-bind="$props"
     :layer="layer"
   />
-  <q-tree v-else 
+  <q-tree v-else
     :nodes="[layer]"
-    node-key="label" 
-    label-key="label" 
+    node-key="label"
+    label-key="label"
     children-key="filters"
     dense
   >
     <template v-slot:default-header="prop">
       <!-- Layer rendering -->
-      <KLayerItem v-if="prop.node.name" 
-        v-bind="$props" 
-        :layer="layer" 
+      <KLayerItem v-if="prop.node.name"
+        v-bind="$props"
+        :layer="layer"
         @toggled="onToggled"
       />
       <!-- Filter rendering -->
       <div v-else class="row items-center q-pl-md q-pr-sm no-wrap">
         <!-- Filter toggle -->
-        <q-toggle 
+        <q-toggle
           :ref="onToggleRefCreated(prop.node)"
-          v-model="prop.node.isActive" 
+          v-model="prop.node.isActive"
           :color="layer.isVisible ? 'primary' : 'grey-5'"
-          :disable="layer.isDisabled || !layer.isVisible" 
-          size="xs" 
+          :disable="layer.isDisabled || !layer.isVisible"
+          size="xs"
           @update:modelValue="onFilterToggled(prop.node)"
         />
         <div :class="{
@@ -48,7 +48,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import KLayerItem from './KLayerItem.vue'
 
 // Props
@@ -75,7 +75,6 @@ function onToggleRefCreated (node) {
 }
 function onToggled () {
   emit('toggled', props.layer)
-  console.log(props.layer.isVisible)
   if (props.layer.isVisible) {
     const areFiltersInactive = _.every(filters.value, { isActive: false })
     if (areFiltersInactive) {
