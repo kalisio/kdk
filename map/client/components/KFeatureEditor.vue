@@ -79,7 +79,7 @@ export default {
   async created () {
     // If not injected load it
     if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
-    else this.layer = await this.$api.getService('catalog').get(this.layerId)
+    else this.layer = await this.$api.getService('catalog', this.contextId).get(this.layerId)
     this.service = _.get(this.layer, '_id') ? _.get(this.layer, 'service') : 'features-edition'
   },
   setup (props) {

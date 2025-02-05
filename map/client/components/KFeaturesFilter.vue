@@ -245,7 +245,7 @@ export default {
     async openModal () {
       // If not injected load it
       if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
-      else this.layer = await this.$api.getService('catalog').get(this.layerId)
+      else this.layer = await this.$api.getService('catalog', this.contextId).get(this.layerId)
       await this.build()
       kCoreMixins.baseModal.methods.openModal.call(this)
     }
