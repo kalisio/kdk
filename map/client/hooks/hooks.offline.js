@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import intersect from '@turf/intersect'
-import { featureCollection } from '@turf/helpers'
+import booleanIntersects from '@turf/boolean-intersects'
+import { polygon } from '@turf/helpers'
 
 export function removeServerSideParameters(context) {
   const params = context.params
@@ -84,12 +84,10 @@ export async function intersectBBoxHook(context) {
   const service = context.service
   const query = await service._find(_.omit(params, ['east', 'west', 'north', 'south']))
   const features = query.data
-  const bbox = [params.east, params.west, params.north, params.south]
+  const bbox = polygon([[[params.east, params.south], [params.west, params.south], [params.west, params.north], [params.east, params.north], [params.east, params.south]]])
   let result = []
   for (let feature of features) {
-    const featurePolygon = _.get(feature, 'geometry.coordinates')
-    var intersection = intersect(featureCollection([bbox, featurePolygon]));
-    if (intersection) {
+    if (booleanIntersects(bbox, feature)) {
       result.push(feature)
     }
   }
