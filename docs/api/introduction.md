@@ -57,18 +57,6 @@ We try to organise hooks in different categories:
 
 Others hooks are usually service-centric and so attached to the target service.
 
-## Data model and segregation
-
-Each service managing business items is usually related to a database *collection* with an underlying data model formatted as a JSON document.
-
-> All dates/times in KDK are managed as date or [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
-
-### Context
-
-One key aspect of access control is to filter the data resources a user can reach. The **KDK** can help to segregate data at the source level, ie the database, using what we call a **context** (more details in this [article](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)). If it makes sense for your assets to only be accessed in a given business context (e.g. within an "organisation" or a "workspace") you can create a dedicated database with associated collections (respectively services) to hold (respectively manage) the data when the context is made available, and simply remove it when it is not anymore.
-
-The context is usually also managed as a business object providing information about it like UUID, name, etc. and stored in a collection accessible through a service. For instance an application might manage a list of organisations as contexts, which can be listed using a service, and for each orgnisation provide a database storing all data collections related to the organisation with related services. Such services are called **contextual services** while services not related to a context are called **global services**.
-
 ## Client
 
 KDK modules provide a collection of reusable *mixins*, *composables* and *components* to be used by modules or applications.

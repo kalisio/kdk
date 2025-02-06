@@ -8,19 +8,23 @@ Although this page details the main data model used for SaaS applications the or
 
 According to the [Feathers philosophy](https://docs.feathersjs.com/guides/about/philosophy.html) each business operation should be performed through a [service interface](https://docs.feathersjs.com/api/services.html). As a consequence, these are are the building blocks at the heart of each KDK application.
 
-## Organisation model
+## Data model and segregation
 
-Organisations are the basic elements that permit to create and configure teams (i.e. **groups** of users) and invite others to join and share content. Organisations are shared workspaces where users can collaborate using a set of services only available **within the context** of the organisation.
+Each service managing business items is usually related to a database **collection** with an underlying data model formatted as a JSON document.
 
-### Data segregation
+> All dates/times in KDK are internally managed as date or [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 
-KDK implements an extreme solution to segregate data at the source: using different databases. This means that dedicated databases (respectively services) are created to hold (respectively to manage) the contextual assets when organisations are made available, and simply destroyed when they are not anymore.
+### Context
+
+One key aspect of access control is to filter the data resources a user can reach. The **KDK** can help to segregate data at the source level, ie the database, using what we call a **context** (more details in this [article](https://blog.feathersjs.com/access-control-strategies-with-feathersjs-72452268739d)). If it makes sense for your assets to only be accessed in a given business context (e.g. within an "organisation" or a "workspace") you can create a dedicated database with associated collections (respectively services) to hold (respectively manage) the data when the context is made available, and simply remove it when it is not anymore.
+
+The context is usually also managed as a business object providing information about it like UUID, name, etc. and stored in a collection accessible through a service. For instance an application might manage a list of organisations as contexts, which can be listed using a service, and for each orgnisation provide a database storing all data collections related to the organisation with related services. Such services are called **contextual services** while services not related to a context are called **global services**.
+
+Using the KDK you can dynamically create a database and declare services to access contextual assets stored in this segregated DB.
 
 ::: tip
 Under the hood the [feathers-mongodb-management](https://github.com/feathersjs-ecosystem/feathers-mongodb-management) module is used to dynamically create/remove a database per organisation whenever required
 :::
-
-Using the KDK you can dynamically declare services to access organisation assets stored in this segregated DB.
 
 ### Permissions
 
