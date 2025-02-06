@@ -57,7 +57,7 @@ export const geojsonLayers = {
             // These are special primitives created to support animated walls & corridors
             const prim = dataSource.primitives.get(customId)
             if (prim) {
-              this.viewer.primitives.remove(prim)
+              this.viewer.scene.primitives.remove(prim)
               dataSource.primitives.delete(customId)
             }
           })
