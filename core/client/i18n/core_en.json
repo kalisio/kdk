@@ -955,7 +955,9 @@
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
   },
   "KStyleManager": {
-    "MANAGER": "Gestionaire des styles"
+    "MANAGER": "Gestionaire des styles",
+    "EDIT": "Edit style",
+    "DELETE": "Delete style"
   }
 }
 

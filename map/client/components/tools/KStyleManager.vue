@@ -3,8 +3,30 @@
     <div class="row justify-center">
       <KGrid
         service="styles"
+        :append-items="true"
         :base-query="baseQuery"
         :filter-query="filterQuery"
+        class="fit"
+        :renderer="{
+          component: 'collection/KItem',
+          actions: [
+            {
+              id: 'edit-style',
+              icon: 'las la-edit',
+              tooltip: 'KStyleManager.EDIT',
+              scope: 'header',
+              handler: (context) => this.editStyle(context.item)
+            },
+            {
+              id: 'delete-style',
+              icon: 'las la-trash',
+              tooltip: 'KStyleManager.DELETE',
+              scope: 'footer',
+              handler: (context) => this.deleteStyle(context.item)
+            },
+          ],
+          class: 'col-12'
+        }"
      />
     </div>
   </div>
@@ -21,7 +43,7 @@ const filter = Store.get('filter')
 // Computed
 const baseQuery = computed(() => {
   // Filter the objets of type of table
-  const query = { type: 'table' }
+  const query = { }
   return query
 })
 const filterQuery = computed(() => {
@@ -30,5 +52,11 @@ const filterQuery = computed(() => {
   return query
 })
 
+function editStyle (style) {
+  console.log(style)
+}
+function deleteStyle (style) {
+  console.log(style)
+}
 
 </script>

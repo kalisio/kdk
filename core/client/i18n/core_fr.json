@@ -955,6 +955,8 @@
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
   },
   "KStyleManager": {
-    "MANAGER": "Gestionaire des styles"
+    "MANAGER": "Gestionaire des styles",
+    "EDIT": "Modifier le style",
+    "DELETE": "Supprimer le style"
   }
 }
