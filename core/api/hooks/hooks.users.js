@@ -135,86 +135,6 @@ export function generatePassword (options = {}) {
   }
 }
 
-export function preventRemoveUser (hook) {
-  if (hook.type !== 'before') {
-    throw new Error('The \'preventRemoveUser\' hook should only be used as a \'before\' hook.')
-  }
-
-  // By pass check ?
-  if (hook.params.force) return hook
-  const user = hook.params.user
-  // Check if the target is the current user
-  if ((user._id.toString() === hook.id.toString()) && user.organisations) {
-    // We must ensure the user is no more a owner of an organisation
-    const owningOrganisations = _.filter(user.organisations, { permissions: RoleNames[Roles.owner] })
-    if (!_.isEmpty(owningOrganisations)) {
-      debug('Cannot remove the user: ', user)
-      throw new Forbidden('You are not allowed to delete the user ' + user.name, {
-        translation: {
-          key: 'CANNOT_REMOVE_USER',
-          params: { user: _.get(user, 'profile.name') }
-        }
-      })
-    }
-  }
-  return hook
-}
-
-export async function joinOrganisation (hook) {
-  const app = hook.app
-  const subject = getItems(hook)
-  const authorisationService = app.getService('authorisations')
-  const usersService = app.getService('users')
-
-  // Set membership for the created user
-  await authorisationService.create({
-    scope: 'organisations',
-    permissions: subject.sponsor.roleGranted, // Member by default
-    resource: subject.sponsor.organisationId,
-    resourcesService: 'organisations'
-  }, {
-    subjectsService: usersService,
-    subjects: [subject]
-  })
-  debug('Organisation membership set for user ' + subject._id)
-  return hook
-}
-
-export function leaveOrganisations (options = { skipPrivate: true }) {
-  return async function (hook) {
-    if (hook.type !== 'after') {
-      throw new Error('The \'leaveOrganisations\' hook should only be used as a \'after\' hook.')
-    }
-
-    const app = hook.app
-    const organisationsService = app.getService('organisations')
-    const authorisationService = app.getService('authorisations')
-    const usersService = app.getService('users')
-    const subject = getItems(hook)
-    const organisations = _.get(subject, 'organisations', [])
-
-    await Promise.all(organisations.map(organisation => {
-      // Unset membership on org except private org if required
-      if (options.skipPrivate && organisation._id.toString() === subject._id.toString()) return Promise.resolve()
-      return authorisationService.remove(organisation._id.toString(), {
-        query: {
-          scope: 'organisations'
-        },
-        user: hook.params.user,
-        // Because we already have resource set it as objects to avoid populating
-        // Moreover used as an after hook the subject might not already exist anymore
-        subjects: [subject],
-        subjectsService: usersService,
-        resource: organisation,
-        resourcesService: organisationsService
-      })
-    }))
-
-    debug('Membership unset for all organisations on user ' + subject._id)
-    return hook
-  }
-}
-
 export async function sendVerificationEmail (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'sendVerificationEmail\' hook should only be used as a \'after\' hook.')
@@ -227,17 +147,6 @@ export async function sendVerificationEmail (hook) {
 
   const accountService = hook.app.getService('account')
   await accountService.options.notifier('resendVerifySignup', hook.result)
-  return hook
-}
-
-export async function sendInvitationEmail (hook) {
-  // Before because we need to send the clear password by email
-  if (hook.type !== 'before') {
-    throw new Error('The \'sendInvitationEmail\' hook should only be used as a \'before\' hook.')
-  }
-
-  const accountService = hook.app.getService('account')
-  await accountService.options.notifier('sendInvitation', hook.data)
   return hook
 }
 

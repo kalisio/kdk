@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { Events } from './events.js'
 import { Store } from './store.js'
-import { api } from './api.js'
 
 // Export singleton
 export const Filter = {

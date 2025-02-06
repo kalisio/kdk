@@ -68,9 +68,6 @@
     "WEAK_PASSWORD_ONEOF": "Not known as one of the most common passwords",
     "WEAK_PASSWORD_PREVIOUS": "Not one of your {history} last passwords",
     "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file",
-    "CANNOT_REMOVE_USER": "Your are not allowed to remove this account.<br>Please remove the organizations owned by <b>{user}</b> first.",
-    "CANNOT_REMOVE_organization": "You are not allowed to remove this organization.<br>Please remove all the groups first.",
-    "CANNOT_REMOVE_LAST_OWNER": "You are not allowed to remove the last owner of <b>{resource}</b>",
     "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {provider}, in order to switch to a local account reset your password first",
     "EMAIL_ALREADY_TAKEN": "A user with this email address seems to be already registered",
     "OBJECT_ID_ALREADY_TAKEN": "An item with this identifier seems to already exist. Please try again with another value.",
@@ -199,18 +196,6 @@
     "AVATAR_FIELD_LABEL": "Select an avatar",
     "NAME_FIELD_LABEL": "Enter your name",
     "COLOR_FIELD_LABEL": "Pick a color",
-    "organizationS_CREATE_TITLE": "Create a new organization ?",
-    "organizationS_NAME_FIELD_LABEL": "Enter the name of this organization",
-    "organizationS_DESCRIPTION_FIELD_LABEL": "Enter a description name of this organization",
-    "MEMBERS_TAGS_FIELD_LABEL": "Add some tags to qualify this member",
-    "TAG_NAME": "{ object.value }",
-    "TAGS_CREATE_TITLE": "Create a new tag ?",
-    "TAGS_NAME_FIELD_LABEL": "Enter the name of this tag",
-    "TAGS_ICON_FIELD_LABEL": "Set the icon of this tag",
-    "TAGS_DESCRIPTION_FIELD_LABEL": "Enter a description of this tag",
-    "GROUPS_CREATE_TITLE": "Create a new group ?",
-    "GROUPS_NAME_FIELD_LABEL": "Enter the name of this group",
-    "GROUPS_DESCRIPTION_FIELD_LABEL": "Enter a description for this group",
     "UPDATE_SETTINGS_TITLE": "Your settings",
     "TIME_FORMAT_SETTINGS": "Time/Date format",
     "TIME_FORMAT_SHORT_TIME_FIELD_LABEL": "Short time format",
@@ -267,12 +252,6 @@
       "EMAIL_VERIFICATION_LABEL": "We will send you an email back containing a link to <b>verify your address</b>.",
       "LOGIN_LINK_LABEL": "You can now login whenever you want using your <b>personal identifiers</b>"
     },
-    "create-organization": {
-      "organization_NAME_LABEL": "Enter the organization name as viewed by others users.",
-      "organization_DESCRIPTION_LABEL": "Enter a detailed description.",
-      "organization_AVATAR_LABEL": "Select the image or the logo of your organization as seen by your members.",
-      "CREATE_organization_LABEL": "Confirm the creation of your new organization."
-    },
     "account": {
       "PROFILE_LABEL": "This activity allows to update your profile information",
       "AVATAR_LABEL": "Your avatar visible in the side menu when an image file has been selected.",
@@ -298,103 +277,6 @@
       "UNSUBSCRIBE_LABEL": "Check for any suspect activity and remove outdated subscriptions.",
       "DANGER_ZONE_LABEL": "This activity allows to remove your account",
       "DELETE_LABEL": "A manual confirmation will be required before final removal."
-    },
-    "groups": {
-      "GROUPS_LABEL": "This activity allows to manage the <b>groups</b> in your organization.",
-      "GROUP_DEFINITION_LABEL": "A group allows to delegate the management of a shared workspace limited to its members.",
-      "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
-      "SEARCH_LABEL": "Type part of a word contained in the name of your groups in the arising bar to perform a search.",
-      "SORT_LABEL": "Sort your groups by ascending or descending alphabetical order this button.",
-      "NEW_GROUP_LABEL": "Create a <b>new group</b> using this button.",
-      "CREATE_GROUP_LINK_LABEL": "How to create a group",
-      "GROUP_CARD_LABEL": "Each group is viewed as a card providing available actions.",
-      "GROUP_MEMBERS_LABEL": "This section shows you the <b>members</b> count of your group.",
-      "LIST_GROUP_MEMBERS_LABEL": "Shows the <b>members</b> of your group by selecting it.",
-      "UPDATE_GROUP_LABEL": "Update the name of your group through this action.",
-      "UPDATE_GROUP_DESCRIPTION_LABEL": "Update the description of your group through this action.",
-      "GROUP_OVERFLOW_MENU_LABEL": "@:tours.CARD_OVERFLOW_MENU_LABEL",
-      "REMOVE_GROUP_LABEL": "Remove your group through this action.",
-      "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL"
-    },
-    "create-group": {
-      "GROUP_NAME_LABEL": "Choose a name for your group.",
-      "GROUP_DESCRIPTION_LABEL": "Choose a detailed description for your group.",
-      "CREATE_GROUP_LABEL": "Confirm the creation of your new group."
-    },
-    "members": {
-      "MEMBERS_LABEL": "This activity allows to manage the <b>members</b> in your organization.",
-      "MEMBER_DEFINITION_LABEL": "A <b>member</b> is a user able to access the shared workspace offered by your organization.",
-      "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
-      "SEARCH_LABEL": "Type part of a word contained in the name of your members in the arising bar to perform a search.",
-      "SEARCH_MORE_LABEL": "Type also a word contained in the name of a group or a tag associated to your members to filter accordingly.",
-      "FILTER_LABEL": "Filter your members according to their status using this button.",
-      "SORT_LABEL": "Sort your members by ascending or descending alphabetical order this button.",
-      "ADD_INVITE_MEMBER_LABEL": "Add members to your organization through this action.",
-      "ADD_MEMBER_LABEL": "If your future member <b>already has an account</b>, <b>add him</b> using this button.",
-      "ADD_MEMBER_LINK_LABEL": "How to add a member",
-      "INVITE_MEMBER_LABEL": "If your future member <b>does not yet have an account</b>, <b>invite him</b> using this button and we will create it .",
-      "INVITE_MEMBER_LINK_LABEL": "How to invite a member",
-      "MEMBER_CARD_LABEL": "Each member is viewed as a card providing available actions.",
-      "ROLE_LABEL": "Visualize the role of your member at a glance.",
-      "TAGS_LABEL": "Visualize tags of your member at a glance as well.",
-      "TAGS_CONTENT_LABEL": "Use the cross to delete a tag.",
-      "GROUPS_LABEL": "Visualize groups of your member at a glance as well.",
-      "GROUPS_CONTENT_LABEL": "Select one of the member groups to show available actions.",
-      "ADD_TAG_LABEL": "Add tag of your member through this action.",
-      "ADD_TAG_LINK_LABEL": "How to manage tags",
-      "JOIN_GROUP_LABEL": "Add your member to a <b>group</b> through this action.",
-      "JOIN_GROUP_LINK_LABEL": "How to manage groups",
-      "CHANGE_ROLE_LABEL": "Update the role of your member through this action.",
-      "CHANGE_ROLE_LINK_LABEL": "How to manage roles",
-      "REMOVE_MEMBER_LABEL": "Remove the member from your organization through this action.",
-      "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL"
-    },
-    "add-member": {
-      "UNIQUE_TAB_LABEL": "Add a unique person to your organization using his email address.",
-      "UNIQUE_EMAIL_LABEL": "Enter the email of the desired person",
-      "UNIQUE_CONTINUE_BUTTON_LABEL": "Click this button to proceed with the invitation or to add the person if they already have an account.",
-      "UNIQUE_NAME_LABEL": "Enter the name of the person.",
-      "UNIQUE_ROLE_LABEL": "Select its role within your organization. A <b>member</b> has a read-only access to your organization while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
-      "UNIQUE_ADD_BUTTON_LABEL": "Click this button to send the invitation.",
-      "MULTIPLE_TAB_LABEL": "Add multiple persons to your organization using a CSV file.",
-      "MULTIPLE_FILE_LABEL": "Upload the CSV file listing the persons to be invited. Each person is represented by a row containing the fields <b>name</b>, <b>email</b> and <b>role</b> separated using a <b>,</b> separator.",
-      "MULTIPLE_ADD_BUTTON_LABEL": "Click this button to proceed with the invitations."
-    },
-    "role-member": {
-      "ROLE_LABEL": "Select its role within your organization. A <b>member</b> has a read-only access to your organization while a <b>manager</b> can edit it, and a <b>owner</b> has full control.",
-      "UPDATE_ROLE_LABEL": "Update the role of your member"
-    },
-    "join-group": {
-      "GROUP_NAME_LABEL": "Typing <b>the first characters</b> of a group name to make it selectable.",
-      "MEMBER_ROLE_LABEL": "Choisissez le rôle de la personne au sein du groupe.",
-      "ROLES_LABEL": "Un <b>membre</b> a un accès consultatif au groupe alors qu'un <b>gestionnaire</b> a le pouvoir de gérer les membres du groupe (ajout/suppression).",
-      "ADD_MEMBER_LABEL": "Confirm adding the member to the group."
-    },
-    "add-tag": {
-      "TAG_NAME_LABEL": "Typing <b>the first characters</b> of a tag name to make it selectable if it already exists using the Return key.",
-      "ADD_TAG_LABEL": "Confirm addition the tags on your members."
-    },
-    "tags": {
-      "TAGS_LABEL": "This activity allows to manage the <b>tags</b> in your organization.",
-      "TAG_DEFINITION_LABEL": "A tag allows to classify a subset of your organization members (e.g. a skill or a service).",
-      "OVERFLOW_MENU_LABEL": "@:tours.APP_BAR_OVERFLOW_MENU_LABEL",
-      "SEARCH_LABEL": "Type part of a word contained in the name of your tags in the arising bar to perform a search.",
-      "SORT_LABEL": "Sort your tags by ascending or descending alphabetical order this button.",
-      "TAG_CARD_LABEL": "Each tag is viewed as a card providing available actions.",
-      "NEW_TAG_LABEL": "Create a <b>new tag</b> using this button.",
-      "CREATE_TAG_LINK_LABEL": "How to create a tag",
-      "TAG_COUNT_LABEL": "This section shows you the number of <b>members</b> having your tag.",
-      "LIST_MEMBERS_LABEL": "Shows the <b>members</b> with this tag by selecting it.",
-      "REMOVE_TAG_LABEL": "Remove your tag through this action.",
-      "REMOVE_CONFIRMATION_LABEL": "@:tours.REMOVE_CONFIRMATION_LABEL",
-      "UPDATE_TAG_LABEL": "Update properties of your tag through this action, this will update all members having this tag.",
-      "UPDATE_TAG_DESCRIPTION_LABEL": "Update the description of your tag through this action."
-    },
-    "create-tag": {
-      "TAG_NAME_LABEL": "Choose a name for your tag.",
-      "TAG_ICON_LABEL": "Choose an icon to easily recognize your tag.",
-      "TAG_DESCRIPTION_LABEL": "Choose a detailed description for your tag.",
-      "CREATE_TAG_LABEL": "Confirm the creation of your new tag."
     }
   },
   "exporter": {
@@ -724,118 +606,6 @@
     "RESTORE_ACTION": "Restore",
     "MAXIMIZE_ACTION": "Maximize"
   },
-  "KorganizationsActivity": {
-    "organizationS_LABEL": "My organizations",
-    "CREATE_organization_LABEL": "Create an organization",
-    "SEARCH_organizationS": "Rechercher des organizations",
-    "SORT_organizationS": "Trier les organizations"
-  },
-  "KMembersActivity": {
-    "MEMBERS_LABEL": "@:MEMBERS",
-    "SORT_MEMBERS": "Sort members",
-    "SEARCH_MEMBERS": "Search members",
-    "EXPORT_MEMBERS": "Export members",
-    "ADD_USER_LABEL": "Add a member",
-    "INVITE_GUEST_LABEL": "Invite guests"
-  },
-  "KAddMember": {
-    "TITLE": "Add one or more persons ?",
-    "EMAIL_FIELD_LABEL": "Enter the email address of the person to be added",
-    "NAME_FIELD_LABEL": "Enter the name of this person",
-    "ROLE_FIELD_LABEL": "Select the role granted to this person",
-    "ADD_MESSAGE": "<b>{email}</b> is already registered. Would you like to add this persion to your organization ?",
-    "INVITE_MESSAGE": "<b>{email}</b> is not registered. Would you like to invite this person ?",
-    "FILE_FIELD_LABEL": "Select the CSV file you want to import",
-    "OWNER_LABEL": "@:OWNER",
-    "MANAGER_LABEL": "@:MANAGER",
-    "MEMBER_LABEL": "@:MEMBER",
-    "CANCEL_BUTTON": "@:CANCEL",
-    "CONTINUE_BUTTON": "Continue",
-    "BACK_BUTTON": "Back",
-    "ADD_BUTTON": "Add",
-    "INVITE_BUTTON": "Invite",
-    "ALREADY_MEMBER_ERROR": "This person is already a member of your organization",
-    "CONTENT_FILE_ERROR": "Are you sure your file is correclty formatted ?",
-    "INVALID_FIELDS_VALUES_ERROR": "Invalid values",
-    "INVALID_FIELDS_NUMBER_ERROR": "Invalid field number",
-    "ALERT_FILE_IMPORT_MESSAGE": "No valid record detected. Please ensure your file is correctly formatted",
-    "CONFIRM_FILE_IMPORT_MESSAGE": "<b>{errors} error(s)</b> detected among {records}] record(s). Would you to continue ?",
-    "USER_ADDED_MESSAGE": "This person as been added",
-    "GUEST_ADDED_MESSAGE": "This person as been invited"
-  },
-  "KAddTag": {
-    "TITLE": "Tag {member} with an existing tag ?",
-    "TAG_FIELD_LABEL": "Enter the name of the tag",
-    "CLOSE_ACTION": "@:CLOSE",
-    "ADD_BUTTON": "Tag"
-  },
-  "KJoinGroup": {
-    "TITLE": "Add {member} to an existing group ?",
-    "GROUP_FIELD_LABEL": "Enter the name of the group",
-    "ROLE_FIELD_LABEL": "Delegate group management to this member?",
-    "OWNER_LABEL": "@:OWNER",
-    "MANAGER_LABEL": "@:MANAGER",
-    "MEMBER_LABEL": "@:MEMBER",
-    "CLOSE_ACTION": "@:CLOSE",
-    "ADD_BUTTON": "Add"
-  },
-  "KChangeRole": {
-    "TITLE": "Change role of {member} ?",
-    "ROLE_FIELD_LABEL": "Select the role to be granted to the user",
-    "CLOSE_ACTION": "@:CLOSE",
-    "UPDATE_BUTTON": "Update"
-  },
-  "KMemberCard": {
-    "EDIT_ACTION": "@:EDIT",
-    "REMOVE_ACTION": "@:REMOVE",
-    "TAGS_SECTION": "Tags",
-    "NO_TAGS_LABEL": "Update tags",
-    "TAG_ACTION": "Add a tag",
-    "REMOVE_TAG_DIALOG_TITLE": "Remove tag {tag} ?",
-    "REMOVE_TAG_DIALOG_MESSAGE": "Are you sure you want to remove tag <b>{tag}</b> for <b>{member}</b>?",
-    "GROUPS_SECTION": "Groups",
-    "NO_GROUPS_LABEL": "No groups",
-    "JOIN_GROUP_ACTION": "Join a group",
-    "EXPIRE_AT_LABEL": "Invitation expire at",
-    "CHANGE_ROLE_ACTION": "Change role",
-    "RESEND_INVITATION_ACTION": "Resend an invitation",
-    "REMOVE_DIALOG_TITLE": "Remove {member} ?",
-    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{member}</b> from your organization ?",
-    "LEAVE_GROUP_DIALOG_TITLE": "Leave the group {group} '?",
-    "LEAVE_GROUP_DIALOG_MESSAGE": "Are you sure you want <b>{member}</b> to leave the group <b>{group}</b> ?",
-    "RESEND_INVITATION_DIALOG_TITLE": "Resend the invitation for {member} ?",
-    "RESEND_INVITATION_DIALOG_MESSAGE": "Is <b>{member}</b>'s email address correct ?"
-  },
-  "KTagsActivity": {
-    "TAGS_LABEL": "@:TAGS",
-    "SORT_TAGS": "Sort tags",
-    "SEARCH_TAGS": "Search tags",
-    "EXPORT_TAGS": "Export tags",
-    "CREATE_TAG_LABEL": "Create a tag"
-  },
-  "KTagCard": {
-    "EDIT_ACTION": "@:EDIT",
-    "REMOVE_ACTION": "@:REMOVE",
-    "MEMBERS_SECTION": "Members",
-    "MEMBERS_LABEL": "{count} member(s)",
-    "VIEW_MEMBERS_LABEL": "View members with tag"
-  },
-  "KGroupsActivity": {
-    "GROUPS_LABEL": "@:GROUPS",
-    "SORT_GROUPS": "Sort groups",
-    "SEARCH_GROUPS": "Search groups",
-    "EXPORT_GROUPS": "Export groups",
-    "CREATE_GROUP_LABEL": "Create a group"
-  },
-  "KGroupCard": {
-    "EDIT_ACTION": "@:EDIT",
-    "REMOVE_ACTION": "@:REMOVE",
-    "DESCRIPTION_SECTION": "Description",
-    "NO_DESCRIPTION_LABEL": "No description",
-    "MEMBERS_SECTION": "Members",
-    "MEMBERS_LABEL": "{count} member(s)",
-    "VIEW_MEMBERS_LABEL": "View members"
-  },
   "KResetPassword": {
     "TITLE": "Reset your password ?",
     "MESSAGE": "Please enter your new password to proceed",
@@ -858,13 +628,6 @@
     "ERROR_INVALID_EMAIL": "Unable to find the account associated to the email entered",
     "ERROR_MESSAGE_IS_VERIFIED": "Check your inbox and verify your email address first",
     "ERROR_MESSAGE_DEFAULT": "Error while sending email, please check the address and send it again or try again later"
-  },
-  "KMemberFilter": {
-    "NONE": "None",
-    "OWNER": "Owner",
-    "MANAGER": "Manager",
-    "MEMBER": "Member",
-    "GUEST": "Guest"
   },
   "KSorter": {
     "SORT": "Sort"

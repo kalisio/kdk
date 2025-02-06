@@ -76,7 +76,6 @@ describe('core:account', () => {
             hooks.generatePassword(),
             // Keep track of clear password before hashing for testing purpose
             hooks.serialize([{ source: 'password', target: 'clearPassword' }]),
-            hooks.sendInvitationEmail,
             hooks.hashPassword('password')),
           hooks.addVerification
         ]
@@ -91,16 +90,6 @@ describe('core:account', () => {
     })
     authenticationService = app.getService('authentication')
     expect(authenticationService).toExist()
-    authenticationService.hooks({
-      before: {
-        create: [],
-        remove: []
-      },
-      after: {
-        // Used for invitation to automatically verify invited users on first login
-        create: [hooks.verifyGuest, hooks.consentGuest]
-      }
-    })
     mailerService = app.getService('mailer')
     expect(mailerService).toExist()
     accountService = app.getService('account')
@@ -116,67 +105,6 @@ describe('core:account', () => {
     const gmailApiConfig = app.get('gmailApi')
     gmailUser = gmailApiConfig.user
     // gmailClient = await createGmailClient(gmailApiConfig)
-  })
-  // Let enough time to process
-    .timeout(5000)
-
-  it('invites a user', async () => {
-    const user = await userService.create({
-      email: gmailUser,
-      name: 'test-user',
-      sponsor: { name: 'sponsor' }
-    })
-    userObject = user
-    expect(userObject.password).toExist()
-    expect(userObject.expireAt).toExist()
-    expect(userObject.expireAt instanceof Date).beTrue()
-    expect(userObject.isVerified).toExist()
-    expect(userObject.isVerified).beFalse()
-    expect(userObject.verifyShortToken).toExist()
-    expect(userObject.consentTerms).beUndefined()
-  })
-  // Let enough time to process
-    .timeout(10000)
-
-  it('check invitation email', () => {
-    mailerStub.checkEmail(userObject, mailerService.options.auth.user,
-      'Welcome', [new RegExp(userObject.profile.name, 'g'), new RegExp(userObject.email, 'g')])
-    mailerStub.checkNbEmails(0)
-    // Add some delay to wait for email reception
-    /*
-    setTimeout(() => {
-      gmailClient.checkEmail(userObject, mailerService.options.auth.user, 'Welcome', done)
-    }, 10000)
-    */
-  })
-  // Let enough time to process
-    .timeout(15000)
-
-  it('check invitation email exist', async () => {
-    const response = await accountService.verifyEmail({ email: gmailUser })
-    expect(response.status).to.equal(200)
-  })
-
-  it('authenticates an invited user', async () => {
-    const response = await request
-      .post(`${baseUrl}/authentication`)
-      .send({ email: userObject.email, password: userObject.clearPassword, strategy: 'local' })
-    expect(response.body.accessToken).toExist()
-    userObject = await userService.get(userObject._id.toString())
-    expect(userObject.consentTerms).toExist()
-    expect(userObject.consentTerms).beTrue()
-    expect(userObject.isVerified).beTrue()
-    expect(userObject.expireAt).to.equal(null)
-  })
-  // Let enough time to process
-    .timeout(5000)
-
-  it('removes invited user', async () => {
-    try {
-      await userService.remove(userObject._id.toString(), { user: userObject })
-    } catch (error) {
-      console.log(error)
-    }
   })
   // Let enough time to process
     .timeout(5000)

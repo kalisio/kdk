@@ -47,19 +47,6 @@ export function decorateDistributedService (service) {
   return remoteService
 }
 
-export function createTagService (options = {}) {
-  const app = this
-  return app.createService('tags', Object.assign({
-    servicesPath,
-    modelsPath
-  }, options))
-}
-
-export function removeTagService (options = {}) {
-  const app = this
-  return app.removeService(app.getService('tags', options.context))
-}
-
 export function createStorageService (options = {}) {
   const app = this
   return app.createService('storage', Object.assign({
@@ -102,42 +89,6 @@ export function removeDatabasesService (options = {}) {
   return app.removeService(app.getService('databases', options.context))
 }
 
-export async function createOrganisationService (options = {}) {
-  const app = this
-
-  // Create services to manage MongoDB databases, organisations, etc.
-  await createDatabasesService.call(app)
-  const orgsService = await app.createService('organisations', { modelsPath, servicesPath })
-
-  // Replication management
-  const usersService = app.getService('users')
-  const authorisationsService = app.getService('authorisations')
-  // Ensure permissions are correctly distributed when replicated
-  usersService.on('patched', user => {
-    // Patching profile should not trigger abilities update since
-    // it is a perspective and permissions are not available in this case
-    // Updating abilities in this case will result in loosing permissions for orgs/groups as none are available
-    if (_.has(user, 'organisations') || _.has(user, 'groups')) authorisationsService.updateAbilities(user)
-  })
-  // Ensure org services are correctly distributed when replicated
-  orgsService.on('created', organisation => {
-    // Check if already done (initiator)
-    const orgMembersService = app.getService('members', organisation)
-    if (!orgMembersService) {
-      // Jump from infos/stats to real DB object
-      const db = app.db.client.db(organisation._id.toString())
-      orgsService.createOrganisationServices(organisation, db)
-    }
-  })
-  orgsService.on('removed', organisation => {
-    // Check if already done (initiator)
-    const orgMembersService = app.getService('members', organisation)
-    if (!orgMembersService) return
-    orgsService.removeOrganisationServices(organisation)
-  })
-  return orgsService
-}
-
 export default async function () {
   const app = this
 
@@ -178,12 +129,6 @@ export default async function () {
   if (messagesConfig) {
     await createMessagesService.call(app)
     debug('\'messages\' service created')
-  }
-
-  const orgConfig = app.get('organisations')
-  if (orgConfig) {
-    await createOrganisationService.call(app)
-    debug('\'organisations\' service created')
   }
 
   const mailerConfig = app.get('mailer')

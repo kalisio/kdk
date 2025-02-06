@@ -22,10 +22,6 @@ export default {
       const scope = _.get(subject, scopeName, [])
       // Then the target resource
       let resource = _.find(scope, resource => resource._id && (resource._id.toString() === params.resource._id.toString()))
-      if (!resource) {
-        // Fallback as name
-        resource = _.find(scope, resource => resource.name && (resource.name === params.resource.name))
-      }
       // On first authorisation create the resource in scope
       if (!resource) {
         resource = Object.assign({}, params.resource)
