@@ -2,6 +2,7 @@
   <KLayerItem v-if="!layer.filters"
     v-bind="$props"
     :layer="layer"
+    @toggled="onToggled"
   />
   <q-tree v-else
     :nodes="[layer]"

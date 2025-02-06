@@ -36,35 +36,31 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
-import { utils } from '../../../../core/client'
+import { computed } from 'vue'
 import { KPanel } from '../../../../core/client/components'
 
-export default {
-  components: {
-    KPanel
-  },
-  props: {
-    layer: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  computed: {
-    id () {
-      const name = _.kebabCase(this.layer.name)
-      if (_.startsWith(name, 'layers-')) return name
-      return 'layers-' + name
-    },
-    icon () {
-      return utils.getIconName(this.layer, 'icon')
-    }
-  },
-  methods: {
-    onToggled () {
-      this.$emit('toggled', this.layer)
-    }
+// Props
+const props = defineProps({
+  layer: {
+    type: Object,
+    default: () => {}
   }
+})
+
+// Emits
+const emit = defineEmits(['toggled'])
+
+// Computed
+const id = computed(() => {
+  const name = _.kebabCase(_.get(props.layer, 'name'))
+  if (_.startsWith(name, 'layers-')) return name
+  return 'layers-' + name
+})
+
+// Functions
+function onToggled () {
+  emit('toggled', props.layer)
 }
 </script>
