@@ -278,11 +278,14 @@ api.createService('catalog', { context })
 // Set the context as current
 Context.set(context)
 // Here get the contextual service
-api.createService('catalog')
+// Shortcut of api.getService('catalog', context)
+api.getService('catalog')
+// To get the global service even if the context is set
+api.getService('catalog', 'global')
 // Clear the current context
 Context.set(null)
 // Here get the global service
-api.createService('catalog')
+api.getService('catalog')
 ```
 
 ### Guards
