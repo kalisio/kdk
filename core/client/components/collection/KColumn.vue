@@ -33,7 +33,6 @@
               :id="item._id"
               :service="service"
               :item="item"
-              :contextId="contextId"
               :is="rendererComponent"
               v-bind="renderer"
               @item-selected="onItemSelected"
@@ -119,10 +118,6 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
-  },
-  contextId: {
-    type: String,
-    default: undefined
   },
   service: {
     type: String,

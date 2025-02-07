@@ -33,7 +33,6 @@
                   :ref="onItemRendered"
                   :service="service"
                   :item="item"
-                  :contextId="contextId"
                   :is="itemRenderer"
                   v-bind="renderer"
                   @item-selected="onItemSelected"
@@ -52,7 +51,6 @@
               :ref="onItemRendered"
               :service="service"
               :item="item"
-              :contextId="contextId"
               :is="itemRenderer"
               v-bind="renderer"
               @item-selected="onItemSelected"
@@ -150,10 +148,6 @@ import KPanel from '../KPanel.vue'
 
 // Props
 const props = defineProps({
-  contextId: {
-    type: String,
-    default: undefined
-  },
   service: {
     type: String,
     required: true

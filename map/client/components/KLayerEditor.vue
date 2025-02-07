@@ -4,7 +4,6 @@
     :ref="onEditorCreated"
     service="catalog"
     :objectId="layerId"
-    :contextId="contextId"
     @applied="onLayerEdited"
   />
 </template>
@@ -23,10 +22,6 @@ export default {
     layerId: {
       type: String,
       required: true
-    },
-    contextId: {
-      type: String,
-      default: ''
     }
   },
   methods: {

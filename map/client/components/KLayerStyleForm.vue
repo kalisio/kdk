@@ -371,7 +371,7 @@ export default {
       if ((componentName !== 'form/KNumberField') && _.has(this.layer, 'service')) {
         componentName = 'form/KSelectField'
         // Get available values
-        let values = await this.$api.getService(_.get(this.layer, 'service'), this.contextId)
+        let values = await this.$api.getService(_.get(this.layer, 'service'))
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
         // Sort them to ease searching
         values = values.sort()

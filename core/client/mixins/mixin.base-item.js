@@ -9,10 +9,6 @@ export const baseItem = {
     'item-expanded'
   ],
   props: {
-    contextId: {
-      type: String,
-      default: ''
-    },
     service: {
       type: String,
       required: true
@@ -95,14 +91,14 @@ export const baseItem = {
       this.$emit('item-expanded', this.item, expanded)
     },
     canViewItem () {
-      return this.$can('read', this.service, this.contextId, this.item)
+      return this.$can('read', this.service, this.item)
     },
     viewItem () {
       const path = this.$route.fullPath + `/view/${this.item._id}`
       this.$router.push(path)
     },
     canEditItem () {
-      return this.$can('update', this.service, this.contextId, this.item)
+      return this.$can('update', this.service, this.item)
     },
     editItem (scope = undefined, properties = undefined) {
       const route = this.$route
@@ -120,7 +116,7 @@ export const baseItem = {
       })
     },
     canRemoveItem () {
-      return this.$can('remove', this.service, this.contextId, this.item)
+      return this.$can('remove', this.service, this.item)
     },
     removeItem (prompt, nameField = 'name') {
       if (prompt === 'confirm' || prompt === 'input') {
@@ -145,10 +141,10 @@ export const baseItem = {
             flat: true
           }
         }).onOk(() => {
-          this.$api.getService(this.service, this.contextId).remove(this.item._id)
+          this.$api.getService(this.service).remove(this.item._id)
         })
       } else {
-        this.$api.getService(this.service, this.contextId).remove(this.item._id)
+        this.$api.getService(this.service).remove(this.item._id)
       }
     },
     exportItem () {

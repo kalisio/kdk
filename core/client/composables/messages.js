@@ -1,7 +1,7 @@
 import { api } from '../api.js'
 
-export function useMessages (contextId) {
-  const messagesService = api.getService('messages', contextId)
+export function useMessages () {
+  const messagesService = api.getService('messages')
 
   // Functions
   async function createMessage (message, query) {

@@ -93,10 +93,6 @@ import KStamp from '../KStamp.vue'
 
 // Props
 const props = defineProps({
-  contextId: {
-    type: String,
-    default: undefined
-  },
   path: {
     type: String,
     default: undefined
@@ -158,7 +154,6 @@ const tools = computed(() => {
       tooltip: 'KBrowser.UPLOAD_FILES',
       dialog: {
         component: 'document/KUploader',
-        'component.contextId': props.contextId,
         'component.path': props.path,
         cancelAction: 'CANCEL',
         okAction: { id: 'upload-button', label: 'KBrowser.UPLOAD', handler: 'upload' }
@@ -214,7 +209,6 @@ async function refresh () {
   file.value = files.value[index.value]
   file.value.url = await Storage.getPresignedUrl({
     key: getDocumentKey(file.value.name),
-    context: props.contextId,
     expiresIn: 60
   })
   viewer.value = Document.getViewer(file.value.type)
@@ -222,8 +216,7 @@ async function refresh () {
 function downloadFile () {
   Storage.export({
     file: file.value.name,
-    key: getDocumentKey(file.value.name),
-    context: props.contextId
+    key: getDocumentKey(file.value.name)
   })
 }
 function deleteFile () {
@@ -241,16 +234,14 @@ function deleteFile () {
   }).onOk(() => {
     Storage.remove({
       file: file.value.name,
-      key: getDocumentKey(file.value.name),
-      context: props.contextId
+      key: getDocumentKey(file.value.name)
     })
   })
 }
 async function onFileUploaded (data) {
-  const { name, key, type, context } = data
+  const { name, key, type } = data
   logger.debug(`[KDK] File ${name} of type ${type} uploaded:`, key, context)
   // filter event
-  if (context !== props.contextId) return
   if (!key.includes(props.path)) return
   // add the file
   files.value.push({ name, type })
@@ -261,10 +252,9 @@ async function onFileUploaded (data) {
   }
 }
 async function onFileRemoved (data) {
-  const { name, key, context } = data
+  const { name, key } = data
   logger.debug(`[KDK] File ${name} removed:`, key, context)
   // filter event
-  if (context !== props.contextId) return
   if (!key.includes(props.path)) return
   // remove the file
   _.remove(files.value, file => {

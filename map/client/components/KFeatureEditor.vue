@@ -6,7 +6,6 @@
     :service="service"
     perspective="properties"
     :objectId="featureId"
-    :contextId="contextId"
     :schema-function="loadLayerSchema"
     @applied="onFeatureEdited"
     @closed="closeModal()"
@@ -38,10 +37,6 @@ export default {
     featureId: {
       type: String,
       required: true
-    },
-    contextId: {
-      type: String,
-      default: ''
     }
   },
   data () {
@@ -79,7 +74,7 @@ export default {
   async created () {
     // If not injected load it
     if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
-    else this.layer = await this.$api.getService('catalog', this.contextId).get(this.layerId)
+    else this.layer = await this.$api.getService('catalog').get(this.layerId)
     this.service = _.get(this.layer, '_id') ? _.get(this.layer, 'service') : 'features-edition'
   },
   setup (props) {

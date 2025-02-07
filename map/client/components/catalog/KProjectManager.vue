@@ -11,11 +11,11 @@
       </q-tabs>
       <div>
         <q-tab-panels v-model="mode" animated>
-          <q-tab-panel name="select-layers" v-if="modes.includes('select-layers')" :contextId="contextId">
-            <Suspense><k-select-layers :contextId="contextId" @done="closeModal" /></Suspense>
+          <q-tab-panel name="select-layers" v-if="modes.includes('select-layers')">
+            <Suspense><k-select-layers @done="closeModal" /></Suspense>
           </q-tab-panel>
-          <q-tab-panel name="select-views" v-if="modes.includes('select-views')" :contextId="contextId">
-            <Suspense><k-select-views :contextId="contextId" @done="closeModal" /></Suspense>
+          <q-tab-panel name="select-views" v-if="modes.includes('select-views')">
+            <Suspense><k-select-views @done="closeModal" /></Suspense>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -38,10 +38,6 @@ export default {
   },
   mixins: [kCoreMixins.baseModal],
   props: {
-    contextId: {
-      type: String,
-      default: ''
-    },
     defaultMode: {
       type: String,
       default: 'select-layers'

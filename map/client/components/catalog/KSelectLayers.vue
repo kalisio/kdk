@@ -32,12 +32,6 @@ export default {
     'done'
   ],
   inject: ['kActivity'],
-  props: {
-    contextId: {
-      type: String,
-      default: ''
-    }
-  },
   computed: {
     layersFormSchema () {
       return {
@@ -78,14 +72,14 @@ export default {
     async onSelect () {
       const layersResult = this.$refs.layersForm.validate()
       if (!layersResult.isValid) return
-      const projectService = this.$api.getService('projects', this.contextId)
+      const projectService = this.$api.getService('projects')
       await projectService.patch(this.projectId, { layers: layersResult.values.layers })
       this.$emit('done')
     }
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront
   async setup (props) {
-    const project = useProject({ contextId: props.contextId })
+    const project = useProject()
     await project.loadProject({ populate: false })
     // Expose
     return {

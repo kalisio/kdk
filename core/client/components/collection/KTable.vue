@@ -114,10 +114,6 @@ const props = defineProps({
   selection: {
     type: String
   },
-  contextId: {
-    type: String,
-    default: undefined
-  },
   service: {
     type: String,
     required: true

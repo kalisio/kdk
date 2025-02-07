@@ -21,7 +21,6 @@
           v-if="item.side === 'left'"
           :id="item._id"
           :item="item"
-          :contextId="contextId"
           :is="rendererComponent"
           v-bind="renderer"
         />
@@ -40,7 +39,6 @@
           v-if="$q.screen.lt.md || item.side === 'right'"
           :id="item._id"
           :item="item"
-          :contextId="contextId"
           :is="rendererComponent"
           v-bind="renderer"
         />

@@ -41,10 +41,6 @@ export default {
     layerName: {
       type: String,
       default: ''
-    },
-    contextId: {
-      type: String,
-      default: ''
     }
   },
   computed: {
@@ -82,7 +78,7 @@ export default {
       // If saved layer update it in DB
       if (this.layer._id) {
         try {
-          await this.$api.getService('catalog', this.contextId).patch(this.layer._id, result.values)
+          await this.$api.getService('catalog').patch(this.layer._id, result.values)
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
           logger.error(error)
@@ -108,7 +104,7 @@ export default {
     async openModal () {
       // If not injected load it
       if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
-      else this.layer = await this.$api.getService('catalog', this.contextId).get(this.layerId)
+      else this.layer = await this.$api.getService('catalog').get(this.layerId)
       kCoreMixins.baseModal.methods.openModal.call(this)
     }
   },
