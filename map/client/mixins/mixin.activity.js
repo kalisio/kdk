@@ -241,7 +241,7 @@ export const activity = {
     },
     listenToCatalogServiceEvents () {
       // Listen about changes in global/contextual catalog services
-      this.globalCatalogService = this.$api.getService('catalog', '')
+      this.globalCatalogService = this.$api.getService('catalog', 'global')
       this.catalogService = this.$api.getService('catalog')
       // Keep track of binded listeners as we use the same function with different contexts
       this.catalogListeners = {}
@@ -258,8 +258,10 @@ export const activity = {
       })
     },
     unlistenToCatalogServiceEvents () {
+      // Nothing to unlisten for
+      if (!this.catalogListeners) return
       // Stop listening about changes in global/contextual catalog services
-      if (!this.globalCatalogService) this.globalCatalogService = this.$api.getService('catalog', '')
+      if (!this.globalCatalogService) this.globalCatalogService = this.$api.getService('catalog', 'global')
       if (!this.catalogService) this.catalogService = this.$api.getService('catalog')
       const events = ['created', 'updated', 'patched', 'removed']
       events.forEach(event => {

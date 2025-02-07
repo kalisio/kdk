@@ -94,7 +94,7 @@ const planetApi = project && typeof project.getPlanetApi === 'function' ? projec
 // Use target catalog according to project
 const { getSublegends: getProjectSublegends } = useCatalog({ project, planetApi })
 // Use global catalog
-const { getSublegends } = useCatalog()
+const { getSublegends } = useCatalog({ context: 'global' })
 // Use local catalog if any
 const { getSublegends: getContextSublegends } = useCatalog({ context: Store.get('context') })
 

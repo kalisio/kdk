@@ -12,7 +12,7 @@ export function useProject (options = {}) {
     // Set if project should be extracted from route
     // otherwise it should be loaded manually
     route: true,
-    // Default to global service
+    // Default to contextual or global service depending on store
     context: '',
     // Default to target activity
     updateActivity: true,

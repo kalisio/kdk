@@ -105,7 +105,7 @@ export default {
   },
   setup (props) {
     // Use global catalog
-    const { views, getViews } = useCatalog()
+    const { views, getViews } = useCatalog({ context: 'global' })
     // Use local catalog
     const { views: contextViews, getViews: getContextViews } = useCatalog({ context: Store.get('context') })
 

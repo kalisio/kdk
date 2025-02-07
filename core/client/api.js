@@ -82,7 +82,8 @@ export async function createClient (config) {
     if (!_.isEmpty(context)) {
       // Context is given as string ID or object ?
       if (typeof context === 'string') {
-        path = context + '/' + name
+        // 'global' keyword is to get the global service
+        if (context !== 'global') path = context + '/' + name
       } else if (context._id) {
         path = context._id + '/' + name
       }
