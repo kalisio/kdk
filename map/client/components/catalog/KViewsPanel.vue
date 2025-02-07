@@ -20,7 +20,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Filter, Sorter, utils, i18n, api, LocalCache } from '../../../../core/client'
+import { Filter, Sorter, utils, i18n, api, LocalCache, Store } from '../../../../core/client'
 import { KGrid, KPanel, KAction } from '../../../../core/client/components'
 import { useProject } from '../../composables'
 import { cacheView, uncacheView } from '../../utils/utils.offline.js'
@@ -45,7 +45,7 @@ export default {
       dense: true,
       content: []
     })
-    if (this.$can('create', 'catalog', this.kActivity.contextId)) {
+    if (this.$can('create', 'catalog')) {
       viewActions[0].content.push({
         id: 'remove-view',
         icon: 'las la-trash',
@@ -117,7 +117,7 @@ export default {
           break
         }
         case 'set-home-view': {
-          if (!this.$can('update', 'catalog', this.kActivity.contextId)) return
+          if (!this.$can('update', 'catalog')) return
           // Get current home view
           const response = await api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
           const currentHomeView = (response.data.length > 0 ? response.data[0] : null)
@@ -159,7 +159,7 @@ export default {
               spinner: true
             })
             await cacheView(view, this.getProjectLayers(), {
-              contextId: this.kActivity.contextId,
+              contextId: Store.get('context'),
               ...values
             })
             view.isCached = true
@@ -177,7 +177,7 @@ export default {
             spinner: true
           })
           await uncacheView(view, this.getProjectLayers(), {
-            contextId: this.kActivity.contextId
+            contextId: Store.get('context')
           })
           view.isCached = false
           dismiss()

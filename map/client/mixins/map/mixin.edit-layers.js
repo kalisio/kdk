@@ -2,6 +2,7 @@ import _ from 'lodash'
 import L from 'leaflet'
 import { getType, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
+import { Store } from '../../../../core/client/store.js'
 import { 
   bindLeafletEvents, unbindLeafletEvents, 
   getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle,
@@ -292,7 +293,7 @@ export const editLayers = {
           layerId: this.editedLayer._id,
           layerName: this.editedLayer.name,
           featureId: feature._id,
-          contextId: this.contextId
+          contextId: Store.get('context')
         })
       })
     },
