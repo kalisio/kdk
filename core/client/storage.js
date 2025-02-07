@@ -12,10 +12,9 @@ export const Storage = {
     this.useProxy = _.get(config, 'storage.useProxy', false)
   },
   getService (context) {
-    // Even when service is not yet declared feathers returns a wraper
-    let service = api.getService('storage', context)
-    // So we check if it has the right methods to initialize on first call
-    if (!service.upload && !service.download) {
+    // check if the service is not yet declared without letting feathers returns the default wrapper
+    let service = api.getServiceInstance('storage', context, { create: false })
+    if (!service) {
       service = getClientService(api, {
         servicePath: api.getServicePath('storage', context).substr(1),
         transport: api.transporter,
