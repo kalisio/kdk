@@ -1,13 +1,8 @@
 import _ from 'lodash'
-import { api, Context } from '@kalisio/kdk/core.client.js'
+import { api } from '@kalisio/kdk/core.client.js'
 
-export function getCollectionService (serviceName, serviceContext) {
-  if (!serviceContext) return api.getService(serviceName)
-  if (serviceContext === 'context') {
-    if (!Context.get()) throw new Error(`[KDK] Cannot retrieve service '${serviceName}': undefined Context`)
-    return api.getService(serviceName, Context.get()._id)
-  }
-  return api.getService(serviceName, serviceContext)
+export function getCollectionService (name, context) {
+  return api.getService(name, context)
 }
 
 export async function listItems (service, fields, filter= {}, limit = 50) {
