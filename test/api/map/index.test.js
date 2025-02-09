@@ -17,7 +17,7 @@ const { util, expect } = chai
 describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, catalogService, defaultLayers,
-    zonesService, vigicruesStationsService, nbStations, vigicruesObsService,
+    zones, zonesService, vigicruesStationsService, nbStations, vigicruesObsService,
     adsbObsService, items, eventListeners, eventCount, eventData
 
   function eventsOn (service) {
@@ -125,8 +125,26 @@ describe('map:services', () => {
     // Check for events
     eventsOn(zonesService)
     // Feed the collection
-    const zones = fs.readJsonSync(path.join(__dirname, 'data/zones.json')).features
+    zones = fs.readJsonSync(path.join(__dirname, 'data/zones.json')).features
     items = await zonesService.create(zones)
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('upsert data in zones service', async () => {
+    const result = await zonesService.patch(null, {
+      type: 'Feature',
+      id: 100,
+      geometry: zones[0].geometry,
+      properties: {
+        'OBJECTID': 100
+      }
+    }, { query: { id: 100, upsert: true } })
+    const feature = result[0]
+    expect(feature._id).toExist()
+    expect(feature.geometry).toExist()
+    expect(feature.properties).toExist()
+    expect(feature.properties.OBJECTID).to.equal(100)
   })
   // Let enough time to process
     .timeout(5000)
@@ -140,6 +158,13 @@ describe('map:services', () => {
       expect(item.geometry).beUndefined()
       expect(item.properties).beUndefined()
     })
+    // But not on single item
+    expect(getEventCount('patched')).to.equal(1)
+    const payload = getEventData('patched')
+    expect(payload._id).toExist()
+    expect(payload.geometry).toExist()
+    expect(payload.properties).toExist()
+    expect(payload.properties.OBJECTID).to.equal(100)
   })
 
   it('performs spatial filtering on zones service', async () => {
