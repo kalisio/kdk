@@ -115,13 +115,14 @@ defineAbilities.unregisterHook = function (hook) {
 export function hasServiceAbilities (abilities, service) {
   if (!abilities) return false
   // The unique identifier of a service is its path not its name.
-  // Indeed we have for instance a 'groups' service in each organisation
+  // Indeed we have for instance a 'groups' service in each context
   // Take care that in client we have the service path while on server we have the actual object
   const path = typeof service === 'string' ? service : service.getPath()
   // */groups will allow to access any groups service in any context
+  const allContextsPath = _.replace(path, /^.*\//, '*/')
   return abilities.can('service', path) ||
          abilities.can('service', `*/${path}`) ||
-         abilities.can('service', _.replace(path, /^.*\//, '*/'))
+         abilities.can('service', allContextsPath)
 }
 
 export function hasResourceAbilities (abilities, operation, resourceType, context, resource) {
