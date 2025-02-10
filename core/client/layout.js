@@ -299,6 +299,17 @@ export const Layout = {
   clearStickies () {
     this.clearElement('stickies')
   },
+  findSticky (stickyId) {
+    return _.find(this.getStickies().components, { id: stickyId })
+  },
+  setStickyVisible (stickyId, visible) {
+    const sticky = this.findSticky(stickyId)
+    if (!sticky) {
+      logger.error('[KDK] Cannot find sticky with id', stickyId)
+      return
+    }
+    _.set(sticky, 'visible', visible)
+  },
   getFab () {
     return this.getElement('fab')
   },

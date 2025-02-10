@@ -24,7 +24,7 @@
         :offset="getStickyOffset(sticky)"
         class="k-sticky"
       >
-        <KContent :content="sticky.content" />
+        <KContent v-bind="sticky" />
       </q-page-sticky>
     </template>
     <!--
@@ -317,7 +317,12 @@ const fabBehavior = computed(() => {
 })
 const stickiesComponents = computed(() => {
   return _.map(stickies.components, sticky => {
-    return _.merge(sticky, { content: [{ component: sticky.component }] })
+    return _.merge(sticky, { 
+      content: [{ 
+        component: sticky.component, 
+        visible: sticky.visible 
+      }] 
+    })
   })
 })
 
