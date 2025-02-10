@@ -378,9 +378,9 @@ export async function aggregateFeaturesQuery (hook) {
         aggregatedResults = elementResults
       } else {
         elementResults.forEach(result => {
-          const resultKeys = _.pick(result, keys)
+          const resultKeys = _.pick(result._id, keys)
           const previousResult = aggregatedResults.find(aggregatedResult => {
-            const aggregatedResultKeys = _.pick(aggregatedResult, keys)
+            const aggregatedResultKeys = _.pick(aggregatedResult._id, keys)
             return _.isEqual(aggregatedResultKeys, resultKeys)
           })
           // Merge with previous matching feature if any

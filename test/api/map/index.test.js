@@ -316,6 +316,11 @@ describe('map:services', () => {
     // Feed the collection
     const observations = fs.readJsonSync(path.join(__dirname, 'data/adsb.observations.json'))
     await adsbObsService.create(observations)
+    // We duplicate data for the aircraft with another target ID
+    observations.forEach(observation => {
+      observation.properties.icao = '885103'
+    })
+    await adsbObsService.create(observations)
   })
   // Let enough time to process
     .timeout(5000)
@@ -485,9 +490,38 @@ describe('map:services', () => {
   // Let enough time to process
     .timeout(10000)
 
+  it('performs geometry and property aggregation on ADS-B observations service', async () => {
+    const aggregationQuery = {
+      time: {
+        $lte: new Date('2019-01-04T13:58:54.767Z').toISOString()
+      },
+      $groupBy: 'icao',
+      $aggregate: ['geometry', 'altitude']
+    }
+    // Aggregation requires feature ID index to be built so we add some time to do so
+    await utility.promisify(setTimeout)(5000)
+    const result = await adsbObsService.find({ query: Object.assign({}, aggregationQuery) })
+    expect(result.features.length).to.equal(2)
+    result.features.forEach(feature => {
+      expect(feature.time).toExist()
+      expect(feature.time.geometry).toExist()
+      expect(feature.time.geometry.length === 4).beTrue()
+      expect(feature.time.geometry[0].isBefore(feature.time.geometry[1])).beTrue()
+      expect(feature.geometry.type).to.equal('GeometryCollection')
+      expect(feature.geometry.geometries).toExist()
+      expect(feature.geometry.geometries.length === 4).beTrue()
+      expect(feature.properties).toExist()
+      expect(feature.properties.altitude).toExist()
+      expect(feature.properties.altitude.length === 4).beTrue()
+    })
+  })
+  // Let enough time to process
+    .timeout(10000)
+
   it('performs heatmap on ADS-B observations service', async () => {
     let results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-04T13:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-04T14:00:00.000Z').toISOString()
@@ -499,6 +533,7 @@ describe('map:services', () => {
     expect(results[0]).to.deep.equal({ hour: 13, count: 4 })
     results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-04T13:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-04T14:00:00.000Z').toISOString()
@@ -511,6 +546,7 @@ describe('map:services', () => {
     expect(results[0]).to.deep.equal({ hour: 15, count: 4 })
     results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-03T00:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-05T00:00:00.000Z').toISOString()
@@ -522,6 +558,7 @@ describe('map:services', () => {
     expect(results[0]).to.deep.equal({ dayOfYear: 4, count: 5 })
     results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-03T00:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-05T00:00:00.000Z').toISOString()
