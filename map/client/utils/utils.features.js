@@ -72,7 +72,7 @@ export async function constructFeatures(geoJson, options) {
   }
 
   let newfeatures = []
-  
+
   for (let i = 0; i < geoJson.features.length; i++) {
     const feature = geoJson.features[i];
 
@@ -321,8 +321,7 @@ export async function getFeaturesFromQuery(options, query) {
   const response = await planetApi.getService(options.service).find(Object.assign({ query }, options.baseParams))
   if (options.processor) processFeatures(response, options.processor)
   if (options.transform) transformFeatures(response, options.transform)
-  console.log(response);
-  // if (options.construct) await constructFeatures(response, options)
+  if (options.construct) await constructFeatures(response, options)
   return response
 }
 
