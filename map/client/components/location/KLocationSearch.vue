@@ -24,10 +24,10 @@
         <!-- viewbox filtering -->
         <KAction
           id="viewbox-search"
-          icon="las la-expand"
-          tooltip="KLocationSearch.SEARCH_IN_VIEWBOX"
-          size="0.8rem"
-          :toggle="{ tooltip: 'KLocationSearch.SEARCH_IN_MAPBOX' }"
+          icon="pageview"
+          tooltip="KLocationSearch.ENABLE_VIEWBOX"
+          size="0.85rem"
+          :toggle="{ tooltip: 'KLocationSearch.DISABLE_VIEWBOX' }"
           @toggled="onViewboxToggled"
         />
         <!-- geocoders filtering -->
