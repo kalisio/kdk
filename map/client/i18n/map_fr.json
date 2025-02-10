@@ -391,9 +391,9 @@
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "Aucun résultat trouvé",
-    "SEARCH_IN_VIEWBOX": "Limiter la recherche à la vue courante",
-    "SEARCH_IN_MAPBOX": "Rechercher dans toute la carte",
-    "FILTER_GEOCODERS": "Filtrer les services de recherche"
+    "ENABLE_VIEWBOX": "Activer la limitation de la recherche à la vue courante",
+    "DISABLE_VIEWBOX": "Désactiver la limitation de la recherche à la vue courante",
+    "FILTER_GEOCODERS": "Filtrer les sources de recherche"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
@@ -717,6 +717,12 @@
     "EAST": "E",
     "SOUTH": "S",
     "WEST": "O"
+  },
+  "KPosition": {
+    "COPY": "Copier les coordonnées",
+    "POSITION_COPIED":"Coordonnées copiées en mémoire",
+    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité",
+    "OUTSIDE_MAP": "Position indéterminée"
   },
   "KDirectionField": {
     "COMPASS": "Boussole"

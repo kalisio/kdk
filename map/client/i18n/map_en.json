@@ -392,9 +392,9 @@
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "No result found",
-    "SEARCH_IN_VIEWBOX": "Limit search to current view",
-    "SEARCH_IN_MAPBOX": "Search the entire map",
-    "FILTER_GEOCODERS": "Filter search services"
+    "ENABLE_VIEWBOX": "Activate search limitation to the current view",
+    "DISABLE_VIEWBOX": "Deactivate search limitation to the current view",
+    "FILTER_GEOCODERS": "Filter search sources"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
@@ -713,6 +713,12 @@
     "EAST": "E",
     "SOUTH": "S",
     "WEST": "W"
+  },
+  "KPosition": {
+    "COPY": "Copy the coordinates",
+    "POSITION_COPIED":"Position copied to clipboard",
+    "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
+    "OUTSIDE_MAP": "Indeterminated position"
   },
   "KDirectionField": {
     "COMPASS": "Compass"
