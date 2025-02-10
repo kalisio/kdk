@@ -14,13 +14,6 @@
       size="sm"
       :handler="onCopy"
     />
-    <!--KAction
-      id="hide-position"
-      icon="cancel"
-      tooltip="KPosition.HIDE"      
-      size="sm"
-      :handler="onHide"
-    /-->
   </div>
 </template>
 
@@ -54,7 +47,6 @@ const formattedPosition = computed(() => {
 // Function
 function updatePosition () {
   position.value = CurrentActivity.value.is2D() ? CurrentActivity.value.getCenter() : CurrentActivity.value.getCameraEllipsoidTarget()
-  console.log(position.value)
 }
 async function onCopy () {
   try {

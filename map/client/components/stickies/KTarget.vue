@@ -11,7 +11,7 @@
 import { computed } from 'vue'
 
 // Props
-const props = defineProps({
+defineProps({
   image: {
     type: String,
     default: 'kdk/target.svg'
@@ -24,14 +24,6 @@ const props = defineProps({
     type: String,
     default: '40px'
   }
-})
-
-// Computed
-const width = computed(() => {
-  return `${props.size}px`
-})
-const height = computed(() => {
-  return `${props.size}px`
 })
 </script>
 
