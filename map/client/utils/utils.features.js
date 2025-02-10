@@ -102,7 +102,7 @@ export async function constructFeatures(geoJson, options) {
       },
       properties: {
         gradient: gradient,
-        featureId: feature.properties[options.featureId],
+        [options.featureId]: feature.properties[options.featureId],
       }
     }
     newfeatures.push(newfeature);
