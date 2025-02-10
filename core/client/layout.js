@@ -305,7 +305,7 @@ export const Layout = {
   setStickyVisible (stickyId, visible) {
     const sticky = this.findSticky(stickyId)
     if (!sticky) {
-      logger.error('[KDK] Cannot find sticky with id', stickyId)
+      logger.error(`[KDK] Cannot find sticky with id '${stickyId}'`)
       return
     }
     _.set(sticky, 'visible', visible)
