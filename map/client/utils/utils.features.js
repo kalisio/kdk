@@ -12,7 +12,6 @@ import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
 import { api, Time } from '../../../core/client/index.js'
 import chroma from 'chroma-js'
-import { name } from 'ejs'
 
 export function processFeatures(geoJson, processor) {
   const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
@@ -70,7 +69,6 @@ export async function constructFeatures(geoJson, options) {
   if (!construct || typeof construct?.type !== 'string') {
     throw new Error('Invalid construct options');
   }
-
   let newfeatures = []
 
   for (let i = 0; i < geoJson.features.length; i++) {
@@ -107,7 +105,6 @@ export async function constructFeatures(geoJson, options) {
         featureId: feature.properties[options.featureId],
       }
     }
-
     newfeatures.push(newfeature);
   }
 
