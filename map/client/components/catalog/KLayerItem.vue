@@ -1,7 +1,12 @@
 <template>
-  <div :id="id" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
+  <div :id="id" class="full-width row items-center q-px-sm no-wrap">
     <!-- Layer toggle -->
-    <q-toggle v-model="layer.isVisible" :disable="layer.isDisabled" size="xs" @update:modelValue="onToggled" />
+    <q-toggle 
+      v-model="layer.isVisible" 
+      :disable="layer.isDisabled" 
+      size="xs" 
+      @update:modelValue="onToggled" 
+    />
     <!-- Layer name -->
     <div
       class="row ellipsis-2-lines"

@@ -90,8 +90,8 @@ export function getOrphanLayers (layers, layersByCategory) {
 
 function processTranslations (item) {
   if (item.i18n) i18n.registerTranslation(item.i18n)
-  item.label = i18n.tie(item.name)
-  item.description = i18n.tie(item.description)
+  if (!_.has(item, 'label')) item.label = i18n.tie(item.name)
+  if (_.has(item, 'description')) item.description = i18n.tie(item.description)
 }
 
 export async function getLayers (options = {}) {
