@@ -27,6 +27,7 @@ const sticky = Layout.findSticky(props.stickyId)
 
 // Functions
 function toggleSticky (context, value) {
-  Layout.setStickyVisible(props.stickyId, value)
+  if (value) Layout.showSticky(props.stickyId)
+  else Layout.hideSticky(props.stickyId)
 }
 </script>

@@ -30,7 +30,7 @@ import KAction from '../../../../core/client/components/action/KAction.vue'
 const props = defineProps({
   target: {
     type: String,
-    default: 'target'
+    default: 'target-sticky'
   }
 })
 
@@ -59,7 +59,7 @@ async function onCopy () {
 
 onMounted(() => {
   // Show target sticky
-  if (props.target) Layout.setStickyVisible(props.target, true)
+  if (props.target) Layout.showSticky(props.target)
   // Listen move events
   CurrentActivity.value.$engineEvents.on('movestart', updatePosition)
   CurrentActivity.value.$engineEvents.on('move', updatePosition)
@@ -69,7 +69,7 @@ onMounted(() => {
 })
 // Hooks
 onBeforeUnmount(() => {
-  if (props.target) Layout.setStickyVisible(props.target, false)
+  if (props.target) Layout.hideSticky(props.target)
   // Stop listening move events
   CurrentActivity.value.$engineEvents.off('movestart', updatePosition)
   CurrentActivity.value.$engineEvents.off('move', updatePosition)

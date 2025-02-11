@@ -718,13 +718,13 @@
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
   },
   "KToggleWidgetVisibility": {
-    "DISPLAY_LEGEND": "Display legend",
+    "SHOW_LEGEND": "Show legend",
     "HIDE_LEGEND": "Hide legend"
   },
   "KToggleStickyVisibility": {
-    "DISPLAY_POSITION": "Display geographical coordinates",
+    "SHOW_POSITION": "Show geographical coordinates",
     "HIDE_POSITION": "Hide geographical coordinates",
-    "DISPLAY_NORTH": "Display north arrow",
+    "SHOW_NORTH": "Show north arrow",
     "HIDE_NORTH": "Hide north arrow"
   }
 }

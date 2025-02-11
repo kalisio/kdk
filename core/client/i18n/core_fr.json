@@ -716,13 +716,13 @@
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
   },
   "KToggleWidgetVisibility": {
-    "DISPLAY_LEGEND": "Afficher la légende",
+    "SHOW_LEGEND": "Afficher la légende",
     "HIDE_LEGEND": "Masquer la légende"
   },
   "KToggleStickyVisibility": {
-    "DISPLAY_POSITION": "Afficher les coordonnées géographiques",
+    "SHOW_POSITION": "Afficher les coordonnées géographiques",
     "HIDE_POSITION": "Masquer les coordonnées géographiques",
-    "DISPLAY_NORTH": "Afficher la flèche d’orientation vers le nord",
+    "SHOW_NORTH": "Afficher la flèche d’orientation vers le nord",
     "HIDE_NORTH": "Masquer la flèche d’orientation vers le nord"
   }
 }

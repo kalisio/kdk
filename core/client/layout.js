@@ -302,13 +302,21 @@ export const Layout = {
   findSticky (stickyId) {
     return _.find(this.getStickies().components, { id: stickyId })
   },
-  setStickyVisible (stickyId, visible) {
+  showSticky (stickyId) {
     const sticky = this.findSticky(stickyId)
     if (!sticky) {
       logger.error(`[KDK] Cannot find sticky with id '${stickyId}'`)
       return
     }
-    _.set(sticky, 'visible', visible)
+    _.set(sticky, 'visible', true)
+  },
+  hideSticky (stickyId) {
+    const sticky = this.findSticky(stickyId)
+    if (!sticky) {
+      logger.error(`[KDK] Cannot find sticky with id '${stickyId}'`)
+      return
+    }
+    _.set(sticky, 'visible', false)
   },
   getFab () {
     return this.getElement('fab')
@@ -447,10 +455,10 @@ export const Layout = {
   clearWindow (placement) {
     this.clearElement(`windows.${placement}`)
   },
-  findWindow (widget) {
+  findWindow (widgeId) {
     for (const placement of this.placements) {
       const window = this.getWindow(placement)
-      if (_.find(window.components, { id: widget })) {
+      if (_.find(window.components, { id: widgeId })) {
         return { placement, window }
       }
     }
