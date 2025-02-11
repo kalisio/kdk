@@ -54,64 +54,89 @@ export function transformFeatures(geoJson, transform) {
 
 
 
-export async function constructFeatures(geoJson, options) {
-  const construct = options.construct;
-  const variable = options.variables[0]; // for now we only support one variable
+export async function buildGradientPath(geoJson, options) {
+  const variable = options.build.variable;
   const chromajs = {
     range: variable.chromajs?.range || ['red', 'yellow', 'green'],
-    domain: variable.chromajs?.domain || [0, 100],
+    domain: variable.chromajs?.domain
   };
 
-  // Initial validation
+  // Check if the GeoJSON is a FeatureCollection
   if (!geoJson || geoJson.type !== 'FeatureCollection') {
-    throw new Error('Invalid GeoJSON');
+    console.error('Invalid GeoJSON, a FeatureCollection is required to build a gradient path');
+    return
   }
-  if (!construct || typeof construct?.type !== 'string') {
-    throw new Error('Invalid construct options');
-  }
-  let newfeatures = []
 
-  for (let i = 0; i < geoJson.features.length; i++) {
-    const feature = geoJson.features[i];
+  geoJson.features = geoJson.features.map((feature) => {
+    const geometries = feature.geometry.geometries.map(g => g.coordinates);
+    const values = feature.properties[variable.name];
 
-    let geometries = []
-    for (let j = 0; j < feature.geometry.geometries.length; j++) {
-      geometries.push(feature.geometry.geometries[j].coordinates);
-    }
-    let values = feature.properties[options.variables[0].name];
-
-    // Vérifier s'il y a au moins deux géométries pour construire une ligne
+    // Check if the feature has at least two geometries needed to construct a line
     if (geometries.length < 2) {
-      throw new Error('Invalid GeoJSON, at least two geometries are required to construct a line');
+      console.error('Invalid GeoJSON, at least two geometries are required to construct a line');
+      // convert it to a point
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: geometries[0],
+        },
+        features: feature.properties,
+      };
     }
-
-    // Vérifier s'il y a au moins deux coordonnées différentes pour construire une ligne
     if (_.uniqBy(geometries, JSON.stringify).length < 2) {
-      throw new Error('Invalid GeoJSON, at least two different coordinates are required to construct a line');
-    }
-    let gradient = []
-    for (let i = 0; i < values.length; i++) {
-      gradient.push(chroma.scale(chromajs.range).domain(chromajs.domain)(values[i]).hex());
+      console.error('Invalid GeoJSON, at least two different geometries are required to construct a line');
+      // convert it to a point
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: geometries[0],
+        },
+        features: feature.properties,
+      };
     }
 
-    let newfeature = {
+    // Use the domain if provided, otherwise use the min and max values 
+    let domain = chromajs.domain || [_.min(values), _.max(values)];
+    const scale = chroma.scale(chromajs.range).domain(domain);
+
+    const gradient = values.map(value => scale(value).hex());
+
+    return {
       type: 'Feature',
       geometry: {
         type: 'LineString',
         coordinates: geometries,
       },
       properties: {
-        gradient: gradient,
+        gradient,
         [options.featureId]: feature.properties[options.featureId],
-      }
+        ..._.get(variable, 'gradientPath.properties', {}),
+        // add the name if its in the properties
+        ...(feature.properties.name ? { name: feature.properties.name } : {}),
+      },
+    };
+  });
+
+  // remove invalid features
+  geoJson.features = geoJson.features.filter(f => f);
+
+  geoJson.total = geoJson.features.length;
+}
+
+
+async function checkBuildInstructions(options) {
+  const knownInstructions = ['gradientPath'];
+  if (!options.variables) return;
+
+  for (const instr of knownInstructions) {
+    const variable = _.find(options.variables, (variable) => _.has(variable, instr));
+    if (variable) {
+      // { instruct: 'gradientPath', variable: { temperature: { ... } } }
+      return { instruct: instr, variable };
     }
-    newfeatures.push(newfeature);
   }
-
-  geoJson.features = newfeatures;
-  geoJson.type = 'FeatureCollection';
-  geoJson.total = newfeatures.length;
-
 }
 
 
@@ -228,15 +253,18 @@ export async function getFeaturesQuery(options, queryInterval, queryLevel) {
   }
   // Any base query to process ?
   let query = await getBaseQueryForFeatures(options)
+
+  // Check if we have a known instruction to build
+  const instruct = await checkBuildInstructions(options)
+  options.build = instruct
+
   // Request features with at least one data available during last query interval
   if (queryInterval) {
-    // Check if we are in construct mode 
-    if (options.construct) {
-
-      // for now don't do anything special
+    // If we have a build instruction 
+    if (instruct) {
       query = Object.assign({
         $groupBy: options.featureId,
-        $aggregate: ['geometry', options.variables[0].name]
+        $aggregate: ['geometry', instruct.variable.name]
       }, query)
     }
     // Check if we have variables to be aggregated in time or not
@@ -271,7 +299,8 @@ export async function getFeaturesQuery(options, queryInterval, queryLevel) {
         }
       })
       // If we can aggregate then keep track of last element of each aggregation
-      if (options.featureId && !_.has(options, "construct")) query.$limit = 1
+      // for the build instruction we need to keep all elements
+      if (options.featureId && !instruct) query.$limit = 1
     } else if (typeof queryInterval === 'object') {
       query.time = queryInterval
     } else {
@@ -280,7 +309,8 @@ export async function getFeaturesQuery(options, queryInterval, queryLevel) {
         time: { $lte: now.toISOString() }
       })
       // If we can aggregate then keep track of last element of each aggregation
-      if (options.featureId && !_.has(options, "construct")) query.$limit = 1
+      // for the build instruction we need to keep all elements
+      if (options.featureId && !instruct) query.$limit = 1
     }
   }
   if (!_.isNil(queryLevel)) {
@@ -318,7 +348,15 @@ export async function getFeaturesFromQuery(options, query) {
   const response = await planetApi.getService(options.service).find(Object.assign({ query }, options.baseParams))
   if (options.processor) processFeatures(response, options.processor)
   if (options.transform) transformFeatures(response, options.transform)
-  if (options.construct) await constructFeatures(response, options)
+  if (options.build) {
+    switch (options.build.instruct) {
+      case 'gradientPath':
+        await buildGradientPath(response, options);
+        break;
+    }
+    delete options.build;
+  }
+
   return response
 }
 
