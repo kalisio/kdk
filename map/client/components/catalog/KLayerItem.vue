@@ -10,7 +10,7 @@
         'text-grey-6': layer.isDisabled
       }"
     >
-      {{ layer.label || layer.name }}
+      <span v-html="label" />
       <q-badge v-if="layer.badge" v-bind="layer.badge">
         <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
       </q-badge>
@@ -39,6 +39,7 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
+import { Document } from '../../../../core/client/document.js'
 import { KPanel } from '../../../../core/client/components'
 
 // Props
@@ -57,6 +58,10 @@ const id = computed(() => {
   const name = _.kebabCase(_.get(props.layer, 'name'))
   if (_.startsWith(name, 'layers-')) return name
   return 'layers-' + name
+})
+const label = computed(() => {
+  const label = _.get(props.layer, 'label')
+  return Document.sanitizeHtml(label || _.get(props.layer, 'name'))
 })
 
 // Functions
