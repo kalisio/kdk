@@ -28,7 +28,7 @@
 import _ from 'lodash'
 import { computed } from 'vue'
 import { utils } from '../../../../core/client'
-import { KStamp } from '../../../../core/client/components/KStamp.vue'
+import KStamp from '../../../../core/client/components/KStamp.vue'
 
 // Props
 const props = defineProps({
