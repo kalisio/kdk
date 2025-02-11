@@ -455,25 +455,25 @@ export const Layout = {
   clearWindow (placement) {
     this.clearElement(`windows.${placement}`)
   },
-  findWindow (widgeId) {
+  findWindow (widgetId) {
     for (const placement of this.placements) {
       const window = this.getWindow(placement)
-      if (_.find(window.components, { id: widgeId })) {
+      if (_.find(window.components, { id: widgetId })) {
         return { placement, window }
       }
     }
-    logger.debug(`[KDK] Unable to find the widget ${widget}`)
+    logger.debug(`[KDK] Unable to find the widget ${widgetId}`)
     return { placement: undefined, window: undefined }
   },
-  openWidget (widget, focus = true) {
-    const { placement, window } = this.findWindow(widget)
+  openWidget (widgetId, focus = true) {
+    const { placement, window } = this.findWindow(widgetId)
     if (!placement) return
-    if (window.current !== 'current') this.setWindowCurrent(placement, widget)
+    if (window.current !== 'current') this.setWindowCurrent(placement, widgetId)
     if (!window.visible) this.setWindowVisible(placement, true)
     if (focus) Layout.setFocus(`windows.${placement}`)
   },
-  closeWidget (widget) {
-    const { placement, window } = this.findWindow(widget)
+  closeWidget (widgetId) {
+    const { placement, window } = this.findWindow(widgetId)
     if (!placement) return
     if (window.visible) this.setWindowVisible(placement, false)
   },

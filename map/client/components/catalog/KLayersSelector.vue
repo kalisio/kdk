@@ -13,11 +13,11 @@
       </template>
     </div>
     <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pa-sm">
-      <KStamp 
-        icon="las la-exclamation-circle" 
-        icon-size="sm" 
-        :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')" 
-        direction="horizontal" 
+      <KStamp
+        icon="las la-exclamation-circle"
+        icon-size="sm"
+        :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')"
+        direction="horizontal"
       />
     </div>
     <slot name="footer" />
@@ -51,7 +51,7 @@ const layerRenderer = computed(() => {
 })
 
 // Functions
-function  toggleLayer (layer) {
+function toggleLayer (layer) {
   const toggleAction = _.find(layer.actions, { id: 'toggle' })
   if (toggleAction) toggleAction.handler()
 }
