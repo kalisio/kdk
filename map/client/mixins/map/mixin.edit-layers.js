@@ -3,14 +3,16 @@ import L from 'leaflet'
 import { getType, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
 import { Store } from '../../../../core/client/store.js'
+import { Units } from '../../../../core/client/units.js'
 import { 
   bindLeafletEvents, unbindLeafletEvents, 
   getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle,
-  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle
+  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
+  formatUserCoordinates
 } from '../../utils.map.js'
 
 // Events we listen while layer is in edition mode
-const mapEditEvents = ['pm:create']
+const mapEditEvents = ['pm:drawstart', 'pm:drawend', 'pm:create']
 const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend', 'pm:markerdragend']
 
 // The name of the edition helper pane where we put the various edit layers
@@ -194,7 +196,10 @@ export const editLayers = {
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
 
       this.$engineEvents.on('click', this.onEditFeatureProperties)
+      this.$engineEvents.on('mousemove', this.onMouseMoveWhileEditing)
       this.$engineEvents.on('zoomend', this.onMapZoomWhileEditing)
+      this.$engineEvents.on('pm:drawstart', this.onDrawStart)
+      this.$engineEvents.on('pm:drawend', this.onDrawEnd)
       this.$engineEvents.on('pm:create', this.onCreateFeatures)
       this.$engineEvents.on('pm:update', this.onEditFeatures)
       this.$engineEvents.on('pm:dragend', this.onEditFeatures)
@@ -263,7 +268,10 @@ export const editLayers = {
       this.editingLayer = false
 
       this.$engineEvents.off('click', this.onEditFeatureProperties)
+      this.$engineEvents.off('mousemove', this.onMouseMoveWhileEditing)
       this.$engineEvents.off('zoomend', this.onMapZoomWhileEditing)
+      this.$engineEvents.off('pm:drawstart', this.onDrawStart)
+      this.$engineEvents.off('pm:drawend', this.onDrawEnd)
       this.$engineEvents.off('pm:create', this.onCreateFeatures)
       this.$engineEvents.off('pm:update', this.onEditFeatures)
       this.$engineEvents.off('pm:dragend', this.onEditFeatures)
@@ -274,6 +282,52 @@ export const editLayers = {
     onEditStop (status, layer) {
       this.$emit('edit-stop', { status, layer })
       this.$engineEvents.emit('edit-stop', { status, layer })
+    },
+    resetEditionTooltip () {
+      if (!this.hintTooltip) return
+      // Retrieve default tooltip content set by geoman
+      this.hintTooltipInitialContent = this.hintTooltip.getContent()
+    },
+    updateEditionTooltip (event) {
+      if (!this.hintTooltip) return
+      // Update default tooltip content set by geoman with additional information to help editing
+      const { latlng } = event
+      if (_.isNil(latlng)) return
+      let tooltip = this.hintTooltipInitialContent
+      const modesWithCoordinates = ['add-polygons', 'add-rectangles', 'add-lines', 'add-points']
+      const modesWithOrientation = ['add-lines']
+      if (modesWithCoordinates.includes(this.layerEditMode)) {
+        tooltip += `<br/>${formatUserCoordinates(latlng.lat, latlng.lng, Store.get('locationFormat', 'FFf'))}`
+      }
+      this.hintTooltip.setContent(tooltip)
+    },
+    onDrawStart (event) {
+      // Retrieve hint marker/tooltip created by geoman if any
+      this.hintMarker = _.get(this.map.pm, `${event.source}.${event.shape}._hintMarker`)
+      if (!this.hintMarker) return
+      this.hintTooltip = this.hintMarker.getTooltip()
+      if (!this.hintTooltip) return
+      // Listen for vertex added to shape as geoman will update the tooltip
+      if (event.workingLayer) {
+        this.workingLayer = event.workingLayer
+        this.workingLayer.on('pm:vertexadded', this.onVertexAddedWhileEditing)
+      }
+      this.resetEditionTooltip()
+    },
+    onDrawEnd (event) {
+      if (this.hintTooltip) {
+        if (this.workingLayer) this.workingLayer.off('pm:vertexadded', this.onVertexAddedWhileEditing)
+      }
+      this.hintMarker = null
+      this.hintTooltip = null
+    },
+    onMouseMoveWhileEditing (options, event) {
+      // Update hint tooltip as required
+      this.updateEditionTooltip(event)
+    },
+    onVertexAddedWhileEditing (event) {
+      // Update hint tooltip base content as geoman has changed it
+      this.resetEditionTooltip()
     },
     async onEditFeatureProperties (layer, event) {
       const leafletLayer = event && event.target
