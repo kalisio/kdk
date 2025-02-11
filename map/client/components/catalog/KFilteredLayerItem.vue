@@ -32,7 +32,8 @@
         <div :class="{
             'text-primary': layer.isVisible,
             'text-grey-6': layer.isDisabled || !layer.isVisible || !prop.node.isActive
-          }">
+          }"
+        >
           {{ $tie(prop.node.label) }}
           <q-tooltip
             v-if="(prop.node.tooltip || prop.node.description) && $q.platform.is.desktop" :delay="1000"
