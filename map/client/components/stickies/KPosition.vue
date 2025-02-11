@@ -1,7 +1,7 @@
 <template>
-  <div 
+  <div
     v-if="CurrentActivity"
-    id="position" 
+    id="position"
     class="row items-center no-padding k-position"
   >
     <span class="text-caption q-pl-sm q-pr-sm">
@@ -10,7 +10,7 @@
     <KAction
       id="copy-position"
       icon="las la-copy"
-      tooltip="KPosition.COPY"      
+      tooltip="KPosition.COPY"
       size="sm"
       :handler="onCopy"
     />
@@ -73,7 +73,7 @@ onBeforeUnmount(() => {
   // Stop listening move events
   CurrentActivity.value.$engineEvents.off('movestart', updatePosition)
   CurrentActivity.value.$engineEvents.off('move', updatePosition)
-  CurrentActivity.value.$engineEvents.off('moveend', updatePosition) 
+  CurrentActivity.value.$engineEvents.off('moveend', updatePosition)
 })
 </script>
 

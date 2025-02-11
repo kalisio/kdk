@@ -137,7 +137,7 @@ describe('map:services', () => {
       id: 100,
       geometry: zones[0].geometry,
       properties: {
-        'OBJECTID': 100
+        OBJECTID: 100
       }
     }, { query: { id: 100, upsert: true } })
     const feature = result[0]

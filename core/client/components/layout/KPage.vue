@@ -317,11 +317,11 @@ const fabBehavior = computed(() => {
 })
 const stickiesComponents = computed(() => {
   return _.map(stickies.components, sticky => {
-    return _.merge(sticky, { 
-      content: [{ 
-        component: sticky.component, 
-        visible: sticky.visible 
-      }] 
+    return _.merge(sticky, {
+      content: [{
+        component: sticky.component,
+        visible: sticky.visible
+      }]
     })
   })
 })

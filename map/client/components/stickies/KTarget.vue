@@ -8,8 +8,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-
 // Props
 defineProps({
   image: {
@@ -30,7 +28,7 @@ defineProps({
 <style lang="scss" scoped>
 .k-target {
   pointer-events: none;
-  background-color: #00000020; 
+  background-color: #00000020;
   border-radius: 50%;
 }
 </style>
