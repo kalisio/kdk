@@ -71,8 +71,8 @@ export async function buildGradientPath(geoJson, options) {
     const geometries = feature.geometry.geometries.map(g => g.coordinates);
     const values = feature.properties[variable.name];
 
-    // Check if the feature has at least two geometries needed to construct a line
-    if (geometries.length < 2) {
+    // Check if the feature has at least two geometries and they are different
+    if (geometries.length < 2 || _.uniqBy(geometries, JSON.stringify).length < 2) {
       console.error('Invalid GeoJSON, at least two geometries are required to construct a line');
       // convert it to a point
       return {
@@ -81,19 +81,7 @@ export async function buildGradientPath(geoJson, options) {
           type: 'Point',
           coordinates: geometries[0],
         },
-        features: feature.properties,
-      };
-    }
-    if (_.uniqBy(geometries, JSON.stringify).length < 2) {
-      console.error('Invalid GeoJSON, at least two different geometries are required to construct a line');
-      // convert it to a point
-      return {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: geometries[0],
-        },
-        features: feature.properties,
+        properties: feature.properties,
       };
     }
 
@@ -113,14 +101,11 @@ export async function buildGradientPath(geoJson, options) {
         gradient,
         [options.featureId]: feature.properties[options.featureId],
         ..._.get(variable, 'gradientPath.properties', {}),
-        // add the name if its in the properties
-        ...(feature.properties.name ? { name: feature.properties.name } : {}),
+        // add the tooltip property if it exists
+        [options.leaflet.tooltip.property]: feature.properties[options.leaflet.tooltip.property],
       },
     };
   });
-
-  // remove invalid features
-  geoJson.features = geoJson.features.filter(f => f);
 
   geoJson.total = geoJson.features.length;
 }
