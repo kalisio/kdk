@@ -23,3 +23,6 @@ fab: { actions: [current actions], filter: { curent actions filter } }
 ```
 
 > More details in the [layout section](./components.md#layout)
+
+### [utils.collection](./utilities/utils.collection.md)
+### [utils.screen](./utilities/utils.screen.md)

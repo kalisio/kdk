@@ -1,116 +1,101 @@
-# Collection Service Utilities
+# utils.collection
 
-This module provides utility functions for interacting with FeathersJS services, facilitating operations such as retrieving services, listing items, and fetching the oldest or latest records.
+## Overview
+
+The `utils.collection.js` module provides utility functions for interacting with collections in a KDK-based application. It leverages **Lodash** for object manipulation and **FeathersJS** services to perform database operations efficiently.
 
 ## Functions
 
-### `getCollectionService(name, context)`
+### 1. `getCollectionService(name, context)`
 
-Retrieves a service from the API within the specified context.
+**Description:** Retrieves a service instance for a specified collection.
 
-#### Parameters:
-
-- `name` *(string)*: The name of the service to retrieve.
-- `context` *(string, optional)*: The context in which to retrieve the service.
-
-#### Returns:
-
-- *(Object)*: The requested service instance.
+- **Parameters:**
+  - `name` *(string)*: The name of the collection service.
+  - `context` *(object)*: The context in which the service operates.
+- **Returns:** The requested service instance.
 
 ---
 
-### `listItems(service, fields, filter = {}, limit = 50)`
+### 2. `listItems(service, fields, filter = {}, limit = 50)`
 
-Retrieves a list of items from a specified service.
+**Description:** Fetches a list of items from a given service, applying optional filters and field selection.
 
-#### Parameters:
-
-- `service` *(Object)*: The FeathersJS service instance.
-- `fields` *(Array)*: The fields to select from the service.
-- `filter` *(Object, optional)*: Query filters (default: `{}`).
-- `limit` *(number, optional)*: The maximum number of items to retrieve (default: `50`).
-
-#### Returns:
-
-- *(Promise**)*: A promise resolving to the list of retrieved items.
+- **Parameters:**
+  - `service` *(object)*: The service instance to query.
+  - `fields` *(array)*: The fields to select in the query.
+  - `filter` *(object, optional)*: Additional query filters.
+  - `limit` *(number, optional, default=50)*: The maximum number of items to retrieve.
+- **Returns:** A promise resolving to the list of retrieved items.
 
 ---
 
-### `getOldestItem(service, field = 'createdAt', filter = {})`
+### 3. `getOldestItem(service, field = 'createdAt', filter = {})`
 
-Fetches the oldest item in a service based on a specified field.
+**Description:** Retrieves the oldest item from a service based on a specified field.
 
-#### Parameters:
-
-- `service` *(Object)*: The FeathersJS service instance.
-- `field` *(string, optional)*: The field to sort by (default: `'createdAt'`).
-- `filter` *(Object, optional)*: Query filters (default: `{}`).
-
-#### Returns:
-
-- *(Promise**)*: A promise resolving to the oldest item.
+- **Parameters:**
+  - `service` *(object)*: The service instance to query.
+  - `field` *(string, optional, default='createdAt')*: The field used to determine the oldest item.
+  - `filter` *(object, optional)*: Additional query filters.
+- **Returns:** A promise resolving to the oldest item.
 
 ---
 
-### `getOldestTime(service, field = 'createdAt', filter = {})`
+### 4. `getOldestTime(service, field = 'createdAt', filter = {})`
 
-Retrieves the timestamp of the oldest item based on a specified field.
+**Description:** Retrieves the timestamp of the oldest item from a service based on a specified field.
 
-#### Parameters:
-
-- `service` *(Object)*: The FeathersJS service instance.
-- `field` *(string, optional)*: The field to retrieve the timestamp from (default: `'createdAt'`).
-- `filter` *(Object, optional)*: Query filters (default: `{}`).
-
-#### Returns:
-
-- *(Promise\<string | number | undefined>)*: A promise resolving to the timestamp of the oldest item.
+- **Parameters:**
+  - `service` *(object)*: The service instance to query.
+  - `field` *(string, optional, default='createdAt')*: The field used to determine the oldest timestamp.
+  - `filter` *(object, optional)*: Additional query filters.
+- **Returns:** A promise resolving to the timestamp of the oldest item.
 
 ---
 
-### `getLatestItem(service, field = 'createdAt', filter = {})`
+### 5. `getLatestItem(service, field = 'createdAt', filter = {})`
 
-Fetches the latest item in a service based on a specified field.
+**Description:** Retrieves the latest item from a service based on a specified field.
 
-#### Parameters:
-
-- `service` *(Object)*: The FeathersJS service instance.
-- `field` *(string, optional)*: The field to sort by (default: `'createdAt'`).
-- `filter` *(Object, optional)*: Query filters (default: `{}`).
-
-#### Returns:
-
-- *(Promise**)*: A promise resolving to the latest item.
+- **Parameters:**
+  - `service` *(object)*: The service instance to query.
+  - `field` *(string, optional, default='createdAt')*: The field used to determine the latest item.
+  - `filter` *(object, optional)*: Additional query filters.
+- **Returns:** A promise resolving to the latest item.
 
 ---
 
-### `getLatestTime(service, field = 'createdAt', filter = {})`
+### 6. `getLatestTime(service, field = 'createdAt', filter = {})`
 
-Retrieves the timestamp of the latest item based on a specified field.
+**Description:** Retrieves the timestamp of the latest item from a service based on a specified field.
 
-#### Parameters:
-
-- `service` *(Object)*: The FeathersJS service instance.
-- `field` *(string, optional)*: The field to retrieve the timestamp from (default: `'createdAt'`).
-- `filter` *(Object, optional)*: Query filters (default: `{}`).
-
-#### Returns:
-
-- *(Promise\<string | number | undefined>)*: A promise resolving to the timestamp of the latest item.
+- **Parameters:**
+  - `service` *(object)*: The service instance to query.
+  - `field` *(string, optional, default='createdAt')*: The field used to determine the latest timestamp.
+  - `filter` *(object, optional)*: Additional query filters.
+- **Returns:** A promise resolving to the timestamp of the latest item.
 
 ---
 
-### `enumerateField(service, field, filter = {})`
+### 7. `enumerateField(service, field, filter = {})`
 
-Retrieves all distinct values of a specified field within a service.
+**Description:** Retrieves a list of distinct values for a specified field in a collection.
 
-#### Parameters:
+- **Parameters:**
+  - `service` *(object)*: The service instance to query.
+  - `field` *(string)*: The field for which distinct values are required.
+  - `filter` *(object, optional)*: Additional query filters.
+- **Returns:** A promise resolving to an array of unique values.
 
-- `service` *(Object)*: The FeathersJS service instance.
-- `field` *(string)*: The field to retrieve distinct values from.
-- `filter` *(Object, optional)*: Query filters (default: `{}`).
+---
 
-#### Returns:
+## Usage Example
+```javascript
+import { getCollectionService, listItems } from './utils.collection.js';
 
-- *(Promise**)*: A promise resolving to an array of distinct field values.
+const service = getCollectionService('myCollection', context);
+const items = await listItems(service, ['name', 'age'], { active: true }, 100)
+console.log('Active items:', items);
+```
 
