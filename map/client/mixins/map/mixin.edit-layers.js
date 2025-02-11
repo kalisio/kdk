@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import { getType, getGeom } from '@turf/invariant'
+import bearing from '@turf/bearing'
+import { getType, getCoords, getGeom } from '@turf/invariant'
 import { Dialog, uid } from 'quasar'
 import { Store } from '../../../../core/client/store.js'
 import { Units } from '../../../../core/client/units.js'
@@ -295,9 +296,16 @@ export const editLayers = {
       if (_.isNil(latlng)) return
       let tooltip = this.hintTooltipInitialContent
       const modesWithCoordinates = ['add-polygons', 'add-rectangles', 'add-lines', 'add-points']
-      const modesWithOrientation = ['add-lines']
+      const modesWithOrientation = ['add-polygons', 'add-lines']
       if (modesWithCoordinates.includes(this.layerEditMode)) {
         tooltip += `<br/>${formatUserCoordinates(latlng.lat, latlng.lng, Store.get('locationFormat', 'FFf'))}`
+      }
+      if (modesWithOrientation.includes(this.layerEditMode) && this.workingLayer) {
+        const coordinates = getCoords(this.workingLayer.toGeoJSON())
+        if (coordinates.length > 0) {
+          const angle = bearing(coordinates[coordinates.length - 1], [latlng.lng, latlng.lat])
+          tooltip += `<br/>${Units.format(angle, 'deg', Units.getDefaultUnit('angle'))}`
+        }
       }
       this.hintTooltip.setContent(tooltip)
     },
