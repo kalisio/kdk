@@ -715,6 +715,10 @@
     "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succès",
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
   },
+  "KToggleWidgetVisibility": {
+    "DISPLAY_LEGEND": "Afficher la légende",
+    "HIDE_LEGEND": "Masquer la légende"
+  },
   "KToggleStickyVisibility": {
     "DISPLAY_POSITION": "Afficher les coordonnées géographiques",
     "HIDE_POSITION": "Masquer les coordonnées géographiques",
