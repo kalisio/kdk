@@ -219,8 +219,11 @@ export default {
     },
     onMeasureDistanceMouseMove (event) {
       const state = this.measureDistance
-
-      if (!state.workingLayer) return
+      // Only coordinates while no first location selected
+      if (!state.workingLayer) {
+        this.showCursorTooltip(event.latlng, this.formatCoordinates(event.latlng.lat, event.latlng.lng))
+        return
+      }
 
       const geojson = state.workingLayer.toGeoJSON()
       const coords = getCoords(geojson)
@@ -234,6 +237,8 @@ export default {
       const b = bearing(geoCoords0, geoCoords1)
       content += ' '
       content += this.formatAngle(b, 'deg')
+      content += '</br>'
+      content += this.formatCoordinates(event.latlng.lat, event.latlng.lng)
       this.showCursorTooltip(event.latlng, content)
 
       // measure is length of complete line
@@ -321,7 +326,11 @@ export default {
     onMeasureAreaMouseMove (event) {
       const state = this.measureArea
 
-      if (!state.workingLayer) return
+      // Only coordinates while no first location selected
+      if (!state.workingLayer) {
+        this.showCursorTooltip(event.latlng, this.formatCoordinates(event.latlng.lat, event.latlng.lng))
+        return
+      }
 
       const geojson = state.workingLayer.toGeoJSON()
       const coords = getCoords(geojson)
@@ -335,6 +344,8 @@ export default {
       const b = bearing(geoCoords0, geoCoords1)
       content += ' '
       content += this.formatAngle(b, 'deg')
+      content += '</br>'
+      content += this.formatCoordinates(event.latlng.lat, event.latlng.lng)
       this.showCursorTooltip(event.latlng, content)
 
       // area of the closed polygon
@@ -450,8 +461,9 @@ export default {
     onMeasureCircleMouseMove (event) {
       const state = this.measureCircle
 
+      // Only coordinates while no first location selected
       if (!state.center) {
-        // this.showCursorTooltip(event.latlng, this.formatCoordinates(event.latlng.lat, event.latlng.lng))
+        this.showCursorTooltip(event.latlng, this.formatCoordinates(event.latlng.lat, event.latlng.lng))
         return
       }
 
@@ -470,8 +482,10 @@ export default {
         state.circleLayer.setRadius(state.distToCenter)
         state.lineLayer.setLatLngs([state.center, event.latlng])
       }
-
-      this.showCursorTooltip(event.latlng, this.measureValue)
+      let content = this.measureValue
+      content += '</br>'
+      content += this.formatCoordinates(event.latlng.lat, event.latlng.lng)
+      this.showCursorTooltip(event.latlng, content)
     },
     measureCircleTooltip (circleLayer) {
       let tooltip = ''
