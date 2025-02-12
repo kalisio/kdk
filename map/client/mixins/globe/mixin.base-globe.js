@@ -79,7 +79,7 @@ export const baseGlobe = {
 
           const elapsed = (Date.now() - m.startTime) * 0.001
           if (m.animationSpeed) {
-            const loopDuration = m.length / m.animationSpeed
+            const loopDuration = (m.length / m.material.uniforms.repeat.x) / m.animationSpeed
             m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
           }
         })
