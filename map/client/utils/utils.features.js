@@ -52,28 +52,38 @@ export function transformFeatures(geoJson, transform) {
   })
 }
 
-
-
 export async function buildGradientPath(geoJson, options) {
-  const variable = options.build.variable;
-  const chromajs = {
-    range: variable.chromajs?.range || ['red', 'yellow', 'green'],
-    domain: variable.chromajs?.domain
-  };
+  const variable = options.build.variable
 
   // Check if the GeoJSON is a FeatureCollection
   if (!geoJson || geoJson.type !== 'FeatureCollection') {
-    console.error('Invalid GeoJSON, a FeatureCollection is required to build a gradient path');
+    console.error('Invalid GeoJSON, a FeatureCollection is required to build a gradient path')
+    return
+  }
+
+  // Check chromajs has required infos
+  if (!variable.chromajs.colors) {
+    console.error(`Invalid chromajs on variable ${variable.name}, missing colors.`)
+    return
+  }
+  let scale
+  if (variable.chromajs.domain) {
+    scale = chroma.scale(variable.chromajs.colors).domain(variable.chromajs.domain)
+  } else if (variable.chromajs.classes) {
+    scale = chroma.scale(variable.chromajs.colors).classes(variable.chromajs.classes)
+  }
+  if (!scale) {
+    console.error(`Invalid chromajs on variable ${variable.name}, missing domain or classes.`)
     return
   }
 
   geoJson.features = geoJson.features.map((feature) => {
-    const geometries = feature.geometry.geometries.map(g => g.coordinates);
-    const values = feature.properties[variable.name];
+    const geometries = feature.geometry.geometries.map(g => g.coordinates)
+    const values = feature.properties[variable.name]
 
     // Check if the feature has at least two geometries and they are different
     if (geometries.length < 2 || _.uniqBy(geometries, JSON.stringify).length < 2) {
-      console.error('Invalid GeoJSON, at least two geometries are required to construct a line');
+      console.error('Invalid GeoJSON, at least two geometries are required to construct a line')
       // convert it to a point
       return {
         type: 'Feature',
@@ -82,14 +92,10 @@ export async function buildGradientPath(geoJson, options) {
           coordinates: geometries[0],
         },
         properties: feature.properties,
-      };
+      }
     }
 
-    // Use the domain if provided, otherwise use the min and max values 
-    let domain = chromajs.domain || [_.min(values), _.max(values)];
-    const scale = chroma.scale(chromajs.range).domain(domain);
-
-    const gradient = values.map(value => scale(value).hex());
+    const gradient = values.map(value => scale(value).hex())
 
     return {
       type: 'Feature',
@@ -97,36 +103,25 @@ export async function buildGradientPath(geoJson, options) {
         type: 'LineString',
         coordinates: geometries,
       },
-      properties: {
-        gradient,
-        [options.featureId]: feature.properties[options.featureId],
-        ..._.get(variable, 'gradientPath.properties', {}),
-        // add the tooltip property if it exists
-        [options.leaflet.tooltip.property]: feature.properties[options.leaflet.tooltip.property],
-      },
-    };
-  });
+      properties: Object.assign({ gradient }, _.omit(feature.properties, variable.name), variable.gradientPath.properties)
+    }
+  })
 
-  geoJson.total = geoJson.features.length;
+  geoJson.total = geoJson.features.length
 }
 
-
 async function checkBuildInstructions(options) {
-  const knownInstructions = ['gradientPath'];
-  if (!options.variables) return;
+  const knownInstructions = ['gradientPath']
+  if (!options.variables) return
 
   for (const instr of knownInstructions) {
-    const variable = _.find(options.variables, (variable) => _.has(variable, instr));
+    const variable = _.find(options.variables, (variable) => _.has(variable, instr))
     if (variable) {
       // { instruct: 'gradientPath', variable: { temperature: { ... } } }
-      return { instruct: instr, variable };
+      return { instruct: instr, variable }
     }
   }
 }
-
-
-
-
 
 export async function getBaseQueryForFeatures(options) {
   // Any base query to process ?
@@ -336,10 +331,10 @@ export async function getFeaturesFromQuery(options, query) {
   if (options.build) {
     switch (options.build.instruct) {
       case 'gradientPath':
-        await buildGradientPath(response, options);
-        break;
+        await buildGradientPath(response, options)
+        break
     }
-    delete options.build;
+    delete options.build
   }
 
   return response
