@@ -27,7 +27,6 @@
       <KLayersSelector
         :layers="orphanLayers"
         :options="orphanLayersOptions"
-        class="q-py-sm"
       />
       <!-- Categorized layers -->
       <template v-for="category in filteredCategories">
