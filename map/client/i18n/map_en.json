@@ -716,5 +716,16 @@
   },
   "KDirectionField": {
     "COMPASS": "Compass"
+  },
+  "KStyleManager": {
+    "EDIT": "Edit style",
+    "NAME": "Style name",
+    "SECTION_TITLE_POINT": "Point",
+    "SECTION_TITLE_LINE": "Line",
+    "SECTION_TITLE_POLYGON": "Polygon",
+    "COLOR": "Color",
+    "SIZE": "Size",
+    "SHAPE": "Shape",
+    "ICON": "Icon"
   }
 }

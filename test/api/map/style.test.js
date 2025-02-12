@@ -30,10 +30,9 @@ describe('map:styles', () => {
   // Let enough time to process
     .timeout(10000)
 
-
   it('create / read styles', async () => {
     const createdStyle = await stylesService.create({ name: 'test-style-1' })
-    const foundedStyle = await stylesService.find({ query: { '_id': createdStyle._id } })
+    const foundedStyle = await stylesService.find({ query: { _id: createdStyle._id } })
     expect(foundedStyle.data.length > 0).beTrue()
   })
 

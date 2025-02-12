@@ -720,5 +720,17 @@
   },
   "KDirectionField": {
     "COMPASS": "Boussole"
+  },
+  "KStyleManager": {
+    "EDIT": "Editer le style",
+    "NAME": "Nom du style",
+    "SECTION_TITLE_POINT": "Point",
+    "SECTION_TITLE_LINE": "Ligne",
+    "SECTION_TITLE_POLYGON": "Polygone",
+    "COLOR": "Couleur",
+    "SIZE": "Taille",
+    "SHAPE": "Forme",
+    "ICON": "Icone"
+
   }
 }
