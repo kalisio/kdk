@@ -56,7 +56,7 @@ function createWallGeometry (positions, minimumHeights = [], maximumHeights = []
     // St
     percent += distances[i] / lineLength
     if (i === positions.length - 1) percent = 1
-    st.push(percent, 0, percent, 1)
+    st.push(1 - percent, 0, 1 - percent, 1)
 
     // Positions
     const position = positions[i]
@@ -164,7 +164,7 @@ function createCorridorGeometry (positions, width, height) {
     // Normalize distances for texture coordinates
     percent += distances[i] / lineLength
     if (i === positions.length - 1) percent = 1
-    st.push(percent, 0, percent, 1)
+    st.push(1 - percent, 0, 1 - percent, 1)
 
     // Compute the offset positions to create the corridor
     const leftOffset = setHeight(computeOffset(positions[i], positions[i - 1], positions[i + 1], -width / 2), height)
