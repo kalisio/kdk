@@ -15,6 +15,33 @@ const CustomTypes = ['wall', 'corridor']
 function getCustomEntityId (id, type) {
   return `${id}-${type}`
 }
+// Generate original id from a custom id
+function getOriginalEntityId (customId, type) {
+  const suffix = `-${type}`
+  return customId.endsWith(suffix) ? customId.slice(0, -suffix.length) : ''
+}
+
+function addCustomPrimitive (activity, dataSource, id, primitive, material) {
+  const oldCustom = dataSource.primitives.get(id)
+  if (oldCustom) {
+    activity.viewer.scene.primitives.remove(oldCustom.primitive)
+    const index = activity.cesiumMaterials.indexOf(oldCustom.material)
+    activity.cesiumMaterials.splice(index, 1)
+  }
+  dataSource.primitives.set(id, { primitive, material })
+  activity.viewer.scene.primitives.add(primitive)
+  activity.cesiumMaterials.push(material)
+}
+
+function removeCustomPrimitiveById (activity, dataSource, id) {
+  const custom = dataSource.primitives.get(id)
+  if (custom) {
+    activity.viewer.scene.primitives.remove(custom.primitive)
+    const index = activity.cesiumMaterials.indexOf(custom.material)
+    activity.cesiumMaterials.splice(index, 1)
+    dataSource.primitives.delete(id)
+  }
+}
 
 function updateGeoJsonEntity (source, destination) {
   destination.position = source.position
@@ -55,11 +82,7 @@ export const geojsonLayers = {
             // Take care that in case of a custom entity we add it in addition to or instead the original line
             if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
             // These are special primitives created to support animated walls & corridors
-            const prim = dataSource.primitives.get(customId)
-            if (prim) {
-              this.viewer.scene.primitives.remove(prim)
-              dataSource.primitives.delete(customId)
-            }
+            removeCustomPrimitiveById(this, dataSource, customId)
           })
         })
 
@@ -87,12 +110,15 @@ export const geojsonLayers = {
             if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
           })
         })
+        // Cleanup custom primitives if needed too
+        for (const id of dataSource.primitives.keys()) {
+          CustomTypes.forEach(type => {
+            const entityId = getOriginalEntityId(id, type)
+            if (entityId && !loadingDataSource.entities.contains(entityId))
+              removeCustomPrimitiveById(this, dataSource, id)
+          })
+        }
       }
-
-      // We always remove custom primitives (animated walls & corridors)
-      for (const [key, value] of dataSource.primitives)
-        this.viewer.scene.primitives.remove(value)
-      dataSource.primitives.clear()
 
       // Process specific entities
       entities = dataSource.entities.values
@@ -138,11 +164,9 @@ export const geojsonLayers = {
             options.positions = entity.polyline.positions.getValue(0)
             const { primitive, material } = createPrimitiveWithMovingTexture('wall', options)
             if (primitive) {
-              dataSource.primitives.set(wallId, primitive)
-              this.viewer.scene.primitives.add(primitive)
-              this.cesiumMaterials.push(material)
+              addCustomPrimitive(this, dataSource, wallId, primitive, material)
             }
-            // entitiesToRemove.push(entity)
+            entitiesToRemove.push(entity)
           } else {
             entitiesToAdd.push({
               id: wallId,
@@ -174,11 +198,9 @@ export const geojsonLayers = {
             options.positions = entity.polyline.positions.getValue(0)
             const { primitive, material } = createPrimitiveWithMovingTexture('corridor', options)
             if (primitive) {
-              dataSource.primitives.set(corridorId, primitive)
-              this.viewer.scene.primitives.add(primitive)
-              this.cesiumMaterials.push(material)
+              addCustomPrimitive(this, dataSource, corridorId, primitive, material)
             }
-           // entitiesToRemove.push(entity)
+            entitiesToRemove.push(entity)
           } else {
             entitiesToAdd.push({
               id: corridorId,
