@@ -1,7 +1,7 @@
 <template>
   <div :id="id" class="full-width row items-center q-px-sm no-wrap">
     <!-- Layer toggle -->
-    <q-toggle
+    <q-toggle v-if="togglable"
       v-model="layer.isVisible"
       :disable="layer.isDisabled"
       size="xs"
@@ -52,6 +52,10 @@ const props = defineProps({
   layer: {
     type: Object,
     default: () => {}
+  },
+  togglable: {
+    type: Boolean,
+    default: true
   }
 })
 
