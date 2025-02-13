@@ -110,7 +110,16 @@ function createCorridorGeometry (positions, width, height) {
     return Cesium.Cartographic.toCartesian(cartographic)
   }
 
-  const computeOffset = (current, previous, next, offset) => {
+  const angleBetweenThreePoints = (A, B, C) => {
+    const AB = Cesium.Cartesian3.subtract(B, A, new Cesium.Cartesian3())
+    const AC = Cesium.Cartesian3.subtract(C, A, new Cesium.Cartesian3())
+    const dot = Cesium.Cartesian3.dot(AB, AC)
+    const lengthAB = Cesium.Cartesian3.magnitude(AB)
+    const lengthAC = Cesium.Cartesian3.magnitude(AC)
+    return Math.acos(dot / (lengthAB * lengthAC))
+  }
+
+  const computeOffset = (current, previous, next, offset, normal) => {
     let direction
 
     if (!previous) {
@@ -129,55 +138,81 @@ function createCorridorGeometry (positions, width, height) {
     Cesium.Cartesian3.normalize(direction, direction)
 
     // Compute the perpendicular vector
-    const up = Cesium.Cartesian3.UNIT_Z
+    const up = normal || Cesium.Cartesian3.UNIT_Z
     const perpendicular = Cesium.Cartesian3.cross(direction, up, new Cesium.Cartesian3())
     Cesium.Cartesian3.normalize(perpendicular, perpendicular)
 
     // Apply the offset
     const offsetVector = Cesium.Cartesian3.multiplyByScalar(perpendicular, offset, new Cesium.Cartesian3())
-    return Cesium.Cartesian3.add(current, offsetVector, new Cesium.Cartesian3())
+    return { direction, position: Cesium.Cartesian3.add(current, offsetVector, new Cesium.Cartesian3()) }
   }
 
-  const indices = []
+  for (let i = 0; i < positions.length; i++) {
+    positions[i] = setHeight(positions[i], height)
+  }
+
+  // Find local normal
+  // Implies that if the corridor extends over very large distances, the normal may be incorrect
+  const normal = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(positions[0])
   const distances = [0]
   let lineLength = 0
+  const corridorPositions = []
 
-  for (let i = 0; i < positions.length - 1; i++) {
-    const p0 = positions[i]
-    const p1 = positions[i + 1]
-    const distance = Cesium.Cartesian3.distance(p0, p1)
-    distances.push(distance)
-    lineLength += distance
+  let lastLeftPoint = null
+  let lastRightPoint = null
+  let lastDirection = null
+  for (let i = 0; i < positions.length; i++) {
+    // Compute the offset positions to create the corridor
+    const left = computeOffset(positions[i], positions[i - 1], positions[i + 1], -width / 2, normal)
+    const right = computeOffset(positions[i], positions[i - 1], positions[i + 1], width / 2, normal)
 
-    // Add indices
-    const baseIndex = i * 2
-    indices.push(
-      baseIndex, baseIndex + 1, baseIndex + 2,
-      baseIndex + 1, baseIndex + 3, baseIndex + 2
+    // Check if [left, right] segment intersects with the previous one
+    if (i > 0) {
+      const turnLeft = Cesium.Cartesian3.cross(left.direction, lastDirection, new Cesium.Cartesian3()).z < 0
+
+      const previousAngle = angleBetweenThreePoints(positions[i - 1], positions[i], turnLeft ? lastLeftPoint : lastRightPoint)
+      const currentAngle = angleBetweenThreePoints(positions[i - 1], positions[i], turnLeft ? left.position : right.position)
+      if (currentAngle > previousAngle) {
+        if (turnLeft) left.position = lastLeftPoint
+        else right.position = lastRightPoint
+      }
+
+      const distance = Cesium.Cartesian3.distance(positions[i - 1], positions[i])
+      distances.push(distance)
+      lineLength += distance
+    }
+
+    corridorPositions.push(
+      left.position.x,
+      left.position.y,
+      left.position.z,
+      right.position.x,
+      right.position.y,
+      right.position.z
     )
+
+    lastLeftPoint = left.position
+    lastRightPoint = right.position
+    lastDirection = left.direction
   }
 
   let percent = 0
   const st = []
-  const corridorPositions = []
+  const indices = []
   for (let i = 0; i < positions.length; i++) {
     // Normalize distances for texture coordinates
     percent += distances[i] / lineLength
     if (i === positions.length - 1) percent = 1
     st.push(1 - percent, 0, 1 - percent, 1)
 
-    // Compute the offset positions to create the corridor
-    const leftOffset = setHeight(computeOffset(positions[i], positions[i - 1], positions[i + 1], -width / 2), height)
-    const rightOffset = setHeight(computeOffset(positions[i], positions[i - 1], positions[i + 1], width / 2), height)
-
-    corridorPositions.push(
-      leftOffset.x,
-      leftOffset.y,
-      leftOffset.z,
-      rightOffset.x,
-      rightOffset.y,
-      rightOffset.z
-    )
+    // Add indices for triangulation
+    if (i < positions.length - 1) {
+      const baseIndex = i * 2
+      indices.push(
+        baseIndex, baseIndex + 1, baseIndex + 2,
+        baseIndex + 1, baseIndex + 3, baseIndex + 2
+      )
+    }
   }
 
   return {
