@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://www.kalisio.xyz/schemas/catalog.update.json#",
   "title": "schemas.OBJECT_NAME",
-  "description": "Catalog edition schema",
+  "description": "Layer edition schema",
   "type": "object",
   "properties": {
     "name": {
@@ -20,6 +20,22 @@
       "field": {
         "component": "form/KTextField",
         "label": "schemas.CATALOG_DESCRIPTION_FIELD_LABEL"
+      }
+    },
+    "featureId": {
+      "type": "string", 
+      "maxLength": 256,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.CATALOG_FEATURE_ID_FIELD_LABEL"
+      }
+    },
+    "featureLabel": {
+      "type": "string", 
+      "maxLength": 256,
+      "field": {
+        "component": "form/KTextField",
+        "label": "schemas.CATALOG_FEATURE_LABEL_FIELD_LABEL"
       }
     }
   },
