@@ -58,6 +58,9 @@ export function useHighlight (name, options = {}) {
     }
     return id
   }
+  function isHighlightFor (highlightId, layer, feature) {
+    return feature ? highlightId.includes(`-${getFeatureId(feature, layer)}`) : highlightId.includes(`-${_.kebabCase(layer.name)}`)
+  }
   function hasHighlight (feature, layer) {
     return has(getHighlightId(feature, layer))
   }
@@ -71,7 +74,6 @@ export function useHighlight (name, options = {}) {
     const highlight = {
       highlightId,
       type: 'Feature',
-      isDisabled: (layer ? layer.isDisabled : false),
       properties: Object.assign({
         zOrder: 0,
       }, options)
@@ -117,7 +119,7 @@ export function useHighlight (name, options = {}) {
     // Add additional information provided by feature, if any, for custom styling
     _.merge(highlight, _.omit(feature, ['geometry', 'style']))
     set(highlightId, highlight)
-    requestHighlightsLayerUpdate()
+    setHighlightEnabled(feature, layer, layer ? !layer.isDisabled : true)
     return highlight
   }
   function unhighlight (feature, layer) {
@@ -125,17 +127,29 @@ export function useHighlight (name, options = {}) {
     unset(highlightId)
     requestHighlightsLayerUpdate()
   }
+  function setHighlightEnabled (feature, layer, enabled = true) {
+    const highlight = getHighlight(feature, layer)
+    _.set(highlight, 'style.visibility', enabled)
+    requestHighlightsLayerUpdate()
+  }
+  function setHighlightsEnabled (layer, enabled = true) {
+    getHighlights(layer).forEach(highlight => setHighlightEnabled(highlight, layer, enabled))
+  }
   function clearHighlights () {
     clear()
     requestHighlightsLayerUpdate()
   }
-  function getHighlightedFeatures () {
+  function getHighlights (layer, feature) {
     // Iterate over all highlights
     let features = []
     // For each highlight store
-    forOwn((store, key) => {
+    forOwn(store => {
       // Retrieve features in highlight store
-      features = features.concat(_.flatten(_.values(store)))
+      _.forOwn(store, (value, key) => {
+        if (!layer || (layer && isHighlightFor(key, layer, feature))) {
+          features.push(value)
+        }
+      })
     })
     return features
   }
@@ -174,7 +188,7 @@ export function useHighlight (name, options = {}) {
   }
   function updateHighlightsLayer () {
     // Get all highlights
-    let features = getHighlightedFeatures()
+    let features = getHighlights()
     // Filter invisible ones
     features = features.filter(feature => !feature.isDisabled)
     // Order from back to front
@@ -183,7 +197,7 @@ export function useHighlight (name, options = {}) {
       activity.updateLayer(HighlightsLayerName, {
         type: 'FeatureCollection',
         features
-      }, { replace: true }) // Always start from fresh data as we debounce the update and might multiple operations might generate a wrong order otherwise
+      }, { replace: true }) // Always start from fresh data as we debounce the update and multiple operations might generate a wrong order otherwise
     }
   }
   // In order to avoid updating the layer too much often we queue a request update every N ms
@@ -194,24 +208,16 @@ export function useHighlight (name, options = {}) {
     if (activity) activity.removeLayer(HighlightsLayerName)
   }
   function onHighlightedLayerDisabled (layer) {
-    // Get all highlights
-    const features = getHighlightedFeatures()
-    // Tag layer' features as invisible
-    features.forEach(feature => {
-      const suffix = `-${_.kebabCase(layer.name)}-${getFeatureId(feature, layer)}`
-      if (feature.highlightId.endsWith(suffix)) feature.isDisabled = true
+    // Tag all highlights as invisible
+    getHighlights(layer).forEach(highlight => {
+      setHighlightEnabled(highlight, layer, false)
     })
-    requestHighlightsLayerUpdate()
   }
   function onHighlightedLayerEnabled (layer) {
-    // Get all highlights
-    const features = getHighlightedFeatures()
-    // Tag layer' features as visible
-    features.forEach(feature => {
-      const suffix = `-${_.kebabCase(layer.name)}-${getFeatureId(feature, layer)}`
-      if (feature.highlightId.endsWith(suffix)) feature.isDisabled = false
+    // Tag all highlights as visible
+    getHighlights(layer).forEach(highlight => {
+      setHighlightEnabled(highlight, layer, true)
     })
-    requestHighlightsLayerUpdate()
   }
 
   // Cleanup on destroy
@@ -225,8 +231,11 @@ export function useHighlight (name, options = {}) {
     highlights: store,
     hasHighlight,
     getHighlight,
+    getHighlights,
     highlight,
     unhighlight,
+    setHighlightEnabled,
+    setHighlightsEnabled,
     clearHighlights
   }
 }

@@ -166,7 +166,7 @@ function processStyle (style, feature, options, mappings) {
   // visibility attribute can be used to hide individual features
   // visibility is true by default but can also be a string when it's
   // a result of a lodash steing template evaluation
-  let visibility = _.get(style, 'style.visibility', true)
+  let visibility = _.get(style, `style.${type}.visibility`, true)
   if (typeof visibility === 'string') visibility = visibility === 'true'
   // The 'kdk-hidden-features' pane is created when the leaflet map is initialized
   if (!visibility) _.set(style, `style.${type}.pane`, 'kdk-hidden-features')
