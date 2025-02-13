@@ -396,7 +396,9 @@ export const geojsonLayers = {
           // Add FeatureGroup interface so that layer edition works as well
           layer.toGeoJSON = () => ({ type: 'FeatureCollection', features: _.values(layer._features) })
           layer.clearLayers = () => layer._onNewData(true, { type: 'FeatureCollection', features: [] })
-          layer.addLayer = (geoJsonLayer) => layer._onNewData(true, geoJsonLayer.toGeoJSON())
+          layer.getLayers = () => _.values(layer._featureLayers)
+          layer.addLayer = (geoJsonLayer) => layer._onNewData(false, geoJsonLayer.toGeoJSON())
+          layer.removeLayer = (geoJsonLayer) => layer.remove(geoJsonLayer.toGeoJSON())
           // We launch a first update to initialize data
           layer.update()
         } else {
@@ -485,7 +487,7 @@ export const geojsonLayers = {
         const removeMissing = _.get(options, 'removeMissing', layer.options.removeMissing)
         // Check if clustering on top of a realtime layer, in this case we have a top-level container
         let container
-        if (typeof layer.getLayers === 'function') {
+        if (layer instanceof L.MarkerClusterGroup) {
           container = layer
           layer = container.getLayers().find(layer => layer._container === container)
         }
@@ -645,7 +647,7 @@ export const geojsonLayers = {
           // Restore geojson data for in-memory layers that was hidden
           // Directly deal with the leaflet layer instead of calling updateLayer, we are just restoring data
           // Handle case where there's clustering on top (cf. updateLayer)
-          if (typeof engineLayer.getLayers === 'function') {
+          if (engineLayer instanceof L.MarkerClusterGroup) {
             const container = engineLayer
             engineLayer = container.getLayers().find(layer => layer._container === container)
           }

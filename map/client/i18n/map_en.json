@@ -74,6 +74,7 @@
       "PROBE": "Probe",
       "DISPLAY_POSITION": "Display the coordinates",
       "DISPLAY_LEGEND": "Display legend",
+      "DISPLAY_SELECTION": "Display selection",
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
       "ADD_VIEW": "Add view",      
@@ -94,8 +95,6 @@
       "FORECAST_PROBE": "Forecast"
     },
     "editLayers": {
-      "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",
-      "REMOVE_FEATURE_DIALOG_MESSAGE": "Are you sure you want to remove this feature from your workspace ?",
       "draw": {
         "toolbar": {
           "actions": {
@@ -512,6 +511,23 @@
     "CHART_SETTINGS_LABEL": "Graph settings",
     "CHART_EXPORT_LABEL": "Export data",
     "CHART_EXPORT_FILE": "Chart-{layer}.csv"
+  },
+  "KFeaturesSelection": {
+    "LABEL": "Selection",
+    "NONE_SELECTED": "Nothing selected"
+  },
+  "KSelectedLayerFeatures": {
+    "ZOOM_TO_FEATURES_LABEL": "Zoom to layer features",
+    "EDIT_FEATURES_LABEL": "Edit layer elements",
+    "REMOVE_FEATURES_LABEL": "Remove layer features",
+    "ZOOM_TO_FEATURE_LABEL": "Zoom to feature",
+    "EDIT_FEATURE_LABEL": "Edit feature",
+    "EDIT_FEATURE_PROPERTIES_LABEL": "Edit feature properties",
+    "REMOVE_FEATURE_LABEL": "Remove feature",
+    "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",
+    "REMOVE_FEATURE_DIALOG_MESSAGE": "Are you sure you want to remove this feature from your workspace ?",
+    "REMOVE_FEATURES_DIALOG_TITLE": "Remove these features ?",
+    "REMOVE_FEATURES_DIALOG_MESSAGE": "Are you sure you want to remove these features from your workspace ?"
   },
   "KLayerStyleForm": {
     "BASE": "Base properties",

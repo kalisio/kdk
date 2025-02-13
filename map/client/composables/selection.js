@@ -61,9 +61,7 @@ export function useSelection (name, options = {}) {
   // Avoid using .value everywhere
   let activity = unref(kActivity)
 
-  // data
-
-  // functions
+  // Functions
   function setCurrentActivity (newActivity) {
     // Avoid multiple updates
     if (activity === newActivity) return
@@ -114,14 +112,30 @@ export function useSelection (name, options = {}) {
   function getSelectedFeature () {
     return selection.getSelectedItem().feature
   }
+  function getSelectedFeatures () {
+    return selection.getSelectedItems().filter(item => item.feature).map(item => item.feature)
+  }
   function getSelectedFeatureCollection () {
     return { type: 'FeatureCollection', features: selection.getSelectedItems().filter(item => item.feature).map(item => item.feature) }
+  }
+  function getSelectedFeaturesByLayer () {
+    const featuresByLayer = {}
+    const items = selection.getSelectedItems().filter(item => item.feature && item.layer)
+    items.forEach(item => {
+      const key = item.layer._id || item.layer.name
+      if (!featuresByLayer[key]) featuresByLayer[key] = { layer: item.layer, features: [] }
+      featuresByLayer[key].features.push(item.feature)
+    })
+    return _.values(featuresByLayer)
   }
   function hasSelectedLayer () {
     return selection.hasSelectedItem() && selection.getSelectedItem().layer
   }
   function getSelectedLayer () {
     return selection.getSelectedItem().layer
+  }
+  function getSelectedLayers () {
+    return selection.getSelectedItem().filter(item => item.layer).map(item => item.layer)
   }
   function hasSelectedLocation () {
     return selection.hasSelectedItem() && selection.getSelectedItem().location
@@ -228,6 +242,8 @@ export function useSelection (name, options = {}) {
 
   let lastClickedPosition, lastBoxSelectionPosition
   function onClicked (layer, event) {
+    if (!selection.isSelectionEnabled()) return
+    
     // FIXME: For some layers, eg based on path, we get a first click with the layer as target
     // then a second click with the map as target, we need to filter the later for selection
     // Similarly we get a click when performing a box selection
@@ -288,6 +304,8 @@ export function useSelection (name, options = {}) {
     else handleSelection(items, clearSelection)
   }
   function onBoxSelection (map, event) {
+    if (!selection.isSelectionEnabled()) return
+
     lastBoxSelectionPosition = _.get(event, 'containerPoint')
     const { bounds } = event
     let items = getIntersectedItems(bboxPolygon([
@@ -302,6 +320,8 @@ export function useSelection (name, options = {}) {
     else handleSelection(items, true)
   }
   function onClusterSelection (layer, event) {
+    if (!selection.isSelectionEnabled()) return
+      
     // Not relevent in this case
     if (selection.isSingleSelectionMode()) return
     const items = _.get(event, 'markers', []).map(marker => {
@@ -329,9 +349,12 @@ export function useSelection (name, options = {}) {
     setCurrentActivity,
     hasSelectedFeature,
     getSelectedFeature,
+    getSelectedFeatures,
     getSelectedFeatureCollection,
+    getSelectedFeaturesByLayer,
     hasSelectedLayer,
     getSelectedLayer,
+    getSelectedLayers,
     hasSelectedLocation,
     getSelectedLocation,
     getWidgetForSelection,

@@ -4,7 +4,7 @@ import { useStore } from './store.js'
 export function useSelection (name, options = {}) {
   // Item comparator
   const comparator = options.matches || _.matches
-  // data
+  
   // selection store
   const { store, set, get, has } = useStore(`selections.${name}`)
 
@@ -12,6 +12,7 @@ export function useSelection (name, options = {}) {
   // Single selection will rely on the lastly selected item only
   // Multiple selection mode will rely on all items
   function clearSelection () {
+    if (!isSelectionEnabled()) return
     // Do not force an update if not required
     // We set a new array so that deeply watch is not required
     if (hasSelectedItem()) set('items', [])
@@ -28,6 +29,12 @@ export function useSelection (name, options = {}) {
   function isMultipleSelectionMode () {
     return get('mode') !== 'single'
   }
+  function setSelectionEnabled (enabled = true) {
+    return set('enabled', enabled)
+  }
+  function isSelectionEnabled () {
+    return get('enabled')
+  }
   function getSelectionFilter () {
     return get('filter')
   }
@@ -35,6 +42,7 @@ export function useSelection (name, options = {}) {
     return set('filter', filter)
   }
   function selectItem (item) {
+    if (!isSelectionEnabled()) return
     const filter = getSelectionFilter()
     if (filter && !filter(item)) return
     const items = get('items')
@@ -43,6 +51,7 @@ export function useSelection (name, options = {}) {
     if (!selected) set('items', items.concat([item]))
   }
   function unselectItem (item) {
+    if (!isSelectionEnabled()) return
     const items = get('items')
     // We set a new array so that deeply watch is not required
     _.remove(items, comparator(item))
@@ -66,6 +75,7 @@ export function useSelection (name, options = {}) {
     // We set a new array so that deeply watch is not required
     set('items', [])
     set('mode', 'single')
+    set('enabled', true)
   }
 
   // expose
@@ -76,6 +86,8 @@ export function useSelection (name, options = {}) {
     setSelectionMode,
     isSingleSelectionMode,
     isMultipleSelectionMode,
+    setSelectionEnabled,
+    isSelectionEnabled,
     getSelectionFilter,
     setSelectionFilter,
     selectItem,

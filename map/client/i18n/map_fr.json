@@ -74,6 +74,7 @@
       "PROBE": "Sonder",
       "DISPLAY_POSITION": "Afficher les coordonnées",
       "DISPLAY_LEGEND": "Afficher la légende",
+      "DISPLAY_SELECTION": "Afficher la sélection",
       "HIDE_LEGEND": "Masquer la légende",
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_VIEW": "Ajouter une vue",
@@ -92,8 +93,6 @@
       "FORECAST_PROBE": "Prévisions"
     },
     "editLayers": {
-      "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'objet ?",
-      "REMOVE_FEATURE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'objet de votre espace de travail ?",
       "draw": {
         "toolbar": {
           "actions": {
@@ -511,6 +510,23 @@
     "CHART_SETTINGS_LABEL": "Paramétrage du graphique",
     "CHART_EXPORT_LABEL": "Exporter les données",
     "CHART_EXPORT_FILE": "Graphique-{layer}.csv"
+  },
+  "KFeaturesSelection": {
+    "LABEL": "Sélection",
+    "NONE_SELECTED": "Pas de sélection"
+  },
+  "KSelectedLayerFeatures": {
+    "ZOOM_TO_FEATURES_LABEL": "Zoomer sur les éléments de la couche",
+    "EDIT_FEATURES_LABEL": "Editer les éléments de la couche",
+    "REMOVE_FEATURES_LABEL": "Supprimer les éléments de la couche",
+    "ZOOM_TO_FEATURE_LABEL": "Zoomer sur l'élément",
+    "EDIT_FEATURE_LABEL": "Editer l'élément",
+    "EDIT_FEATURE_PROPERTIES_LABEL": "Editer les propriétés de l'élément",
+    "REMOVE_FEATURE_LABEL": "Supprimer l'élément",
+    "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'élément ?",
+    "REMOVE_FEATURE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'élément de votre espace de travail ?",
+    "REMOVE_FEATURES_DIALOG_TITLE": "Supprimer les éléments ?",
+    "REMOVE_FEATURES_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer les éléments de votre espace de travail ?"
   },
   "KLayerStyleForm": {
     "BASE": "Propriétés de base",
