@@ -11,6 +11,8 @@ import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
 import { api, Time } from '../../../core/client/index.js'
+import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
+import { isInMemoryLayer, isFeatureLayer } from './utils.layers.js'
 import chroma from 'chroma-js'
 
 export function processFeatures(geoJson, processor) {
@@ -516,4 +518,29 @@ export function getFeatureStyleType(feature) {
   if (['Polygon', 'MultiPolygon'].includes(geometryType)) return 'polygon'
   logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
   return
+}
+
+// Bind listeners to layer service events and store it in the returned object
+export function listenToFeaturesServiceEventsForLayer (layer, {
+  context = null, created = null, updated = null, patched = null, removed = null, all = null,
+} = {}, listeners) {
+  // User-defined layers are already managed
+  if (!layer.service || !layer.serviceEvents || isInMemoryLayer(layer) || isFeatureLayer(layer)) return
+  // Check if already registered
+  unlistenToFeaturesServiceEventsForLayer(layer, listeners)
+  // Generate listeners targetting the right layer as in this case the features won't hold it
+  // contrary to user-defined layers, which store the layer ID in the layer property of the features
+  return listenToServiceEvents(layer.service, {
+    context,
+    created: created ? (feature) => created(feature, layer) : null,
+    updated: updated ? (feature) => updated(feature, layer) : null,
+    patched: patched ? (feature) => patched(feature, layer) : null,
+    removed: removed ? (feature) => removed(feature, layer) : null,
+    all: all ? (feature) => all(feature, layer) : null
+  })
+}
+
+// Unbind previously stored listeners from layer service events
+export function unlistenToFeaturesServiceEventsForLayer (layer, listeners) {
+  unlistenToServiceEvents(listeners)
 }

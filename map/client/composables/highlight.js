@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import config from 'config'
 import bbox from '@turf/bbox'
+import { getType, getGeom } from '@turf/invariant'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid } from 'quasar'
-import { unref, onUnmounted } from 'vue'
+import { unref, onBeforeMount, onBeforeUnmount } from 'vue'
 import { getFeatureId, getFeatureStyleType, isLayerHighlightable } from '../utils.js'
+import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import * as composables from '../../../core/client/composables/index.js'
 
 export const HighlightsLayerName = uid()
@@ -22,6 +24,7 @@ export function useHighlight (name, options = {}) {
   let activity = unref(kActivity)
 
   // Data
+  let featuresServiceListeners, layerServiceEventListeners
   // highlight store for context
   const { store, clear, set, get, unset, has } = composables.useStore(`highlights.${name}`)
   // global highlight store
@@ -67,6 +70,18 @@ export function useHighlight (name, options = {}) {
   function getHighlight (feature, layer) {
     return get(getHighlightId(feature, layer))
   }
+  function setHighlightGeometry (feature, highlight) {
+    // Assign geometry
+    Object.assign(highlight, feature.geometry
+      ? { geometry: feature.geometry }
+      : { geometry: { type: 'Point', coordinates: [_.get(feature, 'lng', 0), _.get(feature, 'lat', 0)] } }
+    )
+    // Use bbox for line/polygons
+    if (options.asBbox && (highlight.geometry.type !== 'Point')) {
+      Object.assign(highlight, bboxPolygon(bbox(highlight)))
+    }
+    requestHighlightsLayerUpdate()
+  }
   function highlight (feature, layer, selected = true) {
     if (layer && !isLayerHighlightable(layer)) return
     const highlightId = getHighlightId(feature, layer)
@@ -78,15 +93,7 @@ export function useHighlight (name, options = {}) {
         zOrder: 0,
       }, options)
     }
-    // Assign geometry
-    Object.assign(highlight, feature.geometry
-      ? { geometry: feature.geometry }
-      : { geometry: { type: 'Point', coordinates: [_.get(feature, 'lng', 0), _.get(feature, 'lat', 0)] } }
-    )
-    // Use bbox for line/polygons
-    if (options.asBbox && (highlight.geometry.type !== 'Point')) {
-      Object.assign(highlight, bboxPolygon(bbox(highlight)))
-    }
+    setHighlightGeometry(feature, highlight)
     // Assign style
     if (selected) {
       // Do not alter config object
@@ -113,7 +120,7 @@ export function useHighlight (name, options = {}) {
       }
       Object.assign(highlight, { style: highlightStyle })
     } else {
-      // retrieve feature sytle
+      // Retrieve feature sytle
       Object.assign(highlight, { style: feature.style })
     }
     // Add additional information provided by feature, if any, for custom styling
@@ -219,13 +226,36 @@ export function useHighlight (name, options = {}) {
       setHighlightEnabled(highlight, layer, true)
     })
   }
+  function onFeatureUpdated (feature, layer) {
+    // We only support single feature edition
+    if (!getType(feature) || !getGeom(feature)) return
+    // Find related layer, either directly given in feature if coming from user-defined features service
+    // otherwise bound to the listener for features services attached to a built-in layer
+    if (!layer && feature.layer) layer = activity.getLayerById(feature.layer)
+    if (!layer) return
+    if (hasHighlight(feature, layer)) setHighlightGeometry(feature, getHighlight(feature, layer))
+  }
+  function onFeatureRemoved (feature, layer) {
+    // We only support single feature edition
+    if (!getType(feature) || !getGeom(feature)) return
+    // Find related layer, either directly given in feature if coming from user-defined features service
+    // otherwise bound to the listener for features services attached to a built-in layer
+    if (!layer && feature.layer) layer = activity.getLayerById(feature.layer)
+    if (!layer) return
+    if (hasHighlight(feature, layer)) unhighlight(feature, layer)
+  }
 
+  // Initialize on create
+  onBeforeMount(() => {
+    featuresServiceListeners = listenToServiceEvents('features', { all: onFeatureUpdated, removed: onFeatureRemoved })
+  })
   // Cleanup on destroy
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
+    unlistenToServiceEvents(featuresServiceListeners)
     clearHighlights()
   })
 
-  // expose
+  // Expose
   return {
     setCurrentActivity,
     highlights: store,
