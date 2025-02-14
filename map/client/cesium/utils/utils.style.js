@@ -3,6 +3,7 @@ import chroma from 'chroma-js'
 import moment from 'moment'
 import { Color } from 'cesium'
 import { Time, Units, TemplateContext } from '../../../../core/client/index.js'
+import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
@@ -153,6 +154,8 @@ function processStyle (style, feature, options, mappings) {
       _.set(style, _.get(mappings, _.kebabCase(entry.property), entry.property), entry.compiler(context))
     })
   }
+
+  const type = getFeatureStyleType(feature)
 
   // visibility attribute can be used to hide individual features
   // visibility is true by default but can also be a string when it's
