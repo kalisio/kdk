@@ -26,3 +26,4 @@ fab: { actions: [current actions], filter: { curent actions filter } }
 
 ### [utils.collection](./utilities/utils.collection.md)
 ### [utils.screen](./utilities/utils.screen.md)
+### [utils.screen](./utilities/utils.services.md)

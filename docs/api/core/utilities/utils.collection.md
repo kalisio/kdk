@@ -1,4 +1,4 @@
-# utils.collection
+# Collection utilities
 
 ## Overview
 
