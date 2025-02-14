@@ -26,10 +26,12 @@ function gradientPath2SVG (geojson) {
   const bbox = turfbbox(geojson)
   // Grow the bbox a bit because we use it to position the svgOverlay. If it matches exaclty
   // it'll crop the svg lines when using a big stroke-width, they'll exceed the geojson bbox ...
-  bbox[0] -= 1
-  bbox[1] -= 1
-  bbox[2] += 1
-  bbox[3] += 1
+  const width = bbox[2] - bbox[0]
+  const height = bbox[3] - bbox[1]
+  bbox[0] -= width * 0.1
+  bbox[1] -= height * 0.1
+  bbox[2] += width * 0.1
+  bbox[3] += height * 0.1
 
   // Create an id suffix to make linearGradient ids unique
   const idSuffix = `${bbox.join('_')}_${gradient.length}`
@@ -43,7 +45,9 @@ function gradientPath2SVG (geojson) {
     // The linear gradient to apply on the current segment
     defs.push(`<linearGradient gradientUnits="userSpaceOnUse" x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" id="gradient${i}_${idSuffix}"><stop offset="0" stop-color="${gradient[i]}"/><stop offset="1" stop-color="${gradient[i+1]}"/></linearGradient>`)
     // The associated line segment, vector-effect="non-sclaing-stroke" make it so stroke-width is a final pixel value, independent of zoom level
-    lines.push(`<line x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke"/>`)
+    // lines.push(`<line x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke"/>`)
+    // Use paths instead because leaflet CSS defines 'pointer' cursor only on 'path' elements, not lines
+    lines.push(`<path d="M ${p0[0]} ${p0[1]} L ${p1[0]} ${p1[1]}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke" class="leaflet-interactive"/>`)
   }
 
   // Compute the svg extent we must map in the svgOverlay (= the projected geojson bbox)
@@ -60,10 +64,14 @@ function gradientPath2SVG (geojson) {
   // svg html content, round linecap + stroke-width
   svgElement.innerHTML = `<g stroke-linecap="round" stroke-width="${geojson.properties.weight}"><defs>${defs.join('')}</defs>${lines.join('')}</g>`
   var svgElementBounds = [ [ bbox[1], bbox[0] ], [ bbox[3], bbox[2] ] ];
-  const layer = L.svgOverlay(svgElement, svgElementBounds)
+  // TODO: interactive should be set to false, and layer.addInteractiveTarget(layer._image) should be called, but it needs the map
+  // we don't want 'leaflet-interactive' class on the svg html element because it requests 'pointer' cursor
+  // but we want the map to know about interactive targets
+  const layer = L.svgOverlay(svgElement, svgElementBounds, { interactive: true })
   const opacity = _.get(geojson.properties, 'opacity')
   if (opacity !== undefined)
     layer.setOpacity(opacity)
+  layer.getCenter = () => L.latLng((bbox[1]+bbox[3])/2,(bbox[0]+bbox[2])/2)
   return layer
 }
 
