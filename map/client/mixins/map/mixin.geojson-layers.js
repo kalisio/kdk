@@ -3,6 +3,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import lineOffset from '@turf/line-offset'
+import turfbbox from '@turf/bbox'
 import 'leaflet-realtime'
 import { Time, Units, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { GradientPath } from '../../leaflet/GradientPath.js'
@@ -13,6 +14,58 @@ import {
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
 import * as wfs from '../../../common/wfs-utils.js'
+
+// Build a svgOverlay leaflet layer
+// geojson geometry must be a line string, with gradient information
+// The svg element will be populated with coordinates in spherical mercator
+// The svg overlay will be placed in the map covering the bbox of the geojson
+function gradientPath2SVG (geojson) {
+  const defs = []  // We'll push every linearGradient we need here
+  const lines = [] // and every line segment we need here
+  const gradient = geojson.properties.gradient
+  const bbox = turfbbox(geojson)
+  // Grow the bbox a bit because we use it to position the svgOverlay. If it matches exaclty
+  // it'll crop the svg lines when using a big stroke-width, they'll exceed the geojson bbox ...
+  bbox[0] -= 1
+  bbox[1] -= 1
+  bbox[2] += 1
+  bbox[3] += 1
+
+  // Create an id suffix to make linearGradient ids unique
+  const idSuffix = `${bbox.join('_')}_${gradient.length}`
+  // Project geojson coordinates to spherical mercator
+  const latlngs = L.GeoJSON.coordsToLatLngs(geojson.geometry.coordinates)
+  const coordinates = latlngs.map((latlng) => L.Projection.SphericalMercator.project(latlng))
+  for (let i = 0; i < gradient.length - 1; ++i) {
+    // Reverse y, svg origin is top left
+    const p0 = [coordinates[i].x, -coordinates[i].y]
+    const p1 = [coordinates[i+1].x, -coordinates[i+1].y]
+    // The linear gradient to apply on the current segment
+    defs.push(`<linearGradient gradientUnits="userSpaceOnUse" x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" id="gradient${i}_${idSuffix}"><stop offset="0" stop-color="${gradient[i]}"/><stop offset="1" stop-color="${gradient[i+1]}"/></linearGradient>`)
+    // The associated line segment, vector-effect="non-sclaing-stroke" make it so stroke-width is a final pixel value, independent of zoom level
+    lines.push(`<line x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke"/>`)
+  }
+
+  // Compute the svg extent we must map in the svgOverlay (= the projected geojson bbox)
+  const b0 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(0, 2)))
+  const b1 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(2, 4)))
+  const min = { x: Math.min(b0.x, b1.x), y: Math.min(-b0.y, -b1.y) }
+  const max = { x: Math.max(b0.x, b1.x), y: Math.max(-b0.y, -b1.y) }
+
+  // Create svg HTML element
+  var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+  // Viewbox is used to define which part of the svg must be displayed in it's html element
+  svgElement.setAttribute('viewBox', `${min.x} ${min.y} ${max.x-min.x} ${max.y-min.y}`)
+  // svg html content, round linecap + stroke-width
+  svgElement.innerHTML = `<g stroke-linecap="round" stroke-width="${geojson.properties.weight}"><defs>${defs.join('')}</defs>${lines.join('')}</g>`
+  var svgElementBounds = [ [ bbox[1], bbox[0] ], [ bbox[3], bbox[2] ] ];
+  const layer = L.svgOverlay(svgElement, svgElementBounds)
+  const opacity = _.get(geojson.properties, 'opacity')
+  if (opacity !== undefined)
+    layer.setOpacity(opacity)
+  return layer
+}
 
 // Override default remove handler for leaflet-realtime due to
 // https://github.com/perliedman/leaflet-realtime/issues/177
@@ -74,7 +127,7 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
   }
   if (geometry && properties && properties.gradient) {
     if (geometry.type === 'LineString') {
-      return new GradientPath(geojson, options.style(geojson))
+      return properties.svg ? gradientPath2SVG(geojson) : new GradientPath(geojson, options.style(geojson))
     }
   }
   if (geometry && properties && properties.mask) {
