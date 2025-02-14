@@ -1,6 +1,6 @@
 <template>
   <div class="row items-center justify-center">
-    <q-chip class="ellipsis" text-color="accent" icon="las la-layer-group" :label="layerName"/>
+    <q-chip class="ellipsis" text-color="accent" icon="las la-layer-group" :label="layerLabel"/>
     <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
   </div>
 </template>
@@ -15,8 +15,8 @@ export default {
     KPanel
   },
   computed: {
-    layerName () {
-      return this.kActivity.editedLayer.name
+    layerLabel () {
+      return _.get(this.kActivity.editedLayer, 'label', _.get(this.kActivity.editedLayer, 'name'))
     },
     editMode () {
       return this.kActivity.layerEditMode
