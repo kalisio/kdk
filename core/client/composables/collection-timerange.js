@@ -2,10 +2,12 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, watchEffect, onBeforeMount, onBeforeUnmount } from 'vue'
 import { api } from '../api.js'
+import { listenToServiceEvents, unlistenToServiceEvents } from '../utils/utils.services.js'
 
 export function useCollectionTimeRange (options = {}) {
   // Data
   const timeRange = ref(null)
+  let serviceEventListeners
 
   // Watch
   watchEffect(() => refresh())
@@ -41,19 +43,11 @@ export function useCollectionTimeRange (options = {}) {
   }
 
   // Hooks
-  onBeforeMount(async () => {
-    const service = getService()
-    service.on('created', refresh)
-    service.on('updated', refresh)
-    service.on('patched', refresh)
-    service.on('removed', refresh)
+  onBeforeMount(() => {
+    serviceEventListeners = listenToServiceEvents(getService(), { all: refresh })
   })
   onBeforeUnmount(() => {
-    const service = getService()
-    service.off('created', refresh)
-    service.off('updated', refresh)
-    service.off('patched', refresh)
-    service.off('removed', refresh)
+    unlistenToServiceEvents(serviceEventListeners)
   })
 
   return {

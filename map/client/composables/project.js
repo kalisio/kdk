@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../../../core.client.js'
+import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { useCurrentActivity } from '../composables/activity.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
@@ -25,6 +26,7 @@ export function useProject (options = {}) {
   const router = useRouter()
   const projectId = ref(null)
   const project = ref(null)
+  let serviceEventListeners
 
   // Computed
   const projectQuery = computed(() => {
@@ -95,19 +97,16 @@ export function useProject (options = {}) {
 
   onBeforeMount(() => {
     refreshProjectId()
-    const projectsService = options.planetApi.getService('projects', options.context)
-    // Keep track of changes once project is loaded
-    projectsService.on('patched', onProjectUpdated)
-    projectsService.on('updated', onProjectUpdated)
-    projectsService.on('removed', onProjectRemoved)
+    serviceEventListeners = listenToServiceEvents(options.planetApi.getService('projects', options.context), {
+      patched: onProjectUpdated,
+      updated: onProjectUpdated,
+      removed: onProjectRemoved
+    })
   })
 
   // Cleanup
   onBeforeUnmount(() => {
-    const projectsService = options.planetApi.getService('projects', options.context)
-    projectsService.off('patched', onProjectUpdated)
-    projectsService.off('updated', onProjectUpdated)
-    projectsService.off('removed', onProjectRemoved)
+    unlistenToServiceEvents(serviceEventListeners)
   })
 
   return {

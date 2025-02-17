@@ -524,19 +524,20 @@ export function getFeatureStyleType(feature) {
 export function listenToFeaturesServiceEventsForLayer (layer, {
   context = null, created = null, updated = null, patched = null, removed = null, all = null,
 } = {}, listeners) {
-  // User-defined layers are already managed
-  if (!layer.service || !layer.serviceEvents || isInMemoryLayer(layer) || isFeatureLayer(layer)) return
+  if (!layer.service || isInMemoryLayer(layer)) return
+  // serviceEvents property can be used to force realtime events on non user-defined layer, ie when service is not 'features'
+  if (!isFeatureLayer(layer) && !layer.serviceEvents) return
   // Check if already registered
   unlistenToFeaturesServiceEventsForLayer(layer, listeners)
   // Generate listeners targetting the right layer as in this case the features won't hold it
   // contrary to user-defined layers, which store the layer ID in the layer property of the features
   return listenToServiceEvents(layer.service, {
     context,
-    created: created ? (feature) => created(feature, layer) : null,
-    updated: updated ? (feature) => updated(feature, layer) : null,
-    patched: patched ? (feature) => patched(feature, layer) : null,
-    removed: removed ? (feature) => removed(feature, layer) : null,
-    all: all ? (feature) => all(feature, layer) : null
+    created: created ? (feature) => (feature.layer === layer._id) && created(feature, layer) : null,
+    updated: updated ? (feature) => (feature.layer === layer._id) && updated(feature, layer) : null,
+    patched: patched ? (feature) => (feature.layer === layer._id) && patched(feature, layer) : null,
+    removed: removed ? (feature) => (feature.layer === layer._id) && removed(feature, layer) : null,
+    all: all ? (feature) => (feature.layer === layer._id) && all(feature, layer) : null
   })
 }
 
