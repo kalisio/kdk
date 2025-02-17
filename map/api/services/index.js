@@ -31,6 +31,7 @@ export function createFeaturesService (options = {}) {
 
 export function removeFeaturesService (options = {}) {
   const app = this
+  debug('Removing features service with options', options)
   return app.removeService(app.getService(options.collection, options.context))
 }
 
@@ -54,6 +55,7 @@ export function createCatalogService (options = {}) {
 
 export function removeCatalogService (options = {}) {
   const app = this
+  debug('Removing catalog service with options', options)
   return app.removeService(app.getService('catalog', options.context))
 }
 
@@ -70,6 +72,7 @@ export async function createProjectsService (options = {}) {
 
 export function removeProjectsService (options = {}) {
   const app = this
+  debug('Removing projects service with options', options)
   return app.removeService(app.getService('projects', options.context))
 }
 
@@ -87,24 +90,67 @@ export function createAlertsService (options = {}) {
 
 export function removeAlertsService (options = {}) {
   const app = this
+  debug('Removing alerts service with options', options)
   return app.removeService(app.getService('alerts', options.context))
 }
 
 // Helper to register service and permissions for a layer
-export async function createFeaturesServiceForLayer (options) {
+export async function createFeaturesServiceForLayer (layer, context) {
   const app = this
-  const service = await createFeaturesService.call(app, options)
-  // Register default permissions for it
-  permissions.defineAbilities.registerHook((subject, can, cannot) => {
-    can('service', options.collection)
-    can('read', options.collection)
-  })
-  return service
+  // Check if service(s) are associated to this layer
+  // Avoid create it twice as we can share services between different layers
+  let probeService = (layer.probeService ? app.getService(layer.probeService, context) : null)
+  if (layer.probeService && !probeService) {
+    probeService = await createFeaturesService.call(app, Object.assign({
+      collection: layer.probeService,
+      context,
+      db: app.db.db(layer.dbName)
+    }, _.pick(layer, ['featureLabel', 'simplifyResult', 'skipEvents', 'simplifyEvents'])))
+    // Register default permissions for it
+    permissions.defineAbilities.registerHook((subject, can, cannot) => {
+      can('service', layer.probeService)
+      can('read', layer.probeService)
+    })
+    // We then need to update abilities cache
+    const authorisationService = app.getService('authorisations')
+    if (authorisationService) authorisationService.clearAbilities()
+  }
+  let service = (layer.service ? app.getService(layer.service, context) : null)
+  if (layer.service && !service) {
+    service = await createFeaturesService.call(app, Object.assign({
+      collection: layer.service,
+      context,
+      db: app.db.db(layer.dbName)
+    }, _.pick(layer, ['ttl', 'featureId', 'featureIdType', 'featureLabel', 'variables', 'simplifyResult', 'skipEvents', 'simplifyEvents'])))
+    // Register default permissions for it
+    permissions.defineAbilities.registerHook((subject, can, cannot) => {
+      can('service', layer.service)
+      can('read', layer.service)
+    })
+    // We then need to update abilities cache
+    const authorisationService = app.getService('authorisations')
+    if (authorisationService) authorisationService.clearAbilities()
+  }
+  return service || probeService
+}
+// Helper to unregister service for a layer
+export async function removeFeaturesServiceForLayer (layer, context) {
+  const app = this
+  // Check if service(s) are associated to this layer and remove it
+  let probeService = (layer.probeService ? app.getService(layer.probeService, context) : null)
+  if (layer.probeService && probeService) {
+    probeService = await removeFeaturesService.call(app, { collection: layer.probeService, context })
+  }
+  let service = (layer.service ? app.getService(layer.service, context) : null)
+  if (layer.service && service) {
+    service = await removeFeaturesService.call(app, { collection: layer.service, context })
+  }
+  return service || probeService
 }
 // Helper to create features from source for a layer
-export async function createFeaturesForLayer (features, layer, options) {
+export async function createFeaturesForLayer (features, layer, options = {}) {
   const app = this
-  const featuresService = app.getService(layer.service)
+  const featuresService = app.getService(layer.service, options.context)
   if (options && options.filter) features = await options.filter(features, layer, app)
   if (!features.length) return
   // The unordered option ensure a faster processing when inserting multiple items
@@ -112,15 +158,11 @@ export async function createFeaturesForLayer (features, layer, options) {
   await featuresService.create(features, { mongodb: { ordered: false } })
 }
 
-export async function createDefaultCatalogLayers (options) {
+// Read default layers configured and create, if not found in DB, or update it accordingly
+// Will also clean and feed default data (ie features) if provided as input file
+export async function createDefaultCatalogLayers (options = {}) {
   const app = this
-  // Backward compatibility when the sole possible option was a context
-  let context
-  if (typeof options === 'object') {
-    if (options.context) context = options.context
-    else if (options._id) context = options
-  } else if (typeof options === 'string') context = options
-  const catalogService = app.getService('catalog', context)
+  const catalogService = app.getService('catalog', options.context)
   const catalog = app.get('catalog')
 
   const defaultLayers = catalog ? catalog.layers || [] : []
@@ -128,7 +170,15 @@ export async function createDefaultCatalogLayers (options) {
   for (let i = 0; i < defaultLayers.length; i++) {
     const defaultLayer = defaultLayers[i]
     const createdLayer = _.find(layers, { name: defaultLayer.name })
+    let featuresService
     try {
+      // Check if service(s) are associated to this layer and create the related service(s) if required
+      if (defaultLayer.service) {
+        featuresService = app.getService(defaultLayer.service)
+        // Avoid create it twice as we can share services between different layers
+        if (featuresService) continue
+        featuresService = await createFeaturesServiceForLayer.call(app, defaultLayer, options.context)
+      }
       // Create or update the layer removing any option only used to manage layer setup
       if (!createdLayer) {
         app.logger.info('Adding default layer (name = ' + defaultLayer.name + ')')
@@ -139,23 +189,6 @@ export async function createDefaultCatalogLayers (options) {
       }
     } catch (error) {
       console.error(error)
-    }
-    // Check if service(s) are associated to this layer
-    let featuresService
-    if (defaultLayer.service) {
-      featuresService = app.getService(defaultLayer.service)
-      // Avoid create it twice as we can share services between different layers
-      if (featuresService) continue
-      featuresService = await createFeaturesServiceForLayer.call(app, Object.assign({
-        collection: defaultLayer.service,
-        db: app.db.db(defaultLayer.dbName)
-      }, _.pick(defaultLayer, ['ttl', 'featureId', 'featureIdType', 'featureLabel', 'variables', 'simplifyResult', 'skipEvents', 'simplifyEvents'])))
-    }
-    if (defaultLayer.probeService) {
-      await createFeaturesServiceForLayer.call(app, Object.assign({
-        collection: defaultLayer.probeService,
-        db: app.db.db(defaultLayer.dbName)
-      }, _.pick(defaultLayer, ['featureLabel', 'simplifyResult', 'skipEvents', 'simplifyEvents'])))
     }
     // And if we need to initialize some data as well
     if (!createdLayer && featuresService && (defaultLayer.url || defaultLayer.fileName)) {
@@ -196,6 +229,16 @@ export async function createDefaultCatalogLayers (options) {
         }
       }
     }
+  }
+}
+
+// Create the required features services for layers found in catalog
+export async function createCatalogFeaturesServices (options = {}) {
+  const app = this
+  const catalogService = app.getService('catalog', options.context)
+  const layers = await catalogService.find({ query: { service: { $exists: true } }, paginate: false, $select: ['service'] })
+  for (let i = 0; i < layers.length; i++) {
+    await createFeaturesServiceForLayer.call(app, layers[i], options.context)
   }
 }
 
