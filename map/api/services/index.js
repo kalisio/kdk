@@ -17,7 +17,7 @@ export function createFeaturesService (options = {}) {
   const app = this
 
   debug('Creating features service with options', options)
-  return app.createService(options.collection, Object.assign({
+  const service = app.createService(options.collection, Object.assign({
     modelName: 'features',
     servicesPath,
     modelsPath,
@@ -27,6 +27,15 @@ export function createFeaturesService (options = {}) {
     events: ['features'],
     methods: ['find', 'get', 'create', 'update', 'patch', 'remove', 'heatmap', 'formatGeoJSON']
   }, options))
+  // As a features service can be created dynamically register default permissions for it
+  permissions.defineAbilities.registerHook((subject, can, cannot) => {
+    can('service', options.collection)
+    can('read', options.collection)
+  })
+  // We then need to update abilities cache
+  const authorisationService = app.getService('authorisations')
+  if (authorisationService) authorisationService.clearAbilities()
+  return service
 }
 
 export function removeFeaturesService (options = {}) {
@@ -106,14 +115,6 @@ export async function createFeaturesServiceForLayer (layer, context) {
       context,
       db: app.db.db(layer.dbName)
     }, _.pick(layer, ['featureLabel', 'simplifyResult', 'skipEvents', 'simplifyEvents'])))
-    // Register default permissions for it
-    permissions.defineAbilities.registerHook((subject, can, cannot) => {
-      can('service', layer.probeService)
-      can('read', layer.probeService)
-    })
-    // We then need to update abilities cache
-    const authorisationService = app.getService('authorisations')
-    if (authorisationService) authorisationService.clearAbilities()
   }
   let service = (layer.service ? app.getService(layer.service, context) : null)
   if (layer.service && !service) {
@@ -122,14 +123,6 @@ export async function createFeaturesServiceForLayer (layer, context) {
       context,
       db: app.db.db(layer.dbName)
     }, _.pick(layer, ['ttl', 'featureId', 'featureIdType', 'featureLabel', 'variables', 'simplifyResult', 'skipEvents', 'simplifyEvents'])))
-    // Register default permissions for it
-    permissions.defineAbilities.registerHook((subject, can, cannot) => {
-      can('service', layer.service)
-      can('read', layer.service)
-    })
-    // We then need to update abilities cache
-    const authorisationService = app.getService('authorisations')
-    if (authorisationService) authorisationService.clearAbilities()
   }
   return service || probeService
 }

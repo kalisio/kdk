@@ -125,6 +125,8 @@ export default {
 
   // Compute abilities for a given user and update it in cache
   async updateAbilities (subject) {
+    debug('Updating user abilities of subject ' + subject._id)
+    
     if (this.cache) {
       if (subject && subject._id) {
         this.cache.delete(subject._id.toString())
@@ -139,6 +141,9 @@ export default {
 
   // Clear abilities
   clearAbilities() {
-    if (this.cache) this.cache.clear()
+    if (this.cache) {
+      debug('Clearing user abilities cache')
+      this.cache.clear()
+    }
   }
 }
