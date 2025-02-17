@@ -210,9 +210,8 @@ feature.properties.entityStyle = {
 
 ![Animated wall](../../.vitepress/public/images/animated-wall.gif)
 
-:::note
-The `animateMaterialAlongPath` property in the `wall` (or `corridor`) object will create a custom wall (or corridor) object, don’t expect it to behave like a regular CesiumJS [WallGraphics](https://cesium.com/learn/cesiumjs/ref-doc/WallGraphics.html) (or [CorridorGraphics](https://cesium.com/learn/cesiumjs/ref-doc/CorridorGraphics.html)) object.
-:::
+> [!NOTE]
+> The `animateMaterialAlongPath` property in the `wall` (or `corridor`) object will create a custom wall (or corridor) object, don’t expect it to behave like a regular CesiumJS [WallGraphics](https://cesium.com/learn/cesiumjs/ref-doc/WallGraphics.html) (or [CorridorGraphics](https://cesium.com/learn/cesiumjs/ref-doc/CorridorGraphics.html)) object.
 
 ### Dynamic styling
 
