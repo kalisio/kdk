@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { onBeforeUnmount } from 'vue'
 import { useStore } from './store.js'
 
 export function useSelection (name, options = {}) {
@@ -8,7 +9,7 @@ export function useSelection (name, options = {}) {
   // selection store
   const { store, set, get, has } = useStore(`selections.${name}`)
 
-  // functions
+  // Functions
   // Single selection will rely on the lastly selected item only
   // Multiple selection mode will rely on all items
   function clearSelection () {
@@ -78,7 +79,13 @@ export function useSelection (name, options = {}) {
     set('enabled', true)
   }
 
-  // expose
+  // Cleanup on destroy
+  onBeforeUnmount(() => {
+    setSelectionEnabled()
+    clearSelection()
+  })
+
+  // Expose
   return {
     selection: store,
     clearSelection,

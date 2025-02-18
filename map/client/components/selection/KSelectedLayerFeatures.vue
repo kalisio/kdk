@@ -181,7 +181,7 @@ function isFeaturePropertiesNode (node) {
 }
 function getIcon (node) {
   if (isLayerNode(node)) return (editedFeatures.value.length > 0 ? 'las la-edit' : '')
-  if (isFeatureNode(node)) return (editedFeatures.value.contains(node) ? 'las la-edit' : '')
+  if (isFeatureNode(node)) return (editedFeatures.value.contains(getFeatureId(node, props.item.layer)) ? 'las la-edit' : '')
   if (isFeaturePropertiesNode(node)) return 'las la-address-card'
   return ''
 }
@@ -200,8 +200,9 @@ function zoomToSelectedFeature (feature) {
 function editSelectedFeatures () {
   // Zoom to then edit
   zoomToSelectedFeatures()
+  editedFeatures.value = props.item.features.map(feature => getFeatureId(feature, props.item.layer))
   CurrentActivity.value.startEditLayer(props.item.layer, {
-    features: props.item.features.map(feature => getFeatureId(feature, props.item.layer)),
+    features: editedFeatures.value,
     editMode: 'edit-geometry',
     allowedEditModes: [
       'edit-properties',
@@ -210,15 +211,16 @@ function editSelectedFeatures () {
       'rotate'
     ],
     callback: (event) => {
-      editedFeatures.value = (event.status === 'edit-start' ? props.item.features : [])
+      if (event.status === 'accept') editedFeatures.value = []
     }
   })
 }
 function editSelectedFeature (feature) {
   // Zoom to then edit
   zoomToSelectedFeature(feature)
+  editedFeatures.value = [getFeatureId(feature, props.item.layer)]
   CurrentActivity.value.startEditLayer(props.item.layer, {
-    features: [getFeatureId(feature, props.item.layer)],
+    features: editedFeatures.value,
     editMode: 'edit-geometry',
     allowedEditModes: [
       'edit-properties',
@@ -227,7 +229,7 @@ function editSelectedFeature (feature) {
       'rotate'
     ],
     callback: (event) => {
-      editedFeatures.value = (event.status === 'edit-start' ? [feature] : [])
+      if (event.status === 'accept') editedFeatures.value = []
     }
   })
 }
