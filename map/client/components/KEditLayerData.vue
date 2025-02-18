@@ -4,6 +4,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
 import { actionProps } from '../../../core/client/utils/utils.actions.js'
 import KAction from '../../../core/client/components/action/KAction.vue'
