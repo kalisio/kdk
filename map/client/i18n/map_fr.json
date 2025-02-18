@@ -521,6 +521,7 @@
     "NONE_SELECTED": "Pas de sélection"
   },
   "KSelectedLayerFeatures": {
+    "FEATURE_PROPERTIES_LABEL": "Propriétés de l'élément",
     "ZOOM_TO_FEATURES_LABEL": "Zoomer sur les éléments de la couche",
     "EDIT_FEATURES_LABEL": "Editer les éléments de la couche",
     "REMOVE_FEATURES_LABEL": "Supprimer les éléments de la couche",

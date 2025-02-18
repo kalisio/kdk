@@ -522,6 +522,7 @@
     "NONE_SELECTED": "Nothing selected"
   },
   "KSelectedLayerFeatures": {
+    "FEATURE_PROPERTIES_LABEL": "Feature properties",
     "ZOOM_TO_FEATURES_LABEL": "Zoom to layer features",
     "EDIT_FEATURES_LABEL": "Edit layer elements",
     "REMOVE_FEATURES_LABEL": "Remove layer features",

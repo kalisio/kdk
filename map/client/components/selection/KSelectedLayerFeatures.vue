@@ -3,35 +3,44 @@
     :nodes="[root]"
     node-key="_id"
     label-key="label"
-    children-key="features"
-    default-expand-all
+    children-key="children"
+    v-model:expanded="expandedNodes"
     dense
   >
     <template v-slot:default-header="prop">
       <!-- Layer rendering -->
       <q-icon v-if="prop.node.icon" :name="prop.node.icon"/>
-      <KLayerItem v-if="prop.node.name"
+      <KLayerItem v-if="isLayerNode(prop.node)"
         v-bind="$props"
         :togglable="false"
         :layer="root"
       />
       <!-- Features rendering -->
-      <div v-else class="row fit items-center q-pl-md q-pr-sm no-wrap">
+      <div v-else-if="prop.node.label" class="row fit items-center q-pl-md q-pr-sm no-wrap">
         <div :class="{
             'text-primary': root.isVisible,
             'text-grey-6': root.isDisabled || !root.isVisible
           }"
         >
-          <span v-html="prop.node.label || prop.node._id" />
+          <span v-html="prop.node.label" />
         </div>
-        <q-space />
+        <q-space  v-if="isFeatureNode(prop.node)"/>
         <!-- Features actions -->
-        <KPanel
+        <KPanel v-if="isFeatureNode(prop.node)"
           :id="`${prop.node.label}-feature-actions`"
           :content="featureActions"
           :context="prop.node"
         />
       </div>
+    </template>
+    <!-- Feature properties rendering -->
+    <template v-slot:default-body="prop">
+      <KView v-if="isFeaturePropertiesNode(prop.node)" 
+        class="q-pa-md full-width"
+        :values="prop.node"
+        :schema="schema"
+        :separators="true"
+      />
     </template>
   </q-tree>
 </template>
@@ -43,6 +52,7 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import bbox from '@turf/bbox'
 import { Store, i18n } from '../../../../core/client'
+import { KView } from '../../../../core/client/components'
 import KLayerItem from '../catalog/KLayerItem.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { getFeatureId, getFeatureLabel } from '../../utils/utils.js'
@@ -60,6 +70,7 @@ const props = defineProps({
 const route = useRoute()
 const router = useRouter()
 const { CurrentActivity } = useCurrentActivity()
+const expandedNodes = ref([props.item.layer._id])
 const editedFeatures = ref([])
 
 // Computed
@@ -125,19 +136,60 @@ const featureActions = computed(() => {
     }]
   }]
 })
+const schema = computed(() => {
+  let schema
+  // Is there any schema ?
+  if (_.has(props.item.layer, 'schema.content')) {
+    // As we update the schema does not alter the original one
+    schema = _.cloneDeep(_.get(props.item.layer, 'schema.content'))
+  } else {
+    schema = generatePropertiesSchema(_.get(props.item, 'features[0]', {}), props.item.layer.name)
+  }
+  // Ensure schema is not empty
+  if (_.isNil(schema) || _.isEmpty(_.get(schema, 'properties', {}))) {
+    return
+  }
+  return schema
+})
 const root = computed(() => {
-  const features = props.item.features.map(feature => Object.assign({
-    label: getFeatureLabel(feature, props.item.layer),
-    icon: (editedFeatures.value.contains(feature) ? 'las la-edit' : '')
-  }, feature))
+  const children = props.item.features.map(feature => Object.assign({
+    icon: getIcon(feature),
+    label: getLabel(feature),
+    children: [Object.assign({
+      icon: getIcon(feature.properties),
+      label: getLabel(feature.properties)
+    }, feature.properties)] // Properties only for node displaying it
+  }, feature)) // Target feature is required as context for actions
+  // For each feature add a node containing 
   // Replace default layer actions with new ones
-  const root = Object.assign({
-    icon: (editedFeatures.value.length > 0 ? 'las la-edit' : '')
-  }, _.omit(props.item.layer, ['icon', 'actions']), { actions: layerActions.value, features })
-  return root
+  return Object.assign({
+    icon: getIcon(props.item.layer),
+    label: getLabel(props.item.layer),
+  }, _.omit(props.item.layer, ['icon', 'actions']), { actions: layerActions.value, children })
 })
 
 // Functions
+function isLayerNode (node) {
+  return node.name
+}
+function isFeatureNode (node) {
+  return node.properties
+}
+function isFeaturePropertiesNode (node) {
+  return !node.properties && !isLayerNode(node)
+}
+function getIcon (node) {
+  if (isLayerNode(node)) return (editedFeatures.value.length > 0 ? 'las la-edit' : '')
+  if (isFeatureNode(node)) return (editedFeatures.value.contains(node) ? 'las la-edit' : '')
+  if (isFeaturePropertiesNode(node)) return 'las la-address-card'
+  return ''
+}
+function getLabel (node) {
+  if (isLayerNode(node)) return node.label || node.name
+  if (isFeatureNode(node)) return getFeatureLabel(node, props.item.layer) || getFeatureId(node, props.item.layer)
+  if (isFeaturePropertiesNode(node)) return i18n.t('KSelectedLayerFeatures.FEATURE_PROPERTIES_LABEL')
+  return ''
+}
 function zoomToSelectedFeatures () {
   CurrentActivity.value.zoomToBBox(bbox({ type: 'FeatureCollection', features: props.item.features }))
 }
