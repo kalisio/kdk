@@ -272,7 +272,7 @@ export const activity = {
         try {
           await this.setupWeacast()
         } catch (error) {
-          logger.error(`[KDK] ${error}`)
+          logger.error('[KDK]', error)
         }
       } else {
         if (weacastEnabled) logger.warn('[KDK] Weacast setup function is missing')
@@ -284,7 +284,7 @@ export const activity = {
         await this.refreshLayers()
         if (hasContext) await this.restoreContext('layers')
       } catch (error) {
-        logger.error(`[KDK] ${error}`)
+        logger.error('[KDK]', error)
       }
       // Retrieve the time
       if (hasContext) await this.restoreContext('time')
