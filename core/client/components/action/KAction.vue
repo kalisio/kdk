@@ -77,6 +77,9 @@
     <q-item-section :class="'text-' + computedColor" no-wrap>
       <q-item-label :lines="1">{{ computedLabel }}</q-item-label>
     </q-item-section>
+    <!-- extra content -->
+    <slot>
+    </slot>
   </q-item>
   <!--
     Fab renderer
