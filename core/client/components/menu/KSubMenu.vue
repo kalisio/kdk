@@ -85,7 +85,6 @@ const props = defineProps(Object.assign({
 
 // Data
 const showMenu = ref(false)
-let showMenuRequested = false
 let hideMenuRequested = false
 
 // Functions
