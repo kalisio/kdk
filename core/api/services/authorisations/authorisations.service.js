@@ -125,7 +125,7 @@ export default {
 
   // Compute abilities for a given user and update it in cache
   async updateAbilities (subject) {
-    debug('Updating user abilities of subject ' + subject._id)
+    debug('Updating user abilities of subject ' + subject ? subject._id : ANONYMOUS_USER)
     
     if (this.cache) {
       if (subject && subject._id) {
