@@ -1,85 +1,22 @@
 <template>
-  <k-action v-bind="$props" :toggled="isToggled" />
+  <KAction v-bind="props" :toggled="isToggled">
+  </KAction>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { actionProps } from '../../../core/client/utils/utils.actions.js'
 import KAction from '../../../core/client/components/action/KAction.vue'
+import { useCurrentActivity } from '../composables/activity.js'
 
-export default {
-  name: 'k-edit-layer-data',
-  components: {
-    KAction
-  },
-  inject: ['kActivity'],
-  props: {
-    id: {
-      type: String,
-      required: true
-    },
-    icon: {
-      type: String,
-      default: undefined
-    },
-    color: {
-      type: String,
-      default: 'grey-9'
-    },
-    size: {
-      type: String,
-      default: 'md'
-    },
-    flat: {
-      type: Boolean,
-      default: true
-    },
-    outline: {
-      type: Boolean,
-      default: false
-    },
-    badge: {
-      type: Object,
-      default: () => null
-    },
-    toggle: {
-      type: Object,
-      default: () => null
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    tooltip: {
-      type: String,
-      default: ''
-    },
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    context: {
-      type: Object,
-      default: () => null
-    },
-    handler: {
-      type: [Function],
-      default: null
-    },
-    renderer: {
-      type: String,
-      default: 'button',
-      validator: (value) => {
-        return ['button', 'form-button', 'item', 'fab'].includes(value)
-      }
-    }
-  },
-  computed: {
-    isToggled () {
-      return this.kActivity.isLayerEdited(this.context)
-    }
-  }
-}
+// Props
+const props = defineProps(_.omit(actionProps, ['toggle', 'url', 'handler', 'route', 'dialog']))
+
+// Data
+const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
+
+// Computed
+const isToggled = computed(() => {
+  return CurrentActivity.value.isLayerEdited(props.context)
+})
 </script>

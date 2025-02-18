@@ -154,7 +154,11 @@ export const editLayers = {
       zIndex = -1,
       callback = null // Callback function to be called once edition is started/ended
     } = {}) {
-      if (this.editedLayer) return
+      // Close any running edit
+      if (this.editedLayer) {
+        // Always accept editions in the action
+        await this.stopEditLayer('accept')
+      }
 
       const leafletLayer = this.getLeafletLayerByName(layer.name)
       if (!leafletLayer) return
