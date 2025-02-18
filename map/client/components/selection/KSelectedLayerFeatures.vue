@@ -57,6 +57,7 @@ import KLayerItem from '../catalog/KLayerItem.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { getFeatureId, getFeatureLabel } from '../../utils/utils.js'
 import { isLayerDataEditable } from '../../utils/utils.layers.js'
+import { generatePropertiesSchema } from '../../utils/utils.schema.js'
 
 // Props
 const props = defineProps({
