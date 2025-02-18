@@ -30,6 +30,7 @@
         :content="content"
         :mode="mode"
         :context="context"
+        :filter="filter"
         :action-renderer="actionRenderer"
         :direction="direction"
         class="no-wrap"
