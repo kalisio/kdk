@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
-import { getType } from '@turf/invariant'
+import { getType, getGeom } from '@turf/invariant'
 import explode from '@turf/explode'
 import kinks from '@turf/kinks'
 import clean from '@turf/clean-coords'
@@ -529,15 +529,29 @@ export function listenToFeaturesServiceEventsForLayer (layer, {
   if (!isFeatureLayer(layer) && !layer.serviceEvents) return
   // Check if already registered
   unlistenToFeaturesServiceEventsForLayer(layer, listeners)
-  // Generate listeners targetting the right layer as in this case the features won't hold it
-  // contrary to user-defined layers, which store the layer ID in the layer property of the features
+  // Generate listeners targetting the right layer as in some cases the features won't hold it.
+  // Indeed, contrary to user-defined layers, which store the layer ID in the layer property of the features,
+  // multiple built-in layers might target the same service with a different base query so that filtering according to layer ID is not relevent.
+  const generateListenerForEvent = (listener, layer) => {
+    if (!listener) return null
+    else return (feature) => {
+      // We only support single feature edition
+      if (!getType(feature) || !getGeom(feature)) return
+
+      if (feature.layer) {
+        if (feature.layer === layer._id) listener(feature, layer)
+      } else {
+        listener(feature, layer)
+      }
+    }
+  }
   return listenToServiceEvents(layer.service, {
     context,
-    created: created ? (feature) => (feature.layer === layer._id) && created(feature, layer) : null,
-    updated: updated ? (feature) => (feature.layer === layer._id) && updated(feature, layer) : null,
-    patched: patched ? (feature) => (feature.layer === layer._id) && patched(feature, layer) : null,
-    removed: removed ? (feature) => (feature.layer === layer._id) && removed(feature, layer) : null,
-    all: all ? (feature) => (feature.layer === layer._id) && all(feature, layer) : null
+    created: generateListenerForEvent(created, layer),
+    updated: generateListenerForEvent(updated, layer),
+    patched: generateListenerForEvent(patched, layer),
+    removed: generateListenerForEvent(removed, layer),
+    all: generateListenerForEvent(all, layer)
   })
 }
 

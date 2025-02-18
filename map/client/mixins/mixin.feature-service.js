@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import sift from 'sift'
-import { getType, getGeom } from '@turf/invariant'
 import logger from 'loglevel'
 import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import * as features from '../utils/utils.features.js'
@@ -71,9 +70,7 @@ export const featureService = {
     editFeaturesGeometry: features.editFeaturesGeometry,
     editFeaturesProperties: features.editFeaturesProperties,
     removeFeatures: features.removeFeatures,
-    onFeaturesUpdated (feature, layer) {
-      // We only support single feature edition
-      if (!getType(feature) || !getGeom(feature)) return
+    onFeatureUpdated (feature, layer) {
       // Find related layer, either directly given in feature if coming from user-defined features service
       // otherwise bound to the listener for features services attached to a built-in layer
       if (!layer && feature.layer) layer = this.getLayerById(feature.layer)
@@ -91,9 +88,7 @@ export const featureService = {
         if (filteredFeature.length > 0) this.updateLayer(layer.name, feature, { removeMissing: false })
       }
     },
-    onFeaturesRemoved (feature, layer) {
-      // We only support single feature edition
-      if (!getType(feature) || !getGeom(feature)) return
+    onFeatureRemoved (feature, layer) {
       // Find related layer, either directly given in feature if coming from user-defined features service
       // otherwise bound to the listener for features services attached to a built-in layer
       if (!layer && feature.layer) layer = this.getLayerById(feature.layer)
@@ -112,9 +107,10 @@ export const featureService = {
       }
     },
     listenToFeaturesServiceEventsForLayer (layer) {
-      this.layerServiceEventListeners[layer._id] = features.listenToFeaturesServiceEventsForLayer(layer, {
-        created: this.onFeaturesUpdated, updated: this.onFeaturesUpdated, patched: this.onFeaturesUpdated, removed: this.onFeaturesRemoved
+      const listeners = features.listenToFeaturesServiceEventsForLayer(layer, {
+        created: this.onFeatureUpdated, updated: this.onFeatureUpdated, patched: this.onFeatureUpdated, removed: this.onFeatureRemoved
       }, this.layerServiceEventListeners[layer._id])
+      if (listeners) this.layerServiceEventListeners[layer._id] = listeners
     },
     unlistenToFeaturesServiceEventsForLayer (layer) {
       features.unlistenToFeaturesServiceEventsForLayer(layer, this.layerServiceEventListeners[layer._id])
@@ -122,7 +118,7 @@ export const featureService = {
     },
     listenToFeaturesServiceEventsForLayers () {
       this.layerServiceEventListeners = {}
-      _.forOwn(this.getLayers(), this.listenToFeaturesServiceEventsForLayer)
+      _.forEach(this.getLayers(), this.listenToFeaturesServiceEventsForLayer)
     },
     unlistenToFeaturesServiceEventsForLayers () {
       _.forOwn(this.layerServiceEventListeners, this.unlistenToFeaturesServiceEventsForLayer)
