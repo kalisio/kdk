@@ -79,6 +79,7 @@ export function useSelection (name, options = {}) {
     set('enabled', true)
   }
 
+  // Hooks
   // Cleanup on destroy
   onBeforeUnmount(() => {
     setSelectionEnabled()

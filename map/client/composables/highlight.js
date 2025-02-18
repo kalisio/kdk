@@ -1,12 +1,10 @@
 import _ from 'lodash'
 import config from 'config'
 import bbox from '@turf/bbox'
-import { getType, getGeom } from '@turf/invariant'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid } from 'quasar'
 import { unref, onBeforeMount, onBeforeUnmount } from 'vue'
-import { getFeatureId, getFeatureStyleType, isLayerHighlightable } from '../utils.js'
-import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
+import * as utils from '../utils.js'
 import * as composables from '../../../core/client/composables/index.js'
 
 export const HighlightsLayerName = uid()
@@ -16,21 +14,21 @@ export const HighlightsZIndex = 999
 export const HighlightMargin = 8
 
 export function useHighlight (name, options = {}) {
+  // Data
+  let highlightMode = 'highlightable-layers'
+  let layerServiceEventListeners = {}
   // Set default options
   options = Object.assign({ updateDelay: 250 }, options)
   // Retrieve activity
   const { kActivity } = composables.useCurrentActivity()
   // Avoid using .value everywhere
   let activity = unref(kActivity)
-
-  // Data
-  let featuresServiceListeners, layerServiceEventListeners
   // highlight store for context
   const { store, clear, set, get, unset, has } = composables.useStore(`highlights.${name}`)
   // global highlight store
   const { forOwn } = composables.useStore('highlights')
 
-  // functions
+  // Functions
   function setCurrentActivity (newActivity) {
     // Avoid multiple updates
     if (activity === newActivity) return
@@ -56,13 +54,13 @@ export function useHighlight (name, options = {}) {
     let id = `${name}`
     if (layer) id += `-${_.kebabCase(layer.name)}`
     if (feature) {
-      const featureId = getFeatureId(feature, layer)
+      const featureId = utils.getFeatureId(feature, layer)
       if (featureId) id += `-${featureId}`
     }
     return id
   }
   function isHighlightFor (highlightId, layer, feature) {
-    return feature ? highlightId.includes(`-${getFeatureId(feature, layer)}`) : highlightId.includes(`-${_.kebabCase(layer.name)}`)
+    return feature ? highlightId.includes(`-${utils.getFeatureId(feature, layer)}`) : highlightId.includes(`-${_.kebabCase(layer.name)}`)
   }
   function hasHighlight (feature, layer) {
     return has(getHighlightId(feature, layer))
@@ -82,8 +80,11 @@ export function useHighlight (name, options = {}) {
     }
     requestHighlightsLayerUpdate()
   }
+  function setHighlightMode (mode = 'highlightable-layers') {
+    highlightMode = mode
+  }
   function highlight (feature, layer, selected = true) {
-    if (layer && !isLayerHighlightable(layer)) return
+    if (layer && (highlightMode === 'highlightable-layers') && !utils.isLayerHighlightable(layer)) return
     const highlightId = getHighlightId(feature, layer)
     // Define default highlight feature
     const highlight = {
@@ -97,7 +98,7 @@ export function useHighlight (name, options = {}) {
     // Assign style
     if (selected) {
       // Do not alter config object
-      const selectionStylePath = `engines.${activity.engine}.style.selection.${getFeatureStyleType(highlight)}`
+      const selectionStylePath = `engines.${activity.engine}.style.selection.${utils.getFeatureStyleType(highlight)}`
       let highlightStyle = _.cloneDeep(_.get(config, selectionStylePath, {}))
       if (activity.is2D()) {
         // adapt the size to the marker using feature style
@@ -226,9 +227,25 @@ export function useHighlight (name, options = {}) {
       setHighlightEnabled(highlight, layer, true)
     })
   }
+  function listenToFeaturesServiceEventsForLayer (layer) {
+    const listeners = utils.listenToFeaturesServiceEventsForLayer(layer, {
+      all: onFeatureUpdated, removed: onFeatureRemoved
+    }, layerServiceEventListeners[layer._id])
+    if (listeners) layerServiceEventListeners[layer._id] = listeners
+  }
+  function unlistenToFeaturesServiceEventsForLayer (layer) {
+    utils.unlistenToFeaturesServiceEventsForLayer(layer, layerServiceEventListeners[layer._id])
+    delete layerServiceEventListeners[layer._id]
+  }
+  function listenToFeaturesServiceEventsForLayers () {
+    layerServiceEventListeners = {}
+    _.forEach(activity.getLayers(), listenToFeaturesServiceEventsForLayer)
+  }
+  function unlistenToFeaturesServiceEventsForLayers () {
+    _.forOwn(layerServiceEventListeners, unlistenToFeaturesServiceEventsForLayer)
+    layerServiceEventListeners = {}
+  }
   function onFeatureUpdated (feature, layer) {
-    // We only support single feature edition
-    if (!getType(feature) || !getGeom(feature)) return
     // Find related layer, either directly given in feature if coming from user-defined features service
     // otherwise bound to the listener for features services attached to a built-in layer
     if (!layer && feature.layer) layer = activity.getLayerById(feature.layer)
@@ -236,8 +253,6 @@ export function useHighlight (name, options = {}) {
     if (hasHighlight(feature, layer)) setHighlightGeometry(feature, getHighlight(feature, layer))
   }
   function onFeatureRemoved (feature, layer) {
-    // We only support single feature edition
-    if (!getType(feature) || !getGeom(feature)) return
     // Find related layer, either directly given in feature if coming from user-defined features service
     // otherwise bound to the listener for features services attached to a built-in layer
     if (!layer && feature.layer) layer = activity.getLayerById(feature.layer)
@@ -245,13 +260,14 @@ export function useHighlight (name, options = {}) {
     if (hasHighlight(feature, layer)) unhighlight(feature, layer)
   }
 
+  // Hooks
   // Initialize on create
   onBeforeMount(() => {
-    featuresServiceListeners = listenToServiceEvents('features', { all: onFeatureUpdated, removed: onFeatureRemoved })
+    listenToFeaturesServiceEventsForLayers()
   })
   // Cleanup on destroy
   onBeforeUnmount(() => {
-    unlistenToServiceEvents(featuresServiceListeners)
+    unlistenToFeaturesServiceEventsForLayers()
     clearHighlights()
   })
 
@@ -259,6 +275,7 @@ export function useHighlight (name, options = {}) {
   return {
     setCurrentActivity,
     highlights: store,
+    setHighlightMode,
     hasHighlight,
     getHighlight,
     getHighlights,

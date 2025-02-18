@@ -385,6 +385,7 @@ export function useSelection (name, options = {}) {
     if (item) selection.unselectItem(item)
   }
 
+  // Hooks
   // Here we need to listen to service events for all realtime layers
   onBeforeMount(() => {
     listenToFeaturesServiceEventsForLayers()
