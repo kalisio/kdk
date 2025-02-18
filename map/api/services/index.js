@@ -165,13 +165,6 @@ export async function createDefaultCatalogLayers (options = {}) {
     const createdLayer = _.find(layers, { name: defaultLayer.name })
     let featuresService
     try {
-      // Check if service(s) are associated to this layer and create the related service(s) if required
-      if (defaultLayer.service) {
-        featuresService = app.getService(defaultLayer.service)
-        // Avoid create it twice as we can share services between different layers
-        if (featuresService) continue
-        featuresService = await createFeaturesServiceForLayer.call(app, defaultLayer, options.context)
-      }
       // Create or update the layer removing any option only used to manage layer setup
       if (!createdLayer) {
         app.logger.info('Adding default layer (name = ' + defaultLayer.name + ')')
@@ -179,6 +172,13 @@ export async function createDefaultCatalogLayers (options = {}) {
       } else {
         app.logger.info('Updating default layer (name = ' + defaultLayer.name + ')')
         await catalogService.update(createdLayer._id, _.omit(defaultLayer, ['filter']))
+      }
+      // Check if service(s) are associated to this layer and create the related service(s) if required
+      if (defaultLayer.service) {
+        featuresService = app.getService(defaultLayer.service)
+        // Avoid create it twice as we can share services between different layers
+        if (featuresService) continue
+        featuresService = await createFeaturesServiceForLayer.call(app, defaultLayer, options.context)
       }
     } catch (error) {
       console.error(error)
