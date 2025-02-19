@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="CurrentActivity"
     id="position"
     class="row items-center no-padding k-position"
   >
@@ -61,9 +60,11 @@ onMounted(() => {
   // Show target sticky
   if (props.target) Layout.showSticky(props.target)
   // Listen move events
-  CurrentActivity.value.$engineEvents.on('movestart', updatePosition)
-  CurrentActivity.value.$engineEvents.on('move', updatePosition)
-  CurrentActivity.value.$engineEvents.on('moveend', updatePosition)
+  if (CurrentActivity.value) {
+    CurrentActivity.value.$engineEvents.on('movestart', updatePosition)
+    CurrentActivity.value.$engineEvents.on('move', updatePosition)
+    CurrentActivity.value.$engineEvents.on('moveend', updatePosition)
+  }
   // Update the position
   updatePosition()
 })
@@ -71,9 +72,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (props.target) Layout.hideSticky(props.target)
   // Stop listening move events
-  CurrentActivity.value.$engineEvents.off('movestart', updatePosition)
-  CurrentActivity.value.$engineEvents.off('move', updatePosition)
-  CurrentActivity.value.$engineEvents.off('moveend', updatePosition)
+  if (CurrentActivity.value) {
+    CurrentActivity.value.$engineEvents.off('movestart', updatePosition)
+    CurrentActivity.value.$engineEvents.off('move', updatePosition)
+    CurrentActivity.value.$engineEvents.off('moveend', updatePosition)
+  }
 })
 </script>
 
