@@ -58,7 +58,7 @@ export const editLayers = {
     isLayerEdited (layer) {
       return this.editedLayer && (this.editedLayer.name === layer.name)
     },
-    getGeoJsonEditOptions (options) {
+    getGeoJsonEditOptions (options, geometryTypes) {
       let filteredOptions = options
       // Convert and store style
       const leafletOptions = options.leaflet || options
@@ -74,7 +74,7 @@ export const editLayers = {
         if (filteredOptions.leaflet.popup) delete filteredOptions.leaflet.popup
       }
       // Retrieve base options first
-      const { onEachFeature } = this.getGeoJsonOptions(filteredOptions)
+      const { onEachFeature, style, pointToLayer } = this.getGeoJsonOptions(filteredOptions)
       return {
         // Ensure it is on top of all others layers while editing
         pane: 'popupPane',
@@ -83,16 +83,23 @@ export const editLayers = {
         onEachFeature,
         // Use default styling when editing as dynamic styling can conflict
         style: (feature) => {
-          if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
-            return getDefaultLineStyle(feature, layerStyle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
+          const isLine = ((feature.geometry.type === 'LineString') || (feature.geometry.type === 'MultiLineString'))
+          if (isLine) {
+            // Skip line editing style if not editing lines
+            if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('LineString') && !geometryTypes.includes('MultiLineString')) return style(feature)
+            else return getDefaultLineStyle(feature, layerStyle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
           }
-          if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
-            return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
-          } else {
-            logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
+          const isPolygon = ((feature.geometry.type === 'Polygon') || (feature.geometry.type === 'MultiPolygon'))
+          if (isPolygon) {
+            // Skip polygon editing style if not editing polygons
+            if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Polygon') && !geometryTypes.includes('MultiPolygon')) return style(feature)
+            else return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
           }
+          logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
         },
         pointToLayer: (feature, latlng) => {
+          // Skip point editing style if not editing points
+          if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Point') && !geometryTypes.includes('MultiPoint')) return pointToLayer(feature, layer)
           const style = getDefaultPointStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.point')
           style.options = { pmIgnore: false } // Allow geoman edition
           return createMarkerFromPointStyle(latlng, style)
@@ -149,6 +156,7 @@ export const editLayers = {
     },
     async startEditLayer (layer, {
       features = [], // Target features to be edited, otherwise the whole layer will be
+      geometryTypes = [], // Target geometry types to be edited, otherwise the whole layer will be
       allowedEditModes = null,
       editMode = null,
       zIndex = -1,
@@ -187,13 +195,19 @@ export const editLayers = {
       // and also to manage partial edition of large datasets
       const geoJson = leafletLayer.toGeoJSON()
       let editedFeatures = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-      if (_.isEmpty(features)) {
+      if (_.isEmpty(features) && _.isEmpty(geometryTypes)) {
         leafletLayer.clearLayers()
-      } else {
+      } else if (!_.isEmpty(features)) {
         editedFeatures = editedFeatures.filter(feature => features.includes(getFeatureId(feature, layer)))
         leafletLayer.getLayers().forEach(layer => {
           const feature = layer.feature
           if (features.includes(getFeatureId(feature, layer))) leafletLayer.removeLayer(layer)
+        })
+      } else if (!_.isEmpty(geometryTypes)) {
+        editedFeatures = editedFeatures.filter(feature => geometryTypes.includes(_.get(feature, 'geometry.type')))
+        leafletLayer.getLayers().forEach(layer => {
+          const feature = layer.feature
+          if (geometryTypes.includes(_.get(feature, 'geometry.type'))) leafletLayer.removeLayer(layer)
         })
       }
 
@@ -216,7 +230,7 @@ export const editLayers = {
         })
       }
 
-      this.editableLayer = L.geoJson(editedFeatures, this.getGeoJsonEditOptions(layer))
+      this.editableLayer = L.geoJson(editedFeatures, this.getGeoJsonEditOptions(layer, geometryTypes))
       this.map.addLayer(this.editableLayer)
       bindLeafletEvents(this.map, mapEditEvents, this)
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
