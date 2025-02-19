@@ -513,7 +513,7 @@ export function getFeatureStyleType(feature) {
     logger.warn('[KDK] feature has undefined geometry')
     return
   }
-  if (geometryType === 'Point') return 'point'
+  if (['Point', 'MultiPoint'].includes(geometryType)) return 'point'
   if (['LineString', 'MultiLineString'].includes(geometryType)) return 'line'
   if (['Polygon', 'MultiPolygon'].includes(geometryType)) return 'polygon'
   logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
