@@ -177,7 +177,6 @@ export async function createDefaultCatalogLayers (options = {}) {
       if (defaultLayer.service) {
         featuresService = app.getService(defaultLayer.service)
         // Avoid create it twice as we can share services between different layers
-        if (featuresService) continue
         featuresService = await createFeaturesServiceForLayer.call(app, defaultLayer, options.context)
       }
     } catch (error) {
