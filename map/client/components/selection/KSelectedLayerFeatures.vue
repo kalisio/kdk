@@ -261,7 +261,7 @@ function removeSelectedFeatures () {
       flat: true
     }
   }).onOk(async () => {
-    await CurrentActivity.value.removeFeatures(props.item.features, props.item.layer)
+    await CurrentActivity.value.removeFeatures({ type: 'FeatureCollection', features: props.item.features }, props.item.layer)
   })
 }
 function removeSelectedFeature (feature) {
