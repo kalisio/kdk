@@ -117,6 +117,7 @@ function getAPISidebar () {
         { text: 'Overview', link: '/api/map/introduction' },
         { text: 'Services', link: '/api/map/services' },
         { text: 'Hooks', link: '/api/map/hooks' },
+        { text: 'Utilities', link: '/api/map/utilities' },
         { text: 'Mixins', link: '/api/map/mixins' },
         { text: 'Map Mixins', link: '/api/map/map-mixins' },
         { text: 'Globe Mixins', link: '/api/map/globe-mixins' },
