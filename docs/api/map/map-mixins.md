@@ -373,7 +373,6 @@ You can also draw a path with a different styling on each part like this:
 
 You might want to dynamically build new GeoJson features based on existing ones, such as creating a gradient color line from a set of points depending on a specific property value. To handle this use case, you can define build options in the layer's `variables`.
 
-
 You can use either `classes` or `domain` to define the color scheme:
 * **classes**: An array of values used to define a discrete color gradient.<br>
 
