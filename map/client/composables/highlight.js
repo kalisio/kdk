@@ -35,17 +35,21 @@ export function useHighlight (name, options = {}) {
     // Remove highlights on previous activity and set it on new one
     if (activity) {
       removeHighlightsLayer()
+      activity.$engineEvents.off('layer-added', listenToFeaturesServiceEventsForLayer)
+      activity.$engineEvents.off('layer-removed', unlistenToFeaturesServiceEventsForLayer)
       activity.$engineEvents.off('layer-added', createHighlightsLayer)
       activity.$engineEvents.off('layer-disabled', onHighlightedLayerDisabled)
       activity.$engineEvents.off('layer-enabled', onHighlightedLayerEnabled)
     }
     activity = newActivity
-    if (newActivity) {
+    if (activity) {
+      activity.$engineEvents.on('layer-added', listenToFeaturesServiceEventsForLayer)
+      activity.$engineEvents.on('layer-removed', unlistenToFeaturesServiceEventsForLayer)
       // When at least one layer is added we know the catalog has been loaded
       // so that we can add our highlight layer, before that it would be cleared by catalog loading
-      newActivity.$engineEvents.on('layer-added', createHighlightsLayer)
-      newActivity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
-      newActivity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)      
+      activity.$engineEvents.on('layer-added', createHighlightsLayer)
+      activity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
+      activity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)      
     }
   }
   function getHighlightId (feature, layer) {

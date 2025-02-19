@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { onBeforeUnmount } from 'vue'
 import { useStore } from './store.js'
 
 export function useSelection (name, options = {}) {
@@ -78,13 +77,6 @@ export function useSelection (name, options = {}) {
     set('mode', 'single')
     set('enabled', true)
   }
-
-  // Hooks
-  // Cleanup on destroy
-  onBeforeUnmount(() => {
-    setSelectionEnabled()
-    clearSelection()
-  })
 
   // Expose
   return {

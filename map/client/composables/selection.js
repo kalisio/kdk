@@ -7,7 +7,7 @@ import circle from '@turf/circle'
 import bboxPolygon from '@turf/bbox-polygon'
 import intersects from '@turf/boolean-intersects'
 import { featureEach } from '@turf/meta'
-import { unref, onBeforeMount, onBeforeUnmount } from 'vue'
+import { unref } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
 import * as utils from '../utils.js'
 import { convertPolygonStyleToLeafletPath } from '../leaflet/utils/index.js'
@@ -69,6 +69,9 @@ export function useSelection (name, options = {}) {
     if (activity === newActivity) return
     // Remove listeners on previous activity and set it on new one
     if (activity && activity.$engineEvents) {
+      unlistenToFeaturesServiceEventsForLayers()
+      setSelectionEnabled()
+      clearSelection()
       activity.$engineEvents.off('click', onClicked)
       if (options.boxSelection) activity.$engineEvents.off('boxselectionend', onBoxSelection)
       if (options.clusterSelection) activity.$engineEvents.off('spiderfied', onClusterSelection)
@@ -77,13 +80,14 @@ export function useSelection (name, options = {}) {
       activity.$engineEvents.off('layer-hidden', onSelectedLayerHidden)
     }
     activity = newActivity
-    if (newActivity && newActivity.$engineEvents) {
-      newActivity.$engineEvents.on('click', onClicked)
-      if (options.boxSelection) newActivity.$engineEvents.on('boxselectionend', onBoxSelection)
-      if (options.clusterSelection) newActivity.$engineEvents.on('spiderfied', onClusterSelection)
-      newActivity.$engineEvents.on('layer-added', listenToFeaturesServiceEventsForLayer)
-      newActivity.$engineEvents.on('layer-removed', unlistenToFeaturesServiceEventsForLayer)
-      newActivity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
+    if (activity && activity.$engineEvents) {
+      listenToFeaturesServiceEventsForLayers()
+      activity.$engineEvents.on('click', onClicked)
+      if (options.boxSelection) activity.$engineEvents.on('boxselectionend', onBoxSelection)
+      if (options.clusterSelection) activity.$engineEvents.on('spiderfied', onClusterSelection)
+      activity.$engineEvents.on('layer-added', listenToFeaturesServiceEventsForLayer)
+      activity.$engineEvents.on('layer-removed', unlistenToFeaturesServiceEventsForLayer)
+      activity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
     }
   }
   function setBoxSelectionEnabled (enabled) {
@@ -385,16 +389,6 @@ export function useSelection (name, options = {}) {
     if (item) selection.unselectItem(item)
   }
 
-  // Hooks
-  // Here we need to listen to service events for all realtime layers
-  onBeforeMount(() => {
-    listenToFeaturesServiceEventsForLayers()
-  })
-  // Cleanup on destroy
-  onBeforeUnmount(() => {
-    unlistenToFeaturesServiceEventsForLayers()
-  })
-  
   // Expose
   return {
     ...selection,
