@@ -7,22 +7,36 @@ export function listenToServiceEvents (service, {
   // Check if already registered
   unlistenToServiceEvents(listeners)
   if (typeof service === 'string') service = api.getService(service, context)
+  // Generate listeners having the event type as parameter, can be useful if registering the same listener for multiple events.
+  const generateListenerForEvent = (listener, event) => (listener ? (object) => listener(object, event) : null)
   if (service) {
-    if (created || all) service.on('created', created || all)
-    if (updated || all) service.on('updated', updated || all)
-    if (patched || all) service.on('patched', patched || all)
-    if (removed || all) service.on('removed', removed || all)
+    if (created || all) {
+      created = generateListenerForEvent(created || all, 'created')
+      service.on('created', created)
+    }
+    if (updated || all) {
+      updated = generateListenerForEvent(updated || all, 'updated')
+      service.on('updated', updated)
+    }
+    if (patched || all) {
+      patched = generateListenerForEvent(patched || all, 'patched')
+      service.on('patched', patched)
+    }
+    if (removed || all) {
+      removed = generateListenerForEvent(removed || all, 'removed')
+      service.on('removed', removed)
+    }
   }
   // We keep track of service as it might change between listen/unlisten (typically when going offline)
-  return { service, created, updated, patched, removed, all }
+  return { service, created, updated, patched, removed }
 }
 
 // Unbind previously stored listeners from service events
 export function unlistenToServiceEvents (listeners) {
   if (!listeners) return
-  const { service, created, updated, patched, removed, all } = listeners
-  if (created || all) service.off('created', created || all)
-  if (updated || all) service.off('updated', updated || all)
-  if (patched || all) service.off('patched', patched || all)
-  if (removed || all) service.off('removed', removed || all)
+  const { service, created, updated, patched, removed } = listeners
+  if (created ) service.off('created', created)
+  if (updated) service.off('updated', updated)
+  if (patched) service.off('patched', patched)
+  if (removed) service.off('removed', removed)
 }

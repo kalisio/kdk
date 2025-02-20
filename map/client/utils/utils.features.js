@@ -534,14 +534,16 @@ export function listenToFeaturesServiceEventsForLayer (layer, {
   // multiple built-in layers might target the same service with a different base query so that filtering according to layer ID is not relevent.
   const generateListenerForEvent = (listener, layer) => {
     if (!listener) return null
-    else return (feature) => {
+    else return (feature, event) => {
       // We only support single feature edition
       if (!getType(feature) || !getGeom(feature)) return
 
       if (feature.layer) {
-        if (feature.layer === layer._id) listener(feature, layer)
+        if (feature.layer === layer._id) {
+          listener(feature, layer, event)
+        }
       } else {
-        listener(feature, layer)
+        listener(feature, layer, event)
       }
     }
   }
