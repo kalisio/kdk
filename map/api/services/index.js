@@ -145,6 +145,12 @@ export async function createFeaturesForLayer (features, layer, options = {}) {
   const app = this
   const featuresService = app.getService(layer.service, options.context)
   if (options && options.filter) features = await options.filter(features, layer, app)
+  // User-defined layers requires layer ID
+  if (layer.service === 'features') {
+    features.forEach(feature => {
+      feature.layer = layer._id
+    })
+  }
   if (!features.length) return
   // The unordered option ensure a faster processing when inserting multiple items
   // and that after an error remaining write operations in the queue will continue anyway
@@ -163,16 +169,21 @@ export async function createDefaultCatalogLayers (options = {}) {
   for (let i = 0; i < defaultLayers.length; i++) {
     const defaultLayer = defaultLayers[i]
     const createdLayer = _.find(layers, { name: defaultLayer.name })
+    const isLayerAlreadyCreated = !_.isNil(createdLayer)
     let featuresService
     try {
+      // Used to filter properties only used to initialize a layer and related data
+      const reservedProperties ['filter', 'url', 'fileName']
       // Create or update the layer removing any option only used to manage layer setup
-      if (!createdLayer) {
+      if (!isLayerAlreadyCreated) {
         app.logger.info('Adding default layer (name = ' + defaultLayer.name + ')')
-        await catalogService.create(_.omit(defaultLayer, ['filter']))
+        createdLayer = await catalogService.create(_.omit(defaultLayer, reservedProperties))
       } else {
         app.logger.info('Updating default layer (name = ' + defaultLayer.name + ')')
-        await catalogService.update(createdLayer._id, _.omit(defaultLayer, ['filter']))
+        createdLayer = await catalogService.update(createdLayer._id, _.omit(defaultLayer, reservedProperties))
       }
+      // Features creation might require the layer ID
+      defaultLayer._id = createdLayer._id
       // Check if service(s) are associated to this layer and create the related service(s) if required
       if (defaultLayer.service) {
         featuresService = app.getService(defaultLayer.service)
@@ -183,7 +194,7 @@ export async function createDefaultCatalogLayers (options = {}) {
       console.error(error)
     }
     // And if we need to initialize some data as well
-    if (!createdLayer && featuresService && (defaultLayer.url || defaultLayer.fileName)) {
+    if (!isLayerAlreadyCreated && featuresService && (defaultLayer.url || defaultLayer.fileName)) {
       // Cleanup
       try {
         await featuresService.remove(null, { query: {} })
