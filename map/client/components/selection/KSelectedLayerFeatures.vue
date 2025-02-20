@@ -289,6 +289,7 @@ onBeforeMount(() => {
 })
 // Cleanup on destroy
 onBeforeUnmount(() => {
-  CurrentActivity.value.setHighlightMode('highlightable-layers')
+  // Activity might have been cleared already
+  if (CurrentActivity.value) CurrentActivity.value.setHighlightMode('highlightable-layers')
 })
 </script>
