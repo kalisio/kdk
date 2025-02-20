@@ -168,7 +168,7 @@ export async function createDefaultCatalogLayers (options = {}) {
   const layers = await catalogService.find({ query: {}, paginate: false })
   for (let i = 0; i < defaultLayers.length; i++) {
     const defaultLayer = defaultLayers[i]
-    const createdLayer = _.find(layers, { name: defaultLayer.name })
+    let createdLayer = _.find(layers, { name: defaultLayer.name })
     const isLayerAlreadyCreated = !_.isNil(createdLayer)
     let featuresService
     try {
