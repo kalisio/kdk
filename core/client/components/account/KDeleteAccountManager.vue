@@ -48,7 +48,7 @@ async function onDelete () {
   }).onOk(async (data) => {
     try {
       await api.getService('users').remove(User._id)
-      // Redirecting to logut will logut the user but logout an inexsiting user will raise an error
+      // Redirecting to logout will logout the user but logout an inexsiting user will raise an error
       // We prefer to clean the token manually instead
       // router.push({ name: 'logout' })
       Store.set('user', null)

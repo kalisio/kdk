@@ -81,7 +81,7 @@ export default {
   },
   setup (props) {
     return {
-      ...useProject({ contextId: props.contextId })
+      ...useProject()
     }
   }
 }

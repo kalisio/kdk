@@ -1,11 +1,11 @@
 <template>
   <q-ajax-bar
-    ref="progessBarRef"
+    ref="progressBarRef"
     position="bottom"
     size="8px"
     color="primary"
-    :delay="250">
-  </q-ajax-bar>
+    :delay="250"
+  />
 </template>
 
 <script setup>
@@ -13,7 +13,7 @@ import { ref, onMounted } from 'vue'
 import { Events } from '../../events.js'
 
 // Data
-const progessBarRef = ref(null)
+const progressBarRef = ref(null)
 let nbRequests = 0
 let nbCompletedRequests = 0
 let isProgressBarActive = false
@@ -23,8 +23,8 @@ function addRequest (hook) {
   // Check if this request is a quiet one or not
   if (hook.params.ignore) return
   nbRequests++
-  if (progessBarRef.value && !isProgressBarActive && (nbRequests > nbCompletedRequests)) {
-    progessBarRef.value.start()
+  if (progressBarRef.value && !isProgressBarActive && (nbRequests > nbCompletedRequests)) {
+    progressBarRef.value.start()
     isProgressBarActive = true
   }
 }
@@ -32,9 +32,9 @@ function addCompletedRequest (hook) {
   // Check if this request is a quiet one or not
   if (hook.params.ignore) return
   nbCompletedRequests++
-  if (progessBarRef.value && isProgressBarActive && (nbRequests <= nbCompletedRequests)) {
+  if (progressBarRef.value && isProgressBarActive && (nbRequests <= nbCompletedRequests)) {
     isProgressBarActive = false
-    progessBarRef.value.stop()
+    progressBarRef.value.stop()
   }
 }
 
@@ -44,5 +44,4 @@ onMounted(() => {
   Events.on('after-hook', hook => { addCompletedRequest(hook) })
   Events.on('error-hook', hook => { addCompletedRequest(hook) })
 })
-
 </script>

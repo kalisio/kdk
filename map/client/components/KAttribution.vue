@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-sm">
+  <div v-if="CurrentActivity" class="q-pa-sm">
     <KShape
       class="text-weight-bold"
       :options="{
@@ -28,7 +28,10 @@
       >
         <!-- Header Content -->
         <div v-if="header">
-          <KContent :content="header" :class="headerClass" />
+          <KContent
+            :content="header"
+            :class="headerClass"
+          />
         </div>
         <!-- Main Content -->
         <div
@@ -38,7 +41,10 @@
         />
         <!-- Footer Content -->
         <div v-if="footer">
-          <KContent :content="footer" :class="footerClass" />
+          <KContent
+            :content="footer"
+            :class="footerClass"
+          />
         </div>
       </div>
     </q-popup-proxy>
@@ -49,7 +55,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, onBeforeUnmount, onMounted } from 'vue'
 import { Document } from '../../../core/client/document.js'
 import { KShape } from '../../../core/client/components/media'
 import { useCurrentActivity } from '../composables'
@@ -72,37 +78,37 @@ const sanitizedAttributions = computed(() => {
   return Document.sanitizeHtml(content)
 })
 
-// Watch
-watch(() => CurrentActivity.value, (newActivity, oldActivity) => {
-  if (oldActivity) {
-    // remove listeners
-    oldActivity.$engineEvents.off('layer-shown', onShowLayer)
-    oldActivity.$engineEvents.off('layer-hidden', onHideLayer)
-  }
-  if (newActivity) {
-    // setup attribution
-    newActivity.getLayers().forEach((layer) => {
-      if (newActivity.isLayerVisible(layer.name)) {
-        onShowLayer(layer)
-      }
-    })
-    // install listeners
-    newActivity.$engineEvents.on('layer-shown', onShowLayer)
-    newActivity.$engineEvents.on('layer-hidden', onHideLayer)
-  }
-}, { immediate: true })
-
 // Functions
-function onShowLayer (layer) {
+function onLayerShown (layer) {
   if (layer.attribution) {
-    logger.debug(`[KDK] Add ${layer.name} to attribution`)
-    _.set(attributions.value, _.kebabCase(layer.name), layer.attribution)
+    const key = _.kebabCase(layer.name)
+    if (!_.has(attributions.value, key)) {
+      logger.debug(`[KDK] Add ${layer.name} to attributions`)
+      _.set(attributions.value, key, layer.attribution)
+    }
   }
 }
-function onHideLayer (layer) {
+function onLayerHidden (layer) {
   if (layer.attribution) {
-    logger.debug(`[KDK] Remove ${layer.name} from attribution`)
+    logger.debug(`[KDK] Remove ${layer.name} from attributions`)
     _.unset(attributions.value, _.kebabCase(layer.name))
   }
 }
+
+// Hooks
+onMounted(() => {
+  if (CurrentActivity.value) {
+    CurrentActivity.value.getLayers().forEach((layer) => {
+      if (CurrentActivity.value.isLayerVisible(layer.name)) onLayerShown(layer)
+    })
+    CurrentActivity.value.$engineEvents.on('layer-shown', onLayerShown)
+    CurrentActivity.value.$engineEvents.on('layer-hidden', onLayerHidden)
+  }
+})
+onBeforeUnmount(() => {
+  if (CurrentActivity.value) {
+    CurrentActivity.value.$engineEvents.off('layer-shown', onLayerShown)
+    CurrentActivity.value.$engineEvents.off('layer-hidden', onLayerHidden)
+  }
+})
 </script>

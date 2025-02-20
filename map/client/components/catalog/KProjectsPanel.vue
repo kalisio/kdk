@@ -60,8 +60,7 @@ export default {
       sorter: Sorter.get(),
       projectRenderer: {
         component: 'catalog/KProjectSelector',
-        class: 'col-12',
-        contextId: this.kActivity.contextId
+        class: 'col-12'
       }
     }
   },
@@ -93,8 +92,7 @@ export default {
         name: 'edit-map-project',
         query: this.$route.query,
         params: Object.assign(this.$route.params, {
-          objectId: project._id,
-          contextId: this.contextId
+          objectId: project._id
         })
       })
     },
@@ -115,7 +113,6 @@ export default {
       if (!result.ok) return false
       const catalogService = this.$api.getService('catalog')
       for (const viewId of project.views) {
-        console.log(viewId)
         const view = await catalogService.get(viewId._id)
         uncacheView(view, project, this.kActivity)
       }

@@ -86,7 +86,6 @@
                     :ref="onBodyRendered"
                     :service="service"
                     :item="item"
-                    :contextId="contextId"
                     :is="bodyRendererComponent"
                     v-bind="bodyRenderer"
                   />
@@ -181,10 +180,6 @@ import KPanel from '../KPanel.vue'
 
 // Props
 const props = defineProps({
-  contextId: {
-    type: String,
-    default: undefined
-  },
   service: {
     type: String,
     required: true

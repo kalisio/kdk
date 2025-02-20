@@ -43,10 +43,6 @@ export default {
   },
   mixins: [kCoreMixins.baseModal],
   props: {
-    contextId: {
-      type: String,
-      default: ''
-    },
     defaultMode: {
       type: String,
       default: 'import'

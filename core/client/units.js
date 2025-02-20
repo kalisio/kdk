@@ -353,13 +353,16 @@ export const Units = {
     if (!sourceUnitDef || !targetUnitDef) return value
     // If target unit is same as source unit does nothing
     if (targetUnitDef.name === sourceUnitDef.name) return value
+    // Take care that we name area/volume units like m^2 / m^3 but mathjs does not like it and uses m2 / m3
+    const sourceName = sourceUnitDef.name.replace('^', '')
+    const targetName = targetUnitDef.name.replace('^', '')
     // If target unit or source unit is unknown by unit system does nothing
-    if (!math.Unit.isValuelessUnit(sourceUnitDef.name) || !math.Unit.isValuelessUnit(targetUnitDef.name)) return value
+    if (!math.Unit.isValuelessUnit(sourceName) || !math.Unit.isValuelessUnit(targetName)) return value
     // Now convert
-    let n = math.unit(value, sourceUnitDef.name)
-    n = n.toNumber(targetUnitDef.name)
+    let n = math.unit(value, sourceName)
+    n = n.toNumber(targetName)
     // Remap from [-180,+180[ to [0,360[ for angles
-    n = (targetUnitDef.name === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
+    n = (targetName === 'deg' ? (n < 0.0 ? n + 360.0 : n) : n)
     return n
   },
   // Format display of source value in target unit, converting from source unit

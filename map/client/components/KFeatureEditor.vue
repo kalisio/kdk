@@ -6,7 +6,6 @@
     :service="service"
     perspective="properties"
     :objectId="featureId"
-    :contextId="contextId"
     :schema-function="loadLayerSchema"
     @applied="onFeatureEdited"
     @closed="closeModal()"
@@ -38,10 +37,6 @@ export default {
     featureId: {
       type: String,
       required: true
-    },
-    contextId: {
-      type: String,
-      default: ''
     }
   },
   data () {

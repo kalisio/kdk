@@ -57,6 +57,11 @@
       "CHART_DATA_LABEL": "Graphique des données",
       "START_EDIT_DATA_LABEL": "Editer les données",
       "STOP_EDIT_DATA_LABEL": "Clôturer l'édition des données",
+      "EDIT_POINTS_DATA_LABEL": "Editer des ponctuels",
+      "EDIT_LINES_DATA_LABEL": "Editer des linéaires",
+      "EDIT_POLYGONS_DATA_LABEL": "Editer des polygones",
+      "EDIT_PROPERTIES_LABEL": "Editer les propriétés",
+      "EDIT_GEOMETRIES_LABEL": "Editer les géométries",
       "EDITING_DATA_MESSAGE": "Edition en cours",
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
@@ -74,6 +79,7 @@
       "PROBE": "Sonder",
       "DISPLAY_POSITION": "Afficher les coordonnées",
       "DISPLAY_LEGEND": "Afficher la légende",
+      "DISPLAY_SELECTION": "Afficher la sélection",
       "HIDE_LEGEND": "Masquer la légende",
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_VIEW": "Ajouter une vue",
@@ -92,8 +98,6 @@
       "FORECAST_PROBE": "Prévisions"
     },
     "editLayers": {
-      "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'objet ?",
-      "REMOVE_FEATURE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'objet de votre espace de travail ?",
       "draw": {
         "toolbar": {
           "actions": {
@@ -211,7 +215,8 @@
     "CATALOG_CREATE_TITLE": "Créer une nouvelles couche de données",
     "CATALOG_NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Saisissez la description de la nouvelle couche",
-    "CATALOG_FEATURE_ID_FIELD_LABEL": "Saisissez un identifiant unique",
+    "CATALOG_FEATURE_ID_FIELD_LABEL": "Saisissez un nom de propriété pour l'identifiant unique des éléments",
+    "CATALOG_FEATURE_LABEL_FIELD_LABEL": "Saisissez un nom de propriété pour la labellisation des éléments",
     "CATALOG_SCHEMA_FIELD_LABEL": "Sélectionnez un schéma de données",
     "LAYER_CATEGORY_CREATE_TITLE": "Créer une nouvelle catégorie ?",
     "LAYER_CATEGORY_NAME_FIELD_LABEL": "Saisissez le nom de la catégorie",
@@ -391,9 +396,9 @@
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "Aucun résultat trouvé",
-    "SEARCH_IN_VIEWBOX": "Limiter la recherche à la vue courante",
-    "SEARCH_IN_MAPBOX": "Rechercher dans toute la carte",
-    "FILTER_GEOCODERS": "Filtrer les services de recherche"
+    "ENABLE_VIEWBOX": "Activer la limitation de la recherche à la vue courante",
+    "DISABLE_VIEWBOX": "Désactiver la limitation de la recherche à la vue courante",
+    "FILTER_GEOCODERS": "Filtrer les sources de recherche"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
@@ -510,6 +515,24 @@
     "CHART_SETTINGS_LABEL": "Paramétrage du graphique",
     "CHART_EXPORT_LABEL": "Exporter les données",
     "CHART_EXPORT_FILE": "Graphique-{layer}.csv"
+  },
+  "KFeaturesSelection": {
+    "LABEL": "Sélection",
+    "NONE_SELECTED": "Pas de sélection"
+  },
+  "KSelectedLayerFeatures": {
+    "FEATURE_PROPERTIES_LABEL": "Propriétés de l'élément",
+    "ZOOM_TO_FEATURES_LABEL": "Zoomer sur les éléments de la couche",
+    "EDIT_FEATURES_LABEL": "Editer les éléments de la couche",
+    "REMOVE_FEATURES_LABEL": "Supprimer les éléments de la couche",
+    "ZOOM_TO_FEATURE_LABEL": "Zoomer sur l'élément",
+    "EDIT_FEATURE_LABEL": "Editer l'élément",
+    "EDIT_FEATURE_PROPERTIES_LABEL": "Editer les propriétés de l'élément",
+    "REMOVE_FEATURE_LABEL": "Supprimer l'élément",
+    "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'élément ?",
+    "REMOVE_FEATURE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'élément de votre espace de travail ?",
+    "REMOVE_FEATURES_DIALOG_TITLE": "Supprimer les éléments ?",
+    "REMOVE_FEATURES_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer les éléments de votre espace de travail ?"
   },
   "KLayerStyleForm": {
     "BASE": "Propriétés de base",
@@ -717,6 +740,12 @@
     "EAST": "E",
     "SOUTH": "S",
     "WEST": "O"
+  },
+  "KPosition": {
+    "COPY": "Copier les coordonnées",
+    "POSITION_COPIED":"Coordonnées copiées en mémoire",
+    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité",
+    "OUTSIDE_MAP": "Position indéterminée"
   },
   "KDirectionField": {
     "COMPASS": "Boussole"

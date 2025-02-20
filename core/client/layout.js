@@ -13,7 +13,6 @@ export const DefaultZIndex = {
   stickies: 980,
   focus: 1010
 }
-
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
@@ -33,8 +32,8 @@ const defaults = {
   view: 'lHh LpR lFf',
   padding: true,
   mode: undefined,
-  header: { ...contentDefaults },
-  footer: { ...contentDefaults },
+  header: { ...contentDefaults, size: [undefined, 0] },
+  footer: { ...contentDefaults, size: [undefined, 0] },
   page: { ...contentDefaults, size: [0, 0] },
   stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: DefaultZIndex.fab },
@@ -237,6 +236,9 @@ export const Layout = {
   setHeaderVisible (visible) {
     this.setElementVisible('header', visible)
   },
+  setHeaderSize (size) {
+    this.setElementSize('header', size)
+  },
   clearHeader () {
     this.clearElement('header')
   },
@@ -254,6 +256,9 @@ export const Layout = {
   },
   setFooterVisible (visible) {
     this.setElementVisible('footer', visible)
+  },
+  setFooterSize (size) {
+    this.setElementSize('footer', size)
   },
   clearFooter () {
     this.clearElement('footer')
@@ -293,6 +298,25 @@ export const Layout = {
   },
   clearStickies () {
     this.clearElement('stickies')
+  },
+  findSticky (stickyId) {
+    return _.find(this.getStickies().components, { id: stickyId })
+  },
+  showSticky (stickyId) {
+    const sticky = this.findSticky(stickyId)
+    if (!sticky) {
+      logger.error(`[KDK] Cannot find sticky with id '${stickyId}'`)
+      return
+    }
+    _.set(sticky, 'visible', true)
+  },
+  hideSticky (stickyId) {
+    const sticky = this.findSticky(stickyId)
+    if (!sticky) {
+      logger.error(`[KDK] Cannot find sticky with id '${stickyId}'`)
+      return
+    }
+    _.set(sticky, 'visible', false)
   },
   getFab () {
     return this.getElement('fab')
@@ -431,25 +455,25 @@ export const Layout = {
   clearWindow (placement) {
     this.clearElement(`windows.${placement}`)
   },
-  findWindow (widget) {
+  findWindow (widgetId) {
     for (const placement of this.placements) {
       const window = this.getWindow(placement)
-      if (_.find(window.components, { id: widget })) {
+      if (_.find(window.components, { id: widgetId })) {
         return { placement, window }
       }
     }
-    logger.debug(`[KDK] Unable to find the widget ${widget}`)
+    logger.debug(`[KDK] Unable to find the widget ${widgetId}`)
     return { placement: undefined, window: undefined }
   },
-  openWidget (widget, focus = true) {
-    const { placement, window } = this.findWindow(widget)
+  openWidget (widgetId, focus = true) {
+    const { placement, window } = this.findWindow(widgetId)
     if (!placement) return
-    if (window.current !== 'current') this.setWindowCurrent(placement, widget)
+    if (window.current !== 'current') this.setWindowCurrent(placement, widgetId)
     if (!window.visible) this.setWindowVisible(placement, true)
     if (focus) Layout.setFocus(`windows.${placement}`)
   },
-  closeWidget (widget) {
-    const { placement, window } = this.findWindow(widget)
+  closeWidget (widgetId) {
+    const { placement, window } = this.findWindow(widgetId)
     if (!placement) return
     if (window.visible) this.setWindowVisible(placement, false)
   },

@@ -4,6 +4,7 @@
     :geocoders="geocoders"
     :autofocus="autofocus"
     :viewbox="viewbox"
+    :limit="limit"
     :style="computedStyle"
   />
 </template>
@@ -26,6 +27,13 @@ defineProps({
   geocoders: {
     type: Array,
     default: () => []
+  },
+  limit: {
+    type: Number,
+    default: 25,
+    validator: (value) => {
+      return value > 0 && value < 500
+    }
   },
   autofocus: {
     type: Boolean,

@@ -76,64 +76,64 @@ export async function createClient (config) {
   api.matcher = siftMatcher
 
   // This avoid managing the API path before each service name
-  // If a context is not given it will be retrieved from the store if any and used for contextual services
   api.getServicePath = function (name, context, withApiPrefix = true) {
-    const options = _.get(api.serviceOptions, name, {})
-    let path
-    // For non-contextual services path is always the name
-    if (!options.context) {
-      path = name
-    } else {
+    // Defaults to global service path on "nil" context
+    let path = name
+    if (!_.isEmpty(context)) {
       // Context is given as string ID or object ?
       if (typeof context === 'string') {
-        if (context) path = context + '/' + name
-        // Force global context on empty string
-        else path = name
-      } else if (typeof context === 'object') {
-        if (context && context._id) path = context._id + '/' + name
-        // Force global context on empty object
-        else path = name
-      } else {
-        // Otherwise test for current context as service is registered as contextual
-        const context = Store.get('context')
-        if (context) {
-          path = api.getServicePath(name, context, false)
-        } else {
-          // Because it could also be registered as global with the same name fallback
-          path = name
-        }
+        // 'global' keyword is to get the global service
+        if (context !== 'global') path = context + '/' + name
+      } else if (context._id) {
+        path = context._id + '/' + name
       }
     }
-
     if (withApiPrefix) {
       path = config.apiPath + '/' + path
     }
+    // Take care that feathers strip slashes
+    if (path.startsWith('/')) path = path.substr(1)
     return path
   }
-
-  api.getOnlineService = function (name, context) {
-    const servicePath = api.getServicePath(name, context)
-    const service = api.service(servicePath)
-    // Store the path on first call
-    if (service && !service.path) service.path = servicePath
+  // If no context is given the current from the store will be retrieved (if any)
+  // and the associated contextual service returned (if any)
+  api.getServiceInstance = function (name, context, options = {}) {
+    // Depending on the create option we don't directly use service() here
+    // as it will automatically create a new service wrapper even if it does not exist
+    let service
+    // If a context is given use it
+    if (!_.isEmpty(context)) {
+      const servicePath = api.getServicePath(name, context)
+      service = (options.create ? api.service(servicePath) : api.services[servicePath])
+    } else { // Otherwise check for a potential current context to be used
+      const currentContext = Store.get('context')
+      const contextualPath = api.getServicePath(name, currentContext)
+      const contextualService = api.services[contextualPath]
+      const globalPath = api.getServicePath(name)
+      const globalService = api.services[globalPath]
+      // If one of the service do exist use it, contextual one first
+      service = contextualService || globalService
+      // Otherwise as a fallback create a new global service as we don't really know if context should apply,
+      // if so the app should declare it upfront
+      if (!service && options.create) {
+        service = api.service(globalPath)
+      }
+    }
     return service
   }
-
-  api.getOfflineService = function (name, context) {
-    let servicePath = `${api.getServicePath(name, context)}-offline`
-    if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
-    // We don't directly use service() here as it will create a new service wrapper even if it does not exist
-    const service = api.services[servicePath]
-    // Store the path on first call
-    if (service && !service.path) service.path = servicePath
-    return service
+  // Check if an online, ie "standard", version of a service is available
+  api.getOnlineService = function (name, context, options = {}) {
+    return api.getServiceInstance(name, context, Object.assign({ create: true }, options))
   }
-
-  api.getService = function (name, context) {
+  // Check if an offline version of a service is available
+  api.getOfflineService = function (name, context, options = {}) {
+    return api.getServiceInstance(`${name}-offline`, context, Object.assign({ create: false }, options))
+  }
+  api.getService = function (name, context, options = {}) {
     let service
     // When offline try to use offline service version if any
     if (api.isDisconnected || api.useLocalFirst) {
-      service = api.getOfflineService(name, context)
+      service = api.getOfflineService(name, context, options)
       // In local first mode we allow to use remote service if offline one doesn't exist
       if (!service && !api.useLocalFirst) {
         // Do not throw as a lot of components expect services to be available at initialization, eg
@@ -145,50 +145,32 @@ export async function createClient (config) {
       }
     }
     if (!service) {
-      service = api.getOnlineService(name, context)
+      service = api.getOnlineService(name, context, options)
       if (!service) {
         throw new Error('Cannot retrieve service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
       }
     }
     return service
   }
-  // Used to register an existing backend service with its options
-  api.declareService = function (name, options = {}) {
-    if (!_.has(api.serviceOptions, name)) _.set(api.serviceOptions, name, options)
-  }
-  api.getServiceOptions = function (name) {
-    return _.get(api.serviceOptions, name)
-  }
   // Used to create a frontend only service with its options
   api.createService = function (name, options = {}) {
-    let servicePath = options.path || name
-    let contextId
-    if (options.context) {
-      contextId = (typeof options.context === 'object' ? options.context._id : options.context)
-      servicePath = contextId + '/' + servicePath
-    }
-    servicePath = config.apiPath + '/' + servicePath
-    if (servicePath.startsWith('/')) servicePath = servicePath.substr(1)
-    api.declareService(name, options)
+    const servicePath = api.getServicePath(name, options.context)
+    // Service object/constructor fucntion provided ?
     let service = options.service
     // If we get a function try to call it assuming it will return the service object
     if (typeof service === 'function') {
       service = service(name, api, options)
     }
-    // Need to register services with custom methods
-    if (options.methods) {
-      api.use(servicePath, service || api.transporter.service(servicePath), {
-        methods: options.methods
-      })
-    } else {
-      api.use(servicePath, service)
-    }
+    // Otherwise initialize a default wrapper
+    if (!service) service = api.transporter.service(servicePath)
+    // Register service up-front (required for custom methods)
+    api.use(servicePath, service, options)
     service = api.service(servicePath)
     if (options.hooks) service.hooks(options.hooks)
     if (options.context) service.context = options.context
+    service.path = servicePath
     return service
   }
-
   // Used to create a frontend only service to be used in offline mode
   // based on an online service name, will snapshot service data by default
   api.createOfflineService = async function (serviceName, options = {}) {
@@ -232,8 +214,7 @@ export async function createClient (config) {
     return offlineService
   }
   api.removeService = function (name, context) {
-    let path = api.getServicePath(name, context)
-    if (path.startsWith('/')) path = path.substr(1)
+    const path = api.getServicePath(name, context)
     api.unuse(path)
   }
   // Helper functions to access/alter config used at creation time
@@ -359,8 +340,6 @@ export async function createClient (config) {
   if (_.get(config, 'renewJwt', true)) {
     api.on('login', api.renewJwtOnExpiration)
   }
-  // Object used to store configuration options for services
-  api.serviceOptions = {}
   // Override Feathers configure that do not manage async operations,
   // here we also simply call the function given as parameter but await for it
   api.configure = async function (fn) {

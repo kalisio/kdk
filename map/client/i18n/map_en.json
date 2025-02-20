@@ -57,6 +57,11 @@
       "CHART_DATA_LABEL": "Chart data",
       "START_EDIT_DATA_LABEL": "Start data edit",
       "STOP_EDIT_DATA_LABEL": "Stop data edit",
+      "EDIT_POINTS_DATA_LABEL": "Edit points",
+      "EDIT_LINES_DATA_LABEL": "Edit lines",
+      "EDIT_POLYGONS_DATA_LABEL": "Edit polygons",
+      "EDIT_PROPERTIES_LABEL": "Edit properties",
+      "EDIT_GEOMETRIES_LABEL": "Edit geometries",
       "EDITING_DATA_MESSAGE": "Editing",
       "ZOOM_TO_LABEL": "Zoom to",
       "ZOOM_IN": "Zoom in",
@@ -74,6 +79,7 @@
       "PROBE": "Probe",
       "DISPLAY_POSITION": "Display the coordinates",
       "DISPLAY_LEGEND": "Display legend",
+      "DISPLAY_SELECTION": "Display selection",
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
       "ADD_VIEW": "Add view",      
@@ -94,8 +100,6 @@
       "FORECAST_PROBE": "Forecast"
     },
     "editLayers": {
-      "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",
-      "REMOVE_FEATURE_DIALOG_MESSAGE": "Are you sure you want to remove this feature from your workspace ?",
       "draw": {
         "toolbar": {
           "actions": {
@@ -213,7 +217,8 @@
     "CATALOG_CREATE_TITLE": "Create a new data layer",
     "CATALOG_NAME_FIELD_LABEL": "Enter the name of the new layer",
     "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
-    "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID",
+    "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID property name",
+    "CATALOG_FEATURE_LABEL_FIELD_LABEL": "Enter the feature label property name",
     "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme",
     "LAYER_CATEGORY_CREATE_TITLE": "Create a new category?",
     "LAYER_CATEGORY_NAME_FIELD_LABEL": "Enter the name of this category",
@@ -392,9 +397,9 @@
   "KLocationSearch": {
     "SEARCH": "@:SEARCH",
     "NO_RESULT": "No result found",
-    "SEARCH_IN_VIEWBOX": "Limit search to current view",
-    "SEARCH_IN_MAPBOX": "Search the entire map",
-    "FILTER_GEOCODERS": "Filter search services"
+    "ENABLE_VIEWBOX": "Activate search limitation to the current view",
+    "DISABLE_VIEWBOX": "Deactivate search limitation to the current view",
+    "FILTER_GEOCODERS": "Filter search sources"
   },
   "KLocationField": {
     "SEARCH": "@:SEARCH",
@@ -511,6 +516,24 @@
     "CHART_SETTINGS_LABEL": "Graph settings",
     "CHART_EXPORT_LABEL": "Export data",
     "CHART_EXPORT_FILE": "Chart-{layer}.csv"
+  },
+  "KFeaturesSelection": {
+    "LABEL": "Selection",
+    "NONE_SELECTED": "Nothing selected"
+  },
+  "KSelectedLayerFeatures": {
+    "FEATURE_PROPERTIES_LABEL": "Feature properties",
+    "ZOOM_TO_FEATURES_LABEL": "Zoom to layer features",
+    "EDIT_FEATURES_LABEL": "Edit layer elements",
+    "REMOVE_FEATURES_LABEL": "Remove layer features",
+    "ZOOM_TO_FEATURE_LABEL": "Zoom to feature",
+    "EDIT_FEATURE_LABEL": "Edit feature",
+    "EDIT_FEATURE_PROPERTIES_LABEL": "Edit feature properties",
+    "REMOVE_FEATURE_LABEL": "Remove feature",
+    "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",
+    "REMOVE_FEATURE_DIALOG_MESSAGE": "Are you sure you want to remove this feature from your workspace ?",
+    "REMOVE_FEATURES_DIALOG_TITLE": "Remove these features ?",
+    "REMOVE_FEATURES_DIALOG_MESSAGE": "Are you sure you want to remove these features from your workspace ?"
   },
   "KLayerStyleForm": {
     "BASE": "Base properties",
@@ -713,6 +736,12 @@
     "EAST": "E",
     "SOUTH": "S",
     "WEST": "W"
+  },
+  "KPosition": {
+    "COPY": "Copy the coordinates",
+    "POSITION_COPIED":"Position copied to clipboard",
+    "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
+    "OUTSIDE_MAP": "Indeterminated position"
   },
   "KDirectionField": {
     "COMPASS": "Compass"

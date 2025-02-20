@@ -369,6 +369,47 @@ You can also draw a path with a different styling on each part like this:
 }
 ```
 
+### Dynamic building
+
+You might want to dynamically build new GeoJson features based on existing ones, such as creating a gradient color line from a set of points depending on a specific property value. To handle this use case, you can define build options in the layer's `variables`.
+
+You can use either `classes` or `domain` to define the color scheme:
+* **classes**: An array of values used to define a discrete color gradient.
+* **domain**: An array of values used to define a continuous color gradient.
+
+For instance, you can build a gradient path based on a property's value like this:
+
+```js
+variables: [
+  {
+    name: 'accuracy',
+    chromajs: {
+      colors: ['#00FF00', '#FFFF00', '#FFAA00', '#FF0000'],
+
+      classes: [0, 500, 1000, Number.MAX_VALUE] // For predefined colors 
+      // or
+      domain: [0, 1500],                        // For continuous color gradient
+    },
+    gradientPath: {
+      properties: {
+        weight: 7,
+        opacity: 0.65,
+      }
+    }
+  }
+]
+```
+
+![Gradient Path Classes](../../.vitepress/public/images/gradient-path.png)
+
+
+You can add any property to the `properties` object to customize the newly built feature.  
+Currently, only the `gradientPath` build option is supported.
+
+::: warning
+Only one build option can be defined per layer.
+:::
+
 ## Edit Layer
 
 Make it possible to edit features of a [GeoJson layer](./map-mixins.md#geojson-layer) (geometry and properties):

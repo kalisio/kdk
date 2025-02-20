@@ -1,4 +1,4 @@
-import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty } from 'cesium'
+import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty, PrimitiveCollection } from 'cesium'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
@@ -7,6 +7,7 @@ import { Time, Units } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
+import { createPrimitiveWithMovingTexture, findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
 const CustomTypes = ['wall', 'corridor']
@@ -14,8 +15,35 @@ const CustomTypes = ['wall', 'corridor']
 function getCustomEntityId (id, type) {
   return `${id}-${type}`
 }
+// Generate original id from a custom id
+function getOriginalEntityId (customId, type) {
+  const suffix = `-${type}`
+  return customId.endsWith(suffix) ? customId.slice(0, -suffix.length) : ''
+}
 
-function updateGeoJsonEntity(source, destination) {
+function addCustomPrimitive (activity, dataSource, id, primitive, material) {
+  const oldCustom = dataSource.primitives.get(id)
+  if (oldCustom) {
+    activity.viewer.scene.primitives.remove(oldCustom.primitive)
+    const index = activity.cesiumMaterials.indexOf(oldCustom.material)
+    activity.cesiumMaterials.splice(index, 1)
+  }
+  dataSource.primitives.set(id, { primitive, material })
+  activity.viewer.scene.primitives.add(primitive)
+  activity.cesiumMaterials.push(material)
+}
+
+function removeCustomPrimitiveById (activity, dataSource, id) {
+  const custom = dataSource.primitives.get(id)
+  if (custom) {
+    activity.viewer.scene.primitives.remove(custom.primitive)
+    const index = activity.cesiumMaterials.indexOf(custom.material)
+    activity.cesiumMaterials.splice(index, 1)
+    dataSource.primitives.delete(id)
+  }
+}
+
+function updateGeoJsonEntity (source, destination) {
   destination.position = source.position
   destination.orientation = source.orientation
   destination.properties = source.properties
@@ -45,6 +73,7 @@ export const geojsonLayers = {
       // Remove mode
       if (_.get(updateOptions, 'remove', false)) {
         const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+
         features.forEach(feature => {
           const id = getFeatureId(feature, options)
           CustomTypes.forEach(type => {
@@ -52,8 +81,11 @@ export const geojsonLayers = {
             if (dataSource.entities.getById(id)) dataSource.entities.removeById(id)
             // Take care that in case of a custom entity we add it in addition to or instead the original line
             if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
+            // These are special primitives created to support animated walls & corridors
+            removeCustomPrimitiveById(this, dataSource, customId)
           })
         })
+
         return
       }
       // We use a separated source in order to load data otherwise Cesium will replace previous ones, causing flickering
@@ -78,7 +110,16 @@ export const geojsonLayers = {
             if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId)
           })
         })
+        // Cleanup custom primitives if needed too
+        for (const id of dataSource.primitives.keys()) {
+          CustomTypes.forEach(type => {
+            const entityId = getOriginalEntityId(id, type)
+            if (entityId && !loadingDataSource.entities.contains(entityId))
+              removeCustomPrimitiveById(this, dataSource, id)
+          })
+        }
       }
+
       // Process specific entities
       entities = dataSource.entities.values
       const entitiesToAdd = []
@@ -116,20 +157,32 @@ export const geojsonLayers = {
           // Simply push the entity, other options like font will be set using styling options
           // This one will come in addition to the original line
           const wallId = getCustomEntityId(entity.id, 'wall')
-          entitiesToAdd.push({
-            id: wallId,
-            parent: entity,
-            name: entity.name ? entity.name : wallId,
-            description: entity.description.getValue(0),
-            properties: entity.properties.getValue(0),
-            wall: {
-              positions: entity.polyline.positions.getValue(0),
-              material: new ColorMaterialProperty(fill),
-              outlineColor: new ConstantProperty(stroke),
-              outlineWidth: strokeWidth,
-              outline: new ConstantProperty(true)
+
+          const texture = _.get(properties, 'entityStyle.wall.material.image')
+          if (texture && _.get(properties, 'entityStyle.wall.animateMaterialAlongPath', false)) {
+            const options = _.get(properties, 'entityStyle.wall')
+            options.positions = entity.polyline.positions.getValue(0)
+            const { primitive, material } = createPrimitiveWithMovingTexture('wall', options)
+            if (primitive) {
+              addCustomPrimitive(this, dataSource, wallId, primitive, material)
             }
-          })
+            entitiesToRemove.push(entity)
+          } else {
+            entitiesToAdd.push({
+              id: wallId,
+              parent: entity,
+              name: entity.name ? entity.name : wallId,
+              description: entity.description.getValue(0),
+              properties: entity.properties.getValue(0),
+              wall: {
+                positions: entity.polyline.positions.getValue(0),
+                material: new ColorMaterialProperty(fill),
+                outlineColor: new ConstantProperty(stroke),
+                outlineWidth: strokeWidth,
+                outline: new ConstantProperty(true)
+              }
+            })
+          }
         }
         // Corridors
         const corridor = _.get(properties, 'corridor') || _.get(properties, 'entityStyle.corridor')
@@ -138,21 +191,33 @@ export const geojsonLayers = {
           // Simply push the entity, other options like width be set using styling options
           // This one will come in replacement to the original line
           const corridorId = getCustomEntityId(entity.id, 'corridor')
-          entitiesToAdd.push({
-            id: corridorId,
-            parent: entity,
-            name: entity.name ? entity.name : corridorId,
-            description: entity.description.getValue(0),
-            properties: entity.properties.getValue(0),
-            corridor: {
-              positions: entity.polyline.positions.getValue(0),
-              material: new ColorMaterialProperty(fill),
-              outlineColor: new ConstantProperty(stroke),
-              outlineWidth: strokeWidth,
-              outline: new ConstantProperty(true)
+
+          const texture = _.get(properties, 'entityStyle.corridor.material.image')
+          if (texture && _.get(properties, 'entityStyle.corridor.animateMaterialAlongPath', false)) {
+            const options = _.get(properties, 'entityStyle.corridor')
+            options.positions = entity.polyline.positions.getValue(0)
+            const { primitive, material } = createPrimitiveWithMovingTexture('corridor', options)
+            if (primitive) {
+              addCustomPrimitive(this, dataSource, corridorId, primitive, material)
             }
-          })
-          entitiesToRemove.push(entity)
+            entitiesToRemove.push(entity)
+          } else {
+            entitiesToAdd.push({
+              id: corridorId,
+              parent: entity,
+              name: entity.name ? entity.name : corridorId,
+              description: entity.description.getValue(0),
+              properties: entity.properties.getValue(0),
+              corridor: {
+                positions: entity.polyline.positions.getValue(0),
+                material: new ColorMaterialProperty(fill),
+                outlineColor: new ConstantProperty(stroke),
+                outlineWidth: strokeWidth,
+                outline: new ConstantProperty(true)
+              }
+            })
+            entitiesToRemove.push(entity)
+          }
         }
         // Billboard with 'none' shape should be removed as Cesium creates it even if the maki icon id is unknown
         if (entity.billboard && (_.get(properties, 'marker-symbol') === 'none')) {
@@ -328,6 +393,10 @@ export const geojsonLayers = {
       if (!dataSource || !dataSource.name) {
         dataSource = new GeoJsonDataSource()
         dataSource.notFromDrop = true
+
+        // This is where we'll store custom primitives used for animated walls/corridors.
+        // Key is feature id, value is associated primitive object
+        dataSource.primitives = new Map()
         // Check for realtime layers
         if (cesiumOptions.realtime) {
           await this.createCesiumRealtimeGeoJsonLayer(dataSource, options)
@@ -455,6 +524,31 @@ export const geojsonLayers = {
       if (_.has(this.geojsonCache, layer.name)) {
         delete this.geojsonCache[layer.name]
       }
+    },
+    selectFeaturesForPostProcess (effect, layerName, featureIds) {
+      // Make sure post process is enabled
+      const stage = this.getPostProcessStage(effect)
+      if (!stage) return
+      // Make sure layer exists
+      const layer = this.getCesiumLayerByName(layerName)
+      if (!layer) return
+      // Expect layer to be a datasource
+      if (!layer.entities) return
+
+      const ids = Array.isArray(featureIds) ? featureIds : [ featureIds ]
+      const primitives = []
+      ids.forEach((id) => {
+        // Lookup entity based on featureId
+        const entity = layer.entities.getById(id)
+        if (!entity) return
+        // Lookup associated primitive
+        const primitive = findPrimitiveForEntity(entity, this.viewer)
+        if (!primitive) return
+
+        primitives.push(primitive)
+      })
+
+      stage.selected = primitives
     }
   },
   created () {

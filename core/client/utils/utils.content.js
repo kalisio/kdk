@@ -128,7 +128,7 @@ export function generateHandler (context, name, params) {
     // Function call or property value read ?
     if (typeof handler === 'function') {
       // Provided parameters or simply forward arguments ?
-      result = (params ? handler(...bindParams(params, context)) : handler(...args))
+      result = (params ? handler(...bindParams(params, context, args)) : handler(...args))
     } else {
       result = handler
     }
@@ -137,21 +137,23 @@ export function generateHandler (context, name, params) {
   }
 }
 
-export function bindParams (params, context) {
-  // A parameter like :xxx means xxx is a property of the component, not a static value
-  // In that case remove trailing : and get property value dynamically
+export function bindParams (params, context, args) {
   if (_.isNil(params)) {
     return params
   } else if (Array.isArray(params)) {
-    return params.map(param => bindParams(param, context))
+    return params.map(param => bindParams(param, context, args))
   } else if (typeof params === 'object') {
-    return _.mapValues(params, (value, key) => bindParams(value, context))
+    return _.mapValues(params, (value, key) => bindParams(value, context, args))
   } else {
-    return getBoundValue(params, context)
+    return getBoundValue(params, context, args)
   }
 }
 
-export function getBoundValue (value, context) {
+export function getBoundValue (value, context, args) {
+  // A parameter like :xxx means xxx is a property of the context, not a static value.
+  // In that case remove trailing : and get property value dynamically.
+  // A parameter like :n means the nth argument of the handler, not a static value.
+  // In that case remove trailing : and get indexed argument dynamically.
   if ((typeof value === 'string') && value.startsWith(':')) {
     // From store or context ?
     if (value.startsWith(':store.')) {
@@ -169,6 +171,9 @@ export function getBoundValue (value, context) {
       // if (!_.isNil(result)) return result
     } else {
       const path = value.substring(1)
+      // Check for argument index
+      const n = _.toNumber(path)
+      if (_.isFinite(n)) return args[n]
       // FIXME: we should test if the path exists but this causes
       // a bug in production build with Vue proxy objects
       // if (_.has(context, path)) return _.get(context, path)

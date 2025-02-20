@@ -27,10 +27,8 @@ export function getDefaultCategories (hook) {
   const type = 'Category'
   if ((query.$limit !== 0) && isQueryForType(query, type)) {
     const service = hook.service
-    // Read default category config
-    const catalogConfig = hook.app.get('catalog') || { categories: [] }
-    // Check for specific service override (e.g. contextual catalog different from global catalog)
-    const defaultCategories = _.get(service, 'options.categories', catalogConfig.categories)
+    // Check for default categories config
+    const defaultCategories = _.get(service, 'options.categories', [])
     replaceItems(hook, addDefaultItems(query, type, getItems(hook), defaultCategories))
   }
 }
@@ -41,10 +39,8 @@ export function getDefaultSublegends (hook) {
   const type = 'Sublegend'
   if ((query.$limit !== 0) && isQueryForType(query, type)) {
     const service = hook.service
-    // Read default sublegends config
-    const catalogConfig = hook.app.get('catalog') || { sublegends: [] }
-    // Check for specific service override (e.g. contextual catalog different from global catalog)
-    const defaultSublegends = _.get(service, 'options.sublegends', catalogConfig.sublegends)
+    // Check for default sublegends config
+    const defaultSublegends = _.get(service, 'options.sublegends', [])
     replaceItems(hook, addDefaultItems(query, type, getItems(hook), defaultSublegends))
   }
 }

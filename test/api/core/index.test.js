@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
-import core, { kdk, hooks, permissions, createTagService } from '../../../core/api/index.js'
+import core, { kdk, hooks, permissions, createMessagesService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -13,7 +13,7 @@ const { util, expect } = chai
 
 describe('core:services', () => {
   let app, server, port, baseUrl, accessToken,
-    userService, userObject, authorisationService, tagService, tagObject
+    userService, userObject, authorisationService, messagesService, messageObject
 
   before(async () => {
     chailint(chai, util)
@@ -42,14 +42,10 @@ describe('core:services', () => {
 
     userService = app.getService('users')
     expect(userService).toExist()
-    // Create a global tag service for tests
-    await createTagService.call(app)
-    tagService = app.getService('tags')
-    expect(tagService).toExist()
-    // Register hooks
-    tagService.hooks({
-      after: { remove: hooks.updateOrganisationResource('tags') }
-    })
+    // Create a global messages service for tests
+    await createMessagesService.call(app)
+    messagesService = app.getService('messages')
+    expect(messagesService).toExist()
     authorisationService = app.getService('authorisations')
     expect(authorisationService).toExist()
     // Register escalation hooks
@@ -93,7 +89,7 @@ describe('core:services', () => {
     .timeout(5000)
 
   it('unauthenticated user cannot access services', (done) => {
-    tagService.create({}, { checkAuthorisation: true })
+    messagesService.create({}, { checkAuthorisation: true })
       .catch(error => {
         expect(error).toExist()
         expect(error.name).to.equal('Forbidden')
@@ -247,24 +243,17 @@ describe('core:services', () => {
       })
   })
 
-  it('creates a user tag', async () => {
-    const tag = await tagService.create({
-      name: 'Manager',
-      scope: 'skills',
-      value: 'manager'
+  it('creates a user message', async () => {
+    const message = await messagesService.create({
+      title: 'Title',
+      body: 'Body',
+      author: 'manager'
     })
-    tagObject = tag
-    expect(tagObject).toExist()
-    const tags = await tagService.find({ query: { value: 'manager' } })
-    expect(tags.data.length > 0).beTrue()
-    expect(tags.data[0].scope).to.equal('skills')
-    await userService.patch(userObject._id.toString(), { tags: [tagObject] })
-    const users = await userService.find({ query: { 'profile.name': 'test-user' } })
-    expect(users.data.length > 0).beTrue()
-    userObject = users.data[0]
-    expect(userObject.tags).toExist()
-    expect(userObject.tags.length === 1).beTrue()
-    expect(userObject.tags[0]._id.toString() === tagObject._id.toString()).toExist()
+    messageObject = message
+    expect(messageObject).toExist()
+    const messages = await messagesService.find({ query: { title: 'Title' } })
+    expect(messages.data.length > 0).beTrue()
+    expect(messages.data[0].title).to.equal('Title')
   })
   // Let enough time to process
     .timeout(5000)
@@ -275,8 +264,8 @@ describe('core:services', () => {
       permissions: 'manager',
       subjects: userObject._id.toString(),
       subjectsService: 'users',
-      resource: tagObject._id.toString(),
-      resourcesService: 'tags'
+      resource: messageObject._id.toString(),
+      resourcesService: 'messages'
     }, {
       user: userObject
     })
@@ -300,8 +289,8 @@ describe('core:services', () => {
       permissions: 'owner',
       subjects: userObject._id.toString(),
       subjectsService: 'users',
-      resource: tagObject._id.toString(),
-      resourcesService: 'tags'
+      resource: messageObject._id.toString(),
+      resourcesService: 'messages'
     }, {
       user: userObject,
       checkEscalation: true
@@ -316,12 +305,12 @@ describe('core:services', () => {
   it('cannot escalate an authorisation when removing', (done) => {
     // Fake lower permission level
     userObject.authorisations[0].permissions = 'member'
-    authorisationService.remove(tagObject._id, {
+    authorisationService.remove(messageObject._id, {
       query: {
         scope: 'authorisations',
         subjects: userObject._id.toString(),
         subjectsService: 'users',
-        resourcesService: 'tags'
+        resourcesService: 'messages'
       },
       user: userObject,
       checkEscalation: true
@@ -336,12 +325,12 @@ describe('core:services', () => {
   })
 
   it('removes an authorisation', () => {
-    return authorisationService.remove(tagObject._id, {
+    return authorisationService.remove(messageObject._id, {
       query: {
         scope: 'authorisations',
         subjects: userObject._id.toString(),
         subjectsService: 'users',
-        resourcesService: 'tags'
+        resourcesService: 'messages'
       },
       user: userObject,
       checkEscalation: true
@@ -358,62 +347,11 @@ describe('core:services', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('creates an authorisation by name', () => {
-    return authorisationService.create({
-      scope: 'authorisations',
-      permissions: 'manager',
-      subjects: userObject._id.toString(),
-      subjectsService: 'users',
-      resource: tagObject.name.toString(),
-      resourcesService: 'tags'
-    }, {
-      user: userObject
-    })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.get(userObject._id.toString())
-      })
-      .then(user => {
-        userObject = user
-        expect(user.authorisations).toExist()
-        expect(user.authorisations.length > 0).beTrue()
-        expect(user.authorisations[0].permissions).to.deep.equal('manager')
-      })
-  })
-  // Let enough time to process
-    .timeout(5000)
-
-  it('removes an authorisation by name', () => {
-    return authorisationService.remove(tagObject.name, {
-      query: {
-        scope: 'authorisations',
-        subjects: userObject._id.toString(),
-        subjectsService: 'users',
-        resourcesService: 'tags'
-      },
-      user: userObject,
-      checkEscalation: true
-    })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.get(userObject._id.toString())
-      })
-      .then(user => {
-        expect(user.authorisations).toExist()
-        expect(user.authorisations.length === 0).beTrue()
-      })
-  })
-  // Let enough time to process
-    .timeout(5000)
-
-  it('removes a user tag', async () => {
-    const tag = await tagService.remove(tagObject._id.toString())
-    expect(tag).toExist()
-    const tags = await tagService.find({})
-    expect(tags.data.length === 0).beTrue()
-    const users = await userService.find({ query: { 'profile.name': 'test-user' } })
-    expect(users.data.length > 0).beTrue()
-    expect(users.data[0].tags.length === 0).beTrue()
+  it('removes a user message', async () => {
+    const message = await messagesService.remove(messageObject._id.toString())
+    expect(message).toExist()
+    const messages = await messagesService.find({})
+    expect(messages.data.length === 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
@@ -438,10 +376,10 @@ describe('core:services', () => {
       })
       .then(users => {
         expect(users.data.length === 0).beTrue()
-        return tagService.find({ query: { value: 'developer' } })
+        return messagesService.find({ query: { title: 'Title' } })
       })
-      .then(tags => {
-        expect(tags.data.length === 0).beTrue()
+      .then(messages => {
+        expect(messages.data.length === 0).beTrue()
       })
   })
   // Let enough time to process

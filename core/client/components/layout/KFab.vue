@@ -107,6 +107,6 @@ const actions = computed(() => {
 
 <style lang="scss" scoped>
 .k-fab {
-  border: 2px solid var(--q-secondary);
+  border: 1px solid var(--q-secondary);
 }
 </style>

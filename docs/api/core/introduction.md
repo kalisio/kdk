@@ -12,5 +12,4 @@
 * [Directives](./directives.md)
 * [Mixins](./mixins.md)
 * [Composables](./composables.md)
-* [Components](./components.md
-)
+* [Components](./components.md)

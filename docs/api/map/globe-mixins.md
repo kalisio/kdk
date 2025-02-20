@@ -30,6 +30,16 @@ Make it possible to manage globe layers and extend supported layer types:
 This mixin also adds the following internal data properties:
 * **layers** available layers as [catalog layer descriptors](./services.md#catalog-service)
 
+### Scene post processing
+
+Post processing can be enabled on the globe, you can use the following methods to control this feature:
+* **setupPostProcess(postProcessName, options)** handles setup of 3d post process on the scene
+* **selectFeaturesForPostProcess(postProcessName, layerName, featureIdList)** can be used for post process that requires *selected* features to operate
+
+We currently only support `desaturate` post process. The `options` parameter in **setupPostProcess** only expects an `enabled: true|false` field. This post process requires *selected* feature to operate, it'll desaturate the whole scene, except features that are *selected*.
+
+![Desaturate post process](../../.vitepress/public/images/desaturate-post-process.png)
+
 ## Globe Style
 
 Make it possible to setup Cesium entities objects with style based on (Geo)Json (feature) properties stored in entities:
@@ -155,6 +165,53 @@ The following options can be set as feature `properties` to manage more geometry
 ![Geodesic feature type](../../.vitepress/public/images/great-circle-3D.png)
 
 ![Wall feature type](../../.vitepress/public/images/wall-3D.png)
+
+There are a few additional specific geometry types that can be instanciated for features. When using these, they replace the 3d object used to display the feature in the scene, you can't use them in addition to some other geometries. You can instanciate:
+* an **animated wall** using the following properties:
+```js
+feature.properties.entityStyle = {
+    wall: {
+        minimumHeights: 200,            // height (altitude) for lowest edge of wall, can be an array if per point altitude is required
+        maximumHeights: 250,            // height (altitude) for highest edge of wall, can be an array if per point altitude is required
+        animateMaterialAlongPath: true, // true to trigger material animation along wall geometry
+        material: {
+            image: '/iframe/arrow-green.png', // source for animated texture
+            animationSpeed: 50,               // animation speed, in ‘units of scene’ per second
+            scale: 2,                         // texture scale factor (default to 1), can be an array to specify x and y scale factors
+                                              // if both factors are equal, texture aspect ratio is maintained on the geometry
+            reverseAnimation: true,           // true to reverse animation (default false)
+                                              // animation flows by default from first point of geometry to last
+            translucent: true,                // set to true if the geometry with this material is expected to appear translucent
+            useAsDiffuse: false               // set to true to use texture as diffuse color, will be emissive otherwise (default false)
+        }
+    }
+}
+```
+* an **animated corridor** using the following properties:
+```js
+feature.properties.entityStyle = {
+    corridor: {
+        width: 200,                     // width, in units of scene, of the corridor
+        height: 250,                    // height (altitude) for the corridor
+        animateMaterialAlongPath: true, // true to trigger material animation along wall geometry
+        material: {
+            image: '/iframe/arrow-green.png', // source for animated texture
+            animationSpeed: 50,               // animation speed, in ‘units of scene’ per second
+            scale: 2,                         // texture scale factor (default to 1), can be an array to specify x and y scale factors
+                                              // if both factors are equal, texture aspect ratio is maintained on the geometry
+            reverseAnimation: true,           // true to reverse animation (default false)
+                                              // animation flows by default from first point of geometry to last
+            translucent: true,                // set to true if the geometry with this material is expected to appear translucent
+            useAsDiffuse: false               // set to true to use texture as diffuse color, will be emissive otherwise (default false)
+        }
+    }
+}
+```
+
+![Animated wall](../../.vitepress/public/images/animated-wall.gif)
+
+> [!NOTE]
+> The `animateMaterialAlongPath` property in the `wall` (or `corridor`) object will create a custom wall (or corridor) object, don’t expect it to behave like a regular CesiumJS [WallGraphics](https://cesium.com/learn/cesiumjs/ref-doc/WallGraphics.html) (or [CorridorGraphics](https://cesium.com/learn/cesiumjs/ref-doc/CorridorGraphics.html)) object.
 
 ### Dynamic styling
 

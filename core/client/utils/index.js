@@ -6,6 +6,7 @@ import { defineAsyncComponent, markRaw } from 'vue'
 
 export * from './utils.account.js'
 export * from './utils.actions.js'
+export * from './utils.collection.js'
 export * from './utils.colors.js'
 export * from './utils.content.js'
 export * from './utils.items.js'
@@ -14,6 +15,7 @@ export * from './utils.math.js'
 export * from './utils.push.js'
 export * from './utils.pwa.js'
 export * from './utils.screen.js'
+export * from './utils.services.js'
 export * from './utils.shapes.js'
 export * from './utils.session.js'
 export * from './utils.time.js'
@@ -159,7 +161,7 @@ export function mapIconFunction (iconName) {
     // we strip the "kdk:" part
     const name = iconName.substring(4)
     // Return the inlined icon
-    return { icon: 'img:icons/kdk/' + name }
+    return { icon: 'img:kdk/' + name }
   }
 }
 

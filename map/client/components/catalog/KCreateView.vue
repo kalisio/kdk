@@ -27,12 +27,6 @@ export default {
   },
   mixins: [baseModal],
   inject: ['kActivity'],
-  props: {
-    contextId: {
-      type: String,
-      default: ''
-    }
-  },
   data () {
     return {
       creating: false
@@ -120,7 +114,7 @@ export default {
   },
   // Should be used with <Suspense> to ensure the project is loaded upfront
   async setup (props) {
-    const project = useProject({ contextId: props.contextId })
+    const project = useProject()
     await project.loadProject({ populate: false })
     // Expose
     return {

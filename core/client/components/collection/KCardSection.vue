@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-separator />
+    <q-separator v-if="!hideSeparator" />
     <!--
       Header section
      -->
@@ -26,30 +26,10 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
+import { CardSectionProps } from '../../utils/utils.items.js'
 
 // Props
-const props = defineProps({
-  title: {
-    type: String,
-    default: ''
-  },
-  actions: {
-    type: Array,
-    default: () => null
-  },
-  actionsFilter: {
-    type: [String, Array],
-    default: () => null
-  },
-  hideHeader: {
-    type: Boolean,
-    default: false
-  },
-  dense: {
-    type: Boolean,
-    default: false
-  }
-})
+const props = defineProps(_.omit(CardSectionProps, ['item']))
 
 // Computed
 const filteredActions = computed(() => {

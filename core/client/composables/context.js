@@ -4,11 +4,13 @@ import { readonly } from 'vue'
 import { Dialog } from 'quasar'
 import { Context } from '../context.js'
 import { i18n } from '../i18n.js'
+import { listenToServiceEvents, unlistenToServiceEvents } from '../utils/utils.services.js'
 
 export function useContext (options) {
   // Data
   const router = useRouter()
   const fallbackRoute = options?.fallbackRoute || 'home'
+  let serviceEventListeners
 
   // Functions
   function getService () {
@@ -46,14 +48,13 @@ export function useContext (options) {
     Context.set(null)
   }
   function track () {
-    const service = Context.getService()
-    service.on('patched', onPatched)
-    service.on('removed', onRemoved)
+    serviceEventListeners = listenToServiceEvents(Context.getService(), {
+      patched: onPatched,
+      removed: onRemoved
+    })
   }
   function untrack () {
-    const service = Context.getService()
-    service.off('patched', onPatched)
-    service.off('removed', onRemoved)
+    unlistenToServiceEvents(serviceEventListeners)
   }
   function onPatched (data) {
     const context = Context.get()

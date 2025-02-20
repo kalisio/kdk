@@ -17,14 +17,14 @@
     <!--
       Custom stickies
      -->
-    <template v-for="sticky in stickies.components" :key="sticky.id">
+    <template v-for="sticky in stickiesComponents" :key="sticky.id">
       <q-page-sticky
         :id="sticky.id"
         :position="getStickyPosition(sticky)"
         :offset="getStickyOffset(sticky)"
         class="k-sticky"
       >
-        <KContent :content="[sticky]" />
+        <KContent v-bind="sticky" />
       </q-page-sticky>
     </template>
     <!--
@@ -314,6 +314,16 @@ const fabBehavior = computed(() => {
     case 'top-right': return { direction: 'down', actionsAlign: 'left' }
     case 'top-left': return { direction: 'down', actionsAlign: 'right' }
   }
+})
+const stickiesComponents = computed(() => {
+  return _.map(stickies.components, sticky => {
+    return _.merge(sticky, {
+      content: [{
+        component: sticky.component,
+        visible: sticky.visible
+      }]
+    })
+  })
 })
 
 // Functions

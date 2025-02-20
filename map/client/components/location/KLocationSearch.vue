@@ -24,10 +24,10 @@
         <!-- viewbox filtering -->
         <KAction
           id="viewbox-search"
-          icon="las la-expand"
-          tooltip="KLocationSearch.SEARCH_IN_VIEWBOX"
-          size="0.8rem"
-          :toggle="{ color: 'primary', tooltip: 'KLocationSearch.SEARCH_IN_MAPBOX' }"
+          icon="pageview"
+          tooltip="KLocationSearch.ENABLE_VIEWBOX"
+          size="0.85rem"
+          :toggle="{ tooltip: 'KLocationSearch.DISABLE_VIEWBOX' }"
           @toggled="onViewboxToggled"
         />
         <!-- geocoders filtering -->
@@ -112,6 +112,13 @@ const props = defineProps({
     type: Array,
     default: () => null
   },
+  limit: {
+    type: Number,
+    default: 25,
+    validator: (value) => {
+      return value > 0 && value < 500
+    }
+  },
   editor: {
     type: Object,
     default: () => null
@@ -152,7 +159,7 @@ async function onSearch (pattern, update, abort) {
     abort()
     return
   }
-  const result = await searchLocation(pattern)
+  const result = await searchLocation(pattern, props.limit)
   update(() => {
     locations.value = result
   })

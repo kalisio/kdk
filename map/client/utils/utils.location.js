@@ -54,7 +54,7 @@ export async function queryGeocoder(planetConfig, path, query = '') {
   return results
 }
 
-export async function searchLocation (planetConfig, pattern, options) {
+export async function searchLocation (planetConfig, pattern, options = {}) {
   const locations = []
   // Try to parse lat/long coordinates
   const coordinates = parseCoordinates(pattern)
@@ -71,13 +71,16 @@ export async function searchLocation (planetConfig, pattern, options) {
     })
   } else {
     let filter = ''
+    // Take into account optional geocoders
     if (!_.isEmpty(options.geocoders)) {
-      // only request geocoder results from specified sources
       filter += '&sources=*(' + options.geocoders.join('|') + ')'
     }
+    // Take into account optional viewbo
     if (!_.isEmpty(options.viewbox)) {
       filter += '&viewbox=' + options.viewbox.join(',')
     }
+    // Define the limit
+    filter += '&limit=' + (options.limit || 20)
     const results = await queryGeocoder(planetConfig, 'forward', `q=${pattern}${filter}`)
     results.forEach(result => {
       locations.push(

@@ -25,10 +25,6 @@ import { i18n } from '../../i18n.js'
 
 // Props
 const props = defineProps({
-  contextId: {
-    type: String,
-    default: undefined
-  },
   path: {
     type: String,
     default: undefined
@@ -77,8 +73,7 @@ async function upload (path) {
       file: file.name,
       type: file.type,
       key,
-      blob: file,
-      context: props.contextId
+      blob: file
     })
       .then(() => {
         Notify.create({

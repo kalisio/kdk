@@ -68,9 +68,11 @@ const value = config.property
 backend/client
 :::
 
-Retrieve the given service by name, should replace [Feathers service method](https://docs.feathersjs.com/api/application.html#servicepath) so that you are abstracted away from the internal service path (i.e. API prefix and context ID) and only refer to it by its "usual" name.
+Retrieve the given service by its name, should replace [Feathers service method](https://docs.feathersjs.com/api/application.html#servicepath) so that you are abstracted away from the internal service path (i.e. API prefix and context ID) and only refer to it by its "usual" name.
 
-> On the client side this is also used to instanciate the service on first call.
+If no context is given, the current context set in the the store will be retrieved (if any) and the associated contextual or global service returned (if any).
+
+> On the client side this will also instanciate the service on the first call by default if not already created (see below).
 
 ### createService(name, options)
 
@@ -105,20 +107,24 @@ Depending on the options you have to create a *models* and *services* directorie
     * *serviceName.filters.js* : exporting the [filters](https://docs.feathersjs.com/api/events.html#event-filtering) of your service, 
     * *serviceName.service.js* : exporting the specific mixin or mixin constructor function associated to your service (optional)
 
-By default client-side services related to backend services don't have to be explicitely created as Feathers will automatically generate a wrapper on first call.
-However, the `declareService()` might be called to declare any specific options like the fact a service is a contextual one:
+By default in Feathers client-side services related to backend services don't have to be explicitely created as it will automatically generate a wrapper on the first access, although using custom methods requires the service to be declared upfront.
+However, in the frame of the **KDK**, it is highly recommanded to also use the `createService()` method on the client side to declare any required service and related options:
 ```js
-api.declareService('catalog', { context: true })
+api.createService('catalog', { methods: [...] })
 ```
 
-Otherwise, you can create a new service attached to the application by name and given a set of options in the frontend:
+::: tip
+backend/client
+:::
+
+You can create a new service attached to the application by name and give a set of options in the frontend almost like in the backend:
 * **context**: the context object the service will be contextual to, if given the internal service path will be `contextId/serviceName`
 * **events**: [service events](https://feathersjs.com/api/application.html#options) to be used by the service
 * **methods**: [service methods](https://feathersjs.com/api/application.html#options) typically useful for [custom methods](https://feathersjs.com/api/client/rest.html#custom-methods)
 * **hooks**: object defining client-side hooks
 * **service**: service object or function like `fn(name, app, options)` generating a serive object
 
-For instance this creates a in-memory service o nthe frontend:
+For instance this creates a in-memory service on the frontend:
 ```js
 import { memory } from '@feathersjs/memory'
 
@@ -262,6 +268,32 @@ Events.on('myGlobal-changed', myCallback) // When updating a root object
 Events.on('myGlobal-property-changed', myCallback) // When updating a specific property path
 ```
 
+### Context
+
+You can define the currently active [context object](../introduction.md#context) by using either the **Context** singleton object or the [useContext](./composables.md#usecontext) composable, both actually sets it in the **Store** (`context` property). The composable will also track any change on the context business object by listening to the target service. Based on the current context, the `getService` method should return the appropriate service without the burden of providing the context as input parameter everywhere you need it:
+```js
+// Create a global/contextual service
+api.createService('catalog')
+api.createService('catalog', { context })
+// Set the context as current
+Context.set(context)
+// Here get the contextual service
+// Shortcut of api.getService('catalog', context)
+api.getService('catalog')
+// To get the global service even if the context is set
+api.getService('catalog', 'global')
+// Clear the current context
+Context.set(null)
+// Here get the global service
+api.getService('catalog')
+```
+
+### Guards
+
+[Navigation guards](https://router.vuejs.org/guide/advanced/navigation-guards.html) control access to [routes](https://quasar.dev/layout/routing-with-layouts-and-pages/) within an application. They allow you to define navigation rules in your app based on the user's status (authenticated or not), permissions, and route definitions.
+
+The **KDK** provides you with some built-in before guards and a mecanism to register your own ones, more details can be found in our [application template](https://kalisio.github.io/skeleton/guides/howtos/guards.html).
+
 ### Storage
 
 The **Storage** singleton provides you with high level functions to upload and download files using the [Storage service](./services.md#storage-service).
@@ -298,11 +330,7 @@ service: 'documents',
   gzip: false
 ```
 
- Assuming, the use has selected the `csv` format, the generated file will be named `my-documents_YYYY-MM-DDTHH-MM-SS:ssSZ.csv`.
-
-### Context
-
-**TODO**
+Assuming, the use has selected the `csv` format, the generated file will be named `my-documents_YYYY-MM-DDTHH-MM-SS:ssSZ.csv`.
 
 ### Theme
 

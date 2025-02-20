@@ -1,15 +1,19 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import { getType, getGeom } from '@turf/invariant'
-import { Dialog, uid } from 'quasar'
+import bearing from '@turf/bearing'
+import { getType, getCoords, getGeom } from '@turf/invariant'
+import { uid } from 'quasar'
+import { Store } from '../../../../core/client/store.js'
+import { Units } from '../../../../core/client/units.js'
 import { 
   bindLeafletEvents, unbindLeafletEvents, 
   getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle,
-  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle
+  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
+  formatUserCoordinates, getFeatureId, listenToFeaturesServiceEventsForLayer, unlistenToFeaturesServiceEventsForLayer
 } from '../../utils.map.js'
 
 // Events we listen while layer is in edition mode
-const mapEditEvents = ['pm:create']
+const mapEditEvents = ['pm:drawstart', 'pm:drawend', 'pm:create']
 const layerEditEvents = ['layerremove', 'pm:update', 'pm:dragend', 'pm:rotateend', 'pm:markerdragend']
 
 // The name of the edition helper pane where we put the various edit layers
@@ -54,7 +58,7 @@ export const editLayers = {
     isLayerEdited (layer) {
       return this.editedLayer && (this.editedLayer.name === layer.name)
     },
-    getGeoJsonEditOptions (options) {
+    getGeoJsonEditOptions (options, geometryTypes) {
       let filteredOptions = options
       // Convert and store style
       const leafletOptions = options.leaflet || options
@@ -70,7 +74,7 @@ export const editLayers = {
         if (filteredOptions.leaflet.popup) delete filteredOptions.leaflet.popup
       }
       // Retrieve base options first
-      const { onEachFeature } = this.getGeoJsonOptions(filteredOptions)
+      const { onEachFeature, style, pointToLayer } = this.getGeoJsonOptions(filteredOptions)
       return {
         // Ensure it is on top of all others layers while editing
         pane: 'popupPane',
@@ -79,16 +83,23 @@ export const editLayers = {
         onEachFeature,
         // Use default styling when editing as dynamic styling can conflict
         style: (feature) => {
-          if (['LineString', 'MultiLineString'].includes(feature.geometry.type)) {
-            return getDefaultLineStyle(feature, layerStyle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
+          const isLine = ((feature.geometry.type === 'LineString') || (feature.geometry.type === 'MultiLineString'))
+          if (isLine) {
+            // Skip line editing style if not editing lines
+            if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('LineString') && !geometryTypes.includes('MultiLineString')) return style(feature)
+            else return getDefaultLineStyle(feature, layerStyle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
           }
-          if (['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
-            return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
-          } else {
-            logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
+          const isPolygon = ((feature.geometry.type === 'Polygon') || (feature.geometry.type === 'MultiPolygon'))
+          if (isPolygon) {
+            // Skip polygon editing style if not editing polygons
+            if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Polygon') && !geometryTypes.includes('MultiPolygon')) return style(feature)
+            else return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
           }
+          logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
         },
         pointToLayer: (feature, latlng) => {
+          // Skip point editing style if not editing points
+          if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Point') && !geometryTypes.includes('MultiPoint')) return pointToLayer(feature, layer)
           const style = getDefaultPointStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.point')
           style.options = { pmIgnore: false } // Allow geoman edition
           return createMarkerFromPointStyle(latlng, style)
@@ -143,8 +154,19 @@ export const editLayers = {
 
       this.layerEditMode = mode
     },
-    async startEditLayer (layer, { allowedEditModes = null, editMode = null, zIndex = -1 } = {}) {
-      if (this.editedLayer) return
+    async startEditLayer (layer, {
+      features = [], // Target features to be edited, otherwise the whole layer will be
+      geometryTypes = [], // Target geometry types to be edited, otherwise the whole layer will be
+      allowedEditModes = null,
+      editMode = null,
+      zIndex = -1,
+      callback = null // Callback function to be called once edition is started/ended
+    } = {}) {
+      // Close any running edit
+      if (this.editedLayer) {
+        // Always accept editions in the action
+        await this.stopEditLayer('accept')
+      }
 
       const leafletLayer = this.getLeafletLayerByName(layer.name)
       if (!leafletLayer) return
@@ -163,17 +185,36 @@ export const editLayers = {
 
       this.editedLayer = layer
       this.editingLayer = true
+      this.editingCallback = callback
+      // Disable selection/highlights to ease editing
+      if (typeof this.setHighlightsEnabled === 'function') this.setHighlightsEnabled(layer, false)
+      if (typeof this.setSelectionEnabled === 'function') this.setSelectionEnabled(false)
       this.onEditStart(this.editedLayer)
 
       // Move source layers to edition layers, required as eg clusters are not supported
+      // and also to manage partial edition of large datasets
       const geoJson = leafletLayer.toGeoJSON()
-      leafletLayer.clearLayers()
+      let editedFeatures = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+      if (_.isEmpty(features) && _.isEmpty(geometryTypes)) {
+        leafletLayer.clearLayers()
+      } else if (!_.isEmpty(features)) {
+        editedFeatures = editedFeatures.filter(feature => features.includes(getFeatureId(feature, layer)))
+        leafletLayer.getLayers().forEach(layer => {
+          const feature = layer.feature
+          if (features.includes(getFeatureId(feature, layer))) leafletLayer.removeLayer(layer)
+        })
+      } else if (!_.isEmpty(geometryTypes)) {
+        editedFeatures = editedFeatures.filter(feature => geometryTypes.includes(_.get(feature, 'geometry.type')))
+        leafletLayer.getLayers().forEach(layer => {
+          const feature = layer.feature
+          if (geometryTypes.includes(_.get(feature, 'geometry.type'))) leafletLayer.removeLayer(layer)
+        })
+      }
 
       // in-memory edition ?
       if (this.editedLayer._id === undefined) {
         // In this case we have to push features to in memory service
-        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
-        for (const feature of features) {
+        for (const feature of editedFeatures) {
           // Generate in memory service _id as string to match what's done with mongo
           feature._id = uid().toString()
           // Service will use the provided _id as object key
@@ -181,19 +222,24 @@ export const editLayers = {
         }
       } else {
         // Listen to layer changes
-        const featuresService = this.$api.getService(this.editedLayer.service)
-        featuresService.on('created', this.onEditedFeaturesCreated)
-        featuresService.on('patched', this.onEditedFeaturesUpdated)
-        featuresService.on('removed', this.onEditedFeaturesRemoved)
+        this.editedLayerServiceEventListeners = listenToFeaturesServiceEventsForLayer(this.editedLayer, {
+          created: this.onEditedFeaturesCreated,
+          updated: this.onEditedFeaturesUpdated,
+          patched: this.onEditedFeaturesUpdated,
+          removed: this.onEditedFeaturesRemoved
+        })
       }
 
-      this.editableLayer = L.geoJson(geoJson, this.getGeoJsonEditOptions(layer))
+      this.editableLayer = L.geoJson(editedFeatures, this.getGeoJsonEditOptions(layer, geometryTypes))
       this.map.addLayer(this.editableLayer)
       bindLeafletEvents(this.map, mapEditEvents, this)
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
 
       this.$engineEvents.on('click', this.onEditFeatureProperties)
+      this.$engineEvents.on('mousemove', this.onMouseMoveWhileEditing)
       this.$engineEvents.on('zoomend', this.onMapZoomWhileEditing)
+      this.$engineEvents.on('pm:drawstart', this.onDrawStart)
+      this.$engineEvents.on('pm:drawend', this.onDrawEnd)
       this.$engineEvents.on('pm:create', this.onCreateFeatures)
       this.$engineEvents.on('pm:update', this.onEditFeatures)
       this.$engineEvents.on('pm:dragend', this.onEditFeatures)
@@ -212,6 +258,7 @@ export const editLayers = {
     onEditStart (layer) {
       this.$emit('edit-start', { layer })
       this.$engineEvents.emit('edit-start', { layer })
+      if (this.editingCallback) this.editingCallback({ status: 'edit-start', layer })
     },
     async stopEditLayer (status = 'accept') {
       if (!this.editedLayer) return
@@ -248,21 +295,25 @@ export const editLayers = {
         await Promise.all(features.map((f) => service.remove(f._id)))
       } else {
         // Clear listeners to layer changes
-        const featuresService = this.$api.getService(this.editedLayer.service)
-        featuresService.off('created', this.onEditedFeaturesCreated)
-        featuresService.off('patched', this.onEditedFeaturesUpdated)
-        featuresService.off('removed', this.onEditedFeaturesRemoved)
+        unlistenToFeaturesServiceEventsForLayer(this.editedLayer, this.editedLayerServiceEventListeners)
       }
 
       // Set back edited layers to source layer
       this.map.removeLayer(this.editableLayer)
       leafletLayer.addLayer(this.editableLayer)
+      // Restore selection/highlights disabled to ease editing
+      if (typeof this.setHighlightsEnabled === 'function') this.setHighlightsEnabled(this.editedLayer, true)
+      if (typeof this.setSelectionEnabled === 'function') this.setSelectionEnabled(true)
       this.onEditStop(status, this.editedLayer)
       this.editedLayer = null
       this.editingLayer = false
+      this.editingCallback = null
 
       this.$engineEvents.off('click', this.onEditFeatureProperties)
+      this.$engineEvents.off('mousemove', this.onMouseMoveWhileEditing)
       this.$engineEvents.off('zoomend', this.onMapZoomWhileEditing)
+      this.$engineEvents.off('pm:drawstart', this.onDrawStart)
+      this.$engineEvents.off('pm:drawend', this.onDrawEnd)
       this.$engineEvents.off('pm:create', this.onCreateFeatures)
       this.$engineEvents.off('pm:update', this.onEditFeatures)
       this.$engineEvents.off('pm:dragend', this.onEditFeatures)
@@ -273,6 +324,60 @@ export const editLayers = {
     onEditStop (status, layer) {
       this.$emit('edit-stop', { status, layer })
       this.$engineEvents.emit('edit-stop', { status, layer })
+      if (this.editingCallback) this.editingCallback({ status, layer })
+    },
+    resetEditionTooltip () {
+      if (!this.hintTooltip) return
+      // Retrieve default tooltip content set by geoman
+      this.hintTooltipInitialContent = this.hintTooltip.getContent()
+    },
+    updateEditionTooltip (event) {
+      if (!this.hintTooltip) return
+      // Update default tooltip content set by geoman with additional information to help editing
+      const { latlng } = event
+      if (_.isNil(latlng)) return
+      let tooltip = this.hintTooltipInitialContent
+      const modesWithCoordinates = ['add-polygons', 'add-rectangles', 'add-lines', 'add-points']
+      const modesWithOrientation = ['add-polygons', 'add-lines']
+      if (modesWithCoordinates.includes(this.layerEditMode)) {
+        tooltip += `<br/>${formatUserCoordinates(latlng.lat, latlng.lng, Store.get('locationFormat', 'FFf'))}`
+      }
+      if (modesWithOrientation.includes(this.layerEditMode) && this.workingLayer) {
+        const coordinates = getCoords(this.workingLayer.toGeoJSON())
+        if (coordinates.length > 0) {
+          const angle = bearing(coordinates[coordinates.length - 1], [latlng.lng, latlng.lat])
+          tooltip += `<br/>${Units.format(angle, 'deg', Units.getDefaultUnit('angle'))}`
+        }
+      }
+      this.hintTooltip.setContent(tooltip)
+    },
+    onDrawStart (event) {
+      // Retrieve hint marker/tooltip created by geoman if any
+      this.hintMarker = _.get(this.map.pm, `${event.source}.${event.shape}._hintMarker`)
+      if (!this.hintMarker) return
+      this.hintTooltip = this.hintMarker.getTooltip()
+      if (!this.hintTooltip) return
+      // Listen for vertex added to shape as geoman will update the tooltip
+      if (event.workingLayer) {
+        this.workingLayer = event.workingLayer
+        this.workingLayer.on('pm:vertexadded', this.onVertexAddedWhileEditing)
+      }
+      this.resetEditionTooltip()
+    },
+    onDrawEnd (event) {
+      if (this.hintTooltip) {
+        if (this.workingLayer) this.workingLayer.off('pm:vertexadded', this.onVertexAddedWhileEditing)
+      }
+      this.hintMarker = null
+      this.hintTooltip = null
+    },
+    onMouseMoveWhileEditing (options, event) {
+      // Update hint tooltip as required
+      this.updateEditionTooltip(event)
+    },
+    onVertexAddedWhileEditing (event) {
+      // Update hint tooltip base content as geoman has changed it
+      this.resetEditionTooltip()
     },
     async onEditFeatureProperties (layer, event) {
       const leafletLayer = event && event.target
@@ -292,7 +397,7 @@ export const editLayers = {
           layerId: this.editedLayer._id,
           layerName: this.editedLayer.name,
           featureId: feature._id,
-          contextId: this.contextId
+          contextId: Store.get('context')
         })
       })
     },
@@ -377,26 +482,6 @@ export const editLayers = {
         this.editableLayer.bringToFront()
       }
     },
-    async onRemoveFeature (feature, layer, leafletLayer) {
-      Dialog.create({
-        title: this.$t('mixins.editLayers.REMOVE_FEATURE_DIALOG_TITLE'),
-        message: this.$t('mixins.editLayers.REMOVE_FEATURE_DIALOG_MESSAGE'),
-        html: true,
-        ok: {
-          label: this.$t('OK'),
-          flat: true
-        },
-        cancel: {
-          label: this.$t('CANCEL'),
-          flat: true
-        }
-      }).onOk(async () => {
-        const parentLeafletLayer = this.getLeafletLayerByName(layer.name)
-        if (!parentLeafletLayer) return
-        await this.removeFeatures(feature, layer)
-        parentLeafletLayer.removeLayer(leafletLayer)
-      })
-    },
     onPointMoveEnd (event) {
       // Called as well when moving individual point while editing geometries
       // but in this case we don't want to emit/manage the event
@@ -452,22 +537,22 @@ export const editLayers = {
       this.$emit('edit-point-moved', args)
       this.$engineEvents.emit('edit-point-moved', args)
     },
-    onEditedFeaturesCreated (feature) {
+    onEditedFeaturesCreated (feature, layer) {
       // We only support single feature edition
       if (!getType(feature) || !getGeom(feature)) return
       // Find related layer
-      const layer = this.getLayerById(feature.layer)
+      if (!layer && feature.layer) layer = this.getLayerById(feature.layer)
       if (!layer || !this.isLayerEdited(layer)) return
       // Used to prevent some re-entrance as event is also raised when we are the initiator
       this.createdFeature = feature
       this.editableLayer.addData(feature)
       this.createdFeature = null
     },
-    onEditedFeaturesUpdated (feature) {
+    onEditedFeaturesUpdated (feature, layer) {
       // We only support single feature edition
       if (!getType(feature) || !getGeom(feature)) return
       // Find related layer
-      const layer = this.getLayerById(feature.layer)
+      if (!layer && feature.layer) layer = this.getLayerById(feature.layer)
       if (!layer || !this.isLayerEdited(layer)) return
       // Used to prevent some re-entrance as event is also raised when we are the initiator
       this.updatedFeature = feature
@@ -479,11 +564,11 @@ export const editLayers = {
       })
       this.updatedFeature = null
     },
-    onEditedFeaturesRemoved (feature) {
+    onEditedFeaturesRemoved (feature, layer) {
       // We only support single feature edition
       if (!getType(feature) || !getGeom(feature)) return
       // Find related layer
-      const layer = this.getLayerById(feature.layer)
+      if (!layer && feature.layer) layer = this.getLayerById(feature.layer)
       if (!layer || !this.isLayerEdited(layer)) return
       // Used to prevent some re-entrance as event is also raised when we are the initiator
       this.removedFeature = feature

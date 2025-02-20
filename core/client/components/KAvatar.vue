@@ -29,10 +29,6 @@ export default {
       type: Object,
       required: true
     },
-    contextId: {
-      type: String,
-      default: ''
-    },
     size: {
       type: String,
       default: 'md'
@@ -74,7 +70,6 @@ export default {
             const data = await Storage.download({
               file: _.get(avatar, 'name'),
               key: avatarId,
-              context: this.contextId,
               asDataUrl: true
             })
             avatar.uri = data.uri
@@ -83,7 +78,6 @@ export default {
             this.avatar = await Storage.getObjectUrl({
               file: _.get(avatar, 'name'),
               key: avatarId,
-              context: this.contextId,
               query: {
                 timestamp: Date.now()
               }

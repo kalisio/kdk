@@ -15,7 +15,7 @@
     </div>
     <!-- Kalisio logo -->
     <a href="https://kalisio.com" target="_blank">
-      <q-img src="kalisio.png" width="64px">
+      <q-img src="kdk/kalisio.png" width="64px">
         <q-tooltip>
           {{ $t('KSponsor.MORE_ABOUT_KALISIO') }}
         </q-tooltip>

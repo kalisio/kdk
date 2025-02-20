@@ -1,14 +1,15 @@
 <template>
   <KCardSection
-    :title="$t('KDescriptionCardSection.TITLE')"
+    :title="computedTitle"
     :actions="actions"
     :actionsFilter="actionsFilter"
-    :hideHeader="hideHeader"
+    :hide-separator="hideSeparator"
+    :hide-header="hideHeader"
     :dense="dense"
   >
     <KTextArea
-      v-if="description"
-      :text="description"
+      v-if="computedDescription"
+      :text="computedDescription"
       :minHeight="48"
       :dense="dense"
     />
@@ -28,6 +29,7 @@
 import _ from 'lodash'
 import { computed } from 'vue'
 import { CardSectionProps } from '../../utils/utils.items.js'
+import { i18n } from '../../i18n.js'
 import KCardSection from './KCardSection.vue'
 import KTextArea from '../KTextArea.vue'
 
@@ -41,7 +43,10 @@ const props = defineProps({
 })
 
 // Computed
-const description = computed(() => {
+const computedTitle = computed(() => {
+  return _.isEmpty(props.title) ? i18n.t('KDescriptionCardSection.TITLE') : props.title
+})
+const computedDescription = computed(() => {
   return _.get(props.item, props.descriptionPath)
 })
 </script>

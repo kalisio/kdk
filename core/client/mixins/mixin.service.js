@@ -1,9 +1,5 @@
 export const service = {
   props: {
-    contextId: {
-      type: String,
-      default: undefined
-    },
     service: {
       type: String,
       default: ''
@@ -12,7 +8,7 @@ export const service = {
 
   methods: {
     getService () {
-      const service = this.$api.getService(this.service, this.contextId)
+      const service = this.$api.getService(this.service)
       if (!service) {
         throw new Error('Cannot retrieve target service ' + this.service)
       }

@@ -17,7 +17,7 @@ const { util, expect } = chai
 describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, catalogService, defaultLayers,
-    zonesService, vigicruesStationsService, nbStations, vigicruesObsService,
+    zones, zonesService, vigicruesStationsService, nbStations, vigicruesObsService,
     adsbObsService, items, eventListeners, eventCount, eventData
 
   function eventsOn (service) {
@@ -125,8 +125,26 @@ describe('map:services', () => {
     // Check for events
     eventsOn(zonesService)
     // Feed the collection
-    const zones = fs.readJsonSync(path.join(__dirname, 'data/zones.json')).features
+    zones = fs.readJsonSync(path.join(__dirname, 'data/zones.json')).features
     items = await zonesService.create(zones)
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('upsert data in zones service', async () => {
+    const result = await zonesService.patch(null, {
+      type: 'Feature',
+      id: 100,
+      geometry: zones[0].geometry,
+      properties: {
+        OBJECTID: 100
+      }
+    }, { query: { id: 100, upsert: true } })
+    const feature = result[0]
+    expect(feature._id).toExist()
+    expect(feature.geometry).toExist()
+    expect(feature.properties).toExist()
+    expect(feature.properties.OBJECTID).to.equal(100)
   })
   // Let enough time to process
     .timeout(5000)
@@ -140,6 +158,13 @@ describe('map:services', () => {
       expect(item.geometry).beUndefined()
       expect(item.properties).beUndefined()
     })
+    // But not on single item
+    expect(getEventCount('patched')).to.equal(1)
+    const payload = getEventData('patched')
+    expect(payload._id).toExist()
+    expect(payload.geometry).toExist()
+    expect(payload.properties).toExist()
+    expect(payload.properties.OBJECTID).to.equal(100)
   })
 
   it('performs spatial filtering on zones service', async () => {
@@ -290,6 +315,11 @@ describe('map:services', () => {
     expect(adsbObsService).toExist()
     // Feed the collection
     const observations = fs.readJsonSync(path.join(__dirname, 'data/adsb.observations.json'))
+    await adsbObsService.create(observations)
+    // We duplicate data for the aircraft with another target ID
+    observations.forEach(observation => {
+      observation.properties.icao = '885103'
+    })
     await adsbObsService.create(observations)
   })
   // Let enough time to process
@@ -460,9 +490,38 @@ describe('map:services', () => {
   // Let enough time to process
     .timeout(10000)
 
+  it('performs geometry and property aggregation on ADS-B observations service', async () => {
+    const aggregationQuery = {
+      time: {
+        $lte: new Date('2019-01-04T13:58:54.767Z').toISOString()
+      },
+      $groupBy: 'icao',
+      $aggregate: ['geometry', 'altitude']
+    }
+    // Aggregation requires feature ID index to be built so we add some time to do so
+    await utility.promisify(setTimeout)(5000)
+    const result = await adsbObsService.find({ query: Object.assign({}, aggregationQuery) })
+    expect(result.features.length).to.equal(2)
+    result.features.forEach(feature => {
+      expect(feature.time).toExist()
+      expect(feature.time.geometry).toExist()
+      expect(feature.time.geometry.length === 4).beTrue()
+      expect(feature.time.geometry[0].isBefore(feature.time.geometry[1])).beTrue()
+      expect(feature.geometry.type).to.equal('GeometryCollection')
+      expect(feature.geometry.geometries).toExist()
+      expect(feature.geometry.geometries.length === 4).beTrue()
+      expect(feature.properties).toExist()
+      expect(feature.properties.altitude).toExist()
+      expect(feature.properties.altitude.length === 4).beTrue()
+    })
+  })
+  // Let enough time to process
+    .timeout(10000)
+
   it('performs heatmap on ADS-B observations service', async () => {
     let results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-04T13:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-04T14:00:00.000Z').toISOString()
@@ -474,6 +533,7 @@ describe('map:services', () => {
     expect(results[0]).to.deep.equal({ hour: 13, count: 4 })
     results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-04T13:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-04T14:00:00.000Z').toISOString()
@@ -486,6 +546,7 @@ describe('map:services', () => {
     expect(results[0]).to.deep.equal({ hour: 15, count: 4 })
     results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-03T00:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-05T00:00:00.000Z').toISOString()
@@ -497,6 +558,7 @@ describe('map:services', () => {
     expect(results[0]).to.deep.equal({ dayOfYear: 4, count: 5 })
     results = await adsbObsService.heatmap({
       query: {
+        'properties.icao': '885102',
         time: {
           $gte: new Date('2019-01-03T00:00:00.000Z').toISOString(),
           $lte: new Date('2019-01-05T00:00:00.000Z').toISOString()

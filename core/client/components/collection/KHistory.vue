@@ -3,7 +3,6 @@
     name="history-column"
     :service="service"
     :renderer="computedRenderer"
-    :contextId="contextId"
     :baseQuery="baseQuery"
     :filterQuery="computedFilterQuery"
     :listStrategy="listStrategy"
@@ -45,10 +44,6 @@ export default {
     dateField: {
       type: String,
       default: 'createdAt'
-    },
-    contextId: {
-      type: String,
-      default: undefined
     },
     service: {
       type: String,

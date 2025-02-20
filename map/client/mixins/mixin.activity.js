@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import config from 'config'
-import { Store, utils as kCoreUtils } from '../../../core/client/index.js'
+import { Store } from '../../../core/client/index.js'
+import { filterContent, bindContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
 import { setEngineJwt, getLayers, getCategories } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
@@ -140,10 +141,10 @@ export const activity = {
     configureLayerActions (layer) {
       let actions = _.get(this, 'activityOptions.layers.actions', [])
       // Apply filtering
-      actions = kCoreUtils.filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
+      actions = filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
-      actions = kCoreUtils.bindContent(_.cloneDeep(actions), this)
+      actions = bindContent(_.cloneDeep(actions), this)
       // Add 'virtual' actions used to trigger the layer/filters
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
       actions.push({ id: 'toggle-filter', handler: (filter) => this.onTriggerLayerFilter(layer, filter) })
@@ -241,40 +242,25 @@ export const activity = {
     },
     listenToCatalogServiceEvents () {
       // Listen about changes in global/contextual catalog services
-      this.globalCatalogService = this.$api.getService('catalog', '')
-      this.catalogService = this.$api.getService('catalog')
-      // Keep track of binded listeners as we use the same function with different contexts
-      this.catalogListeners = {}
-      const events = ['created', 'updated', 'patched', 'removed']
-      events.forEach(event => {
-        // Avoid reentrance
-        if (!this.catalogListeners[event]) {
-          this.catalogListeners[event] = (object) => this.onCatalogUpdated(event, object)
-          this.globalCatalogService.on(event, this.catalogListeners[event])
-          if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
-            this.catalogService.on(event, this.catalogListeners[event])
-          }
-        }
-      })
+      const globalCatalogService = this.$api.getService('catalog', 'global')
+      const catalogService = this.$api.getService('catalog')
+      this.globalCatalogListeners = listenToServiceEvents('catalog', {
+        context: 'global', all: this.onCatalogUpdated, removed: (object) => this.onCatalogUpdated(object, 'removed')
+      }, this.globalCatalogListeners)
+      if (catalogService && (catalogService !== globalCatalogService)) {
+        this.catalogListeners = listenToServiceEvents('catalog', {
+          all: this.onCatalogUpdated, removed: (object) => this.onCatalogUpdated(object, 'removed')
+        }, this.catalogListeners)
+      }
     },
     unlistenToCatalogServiceEvents () {
-      // Stop listening about changes in global/contextual catalog services
-      if (!this.globalCatalogService) this.globalCatalogService = this.$api.getService('catalog', '')
-      if (!this.catalogService) this.catalogService = this.$api.getService('catalog')
-      const events = ['created', 'updated', 'patched', 'removed']
-      events.forEach(event => {
-        // Avoid reentrance
-        if (this.catalogListeners[event]) {
-          this.globalCatalogService.removeListener(event, this.catalogListeners[event])
-          if (this.catalogService && (this.catalogService !== this.globalCatalogService)) {
-            this.catalogService.removeListener(event, this.catalogListeners[event])
-          }
-        }
-      })
-      this.catalogListeners = {}
+      if (this.globalCatalogListeners) unlistenToServiceEvents(this.globalCatalogListeners)
+      if (this.catalogListeners) unlistenToServiceEvents(this.catalogListeners)
+      this.globalCatalogListeners = null
+      this.catalogListeners = null
     },
     resetCatalogServiceEventsListeners () {
-      this.unlistenToCatalogServiceEvents()
+      // Listening again will unlisten previous ones if any
       this.listenToCatalogServiceEvents()
     },
     async initialize () {
@@ -286,7 +272,7 @@ export const activity = {
         try {
           await this.setupWeacast()
         } catch (error) {
-          logger.error(`[KDK] ${error}`)
+          logger.error('[KDK]', error)
         }
       } else {
         if (weacastEnabled) logger.warn('[KDK] Weacast setup function is missing')
@@ -298,7 +284,7 @@ export const activity = {
         await this.refreshLayers()
         if (hasContext) await this.restoreContext('layers')
       } catch (error) {
-        logger.error(`[KDK] ${error}`)
+        logger.error('[KDK]', error)
       }
       // Retrieve the time
       if (hasContext) await this.restoreContext('time')
@@ -314,7 +300,7 @@ export const activity = {
     finalize () {
       this.unlistenToCatalogServiceEvents()
     },
-    async onCatalogUpdated (event, object) {
+    async onCatalogUpdated (object, event) {
       switch (object.type) {
         case 'Category':
           // In any case we rebuild categories
@@ -366,6 +352,8 @@ export const activity = {
     // Target online/offline service depending on status
     this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    this.$events.on('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    this.$events.on('websocket-reconnected', this.resetCatalogServiceEventsListeners)
   },
   beforeUnmount () {
     this.$engineEvents.off('map-ready', this.onEngineReady)
@@ -373,6 +361,8 @@ export const activity = {
     this.$engineEvents.off('layer-added', this.configureLayerActions)
     this.$events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     this.$events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    this.$events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    this.$events.off('websocket-reconnected', this.resetCatalogServiceEventsListeners)
     this.finalize()
   }
 }

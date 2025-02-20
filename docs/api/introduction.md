@@ -57,17 +57,11 @@ We try to organise hooks in different categories:
 
 Others hooks are usually service-centric and so attached to the target service.
 
-## Data model
-
-Each service can declare a set of *perspectives*, which are not retrieved by default when querying the object(s), you will need to use [`$select`](https://docs.feathersjs.com/api/databases/querying.html#select) to do so. A perspective is simply a field of the data model containing a nested object, like the **profile** field containing the user's profile information on the user data model.
-
-> All dates/times in KDK are managed as date or [moment](https://momentjs.com) objects and expressed in [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
-
 ## Client
 
-KDK modules provide a collection of reusable *mixins* and *components* to be used by modules or applications.
+KDK modules provide a collection of reusable *mixins*, *composables* and *components* to be used by modules or applications.
 
-[Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be "mixed" into the component's own options.
+[Mixins](https://vuejs.org/v2/guide/mixins.html) are a flexible way to distribute reusable functionalities for [Vue components](https://vuejs.org/v2/guide/components.html). A mixin object can contain any component options. When a component uses a mixin, all options in the mixin will be "mixed" into the component's own options. [Composables](https://vuejs.org/guide/reusability/composables.html) are functions that leverage Vue 3’s Composition API to encapsulate and reuse stateful logic. You can nest them to compose complex logic using small, isolated units, similar to how you compose an entire application using components.
 
 Although `.vue` [single file components](https://vuejs.org/v2/guide/single-file-components.html) are stored at the module level to ensure synchronized configuration management with backend code they are not "processed" within. Instead, the application processes them directly using [WebPack dynamic imports](https://medium.com/front-end-hacking/webpack-and-dynamic-imports-doing-it-right-72549ff49234).
 

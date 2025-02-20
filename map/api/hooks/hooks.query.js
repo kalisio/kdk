@@ -137,7 +137,7 @@ export function asGeoJson (options = {}) {
     const params = hook.params
     const query = params.query
     if (!options.force && !params.asGeoJson) return
-    if (query.$distinct || query.$aggregation) return // Not applicable in this case
+    if (_.has(query, '$distinct') || _.has(query, '$aggregation')) return // Not applicable in this case
     const longitudeProperty = (options.longitudeProperty || 'longitude')
     const latitudeProperty = (options.latitudeProperty || 'latitude')
     const altitudeProperty = (options.altitudeProperty || 'altitude')
@@ -378,9 +378,9 @@ export async function aggregateFeaturesQuery (hook) {
         aggregatedResults = elementResults
       } else {
         elementResults.forEach(result => {
-          const resultKeys = _.pick(result, keys)
+          const resultKeys = _.pick(result._id, keys)
           const previousResult = aggregatedResults.find(aggregatedResult => {
-            const aggregatedResultKeys = _.pick(aggregatedResult, keys)
+            const aggregatedResultKeys = _.pick(aggregatedResult._id, keys)
             return _.isEqual(aggregatedResultKeys, resultKeys)
           })
           // Merge with previous matching feature if any

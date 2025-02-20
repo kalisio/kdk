@@ -58,10 +58,6 @@ export default async function init () {
   const api = this
   logger.debug('[KDK] Initializing Map module...')
 
-  // Declare the built-in services, others are optional
-  api.declareService('catalog')
-  api.declareService('projects')
-  api.declareService('features')
   // Declare our matcher
   api.registerMatcher(siftMatcher)
   // Service to support in memory features edition

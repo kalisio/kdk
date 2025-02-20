@@ -22,10 +22,6 @@ export default {
       const scope = _.get(subject, scopeName, [])
       // Then the target resource
       let resource = _.find(scope, resource => resource._id && (resource._id.toString() === params.resource._id.toString()))
-      if (!resource) {
-        // Fallback as name
-        resource = _.find(scope, resource => resource.name && (resource.name === params.resource.name))
-      }
       // On first authorisation create the resource in scope
       if (!resource) {
         resource = Object.assign({}, params.resource)
@@ -129,6 +125,8 @@ export default {
 
   // Compute abilities for a given user and update it in cache
   async updateAbilities (subject) {
+    debug('Updating user abilities of subject ' + (subject ? subject._id : ANONYMOUS_USER))
+    
     if (this.cache) {
       if (subject && subject._id) {
         this.cache.delete(subject._id.toString())
@@ -143,6 +141,9 @@ export default {
 
   // Clear abilities
   clearAbilities() {
-    if (this.cache) this.cache.clear()
+    if (this.cache) {
+      debug('Clearing user abilities cache')
+      this.cache.clear()
+    }
   }
 }

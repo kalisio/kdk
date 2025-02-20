@@ -9,10 +9,12 @@ import intersects from '@turf/boolean-intersects'
 import { featureEach } from '@turf/meta'
 import { unref } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
-import { getFeatureId } from '../utils.js'
+import * as utils from '../utils.js'
 import { convertPolygonStyleToLeafletPath } from '../leaflet/utils/index.js'
 
 export function useSelection (name, options = {}) {
+  // Data
+  let layerServiceEventListeners = {}
   // Retrieve core selection
   const selection = composables.useSelection(name, options)
   // Selection store, as we store options inside check if already initialized
@@ -29,8 +31,8 @@ export function useSelection (name, options = {}) {
         if (layer1 !== layer2) return false
         // Then compare features
         if (item1.feature && item2.feature) {
-          const id1 = getFeatureId(item1.feature, item1.layer)
-          const id2 = getFeatureId(item2.feature, item2.layer)
+          const id1 = utils.getFeatureId(item1.feature, item1.layer)
+          const id2 = utils.getFeatureId(item2.feature, item2.layer)
           return id1 === id2
         } else {
           // If only one has a feature then it cannot be the same
@@ -61,25 +63,31 @@ export function useSelection (name, options = {}) {
   // Avoid using .value everywhere
   let activity = unref(kActivity)
 
-  // data
-
-  // functions
+  // Functions
   function setCurrentActivity (newActivity) {
     // Avoid multiple updates
     if (activity === newActivity) return
     // Remove listeners on previous activity and set it on new one
     if (activity && activity.$engineEvents) {
+      unlistenToFeaturesServiceEventsForLayers()
+      setSelectionEnabled()
+      clearSelection()
       activity.$engineEvents.off('click', onClicked)
       if (options.boxSelection) activity.$engineEvents.off('boxselectionend', onBoxSelection)
       if (options.clusterSelection) activity.$engineEvents.off('spiderfied', onClusterSelection)
+      activity.$engineEvents.off('layer-added', listenToFeaturesServiceEventsForLayer)
+      activity.$engineEvents.off('layer-removed', unlistenToFeaturesServiceEventsForLayer)
       activity.$engineEvents.off('layer-hidden', onSelectedLayerHidden)
     }
     activity = newActivity
-    if (newActivity && newActivity.$engineEvents) {
-      newActivity.$engineEvents.on('click', onClicked)
-      if (options.boxSelection) newActivity.$engineEvents.on('boxselectionend', onBoxSelection)
-      if (options.clusterSelection) newActivity.$engineEvents.on('spiderfied', onClusterSelection)
-      newActivity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
+    if (activity && activity.$engineEvents) {
+      listenToFeaturesServiceEventsForLayers()
+      activity.$engineEvents.on('click', onClicked)
+      if (options.boxSelection) activity.$engineEvents.on('boxselectionend', onBoxSelection)
+      if (options.clusterSelection) activity.$engineEvents.on('spiderfied', onClusterSelection)
+      activity.$engineEvents.on('layer-added', listenToFeaturesServiceEventsForLayer)
+      activity.$engineEvents.on('layer-removed', unlistenToFeaturesServiceEventsForLayer)
+      activity.$engineEvents.on('layer-hidden', onSelectedLayerHidden)
     }
   }
   function setBoxSelectionEnabled (enabled) {
@@ -114,8 +122,21 @@ export function useSelection (name, options = {}) {
   function getSelectedFeature () {
     return selection.getSelectedItem().feature
   }
+  function getSelectedFeatures () {
+    return selection.getSelectedItems().filter(item => item.feature).map(item => item.feature)
+  }
   function getSelectedFeatureCollection () {
     return { type: 'FeatureCollection', features: selection.getSelectedItems().filter(item => item.feature).map(item => item.feature) }
+  }
+  function getSelectedFeaturesByLayer () {
+    const featuresByLayer = {}
+    const items = selection.getSelectedItems().filter(item => item.feature && item.layer)
+    items.forEach(item => {
+      const key = item.layer._id || item.layer.name
+      if (!featuresByLayer[key]) featuresByLayer[key] = { layer: item.layer, features: [] }
+      featuresByLayer[key].features.push(item.feature)
+    })
+    return _.values(featuresByLayer)
   }
   function hasSelectedLayer () {
     return selection.hasSelectedItem() && selection.getSelectedItem().layer
@@ -123,23 +144,29 @@ export function useSelection (name, options = {}) {
   function getSelectedLayer () {
     return selection.getSelectedItem().layer
   }
+  function getSelectedLayers () {
+    return selection.getSelectedItem().filter(item => item.layer).map(item => item.layer)
+  }
   function hasSelectedLocation () {
     return selection.hasSelectedItem() && selection.getSelectedItem().location
   }
   function getSelectedLocation () {
     return selection.getSelectedItem().location
   }
-  function isFeatureSelected (feature, layer) {
+  function findSelectedFeature (feature, layer) {
     const items = selection.getSelectedItems()
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
       if (item.feature && item.layer && (item.layer.name === layer.name)) {
-        const selectedId = getFeatureId(item.feature, item.layer)
-        const featureId = getFeatureId(feature, layer)
-        if (featureId === selectedId) return true
+        const selectedId = utils.getFeatureId(item.feature, item.layer)
+        const featureId = utils.getFeatureId(feature, layer)
+        if (featureId === selectedId) return item
       }
     }
-    return false
+    return null
+  }
+  function isFeatureSelected (feature, layer) {
+    return findSelectedFeature(feature, layer) !== null
   }
   function getWidgetForSelection () {
     let widget
@@ -228,6 +255,8 @@ export function useSelection (name, options = {}) {
 
   let lastClickedPosition, lastBoxSelectionPosition
   function onClicked (layer, event) {
+    if (!selection.isSelectionEnabled()) return
+    
     // FIXME: For some layers, eg based on path, we get a first click with the layer as target
     // then a second click with the map as target, we need to filter the later for selection
     // Similarly we get a click when performing a box selection
@@ -288,6 +317,8 @@ export function useSelection (name, options = {}) {
     else handleSelection(items, clearSelection)
   }
   function onBoxSelection (map, event) {
+    if (!selection.isSelectionEnabled()) return
+
     lastBoxSelectionPosition = _.get(event, 'containerPoint')
     const { bounds } = event
     let items = getIntersectedItems(bboxPolygon([
@@ -302,6 +333,8 @@ export function useSelection (name, options = {}) {
     else handleSelection(items, true)
   }
   function onClusterSelection (layer, event) {
+    if (!selection.isSelectionEnabled()) return
+      
     // Not relevent in this case
     if (selection.isSingleSelectionMode()) return
     const items = _.get(event, 'markers', []).map(marker => {
@@ -321,17 +354,54 @@ export function useSelection (name, options = {}) {
     const hiddenFeatures = selection.getSelectedItems().filter(item => layer.name === _.get(item, 'layer.name'))
     hiddenFeatures.forEach((item) => selection.unselectItem(item))
   }
+  function listenToFeaturesServiceEventsForLayer (layer) {
+    const listeners = utils.listenToFeaturesServiceEventsForLayer(layer, {
+      all: onFeatureUpdated, removed: onFeatureRemoved
+    }, layerServiceEventListeners[layer._id])
+    if (listeners) layerServiceEventListeners[layer._id] = listeners
+  }
+  function unlistenToFeaturesServiceEventsForLayer (layer) {
+    utils.unlistenToFeaturesServiceEventsForLayer(layer, layerServiceEventListeners[layer._id])
+    delete layerServiceEventListeners[layer._id]
+  }
+  function listenToFeaturesServiceEventsForLayers () {
+    layerServiceEventListeners = {}
+    _.forEach(activity.getLayers(), listenToFeaturesServiceEventsForLayer)
+  }
+  function unlistenToFeaturesServiceEventsForLayers () {
+    _.forOwn(layerServiceEventListeners, unlistenToFeaturesServiceEventsForLayer)
+    layerServiceEventListeners = {}
+  }
+  function onFeatureUpdated (feature, layer) {
+    // Find related layer, either directly given in feature if coming from user-defined features service
+    // otherwise bound to the listener for features services attached to a built-in layer
+    if (!layer && feature.layer) layer = activity.getLayerById(feature.layer)
+    if (!layer) return
+    const item = findSelectedFeature(feature, layer)
+    if (item) Object.assign(item.feature, feature)
+  }
+  function onFeatureRemoved (feature, layer) {
+    // Find related layer, either directly given in feature if coming from user-defined features service
+    // otherwise bound to the listener for features services attached to a built-in layer
+    if (!layer && feature.layer) layer = activity.getLayerById(feature.layer)
+    if (!layer) return
+    const item = findSelectedFeature(feature, layer)
+    if (item) selection.unselectItem(item)
+  }
 
-  // expose
+  // Expose
   return {
     ...selection,
     getSelectionOptions: () => get('options'),
     setCurrentActivity,
     hasSelectedFeature,
     getSelectedFeature,
+    getSelectedFeatures,
     getSelectedFeatureCollection,
+    getSelectedFeaturesByLayer,
     hasSelectedLayer,
     getSelectedLayer,
+    getSelectedLayers,
     hasSelectedLocation,
     getSelectedLocation,
     getWidgetForSelection,

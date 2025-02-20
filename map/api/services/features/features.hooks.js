@@ -1,9 +1,12 @@
 import _ from 'lodash'
+import common from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import {
   marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson,
   simplifyResult, simplifyEvents, skipEvents, fuzzySearch
 } from '../../hooks/index.js'
+
+const { getItems, replaceItems } = common
 
 // Allow to control real-time events emission if required
 const emitEvents = (hook) => {
@@ -15,6 +18,25 @@ const fullResult = (hook) => {
   _.set(hook, 'params.fullResult', _.get(hook, 'params.query.fullResult'))
   _.unset(hook, 'params.query.fullResult')
 }
+// Allow upsert if required
+const upsert = (hook) => {
+  _.set(hook, 'params.mongodb', { upsert: _.get(hook, 'params.query.upsert', false) })
+  _.unset(hook, 'params.query.upsert')
+}
+// Feathers does not return anything in this case
+const upsertResult = async (hook) => {
+  if (_.get(hook, 'params.mongodb.upsert', false)) {
+    let items = getItems(hook)
+    const isArray = Array.isArray(items)
+    items = (isArray ? items : [items])
+    const collection = await hook.service.find({
+      query: _.get(hook, 'params.query', {}),
+      paginate: false
+    })
+    replaceItems(hook, isArray ? collection.features : collection.features[0])
+  }
+  return hook
+}
 
 export default {
   before: {
@@ -23,8 +45,8 @@ export default {
       coreHooks.distinct, aggregateFeaturesQuery, coreHooks.aggregationQuery, fuzzySearch, coreHooks.diacriticSearch()],
     get: [],
     create: [coreHooks.processTimes(['time']), fullResult, emitEvents],
-    update: [coreHooks.processTimes(['time']), fullResult, emitEvents],
-    patch: [coreHooks.processTimes(['time']), fullResult, emitEvents],
+    update: [upsert, coreHooks.processTimes(['time']), fullResult, emitEvents],
+    patch: [upsert, coreHooks.processTimes(['time']), fullResult, emitEvents],
     remove: [coreHooks.marshallComparisonQuery, marshallSpatialQuery, fullResult, emitEvents],
     formatGeoJSON: []
   },
@@ -36,8 +58,8 @@ export default {
     // By default avoid emitting events and full result on feature edition because we usually proceed with big batches
     // On a per-case basis each application can activate all events/results if required or define a more evolved strategy
     create: [coreHooks.unprocessTimes(['time']), simplifyEvents, simplifyResult, skipEvents],
-    update: [coreHooks.unprocessTimes(['time']), simplifyEvents, simplifyResult, skipEvents],
-    patch: [coreHooks.unprocessTimes(['time']), simplifyEvents, simplifyResult, skipEvents],
+    update: [coreHooks.unprocessTimes(['time']), upsertResult, simplifyEvents, simplifyResult, skipEvents],
+    patch: [coreHooks.unprocessTimes(['time']), upsertResult, simplifyEvents, simplifyResult, skipEvents],
     remove: [simplifyEvents, simplifyResult, skipEvents]
   },
 

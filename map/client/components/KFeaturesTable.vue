@@ -8,7 +8,6 @@
   >
     <KTable
       :service="service"
-      :contextId="contextId"
       :schema="schema"
       :item-actions="actions"
       :base-query="layer.baseQuery"
@@ -42,10 +41,6 @@ export default {
       default: ''
     },
     layerName: {
-      type: String,
-      default: ''
-    },
-    contextId: {
       type: String,
       default: ''
     }

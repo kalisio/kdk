@@ -98,7 +98,7 @@ function onClick () {
     opacity: 0.85;
     transition: 0.2s;
     background-color: var(--q-primary);
-    border: 2px solid var(--q-secondary);
+    border: 1px solid var(--q-secondary);
   }
   .k-opener-left, .k-opener-right {
     height: 110px;

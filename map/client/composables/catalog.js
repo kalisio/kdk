@@ -12,7 +12,7 @@ export function useCatalog (options = {}) {
     categories: {},
     sublegends: {},
     views: {},
-    // Default to global catalog
+    // Default to contextual or global catalog depending on store
     context: '',
     // Default to app API
     planetApi: api

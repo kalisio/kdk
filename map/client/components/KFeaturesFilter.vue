@@ -71,10 +71,6 @@ export default {
     layerName: {
       type: String,
       default: ''
-    },
-    contextId: {
-      type: String,
-      default: ''
     }
   },
   computed: {
@@ -124,7 +120,7 @@ export default {
         properties.multiselect = true
         properties.field.chips = true
         // Get available values
-        let values = await this.$api.getService(this.layer.service, this.contextId)
+        let values = await this.$api.getService(this.layer.service)
           .find({ query: Object.assign({ $distinct: `properties.${property}` }, this.layer.baseQuery) })
         // Sort them to ease searching
         values = values.sort()
@@ -229,7 +225,7 @@ export default {
       // If saved layer update it in DB
       if (this.layer._id) {
         try {
-          await this.$api.getService('catalog', this.contextId).patch(this.layer._id, { filters: this.layer.filters })
+          await this.$api.getService('catalog').patch(this.layer._id, { filters: this.layer.filters })
         } catch (error) {
           // User error message on operation should be raised by error hook, otherwise this is more a coding error
           logger.error(error)

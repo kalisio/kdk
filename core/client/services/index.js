@@ -6,17 +6,12 @@ export { LocalSettingsService }
 
 export default function init () {
   const api = this
-
-  // Declare the built-in services, others are optional
-  api.declareService('users')
-  api.declareService('authorisations')
-  api.declareService('tags', { context: true })
-  api.declareService('organisations')
-  api.declareService('members', { context: true })
-  api.declareService('groups', { context: true })
-  api.declareService('storage', { context: true })
-  // TODO we use createService because of the custom methods
-  // https://github.com/kalisio/kdk/issues/781
+  
+  // Initialize mandatory services as some singletons might rely on it
+  // Optional services should be initialized by the application
+  api.createService('users')
+  api.createService('authorisations')
+  api.createService('import-export')
   api.createService('account', { methods: ['create', 'verifyEmail'] })
 
   // Setup service for settings edition

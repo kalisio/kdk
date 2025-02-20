@@ -69,8 +69,24 @@ export const baseGlobe = {
         const undergroundColor = _.get(this.viewerOptions, 'undergroundColor')
         this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Color.BLACK)
       }
+
+      // Cesium pre-render callback used to update moving materials (animated walls/corridors)
+      this.viewer.scene.preRender.addEventListener(() => {
+        if (!this.cesiumMaterials) return
+        _.forEach(this.cesiumMaterials, m => {
+          if (!m.material.uniforms.offset) return
+          if (!m.startTime) m.startTime = Date.now()
+
+          const elapsed = (Date.now() - m.startTime) * 0.001
+          if (m.animationSpeed) {
+            const loopDuration = (m.length / m.material.uniforms.repeat.x) / m.animationSpeed
+            m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
+          }
+        })
+      })
+
       // Debug mode ?
-      //this.viewerOptions.debug = true
+      // this.viewerOptions.debug = true
       if (this.viewerOptions.debug) this.viewer.extend(viewerCesiumInspectorMixin)
       // Cesium always create a default provider when a globe is used
       if (this.viewer.scene.imageryLayers) this.viewer.scene.imageryLayers.removeAll()
@@ -235,6 +251,9 @@ export const baseGlobe = {
         cesiumLayer.show = true
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
       } else { // Entity data source otherwise
+        // Handle potential custom primitives
+        for (const [id, custom] of cesiumLayer.primitives)
+          custom.primitive.show = true
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
@@ -261,6 +280,9 @@ export const baseGlobe = {
       } else if (cesiumLayer instanceof Cesium3DTileset) {
         cesiumLayer.show = false
       } else { // Entity data source otherwise
+        // Hide custom primitives before removing the data source
+        for (const [id, custom] of cesiumLayer.primitives)
+          custom.primitive.show = false
         this.viewer.dataSources.remove(cesiumLayer, true)
       }
       this.onLayerHidden(layer, cesiumLayer)
@@ -713,11 +735,44 @@ export const baseGlobe = {
     onCameraMoveEnd () {
       // Mimic Leaflet events
       this.$engineEvents.emit('moveend', this.getCameraEllipsoidTarget())
+    },
+    getPostProcessStage (effect) {
+      return this.cesiumPostProcessStages[effect]
+    },
+    setupPostProcess (effect, options = { enabled: true }) {
+      let stage = this.cesiumPostProcessStages[effect]
+      if (options.enabled) {
+        if (!stage) {
+          if (effect === 'desaturation') {
+            const fs =`
+    uniform sampler2D colorTexture;
+    in vec2 v_textureCoordinates;
+    void main() {
+        vec4 color = texture(colorTexture, v_textureCoordinates);
+        if (czm_selected()) {
+            out_FragColor = color;
+        } else {
+            out_FragColor = vec4(czm_saturation(color.rgb, 0.0), color.a);
+        }
+    }
+    `
+            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({ fragmentShader: fs }))
+            this.cesiumPostProcessStages[effect] = stage
+          }
+        }
+      } else {
+        if (stage) {
+          this.viewer.scene.postProcessStages.remove(stage)
+          delete this.cesiumPostProcessStages[effect]
+        }
+      }
     }
   },
   created () {
     this.cesiumLayers = {}
     this.cesiumFactory = []
+    this.cesiumMaterials = []
+    this.cesiumPostProcessStages = {}
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus

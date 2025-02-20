@@ -92,7 +92,7 @@ export default async function initialize () {
   Exporter.initialize(_.get(config, 'exporter'))
   Schema.initialize(_.get(config, 'schema'))
 
-  // Listen to the 'patched' event on the users
+  // Listen to events on the users
   utils.subscribeToUserChanges()
 
   // Register the readers

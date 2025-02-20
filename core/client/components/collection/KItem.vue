@@ -15,7 +15,6 @@
       <slot name="item-avatar">
         <KAvatar
           :subject="item"
-          :contextId="contextId"
           :options="options"
         />
       </slot>

@@ -3,6 +3,7 @@ import chroma from 'chroma-js'
 import moment from 'moment'
 import { Color } from 'cesium'
 import { Time, Units, TemplateContext } from '../../../../core/client/index.js'
+import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
@@ -154,10 +155,12 @@ function processStyle (style, feature, options, mappings) {
     })
   }
 
+  const type = getFeatureStyleType(feature)
+
   // visibility attribute can be used to hide individual features
   // visibility is true by default but can also be a string when it's
-  // a result of a lodash steing template evaluation
-  let visibility = _.get(style, 'style.visibility', true)
+  // a result of a lodash string template evaluation
+  let visibility = _.get(style, `style.${type}.visibility`, _.get(style, 'style.visibility', true))
   if (typeof visibility === 'string') visibility = visibility === 'true'
   // The 'kdk-hidden-features' pane is created when the leaflet map is initialized
   // if (!visibility) _.set(style, `style.${type}.pane`, 'kdk-hidden-features')

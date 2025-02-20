@@ -1,7 +1,12 @@
 <template>
-  <div :id="id" class="full-width row items-center q-pl-md q-pr-sm no-wrap">
+  <div :id="id" class="full-width row items-center q-px-sm no-wrap">
     <!-- Layer toggle -->
-    <q-toggle v-model="layer.isVisible" :disable="layer.isDisabled" size="xs" @update:modelValue="onToggled" />
+    <q-toggle v-if="togglable"
+      v-model="layer.isVisible"
+      :disable="layer.isDisabled"
+      size="xs"
+      @update:modelValue="onToggled"
+    />
     <!-- Layer name -->
     <div
       class="row ellipsis-2-lines"
@@ -10,7 +15,7 @@
         'text-grey-6': layer.isDisabled
       }"
     >
-      {{ layer.label || layer.name }}
+      <span v-html="label" />
       <q-badge v-if="layer.badge" v-bind="layer.badge">
         <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
       </q-badge>
@@ -36,35 +41,40 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
-import { utils } from '../../../../core/client'
+import { computed } from 'vue'
+import { Document } from '../../../../core/client/document.js'
 import { KPanel } from '../../../../core/client/components'
 
-export default {
-  components: {
-    KPanel
+// Props
+const props = defineProps({
+  layer: {
+    type: Object,
+    default: () => {}
   },
-  props: {
-    layer: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  computed: {
-    id () {
-      const name = _.kebabCase(this.layer.name)
-      if (_.startsWith(name, 'layers-')) return name
-      return 'layers-' + name
-    },
-    icon () {
-      return utils.getIconName(this.layer, 'icon')
-    }
-  },
-  methods: {
-    onToggled () {
-      this.$emit('toggled', this.layer)
-    }
+  togglable: {
+    type: Boolean,
+    default: true
   }
+})
+
+// Emits
+const emit = defineEmits(['toggled'])
+
+// Computed
+const id = computed(() => {
+  const name = _.kebabCase(_.get(props.layer, 'name'))
+  if (_.startsWith(name, 'layers-')) return name
+  return 'layers-' + name
+})
+const label = computed(() => {
+  const label = _.get(props.layer, 'label')
+  return Document.sanitizeHtml(label || _.get(props.layer, 'name'))
+})
+
+// Functions
+function onToggled () {
+  emit('toggled', props.layer)
 }
 </script>

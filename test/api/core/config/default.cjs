@@ -85,9 +85,6 @@ module.exports = {
     },
     workingDir: 'test/api/core/tmp'
   },
-  organisations: {
-    // nothing for now
-  },
   mailer: {
     service: 'gmail',
     auth: {

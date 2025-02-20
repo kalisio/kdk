@@ -131,7 +131,7 @@ export default {
   setup (props) {
     // Use global catalog
     const { layers, getLayers, categories, getCategories, layersByCategory, orphanLayers } =
-      useCatalog()
+      useCatalog({ context: 'global' })
     // Use local catalog if any
     const {
       layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories,

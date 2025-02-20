@@ -2,7 +2,8 @@ import _ from 'lodash'
 import common from 'feathers-hooks-common'
 import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
-import { filterLayers, updateLayerReferences, updateProjects, getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
+import { filterLayers, updateLayerReferences, updateProjects,
+         getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
 
 const { setNow, discard, when } = common
 
@@ -45,8 +46,8 @@ export default {
       coreHooks.convertObjectIDs(['baseQuery.layer'])
     ],
     find: [
-      // Merge built-in categoriessublegends with user-defined ones for global catalog only
-      when(hook => !hook.service.getContextId(), getDefaultCategories, getDefaultSublegends)
+      // Merge built-in categories/sublegends (if provided) with user-defined ones
+      getDefaultCategories, getDefaultSublegends
     ],
     get: [],
     create: [],

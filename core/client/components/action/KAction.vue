@@ -18,7 +18,9 @@
     :dense="dense"
     :disable="computedDisabled"
     v-close-popup="closePopup"
-    @click="onClicked">
+    @click="onClicked"
+    :class="{ 'k-action-toggled': isToggled }"
+  >
     <!-- label -->
     <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
       {{ computedLabel }}
@@ -47,7 +49,8 @@
     :disable="computedDisabled"
     :loading="loading"
     v-close-popup="closePopup"
-    @click="onClicked">
+    @click="onClicked"
+  >
     <div class="ellipsis">
       {{ computedLabel }}
     </div>
@@ -62,7 +65,8 @@
     :dense="dense"
     :disable="computedDisabled"
     v-close-popup="closePopup"
-    @click="onClicked">
+    @click="onClicked"
+  >
     <q-item-section v-if="computedIcon || badge" avatar>
       <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
       <!-- badge -->
@@ -73,6 +77,9 @@
     <q-item-section :class="'text-' + computedColor" no-wrap>
       <q-item-label :lines="1">{{ computedLabel }}</q-item-label>
     </q-item-section>
+    <!-- extra content -->
+    <slot>
+    </slot>
   </q-item>
   <!--
     Fab renderer
@@ -86,7 +93,8 @@
     :round="true"
     :dense="dense"
     :disable="computedDisabled"
-    @click="onClicked">
+    @click="onClicked"
+  >
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
       {{ computedTooltip }}
@@ -111,7 +119,8 @@
     :label-position="iconRight ? 'left' : 'right'"
     label-class="bg-primary text-white text-caption k-fab-action"
     :disable="computedDisabled"
-    @click="onClicked">
+    @click="onClicked"
+  >
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
       {{ computedTooltip }}
@@ -136,7 +145,8 @@
     square
     :dense="dense"
     :disable="computedDisabled"
-    @click="onClicked">
+    @click="onClicked"
+  >
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip">
       {{ computedTooltip }}
@@ -191,13 +201,8 @@ const computedIcon = computed(() => {
   return props.icon
 })
 const computedColor = computed(() => {
-  if (isToggled.value) return _.get(props.toggle, 'color', 'accent')
+  if (isToggled.value) return _.get(props.toggle, 'color', 'primary')
   return props.color
-})
-const computedDisabled = computed(() => {
-  if (!props.disabled) return false
-  if (typeof props.disabled === 'function') return props.disabled()
-  return props.disabled
 })
 const computedTooltip = computed(() => {
   if (computedDisabled.value) return
@@ -210,6 +215,11 @@ const computedBadgeLabel = computed(() => {
   if (props.badge && _.has(props.badge, 'label')) return i18n.tie(props.badge.label)
   // Take care that changing this to null or '' breaks the display in Quasar
   return undefined
+})
+const computedDisabled = computed(() => {
+  if (!props.disabled) return false
+  if (typeof props.disabled === 'function') return props.disabled()
+  return props.disabled
 })
 const dense = computed(() => {
   return $q.screen.lt.sm
@@ -302,5 +312,8 @@ defineExpose({
 }
 .k-action-tab-active {
   border-bottom: solid 2px;
+}
+.k-action-toggled {
+  background-color: #efefef !important;
 }
 </style>

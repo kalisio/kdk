@@ -3,6 +3,7 @@ import logger from 'loglevel'
 import { ref, computed, watch, onBeforeMount, onBeforeUnmount } from 'vue'
 import { api } from '../api.js'
 import { getLocale } from '../utils/utils.locale.js'
+import { listenToServiceEvents, unlistenToServiceEvents } from '../utils/utils.services.js'
 
 export function useCollection (options) {
   _.defaults(options, {
@@ -24,6 +25,7 @@ export function useCollection (options) {
   const nbTotalItems = ref(0)
   const currentPage = ref(1)
   let itemListener = null
+  let serviceEventListeners
 
   // Computed
   const nbPages = computed(() => {
@@ -149,10 +151,11 @@ export function useCollection (options) {
 
   onBeforeMount(() => {
     if (options.appendItems.value) {
-      const service = getService()
-      service.on('patched', onItemsUpdated)
-      service.on('updated', onItemsUpdated)
-      service.on('removed', onItemsUpdated)
+      serviceEventListeners = listenToServiceEvents(getService(), {
+        patched: onItemsUpdated,
+        updated: onItemsUpdated,
+        removed: onItemsUpdated
+      })
     }
   })
 
@@ -160,10 +163,7 @@ export function useCollection (options) {
   onBeforeUnmount(() => {
     unsubscribe()
     if (options.appendItems.value) {
-      const service = getService()
-      service.off('patched', onItemsUpdated)
-      service.off('updated', onItemsUpdated)
-      service.off('removed', onItemsUpdated)
+      unlistenToServiceEvents(serviceEventListeners)
     }
   })
 
