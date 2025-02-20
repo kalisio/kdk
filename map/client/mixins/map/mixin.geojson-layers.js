@@ -195,7 +195,9 @@ export const geojsonLayers = {
               // oldLayer.setStyle(leafletOptions.pointToLayer(feature))
               return
             } else {
-              oldLayer.setStyle(leafletOptions.style(feature))
+              // Updating style in place does not seem to work when involving panes
+              if (_.get(oldLayer.feature, 'style.pane') !== _.get(feature, 'style.pane')) return
+              else oldLayer.setStyle(leafletOptions.style(feature))
             }
           }
           // We want to restore values that were there till now but are missing from the input feature.
