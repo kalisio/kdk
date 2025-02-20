@@ -11,7 +11,7 @@
     <!--
       Avatar section
     -->
-    <q-item-section top avatar @click="onItemSelected('avatar')">
+    <q-item-section v-if="avatar" top avatar @click="onItemSelected('avatar')">
       <slot name="item-avatar">
         <KAvatar
           :subject="item"

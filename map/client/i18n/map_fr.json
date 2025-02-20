@@ -722,15 +722,28 @@
     "COMPASS": "Boussole"
   },
   "KStyleManager": {
-    "EDIT": "Editer le style",
+    "TITLE": "Gestionnaire de styles",
+    "EDIT": "Modifier le style",
+    "DELETE": "Supprimer le style",
+    "SORT": "Trier les styles",
+    "CREATE_STYLE": "Créer un style"
+  },
+  "KStyleEditor": {
+    "TITLE": "Editeur de style",
     "NAME": "Nom du style",
     "SECTION_TITLE_POINT": "Point",
     "SECTION_TITLE_LINE": "Ligne",
     "SECTION_TITLE_POLYGON": "Polygone",
     "COLOR": "Couleur",
+    "FILL_COLOR": "Couleur de remplissage",
+    "OPACITY": "Opacité",
+    "FILL_OPACITY": "Opacité de remplissage",
     "SIZE": "Taille",
     "SHAPE": "Forme",
-    "ICON": "Icone"
-
+    "ICON": "Icône",
+    "ICON_SIZE": "Taille de l'icône",
+    "STROKE_COLOR": "Couleur du contour",
+    "STROKE_OPACITY": "Opacité du contour",
+    "STROKE_WIDTH": "Largeur du contour"
   }
 }

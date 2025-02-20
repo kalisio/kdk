@@ -718,14 +718,28 @@
     "COMPASS": "Compass"
   },
   "KStyleManager": {
+    "TITLE": "Style manager",
     "EDIT": "Edit style",
+    "DELETE": "Delete style",
+    "SORT": "Sort styles",
+    "CREATE_STYLE": "Create style"
+  },
+  "KStyleEditor": {
+    "TITLE": "Editeur de style",
     "NAME": "Style name",
     "SECTION_TITLE_POINT": "Point",
     "SECTION_TITLE_LINE": "Line",
     "SECTION_TITLE_POLYGON": "Polygon",
     "COLOR": "Color",
+    "FILL_COLOR": "Fill color",
+    "OPACITY": "Opacity",
+    "FILL_OPACITY": "Fill opacity",
     "SIZE": "Size",
     "SHAPE": "Shape",
-    "ICON": "Icon"
+    "ICON": "Icon",
+    "ICON_SIZE": "Icon size",
+    "STROKE_COLOR": "Stroke color",
+    "STROKE_OPACITY": "Stroke opacity",
+    "STROKE_WIDTH": "Stroke width"
   }
 }

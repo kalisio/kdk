@@ -953,11 +953,6 @@
     "FILE_TOO_LARGE": "File {file} is too large. The size must be less than {size}Mb",
     "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
-  },
-  "KStyleManager": {
-    "MANAGER": "Gestionaire des styles",
-    "EDIT": "Edit style",
-    "DELETE": "Delete style"
   }
 }
 

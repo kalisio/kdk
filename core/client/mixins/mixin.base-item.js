@@ -64,6 +64,9 @@ export const baseItem = {
     },
     description () {
       return _.get(this.item, this.options.descriptionField || 'description', '')
+    },
+    avatar () {
+      return _.get(this.options, 'avatar', true)
     }
   },
   methods: {

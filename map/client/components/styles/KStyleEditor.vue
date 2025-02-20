@@ -1,176 +1,153 @@
 <template>
-
-  <div class="row">
-    <div class="col-6">
-      <q-input v-model="name" :label="$t('KStyleManager.NAME')" />
-    </div>
-    <div class="col-12 q-mt-md">
-        <q-expansion-item header-class="bg-grey-2" :label="$t('KStyleManager.SECTION_TITLE_POINT')">
-          <div class="row q-pl-lg q-pb-md bg-grey-1">
-            <div class="col-9">
-              <div class="row q-pl-lg items-center">
-                <div class="col-10">
-                  <p class="q-mb-none q-mt-lg"><q-icon name="las la-fill" size="2em"/> {{ $t('KStyleManager.COLOR') }}</p>
-                </div>
-                <div class="col-2">
-                  <k-color-field values="" :properties="{name:'pointColor'}" model="#333333"/>
-                </div>
-
-                <div class="col-10">
-                  <p class="q-mb-none q-mt-lg"><q-icon name="las la-ruler" size="2em"/> {{ $t('KStyleManager.SIZE') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select v-model="size" :options="availableSizes" :label="$t('KStyleManager.SIZE')">
-                    <template v-slot:selected-item="scope">{{ scope.opt }} px</template>
-                  </q-select>
-                </div>
-
-                <div class="col-10">
-                  <p class="q-mb-none q-mt-lg"><q-icon name="las la-shapes" size="2em"/> {{ $t('KStyleManager.SHAPE') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select
-                      v-model="shape"
-                      :options="availableShapes"
-                      :label="$t('KStyleManager.SHAPE')"
-                  >
-                    <template v-slot:selected-item="scope">
-                      <q-icon :name="`las la-${scope.opt}`" size="1.8em"/>
-                    </template>
-                    <template v-slot:option="scope">
-                      <q-item v-bind="scope.itemProps">
-                        <q-icon :name="`las la-${scope.opt}`" size="1.8em"/>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-
-                <div class="col-10">
-                  <p class="q-mb-none q-mt-lg"><q-icon name="las la-icons" size="2em"/> {{ $t('KStyleManager.ICON') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select
-                      v-model="icon"
-                      :options="availableIcons"
-                      :label="$t('KStyleManager.ICON')"
-                  >
-                    <template v-slot:selected-item="scope">
-                      <q-icon :name="`las la-${scope.opt}`" size="1.8em"/>
-                    </template>
-                    <template v-slot:option="scope">
-                      <q-item v-bind="scope.itemProps">
-                          <q-icon :name="`las la-${scope.opt}`" size="1.8em"/>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </div>
-
-                <div class="col-10">
-                  <p class="q-mb-none q-mt-lg"><q-icon name="las la-ruler" size="2em"/> {{ $t('KStyleManager.SIZE') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select v-model="iconSize" :options="availableSizes" :label="$t('KStyleManager.SIZE')">
-                    <template v-slot:selected-item="scope">{{ scope.opt }} px</template>
-                  </q-select>
-                </div>
-              </div>
-
-            </div>
-            <div class="col-3">
-
-            </div>
-          </div>
-        </q-expansion-item>
-
-        <q-expansion-item header-class="bg-grey-2" :label="$t('KStyleManager.SECTION_TITLE_LINE')">
-          <div class="row q-pl-lg q-pb-md bg-grey-1">
-            <div class="col-9">
-              <div class="row q-pl-lg">
-                <div class="col-10">
-                  <p><q-icon name="las la-fill" size="2em"/> {{ $t('KStyleManager.COLOR') }}</p>
-                </div>
-                <div class="col-2">
-                  <k-color-field values="" :properties="{name:'red'}"/>
-                </div>
-
-                <div class="col-10">
-                  <p><q-icon name="las la-ruler" size="2em"/> {{ $t('KStyleManager.SIZE') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select v-model="size" :options="availableSize" :label="$t('KStyleManager.SIZE')" />
-                </div>
-
-                <div class="col-10">
-                  <p><q-icon name="las la-shapes" size="2em"/> {{ $t('KStyleManager.SHAPE') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select v-model="shape" :options="availableSize" :label="$t('KStyleManager.SIZE')" />
-                </div>
-
-              </div>
-
-            </div>
-
-            <div class="col-3">
-<p>preview</p>
-            </div>
-
-          </div>
-        </q-expansion-item>
-
-        <q-expansion-item header-class="bg-grey-2" :label="$t('KStyleManager.SECTION_TITLE_POLYGON')">
-          <div class="row q-pl-lg q-pb-md bg-grey-1">
-            <div class="col-9">
-              <div class="row q-pl-lg">
-                <div class="col-10">
-                  <p><q-icon name="las la-fill" size="2em"/> {{ $t('KStyleManager.COLOR') }}</p>
-                </div>
-                <div class="col-2">
-                  <k-color-field values="" :properties="{name:'red'}"/>
-                </div>
-
-                <div class="col-10">
-                  <p><q-icon name="las la-ruler" size="2em"/> {{ $t('KStyleManager.SIZE') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select v-model="size" :options="availableSize" :label="$t('KStyleManager.SIZE')" />
-                </div>
-
-                <div class="col-10">
-                  <p><q-icon name="las la-shapes" size="2em"/> {{ $t('KStyleManager.SHAPE') }}</p>
-                </div>
-                <div class="col-2">
-                  <q-select v-model="shape" :options="availableSize" :label="$t('KStyleManager.SIZE')" />
-                </div>
-
-              </div>
-
-            </div>
-
-            <div class="col-3">
-<p>preview</p>
-            </div>
-
-          </div>
-        </q-expansion-item>
-
+  <div id="style-editor-header" v-if="title">
+    <div class="ellipsis text-h6">
+      {{ $tie(title) }}
     </div>
   </div>
+  <div id="style-editor-content" class="row">
+    <div class="col-6">
+      <q-input v-model="style.name" :label="$t('KStyleEditor.NAME')" />
+    </div>
+    <div class="col-12 q-mt-md">
+      <q-expansion-item header-class="bg-grey-2">
+        <template v-slot:header>
+          <q-item-section avatar>
+            <q-icon name="las la-map-marker" />
+          </q-item-section>
+          <q-item-section>
+            {{ $t('KStyleEditor.SECTION_TITLE_POINT') }}
+          </q-item-section>
+          <q-item-section side>
+            <KStylePreview type="point" :options="style" />
+          </q-item-section>
+        </template>
+        <q-list class="q-ml-md">
+          <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" />
+          <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" />
+          <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" />
+          <KStyleProperty v-model="style.point.icon.classes" :name="$t('KStyleEditor.ICON')" type="icon" />
+          <KStyleProperty v-model="style.point.icon.size" :name="$t('KStyleEditor.ICON_SIZE')" type="size" :min="12" :max="24" />
+        </q-list>
+      </q-expansion-item>
 
+      <q-expansion-item header-class="bg-grey-2">
+        <template v-slot:header>
+          <q-item-section avatar>
+            <q-icon name="las la-chart-line" />
+          </q-item-section>
+          <q-item-section>
+            {{ $t('KStyleEditor.SECTION_TITLE_LINE') }}
+          </q-item-section>
+          <q-item-section side>
+            <KStylePreview type="line" :options="style"/>
+          </q-item-section>
+        </template>
+        <q-list class="q-ml-md">
+          <KStyleProperty v-model="style.line.color" :name="$t('KStyleEditor.COLOR')" type="color" />
+          <KStyleProperty v-model="style.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12"/>
+          <KStyleProperty v-model="style.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" />
+        </q-list>
+      </q-expansion-item>
+
+      <q-expansion-item header-class="bg-grey-2">
+        <template v-slot:header>
+          <q-item-section avatar>
+            <q-icon name="las la-draw-polygon" />
+          </q-item-section>
+          <q-item-section>
+            {{ $t('KStyleEditor.SECTION_TITLE_POLYGON') }}
+          </q-item-section>
+          <q-item-section side>
+            <KStylePreview type="polygon" :options="style" />
+          </q-item-section>
+        </template>
+        <q-list class="q-ml-md">
+          <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" />
+          <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" />
+          <KStyleProperty v-model="style.polygon.stroke.color" :name="$t('KStyleEditor.STROKE_COLOR')" type="color" />
+          <KStyleProperty v-model="style.polygon.stroke.width" :name="$t('KStyleEditor.STROKE_WIDTH')" type="size" icon="las la-stop" :min="1" :max="12" />
+          <KStyleProperty v-model="style.polygon.stroke.opacity" :name="$t('KStyleEditor.STROKE_OPACITY')" type="opacity" icon="las la-border-style" />
+        </q-list>
+      </q-expansion-item>
+    </div>
+  </div>
+  <div id="style-editor-footer" class="row justify-end q-mt-md" v-if="!hideButtons">
+    <KPanel
+      id="style-editor-buttons"
+      class="q-gutter-x-sm"
+      :content="buttons"
+      :action-renderer="'form-button'"
+    />
+  </div>
 </template>
 
 <script setup>
 
-import { ref } from 'vue'
-import KColorField from '../../../../core/client/components/form/KColorField.vue'
+import { ref, computed } from 'vue'
+import KStyleProperty from './KStyleProperty.vue'
+import KStylePreview from './KStylePreview.vue'
+import { DefaultStyle } from '../../utils/index.js'
+import _ from 'lodash'
+import KPanel from '../../../../core/client/components/KPanel.vue'
 
-const availableSizes = ref([8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
-const availableShapes = ref(['ruler', 'shapes', 'car-alt'])
-const availableIcons = ref(['ruler', 'shapes'])
-const name = ref('')
-const size = ref(12)
-const shape = ref('')
-const icon = ref('')
-const iconSize = ref(12)
+const props = defineProps({
+  title: {
+    type: String,
+    default: ''
+  },
+  hideButtons: {
+    type: Boolean,
+    default: false
+  },
+  buttons: {
+    type: Array,
+    default: null
+  },
+  style: {
+    type: Object,
+    default: _.pick(DefaultStyle, ['point', 'line', 'polygon'])
+  }
+})
+
+const emit = defineEmits([
+  'cancel',
+  'apply'
+])
+
+const style = ref(_.assign({}, _.pick(DefaultStyle, ['point', 'line', 'polygon']), { name: '' }, props.style))
+
+const buttons = computed(() => {
+  if (props.buttons !== null) return props.buttons
+  return [
+    {
+      id: 'close-button',
+      label: 'CANCEL',
+      renderer: 'form-button',
+      outline: true,
+      handler: () => {
+        emit('cancel')
+      }
+    },
+    {
+      id: 'apply-button',
+      label: 'APPLY',
+      renderer: 'form-button',
+      handler: () => {
+        emit('apply', style.value)
+      }
+    }
+  ]
+})
+const is3D = computed(() => {
+  return this.kActivity.is3D()
+})
+
+function getStyle () {
+  return style.value
+}
+
+defineExpose({
+  getStyle
+})
 
 </script>
