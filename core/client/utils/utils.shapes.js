@@ -210,6 +210,7 @@ export function createShape (options) {
         if (options.stroke.join) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-linejoin', options.stroke.join)
         if (options.stroke.dashArray) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dasharray', options.stroke.dashArray)
         if (options.stroke.dashOffset) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-dashoffset', options.stroke.dashOffset)
+        if (options.stroke.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-opacity', options.stroke.opacity)
         const clipId = uid()
         // clip the shape to avoid stroke overflow
         svgShapeContent = addSvgAttribute(svgShapeContent, 'clip-path', `url(#${clipId})`)
