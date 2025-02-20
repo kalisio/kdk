@@ -483,6 +483,19 @@ export async function editFeaturesProperties(geoJson, layer) {
   return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: updatedFeatures }) : updatedFeatures)
 }
 
+export async function editFeaturesStyle(geoJson, layer) {
+  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const updatedFeatures = []
+  for (let i = 0; i < features.length; i++) {
+    const feature = features[i]
+    if (feature._id) {
+      const updatedFeature = await api.getService(layer.service).patch(feature._id, _.pick(feature, ['style']))
+      updatedFeatures.push(updatedFeature)
+    }
+  }
+  return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: updatedFeatures }) : updatedFeatures)
+}
+
 export async function removeFeatures(geoJson, layer) {
   // Remove all features of a given layer
   if (!geoJson) {

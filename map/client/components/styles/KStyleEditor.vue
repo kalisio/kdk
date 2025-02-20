@@ -25,8 +25,8 @@
           <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" />
           <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" />
           <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" />
-          <KStyleProperty v-model="style.point.icon.classes" :name="$t('KStyleEditor.ICON')" type="icon" />
-          <KStyleProperty v-model="style.point.icon.size" :name="$t('KStyleEditor.ICON_SIZE')" type="size" :min="12" :max="24" />
+          <KStyleProperty v-if="!is3D" v-model="style.point.icon.classes" :name="$t('KStyleEditor.ICON')" type="icon" />
+          <KStyleProperty v-if="!is3D" v-model="style.point.icon.size" :name="$t('KStyleEditor.ICON_SIZE')" type="size" :min="12" :max="24" />
         </q-list>
       </q-expansion-item>
 
@@ -82,14 +82,15 @@
 </template>
 
 <script setup>
-
 import { ref, computed } from 'vue'
+import _ from 'lodash'
 import KStyleProperty from './KStyleProperty.vue'
 import KStylePreview from './KStylePreview.vue'
-import { DefaultStyle } from '../../utils/index.js'
-import _ from 'lodash'
 import KPanel from '../../../../core/client/components/KPanel.vue'
+import { DefaultStyle } from '../../utils/index.js'
+import { useCurrentActivity } from '../../composables/activity.js'
 
+// Props
 const props = defineProps({
   title: {
     type: String,
@@ -109,13 +110,17 @@ const props = defineProps({
   }
 })
 
+// Emits
 const emit = defineEmits([
   'cancel',
   'apply'
 ])
 
+// Data
 const style = ref(_.assign({}, _.pick(DefaultStyle, ['point', 'line', 'polygon']), { name: '' }, props.style))
+const { CurrentActivity } = useCurrentActivity()
 
+// Computed
 const buttons = computed(() => {
   if (props.buttons !== null) return props.buttons
   return [
@@ -139,9 +144,10 @@ const buttons = computed(() => {
   ]
 })
 const is3D = computed(() => {
-  return this.kActivity.is3D()
+  return CurrentActivity.value.is3D()
 })
 
+// Functions
 function getStyle () {
   return style.value
 }

@@ -80,6 +80,7 @@
       "DISPLAY_POSITION": "Display the coordinates",
       "DISPLAY_LEGEND": "Display legend",
       "DISPLAY_SELECTION": "Display selection",
+      "DISPLAY_STYLE_MANAGER": "Display style manager",
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
       "ADD_VIEW": "Add view",      
@@ -748,6 +749,7 @@
   },
   "KStyleManager": {
     "TITLE": "Style manager",
+    "APPLY_TO_SELECTION": "Apply style to selection",
     "EDIT": "Edit style",
     "DELETE": "Delete style",
     "SORT": "Sort styles",
