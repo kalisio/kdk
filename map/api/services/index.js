@@ -173,7 +173,7 @@ export async function createDefaultCatalogLayers (options = {}) {
     let featuresService
     try {
       // Used to filter properties only used to initialize a layer and related data
-      const reservedProperties ['filter', 'url', 'fileName']
+      const reservedProperties = ['filter', 'url', 'fileName']
       // Create or update the layer removing any option only used to manage layer setup
       if (!isLayerAlreadyCreated) {
         app.logger.info('Adding default layer (name = ' + defaultLayer.name + ')')
