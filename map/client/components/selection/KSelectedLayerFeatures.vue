@@ -1,48 +1,58 @@
 <template>
-  <q-tree
-    :nodes="[root]"
-    node-key="_id"
-    label-key="label"
-    children-key="children"
-    v-model:expanded="expandedNodes"
-    dense
-  >
-    <template v-slot:default-header="prop">
-      <!-- Layer rendering -->
-      <q-icon v-if="prop.node.icon" :name="prop.node.icon"/>
-      <KLayerItem v-if="isLayerNode(prop.node)"
-        v-bind="$props"
-        :togglable="false"
-        :layer="root"
-      />
-      <!-- Features rendering -->
-      <div v-else-if="prop.node.label" class="row fit items-center q-pl-md q-pr-sm no-wrap">
-        <div :class="{
-            'text-primary': root.isVisible,
-            'text-grey-6': root.isDisabled || !root.isVisible
-          }"
-        >
-          <span v-html="prop.node.label" />
-        </div>
-        <q-space  v-if="isFeatureNode(prop.node)"/>
-        <!-- Features actions -->
-        <KPanel v-if="isFeatureNode(prop.node)"
-          :id="`${prop.node.label}-feature-actions`"
-          :content="featureActions"
-          :context="prop.node"
+  <div>
+    <q-tree
+      :nodes="[root]"
+      node-key="_id"
+      label-key="label"
+      children-key="children"
+      v-model:expanded="expandedNodes"
+      dense
+    >
+      <template v-slot:default-header="prop">
+        <!-- Layer rendering -->
+        <q-icon v-if="prop.node.icon" :name="prop.node.icon"/>
+        <KLayerItem v-if="isLayerNode(prop.node)"
+          v-bind="$props"
+          :togglable="false"
+          :layer="root"
         />
-      </div>
-    </template>
-    <!-- Feature properties rendering -->
-    <template v-slot:default-body="prop">
-      <KView v-if="isFeaturePropertiesNode(prop.node)" 
-        class="q-pa-md full-width"
-        :values="prop.node"
-        :schema="schema"
-        :separators="true"
-      />
-    </template>
-  </q-tree>
+        <!-- Features rendering -->
+        <div v-else-if="prop.node.label" class="row fit items-center q-pl-md q-pr-sm no-wrap">
+          <div :class="{
+              'text-primary': root.isVisible,
+              'text-grey-6': root.isDisabled || !root.isVisible
+            }"
+          >
+            <span v-html="prop.node.label" />
+          </div>
+          <q-space  v-if="isFeatureNode(prop.node)"/>
+          <!-- Features actions -->
+          <KPanel v-if="isFeatureNode(prop.node)"
+            :id="`${prop.node.label}-feature-actions`"
+            :content="featureActions"
+            :context="prop.node"
+          />
+        </div>
+      </template>
+      <!-- Feature properties rendering -->
+      <template v-slot:default-body="prop">
+        <KView v-if="isFeaturePropertiesNode(prop.node)" 
+          class="q-pa-md full-width"
+          :values="prop.node"
+          :schema="schema"
+          :separators="true"
+        />
+      </template>
+    </q-tree>
+    <KModal
+      id="style-editor-modal"
+      :title="styleEditorTitle"
+      :buttons="[]"
+      v-model="isFeatureStyleEdited"
+    >
+      <KStyleEditor :edit-name="false" :allowed-styles="[editedFeatureType]" :style="editedFeatureStyle" @cancel="onCancelFeatureStyle" @apply="onApplyFeatureStyle" />
+    </KModal>
+  </div>
 </template>
 
 <script setup>
@@ -54,9 +64,11 @@ import bbox from '@turf/bbox'
 import { Store, i18n } from '../../../../core/client'
 import { KView } from '../../../../core/client/components'
 import KLayerItem from '../catalog/KLayerItem.vue'
+import KStyleEditor from '../styles/KStyleEditor.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { getFeatureId, getFeatureLabel } from '../../utils/utils.js'
 import { isLayerDataEditable } from '../../utils/utils.layers.js'
+import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { generatePropertiesSchema } from '../../utils/utils.schema.js'
 
 // Props
@@ -73,8 +85,17 @@ const router = useRouter()
 const { CurrentActivity } = useCurrentActivity()
 const expandedNodes = ref([props.item.layer._id])
 const editedFeatures = ref([])
+const editedFeature = ref(null)
+const editedFeatureType = ref(null)
+const editedFeatureStyle = ref(null)
 
 // Computed
+const isFeatureStyleEdited = computed(() => {
+  return !_.isNil(editedFeatureStyle.value)
+})
+const styleEditorTitle = computed(() => {
+  return (editedFeature.value ? getFeatureLabel(editedFeature.value, props.item.layer) : '')
+})
 const layerActions = computed(() => {
   return [{
     id: 'layer-actions',
@@ -134,6 +155,12 @@ const featureActions = computed(() => {
       icon: 'las la-address-card',
       handler: editSelectedFeatureProperties,
       visible: isLayerDataEditable(props.item.layer) && _.get(props.item.layer, 'schema.content')
+    }, {
+      id: 'edit-style-selected-feature',
+      label: 'KSelectedLayerFeatures.EDIT_FEATURE_STYLE_LABEL',
+      icon: 'las la-paint-brush',
+      handler: editSelectedFeatureStyle,
+      visible: isLayerDataEditable(props.item.layer)
     }, {
       id: 'reset-style-selected-feature',
       label: 'KSelectedLayerFeatures.RESET_FEATURE_STYLE_LABEL',
@@ -259,11 +286,25 @@ function editSelectedFeatureProperties (feature) {
     })
   })
 }
-function resetSelectedFeaturesStyle () {
-  CurrentActivity.value.editFeaturesStyle({ type: 'FeatureCollection', features: props.item.features.map(feature => Object.assign(feature, { style: {} })) }, props.item.layer)
+function editSelectedFeatureStyle (feature) {
+  editedFeature.value = feature
+  editedFeatureType.value = getFeatureStyleType(feature)
+  editedFeatureStyle.value = { [editedFeatureType.value]: _.get(feature, 'style', {}) }
 }
-function resetSelectedFeatureStyle (feature) {
-  CurrentActivity.value.editFeaturesStyle(Object.assign(feature, { style: {} }), props.item.layer)
+function onCancelFeatureStyle () {
+  editedFeature.value = null
+  editedFeatureType.value = null
+  editedFeatureStyle.value = null
+}
+async function onApplyFeatureStyle (style) {
+  await CurrentActivity.value.editFeaturesStyle(Object.assign(editedFeature.value, { style: style[editedFeatureType.value] }), props.item.layer)
+  onCancelFeatureStyle()
+}
+async function resetSelectedFeaturesStyle () {
+  await CurrentActivity.value.editFeaturesStyle({ type: 'FeatureCollection', features: props.item.features.map(feature => Object.assign(feature, { style: {} })) }, props.item.layer)
+}
+async function resetSelectedFeatureStyle (feature) {
+  await CurrentActivity.value.editFeaturesStyle(Object.assign(feature, { style: {} }), props.item.layer)
 }
 function removeSelectedFeatures () {
   Dialog.create({

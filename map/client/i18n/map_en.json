@@ -531,6 +531,7 @@
     "ZOOM_TO_FEATURE_LABEL": "Zoom to feature",
     "EDIT_FEATURE_LABEL": "Edit feature",
     "EDIT_FEATURE_PROPERTIES_LABEL": "Edit feature properties",
+    "EDIT_FEATURE_STYLE_LABEL": "Edit feature style",
     "RESET_FEATURE_STYLE_LABEL": "Reset feature style",
     "REMOVE_FEATURE_LABEL": "Remove feature",
     "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",

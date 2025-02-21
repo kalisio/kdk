@@ -530,6 +530,7 @@
     "ZOOM_TO_FEATURE_LABEL": "Zoomer sur l'élément",
     "EDIT_FEATURE_LABEL": "Editer l'élément",
     "EDIT_FEATURE_PROPERTIES_LABEL": "Editer les propriétés de l'élément",
+    "EDIT_FEATURE_STYLE_LABEL": "Editer le style",
     "RESET_FEATURE_STYLE_LABEL": "Réinitialiser le style",
     "REMOVE_FEATURE_LABEL": "Supprimer l'élément",
     "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'élément ?",
