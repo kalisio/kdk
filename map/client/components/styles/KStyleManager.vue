@@ -70,7 +70,7 @@ import { computed, ref } from 'vue'
 import _ from 'lodash'
 import sift from 'sift'
 import { KGrid } from '../../../../core/client/components'
-import { Store, api } from '@kalisio/kdk/core.client'
+import { Filter, Sorter, Store, api } from '@kalisio/kdk/core.client'
 import KStyleEditor from './KStyleEditor.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle } from '../../utils/utils.layers.js'
@@ -86,21 +86,16 @@ defineProps({
 
 // Data
 const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
-const filter = Store.get('filter')
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
 
 // Computed
 const baseQuery = computed(() => {
-  // Filter the objets of type of table
-  const query = { }
-  return query
+  return Object.assign({}, Sorter.get().query)
 })
 const filterQuery = computed(() => {
-  const query = _.clone(filter.query)
-  // Filter the objects against the group
-  return query
+  return Object.assign({}, Filter.get().query)
 })
 const toolbar = computed(() => {
   if (viewMode.value === 'edit') return []
@@ -111,9 +106,7 @@ const toolbar = computed(() => {
       tooltip: 'KStyleManager.SORT',
       options: [
         { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
-        { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
-        { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
-        { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
+        { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
       ]
     },
     { component: 'collection/KFilter', style: 'max-width: 200px;' },
