@@ -69,6 +69,7 @@ export const featureService = {
     createFeatures: features.createFeatures,
     editFeaturesGeometry: features.editFeaturesGeometry,
     editFeaturesProperties: features.editFeaturesProperties,
+    editFeaturesStyle: features.editFeaturesStyle,
     removeFeatures: features.removeFeatures,
     onFeatureUpdated (feature, layer) {
       // Find related layer, either directly given in feature if coming from user-defined features service

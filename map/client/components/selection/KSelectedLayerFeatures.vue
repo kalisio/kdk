@@ -95,6 +95,12 @@ const layerActions = computed(() => {
       handler: editSelectedFeatures,
       visible: isLayerDataEditable(props.item.layer)
     }, {
+      id: 'reset-style-selected-features',
+      label: 'KSelectedLayerFeatures.RESET_FEATURES_STYLE_LABEL',
+      icon: 'las la-paint-brush',
+      handler: resetSelectedFeaturesStyle,
+      visible: isLayerDataEditable(props.item.layer)
+    }, {
       id: 'remove-selected-features',
       label: 'KSelectedLayerFeatures.REMOVE_FEATURES_LABEL',
       icon: 'las la-trash',
@@ -128,6 +134,12 @@ const featureActions = computed(() => {
       icon: 'las la-address-card',
       handler: editSelectedFeatureProperties,
       visible: isLayerDataEditable(props.item.layer) && _.get(props.item.layer, 'schema.content')
+    }, {
+      id: 'reset-style-selected-feature',
+      label: 'KSelectedLayerFeatures.RESET_FEATURE_STYLE_LABEL',
+      icon: 'las la-paint-brush',
+      handler: resetSelectedFeatureStyle,
+      visible: isLayerDataEditable(props.item.layer)
     }, {
       id: 'remove-selected-feature',
       label: 'KSelectedLayerFeatures.REMOVE_FEATURE_LABEL',
@@ -246,6 +258,12 @@ function editSelectedFeatureProperties (feature) {
       contextId: Store.get('context')
     })
   })
+}
+function resetSelectedFeaturesStyle () {
+  CurrentActivity.value.editFeaturesStyle({ type: 'FeatureCollection', features: props.item.features.map(feature => Object.assign(feature, { style: {} })) }, props.item.layer)
+}
+function resetSelectedFeatureStyle (feature) {
+  CurrentActivity.value.editFeaturesStyle(Object.assign(feature, { style: {} }), props.item.layer)
 }
 function removeSelectedFeatures () {
   Dialog.create({
