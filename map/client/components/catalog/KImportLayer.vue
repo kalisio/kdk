@@ -140,7 +140,7 @@ export default {
           if (_.indexOf(['id', 'fid', 'featureid', '_id', 'objectid'], prop.toLowerCase()) >= 0) return prop
         }
       }
-      return undefined
+      return ''
     },
     onClose () {
       this.$emit('done')
