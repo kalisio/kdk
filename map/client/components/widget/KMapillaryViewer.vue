@@ -58,7 +58,7 @@ export default {
         style: {
           shape: 'none',
           icon: {
-            url: '/icons/kdk/mapillary-marker.png',
+            url: '/kdk/mapillary-marker.png',
             size: 40,
             rotation: bearing
           }

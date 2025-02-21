@@ -61,7 +61,7 @@ export default {
     const target = {
       id: 'position-target',
       component: 'QImg',
-      src: 'icons/kdk/target.svg',
+      src: 'kdk/target.svg',
       height: `${this.size}px`,
       width: `${this.size}px`,
       position: 'center',
