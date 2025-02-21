@@ -52,6 +52,7 @@
       "ADD_LAYER": "Ajouter une couche",
       "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
+      "RESET_LAYER_STYLE_LABEL": "Réinitialiser le style",
       "FILTER_DATA_LABEL": "Filtrer les données",
       "VIEW_DATA_LABEL": "Voir les données",
       "CHART_DATA_LABEL": "Graphique des données",

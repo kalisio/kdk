@@ -52,6 +52,7 @@
       "ADD_LAYER": "Add a layer",
       "EDIT_LABEL": "Edit properties",
       "EDIT_LAYER_STYLE_LABEL": "Edit style",
+      "RESET_LAYER_STYLE_LABEL": "Reset style",
       "FILTER_DATA_LABEL": "Filter data",
       "VIEW_DATA_LABEL": "View data",
       "CHART_DATA_LABEL": "Chart data",

@@ -36,7 +36,7 @@
       </template>
       <!-- Feature properties rendering -->
       <template v-slot:default-body="prop">
-        <KView v-if="isFeaturePropertiesNode(prop.node)" 
+        <KView v-if="isFeaturePropertiesNode(prop.node)"
           class="q-pa-md full-width"
           :values="prop.node"
           :schema="schema"
@@ -118,7 +118,7 @@ const layerActions = computed(() => {
     }, {
       id: 'reset-style-selected-features',
       label: 'KSelectedLayerFeatures.RESET_FEATURES_STYLE_LABEL',
-      icon: 'las la-paint-brush',
+      icon: 'las la-ban',
       handler: resetSelectedFeaturesStyle,
       visible: isLayerDataEditable(props.item.layer)
     }, {
@@ -164,7 +164,7 @@ const featureActions = computed(() => {
     }, {
       id: 'reset-style-selected-feature',
       label: 'KSelectedLayerFeatures.RESET_FEATURE_STYLE_LABEL',
-      icon: 'las la-paint-brush',
+      icon: 'las la-ban',
       handler: resetSelectedFeatureStyle,
       visible: isLayerDataEditable(props.item.layer)
     }, {
@@ -200,11 +200,11 @@ const root = computed(() => {
       label: getLabel(feature.properties)
     }, feature.properties)] // Properties only for node displaying it
   }, feature)) // Target feature is required as context for actions
-  // For each feature add a node containing 
+  // For each feature add a node containing
   // Replace default layer actions with new ones
   return Object.assign({
     icon: getIcon(props.item.layer),
-    label: getLabel(props.item.layer),
+    label: getLabel(props.item.layer)
   }, _.omit(props.item.layer, ['icon', 'actions']), { actions: layerActions.value, children })
 })
 

@@ -344,7 +344,10 @@ export function isMeasureLayer (layer) {
 export async function editLayerStyle (layer, style) {
   style = _.pick(style, ['point', 'line', 'polygon'])
   if (layer._id) {
-    return await api.getService('catalog').patch(layer._id, { 'cesium.style': style, 'leaflet.style': style })
+    await api.getService('catalog').patch(layer._id, { 'cesium.style': style, 'leaflet.style': style })
+  } else {
+    _.set(layer, 'cesium.style', style)
+    _.set(layer, 'leaflet.style', style)
   }
   return layer
 }

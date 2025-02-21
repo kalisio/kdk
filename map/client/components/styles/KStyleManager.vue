@@ -70,7 +70,7 @@ import { computed, ref } from 'vue'
 import _ from 'lodash'
 import sift from 'sift'
 import { KGrid } from '../../../../core/client/components'
-import { Filter, Sorter, Store, api } from '@kalisio/kdk/core.client'
+import { Filter, Sorter, api } from '@kalisio/kdk/core.client'
 import KStyleEditor from './KStyleEditor.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle } from '../../utils/utils.layers.js'
@@ -121,7 +121,7 @@ const toolbar = computed(() => {
   ]
 })
 const layerMenuContent = computed(() => {
-  const visibleLayers = CurrentActivity.value.getLayers().filter(sift({ isVisible: true, scope: 'user', _id: { $exists: true } }))
+  const visibleLayers = CurrentActivity.value.getLayers().filter(sift({ isVisible: true, scope: 'user' }))
   return _.map(visibleLayers, layer => {
     return {
       id: layer._id,
@@ -132,8 +132,11 @@ const layerMenuContent = computed(() => {
 })
 
 // Functions
-function applyToLayer (layer, styleToApply) {
-  editLayerStyle(layer, styleToApply)
+async function applyToLayer (layer, styleToApply) {
+  await editLayerStyle(layer, styleToApply)
+  if (!layer._id) {
+    await CurrentActivity.value.resetLayer(layer)
+  }
 }
 function applyToSelection (styleToApply) {
   const type = { Point: 'point', LineString: 'line', Polygon: 'polygon' }
