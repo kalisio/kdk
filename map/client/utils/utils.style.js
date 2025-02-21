@@ -148,6 +148,11 @@ export const DefaultStyle = {
     color: 'red',
     size: 24,
     shape: 'circle',
+    stroke: {
+      color: 'red',
+      width: 3,
+      opacity: 1
+    },
     icon: {
       classes: '',
       color: 'black',
