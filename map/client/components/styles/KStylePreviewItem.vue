@@ -1,6 +1,5 @@
 <template>
   <KItem ref="item">
-    <template v-slot:item-avatar><div></div></template>
     <template v-slot:item-content>
       <div class="row">
         <q-item-label>{{ name }}</q-item-label>
@@ -21,7 +20,7 @@ import { DefaultStyle } from '../../utils/index.js'
 const item = ref(null)
 
 const name = computed(() => {
-  return _.get(item, 'value.name', '')
+  return _.get(item, 'value.item.name', '')
 })
 
 const style = computed(() => {
