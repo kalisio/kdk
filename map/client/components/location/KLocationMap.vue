@@ -65,7 +65,7 @@ export default {
         if (component === 'location') {
           components.push({
             id: 'location',
-            icon: 'img:icons/kdk/center-on-feature.svg',
+            icon: 'img:kdk/center-on-feature.svg',
             tooltip: 'KLocationMap.RECENTER_MAP',
             label: _.get(this.modelValue, 'properties.name', _.get(this.modelValue, 'name', '')),
             handler: this.recenter

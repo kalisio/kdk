@@ -378,17 +378,23 @@ export function generateLayerDefinition(layerSpec, geoJson){
     if (geoJson.type === 'FeatureCollection') _.forEach(geoJson.features, feature => { feature._id = uid().toString() })
     else geoJson._id = uid().toString()
   }
-  // Check for panes to be created
-  const panes = []
-  _.forEach(geoJson.features, feature => {
-    const pane = _.get(feature, 'style.pane')
-    if (pane) {
-      panes.push({
-        name: pane
+  if (geoJson.type === 'FeatureCollection') {
+    // Properties of the layer can be specified in the root level of the collection
+    _.defaultsDeep(layerSpec, _.omit(geoJson, ['type', 'properties', 'geometry']))
+    // Check for panes to be created if not provided in layer
+    if (!_.has(layerSpec, 'leaflet.panes')) {
+      const panes = []
+      _.forEach(geoJson.features, feature => {
+        const pane = _.get(feature, 'style.pane')
+        if (pane) {
+          panes.push({
+            name: pane
+          })
+        }
       })
+      if (!_.isEmpty(panes)) _.set(layerSpec, 'leaflet.panes', panes)
     }
-  })
-  if (!_.isEmpty(panes)) _.set(layerSpec, 'leaflet.panes', panes)
+  }
 
   return true
 }
