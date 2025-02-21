@@ -1,46 +1,52 @@
 <template>
-  <q-btn-dropdown
-    v-if="hasContent"
-    :id="id"
-    :icon="icon"
-    :color="color"
-    :size="size"
-    :dropdown-icon="dropdownIcon"
-    :no-icon-animation="!dropdownAnimation"
-    :disable="disabled"
-    :dense="dense"
-    :persistent="persistent"
-    :auto-close="autoClose"
-    :menu-anchor="direction === 'vertical' ? 'bottom left' : 'bottom middle' "
-    menu-self="top left"
-    flat
-    rounded
-    no-caps
-    @click="onClicked">
-      <template v-slot:label>
-        <div class="row items-center no-wrap">
-          <q-badge v-if="badge" v-bind="badge" />
-          <div class="text-center">
-            {{ $tie(label) }}
+  <div>
+    <q-btn-dropdown
+      v-if="hasContent"
+      :id="id"
+      :icon="icon"
+      :color="color"
+      :size="size"
+      :dropdown-icon="dropdownIcon"
+      :no-icon-animation="!dropdownAnimation"
+      :disable="disabled"
+      :dense="dense"
+      :persistent="persistent"
+      :auto-close="autoClose"
+      :menu-anchor="direction === 'vertical' ? 'bottom left' : 'bottom middle' "
+      menu-self="top left"
+      flat
+      rounded
+      no-caps
+      @click="onClicked">
+        <template v-slot:label>
+          <div class="row items-center no-wrap">
+            <q-badge v-if="badge" v-bind="badge" />
+            <div class="text-center">
+              {{ $tie(label) }}
+            </div>
           </div>
-        </div>
-      </template>
-      <KPanel
-        id="menu-entries"
-        :content="content"
-        :mode="mode"
-        :context="context"
-        :filter="filter"
-        :action-renderer="actionRenderer"
-        :direction="direction"
-        class="no-wrap"
-      />
-  </q-btn-dropdown>
+        </template>
+        <KPanel
+          id="menu-entries"
+          :content="content"
+          :mode="mode"
+          :context="context"
+          :filter="filter"
+          :action-renderer="actionRenderer"
+          :direction="direction"
+          class="no-wrap"
+        />
+    </q-btn-dropdown>
+    <q-tooltip v-if="hasContent && tooltip">
+      {{ tooltip }}
+    </q-tooltip>
+  </div>
 </template>
 
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
+import { i18n } from '../../i18n.js'
 import KPanel from '../KPanel.vue'
 
 // Props
@@ -80,6 +86,10 @@ const props = defineProps({
   badge: {
     type: Object,
     default: () => null
+  },
+  tooltip: {
+    type: String,
+    default: ''
   },
   disabled: {
     type: Boolean,
@@ -133,6 +143,10 @@ const props = defineProps({
 // Computed
 const hasContent = computed(() => {
   return !_.isEmpty(props.content)
+})
+const tooltip = computed(() => {
+  // Check for translation key or already translated message
+  return i18n.tie(props.tooltip)
 })
 
 // Functions
