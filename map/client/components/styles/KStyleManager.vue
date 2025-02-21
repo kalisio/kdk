@@ -27,24 +27,29 @@
               },
               actions: [
                 {
+                  id: 'apply-to-layer',
+                  component: 'menu/KMenu',
+                  icon: 'las la-layer-group',
+                  tooltip: 'KStyleManager.APPLY_TO_LAYER',
+                  actionRenderer: 'item',
+                  content: layerMenuContent
+                },
+                {
                   id: 'apply-to-selection',
-                  icon: 'las la-object-ungroup',
+                  icon: 'las la-object-group',
                   tooltip: 'KStyleManager.APPLY_TO_SELECTION',
-                  scope: 'header',
                   handler: applyToSelection
                 },
                 {
                   id: 'edit-style',
                   icon: 'las la-edit',
                   tooltip: 'KStyleManager.EDIT',
-                  scope: 'header',
                   handler: editStyle
                 },
                 {
                   id: 'delete-style',
                   icon: 'las la-trash',
                   tooltip: 'KStyleManager.DELETE',
-                  scope: 'footer',
                   handler: { name: 'removeItem', params: ['confirm'] }
                 },
               ],
@@ -63,11 +68,12 @@
 <script setup>
 import { computed, ref } from 'vue'
 import _ from 'lodash'
+import sift from 'sift'
 import { KGrid } from '../../../../core/client/components'
 import { Store, api } from '@kalisio/kdk/core.client'
 import KStyleEditor from './KStyleEditor.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
-import { isLayerStyleEditable } from '../../utils/utils.layers.js'
+import { isLayerStyleEditable, editLayerStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'
 
 // Props
@@ -79,11 +85,11 @@ defineProps({
 })
 
 // Data
+const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
 const filter = Store.get('filter')
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
-const { getSelectedFeaturesByLayer } = useCurrentActivity()
 
 // Computed
 const baseQuery = computed(() => {
@@ -121,8 +127,21 @@ const toolbar = computed(() => {
     }
   ]
 })
+const layerMenuContent = computed(() => {
+  const visibleLayers = CurrentActivity.value.getLayers().filter(sift({ isVisible: true, scope: 'user', _id: { $exists: true } }))
+  return _.map(visibleLayers, layer => {
+    return {
+      id: layer._id,
+      label: layer.name,
+      handler: (styleToApply) => applyToLayer(layer, styleToApply.item)
+    }
+  })
+})
 
 // Functions
+function applyToLayer (layer, styleToApply) {
+  editLayerStyle(layer, styleToApply)
+}
 function applyToSelection (styleToApply) {
   const type = { Point: 'point', LineString: 'line', Polygon: 'polygon' }
   _.forEach(getSelectedFeaturesByLayer(), layer => {
@@ -134,7 +153,7 @@ function applyToSelection (styleToApply) {
 }
 function editStyle (styleToEdit) {
   viewMode.value = 'edit'
-  style.value = _.get(styleToEdit, 'item', null)
+  style.value = _.get(styleToEdit, 'item', {})
 }
 function onApply (style) {
   const service = api.getService('styles')

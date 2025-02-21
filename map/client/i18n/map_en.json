@@ -749,6 +749,7 @@
   },
   "KStyleManager": {
     "TITLE": "Style manager",
+    "APPLY_TO_LAYER": "Apply style to layer",
     "APPLY_TO_SELECTION": "Apply style to selection",
     "EDIT": "Edit style",
     "DELETE": "Delete style",

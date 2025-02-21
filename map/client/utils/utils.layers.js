@@ -341,6 +341,14 @@ export function isMeasureLayer (layer) {
   return layer.variables && layer.service
 }
 
+export async function editLayerStyle (layer, style) {
+  style = _.pick(style, ['point', 'line', 'polygon'])
+  if (layer._id) {
+    return await api.getService('catalog').patch(layer._id, { 'cesium.style': style, 'leaflet.style': style })
+  }
+  return layer
+}
+
 export function generateLayerDefinition(layerSpec, geoJson){
   // Check wether the geoJson content is a valid geoJson
   if (geoJson.type !== 'FeatureCollection' && geoJson.type !== 'Feature') {

@@ -117,7 +117,7 @@ const emit = defineEmits([
 ])
 
 // Data
-const style = ref(_.assign({}, _.pick(DefaultStyle, ['point', 'line', 'polygon']), { name: '' }, props.style))
+const style = ref(_.assign({}, _.cloneDeep(_.pick(DefaultStyle, ['point', 'line', 'polygon']), { name: '' }, props.style)))
 const { CurrentActivity } = useCurrentActivity()
 
 // Computed

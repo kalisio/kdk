@@ -753,6 +753,7 @@
   },
   "KStyleManager": {
     "TITLE": "Gestionnaire de styles",
+    "APPLY_TO_LAYER": "Appliquer le style à une couche",
     "APPLY_TO_SELECTION": "Appliquer le style à la sélection",
     "EDIT": "Modifier le style",
     "DELETE": "Supprimer le style",
