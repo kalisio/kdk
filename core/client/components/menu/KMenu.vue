@@ -87,10 +87,6 @@ const props = defineProps({
     type: Object,
     default: () => null
   },
-  tooltip: {
-    type: String,
-    default: ''
-  },
   disabled: {
     type: Boolean,
     default: false
