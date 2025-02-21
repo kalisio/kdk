@@ -22,8 +22,8 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
-import KColorPicker from './KColorPicker.vue'
 import KShape from '../../../../core/client/components/media/KShape.vue'
+import KColorPicker from '../../../../core/client/components/input/KColorPicker.vue'
 
 const props = defineProps({
   modelValue: {
