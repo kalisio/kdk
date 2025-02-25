@@ -11,7 +11,8 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref } from 'vue'
-import { api, Context } from '@kalisio/kdk/core.client'
+import { api, Context, i18n } from '@kalisio/kdk/core.client'
+import { Notify } from 'quasar'
 
 // Props
 const props = defineProps({
@@ -46,6 +47,10 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  notify: {
+    type: Object,
+    default: null
   }
 })
 
@@ -78,9 +83,11 @@ async function apply () {
     if (mode === 'creation') {
       logger.debug('[KDK] Create object with data', response.values)
       await service.create(values)
+      if (_.has(props, 'notify.created.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.created.success')) })
     } else {
       logger.debug(`[KDK] Patch object ${props.object._id} with data`, response.values)
       await service.patch(props.object._id, response.values)
+      if (_.has(props, 'notify.updated.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.updated.success')) })
     }
     // run the afterRequest hook
     if (props.afterRequest) {
@@ -90,6 +97,8 @@ async function apply () {
     if (!response.isOk) return false
     return true
   } else {
+    if (mode === 'creation' && _.has(props, 'notify.created.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.created.error')) })
+    if (mode === 'edition' && _.has(props, 'notify.updated.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.updated.error')) })
     logger.debug('[KDK] Form is invalid')
   }
 }
