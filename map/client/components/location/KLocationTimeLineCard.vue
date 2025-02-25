@@ -44,8 +44,11 @@
               :tools="[]"
               class="col k-location-map"
             />
-            <div class="full-width ellipsis text-caption k-location-map-caption">
-              {{ item.location.properties.name }}
+            <div 
+              v-if="locationName"
+              class="full-width ellipsis text-caption k-location-map-caption"
+            >
+              {{ locationName }}
             </div>
             <KPanel
               :content="locationActions"
@@ -118,6 +121,9 @@ export default {
     },
     hasDescriptionActions () {
       return !_.isEmpty(this.descriptionActions)
+    },
+    locationName () {
+      return _.get(this.item, 'location.properties.name')
     },
     locationActions () {
       return _.filter(this.itemActions, { scope: 'location' })
