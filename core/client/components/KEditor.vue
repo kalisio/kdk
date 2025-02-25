@@ -50,7 +50,7 @@ const props = defineProps({
   },
   notify: {
     type: Object,
-    default: null
+    default: () => null
   }
 })
 
