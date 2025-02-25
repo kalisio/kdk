@@ -185,8 +185,14 @@ export function getHtmlColor (color, defaultColor) {
   return colors.getPaletteColor(color)
 }
 
+export function getColorFromPalette (color) {
+  // Check if color is already an RGB color
+  if (color.startsWith('#')) return color
+  else return Colors[color] || '#ffffff'
+}
+
 export function getPaletteFromColor (color, nearestIfNotFound = false) {
-  // Check if already a color of the palette
+  // Check if color is already in the palette
   if (Colors[color]) return color
   const colorName = _.findKey(Colors, item => item === color)
   if (colorName) return colorName
@@ -194,10 +200,22 @@ export function getPaletteFromColor (color, nearestIfNotFound = false) {
   return 'white'
 }
 
-export function getColorFromPalette (color) {
-  // Check if already a RGB color
-  if (color.startsWith('#')) return color
-  else return Colors[color] || '#ffffff'
+export function findClosestColor (color) {
+  let minDistance = Number.MAX_VALUE
+  let closestColor = null
+  for (const key in Colors) {
+    const d = chroma.deltaE(color, Colors[key])
+    if (d < minDistance) {
+      minDistance = d
+      closestColor = key
+    }
+  }
+  return closestColor
+}
+
+export function getContrastColor (color, light = 'white', dark = 'black') {
+  const htmlColor = getHtmlColor(color)
+  return colors.luminosity(htmlColor) < 0.5 ? light : dark
 }
 
 export function buildColorScale (options) {
@@ -232,17 +250,4 @@ export function buildColorScale (options) {
     if (options.domain) scale = scale.domain(options.domain)
   }
   return scale
-}
-
-function findClosestColor (color) {
-  let minDistance = Number.MAX_VALUE
-  let closestColor = null
-  for (const key in Colors) {
-    const d = chroma.deltaE(color, Colors[key])
-    if (d < minDistance) {
-      minDistance = d
-      closestColor = key
-    }
-  }
-  return closestColor
 }

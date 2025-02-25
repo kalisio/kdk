@@ -25,5 +25,6 @@ fab: { actions: [current actions], filter: { curent actions filter } }
 > More details in the [layout section](./components.md#layout)
 
 ### [utils.collection](./utilities/utils.collection.md)
+### [utils.colors](./utilities/utils.colors.md)
 ### [utils.screen](./utilities/utils.screen.md)
 ### [utils.services](./utilities/utils.services.md)

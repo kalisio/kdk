@@ -1,77 +1,65 @@
-# Screen utilities
+# Screen
 
 ## Overview
 
-The `utils.screen.js` module provides helper functions for handling responsive width, height, and fullscreen operations in a KDK-based application. It utilizes **Lodash**, **Vue's reactive references**, and **Quasar's Screen & Fullscreen APIs**.
+The `utils.screen.js` module provides helper functions for handling responsive width, height, and fullscreen operations in a KDK-based application. 
+
+It utilizes **Lodash**, **Vue's reactive references**, and **Quasar's Screen & Fullscreen APIs**.
 
 ## Functions
 
-### 1. `Fullscreen`
+### `Fullscreen`
 
-**Description:** A reactive reference that tracks whether the application is in fullscreen mode.
+A reactive reference that tracks whether the application is in fullscreen mode.
 
 - **Type:** `Ref<boolean>`
 - **Source:** Derived from `AppFullscreen.isActive`
 
----
+### `computeResponsiveWidth(width)`
 
-### 2. `computeResponsiveWidth(width)`
-
-**Description:** Computes a responsive width based on the screen size or a percentage value.
+Computes a responsive width based on the screen size or a percentage value.
 
 - **Parameters:**
   - `width` *(number | object)*: Can be an absolute number, percentage, or an object with breakpoint-based values.
 - **Returns:** Computed width in pixels or `undefined` if invalid.
 
----
+### `computeResponsiveHeight(height)`
 
-### 3. `computeResponsiveHeight(height)`
-
-**Description:** Computes a responsive height based on the screen size or a percentage value.
+Computes a responsive height based on the screen size or a percentage value.
 
 - **Parameters:**
   - `height` *(number | object)*: Can be an absolute number, percentage, or an object with breakpoint-based values.
 - **Returns:** Computed height in pixels or `undefined` if invalid.
 
----
+### `computeResponsiveSize(size)`
 
-### 4. `computeResponsiveSize(size)`
-
-**Description:** Computes a responsive size (width & height) based on screen dimensions.
+Computes a responsive size (width & height) based on screen dimensions.
 
 - **Parameters:**
   - `size` *(array | object)*: Can be an array `[width, height]` or an object with breakpoint-based values.
 - **Returns:** An array `[computedWidth, computedHeight]` or `undefined` if invalid.
 
----
+### `getOrientation()`
 
-### 5. `getOrientation()`
-
-**Description:** Determines the current screen orientation.
+Determines the current screen orientation.
 
 - **Returns:** `'portrait'` if height is greater than width, otherwise `'landscape'`.
 
----
+### `toggleFullscreen()`
 
-### 6. `toggleFullscreen()`
-
-**Description:** Toggles the application's fullscreen mode.
+Toggles the application's fullscreen mode.
 
 - **Returns:** A promise that resolves `true` if successful, or rejects with `false` if an error occurs.
 
----
+### `lockOrientation(orientation)`
 
-### 7. `lockOrientation(orientation)`
-
-**Description:** Locks the screen orientation if the browser supports it.
+Locks the screen orientation if the browser supports it.
 
 - **Parameters:**
   - `orientation` *(string)*: The desired orientation (`'portrait'`, `'landscape'`, etc.).
 - **Returns:** A promise that resolves when locking is successful.
 
----
-
-## Usage Example
+## Usage
 
 ```javascript
 import { computeResponsiveWidth, toggleFullscreen } from './utils.screen.js';
