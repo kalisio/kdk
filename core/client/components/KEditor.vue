@@ -82,12 +82,20 @@ async function apply () {
     // do the request
     if (mode === 'creation') {
       logger.debug('[KDK] Create object with data', response.values)
-      await service.create(values)
-      if (_.has(props, 'notify.created.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.created.success')) })
+      try {
+        await service.create(values)
+        if (_.has(props, 'notify.created.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.created.success')) })
+      } catch (error) {
+        if (_.has(props, 'notify.created.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.created.error')) })
+      }
     } else {
       logger.debug(`[KDK] Patch object ${props.object._id} with data`, response.values)
-      await service.patch(props.object._id, response.values)
-      if (_.has(props, 'notify.updated.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.updated.success')) })
+      try {
+        await service.patch(props.object._id, response.values)
+        if (_.has(props, 'notify.updated.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.updated.success')) })
+      } catch (error) {
+        if (_.has(props, 'notify.updated.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.updated.error')) })
+      }
     }
     // run the afterRequest hook
     if (props.afterRequest) {
@@ -97,8 +105,6 @@ async function apply () {
     if (!response.isOk) return false
     return true
   } else {
-    if (mode === 'creation' && _.has(props, 'notify.created.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.created.error')) })
-    if (mode === 'edition' && _.has(props, 'notify.updated.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.updated.error')) })
     logger.debug('[KDK] Form is invalid')
   }
 }
