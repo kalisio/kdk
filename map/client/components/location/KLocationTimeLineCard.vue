@@ -44,7 +44,7 @@
               :tools="[]"
               class="col k-location-map"
             />
-            <div 
+            <div
               v-if="locationName"
               class="full-width ellipsis text-caption k-location-map-caption"
             >
