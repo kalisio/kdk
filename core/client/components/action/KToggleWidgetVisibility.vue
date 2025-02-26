@@ -2,13 +2,15 @@
   <KAction
     v-if="window"
     v-bind="props"
-    :toggled="window.visible && window.current === widgetId"
+    :toggled="state === 'toggled'"
+    :disabled="state === 'disabled'"
     :handler="toggleWindow"
   />
 </template>
 
 <script setup>
 import _ from 'lodash'
+import { computed } from 'vue'
 import { actionProps } from '../../utils/index.js'
 import { Layout } from '../../layout.js'
 import KAction from './KAction.vue'
@@ -22,8 +24,14 @@ const props = defineProps({
   ..._.omit(actionProps, ['url', 'handler', 'dialog', 'route', 'closePopup', 'toggled'])
 })
 
-// Data
-const window = Layout.findWindow(props.widgetId)
+// Computed
+const window = computed(() => {
+  return _.get(Layout.findWindow(props.widgetId), 'window')
+})
+const state = computed(() => {
+  if (!window.value) return 'disabled'
+  if (window.value.visible && (window.value.current === props.widgetId)) return 'toggled'
+})
 
 // Functions
 function toggleWindow (context, value) {
