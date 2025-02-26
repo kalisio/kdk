@@ -2,8 +2,6 @@
 
 Here are a set of utility functions:
 * **createQuerablePromise (promiseOrExecutor)** modify a Promise by adding some status functions (`isFulfilled, isPending, isRejected`)
-* **getPaletteFromColor (color)** convert from hexadecimal color value to color name in basic [Quasar palette](https://quasar.dev/style/color-palette)
-* **getColorFromPalette (color)** convert from color name  in basic [Quasar palette](https://quasar.dev/style/color-palette) to color hexadecimal value
 * **getLocale ()** find the current user's locale
 * **isEmailValid (email)** emails validator
 * **isObjectID (id)** ObjectID validator
