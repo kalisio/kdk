@@ -8,9 +8,9 @@
     class="k-chip"
   >
     <div :id="id" class="ellipsis">
-      {{ label }}
+      {{ computedLabel }}
       <q-tooltip v-if="isTruncated">
-        {{ label }}
+        {{ computedLabel }}
       </q-tooltip>
     </div>
   </q-chip>
@@ -20,6 +20,7 @@
 import _ from 'lodash'
 import { ref, computed, watchEffect, nextTick } from 'vue'
 import { uid } from 'quasar'
+import { i18n } from '../i18n.js'
 import { getHtmlColor, getContrastColor } from '../utils'
 
 // Props
@@ -98,6 +99,9 @@ const isTruncated = ref(false)
 const id = uid()
 
 // Computed
+const computedLabel = computed(() => {
+  return i18n.tie(props.label)
+})
 const computedColor = computed(() => {
   return getHtmlColor(props.color)
 })
@@ -117,9 +121,12 @@ watchEffect(async () => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .k-chip {
   background-color: v-bind(computedColor);
+  color: v-bind(computedTextColor);
+}
+.q-chip__icon {
   color: v-bind(computedTextColor);
 }
 </style>

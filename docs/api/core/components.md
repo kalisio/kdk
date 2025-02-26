@@ -109,12 +109,6 @@ However options of the **itemActions** are more complex:
   * **handler**: function to be called when action is triggerred
 * **menu**: the list of actions displayed in the menu, each action been described as above
 
-### History
-
-The **k-history** component is powered by [Quasar timeline](https://quasar.dev/vue-components/timeline). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
-
-The same properties as with the **k-grid** component can be used to customize it, the component to be used to render items defaults to `collection/KHistoryEntry`, which is pretty similar to a **k-card**.
-
 ### Table
 
 The **k-table** component is powered by [Quasar lists](https://quasar.dev/vue-components/list-and-list-items) and [Quasar pagination](https://quasar.dev/vue-components/pagination). It also relies on the [service](./mixins.md#service) and [collection](./mixins.md#collection) mixins to manage its internal behaviour.
@@ -304,6 +298,16 @@ There are 2 ways to use the **k-modal-editor**:
 The properties to declare a **k-modal-editor** are identical to those of the **k-modal-editor** plus: 
  * **router**: the router function to be triggered when the editor is getting closed. 
 
+## Basics
+
+### Chip
+
+The `KChip` component extends Quasar’s QChip, adding full support for HTML colors and an automatic tooltip for truncated text. It maintains the core functionality of [QChip](https://quasar.dev/vue-components/chip/) while improving color flexibility and usability: 
+- Unlike `QChip`, which primarily supports Quasar’s predefined color classes, `KChip` allows any valid HTML color
+- The `label` prop is automatically translated
+- It detects whether the label text is truncated inside the chip and automatically displays a tooltip to show the full text if needed
+
+**
 ## Graphics
 
 ### Shapes
@@ -391,11 +395,9 @@ Checkout the [ChartActivity](https://github.com/kalisio/kApp/blob/master/src/com
 Have a look at the [choma color scales](https://gka.github.io/chroma.js/#color-scales) to see how to define your color scale.
 :::
 
-## 
 ## User Account
 
 The KDK provides you with a default [activity](./components.md#activity) to manage user accounts in the [account folder](https://github.com/kalisio/kdk/tree/master/core/client/components/account):
 * an "identity panel" to edit profile information
 * a "danger zone" for account removal
 * a "security zone" for password and email change
-
