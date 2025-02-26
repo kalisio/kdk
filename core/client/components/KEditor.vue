@@ -85,7 +85,7 @@ async function apply () {
       try {
         await service.create(values)
         if (_.has(props, 'notify.created.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.created.success')) })
-      } catch (error) {
+      } catch () {
         if (_.has(props, 'notify.created.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.created.error')) })
       }
     } else {
@@ -93,7 +93,7 @@ async function apply () {
       try {
         await service.patch(props.object._id, response.values)
         if (_.has(props, 'notify.updated.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.updated.success')) })
-      } catch (error) {
+      } catch () {
         if (_.has(props, 'notify.updated.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.updated.error')) })
       }
     }
