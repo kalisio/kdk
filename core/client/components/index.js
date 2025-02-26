@@ -1,6 +1,5 @@
 import KAvatar from './KAvatar.vue'
 import KChip from './KChip.vue'
-import KChipsPane from './KChipsPane.vue'
 import KContent from './KContent.vue'
 import KDialog from './KDialog.vue'
 import KExpandable from './KExpandable.vue'
@@ -16,7 +15,6 @@ import KVersion from './KVersion.vue'
 export {
   KAvatar,
   KChip,
-  KChipsPane,
   KContent,
   KDialog,
   KExpandable,

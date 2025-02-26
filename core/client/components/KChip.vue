@@ -1,21 +1,16 @@
 <template>
   <q-chip
-    v-if="object"
-    :key="computedLabel"
-    :color="computedColor"
-    text-color="white"
-    dense
-    outline
-    square>
-    <q-icon
-      v-if="computedIcon"
-      :name="computedIcon"
-      class="q-mr-xs"
-    />
-    <div :id="computedId" class="ellipsis">
-      {{ computedLabel }}
-      <q-tooltip v-if="hasTooltip">
-        {{ computedLabel }}
+    v-bind="_.omit(props, ['color', 'textColor', 'label'])"
+    @updated:modelValue="state => emit('updated:modelValue', state)"
+    @updated:selected="state => emit('updated:selected', state)"
+    @remove="emit('remove')"
+    @click="event => emit('click', event)"
+    class="k-chip"
+  >
+    <div :id="id" class="ellipsis">
+      {{ label }}
+      <q-tooltip v-if="isTruncated">
+        {{ label }}
       </q-tooltip>
     </div>
   </q-chip>
@@ -24,36 +19,91 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watchEffect, nextTick } from 'vue'
-import { i18n } from '../i18n'
-import { getIconName } from '../utils/index.js'
+import { uid } from 'quasar'
+import { getHtmlColor, getContrastColor } from '../utils'
 
 // Props
 const props = defineProps({
-  object: {
-    type: Object,
-    default: () => null
+  label: {
+    type: [String, Number],
+    default: ''
   },
-  labelPath: {
+  icon: {
     type: String,
-    default: 'value'
+    default: undefined
+  },
+  iconRight: {
+    type: String,
+    default: undefined
+  },
+  iconRemove: {
+    type: String,
+    default: 'cancel'
+  },
+  iconSelected: {
+    type: String,
+    default: 'check'
+  },
+  modelValue: {
+    type: Boolean,
+    default: true
+  },
+  selected: {
+    type: Boolean,
+    default: false
+  },
+  color: {
+    type: String,
+    default: 'grey-7'
+  },
+  textColor: {
+    type: String,
+    default: undefined
+  },
+  size: {
+    type: String,
+    default: 'md'
+  },
+  dense: {
+    type: Boolean,
+    default: false
+  },
+  square: {
+    type: Boolean,
+    default: false
+  },
+  outline: {
+    type: Boolean,
+    default: false
+  },
+  clickable: {
+    type: Boolean,
+    default: false
+  },
+  removable: {
+    type: Boolean,
+    default: false
+  },
+  disable: {
+    type: Boolean,
+    default: false
   }
 })
 
+// Emits
+const emit = defineEmits(['update:modelValue', 'update:selected', 'remove', 'click'])
+
 // Data
-const hasTooltip = ref(false)
+const isTruncated = ref(false)
+const id = uid()
 
 // Computed
-const computedId = computed(() => {
-  return _.kebabCase(computedLabel.value)
-})
-const computedLabel = computed(() => {
-  return _.get(props.object, props.labelPath, i18n.t('UNAMED'))
-})
-const computedIcon = computed(() => {
-  return getIconName(props.object)
-})
 const computedColor = computed(() => {
-  return _.get(props.object, 'icon.color', 'black')
+  return getHtmlColor(props.color)
+})
+const computedTextColor = computed(() => {
+  if (_.isEmpty(props.textColor)) return getContrastColor(props.color)
+  return getHtmlColor(props.textColor)
 })
 
 // Watch
@@ -61,8 +111,15 @@ watchEffect(async () => {
   // wait for the chip to be rendered
   await nextTick()
   // get the element
-  const chipElement = document.getElementById(computedId.value)
+  const chipElement = document.getElementById(id)
   // check whether the label is truncated
-  hasTooltip.value = (chipElement && chipElement.offsetWidth < chipElement.scrollWidth)
+  isTruncated.value = (chipElement && chipElement.offsetWidth < chipElement.scrollWidth)
 })
 </script>
+
+<style lang="scss" scoped>
+.k-chip {
+  background-color: v-bind(computedColor);
+  color: v-bind(computedTextColor);
+}
+</style>
