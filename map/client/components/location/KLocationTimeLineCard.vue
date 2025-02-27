@@ -32,6 +32,7 @@
           </div>
           <KDescriptionCardSection
             v-if="!dense  || hasDescription || hasDescriptionActions"
+            v-bind="descriptionOptions"
             :item="item"
             :actions="descriptionActions"
             :dense="dense"
@@ -40,8 +41,8 @@
         <div v-if="!dense" class="q-pl-sm q-pb-sm col-4">
           <div v-if="item.location" class="fit column relative-position">
             <KLocationMap
+              v-bind="locationOptions"
               v-model="item.location"
-              :tools="[]"
               class="col k-location-map"
             />
             <div
@@ -90,6 +91,14 @@ export default {
   props: {
     header: {
       type: [Array, Object],
+      default: () => null
+    },
+    descriptionOptions: {
+      type: Object,
+      default: () => null
+    },
+    locationOptions: {
+      type: Object,
       default: () => null
     },
     sections: {
