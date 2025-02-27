@@ -13,7 +13,7 @@ import { ref, onMounted } from 'vue'
 import { Events } from '../../events.js'
 
 // Props
-const props = defineProps({
+defineProps({
   size: {
     type: String,
     default: '8px'
