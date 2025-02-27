@@ -311,6 +311,17 @@ The `KChip` component extends Quasar’s QChip, adding full support for HTML col
 - The `label` prop is automatically translated
 - It detects whether the label text is truncated inside the chip and automatically displays a tooltip to show the full text if needed
 
+## Content
+
+### `KContent`
+
+The `KContent` component is responsible for dynamically rendering components based on provided content, filtering criteria, and visibility conditions. 
+It supports **Quasar** and non-Quasar components and non-Quasar components are rendering using asynchronous loading. 
+
+### `KPanel`
+
+The `KPanel` component acts as a wrapper for `KContent`, dynamically managing its visibility and layout: horizontal or vertical. 
+
 ## Graphics
 
 ### Shapes
