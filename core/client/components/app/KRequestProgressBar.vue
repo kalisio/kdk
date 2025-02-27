@@ -2,15 +2,27 @@
   <q-ajax-bar
     ref="progressBarRef"
     position="bottom"
-    size="8px"
+    :size="size"
     color="primary"
-    :delay="250"
+    :delay="delay"
   />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { Events } from '../../events.js'
+
+// Props
+const props = defineProps({
+  size: {
+    type: String,
+    default: '8px'
+  },
+  delay: {
+    type: Number,
+    default: 250
+  }
+})
 
 // Data
 const progressBarRef = ref(null)
