@@ -300,14 +300,17 @@ The properties to declare a **k-modal-editor** are identical to those of the **k
 
 ## Basics
 
-### Chip
+### `KStamp`
+
+The `KStamp`component is designed for displaying text with an optional icon, supporting dynamic font sizing, text truncating and flexible layout (horizontal or vertical).
+
+### `KChip`
 
 The `KChip` component extends Quasar’s QChip, adding full support for HTML colors and an automatic tooltip for truncated text. It maintains the core functionality of [QChip](https://quasar.dev/vue-components/chip/) while improving color flexibility and usability: 
 - Unlike `QChip`, which primarily supports Quasar’s predefined color classes, `KChip` allows any valid HTML color
 - The `label` prop is automatically translated
 - It detects whether the label text is truncated inside the chip and automatically displays a tooltip to show the full text if needed
 
-**
 ## Graphics
 
 ### Shapes
