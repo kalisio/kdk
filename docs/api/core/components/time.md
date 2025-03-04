@@ -4,41 +4,59 @@ The time folder provides various components that allow users to input and manipu
 
 ## `KDate`
 
-This component is a date picker button. It allows users to select a date by clicking a button that opens a popup calendar built using [QDate](https://quasar.dev/vue-components/date/).
+This component is a date picker button. It allows users to select a date by clicking a button that opens a popup calendar built using **Quasar** component [QDate](https://quasar.dev/vue-components/date/).
 
 ### Props
 
 | **Prop**        | **Type**   | **Default**      | **Description** |
 |----------------|-----------|----------------|----------------|
-| `modelValue`   | `String`  | `null`         | The selected date value, used with `v-model`. |
-| `picker`       | `Object`  | `null`         | Configuration options for the `QDate` picker. |
-| `format`       | `String`  | `null`         | Custom date format for displaying the selected date. |
-| `placeholder`  | `String`  | `null`         | Text shown when no date is selected. |
-| `icon`         | `String`  | `'las la-calendar'` | Icon displayed on the button. |
-| `disabled`     | `Boolean` | `false`        | Disables the button and prevents date selection. |
-| `dense`        | `Boolean` | `false`        | Controls the button's padding (compact styling). |
+| `modelValue`   | String  | `null`         | The selected date value, used with `v-model`. |
+| `picker`       | Object  | `null`         | Configuration options for the `QDate` picker. |
+| `format`       | String  | `null`         | Custom date format for displaying the selected date. |
+| `placeholder`  | String  | `null`         | Text shown when no date is selected. |
+| `icon`         | String  | `'las la-calendar'` | Icon displayed on the button. |
+| `disabled`     | Boolean | `false`        | Disables the button and prevents date selection. |
+| `dense`        | Boolean | `false`        | Controls the button's padding (compact styling). |
 
 ### Usage
 
+To define a date input with the format `DD/MM/YY`, you can configure the `KDate` component as follows:
+
+```html
+<KDate 
+  v-model="dateValue" 
+  :date-format="'DD/MM/YY'" 
+/>
+```
 
 ## `KTime`
 
-This component is a time picker button. It allows users to select a time by clicking a button that opens a popup calendar built using [QTime](https://quasar.dev/vue-components/time)
+This component is a time picker button. It allows users to select a time by clicking a button that opens a popup calendar built using **Quasar** component [QTime](https://quasar.dev/vue-components/time)
 
 ## Props
 
 | **Prop**        | **Type**   | **Default**      | **Description** |
 |----------------|-----------|----------------|----------------|
-| `modelValue`   | `String`  | `null`         | The selected time value, used with `v-model`. |
-| `picker`       | `Object`  | `null`         | Configuration options for the `QTime` picker. |
-| `withSeconds`  | `Boolean` | `false`        | Determines whether seconds should be displayed in the time picker. |
-| `format`       | `String`  | `null`         | Custom time format for displaying the selected time. |
-| `placeholder`  | `String`  | `null`         | Text shown when no time is selected. |
-| `icon`         | `String`  | `'las la-clock'` | Icon displayed on the button. |
-| `disabled`     | `Boolean` | `false`        | Disables the button and prevents time selection. |
-| `dense`        | `Boolean` | `false`        | Controls the button's padding (compact styling). |
+| `modelValue`   | String  | `null`         | The selected time value, used with `v-model`. |
+| `picker`       | Object  | `null`         | Configuration options for the `QTime` picker. |
+| `withSeconds`  | Boolean | `false`        | Determines whether seconds should be displayed in the time picker. |
+| `format`       | String  | `null`         | Custom time format for displaying the selected time. |
+| `placeholder`  | String  | `null`         | Text shown when no time is selected. |
+| `icon`         | String  | `'las la-clock'` | Icon displayed on the button. |
+| `disabled`     | Boolean | `false`        | Disables the button and prevents time selection. |
+| `dense`        | Boolean | `false`        | Controls the button's padding (compact styling). |
 
 ### Usage
+
+To define a time input without an icon and that accounts for seconds, you can configure the `KTime` component with the following props:
+
+```html
+<KTime 
+  v-model="timeValue" 
+  :icon="null" 
+  :with-seconds="true" 
+/>
+```
 
 ## `KDateTime`
 
@@ -50,22 +68,35 @@ This component provides a combined date and time picker, allowing users to selec
 
 | **Prop**        | **Type**   | **Default**      | **Description** |
 |----------------|-----------|----------------|----------------|
-| `modelValue`   | `String`  | `null`         | The selected date-time value, used with `v-model`. Must be a valid date-time string. |
-| `datePicker`   | `Object`  | `null`         | Configuration options for the `KDate` picker. |
-| `timePicker`   | `Object`  | `null`         | Configuration options for the `KTime` picker. |
-| `withSeconds`  | `Boolean` | `false`        | Determines whether seconds should be displayed in the time picker. |
-| `dateFormat`   | `String`  | `null`         | Custom format for displaying the date. |
-| `timeFormat`   | `String`  | `null`         | Custom format for displaying the time. |
-| `dateClass`    | `String`  | `''`           | Custom CSS class for styling the date input. |
-| `timeClass`    | `String`  | `''`           | Custom CSS class for styling the time input. |
-| `separator`    | `String`  | `'-'`          | Separator string between the date and time. |
-| `min`          | `String`  | `null`         | Minimum selectable date-time value. Must be a valid date-time string. |
-| `max`          | `String`  | `null`         | Maximum selectable date-time value. Must be a valid date-time string. |
-| `timezone`     | `String`  | `null`         | Timezone for displaying and selecting the date-time. |
-| `placeholder`  | `String`  | `null`         | Placeholder text when no date-time is selected. |
-| `icon`         | `String`  | `'las la-calendar'` | Icon displayed on the date picker button. |
-| `disabled`     | `Boolean` | `false`        | Disables the date-time picker. |
-| `dense`        | `Boolean` | `false`        | Controls the padding and spacing of the component (compact styling). |
+| `modelValue`   | String  | `null`         | The selected date-time value, used with `v-model`. Must be a valid date-time string. |
+| `datePicker`   | Object  | `null`         | Configuration options for the `KDate` picker. |
+| `timePicker`   | Object  | `null`         | Configuration options for the `KTime` picker. |
+| `withSeconds`  | Boolean | `false`        | Determines whether seconds should be displayed in the time picker. |
+| `dateFormat`   | String  | `null`         | Custom format for displaying the date. |
+| `timeFormat`   | String  | `null`         | Custom format for displaying the time. |
+| `dateClass`    | String  | `''`           | Custom CSS class for styling the date input. |
+| `timeClass`    | String  | `''`           | Custom CSS class for styling the time input. |
+| `separator`    | String  | `'-'`          | Separator string between the date and time. |
+| `min`          | String  | `null`         | Minimum selectable date-time value. Must be a valid date-time string. |
+| `max`          | String  | `null`         | Maximum selectable date-time value. Must be a valid date-time string. |
+| `timezone`     | String  | `null`         | Timezone for displaying and selecting the date-time. |
+| `placeholder`  | String  | `null`         | Placeholder text when no date-time is selected. |
+| `icon`         | String  | `'las la-calendar'` | Icon displayed on the date picker button. |
+| `disabled`     | Boolean | `false`        | Disables the date-time picker. |
+| `dense`        | Boolean | `false`        | Controls the padding and spacing of the component (compact styling). |
+
+### Usage
+
+To define a timestamp input with the format `DD/MM/YY` for the date and `HH:mm:ss` for the time, you can use the `KDateTime` component like this:
+
+```html
+<KDateTime
+  v-model="dateTimeValue"
+  :date-format="'DD/MM/YY'"
+  :time-format="'HH:mm:ss'"
+  :with-seconds="true"
+/>
+```
 
 ## `KDateTimeRange`
 
@@ -90,11 +121,28 @@ This component is a date-time range selector that allows users to pick a start a
 | `min`          | String  | `null`         | Minimum selectable date-time value. | Must be a valid date-time. Adjusts `startTimeModel` if necessary. |
 | `max`          | String  | `null`         | Maximum selectable date-time value. | Must be a valid date-time. Adjusts `endTimeModel` if necessary. |
 | `timezone`     | String  | `null`         | Timezone in which the date-time values are displayed. | Converts the date-time using `toLocalTimezone()`. |
-| `slider`       | Object  | `null`         | Configuration object for the optional range slider. | Enables the range slider if provided. |
-| `stacked`      | Boolean | `false`        | Determines whether the slider should be stacked. | Works in conjunction with `slider`. |
+| `slider`       | Object  | `null`         | Configuration object for the optional range slider. It conforms the [Quasar QRange API](https://quasar.dev/vue-components/range/). In addition it support the `stacked` property to display the slider above the time labels. | Enables the range slider if provided. |
 | `icon`         | String  | `'las la-calendar'` | Icon displayed in the date-time pickers. | Overrides the default calendar icon. |
 | `disabled`     | Boolean | `false`        | Disables the component when `true`. | Prevents user interaction. |
 | `dense`        | Boolean | `false`        | Enables a more compact design when `true`. | Affects spacing and layout of the component. |
 
 ### Usage
 
+To specify a basic time range, you can configure the `KDateTimeRange` component like this:
+
+```html
+<KDateTimeRange
+  v-model="dateTimeRangeValue"
+/>
+```
+
+If you want to use the `KDateTimeRange` component with a slider stacked with the time labels, you can configure it like this:
+
+```html
+<KDateTimeRange
+  v-model="dateTimeRangeValue"
+  :min="minTime"
+  :max="maxTime"
+  :slider="{ stacked: true }"
+/>
+```
