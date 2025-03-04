@@ -7,7 +7,10 @@
     <KDate
       v-model="computedDateModel"
       :picker="computedDatePicker"
+      :format="dateFormat"
+      :placeholder="placeholder"
       :icon="icon"
+      :disabled="disabled" 
       :dense="dense"
       :class="{ 'q-pl-xs': dense, 'q-pl-md': !dense, [dateClass]: true }"
     />
@@ -16,8 +19,10 @@
     <!-- Time -->
     <KTime
       v-model="computedTimeModel"
-      :icon="null"
       :picker="computedTimePicker"
+      :with-seconds="withSeconds"
+      :format="timeFormat"
+      :icon="null"
       :disabled="disabled || dateTime === null"
       :dense="dense"
       :class="{ 'q-pr-xs': dense, 'q-pr-md': !dense, [timeClass]: true }"
@@ -152,7 +157,7 @@ const computedDatePicker = computed(() => {
   return _.merge({}, props.datePicker, picker)
 })
 const computedTimePicker = computed(() => {
-  let picker = { withSeconds: props.withSeconds }
+  let picker = {}
   if (!_.isEmpty(props.min) || !_.isEmpty(props.max)) picker = { options: checkTime }
   return _.merge({}, props.timePicker, picker)
 })
