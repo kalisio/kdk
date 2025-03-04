@@ -272,7 +272,11 @@ export const geojsonLayers = {
             if (!initialized) {
               try {
                 // Use probes as reference
-                successCallback(await this.getProbeFeatures(options))
+                const geoJson = await this.getProbeFeatures(options)
+                // When probes are fetched, we flag them with a 'measureRequestIssued' property that we may use in dynamic styling
+                const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+                features.forEach(feature => { feature.measureRequestIssued = true })
+                successCallback(geoJson)
                 initialized = true
               } catch (error) {
                 errorCallback(error)
@@ -280,7 +284,8 @@ export const geojsonLayers = {
             }
             try {
               // Then update features
-              successCallback(await this.getFeatures(options))
+              const geoJson = await this.getFeatures(options)
+              successCallback(geoJson)
             } catch (error) {
               errorCallback(error)
             }
