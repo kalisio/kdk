@@ -131,12 +131,16 @@ export const activity = {
     isLayerStyleEditable: layers.isLayerStyleEditable,
     isLayerDataEditable: layers.isLayerDataEditable,
     async resetLayer (layer) {
+      // Keep track of data as we will reset the layer
+      let geoJson
+      if (typeof this.toGeoJson === 'function') geoJson = await this.toGeoJson(layer.name)
       // Reset layer with new setup but keep track of current visibility state
       // as adding the layer back will restore default visibility state
       const isVisible = this.isLayerVisible(layer.name)
       await this.removeLayer(layer.name)
       await this.addLayer(layer)
       if (isVisible) await this.showLayer(layer.name)
+      if (geoJson && (typeof this.toGeoJson === 'function')) this.updateLayer(layer.name, geoJson)
     },
     configureLayerActions (layer) {
       let actions = _.get(this, 'activityOptions.layers.actions', [])
@@ -221,6 +225,12 @@ export const activity = {
     async onEndLayerEdition (status = 'accept') {
       // this one can be triggered from a toolbar to accept or reject changes
       await this.stopEditLayer(status)
+    },
+    async onResetLayerStyle (layer) {
+      await layers.editLayerStyle(layer, {})
+      if (!layer._id) {
+        await this.resetLayer(layer)
+      }
     },
     async onRemoveLayer (layer) {
       // Stop any running edition

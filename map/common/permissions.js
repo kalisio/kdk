@@ -8,6 +8,8 @@ export function defineUserAbilities (subject, can, cannot) {
   can('read', 'projects')
   can('service', 'alerts')
   can('read', 'alerts')
+  can('service', 'styles')
+  can('read', 'styles')
   // can('service', 'daptiles')
   // can('get', 'daptiles')
 }

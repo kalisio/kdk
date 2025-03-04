@@ -52,6 +52,7 @@
       "ADD_LAYER": "Ajouter une couche",
       "EDIT_LABEL": "Editer les propriétés",
       "EDIT_LAYER_STYLE_LABEL": "Editer le style",
+      "RESET_LAYER_STYLE_LABEL": "Réinitialiser le style",
       "FILTER_DATA_LABEL": "Filtrer les données",
       "VIEW_DATA_LABEL": "Voir les données",
       "CHART_DATA_LABEL": "Graphique des données",
@@ -80,6 +81,7 @@
       "DISPLAY_POSITION": "Afficher les coordonnées",
       "DISPLAY_LEGEND": "Afficher la légende",
       "DISPLAY_SELECTION": "Afficher la sélection",
+      "DISPLAY_STYLES": "Afficher les styles",
       "HIDE_LEGEND": "Masquer la légende",
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_VIEW": "Ajouter une vue",
@@ -522,12 +524,15 @@
   },
   "KSelectedLayerFeatures": {
     "FEATURE_PROPERTIES_LABEL": "Propriétés de l'élément",
-    "ZOOM_TO_FEATURES_LABEL": "Zoomer sur les éléments de la couche",
-    "EDIT_FEATURES_LABEL": "Editer les éléments de la couche",
-    "REMOVE_FEATURES_LABEL": "Supprimer les éléments de la couche",
+    "ZOOM_TO_FEATURES_LABEL": "Zoomer sur les éléments",
+    "EDIT_FEATURES_LABEL": "Editer les éléments",
+    "RESET_FEATURES_STYLE_LABEL": "Réinitialiser le style",
+    "REMOVE_FEATURES_LABEL": "Supprimer les éléments",
     "ZOOM_TO_FEATURE_LABEL": "Zoomer sur l'élément",
     "EDIT_FEATURE_LABEL": "Editer l'élément",
     "EDIT_FEATURE_PROPERTIES_LABEL": "Editer les propriétés de l'élément",
+    "EDIT_FEATURE_STYLE_LABEL": "Editer le style",
+    "RESET_FEATURE_STYLE_LABEL": "Réinitialiser le style",
     "REMOVE_FEATURE_LABEL": "Supprimer l'élément",
     "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'élément ?",
     "REMOVE_FEATURE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'élément de votre espace de travail ?",
@@ -749,5 +754,32 @@
   },
   "KDirectionField": {
     "COMPASS": "Boussole"
+  },
+  "KStyleManager": {
+    "TITLE": "Styles",
+    "APPLY_TO_LAYER": "Appliquer le style à une couche",
+    "APPLY_TO_SELECTION": "Appliquer le style à la sélection",
+    "EDIT": "Modifier le style",
+    "DELETE": "Supprimer le style",
+    "SORT": "Trier les styles",
+    "CREATE_STYLE": "Créer un style"
+  },
+  "KStyleEditor": {
+    "TITLE": "Editeur de style",
+    "NAME": "Nom du style",
+    "SECTION_TITLE_POINT": "Point",
+    "SECTION_TITLE_LINE": "Ligne",
+    "SECTION_TITLE_POLYGON": "Polygone",
+    "COLOR": "Couleur",
+    "FILL_COLOR": "Couleur de remplissage",
+    "OPACITY": "Opacité",
+    "FILL_OPACITY": "Opacité de remplissage",
+    "SIZE": "Taille",
+    "SHAPE": "Forme",
+    "ICON": "Icône",
+    "ICON_SIZE": "Taille de l'icône",
+    "STROKE_COLOR": "Couleur du contour",
+    "STROKE_OPACITY": "Opacité du contour",
+    "STROKE_WIDTH": "Largeur du contour"
   }
 }

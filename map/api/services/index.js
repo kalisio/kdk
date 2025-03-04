@@ -245,6 +245,19 @@ export async function createCatalogFeaturesServices (options = {}) {
   }
 }
 
+export function createStylesService (options = {}) {
+  const app = this
+  return app.createService('styles', Object.assign({
+    servicesPath,
+    modelsPath
+  }, options))
+}
+
+export function removeStylesService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('styles', options.context))
+}
+
 export default async function () {
   const app = this
 
@@ -267,6 +280,11 @@ export default async function () {
   const alertsConfig = app.get('alerts')
   if (alertsConfig) {
     await createAlertsService.call(app)
+  }
+  const stylesConfig = app.get('styles')
+  if (stylesConfig) {
+    await createStylesService.call(app)
+    debug('\'styles\' service created')
   }
 
   /*
