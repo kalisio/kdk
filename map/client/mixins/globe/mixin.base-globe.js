@@ -422,8 +422,12 @@ export const baseGlobe = {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
     },
     async toGeoJson (name) {
-      const cachedGeojson = this.geojsonCache[name]
-      if (cachedGeojson) return cachedGeojson
+      if (!this.isLayerVisible(name)) {
+        // Only lookup geojson cache when layer is not visible
+        // otherwise use toGeoJSON() on the layer to get most up to date content.
+        const cachedGeojson = this.geojsonCache[name]
+        if (cachedGeojson) return cachedGeojson
+      }
 
       const layer = this.getCesiumLayerByName(name)
       if (!layer.entities) return
