@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="row items-center no-wrap"
     :class="{ 'q-gutter-x-xs': dense }"
   >

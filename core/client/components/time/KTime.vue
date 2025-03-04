@@ -71,7 +71,7 @@ const computedModel = computed({
 const computedButton = computed(() => {
   // compute format
   let format = props.format
-  if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'time.long') 
+  if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'time.long')
   // compute label
   let label
   if (!_.isEmpty(computedModel.value)) label = moment(computedModel.value, mask).format(format)
@@ -84,7 +84,7 @@ const computedButton = computed(() => {
     noCaps: true,
     disable: props.disabled,
     dense: true,
-    class: props.dense ? 'q-px-xs': 'q-pa-sm'
+    class: props.dense ? 'q-px-xs' : 'q-pa-sm'
   }
   // add icon if defined
   if (props.icon) spec.icon = props.icon
@@ -99,6 +99,6 @@ const computedPicker = computed(() => {
 })
 
 // Immediate
-if (_.isEmpty(props.modelValue) && 
+if (_.isEmpty(props.modelValue) &&
     _.isEmpty(props.placeholder)) computedModel.value = moment.utc().format(mask)
 </script>

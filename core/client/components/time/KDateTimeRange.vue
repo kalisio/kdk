@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     class="column"
   >
     <div class="full-width row items-center justify-between no-wrap">
@@ -35,7 +35,7 @@
             dense
             class="q-px-sm full-width"
             @update:model-value="onSliderUpdated()"
-            @change="onSliderChanged()"            
+            @change="onSliderChanged()"
           />
         </Teleport>
       </div>
@@ -173,8 +173,8 @@ const isMounted = ref(false)
 
 // Computed
 const canDisplaySlider = computed(() => {
-  return !_.isEmpty(props.slider) && 
-         !_.isEmpty(props.min) && 
+  return !_.isEmpty(props.slider) &&
+         !_.isEmpty(props.min) &&
          !_.isEmpty(props.max)
 })
 
@@ -192,7 +192,7 @@ watch(() => props.min, (newValue, oldValue) => {
     const min = moment(props.min)
     const max = moment(props.max)
     const start = moment(startTimeModel.value)
-    let duration = moment.duration(max.diff(min)).asMilliseconds()
+    const duration = moment.duration(max.diff(min)).asMilliseconds()
     if (duration > 0) rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
     else rangeModel.value.min = 0
   }
@@ -205,7 +205,7 @@ watch(() => props.max, (newValue, oldValue) => {
     const min = moment(props.min)
     const max = moment(props.max)
     const end = moment(endTimeModel.value)
-    let duration = moment.duration(max.diff(min)).asMilliseconds()
+    const duration = moment.duration(max.diff(min)).asMilliseconds()
     if (duration > 0) rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
     else rangeModel.value.max = 100
   }
@@ -219,7 +219,7 @@ function onRangeChanged () {
     const max = moment(props.max)
     const start = moment(startTimeModel.value)
     const end = moment(endTimeModel.value)
-    let duration = moment.duration(max.diff(min)).asMilliseconds()
+    const duration = moment.duration(max.diff(min)).asMilliseconds()
     if (duration > 0) {
       rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
       rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
@@ -233,7 +233,7 @@ function onRangeChanged () {
 function onSliderUpdated () {
   const min = moment(props.min)
   const max = moment(props.max)
-  let duration = moment.duration(max.diff(min)).asMilliseconds()
+  const duration = moment.duration(max.diff(min)).asMilliseconds()
   if (duration > 0) {
     startTimeModel.value = min.add(rangeModel.value.min / 100 * duration).toISOString()
     endTimeModel.value = max.subtract((1 - rangeModel.value.max / 100) * duration).toISOString()

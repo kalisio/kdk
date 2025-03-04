@@ -15,7 +15,7 @@ import { Events } from '../../events'
 import { Time } from '../../time'
 import KDateTimeRange from './KDateTimeRange.vue'
 
-const props = defineProps({
+defineProps({
   min: {
     type: String,
     default: () => null,

@@ -84,7 +84,7 @@ const computedButton = computed(() => {
     noCaps: true,
     disable: props.disabled,
     dense: true,
-    class: props.dense ? 'q-px-xs': 'q-pa-sm'
+    class: props.dense ? 'q-px-xs' : 'q-pa-sm'
   }
   // add icon if defined
   if (props.icon) spec.icon = props.icon
@@ -96,6 +96,6 @@ const computedPicker = computed(() => {
 })
 
 // Immediate
-if (_.isEmpty(props.modelValue) && 
+if (_.isEmpty(props.modelValue) &&
     _.isEmpty(props.placeholder)) computedModel.value = moment.utc().format(mask)
 </script>
