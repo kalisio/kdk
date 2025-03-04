@@ -317,11 +317,12 @@ const fabBehavior = computed(() => {
 })
 const stickiesComponents = computed(() => {
   return _.map(stickies.components, sticky => {
-    return _.merge(sticky, {
-      content: [{
-        component: sticky.component,
-        visible: sticky.visible
-      }]
+    const stickyProps = ['expand', 'position', 'offset']
+    const component = _.mapKeys(_.omit(sticky, stickyProps), (value, key) => {
+      return _.replace(key, 'component.', '')
+    })
+    return _.merge(_.pick(sticky, stickyProps), {
+      content: [component]
     })
   })
 })
