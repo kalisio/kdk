@@ -1,26 +1,27 @@
 <template>
-  <div class="row items-center no-wrap">
+  <div 
+    class="row items-center no-wrap"
+    :class="{ 'q-gutter-x-xs': dense }"
+  >
     <!-- Date -->
     <KDate
-      v-model="dateModel"
-      :options="dateOptions"
-      :disabled="disabled"
+      v-model="computedDateModel"
+      :picker="computedDatePicker"
+      :icon="icon"
       :dense="dense"
-      :class="dateOptions.class"
+      :class="{ 'q-pl-xs': dense, 'q-pl-md': !dense, [dateClass]: true }"
     />
-    <template v-if="!props.dateOnly">
-      <!-- Separator -->
-      <div v-if="separator">{{ separator }}</div>
-      <!-- Time -->
-      <KTime
-        v-model="timeModel"
-        :options="timeOptions"
-        :disabled="disabled || dateTime === null"
-        :dense="dense"
-        :class="timeOptions.class"
-      />
-    </template>
-
+    <!-- Separator -->
+    <div v-if="separator">{{ separator }}</div>
+    <!-- Time -->
+    <KTime
+      v-model="computedTimeModel"
+      :icon="null"
+      :picker="computedTimePicker"
+      :disabled="disabled || dateTime === null"
+      :dense="dense"
+      :class="{ 'q-pr-xs': dense, 'q-pr-md': !dense, [timeClass]: true }"
+    />
   </div>
 </template>
 
@@ -43,20 +44,37 @@ const props = defineProps({
       return true
     }
   },
-  timezone: {
+  datePicker: {
+    type: Object,
+    default: () => null
+  },
+  timePicker: {
+    type: Object,
+    default: () => null
+  },
+  withSeconds: {
+    type: Boolean,
+    default: false
+  },
+  dateFormat: {
     type: String,
     default: null
   },
-  options: {
-    type: Object,
-    default: () => {}
-  },
-  format: {
+  timeFormat: {
     type: String,
-    default: 'YYYY/MM/DD HH:mm',
-    validator: (value) => {
-      return !_.isEmpty(value) && value.split(' ').length === 2
-    }
+    default: null
+  },
+  dateClass: {
+    type: String,
+    default: ''
+  },
+  timeClass: {
+    type: String,
+    default: ''
+  },
+  separator: {
+    type: String,
+    default: '-'
   },
   min: {
     type: String,
@@ -74,15 +92,23 @@ const props = defineProps({
       return true
     }
   },
+  timezone: {
+    type: String,
+    default: null
+  },
+  placeholder: {
+    type: String,
+    default: null
+  },
+  icon: {
+    type: String,
+    default: 'las la-calendar'
+  },
   disabled: {
     type: Boolean,
     default: false
   },
   dense: {
-    type: Boolean,
-    default: false
-  },
-  dateOnly: {
     type: Boolean,
     default: false
   }
@@ -99,7 +125,7 @@ const dateMask = 'YYYY/MM/DD'
 const timeMask = 'HH:mm:ss'
 
 // Computed
-const dateModel = computed({
+const computedDateModel = computed({
   get: function () {
     return dateTime.value ? dateTime.value.format(dateMask) : null
   },
@@ -110,10 +136,7 @@ const dateModel = computed({
     emit('update:modelValue', dateTime.value.toISOString())
   }
 })
-const dateOptions = computed(() => {
-  return _.merge({}, _.get(props.options, 'date'), { picker: { options: checkDate } })
-})
-const timeModel = computed({
+const computedTimeModel = computed({
   get: function () {
     return dateTime.value ? dateTime.value.format(timeMask) : null
   },
@@ -123,11 +146,15 @@ const timeModel = computed({
     emit('update:modelValue', dateTime.value.toISOString())
   }
 })
-const timeOptions = computed(() => {
-  return _.merge({}, _.get(props.options, 'time'), { picker: { options: checkTime } })
+const computedDatePicker = computed(() => {
+  let picker = {}
+  if (!_.isEmpty(props.min) || !_.isEmpty(props.max)) picker = { options: checkDate }
+  return _.merge({}, props.datePicker, picker)
 })
-const separator = computed(() => {
-  return _.get(props.options, 'separator')
+const computedTimePicker = computed(() => {
+  let picker = { withSeconds: props.withSeconds }
+  if (!_.isEmpty(props.min) || !_.isEmpty(props.max)) picker = { options: checkTime }
+  return _.merge({}, props.timePicker, picker)
 })
 
 // Watch
@@ -156,21 +183,33 @@ function checkDate (date) {
     hour: dateTime.value ? dateTime.value.hour() : 0,
     minute: dateTime.value ? dateTime.value.minute() : 0
   })
-  if (minDateTime.value && dateToCheck.isBefore(minDateTime.value)) return false
-  if (maxDateTime.value && dateToCheck.isAfter(maxDateTime.value)) return false
+  if (dateToCheck.isBefore(minDateTime.value)) return false
+  if (dateToCheck.isAfter(maxDateTime.value)) return false
   return true
 }
 function checkTime (hours, minutes, seconds) {
-  const timeToCheck = moment({
-    year: dateTime.value.year(),
-    month: dateTime.value.month(),
-    date: dateTime.value.date(),
-    hour: hours || dateTime.value.hour(),
-    minute: minutes || dateTime.value.minute(),
-    second: seconds || dateTime.value.second()
-  })
-  if (minDateTime.value && timeToCheck.isBefore(minDateTime.value)) return false
-  if (maxDateTime.value && timeToCheck.isAfter(maxDateTime.value)) return false
+  if (minDateTime.value) {
+    const maxTimeToCheck = moment({
+      year: dateTime.value.year(),
+      month: dateTime.value.month(),
+      date: dateTime.value.date(),
+      hour: Number(hours),
+      minute: Number(minutes) || 59,
+      second: Number(seconds) || 59
+    })
+    if (maxTimeToCheck.isBefore(minDateTime.value)) return false
+  }
+  if (maxDateTime.value) {
+    const minTimeToCheck = moment({
+      year: dateTime.value.year(),
+      month: dateTime.value.month(),
+      date: dateTime.value.date(),
+      hour: Number(hours),
+      minute: Number(minutes) || 0,
+      second: Number(seconds) || 0
+    })
+    if (minTimeToCheck.isAfter(maxDateTime.value)) return false
+  }
   return true
 }
 

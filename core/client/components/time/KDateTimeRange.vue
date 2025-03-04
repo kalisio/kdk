@@ -1,30 +1,41 @@
 <template>
-  <div>
-    <div class="row items-center q-gutter-x-sm no-wrap">
+  <div 
+    class="column"
+  >
+    <div class="full-width row items-center justify-between no-wrap">
       <!-- Start dateTime -->
       <KDateTime
-        v-model="startModel"
-        :options="options"
-        :min="rangeMin"
-        :max="rangeMax"
+        v-model="startTimeModel"
+        :date-picker="datePicker"
+        :time-picker="timePicker"
+        :date-format="dateFormat"
+        :time-format="timeFormat"
+        :date-class="dateClass"
+        :time-class="timeClass"
+        :separator="dateTimeSeparator"
+        :min="min"
+        :max="endTimeModel"
+        :timezone="timezone"
+        :icon="icon"
         :disabled="disabled"
         :dense="dense"
-        :date-only="dateOnly"
+        @update:modelValue="onRangeChanged"
       />
-      <div v-if="displaySlider"
-        class="q-px-sm"
+      <div v-if="canDisplaySlider"
+        class="col q-px-sm"
       >
         <Teleport v-if="isMounted"
           to="#responsive-range-container"
-          :disabled="disableTeleport"
+          :disabled="!slider.stacked"
         >
           <q-range
             v-model="rangeModel"
             v-bind="props.slider"
-            @update:model-value="setDateTimeRangeFromSliderPosition()"
-            @change="emitRangeChange()"
-            style="min-width: 200px; padding-top: 4px;"
+            :disable="min === max"
             dense
+            class="q-px-sm full-width"
+            @update:model-value="onSliderUpdated()"
+            @change="onSliderChanged()"            
           />
         </Teleport>
       </div>
@@ -33,18 +44,25 @@
       </div>
       <!-- End dateTime -->
       <KDateTime
-        v-model="endModel"
-        :options="options"
-        :min="startDateTime ? startDateTime.toISOString() : null"
-        :max="rangeMax"
-        :disabled="disabled || startDateTime === null"
+        v-model="endTimeModel"
+        :date-picker="datePicker"
+        :time-picker="timePicker"
+        :date-format="dateFormat"
+        :time-format="timeFormat"
+        :date-class="dateClass"
+        :time-class="timeClass"
+        :separator="dateTimeSeparator"
+        :min="startTimeModel"
+        :max="max"
+        :timezone="timezone"
+        :icon="icon"
+        :disabled="disabled"
         :dense="dense"
-        :date-only="dateOnly"
+        @update:modelValue="onRangeChanged"
       />
     </div>
-    <div v-if="displaySlider"
+    <div v-if="canDisplaySlider"
       id="responsive-range-container"
-      class="row items-center q-px-sm q-gutter-x-sm no-wrap"
     >
     </div>
   </div>
@@ -52,7 +70,6 @@
 
 <script setup>
 import _ from 'lodash'
-import { useQuasar } from 'quasar'
 import moment from 'moment'
 import { ref, computed, watch, onMounted } from 'vue'
 import KDateTime from './KDateTime.vue'
@@ -67,6 +84,42 @@ const props = defineProps({
       if (value && value.end && !moment(value.end).isValid()) return false
       return true
     }
+  },
+  datePicker: {
+    type: Object,
+    default: () => null
+  },
+  timePicker: {
+    type: Object,
+    default: () => null
+  },
+  withSeconds: {
+    type: Boolean,
+    default: false
+  },
+  dateFormat: {
+    type: String,
+    default: null
+  },
+  timeFormat: {
+    type: String,
+    default: null
+  },
+  dateClass: {
+    type: String,
+    default: ''
+  },
+  timeClass: {
+    type: String,
+    default: ''
+  },
+  separator: {
+    type: String,
+    default: '/'
+  },
+  dateTimeSeparator: {
+    type: String,
+    default: '-'
   },
   min: {
     type: String,
@@ -84,9 +137,17 @@ const props = defineProps({
       return true
     }
   },
-  options: {
+  timezone: {
+    type: String,
+    default: null
+  },
+  slider: {
     type: Object,
-    default: () => {}
+    default: () => null
+  },
+  icon: {
+    type: String,
+    default: 'las la-calendar'
   },
   disabled: {
     type: Boolean,
@@ -95,14 +156,6 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
-  },
-  dateOnly: {
-    type: Boolean,
-    default: false
-  },
-  slider: {
-    type: Object,
-    default: () => null
   }
 })
 
@@ -110,100 +163,87 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
-const $q = useQuasar()
-const isMounted = ref(false)
-const startDateTime = ref(null)
-const endDateTime = ref(null)
+const startTimeModel = ref(null)
+const endTimeModel = ref(null)
 const rangeModel = ref({
   min: 0,
   max: 100
 })
-const rangeStep = ref(0)
+const isMounted = ref(false)
 
 // Computed
-const startModel = computed({
-  get: function () {
-    return startDateTime.value ? startDateTime.value.toISOString() : null
-  },
-  set: function (value) {
-    if (endDateTime.value) {
-      if (moment.utc(value).isAfter(endDateTime.value)) endDateTime.value = moment(value)
-    } else {
-      endDateTime.value = moment(value)
-    }
-    emit('update:modelValue', { start: value, end: endDateTime.value.toISOString() })
-  }
-})
-const endModel = computed({
-  get: function () {
-    return endDateTime.value ? endDateTime.value.toISOString() : null
-  },
-  set: function (value) {
-    emit('update:modelValue', { start: startDateTime.value.toISOString(), end: value })
-  }
-})
-const separator = computed(() => {
-  return _.get(props.options, 'separator', '/')
-})
-const displaySlider = computed(() => {
-  return !!(props.slider)
-})
-const rangeMin = computed(() => {
-  return props.dateOnly ? getDateWithoutTime(props.min, 'start').toISOString() : moment(props.min).utc().toISOString()
-})
-const rangeMax = computed(() => {
-  return props.dateOnly ? getDateWithoutTime(props.max, 'end').toISOString() : moment(props.max).utc().toISOString()
-})
-const disableTeleport = computed(() => {
-  let disable = false
-  if (props.slider) {
-    switch (props.slider.position) {
-      case 'bottom':
-        disable = false
-        break
-      case 'between':
-        disable = true
-        break
-      case 'auto':
-      default:
-        if ($q.screen.gt.sm) {
-          disable = true
-        }
-        break
-    }
-  }
-  return disable
+const canDisplaySlider = computed(() => {
+  return !_.isEmpty(props.slider) && 
+         !_.isEmpty(props.min) && 
+         !_.isEmpty(props.max)
 })
 
 // Watch
 watch(() => props.modelValue, (value) => {
-  startDateTime.value = value ? moment(value.start).utc() : null
-  endDateTime.value = value ? moment(value.end).utc() : null
-  if (displaySlider.value) {
-    setSliderPositionFromDateTimeRAnge()
+  if (value) {
+    startTimeModel.value = value.start
+    endTimeModel.value = value.end
   }
+})
+watch(() => props.min, (newValue, oldValue) => {
+  if (_.isEmpty(props.max)) return
+  if (rangeModel.value.min === 0) startTimeModel.value = newValue
+  else {
+    const min = moment(props.min)
+    const max = moment(props.max)
+    const start = moment(startTimeModel.value)
+    let duration = moment.duration(max.diff(min)).asMilliseconds()
+    if (duration > 0) rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
+    else rangeModel.value.min = 0
+  }
+  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+})
+watch(() => props.max, (newValue, oldValue) => {
+  if (_.isEmpty(props.min)) return
+  if (rangeModel.value.max === 100) endTimeModel.value = newValue
+  else {
+    const min = moment(props.min)
+    const max = moment(props.max)
+    const end = moment(endTimeModel.value)
+    let duration = moment.duration(max.diff(min)).asMilliseconds()
+    if (duration > 0) rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
+    else rangeModel.value.max = 100
+  }
+  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
 })
 
 // Functions
-function getDateWithoutTime (dateTime, type = 'start') {
-  const date = moment.isMoment(dateTime) ? dateTime : moment(dateTime)
-  return type === 'start' ? date.startOf('day') : date.endOf('day')
-}
-function setDateTimeRangeFromSliderPosition () {
-  startDateTime.value = moment(rangeMin.value).add(rangeStep.value * rangeModel.value.min, 'milliseconds')
-  endDateTime.value = moment(rangeMin.value).add(rangeStep.value * rangeModel.value.max, 'milliseconds')
-}
-function emitRangeChange () {
-  emit('update:modelValue', { start: startDateTime.value.toISOString(), end: endDateTime.value.toISOString() })
-}
-function setSliderPositionFromDateTimeRAnge () {
-  if (props.dateOnly) {
-    rangeModel.value.min = Math.floor((getDateWithoutTime(props.modelValue.start, 'start').diff(moment(rangeMin.value))) / rangeStep.value)
-    rangeModel.value.max = Math.ceil((getDateWithoutTime(props.modelValue.end, 'end').diff(moment(rangeMin.value))) / rangeStep.value)
-  } else {
-    rangeModel.value.min = Math.floor((moment(props.modelValue.start).diff(moment(rangeMin.value))) / rangeStep.value)
-    rangeModel.value.max = Math.ceil((moment(props.modelValue.end).diff(moment(rangeMin.value))) / rangeStep.value)
+function onRangeChanged () {
+  if (!_.isEmpty(props.min && !_.isEmpty(props.max))) {
+    const min = moment(props.min)
+    const max = moment(props.max)
+    const start = moment(startTimeModel.value)
+    const end = moment(endTimeModel.value)
+    let duration = moment.duration(max.diff(min)).asMilliseconds()
+    if (duration > 0) {
+      rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
+      rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
+    } else {
+      rangeModel.value.min = 0
+      rangeModel.value.max = 100
+    }
   }
+  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+}
+function onSliderUpdated () {
+  const min = moment(props.min)
+  const max = moment(props.max)
+  let duration = moment.duration(max.diff(min)).asMilliseconds()
+  if (duration > 0) {
+    startTimeModel.value = min.add(rangeModel.value.min / 100 * duration).toISOString()
+    endTimeModel.value = max.subtract((1 - rangeModel.value.max / 100) * duration).toISOString()
+  } else {
+    startTimeModel.value = props.min
+    endTimeModel.value = props.max
+  }
+}
+function onSliderChanged () {
+  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
 }
 
 // Hooks
@@ -213,21 +253,8 @@ onMounted(() => {
 
 // Immediate
 if (props.modelValue) {
-  startDateTime.value = moment(props.modelValue.start).utc()
-  endDateTime.value = moment(props.modelValue.end).utc()
-  if (displaySlider.value) {
-    if (props.slider.min) {
-      rangeModel.value.min = props.slider.min
-    }
-    if (props.slider.max) {
-      rangeModel.value.max = props.slider.max
-    }
-    if (props.dateOnly) {
-      startDateTime.value = getDateWithoutTime(props.modelValue.start, 'start')
-      endDateTime.value = getDateWithoutTime(props.modelValue.end, 'end')
-    }
-    rangeStep.value = (moment(rangeMax.value).diff(moment(rangeMin.value)) / (rangeModel.value.max - rangeModel.value.min))
-    setSliderPositionFromDateTimeRAnge()
-  }
+  startTimeModel.value = props.modelValue.start
+  endTimeModel.value = props.modelValue.end
+  onRangeChanged()
 }
 </script>

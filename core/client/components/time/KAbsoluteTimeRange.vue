@@ -1,20 +1,19 @@
 <template>
   <KDateTimeRange
     v-model="dateTimeRangeModel"
-    :options="dateTimeRangeOptions"
-    :min="props.min"
-    :max="props.max"
-    :dense="props.dense"
-    :disabled="props.disabled"
+    :min="min"
+    :max="max"
+    :dense="dense"
+    :disabled="disabled"
   />
 </template>
 
 <script setup>
+import moment from 'moment'
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
-import KDateTimeRange from './KDateTimeRange.vue'
 import { Events } from '../../events'
 import { Time } from '../../time'
-import moment from 'moment'
+import KDateTimeRange from './KDateTimeRange.vue'
 
 const props = defineProps({
   min: {
@@ -48,12 +47,6 @@ const { start, end } = Time.getRange()
 const dateTimeRangeModel = ref({
   start: start.toISOString(),
   end: end.toISOString()
-})
-const dateTimeRangeOptions = ref({
-  separator: '-',
-  date: {
-    format: 'DD/MM/YYYY'
-  }
 })
 
 // Watch

@@ -17,16 +17,14 @@
     <template v-slot:control>
       <KDateTimeRange
         v-model="model"
-        :options="options"
-        :min="min"
-        :max="max"
+        v-bind="props"
         dense
         @update:modelValue="onChanged"
       />
     </template>
     <!-- Helper -->
     <template v-if="hasHelper" v-slot:append>
-      <k-action
+      <KAction
         :id="properties.name + '-helper'"
         :label="helperLabel"
         :icon="helperIcon"
@@ -44,11 +42,13 @@
 <script>
 import _ from 'lodash'
 import { baseField } from '../../mixins'
+import KAction from '../action/KAction.vue'
 import KDateTimeRange from '../time/KDateTimeRange.vue'
 
 export default {
   mixins: [baseField],
   components: {
+    KAction,
     KDateTimeRange
   },
   computed: {
@@ -56,14 +56,8 @@ export default {
       // TODO
       return this.model
     },
-    options () {
-      return _.get(this.properties.field, 'options', {})
-    },
-    min () {
-      return _.get(this.properties.field, 'min')
-    },
-    max () {
-      return _.get(this.properties.field, 'max')
+    props () {
+      return _.omit(_.get(this.properties, 'field'), ['component', 'dense'])
     }
   },
   methods: {

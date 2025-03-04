@@ -322,7 +322,7 @@ It supports **Quasar** and non-Quasar components and non-Quasar components are r
 
 The `KPanel` component acts as a wrapper for `KContent`, dynamically managing its visibility and layout: horizontal or vertical. 
 
-## Graphics
+## Graphic
 
 ### Shapes
 
@@ -408,6 +408,8 @@ Checkout the [ChartActivity](https://github.com/kalisio/kApp/blob/master/src/com
 ::: tip Tip
 Have a look at the [choma color scales](https://gka.github.io/chroma.js/#color-scales) to see how to define your color scale.
 :::
+
+## [Time](./components/time.md)
 
 ## User Account
 

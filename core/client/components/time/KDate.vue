@@ -1,18 +1,10 @@
 <template>
-  <q-btn
-    id="date-button"
-    :icon="icon"
-    :label="label"
-    flat
-    no-caps
-    :disable="disabled"
-    :dense="dense"
-  >
+  <q-btn v-bind="computedButton">
     <q-popup-proxy>
       <q-date
         id="date-picker"
-        v-model="model"
-        v-bind="picker"
+        v-model="computedModel"
+        v-bind="computedPicker"
       />
     </q-popup-proxy>
   </q-btn>
@@ -23,16 +15,29 @@ import _ from 'lodash'
 import moment from 'moment'
 import { computed } from 'vue'
 import { Time } from '../../time.js'
+import { i18n } from '../../i18n.js'
 
 // Props
 const props = defineProps({
   modelValue: {
     type: String,
+    default: null
+  },
+  picker: {
+    type: Object,
     default: () => null
   },
-  options: {
-    type: Object,
-    default: () => {}
+  format: {
+    type: String,
+    default: null
+  },
+  placeholder: {
+    type: String,
+    default: null
+  },
+  icon: {
+    type: String,
+    default: 'las la-calendar'
   },
   disabled: {
     type: Boolean,
@@ -51,14 +56,7 @@ const emit = defineEmits(['update:modelValue'])
 const mask = 'YYYY/MM/DD'
 
 // Computed
-const icon = computed(() => {
-  return _.get(props.options, 'icon')
-})
-const label = computed(() => {
-  if (props.modelValue) return moment(props.modelValue, mask).format(format.value)
-  return _.get(props.options, 'helper')
-})
-const model = computed({
+const computedModel = computed({
   get: function () {
     return props.modelValue
   },
@@ -66,13 +64,38 @@ const model = computed({
     emit('update:modelValue', value)
   }
 })
-const format = computed(() => {
-  const dateDateFormat = _.get(Time.getFormat(), 'date.short')
-  const defaultYearFormat = _.get(Time.getFormat(), 'year.long')
-  return _.get(props.options, 'format', `${dateDateFormat}/${defaultYearFormat}`)
+const computedButton = computed(() => {
+  // compute format
+  let format = props.format
+  if (_.isEmpty(format)) {
+    const dateFormat = _.get(Time.getFormat(), 'date.short')
+    const yearFormat = _.get(Time.getFormat(), 'year.long')
+    format = `${dateFormat}/${yearFormat}`
+  }
+  // compute label
+  let label
+  if (!_.isEmpty(computedModel.value)) label = moment(computedModel.value, mask).format(format)
+  else label = i18n.tie(props.placeholder)
+  // define button spec
+  const spec = {
+    id: 'date-button',
+    label,
+    flat: true,
+    noCaps: true,
+    disable: props.disabled,
+    dense: true,
+    class: props.dense ? 'q-px-xs': 'q-pa-sm'
+  }
+  // add icon if defined
+  if (props.icon) spec.icon = props.icon
+  return spec
 })
-const picker = computed(() => {
-  return _.merge({}, _.get(props.options, 'picker'), { mask })
+const computedPicker = computed(() => {
+  const picker = { mask }
+  return _.merge({}, props.picker, picker)
 })
 
+// Immediate
+if (_.isEmpty(props.modelValue) && 
+    _.isEmpty(props.placeholder)) computedModel.value = moment.utc().format(mask)
 </script>
