@@ -360,7 +360,7 @@ export async function aggregateFeaturesQuery (hook) {
       if (hintIndex) aggregateElementOptions.hint = hintIndexName
       debug('Aggregation options', aggregateElementOptions)
       const elementResults = await collection.aggregate(pipeline, aggregateElementOptions).toArray()
-      debug(`Generated ${elementResults.length} feature(s) for ${element} element`, elementResults)
+      debug(`Generated ${elementResults.length} feature(s) for ${element} element, picked first two`, elementResults.slice(0,2))
       // Rearrange data so that we get ordered arrays indexed by element
       elementResults.forEach(result => {
         result.time = { [element]: result.time }
