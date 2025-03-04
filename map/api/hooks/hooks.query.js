@@ -402,7 +402,7 @@ export async function aggregateFeaturesQuery (hook) {
     delete query.$aggregate
     delete query.$geoNear
     // Set result to avoid service DB call
-    hook.result = aggregatedResults
+    hook.result = aggregatedResults || []
   }
   return hook
 }
