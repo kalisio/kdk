@@ -146,6 +146,7 @@ export const activity = {
       let actions = _.get(this, 'activityOptions.layers.actions', [])
       // Apply filtering
       actions = filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
+      
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
       actions = bindContent(_.cloneDeep(actions), this)

@@ -176,7 +176,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuasar, openURL } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { actionProps } from '../../utils/utils.actions'
-import { bindParams } from '../../utils/utils.content.js'
+import { bindParams, bindProperties } from '../../utils/utils.content.js'
 
 // Props
 const props = defineProps(actionProps)
@@ -278,7 +278,7 @@ async function onClicked (event) {
     if (component) {
       dialog = {
         component: 'KDialog',
-        componentProps: _.clone(dialog)
+        componentProps: bindProperties(dialog, props.context)
       }
     }
     $q.dialog(dialog)
