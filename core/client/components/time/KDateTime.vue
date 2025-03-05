@@ -10,7 +10,7 @@
       :format="dateFormat"
       :placeholder="placeholder"
       :icon="icon"
-      :disabled="disabled" 
+      :disabled="disabled"
       :dense="dense"
       :class="{ 'q-pl-xs': dense, 'q-pl-md': !dense, [dateClass]: true }"
     />
