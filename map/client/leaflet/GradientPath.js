@@ -2,7 +2,87 @@ import logger from 'loglevel'
 import _ from 'lodash'
 import L from 'leaflet'
 import * as PIXI from 'pixi.js'
+import turfbbox from '@turf/bbox'
 import 'leaflet-pixi-overlay'
+
+// Build a svgOverlay leaflet layer
+// geojson geometry must be a line string, with gradient information
+// The svg points (inside the svg element) will be populated with coordinates in spherical mercator scaled between [0,1] on both x and y
+// We do this to prevent numerical issues affecting rendering due to spherical mercator coordinates being huge numbers.
+// The svg overlay will be placed in the map covering the bbox of the geojson
+function buildSVGOverlayFromGradientPath (geojson, style)
+{
+  const defs = []  // We'll push every linearGradient we need here
+  const lines = [] // and every line segment we need here
+  const gradient = geojson.properties.gradient
+  const bbox = turfbbox(geojson)
+  // Grow the bbox a bit because we use it to position the svgOverlay. If it matches exaclty
+  // it'll crop the svg lines when using a big stroke-width, they'll exceed the geojson bbox ...
+  const width = bbox[2] - bbox[0]
+  const height = bbox[3] - bbox[1]
+  bbox[0] -= width * 0.1
+  bbox[1] -= height * 0.1
+  bbox[2] += width * 0.1
+  bbox[3] += height * 0.1
+
+  // Compute WGS84 bbox in spherical mercator coordinates
+  const b0 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(0, 2)))
+  const b1 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(2, 4)))
+
+  // Rescale sperical mercator points to [0,1] on biggest axis, where bbox.min is 0 and bbox.max is 1
+  // Other axis is rescaled to maintain aspect ratio, otherwise final display using svg element is not correct
+  const min = { x: Math.min(b0.x, b1.x), y: Math.min(b0.y, b1.y) }
+  const max = { x: Math.max(b0.x, b1.x), y: Math.max(b0.y, b1.y) }
+  const delta = { x: max.x - min.x, y: max.y - min.y }
+  // This scale factor is used to maintain original aspect ratio in svg coordinates
+  const scale = { x: delta.x > delta.y ? 1.0 : delta.x / delta.y, y: delta.y > delta.x ? 1.0 : delta.y / delta.x }
+  // This is how we map from spherical mercator point to svg element coordinates.
+  // Y is reversed to match svg canvas origin
+  const rescalePoint = (point) => [scale.x * ((point.x - min.x) / delta.x), scale.y * (1.0 - ((point.y - min.y) / delta.y))]
+
+  // Create an id suffix to make linearGradient ids unique
+  const idSuffix = `${bbox.join('_')}_${gradient.length}`
+  // Project geojson coordinates to spherical mercator
+  const latlngs = L.GeoJSON.coordsToLatLngs(geojson.geometry.coordinates)
+  const coordinates = latlngs.map((latlng) => rescalePoint(L.Projection.SphericalMercator.project(latlng)))
+  for (let i = 0; i < gradient.length - 1; ++i) {
+    const p0 = coordinates[i]
+    const p1 = coordinates[i+1]
+    // The linear gradient to apply on the current segment
+    defs.push(`<linearGradient gradientUnits="userSpaceOnUse" x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" id="gradient${i}_${idSuffix}"><stop offset="0" stop-color="${gradient[i]}"/><stop offset="1" stop-color="${gradient[i+1]}"/></linearGradient>`)
+    // The associated line segment, vector-effect="non-sclaing-stroke" make it so stroke-width is a final pixel value, independent of zoom level
+    // Use 'path' elements instead of 'line' because leaflet CSS defines 'pointer' cursor only on 'path' elements, not lines
+    lines.push(`<path d="M ${p0[0]} ${p0[1]} L ${p1[0]} ${p1[1]}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke" class="leaflet-interactive"/>`)
+  }
+
+  // Create svg HTML element
+  var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+  // Viewbox is used to define which part of the svg must be displayed in it's html element, and is in svg coordinates.
+  // For us it's 0 0 scale.x scale.y since we rescaled everything
+  svgElement.setAttribute('viewBox', `0 0 ${scale.x} ${scale.y}`)
+  // svg html content, round linecap + stroke-width
+  svgElement.innerHTML = `<g stroke-linecap="round" stroke-width="${geojson.properties.weight}"><defs>${defs.join('')}</defs>${lines.join('')}</g>`
+  var svgElementBounds = [ [ bbox[1], bbox[0] ], [ bbox[3], bbox[2] ] ];
+
+  // Custom svgOverlay overload to make the svg html element interactive for leaflet
+  // We don't simply use the options.interactive constructor option since it also add 'leaflet-interactive' class
+  // on the svg html element and this requests 'pointer' cursor on the whole svg, even if there's nothing drawn.
+  // Instead we just declare the layer interactive for leaflet, without adding the 'leaflet-interactive' class.
+  // 'leaflet-interactive' is set in 'path' elements, which are actually rendered.
+  const SVGOverlayOverload = L.SVGOverlay.extend({
+    onAdd() {
+      L.SVGOverlay.prototype.onAdd.call(this)
+      this.addInteractiveTarget(this._image)
+    }
+  })
+  const layer = new SVGOverlayOverload(svgElement, svgElementBounds, { interactive: false })
+  const opacity = _.get(geojson.properties, 'opacity')
+  if (opacity !== undefined)
+    layer.setOpacity(opacity)
+  layer.getCenter = () => L.latLng((bbox[1]+bbox[3])/2,(bbox[0]+bbox[2])/2)
+  return layer
+}
 
 const GradientPath = L.PixiOverlay.extend({
 
@@ -177,4 +257,4 @@ L.GradientPath = GradientPath
 L.gradientPath = function (options) {
   return new L.GradientPath(options)
 }
-export { GradientPath }
+export { GradientPath, buildSVGOverlayFromGradientPath }
