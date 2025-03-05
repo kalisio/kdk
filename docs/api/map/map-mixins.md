@@ -371,15 +371,22 @@ You can also draw a path with a different styling on each part like this:
 
 ### Dynamic building
 
-You might want to dynamically build new GeoJson features based on existing ones, such as creating a gradient color line from a set of points depending on a specific property value. To handle this use case, you can define build options in the layer's `variables`.
+You might want to dynamically build new GeoJSON features based on existing ones, such as creating a gradient color line from a set of points depending on a specific property value. To handle this use case, you can define build options in the layer's `variables` section.
 
-You can use either `classes` or `domain` to define the color scheme:
-* **classes**: An array of values used to define a discrete color gradient.
-* **domain**: An array of values used to define a continuous color gradient.
+::: warning
+Only one build option can be defined per layer.
+:::
 
-For instance, you can build a gradient path based on a property's value like this:
+#### Dynamically building a gradient path
+
+A gradient path is a line string where each point has a color and the rendering of that line interpolates colors along each line segment. Generally a color map is used to map between arbitrary feature properties and a color.
+
+You can dynamically build gradient paths adding a `gradientPath` object to the `variable` you want to use as source for the color map. The color map used to compute the color of each point is the one defined in the `variable` object. The line will be built by linking all the GeoJSON points sorted by time. The layer's `featureId` property is used to perform the aggregation and group related points.
+
+The following example will group features by `sensorId`, produce a line string for each unique `sensorId` and for each of those lines, will use the `accuracy` property of each point to compute the color along the lines.
 
 ```js
+featureId: 'sensorId',
 variables: [
   {
     name: 'accuracy',
@@ -400,15 +407,16 @@ variables: [
 ]
 ```
 
+The required fields are:
+* `chromajs`: this is what will be used to compute the mapping between `accuracy` values and color for each point
+* `gradientPath`: this is what triggers the construction of the gradient path line, the following properties have a special meaning:
+  * `svg`: a boolean, if true the rendering will be done using an SVG element, otherwise it'll use WebGL and pixi.js
+  * `opacity`: a floating point value `[0,1]` to blend the gradient path with the map
+  * `weight`: if `svg` is set, this is a pixel value (independent of zoom level) to use to draw the line. If not set that's a way to specify the width of the line.
+
+Every property in the `gradientPath.properties` section will be added to the produced GeoJSON line string.
+
 ![Gradient Path Classes](../../.vitepress/public/images/gradient-path.png)
-
-
-You can add any property to the `properties` object to customize the newly built feature.  
-Currently, only the `gradientPath` build option is supported.
-
-::: warning
-Only one build option can be defined per layer.
-:::
 
 ## Edit Layer
 
