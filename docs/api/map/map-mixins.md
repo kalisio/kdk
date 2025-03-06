@@ -34,7 +34,19 @@ Make it possible to manage map layers and extend supported layer types:
 This mixin also adds the following internal data properties:
 * **layers** available layers as [catalog layer descriptors](./services.md#catalog-service)
 
-This mixin automatically includes some Leaflet plugins: [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons, [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode, [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters, [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
+This mixin automatically includes some Leaflet plugins like:
+* [leaflet-fa-markers](https://github.com/danwild/leaflet-fa-markers) to create markers using Font Awesome icons,
+* [Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen) to manage fullscreen mode,
+* [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) to create marker clusters,
+* [Leaflet.donutcluster](https://github.com/kalisio/Leaflet.DonutCluster) to create donut clusters,
+* [leaflet-graphicscale](https://github.com/kalisio/leaflet-graphicscale) to add enhanced scale bar controls,
+* [leaflet.locatecontrol](https://github.com/domoritz/leaflet-locatecontrol) to display user's location,
+* [leaflet-geoman](https://github.com/geoman-io/leaflet-geoman) to edit layers,
+* [leaflet.geodesic](https://github.com/henrythasler/Leaflet.Geodesic) to draw geodesic lines and circles,
+* [leaflet-timedimension](https://github.com/socib/Leaflet.TimeDimension) to manage time dimension on some layers (typically WMS),
+* [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
+
+It also enhance the Leaflet Grid Layer class with an additional `edgeBufferTiles` property to control tiles pre-loading outside the current viewport like does this [plugin](https://github.com/TolonUK/Leaflet.EdgeBuffer).
 
 ### Managing panes
 
