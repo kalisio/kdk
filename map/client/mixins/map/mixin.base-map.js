@@ -61,6 +61,14 @@ L.GridLayer.include({
   }
 })
 
+// Override default Leaflet map renderer create function to be able to provide options to it
+const _createRenderer = L.Map.prototype._createRenderer
+L.Map.include({
+  _createRenderer: function (options) {
+    return _createRenderer.call(this, Object.assign(_.get(this.options, 'rendererOptions', {}), options))
+  }
+})
+
 export const baseMap = {
   emits: [
     'map-ready',
