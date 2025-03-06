@@ -89,13 +89,12 @@ export const Shapes = {
 /*
   Helper functions
 */
-function addTagAttribute (tag, attibute, value) {
-  return tag.slice(0, -1) + ` ${attibute}="${value}">`
+function addTagAttribute (tag, attribute, value) {
+  return tag.slice(0, -1) + ` ${attribute}="${value}">`
 }
-function addSvgAttribute (svg, attibute, value) {
-  return svg.slice(0, -2) + ` ${attibute}="${value}" />`
+function addSvgAttribute (svg, attribute, value) {
+  return svg.slice(0, -2) + ` ${attribute}="${value}" />`
 }
-
 function getSize (size) {
   if (!Array.isArray(size)) return { width: size, height: size }
   return { width: size[0], height: size[1] }
@@ -190,10 +189,10 @@ export function createShape (options) {
     svgClipPath = ''
     endSvgTag = '</svg>'
     // Apply fill style
-    const color = getHtmlColor(options.color, defaultColor)
+    const color = options.color ? getHtmlColor(options.color) : 'none'
     svgShapeContent = addSvgAttribute(svgShapeContent, 'fill', color)
     if (!_.isNil(options.opacity)) svgShapeContent = addSvgAttribute(svgShapeContent, 'fill-opacity', options.opacity)
-    // Aply stroke style
+    // Apply stroke style
     if (options.stroke) {
       // Ensure the stroke color is defined and not transparent
       const strokeColor = getHtmlColor(options.stroke.color, defaultColor)
@@ -213,8 +212,11 @@ export function createShape (options) {
         if (options.stroke.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-opacity', options.stroke.opacity)
         const clipId = uid()
         // clip the shape to avoid stroke overflow
-        svgShapeContent = addSvgAttribute(svgShapeContent, 'clip-path', `url(#${clipId})`)
-        svgClipPath = `<clipPath id="${clipId}">${_.clone(shape.content)}</clipPath>`
+        const clipPath = _.get(options.stroke, 'clipPath', true)
+        if (clipPath) {
+          svgShapeContent = addSvgAttribute(svgShapeContent, 'clip-path', `url(#${clipId})`)
+          svgClipPath = `<clipPath id="${clipId}">${_.clone(shape.content)}</clipPath>`
+        }
       }
     }
   }
