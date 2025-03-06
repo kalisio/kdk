@@ -141,14 +141,14 @@ export function generateHandler (context, name, params) {
 }
 
 export function bindParams (params, context, args) {
-  if (_.isNil(params) || _.isNil(context)) return params
+  
   if (Array.isArray(params)) return params.map(param => bindParams(param, context, args))
   if (typeof params === 'object') return _.mapValues(params, (value, key) => bindParams(value, context, args))
   return getBoundValue(params, context, args)
 }
 
 export function getBoundValue (value, context, args) {
-  if (_.isNil(value) || _.isNil(context)) return value
+  
   // A parameter like :xxx means xxx is a property of the context, not a static value.
   // In that case remove trailing : and get property value dynamically.
   // A parameter like :n means the nth argument of the handler, not a static value.
