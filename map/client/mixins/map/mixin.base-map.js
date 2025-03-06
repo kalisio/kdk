@@ -47,6 +47,20 @@ L.Icon.Default.mergeOptions({
 // Do not create geoman structs everywhere
 L.PM.setOptIn(true)
 
+// Override default Leaflet tile layer to allow for more tile preloading
+const _getTiledPixelBounds = L.GridLayer.prototype._getTiledPixelBounds
+L.GridLayer.include({
+  _getTiledPixelBounds: function (center) {
+    let pixelBounds = _getTiledPixelBounds.call(this, center)
+    const edgeBufferTiles = this.options.edgeBufferTiles
+    if (edgeBufferTiles > 0) {
+      const pixelEdgeBuffer = L.GridLayer.prototype.getTileSize.call(this).multiplyBy(edgeBufferTiles)
+      pixelBounds = new L.Bounds(pixelBounds.min.subtract(pixelEdgeBuffer), pixelBounds.max.add(pixelEdgeBuffer))
+    }
+    return pixelBounds
+  }
+})
+
 export const baseMap = {
   emits: [
     'map-ready',
