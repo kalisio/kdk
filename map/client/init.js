@@ -3,7 +3,7 @@ import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
 import { memory } from '@feathersjs/memory'
-import { Store, Reader, utils as kCoreUtils, hooks as kCoreHooks } from '../../core/client/index.js'
+import { Store, Reader, utils as kdkCoreUtils, hooks as kdkCoreHooks } from '../../core/client/index.js'
 import * as kMapHooks from './hooks/index.js'
 import { Geolocation } from './geolocation.js'
 import { Planets } from './planets.js'
@@ -35,8 +35,8 @@ export function setupApi (configuration) {
       // Set required default hooks and data path for snapshot as the service responds in GeoJson format
       hooks: _.defaultsDeep(_.get(options, 'hooks'), {
         before: {
-          all: [kCoreHooks.ensureSerializable, kCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
-          create: [kCoreHooks.generateId, kMapHooks.referenceCountCreateHook],
+          all: [kdkCoreHooks.ensureSerializable, kdkCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
+          create: [kdkCoreHooks.generateId, kMapHooks.referenceCountCreateHook],
           remove: kMapHooks.referenceCountRemoveHook
         },
         after: {
@@ -94,7 +94,7 @@ export default async function init () {
       long: 'YYYY'
     }),
     utc: false,
-    locale: kCoreUtils.getLocale()
+    locale: kdkCoreUtils.getLocale()
   }))
   // Default location formatting settings
   Store.set('locationFormat', 'f')
@@ -113,6 +113,16 @@ export default async function init () {
   _.forEach(_.get(config, 'readers.map', []), entry => {
     logger.debug(`[KDK] Registering mime types [${entry.mimeTypes}] to reader ${entry.reader}`)
     Reader.register(entry.mimeTypes, readers[entry.reader])
+  })
+
+  // Register additional shapes
+  kdkCoreUtils.Shapes.add('polyline', {
+    viewBox: [0, 0, 50, 50],
+    content: '<path d="M1 44L17 6L33 44L49 6" />'
+  })
+  kdkCoreUtils.Shapes.add('polygon', {
+    viewBox: [0, 0, 50, 50],
+    content: '<path d="M10 40L1 24L5 10L20 1L40 10L49 24L40 40L32 49Z" />'
   })
 
   // Store the initialization state
