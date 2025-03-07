@@ -1,43 +1,78 @@
 <template>
-  <KModalEditor
-    id="layer-editor"
-    :ref="onEditorCreated"
-    service="catalog"
-    :objectId="layerId"
-    @applied="onLayerEdited"
+  <KForm
+    ref="formRef"
+    :values="layer"
+    :schema="getFormSchema()"
   />
 </template>
+<script setup>
+import { ref } from 'vue'
 
-<script>
-import config from 'config'
-import { KModalEditor } from '../../../core/client/components'
+// Props
+const props = defineProps({
+  layer: {
+    type: Object,
+    default: () => null
+  }
+})
 
-export default {
-  name: 'k-layer-editor',
-  inject: ['kActivity'],
-  components: {
-    KModalEditor
-  },
-  props: {
-    layerId: {
-      type: String,
-      required: true
-    }
-  },
-  methods: {
-    onEditorCreated (ref) {
-      this.editor = ref
-    },
-    onLayerEdited (updatedLayer) {
-      // Actual layer update should be triggerred by real-time event
-      // but as we might not always use sockets we should perform it explicitely in this case
-      if (config.transport !== 'websocket') {
-        if (this.layer.name !== updatedLayer.name) {
-          this.kActivity.renameLayer(this.layer.name, updatedLayer.name)
-          Object.assign(this.layer, updatedLayer)
+// Data
+const formRef = ref(null)
+
+// Functions
+function getFormSchema () {
+  return {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    $id: "http://www.kalisio.xyz/schemas/catalog.update.json#",
+    title: "schemas.OBJECT_NAME",
+    description: "Layer edition schema",
+    type: "object",
+    properties: {
+      name: {
+        type: "string", 
+        maxLength: 128,
+        minLength: 3,
+        field: {
+          component: "form/KTextField",
+          label: "schemas.CATALOG_NAME_FIELD_LABEL"
+        }
+      },
+      description: {
+        type: "string", 
+        maxLength: 256,
+        field: {
+          component: "form/KTextField",
+          label: "schemas.CATALOG_DESCRIPTION_FIELD_LABEL"
+        }
+      },
+      featureId: {
+        type: "string", 
+        maxLength: 256,
+        field: {
+          component: "form/KTextField",
+          label: "schemas.CATALOG_FEATURE_ID_FIELD_LABEL"
+        }
+      },
+      featureLabel: {
+        type: "string", 
+        maxLength: 256,
+        field: {
+          component: "form/KTextField",
+          label: "schemas.CATALOG_FEATURE_LABEL_FIELD_LABEL"
         }
       }
-    }
+    },
+    required: ["name"]
   }
 }
+function apply () {
+  const { isValid, values } = formRef.value.validate()
+  if (!isValid) return false
+  // Do stuff
+}
+
+// Expose
+defineExpose({
+  apply
+})
 </script>

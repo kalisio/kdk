@@ -746,7 +746,7 @@
     "COPY": "Copy the coordinates",
     "POSITION_COPIED":"Position copied to clipboard",
     "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
-    "OUTSIDE_MAP": "Indeterminated position"
+    "OUTSIDE_MAP": "Undefined position"
   },
   "KDirectionField": {
     "COMPASS": "Compass"
@@ -761,6 +761,7 @@
     "CREATE_STYLE": "Create style"
   },
   "KStyleEditor": {
+    "NAME_LABEL": "Enter the name of the style",
     "TITLE": "Editeur de style",
     "NAME": "Style name",
     "SECTION_TITLE_POINT": "Point",

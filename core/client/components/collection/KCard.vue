@@ -132,10 +132,6 @@ export default {
       type: [Object, Array],
       default: () => null
     },
-    avatar: {
-      type: Boolean,
-      default: true
-    },
     shadow: {
       type: Number,
       default: 0,

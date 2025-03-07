@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <div id="style-manager-header" class="q-px-md q-mt-md" v-if="title || (toolbar && toolbar.length)">
+  <div class="column">
+    <div id="style-manager-header" 
+      v-if="title || (toolbar && toolbar.length)"
+      class="q-px-md q-mt-md"
+    >
       <div v-if="title" class="ellipsis text-h6">
         {{ $tie(title) }}
       </div>
       <KPanel
         id="style-manager-toolbar"
         :content="toolbar"
-        v-bind:class="{ 'q-gutter-x-sm' : $q.screen.gt.xs, 'q-gutter-x-xs': $q.screen.lt.sm }"
       />
       <QSeparator inset />
     </div>
@@ -53,12 +55,22 @@
                   handler: { name: 'removeItem', params: ['confirm'] }
                 },
               ],
+              dense: true,
               class: 'col-12'
             }"
           />
         </q-tab-panel>
-        <q-tab-panel name="edit">
-          <KStyleEditor ref="styleEditor" :style="style" @cancel="onCancel" @apply="onApply" />
+        <q-tab-panel name="editor">
+          <div class="full-width column">
+            <KStyleEditor 
+              ref="styleEditor" 
+              :style="style" 
+              :default="defaultStyle"
+              @canceled="onCanceled" 
+              @applied="onApplied"
+              class="col"
+            />
+          </div>
         </q-tab-panel>
       </q-tab-panels>
     </div>
@@ -66,15 +78,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
 import _ from 'lodash'
 import sift from 'sift'
-import { KGrid } from '../../../../core/client/components'
+import { computed, ref } from 'vue'
 import { Filter, Sorter, api } from '@kalisio/kdk/core.client'
-import KStyleEditor from './KStyleEditor.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'
+import KGrid from '../../../../core/client/components/collection/KGrid.vue'
+import KStyleEditor from './KStyleEditor.vue'
 
 // Props
 defineProps({
@@ -85,7 +97,7 @@ defineProps({
 })
 
 // Data
-const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
+const { getSelectedFeaturesByLayer, CurrentActivity, CurrentActivityContext } = useCurrentActivity()
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
@@ -97,8 +109,12 @@ const baseQuery = computed(() => {
 const filterQuery = computed(() => {
   return Object.assign({}, Filter.get().query)
 })
+const defaultStyle = computed(() => {
+  const style = _.get(CurrentActivityContext.config, 'engine.style')
+  return _.pick(style, ['point', 'line', 'polygon'])
+})
 const toolbar = computed(() => {
-  if (viewMode.value === 'edit') return []
+  if (viewMode.value === 'editor') return []
   return [
     {
       component: 'collection/KSorter',
@@ -148,21 +164,13 @@ function applyToSelection (styleToApply) {
   })
 }
 function editStyle (styleToEdit) {
-  viewMode.value = 'edit'
-  style.value = _.get(styleToEdit, 'item', {})
+  viewMode.value = 'editor'
+  style.value = _.get(styleToEdit, 'item')
 }
-function onApply (style) {
-  const service = api.getService('styles')
-  if (style._id) {
-    service.patch(style._id, style)
-  } else {
-    service.create(style)
-  }
+function onApplied (style) {
   viewMode.value = 'list'
 }
-
-function onCancel () {
+function onCanceled () {
   viewMode.value = 'list'
 }
-
 </script>

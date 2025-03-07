@@ -1,107 +1,98 @@
 <template>
-  <div id="style-editor-header" v-if="title">
-    <div class="ellipsis text-h6">
-      {{ $tie(title) }}
+  <div id="style-editor" class="column">
+    <div id="style-editor-header" v-if="title">
+      <div class="ellipsis text-h6">
+        {{ $tie(title) }}
+      </div>
     </div>
-  </div>
-  <div id="style-editor-content" class="row">
-    <div class="col-6" v-if="editName">
-      <q-input v-model="style.name" :label="$t('KStyleEditor.NAME')" />
+    <div 
+      id="style-editor-content" 
+      class="full-width column"
+    >
+      <!-- Name editor -->
+      <KForm
+        ref="formRef"
+        :values="formValues"
+        :schema="formSchema"
+      />
+      <!-- Point editor -->
+      <KStyleEditorSection
+        v-if="canEditPoint"
+        title="KStyleEditor.SECTION_TITLE_POINT"
+        :style="style"
+        type="point"
+      >
+        <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" />
+        <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" />
+        <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" />
+        <KStyleProperty v-if="!is3D" v-model="style.point.icon.classes" :name="$t('KStyleEditor.ICON')" type="icon" />
+        <KStyleProperty v-if="!is3D" v-model="style.point.icon.size" :name="$t('KStyleEditor.ICON_SIZE')" type="size" :min="8" :max="48" />
+        <KStyleProperty v-model="style.point.stroke.color" :name="$t('KStyleEditor.STROKE_COLOR')" type="color" />
+        <KStyleProperty v-model="style.point.stroke.width" :name="$t('KStyleEditor.STROKE_WIDTH')" type="size" :min="1" :max="12" />
+        <KStyleProperty v-model="style.point.stroke.opacity" :name="$t('KStyleEditor.STROKE_OPACITY')" type="opacity" />
+      </KStyleEditorSection>
+      <!-- Line editor -->
+      <KStyleEditorSection
+        v-if="canEditLine"
+        title="KStyleEditor.SECTION_TITLE_LINE"
+        :style="style"
+        type="line"
+      >
+        <KStyleProperty v-model="style.line.color" :name="$t('KStyleEditor.COLOR')" type="color" />
+        <KStyleProperty v-model="style.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12"/>
+        <KStyleProperty v-model="style.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" />
+      </KStyleEditorSection>
+      <!-- Polygon editor -->
+      <KStyleEditorSection
+        v-if="canEditPolygon"
+        title="KStyleEditor.SECTION_TITLE_POLYGON"
+        :style="style"
+        type="polygon"
+      >
+        <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" />
+        <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" />
+        <KStyleProperty v-model="style.polygon.stroke.color" :name="$t('KStyleEditor.STROKE_COLOR')" type="color" />
+        <KStyleProperty v-model="style.polygon.stroke.width" :name="$t('KStyleEditor.STROKE_WIDTH')" type="size" :min="1" :max="12" />
+        <KStyleProperty v-model="style.polygon.stroke.opacity" :name="$t('KStyleEditor.STROKE_OPACITY')" type="opacity" />
+      </KStyleEditorSection>
     </div>
-    <div class="col-12 q-mt-md">
-      <q-expansion-item v-if="editPoint" :default-opened="!editLine && !editPolygon" header-class="bg-grey-2">
-        <template v-slot:header>
-          <q-item-section avatar>
-            <q-icon name="las la-map-marker" />
-          </q-item-section>
-          <q-item-section>
-            {{ $t('KStyleEditor.SECTION_TITLE_POINT') }}
-          </q-item-section>
-          <q-item-section side>
-            <KStylePreview type="point" :options="style" />
-          </q-item-section>
-        </template>
-        <q-list class="q-ml-md">
-          <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" />
-          <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" />
-          <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" />
-          <KStyleProperty v-if="!is3D" v-model="style.point.icon.classes" :name="$t('KStyleEditor.ICON')" type="icon" />
-          <KStyleProperty v-if="!is3D" v-model="style.point.icon.size" :name="$t('KStyleEditor.ICON_SIZE')" type="size" :min="8" :max="48" />
-          <KStyleProperty v-model="style.point.stroke.color" :name="$t('KStyleEditor.STROKE_COLOR')" type="color" />
-          <KStyleProperty v-model="style.point.stroke.width" :name="$t('KStyleEditor.STROKE_WIDTH')" type="size" icon="las la-stop" :min="1" :max="12" />
-          <KStyleProperty v-model="style.point.stroke.opacity" :name="$t('KStyleEditor.STROKE_OPACITY')" type="opacity" icon="las la-border-style" />
-        </q-list>
-      </q-expansion-item>
-
-      <q-expansion-item v-if="editLine" :default-opened="!editPoint && !editPolygon" header-class="bg-grey-2">
-        <template v-slot:header>
-          <q-item-section avatar>
-            <q-icon name="las la-chart-line" />
-          </q-item-section>
-          <q-item-section>
-            {{ $t('KStyleEditor.SECTION_TITLE_LINE') }}
-          </q-item-section>
-          <q-item-section side>
-            <KStylePreview type="line" :options="style"/>
-          </q-item-section>
-        </template>
-        <q-list class="q-ml-md">
-          <KStyleProperty v-model="style.line.color" :name="$t('KStyleEditor.COLOR')" type="color" />
-          <KStyleProperty v-model="style.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12"/>
-          <KStyleProperty v-model="style.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" />
-        </q-list>
-      </q-expansion-item>
-
-      <q-expansion-item v-if="editPolygon" :default-opened="!editPoint && !editLine" header-class="bg-grey-2">
-        <template v-slot:header>
-          <q-item-section avatar>
-            <q-icon name="las la-draw-polygon" />
-          </q-item-section>
-          <q-item-section>
-            {{ $t('KStyleEditor.SECTION_TITLE_POLYGON') }}
-          </q-item-section>
-          <q-item-section side>
-            <KStylePreview type="polygon" :options="style" />
-          </q-item-section>
-        </template>
-        <q-list class="q-ml-md">
-          <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" />
-          <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" />
-          <KStyleProperty v-model="style.polygon.stroke.color" :name="$t('KStyleEditor.STROKE_COLOR')" type="color" />
-          <KStyleProperty v-model="style.polygon.stroke.width" :name="$t('KStyleEditor.STROKE_WIDTH')" type="size" icon="las la-stop" :min="1" :max="12" />
-          <KStyleProperty v-model="style.polygon.stroke.opacity" :name="$t('KStyleEditor.STROKE_OPACITY')" type="opacity" icon="las la-border-style" />
-        </q-list>
-      </q-expansion-item>
+    <div id="style-editor-footer" class="row justify-end q-mt-md" v-if="!hideButtons">
+      <KPanel
+        id="style-editor-buttons"
+        class="q-gutter-x-sm"
+        :content="buttons"
+        :action-renderer="'form-button'"
+      />
     </div>
-  </div>
-  <div id="style-editor-footer" class="row justify-end q-mt-md" v-if="!hideButtons">
-    <KPanel
-      id="style-editor-buttons"
-      class="q-gutter-x-sm"
-      :content="buttons"
-      :action-renderer="'form-button'"
-    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
 import _ from 'lodash'
+import { ref, computed, watch } from 'vue'
+import { api } from '@kalisio/kdk/core.client'
 import KStyleProperty from './KStyleProperty.vue'
-import KStylePreview from './KStylePreview.vue'
 import KPanel from '../../../../core/client/components/KPanel.vue'
+import KStyleEditorSection from './KStyleEditorSection.vue'
 import { DefaultStyle } from '../../utils/index.js'
-import { useCurrentActivity } from '../../composables/activity.js'
 
 // Props
 const props = defineProps({
+  style: {
+    type: Object,
+    required: true
+  },
+  default: {
+    type: Object,
+    default: () => null
+  },
+  is3D: {
+    type: Boolean,
+    default: false
+  },
   title: {
     type: String,
     default: ''
-  },
-  editName: {
-    type: Boolean,
-    default: true
   },
   hideButtons: {
     type: Boolean,
@@ -114,27 +105,39 @@ const props = defineProps({
   allowedStyles: {
     type: Array,
     default: ['point', 'line', 'polygon']
-  },
-  style: {
-    type: Object,
-    default: {}
   }
 })
 
 // Emits
-const emit = defineEmits([
-  'cancel',
-  'apply'
-])
+const emit = defineEmits(['applied', 'canceled'])
 
 // Data
-const style = ref(_.defaultsDeep({}, props.style, _.pick(DefaultStyle, props.allowedStyles)))
-const { CurrentActivity } = useCurrentActivity()
+const formRef = ref(null)
+const style = ref(null)
+const mode = props.style ? 'edition' : 'creation'
+const formSchema = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: 'http://kalisio.xyz/schemas/style-editor#',
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      "minLength": 3,
+      "maxLength": 256,
+      field: {
+        component: 'form/KTextField',
+        label: 'KStyleEditor.NAME_LABEL'
+      }
+    }
+  },
+  required: ['name']
+}
 
 // Computed
-const editPoint = computed(() => props.allowedStyles.includes('point'))
-const editLine = computed(() => props.allowedStyles.includes('line'))
-const editPolygon = computed(() => props.allowedStyles.includes('polygon'))
+const formValues = computed(() => {
+  if (_.isEmpty(props.style)) return null
+  return { name: _.get(props.style, 'name') }
+})
 const buttons = computed(() => {
   if (props.buttons !== null) return props.buttons
   return [
@@ -143,31 +146,42 @@ const buttons = computed(() => {
       label: 'CANCEL',
       renderer: 'form-button',
       outline: true,
-      handler: () => {
-        emit('cancel')
-      }
+      handler: () => emit('canceled')
     },
     {
       id: 'apply-button',
       label: 'APPLY',
       renderer: 'form-button',
-      handler: () => {
-        emit('apply', style.value)
-      }
+      handler: apply
     }
   ]
 })
-const is3D = computed(() => {
-  return CurrentActivity.value.is3D()
-})
+const canEditPoint = computed(() => props.allowedStyles.includes('point'))
+const canEditLine = computed(() => props.allowedStyles.includes('line'))
+const canEditPolygon = computed(() => props.allowedStyles.includes('polygon'))
+
+// Watch
+watch(() => props.style,(value) => {
+  style.value = _.defaultsDeep({}, value, props.default, _.pick(DefaultStyle, ['point', 'line', 'polygon']))
+}, { immediate: true })
 
 // Functions
-function getStyle () {
-  return style.value
+async function apply () {
+  const { isValid, values } = formRef.value.validate()
+  if (!isValid) return false
+  const service = api.getService('styles')
+  if (mode === 'creation') {
+    await service.create(_.merge(style.value, values))
+  } else {
+    await service.patch(style._id, _.pick(style.value, ['name', 'point', 'line', 'polygon']))
+  }
+  
+  emit('applied', _.pick(style.value, ['name', 'point', 'line', 'polygon']))
+  return true
 }
 
+// Expose
 defineExpose({
-  getStyle
+  apply
 })
-
 </script>

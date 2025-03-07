@@ -3,19 +3,50 @@
     <q-item-section class="col-auto">
       <q-icon :name="icon" size="2em"/>
     </q-item-section>
-    <q-item-section class="col-grow">
+    <q-item-section class="col-6">
       <q-item-label>{{ props.name }}</q-item-label>
     </q-item-section>
-    <q-item-section class="col-2 items-center">
-      <q-slider v-if="['size', 'opacity'].includes(props.type)" id="style-property-slider" v-model="value"
-        :min="min" :max="max" :step="step"
-        label label-always :label-value="value + (props.unit || '')"/>
-      <KColorPicker v-else-if="props.type === 'color'" v-model="value" />
-      <q-select v-else-if="props.type === 'shape'" v-model="value" :options="getShapes()" emit-value map-options bottom-slots>
-        <template v-slot:selected-item="scope"><KShape :options="scope.opt"/></template>
-        <template v-slot:option="scope"><KShape class="row justify-center" v-bind="scope.itemProps" :options="scope.opt"/></template>
+    <q-item-section>
+      <!-- size opacity -->
+      <q-slider v-if="['size', 'opacity'].includes(props.type)" id="style-property-slider" 
+        v-model="value"
+        :min="min" 
+        :max="max" 
+        :step="step"
+        label 
+        label-always
+        dense
+        :label-value="value + (props.unit || '')"
+      />
+      <!-- color typ -->
+      <KColorPicker v-else-if="props.type === 'color'" 
+        v-model="value" 
+        defaultView="palette" 
+      />
+      <!-- shape type -->
+      <q-select v-else-if="props.type === 'shape'" 
+        v-model="value" 
+        :options="getShapes()" 
+        emit-value 
+        map-options 
+        bottom-slots
+      >
+        <template v-slot:selected-item="scope">
+          <KShape :options="scope.opt"/>
+        </template>
+        <template v-slot:option="scope">
+          <KShape
+            v-bind="scope.itemProps" 
+            :options="scope.opt"
+            class="row justify-center" 
+          />
+        </template>
       </q-select>
-      <q-select v-else-if="props.type === 'icon'" v-model="value" :options="['las la-ruler', 'las la-shapes', 'las la-fill']" />
+      <!-- icon type -->
+      <q-select v-else-if="type === 'icon'" 
+        v-model="value" 
+        :options="['las la-ruler', 'las la-shapes', 'las la-fill']" 
+      />
     </q-item-section>
   </q-item>
 </template>
@@ -25,6 +56,7 @@ import { ref, watch, computed } from 'vue'
 import KShape from '../../../../core/client/components/media/KShape.vue'
 import KColorPicker from '../../../../core/client/components/input/KColorPicker.vue'
 
+// Props
 const props = defineProps({
   modelValue: {
     type: [String, Number, Object],
@@ -38,10 +70,6 @@ const props = defineProps({
     type: String,
     default: 'size',
     validator: (value) => ['size', 'color', 'shape', 'icon', 'opacity'].includes(value)
-  },
-  icon: {
-    type: String,
-    default: ''
   },
   min: {
     type: Number,
@@ -57,9 +85,13 @@ const props = defineProps({
   }
 })
 
+// Emits
 const emit = defineEmits(['update:modelValue'])
+
+// Data
 const value = ref(props.modelValue)
 
+// Computed
 const min = computed(() => {
   return props.type === 'opacity' ? 0 : parseFloat(props.min)
 })
@@ -70,13 +102,11 @@ const step = computed(() => {
   return props.type === 'opacity' ? 0.01 : 1
 })
 const icon = computed(() => {
-  if (props.icon) return props.icon
-
   switch (props.type) {
     case 'size':
       return 'las la-ruler'
     case 'color':
-      return 'las la-fill'
+      return 'las la-palette'
     case 'shape':
       return 'las la-shapes'
     case 'icon':
@@ -85,12 +115,12 @@ const icon = computed(() => {
       return 'las la-adjust'
   }
 })
-
 function getShapes () {
   return ['none', 'circle', 'triangle-down', 'triangle', 'triangle-right', 'triangle-left', 'rect', 'diamond', 'star', 'marker-pin', 'square-pin']
     .map(shape => ({ value: shape, shape, size: 32, opacity: 0.1, color: 'primary', stroke: { color: 'primary', width: 2 } }))
 }
 
+// Hooks
 watch(value, newValue => {
   emit('update:modelValue', newValue)
 })

@@ -1,30 +1,56 @@
 <template>
-  <KItem ref="item">
+  <KItem 
+    ref="item" 
+  >
     <template v-slot:item-content>
-      <div class="row">
-        <q-item-label>{{ name }}</q-item-label>
-        <KStylePreview class="q-ml-md" type="point" :options="style" />
-        <KStylePreview class="q-ml-md" type="line" :options="style" />
-        <KStylePreview class="q-ml-md" type="polygon" :options="style" />
+      <div 
+        class="row items-center no-wrap" 
+        :class="{ 'q-gutter-x-sm': dense, 'q-gutter-x-md': !dense }"
+      >
+        <div class="text-subtitle2">
+          {{ name }}
+        </div>
+        <div 
+          class="row item-baseline no-wrap"
+          :class="{ 'q-gutter-x-sm': dense, 'q-gutter-x-md': !dense }"
+        >
+          <KStylePreview :style="pointStyle" type="point" />
+          <KStylePreview :style="lineStyle" type="line" />
+          <KStylePreview :style="polygonStyle" type="polygon" />
+        </div>
       </div>
     </template>
   </KItem>
 </template>
+
 <script setup>
-import { ref, computed } from 'vue'
 import _ from 'lodash'
+import { ref, computed } from 'vue'
 import KItem from '../../../../core/client/components/collection/KItem.vue'
 import KStylePreview from './KStylePreview.vue'
-import { DefaultStyle } from '../../utils/index.js'
 
+// Props
+defineProps({
+  dense: Boolean,
+  default: false
+})
+
+// Data
 const item = ref(null)
 
+// Computed
 const name = computed(() => {
-  return _.get(item, 'value.item.name', '')
+  return _.get(item.value, 'item.name', '')
 })
-
-const style = computed(() => {
-  return _.get(item, 'value.item', _.pick(DefaultStyle, ['point', 'line', 'polygon']))
+const pointStyle = computed(() => {
+  return _.get(item.value, 'item.point')
 })
-
+const lineStyle = computed(() => {
+  console.log(_.get(item.value, 'item.line'))
+  return _.get(item.value, 'item.line')
+})
+const polygonStyle = computed(() => {
+  console.log(_.get(item.value, 'item.polygon'))
+  return _.get(item.value, 'item.polygon')
+})
 </script>

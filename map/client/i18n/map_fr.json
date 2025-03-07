@@ -765,6 +765,7 @@
     "CREATE_STYLE": "Créer un style"
   },
   "KStyleEditor": {
+    "NAME_LABEL": "Saisissez le nom du style",
     "TITLE": "Editeur de style",
     "NAME": "Nom du style",
     "SECTION_TITLE_POINT": "Point",
