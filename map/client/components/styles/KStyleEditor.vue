@@ -171,17 +171,17 @@ async function apply () {
   const { isValid, values } = formRef.value.validate()
   if (!isValid) return false
   const service = api.getService('styles')
+  let data
   if (mode === 'creation') {
-    const data = _.merge(style.value, values)
+    data = _.merge(style.value, values)
     logger.debug('[KDK] Create style with values:', data)
     await service.create(data)
   } else {
-    const data = _.merge(style.value, values)
+    data = _.merge(style.value, values)
     logger.debug(`[KDK] Patch style ${style._id} with values:`, data)
     await service.patch(style.value._id, data)
   }
-  
-  emit('applied', _.pick(style.value, ['name', 'point', 'line', 'polygon']))
+  emit('applied', data)
   return true
 }
 
