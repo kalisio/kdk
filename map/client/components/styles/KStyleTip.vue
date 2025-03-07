@@ -8,7 +8,6 @@
     :offset="offset"
     :delay="delay"
     :no-parent-event="noParentEvent"
-    @update:model-value="onModelUpdated"
   />
 </template>
 
@@ -75,7 +74,7 @@ function refresh () {
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [1.5, 42]
+        coordinates: [1.5, 43.2]
       },
       properties: {},
       style: props.style
@@ -110,9 +109,4 @@ watch(() => props.modelValue, (value) => {
 watch(() => props.style, (value) => {
   location.value = refresh()
 }, { immediate: true, deep: true })
-
-// Functions
-function onModelUpdated (value) {
-  emit('update:modelValue', value)
-}
 </script>
