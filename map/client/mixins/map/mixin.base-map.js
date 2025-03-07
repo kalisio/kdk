@@ -92,7 +92,7 @@ export const baseMap = {
     setupMap (domEl, options) {
       const viewerOptions = options ||
         // For activities
-        _.get(this, 'activityOptions.engine.viewer', {
+        _.defaults(_.get(this, 'activityOptions.engine.viewer'), {
           minZoom: 3,
           maxZoom: 21,
           center: [47, 3],
@@ -100,7 +100,8 @@ export const baseMap = {
           maxBounds: [[-90, -180], [90, 180]],
           maxBoundsViscosity: 0.25,
           scale: false,
-          geolocate: false
+          geolocate: false,
+          rotateControl: false // Rotate plugin show this even if rotation is disabled
         })
       // Initialize the map
       this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
