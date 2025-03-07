@@ -69,6 +69,7 @@
 
 <script setup>
 import _ from 'lodash'
+import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
 import { api } from '@kalisio/kdk/core.client'
 import KStyleProperty from './KStyleProperty.vue'
@@ -171,9 +172,13 @@ async function apply () {
   if (!isValid) return false
   const service = api.getService('styles')
   if (mode === 'creation') {
-    await service.create(_.merge(style.value, values))
+    const data = _.merge(style.value, values)
+    logger.debug('[KDK] Create style with values:', data)
+    await service.create(data)
   } else {
-    await service.patch(style._id, _.pick(style.value, ['name', 'point', 'line', 'polygon']))
+    const data = _.merge(style.value, values)
+    logger.debug(`[KDK] Patch style ${style._id} with values:`, data)
+    await service.patch(style.value._id, data)
   }
   
   emit('applied', _.pick(style.value, ['name', 'point', 'line', 'polygon']))

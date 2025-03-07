@@ -39,18 +39,8 @@ defineProps({
 const item = ref(null)
 
 // Computed
-const name = computed(() => {
-  return _.get(item.value, 'item.name', '')
-})
-const pointStyle = computed(() => {
-  return _.get(item.value, 'item.point')
-})
-const lineStyle = computed(() => {
-  console.log(_.get(item.value, 'item.line'))
-  return _.get(item.value, 'item.line')
-})
-const polygonStyle = computed(() => {
-  console.log(_.get(item.value, 'item.polygon'))
-  return _.get(item.value, 'item.polygon')
-})
+const name = computed(() => _.get(item.value, 'item.name', ''))
+const pointStyle = computed(() => _.get(item.value, 'item.point'))
+const lineStyle = computed(() => _.get(item.value, 'item.line'))
+const polygonStyle = computed(() => _.get(item.value, 'item.polygon'))
 </script>
