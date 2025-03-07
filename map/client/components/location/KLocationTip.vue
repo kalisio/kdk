@@ -1,15 +1,17 @@
 <template>
   <q-tooltip
-    anchor="center end"
-    self="center middle"
-    class="q-pa-none"
+    v-model="showTip"
+    :target="target"
+    :anchor="anchor"
+    :self="self"
+    :offset="offset"
     :delay="delay"
-    :hide-delay="150"
-    :transition-duration="150"
+    :no-parent-event="noParentEvent"
+    class="q-pa-none"
     style="border-radius: 100px; border: 1px solid var(--q-primary);"
   >
     <KLocationMap
-      v-model="feature"
+      v-model="locationModel"
       style="min-width: 200px; min-height: 200px;"
     />
     <q-icon name="target" class="fixed-center" />
@@ -22,18 +24,55 @@ import KLocationMap from './KLocationMap.vue'
 
 // Props
 const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: null
+  },
   location: {
     type: Object,
-    required: true
+    default: () => null
+  },
+  target: {
+    type: [Boolean, String],
+    default: true
+  },
+  anchor: {
+    type: String,
+    default: 'bottom middle'
+  },
+  self: {
+    type: String,
+    default: 'top middle'
+  },
+  offset: {
+    type: Array,
+    default: [14, 14]
   },
   delay: {
     type: Number,
     default: 500
+  },
+  noParentEvent: {
+    type: Boolean,
+    default: false
   }
 })
 
-// Data
-const feature = computed(() => {
-  return props.location
+// Emit
+const emit = defineEmits(['update:modelValue'])
+
+// Computed
+const showTip = computed({
+  get: function () {
+    return props.modelValue
+  },
+  set: function (value) {
+    emit('update:modelValue', value)
+  }
+})
+const locationModel = computed({
+  get: function () {
+    return props.location
+  }
 })
 </script>
