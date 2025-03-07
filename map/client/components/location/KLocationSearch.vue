@@ -63,7 +63,11 @@
             {{ $tie(`Geocoders.${scope.opt.properties.source}`) }}
           </q-chip>
         </q-item-section>
-        <KLocationTip :location="scope.opt" />
+        <KLocationTip 
+          :location="scope.opt" 
+          anchor="center end"
+          self="center middle"
+        />
       </q-item>
     </template>
     <!-- No options -->
