@@ -13,7 +13,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import _ from 'lodash'
+import { ref, watch } from 'vue'
 import KLocationTip from '../location/KLocationTip.vue'
 
 // Props
@@ -69,29 +70,33 @@ const location = ref(null)
 // Function
 function refresh () {
   if (_.isNil(props.style)) return null
-  if (props.type === 'point') return {
-    type: 'Feature',
-    geometry: {
-      type: 'Point',
-      coordinates: [1.5, 42]
-    },
-    properties: {},
-    style: props.style
+  if (props.type === 'point') {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [1.5, 42]
+      },
+      properties: {},
+      style: props.style
+    }
   }
-  if (props.type === 'line') return {
-    type: 'Feature',
-    geometry: {
-      type: 'LineString',
-      coordinates: [ [0, 43], [0.5, 43.5], [1,43], [1.5, 43.5]] 
-    },
-    properties: {},
-    style: props.style
+  if (props.type === 'line') {
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: [[0, 43], [0.5, 43.5], [1, 43], [1.5, 43.5]]
+      },
+      properties: {},
+      style: props.style
+    }
   }
   return {
     type: 'Feature',
     geometry: {
       type: 'Polygon',
-      coordinates: [ [ [0.4, 42.6], [0, 43], [0.2, 43.3], [0.75, 43.5], [1.2, 43.3], [1.5, 43], [1, 42.5] ] ]
+      coordinates: [[[0.4, 42.6], [0, 43], [0.2, 43.3], [0.75, 43.5], [1.2, 43.3], [1.5, 43], [1, 42.5]]]
     },
     properties: {},
     style: props.style

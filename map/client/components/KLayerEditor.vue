@@ -1,78 +1,86 @@
 <template>
-  <KForm
-    ref="formRef"
-    :values="layer"
-    :schema="getFormSchema()"
+  <KModalEditor
+    id="layer-editor"
+    :router-mode="false"
+    :ref="onEditorCreated"
+    :service="service"
+    perspective="properties"
+    :objectId="featureId"
+    :schema-function="loadLayerSchema"
+    @applied="onFeatureEdited"
+    @closed="closeModal()"
   />
 </template>
-<script setup>
-import { ref } from 'vue'
 
-// Props
-const props = defineProps({
-  layer: {
-    type: Object,
-    default: () => null
-  }
-})
+<script>
+import _ from 'lodash'
+import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
+import { KModalEditor } from '../../../core/client/components'
 
-// Data
-const formRef = ref(null)
-
-// Functions
-function getFormSchema () {
-  return {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    $id: "http://www.kalisio.xyz/schemas/catalog.update.json#",
-    title: "schemas.OBJECT_NAME",
-    description: "Layer edition schema",
-    type: "object",
-    properties: {
-      name: {
-        type: "string", 
-        maxLength: 128,
-        minLength: 3,
-        field: {
-          component: "form/KTextField",
-          label: "schemas.CATALOG_NAME_FIELD_LABEL"
-        }
-      },
-      description: {
-        type: "string", 
-        maxLength: 256,
-        field: {
-          component: "form/KTextField",
-          label: "schemas.CATALOG_DESCRIPTION_FIELD_LABEL"
-        }
-      },
-      featureId: {
-        type: "string", 
-        maxLength: 256,
-        field: {
-          component: "form/KTextField",
-          label: "schemas.CATALOG_FEATURE_ID_FIELD_LABEL"
-        }
-      },
-      featureLabel: {
-        type: "string", 
-        maxLength: 256,
-        field: {
-          component: "form/KTextField",
-          label: "schemas.CATALOG_FEATURE_LABEL_FIELD_LABEL"
-        }
+export default {
+  name: 'k-feature-editor',
+  components: {
+    KModalEditor
+  },
+  mixins: [
+    kCoreMixins.baseModal
+  ],
+  props: {
+    layerId: {
+      type: String,
+      required: true
+    },
+    layerName: {
+      type: String,
+      default: ''
+    },
+    featureId: {
+      type: String,
+      required: true
+    }
+  },
+  data () {
+    return {
+      service: 'features',
+      layer: {}
+    }
+  },
+  methods: {
+    onEditorCreated (ref) {
+      if (ref && !this.editor) {
+        this.editor = ref
+        if (this.isModalOpened) this.openModal()
       }
     },
-    required: ["name"]
+    async onFeatureEdited (updatedFeature) {
+      // Save in DB or in memory
+      if (this.layer._id) {
+        await this.kActivity.editFeaturesProperties(updatedFeature, this.layer)
+      } else {
+        await this.$api.getService(this.service).patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
+      }
+    },
+    loadLayerSchema () {
+      return _.get(this.layer, 'schema.content')
+    },
+    async openModal () {
+      kCoreMixins.baseModal.methods.openModal.call(this)
+      if (this.editor) this.editor.openModal()
+    },
+    async closeModal () {
+      kCoreMixins.baseModal.methods.closeModal.call(this)
+    }
+  },
+  async created () {
+    // If not injected load it
+    if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
+    else this.layer = await this.$api.getService('catalog').get(this.layerId)
+    this.service = _.get(this.layer, '_id') ? _.get(this.layer, 'service') : 'features-edition'
+  },
+  setup (props) {
+    return {
+      ...kCoreComposables.useCurrentActivity()
+    }
   }
 }
-function apply () {
-  const { isValid, values } = formRef.value.validate()
-  if (!isValid) return false
-  // Do stuff
-}
-
-// Expose
-defineExpose({
-  apply
-})
 </script>

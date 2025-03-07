@@ -1,14 +1,14 @@
 <template>
   <div>
-    <q-expansion-item 
+    <q-expansion-item
       v-model="isOpened"
-      group="editor" 
+      group="editor"
       header-class="bg-grey-2"
     >
       <template v-slot:header>
         <q-item-section v-if="title">
           {{ $t(title) }}
-        </q-item-section>            
+        </q-item-section>
         <q-item-section v-if="!isOpened" side>
           <KStylePreview :style="style[type]" :type="type" />
         </q-item-section>
@@ -16,9 +16,9 @@
       <q-list v-hover="{ enter: onEnter }">
         <slot />
       </q-list>
-      <KStyleTip 
-        v-model="showTip" 
-        :style="style[type]" 
+      <KStyleTip
+        v-model="showTip"
+        :style="style[type]"
         :type="type"
         target="#style-editor"
         anchor="top right"
@@ -26,7 +26,7 @@
         no-parent-event
       />
     </q-expansion-item>
-    
+
   </div>
 </template>
 
@@ -68,4 +68,3 @@ function onEnter () {
   showTip.value = true
 }
 </script>
-    

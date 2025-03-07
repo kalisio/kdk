@@ -8,27 +8,27 @@
     </q-item-section>
     <q-item-section>
       <!-- size opacity -->
-      <q-slider v-if="['size', 'opacity'].includes(props.type)" id="style-property-slider" 
+      <q-slider v-if="['size', 'opacity'].includes(props.type)" id="style-property-slider"
         v-model="value"
-        :min="min" 
-        :max="max" 
+        :min="min"
+        :max="max"
         :step="step"
-        label 
+        label
         label-always
         dense
         :label-value="value + (props.unit || '')"
       />
       <!-- color typ -->
-      <KColorPicker v-else-if="props.type === 'color'" 
-        v-model="value" 
-        defaultView="palette" 
+      <KColorPicker v-else-if="props.type === 'color'"
+        v-model="value"
+        defaultView="palette"
       />
       <!-- shape type -->
-      <q-select v-else-if="props.type === 'shape'" 
-        v-model="value" 
-        :options="getShapes()" 
-        emit-value 
-        map-options 
+      <q-select v-else-if="props.type === 'shape'"
+        v-model="value"
+        :options="getShapes()"
+        emit-value
+        map-options
         bottom-slots
       >
         <template v-slot:selected-item="scope">
@@ -36,16 +36,16 @@
         </template>
         <template v-slot:option="scope">
           <KShape
-            v-bind="scope.itemProps" 
+            v-bind="scope.itemProps"
             :options="scope.opt"
-            class="row justify-center" 
+            class="row justify-center"
           />
         </template>
       </q-select>
       <!-- icon type -->
-      <q-select v-else-if="type === 'icon'" 
-        v-model="value" 
-        :options="['las la-ruler', 'las la-shapes', 'las la-fill']" 
+      <q-select v-else-if="type === 'icon'"
+        v-model="value"
+        :options="['las la-ruler', 'las la-shapes', 'las la-fill']"
       />
     </q-item-section>
   </q-item>

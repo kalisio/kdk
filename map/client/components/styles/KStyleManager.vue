@@ -1,6 +1,6 @@
 <template>
   <div class="column">
-    <div id="style-manager-header" 
+    <div id="style-manager-header"
       v-if="title || (toolbar && toolbar.length)"
       class="q-px-md q-mt-md"
     >
@@ -62,11 +62,11 @@
         </q-tab-panel>
         <q-tab-panel name="editor">
           <div class="full-width column">
-            <KStyleEditor 
-              ref="styleEditor" 
-              :style="style" 
+            <KStyleEditor
+              ref="styleEditor"
+              :style="style"
               :default="defaultStyle"
-              @canceled="onCanceled" 
+              @canceled="onCanceled"
               @applied="onApplied"
               class="col"
             />
@@ -81,7 +81,7 @@
 import _ from 'lodash'
 import sift from 'sift'
 import { computed, ref } from 'vue'
-import { Filter, Sorter, api } from '@kalisio/kdk/core.client'
+import { Filter, Sorter } from '@kalisio/kdk/core.client'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'

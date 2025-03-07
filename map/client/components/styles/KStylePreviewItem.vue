@@ -1,16 +1,16 @@
 <template>
-  <KItem 
-    ref="item" 
+  <KItem
+    ref="item"
   >
     <template v-slot:item-content>
-      <div 
-        class="row items-center no-wrap" 
+      <div
+        class="row items-center no-wrap"
         :class="{ 'q-gutter-x-sm': dense, 'q-gutter-x-md': !dense }"
       >
         <div class="text-subtitle2">
           {{ name }}
         </div>
-        <div 
+        <div
           class="row item-baseline no-wrap"
           :class="{ 'q-gutter-x-sm': dense, 'q-gutter-x-md': !dense }"
         >

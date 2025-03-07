@@ -5,8 +5,8 @@
         {{ $tie(title) }}
       </div>
     </div>
-    <div 
-      id="style-editor-content" 
+    <div
+      id="style-editor-content"
       class="full-width column"
     >
       <!-- Name editor -->
@@ -123,8 +123,8 @@ const formSchema = {
   properties: {
     name: {
       type: 'string',
-      "minLength": 3,
-      "maxLength": 256,
+      minLength: 3,
+      maxLength: 256,
       field: {
         component: 'form/KTextField',
         label: 'KStyleEditor.NAME_LABEL'
@@ -162,7 +162,7 @@ const canEditLine = computed(() => props.allowedStyles.includes('line'))
 const canEditPolygon = computed(() => props.allowedStyles.includes('polygon'))
 
 // Watch
-watch(() => props.style,(value) => {
+watch(() => props.style, (value) => {
   style.value = _.defaultsDeep({}, value, props.default, _.pick(DefaultStyle, ['point', 'line', 'polygon']))
 }, { immediate: true })
 
