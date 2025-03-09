@@ -68,7 +68,7 @@ Retrieves the timestamp of the latest item from a service based on a specified f
   - `filter` *(object, optional)*: Additional query filters.
 - **Returns:** A promise resolving to the timestamp of the latest item.
 
-### `enumerateField(service, field, filter = {})`
+### `getDistinctValues(service, field, filter = {})`
 
 Retrieves a list of distinct values for a specified field in a collection.
 
@@ -78,13 +78,45 @@ Retrieves a list of distinct values for a specified field in a collection.
   - `filter` *(object, optional)*: Additional query filters.
 - **Returns:** A promise resolving to an array of unique values.
 
-## Usage
+## Example usage
 
 ```javascript
-import { getCollectionService, listItems } from './utils.collection.js';
+import { getCollectionService, listItems } from './utils.collection.js'
 
-const service = getCollectionService('myCollection', context);
+const service = getCollectionService('myCollection', context)
 const items = await listItems(service, ['name', 'age'], { active: true }, 100)
-console.log('Active items:', items);
+console.log('Active items:', items)
+```
+### `searchText(service, text, caseSensitive = false, diacriticSensitive = false)`
+
+Searches for a given text in a service using a [$text}(https://www.mongodb.com/docs/manual/reference/operator/query/text/) query.
+
+- **Parameters:**
+  - `service` *(Object)* – The service to perform the search on.
+  - `text` *(String)* – The text to search for.
+  - `caseSensitive` *(Boolean, default: `false`)* – Whether the search should be case-sensitive.
+  - `diacriticSensitive` *(Boolean, default: `false`)* – Whether the search should be diacritic-sensitive.
+- **Returns:** A promise that resolves to the search results.
+
+## Example usage
+
+```javascript
+const results = await searchText(myService, 'example')
+console.log(results)
 ```
 
+:::  
+`$text` performs a text query on the content of the fields indexed with a [text index](https://www.mongodb.com/docs/manual/core/indexes/index-types/index-text/#std-label-index-type-text). 
+:::
+
+### `containsText(service, field, text, caseSensitive = false, diacriticSensitive = false)`
+
+Checks if a specific field in the search results contains the exact text.
+
+- **Parameters:**
+  - `service` *(Object)* – The service to perform the search on.
+  - `field` *(String)* – The field to check in the search results.
+  - `text` *(String)* – The text to match against.
+  - `caseSensitive` *(Boolean, default: `false`)* – Whether the comparison should be case-sensitive.
+  - `diacriticSensitive` *(Boolean, default: `false`)* – Whether the comparison should consider diacritics.
+- **Returns:** A promise that resolves to `true` if an exact match is found, otherwise `false`.
