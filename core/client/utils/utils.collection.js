@@ -29,9 +29,43 @@ export async function getLatestTime (service, field = 'createdAt', filter = {}) 
   return _.get(latestItem, field)
 }
 
-export async function enumerateField (service, field, filter = {}) {
+export async function getDistinctValues (service, field, filter = {}) {
   const query = _.merge({}, filter, { $distinct: field })
   const values = await service.find({ query })
   if (Array.isArray(values)) return values
   return [values]
+}
+
+export async function searchText (service, text, caseSensitive = false, diacriticSensitive = false) {
+  const query = { 
+    $text: { 
+      $search: text, 
+      $caseSensitive: caseSensitive,
+      $diacriticSensitive: diacriticSensitive
+    }
+  }
+  return service.find({ query })
+}
+
+export async function containsText (service, field, text, caseSensitive = false, diacriticSensitive = false) {
+  const response = await searchText(service, text, caseSensitive, diacriticSensitive)
+  for (const item of response.data) {
+    const value = _.get(item, field)
+    if (value) {
+      if (_.size(text) === _.size(value)) {
+        let target = text
+        let other = value
+        if (!diacriticSensitive) {
+          target = _.deburr(target)
+          other = _.deburr(other)
+        }
+        if (!caseSensitive) {
+          target = _.toUpper(target)
+          other = _.toUpper(other)
+        }
+        if (target === other) return true
+      }
+    }
+  }
+  return false
 }
