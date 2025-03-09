@@ -59,9 +59,6 @@ const props = defineProps({
   }
 })
 
-// Emit
-const emit = defineEmits(['update:modelValue'])
-
 // Data
 const showTip = ref(null)
 const location = ref(null)

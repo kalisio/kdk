@@ -14,6 +14,7 @@
         ref="formRef"
         :values="formValues"
         :schema="formSchema"
+        @field-changed="onNameChanged"
       />
       <!-- Point editor -->
       <KStyleEditorSection
@@ -71,7 +72,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
-import { api } from '@kalisio/kdk/core.client'
+import { api, i18n, utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
 import KStyleProperty from './KStyleProperty.vue'
 import KPanel from '../../../../core/client/components/KPanel.vue'
 import KStyleEditorSection from './KStyleEditorSection.vue'
@@ -81,7 +82,7 @@ import { DefaultStyle } from '../../utils/index.js'
 const props = defineProps({
   style: {
     type: Object,
-    required: true
+    default: () => null
   },
   default: {
     type: Object,
@@ -167,10 +168,25 @@ watch(() => props.style, (value) => {
 }, { immediate: true })
 
 // Functions
+const onNameChanged = _.debounce(async (field, value) => {
+  if (_.size(value) > 2) await checkName(value)
+}, 200)
+async function checkName (name) {
+  if (mode === 'edition' && name === props.style.name) return true
+  const service = api.getService('styles')
+  const hasName = await kdkCoreUtils.containsText(service, 'name', name)
+  if (!hasName) return true
+  formRef.value.getField('name').reference.invalidate(i18n.t('KStyleEditor.STYLE_ALREADY_EXISTS', { style: name }))
+  return false
+}
 async function apply () {
   const { isValid, values } = formRef.value.validate()
   if (!isValid) return false
   const service = api.getService('styles')
+  // check to name uniqueness
+  const isUnique = await checkName(values.name)
+  if (!isUnique) return false
+  // create to patch the style
   let data
   if (mode === 'creation') {
     data = _.merge(style.value, values)

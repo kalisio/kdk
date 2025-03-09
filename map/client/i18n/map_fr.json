@@ -766,8 +766,7 @@
   },
   "KStyleEditor": {
     "NAME_LABEL": "Saisissez le nom du style",
-    "TITLE": "Editeur de style",
-    "NAME": "Nom du style",
+    "STYLE_ALREADY_EXISTS": "Le style {style} existe déjà !",
     "SECTION_TITLE_POINT": "Point",
     "SECTION_TITLE_LINE": "Ligne",
     "SECTION_TITLE_POLYGON": "Polygone",
