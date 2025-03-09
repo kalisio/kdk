@@ -202,7 +202,6 @@ describe('core:services', () => {
       .set('Authorization', 'Bearer ' + accessToken)
       .send({ service: 'users', operation: 'create' })
       .catch(data => {
-        console.log(data)
         const error = data.response.body
         expect(error).toExist()
         expect(error.name).to.equal('Forbidden')

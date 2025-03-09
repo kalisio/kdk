@@ -9,9 +9,9 @@ export default {
       kdkCoreHooks.diacriticSearch()
     ],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
+    create: [kdkCoreHooks.checkUnique({ field: 'name' })],
+    update: [kdkCoreHooks.checkUnique({ field: 'name' })],
+    patch: [kdkCoreHooks.checkUnique({ field: 'name' })],
     remove: []
   },
 
