@@ -59,6 +59,9 @@ const formRef = ref(null)
 const mode = props.object ? 'edition' : 'creation'
 
 // Functions
+function getContext () {
+  return { props, mode, form: formRef.value }
+}
 async function apply () {
   // validate the form
   const { isValid, values: formValues } = formRef.value.validate()
@@ -76,7 +79,7 @@ async function apply () {
     let response = { isOk: true, values }
     if (props.beforeRequest) {
       logger.debug('[KDK] Apply beforeRequest hook')
-      response = await props.beforeRequest(values, { mode, form: formRef.value, ...props })
+      response = await props.beforeRequest(values, getContext())
     }
     if (!response.isOk) return false
     // do the request
@@ -111,6 +114,7 @@ async function apply () {
 
 // Expose
 defineExpose({
-  apply
+  apply,
+  getContext
 })
 </script>
