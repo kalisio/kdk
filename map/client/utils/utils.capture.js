@@ -95,7 +95,7 @@ function getLayout (values) {
 
   if (_.has(values, 'header') && !_.isEmpty(values.header)) _.set(layout, 'header', headerFooterComponent(values.header, 'header'))
   if (_.has(values, 'footer') && !_.isEmpty(values.footer)) _.set(layout, 'footer', headerFooterComponent(values.footer, 'footer'))
-  if (_.includes(placements, values.compass)) _.set(layout, 'stickies', compassComponent(values.compass))
+  if (_.includes(placements, values.north)) _.set(layout, 'stickies', northComponent(values.north))
   if (_.includes(placements, values.legend)) _.set(layout, `windows.${values.legend}`, legendComponent())
 
   return layout
@@ -103,8 +103,8 @@ function getLayout (values) {
 function headerFooterComponent (text, position) {
   return { content: [{ component: _.get(config, `capture.${position}.component`, 'KCaptureTextArea'), text, position }], visible: true }
 }
-function compassComponent (position) {
-  const northSticky = Layout.getStickies().content.find(sticky => sticky.id === 'north-sticky')
+function northComponent (position) {
+  const northSticky = Layout.findSticky('north-sticky')
   return { content: [{ ...northSticky, position, offset: [0, 5], visible: true }] }
 }
 function legendComponent () {

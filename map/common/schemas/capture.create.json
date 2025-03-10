@@ -101,7 +101,7 @@
         ]
       }
     },
-    "compass": {
+    "north": {
       "type": "string", 
       "default": "none",
       "field": {
@@ -128,5 +128,5 @@
       }
     }
   },
-  "required": ["resolution", "compass", "legend", "format"]
+  "required": ["resolution", "north", "legend", "format"]
 }
