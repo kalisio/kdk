@@ -20,7 +20,7 @@ module.exports = [{
   params: {
     placement: 'top',
     clickOnPrevious: '#left-opener',
-    clickOnNext: ['#left-opener', '#about'],
+    clickOnNext: ['#left-opener', '#about', '#left-opener'],
     nextDelay: 500
   }
 }, {
