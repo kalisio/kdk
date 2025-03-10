@@ -1,6 +1,11 @@
 <template>
   <div>
-    <q-btn id="style-point-color" round style="max-width: 16px" :style="{ 'background-color': color }"/>
+    <q-btn 
+      id="color-picker"
+      :size="size" 
+      round 
+      :style="{ 'background-color': color }"
+    />
     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
       <q-color
         v-model="color"
@@ -35,10 +40,14 @@ const props = defineProps({
   },
   defaultView: {
     type: String,
-    default: 'spectrum',
+    default: 'palette',
     validator: (value) => {
-      return ['spectrum', 'tune', 'palette', 'swatches'].includes(value)
+      return ['spectrum', 'tune'].includes(value)
     }
+  },
+  size: {
+    type: String,
+    default: 'sm'
   }
 })
 
