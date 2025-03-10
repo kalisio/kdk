@@ -99,8 +99,8 @@ export const baseMap = {
           zoom: 6,
           maxBounds: [[-90, -180], [90, 180]],
           maxBoundsViscosity: 0.25,
-          scale: false,
-          geolocate: false,
+          scale: true,
+          geolocate: true,
           rotateControl: false // Rotate plugin show this even if rotation is disabled
         })
       // Initialize the map
