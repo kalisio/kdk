@@ -41,7 +41,7 @@ import KStyleTip from './KStyleTip.vue'
 defineProps({
   title: {
     type: String,
-    default: null
+    required: true
   },
   style: {
     type: Object,

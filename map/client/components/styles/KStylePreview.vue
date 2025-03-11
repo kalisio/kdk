@@ -38,9 +38,15 @@ const shapeOptions = computed(() => {
   const size = props.dense ? ['20px', '20px'] : ['24px', '24px']
   switch (props.type) {
     case 'point': {
+      let stroke
+      if (_.has(props.stroke)) {
+        let width = _.get(props.stroke, 'width', 1)
+        if (width > 1) width = width / 3
+        stroke = { stroke: { width } }
+      }
       let width = _.get(props.style, 'stroke.width', 1)
       if (width > 1) width = width / 3
-      return _.merge({}, props.style, { size, stroke: { width } })
+      return _.merge({}, props.style, { size, stroke })
     }
     case 'line': {
       let width = _.get(props.style, 'width', 1)
@@ -48,9 +54,13 @@ const shapeOptions = computed(() => {
       return { shape: 'polyline', stroke: _.merge({}, props.style, { width }) }
     }
     default: {
-      let width = _.get(props.style, 'stroke.width', 1)
-      if (width > 1) width = width / 3
-      return _.merge({ shape: 'polygon', size }, props.style, { stroke: { width } })
+      let stroke
+      if (_.has(props.stroke)) {
+        let width = _.get(props.stroke, 'width', 1)
+        if (width > 1) width = width / 3
+        stroke = { stroke: { width } }
+      }
+      return _.merge({ shape: 'polygon', size }, props.style, stroke)
     }
   }
 })

@@ -25,12 +25,19 @@
       >
         <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" />
         <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" />
+        <KStyleProperty v-model="style.point.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" />
         <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" />
-        <KStyleProperty v-if="!is3D" v-model="style.point.icon.classes" :name="$t('KStyleEditor.ICON')" type="icon" />
-        <KStyleProperty v-if="!is3D" v-model="style.point.icon.size" :name="$t('KStyleEditor.ICON_SIZE')" type="size" :min="8" :max="48" />
-        <KStyleProperty v-model="style.point.stroke.color" :name="$t('KStyleEditor.STROKE_COLOR')" type="color" />
-        <KStyleProperty v-model="style.point.stroke.width" :name="$t('KStyleEditor.STROKE_WIDTH')" type="size" :min="1" :max="12" />
-        <KStyleProperty v-model="style.point.stroke.opacity" :name="$t('KStyleEditor.STROKE_OPACITY')" type="opacity" />
+        <KStylePropertiesGroup
+          v-if="!is3D"
+          v-model="style.point.icon"
+          label="icon"
+          :properties="pointIconProperties"
+        />
+        <KStylePropertiesGroup 
+          v-model="style.point.stroke"
+          label="stroke"
+          :properties="pointStrokeProperties"
+        />
       </KStyleEditorSection>
       <!-- Line editor -->
       <KStyleEditorSection
@@ -52,9 +59,11 @@
       >
         <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" />
         <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" />
-        <KStyleProperty v-model="style.polygon.stroke.color" :name="$t('KStyleEditor.STROKE_COLOR')" type="color" />
-        <KStyleProperty v-model="style.polygon.stroke.width" :name="$t('KStyleEditor.STROKE_WIDTH')" type="size" :min="1" :max="12" />
-        <KStyleProperty v-model="style.polygon.stroke.opacity" :name="$t('KStyleEditor.STROKE_OPACITY')" type="opacity" />
+        <KStylePropertiesGroup 
+          v-model="style.polygon.stroke"
+          label="stroke"
+          :properties="polygonStrokeProperties"
+        />
       </KStyleEditorSection>
     </div>
     <div id="style-editor-footer" class="row justify-end q-mt-md" v-if="!hideButtons">
@@ -73,9 +82,10 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
 import { api, i18n, utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
-import KStyleProperty from './KStyleProperty.vue'
 import KPanel from '../../../../core/client/components/KPanel.vue'
 import KStyleEditorSection from './KStyleEditorSection.vue'
+import KStylePropertiesGroup from './KStylePropertiesGroup.vue'
+import KStyleProperty from './KStyleProperty.vue'
 import { DefaultStyle } from '../../utils/index.js'
 
 // Props
@@ -144,6 +154,29 @@ const formValues = computed(() => {
   if (_.isEmpty(props.style)) return null
   return { name: _.get(props.style, 'name') }
 })
+const defaultStyle = computed(() => {
+  return _.defaultsDeep(props.default, DefaultStyle)
+})
+const pointStrokeProperties = computed(() => {
+  return [
+    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: defaultStyle.value.point.stroke.color },
+    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: defaultStyle.value.point.stroke.width },
+    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: defaultStyle.value.point.stroke.opacity }
+  ]
+})
+const pointIconProperties = computed(() => {
+  return [
+    { name: 'classes', label: 'KStyleEditor.ICON', type: 'color', default: defaultStyle.value.point.icon.classes },
+    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48,  default: defaultStyle.value.point.icon.size }
+  ]
+})
+const polygonStrokeProperties = computed(() => {
+  return [
+    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: defaultStyle.value.polygon.stroke.color },
+    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: defaultStyle.value.polygon.stroke.width },
+    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: defaultStyle.value.polygon.stroke.opacity }
+  ]
+})
 const buttons = computed(() => {
   if (props.buttons !== null) return props.buttons
   return [
@@ -168,7 +201,7 @@ const canEditPolygon = computed(() => props.allowedStyles.includes('polygon'))
 
 // Watch
 watch(() => props.style, (value) => {
-  style.value = _.defaultsDeep({}, value, props.default, _.pick(DefaultStyle, ['point', 'line', 'polygon']))
+  style.value = value
 }, { immediate: true })
 
 // Functions
