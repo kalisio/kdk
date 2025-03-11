@@ -116,14 +116,15 @@ export default async function init () {
   })
 
   // Register additional shapes
-  kdkCoreUtils.Shapes.add('polyline', {
+  kdkCoreUtils.Shapes['polyline'] = {
     viewBox: [0, 0, 50, 50],
-    content: '<path d="M1 44L17 6L33 44L49 6" />'
-  })
-  kdkCoreUtils.Shapes.add('polygon', {
+    content: '<path d="M1 44L17 6L33 44L49 6" />',
+    clipPath: false
+  }
+  kdkCoreUtils.Shapes['polygon'] = {
     viewBox: [0, 0, 50, 50],
     content: '<path d="M10 40L1 24L5 10L20 1L40 10L49 24L40 40L32 49Z" />'
-  })
+  }
 
   // Store the initialization state
   Store.set('kdk.map.initialized', true)

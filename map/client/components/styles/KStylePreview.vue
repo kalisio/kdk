@@ -45,7 +45,7 @@ const shapeOptions = computed(() => {
     case 'line': {
       let width = _.get(props.style, 'width', 1)
       if (width > 1) width = width / 3
-      return { shape: 'polyline', stroke: _.merge({}, props.style, { width, clipPath: false }) }
+      return { shape: 'polyline', stroke: _.merge({}, props.style, { width }) }
     }
     default: {
       let width = _.get(props.style, 'stroke.width', 1)

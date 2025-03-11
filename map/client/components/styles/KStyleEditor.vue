@@ -107,6 +107,10 @@ const props = defineProps({
   allowedStyles: {
     type: Array,
     default: ['point', 'line', 'polygon']
+  },
+  dense: {
+    type: Boolean,
+    default: false
   }
 })
 

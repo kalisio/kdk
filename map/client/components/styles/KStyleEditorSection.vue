@@ -4,6 +4,7 @@
       v-model="isOpened"
       group="editor"
       header-class="bg-grey-2"
+      :dense="dense"
     >
       <template v-slot:header>
         <q-item-section v-if="title">
@@ -51,6 +52,10 @@ defineProps({
     validator: (value) => {
       return ['point', 'line', 'polygon'].includes(value)
     }
+  },
+  dense: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -60,7 +65,7 @@ const showTip = ref(false)
 
 // Watch
 watch(isOpened, (value) => {
-  showTip.value = value
+  setTimeout(() => { showTip.value = value }, 300)
 })
 
 // Functions
