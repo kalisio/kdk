@@ -4,6 +4,7 @@ module.exports = {
       id: `${name}-activity-action`,
       icon,
       label,
+      renderer: 'item',
       route: { name: `${name}-activity` }
     }
   },
@@ -32,11 +33,11 @@ module.exports = {
   },
   onlineHelp: (url) => {
     return {
-      id: 'online-help-action', 
-      icon: 'las la-book', 
-      label: 'sideNav.ONLINE_HELP', 
-      url, 
-      renderer: 'item' 
+      id: 'online-help-action',
+      icon: 'las la-book',
+      label: 'sideNav.ONLINE_HELP',
+      url,
+      renderer: 'item'
     }
   },
   CONTEXTUAL_HELP: {
@@ -47,10 +48,10 @@ module.exports = {
     renderer: 'item'
   },
   LOGOUT: {
-    id: 'logout-action', 
-    icon: 'las la-sign-out-alt', 
-    label: 'sideNav.LOGOUT', 
-    route: { name: 'logout' }, 
+    id: 'logout-action',
+    icon: 'las la-sign-out-alt',
+    label: 'sideNav.LOGOUT',
+    route: { name: 'logout' },
     renderer: 'item'
   }
 }
