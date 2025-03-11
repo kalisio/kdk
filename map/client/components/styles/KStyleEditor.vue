@@ -22,21 +22,24 @@
         title="KStyleEditor.SECTION_TITLE_POINT"
         :style="style"
         type="point"
+        :dense="dense"
       >
-        <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" />
-        <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" />
-        <KStyleProperty v-model="style.point.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" />
-        <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" />
+        <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" :dense="dense" />
+        <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" :dense="dense" />
+        <KStyleProperty v-model="style.point.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :dense="dense" />
+        <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" :dense="dense" />
         <KStylePropertiesGroup
           v-if="!is3D"
           v-model="style.point.icon"
           label="icon"
           :properties="pointIconProperties"
+          :dense="dense"
         />
         <KStylePropertiesGroup
           v-model="style.point.stroke"
           label="stroke"
           :properties="pointStrokeProperties"
+          :dense="dense"
         />
       </KStyleEditorSection>
       <!-- Line editor -->
@@ -45,10 +48,11 @@
         title="KStyleEditor.SECTION_TITLE_LINE"
         :style="style"
         type="line"
+        :dense="dense"
       >
-        <KStyleProperty v-model="style.line.color" :name="$t('KStyleEditor.COLOR')" type="color" />
-        <KStyleProperty v-model="style.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12"/>
-        <KStyleProperty v-model="style.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" />
+        <KStyleProperty v-model="style.line.color" :name="$t('KStyleEditor.COLOR')" type="color" :dense="dense" />
+        <KStyleProperty v-model="style.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12" :dense="dense" />
+        <KStyleProperty v-model="style.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :dense="dense" />
       </KStyleEditorSection>
       <!-- Polygon editor -->
       <KStyleEditorSection
@@ -56,13 +60,15 @@
         title="KStyleEditor.SECTION_TITLE_POLYGON"
         :style="style"
         type="polygon"
+        :dense="dense"
       >
-        <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" />
-        <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" />
+        <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" :dense="dense" />
+        <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" :dense="dense" />
         <KStylePropertiesGroup
           v-model="style.polygon.stroke"
           label="stroke"
           :properties="polygonStrokeProperties"
+          :dense="dense"
         />
       </KStyleEditorSection>
     </div>

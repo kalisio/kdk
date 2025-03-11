@@ -17,6 +17,7 @@
         <KStyleProperty
           v-bind="property"
           v-model="values[property.name]"
+          :dense="dense"
           @update:model-value="onPropertyUpdated"
         />
       </template>
