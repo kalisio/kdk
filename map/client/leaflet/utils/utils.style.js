@@ -140,7 +140,8 @@ export function convertLineStyleToLeafletPath (style) {
 export function convertPolygonStyleToLeafletPath (style) {
   if (!style) return
   let leafletStyle = convertStyle(style, PolygonStyleToLeafletPath)
-  Object.assign(leafletStyle, convertLineStyleToLeafletPath(style.stroke))
+  if (style.stroke) Object.assign(leafletStyle, convertLineStyleToLeafletPath(style.stroke))
+  else leafletStyle.stroke = false
   // handle quasar/default color if needed
   leafletStyle.fillColor = kdkCoreUtils.getHtmlColor(leafletStyle.fillColor, 'black')
   return leafletStyle
