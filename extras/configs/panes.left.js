@@ -11,7 +11,7 @@ module.exports = {
   SETTINGS: {
     id: 'settings-action',
     icon: 'las la-cog',
-    label: 'SETTINGS',
+    label: 'layout.SETTINGS',
     renderer: 'item',
     dialog: {
       component: 'app/KSettings',
@@ -25,7 +25,7 @@ module.exports = {
   ABOUT: {
     id: 'about-action',
     icon: 'las la-info',
-    label: 'ABOUT',
+    label: 'layout.ABOUT',
     renderer: 'item',
     dialog: {
       component: 'app/KAbout', title: 'ABOUT', okAction: 'CLOSE'
@@ -35,7 +35,7 @@ module.exports = {
     return {
       id: 'online-help-action',
       icon: 'las la-book',
-      label: 'sideNav.ONLINE_HELP',
+      label: 'layout.ONLINE_HELP',
       url,
       renderer: 'item'
     }
@@ -43,14 +43,14 @@ module.exports = {
   CONTEXTUAL_HELP: {
     id: 'contextual-help-action',
     icon: 'las la-question-circle',
-    label: 'sideNav.CONTEXTUAL_HELP',
+    label: 'layout.CONTEXTUAL_HELP',
     handler: { name: 'launchTour', params: ['home'] },
     renderer: 'item'
   },
   LOGOUT: {
     id: 'logout-action',
     icon: 'las la-sign-out-alt',
-    label: 'sideNav.LOGOUT',
+    label: 'layout.LOGOUT',
     route: { name: 'logout' },
     renderer: 'item'
   }

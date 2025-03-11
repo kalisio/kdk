@@ -30,10 +30,14 @@
   "HELP": "Help",
   "NEED_HELP": "Help needed ?",
   "READ_MORE": "Read more",
-  "CONTEXTUAL_HELP": "Contextual help",
-  "ABOUT": "About",
   "BACK": "Return",
-  "SETTINGS": "My settings",
+  "layout": {
+    "SETTINGS": "My settings",
+    "ABOUT": "About",
+    "ONLINE_HELP": "Online help",
+    "CONTEXTUAL_HELP": "Contextual help",
+    "LOGOUT": "Logout"
+  },
   "errors": {
     "400": "Operation cannot be performed: bad parameters",
     "401": "Operation cannot be performed: authentication required",
@@ -325,7 +329,7 @@
     "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
     "PLATFORM_INFO": "Platform information"
   },
-  "KWelcome": { 
+  "KWelcome": {
     "WELCOME_TITLE": "Welcome !",
     "WELCOME_MESSAGE": "This quick start guide covers the main application features.",
     "ONLINE_HELP": "Read first our online help to get an overview of the basic concepts",
@@ -553,7 +557,7 @@
   },
   "KTextAreaField": {
     "CLEAR_TOOLTIP": "Clear content"
-  }, 
+  },
   "KResolutionField": {
     "SD_LABEL": "Standard Definition",
     "SD_DESCRIPTION": "4:3, 640 x 480",
@@ -728,4 +732,3 @@
     "HIDE_NORTH": "Hide north arrow"
   }
 }
-
