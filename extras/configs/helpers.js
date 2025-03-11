@@ -1,12 +1,12 @@
 module.exports = {
-  verticalSeparator: (color = null) => {
+  verticalSeparator: (color = 'grey-4') => {
     return {
       component: 'QSeparator',
       vertical: true,
       color
     }
   },
-  horizontalSeparator: (color = null) => {
+  horizontalSeparator: (color = 'grey-4') => {
     return {
       component: 'QSeparator',
       class: 'full-width',
