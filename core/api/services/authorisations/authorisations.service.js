@@ -87,37 +87,40 @@ export default {
   setup (app) {
     const config = app.get('authorisation')
     if (config && config.cache) {
+      this.cacheConfig = config.cache
       // Store abilities of the N most active users in LRU cache (defaults to 1000)
-      const max = config.cache.maxUsers || 1000
+      const max = this.cacheConfig.maxUsers || 1000
       // LRU cache lib switched from positional parameters to options object at some point
       // so that now we directly pass the options to it while before we used the max argument
-      if (!config.cache.max && !config.cache.ttl && !config.cache.maxSize) config.cache.max = max
-      this.cache = new LRUCache(config.cache)
+      if (!this.cacheConfig.max && !this.cacheConfig.ttl && !this.cacheConfig.maxSize) this.cacheConfig.max = max
+      this.cache = new LRUCache(this.cacheConfig)
       debug('Using LRU cache for user abilities')
     } else {
       debug('Do not use LRU cache for user abilities')
     }
   },
 
+  getCacheKey (subject) {
+    if (!this.cache) return null
+    let cacheKey
+    // Compute cache key based on provided function or user ID
+    if (typeof this.cacheConfig.key === 'function') cacheKey = this.cacheConfig.key(subject)
+    if (!cacheKey && subject && subject._id) cacheKey = subject._id.toString()
+    return cacheKey || ANONYMOUS_USER
+  },
+
   // Compute abilities for a given user and set it in cache the first time
   // or get it from cache if found
   async getAbilities (subject) {
-    if (this.cache) {
-      if (subject && subject._id) {
-        if (this.cache.has(subject._id.toString())) return this.cache.get(subject._id.toString())
-      } else {
-        if (this.cache.has(ANONYMOUS_USER)) return this.cache.get(ANONYMOUS_USER)
-      }
-    }
+    const cacheKey = this.getCacheKey(subject)
+    if (cacheKey && this.cache.has(cacheKey)) return this.cache.get(cacheKey)
+    
     // Provide app for any complex use case requiring to make requests
     const abilities = await defineAbilities(subject, this.app)
 
-    if (this.cache) {
-      if (subject && subject._id) {
-        this.cache.set(subject._id.toString(), abilities)
-      } else {
-        this.cache.set(ANONYMOUS_USER, abilities)
-      }
+    if (cacheKey) {
+      debug('Updating user abilities of subject ' + (subject ? subject._id : ANONYMOUS_USER) + ' with cache key ' + cacheKey)
+      this.cache.set(cacheKey, abilities)
     }
 
     return abilities
@@ -125,16 +128,11 @@ export default {
 
   // Compute abilities for a given user and update it in cache
   async updateAbilities (subject) {
-    debug('Updating user abilities of subject ' + (subject ? subject._id : ANONYMOUS_USER))
+    const cacheKey = this.getCacheKey(subject)
     
-    if (this.cache) {
-      if (subject && subject._id) {
-        this.cache.delete(subject._id.toString())
-      } else {
-        this.cache.delete(ANONYMOUS_USER)
-      }
-    }
-
+    // Remove abilities from cache so that next call will populate it again
+    if (cacheKey && this.cache.has(cacheKey)) this.cache.delete(cacheKey)
+    
     const abilities = await this.getAbilities(subject)
     return abilities
   },
