@@ -185,13 +185,15 @@ export async function authorise (hook) {
   if (checkAuthorisation) {
     // Build ability for user
     const authorisationService = hook.app.getService('authorisations')
-    // If no user we allow for a stateless token with permissions inside
     let subject = hook.params.user
-    if (!subject) {
-      const payload = _.get(hook.params, 'authentication.payload')
-      // Token targeting API gateway (sub = keyId) or app used through iframe (appId = keyId)
-      if (payload && (payload.sub || payload.appId)) {
+    const payload = _.get(hook.params, 'authentication.payload')
+    if (payload) {
+      // If no user we allow for a stateless token with permissions inside, e.g.
+      // token targeting API gateway (sub = keyId) or app used through iframe (appId = keyId)
+      if (!subject && (payload.sub || payload.appId)) {
         subject = Object.assign({ _id: (payload.sub || payload.appId) }, payload)
+      } else { // Otherwise we allow to "extend" user abilities by providing additional information in the token
+        subject = Object.assign(subject, _.omit(payload, ['aud', 'iss', 'exp', 'sub', 'iat', 'jti', 'nbf']))
       }
     }
     const abilities = await authorisationService.getAbilities(subject)
