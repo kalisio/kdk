@@ -42,7 +42,7 @@ const props = defineProps({
     type: String,
     default: 'palette',
     validator: (value) => {
-      return ['spectrum', 'tune'].includes(value)
+      return ['spectrum', 'tune', 'palette'].includes(value)
     }
   },
   size: {
