@@ -5,7 +5,7 @@ module.exports = {
       icon,
       label,
       renderer: 'item',
-      route: { name: `${name}-activity`, ...(params && params) }
+      route: { name: `${name}-activity`, params }
     }
   },
   SETTINGS: {
