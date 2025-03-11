@@ -3,7 +3,7 @@
     <div class="full-width row items-center no-wrap">
       <q-toggle
         v-model="isActive"
-        :label="label"
+        :label="$t(label)"
         size="sm"
         :dense="dense"
         @update:model-value="onToggled"

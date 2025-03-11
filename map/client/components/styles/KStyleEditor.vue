@@ -19,7 +19,7 @@
       <!-- Point editor -->
       <KStyleEditorSection
         v-if="canEditPoint"
-        title="KStyleEditor.SECTION_TITLE_POINT"
+        label="KStyleEditor.POINT_SECTION"
         :style="style"
         type="point"
         :dense="dense"
@@ -30,14 +30,14 @@
         <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" :dense="dense" />
         <KStylePropertiesGroup
           v-if="!is3D"
+          label="KStyleEditor.ICON_GROUP"
           v-model="style.point.icon"
-          label="icon"
           :properties="pointIconProperties"
           :dense="dense"
         />
         <KStylePropertiesGroup
+          label="KStyleEditor.STROKE_GROUP"
           v-model="style.point.stroke"
-          label="stroke"
           :properties="pointStrokeProperties"
           :dense="dense"
         />
@@ -45,7 +45,7 @@
       <!-- Line editor -->
       <KStyleEditorSection
         v-if="canEditLine"
-        title="KStyleEditor.SECTION_TITLE_LINE"
+        label="KStyleEditor.LINE_SECTION"
         :style="style"
         type="line"
         :dense="dense"
@@ -57,7 +57,7 @@
       <!-- Polygon editor -->
       <KStyleEditorSection
         v-if="canEditPolygon"
-        title="KStyleEditor.SECTION_TITLE_POLYGON"
+        label="KStyleEditor.POLYGON_SECTION"
         :style="style"
         type="polygon"
         :dense="dense"
@@ -65,8 +65,8 @@
         <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" :dense="dense" />
         <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" :dense="dense" />
         <KStylePropertiesGroup
+          label="KStyleEditor.STROKE_GROUP"
           v-model="style.polygon.stroke"
-          label="stroke"
           :properties="polygonStrokeProperties"
           :dense="dense"
         />
@@ -172,7 +172,7 @@ const pointStrokeProperties = computed(() => {
 })
 const pointIconProperties = computed(() => {
   return [
-    { name: 'classes', label: 'KStyleEditor.ICON', type: 'color', default: defaultStyle.value.point.icon.classes },
+    { name: 'classes', label: 'KStyleEditor.ICON', type: 'icon', default: defaultStyle.value.point.icon.classes },
     { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: defaultStyle.value.point.icon.size }
   ]
 })

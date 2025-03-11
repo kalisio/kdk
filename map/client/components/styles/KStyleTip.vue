@@ -108,7 +108,6 @@ watch(() => props.modelValue, (value) => {
   showTip.value = value
 }, { immediate: true })
 watch(() => props.style, (value) => {
-  console.log(props.style)
   location.value = refresh()
 }, { immediate: true, deep: true })
 

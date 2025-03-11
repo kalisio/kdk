@@ -34,7 +34,7 @@
       "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",
       "REMOVING_LABEL": "Veuillez patienter pendant la suppression des données",
       "REMOVE_DIALOG_TITLE": "Supprimer {layer} ?",
-      "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {layer} de votre espace de travail ?"
+      "REMOVE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer {layer} de votre espace de travail ?"
     },
     "capture": {
       "CAPTURE_PDF_FILE": "impression_{time}.pdf",
@@ -50,19 +50,19 @@
     },
     "activity": {
       "ADD_LAYER": "Ajouter une couche",
-      "EDIT_LABEL": "Editer les propriétés",
-      "EDIT_LAYER_STYLE_LABEL": "Editer le style",
+      "EDIT_LABEL": "Éditer les propriétés",
+      "EDIT_LAYER_STYLE_LABEL": "Éditer le style",
       "RESET_LAYER_STYLE_LABEL": "Réinitialiser le style",
       "FILTER_DATA_LABEL": "Filtrer les données",
       "VIEW_DATA_LABEL": "Voir les données",
       "CHART_DATA_LABEL": "Graphique des données",
-      "START_EDIT_DATA_LABEL": "Editer les données",
+      "START_EDIT_DATA_LABEL": "Éditer les données",
       "STOP_EDIT_DATA_LABEL": "Clôturer l'édition des données",
-      "EDIT_POINTS_DATA_LABEL": "Editer des ponctuels",
-      "EDIT_LINES_DATA_LABEL": "Editer des linéaires",
-      "EDIT_POLYGONS_DATA_LABEL": "Editer des polygones",
-      "EDIT_PROPERTIES_LABEL": "Editer les propriétés",
-      "EDIT_GEOMETRIES_LABEL": "Editer les géométries",
+      "EDIT_POINTS_DATA_LABEL": "Éditer des ponctuels",
+      "EDIT_LINES_DATA_LABEL": "Éditer des linéaires",
+      "EDIT_POLYGONS_DATA_LABEL": "Éditer des polygones",
+      "EDIT_PROPERTIES_LABEL": "Éditer les propriétés",
+      "EDIT_GEOMETRIES_LABEL": "Éditer les géométries",
       "EDITING_DATA_MESSAGE": "Edition en cours",
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
@@ -162,7 +162,7 @@
           },
           "simpleshape": {
             "tooltip": {
-              "end": "Relacher pour clôturer le tracé."
+              "end": "Relâcher pour clôturer le tracé."
             }
           }
         }
@@ -184,7 +184,7 @@
             }
           },
           "buttons": {
-            "edit": "Editer",
+            "edit": "Éditer",
             "editDisabled": "Il n'y a rien à éditer pour l'instant",
             "remove": "Effacer des éléments",
             "removeDisabled": "Il n'y a rien à effacer pour l'instant"
@@ -235,10 +235,10 @@
     "RESTORE_VIEW_FIELD_LABEL": "Sauvegarder l'emprise courante",
     "RESTORE_LAYERS_FIELD_LABEL": "Sauvegarder les couches actives",
     "LOCATION_FORMAT_LABEL": "Format de coordonnées",
-    "TIMELINE_SETTINGS": "Paramètrage du sélecteur temporel",
-    "TIMELINE_STEP": "Pas du sélécteur temporel, en minutes",
-    "TIMELINE_INTERVAL": "Fréquence de rafraichissement des données en temps-réel",
-    "TIMESERIES_SETTINGS": "Paramètrage des séries temporelles",
+    "TIMELINE_SETTINGS": "Paramétrage du sélecteur temporel",
+    "TIMELINE_STEP": "Pas du sélecteur temporel, en minutes",
+    "TIMELINE_INTERVAL": "Fréquence de rafraîchissement des données en temps-réel",
+    "TIMESERIES_SETTINGS": "Paramétrage des séries temporelles",
     "TIMESERIES_SPAN": "Intervalle des séries temporelles, en heures",
     "TIMESERIES_GROUP_BY": "Regroupement des séries temporelles",
     "TIMESERIES_GROUP_BY_VARIABLE": "Regroupement par variable",
@@ -274,13 +274,13 @@
       "TOOLS_LABEL": "Sélectionnez un outil parmi ceux disponibles via ce bouton.",
       "TRACK_LOCATION_LABEL": "Affichez les coordonnées d'une position via ce bouton.",
       "COPY_LOCATION_LABEL": "Copier vos coordonnées dans le presse-papiers grâce à ce bouton.",
-      "LOCATION_TRACKING_LABEL": "Faites glisser la souris pour afficher les coordonnées du centre de l'écran et relachez pour les conserver.",
+      "LOCATION_TRACKING_LABEL": "Faites glisser la souris pour afficher les coordonnées du centre de l'écran et relâchez pour les conserver.",
       "TRACK_BACK_LABEL": "Arrêtez le suivi en retournant aux actions.",
       "MEASURE_LABEL": "Faites des mesures via ce bouton.",
       "MEASURE_DISTANCE_LABEL": "Mesurez une distance via ce bouton.",
       "MEASURE_DISTANCE_DETAILS_LABEL": "Dessinez le(s) segment(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
       "MEASURE_AREA_LABEL": "Mesurez une aire via ce bouton.",
-      "MEASURE_AREA_DETAILS_LABEL": "Dessinez le(s) polygône(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
+      "MEASURE_AREA_DETAILS_LABEL": "Dessinez le(s) polygone(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
       "MEASURE_CIRCLE_LABEL": "Mesurez une isodistance via ce bouton.",
       "MEASURE_CIRCLE_DETAILS_LABEL": "Dessinez le(s) cercle(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
       "MEASURE_FEATURE_LABEL": "Mesurez une entité géographique via ce bouton.",
@@ -303,17 +303,17 @@
       "USER_VIEWS_FILTER_LABEL": "Vous pouvez facilement filtrer les vues à l'aide de ce champs.",
       "USER_VIEWS_SORTER_LABEL": "Et vous pouvez trier les vues selon différents critères.",
       "USER_VIEWS_VIEW_LABEL": "Enfin cliquez simplement sur la vue pour mettre à jour la carte.",
-      "USER_VIEWS_SET_HOME_LABEL": "Vous pouvez aussi selectionner cette vue pour en faire la vue par défaut.",
+      "USER_VIEWS_SET_HOME_LABEL": "Vous pouvez aussi sélectionner cette vue pour en faire la vue par défaut.",
       "USER_VIEWS_REMOVE_LABEL": "Supprimez la vue.",
       "CATEGORY_LABEL": "Sélectionnez une catégorie pour lister les couches</b> de données disponibles.",
-      "SHOW_LAYER_LABEL": "Sélectionnez une couche de données pour l'afficher sur la carte, elle apparait alors en surbrillance dans la liste.",
-      "MIN_LEVEL_LABEL": "Lorsqu'une couche n'est pas visible à votre échelle elle apparait grisée, vous devez zoomer pour la visualiser sur la carte.",
-      "HIDE_LAYER_LABEL": "Une nouvelle sélection la fera disparaitre.",
+      "SHOW_LAYER_LABEL": "Sélectionnez une couche de données pour l'afficher sur la carte, elle apparaît alors en surbrillance dans la liste.",
+      "MIN_LEVEL_LABEL": "Lorsqu'une couche n'est pas visible à votre échelle elle apparaît grisée, vous devez zoomer pour la visualiser sur la carte.",
+      "HIDE_LAYER_LABEL": "Une nouvelle sélection la fera disparaître.",
       "METEO_MODEL_LABEL": "Concernant les données météorologiques vous pouvez modifier le modèle de prévision si plusieurs sont disponibles.",
       "METEO_LAYERS_LABEL": "Chaque couche ciblera alors un élément météorologique issu des données de ce modèle.",
       "MANAGE_LAYER_CATEGORIES_LABEL": "Vous pouvez gérer les catégories de vos propres couches de données.",
       "MANAGE_LAYER_CATEGORIES_LINK_LABEL": "Voir comment gérer les catégories",
-      "CATEGORIES_LIST_LABEL": "Lorsque vous disposez de catégories elles apparaissent ici, sinon vous pouvez directemment créer votre première.",
+      "CATEGORIES_LIST_LABEL": "Lorsque vous disposez de catégories elles apparaissent ici, sinon vous pouvez directement créer votre première.",
       "CATEGORIES_LIST_ACTIONS_LABEL": "Triez vos catégories par nom ou date de mise à jour et recherchez-en une.",
       "CATEGORY_ACTIONS_LABEL": "Modifiez ou supprimez une catégorie via ces boutons.",
       "ADD_CATEGORY_LABEL": "Ajoutez une nouvelle catégorie via ce bouton.",
@@ -342,8 +342,8 @@
       "PROBE_CURSOR_LABEL": "Une fois l'option sélectionnée choisissez une position sur la carte pour afficher les prévisions.",
       "ADD_LAYER_LABEL": "Ajouter une nouvelle couche de données.",
       "ADD_LAYER_LINK_LABEL": "Voir comment ajouter une nouvelle couche de données",
-      "CREATE_VIEW_LABEL": "Crééer une nouvelle vue.",
-      "CREATE_VIEW_LINK_LABEL": "Voir comment crééer une nouvelle vue"
+      "CREATE_VIEW_LABEL": "créer une nouvelle vue.",
+      "CREATE_VIEW_LINK_LABEL": "Voir comment créer une nouvelle vue"
     },
     "add-layer": {
       "ADD_LAYER_LINK_LABEL": "Voir comment ajouter d'autres types de couches de données",
@@ -433,7 +433,7 @@
     "COPY": "Copier les coordonnées",
     "CLEAR": "Effacer",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",
-    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité",
+    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionnalité",
     "OUTSIDE_MAP": "Position indéterminée"
   },
   "KTimeSeries": {
@@ -461,18 +461,18 @@
     "CACHE_VIEW_DIALOG_MESSAGE": "Configurez le téléchargement des données",
     "SET_HOME_VIEW": "Définir comme vue par défaut",
     "REMOVE_DIALOG_TITLE": "Supprimer {view} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {view} de votre espace de travail ?"
+    "REMOVE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer {view} de votre espace de travail ?"
   },
   "KCreateOfflineView": {
     "MIN_ZOOM_FIELD_LABEL": "Niveau de zoom à partir duquel les données vont être téléchargées, l'augmenter réduira la taille des données",
     "MAX_ZOOM_FIELD_LABEL": "Niveau de zoom jusqu'auquel les données vont être téléchargées, l'augmenter augmentera la taille des données",
-    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Nombre de requêtes concurrentes utilisées pour le téléchargement, l'augmenter accélèrera le processus mais pourra surcharger la machine et le serveur",
+    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Nombre de requêtes concurrentes utilisées pour le téléchargement, l'augmenter accélérera le processus mais pourra surcharger la machine et le serveur",
     "NUMBER_OF_TILES": "Estimation du nombre de tuiles à télécharger pour chaque couche: "
   },
   "KProjectsPanel": {
     "SORT_PROJECTS": "Trier les projets",
     "REMOVE_DIALOG_TITLE": "Supprimer {project} ?",
-    "REMOVE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer {project} de votre espace de travail ?"
+    "REMOVE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer {project} de votre espace de travail ?"
   },
   "KProjectSelector": {
     "EDIT_PROJECT": "@:EDIT",
@@ -486,7 +486,7 @@
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
     "ADD_FILTER": "Sélectionnez une propriété à associer à un filtre",
     "REMOVE_FILTER": "Supprimer le filtre associée à cette valeur",
-    "$in": "valeur parmis",
+    "$in": "valeur parmi",
     "$nin": "valeur différente de",
     "$eq": "valeur égale à",
     "$neq": "valeur différente de",
@@ -525,19 +525,19 @@
   "KSelectedLayerFeatures": {
     "FEATURE_PROPERTIES_LABEL": "Propriétés de l'élément",
     "ZOOM_TO_FEATURES_LABEL": "Zoomer sur les éléments",
-    "EDIT_FEATURES_LABEL": "Editer les éléments",
+    "EDIT_FEATURES_LABEL": "Éditer les éléments",
     "RESET_FEATURES_STYLE_LABEL": "Réinitialiser le style",
     "REMOVE_FEATURES_LABEL": "Supprimer les éléments",
     "ZOOM_TO_FEATURE_LABEL": "Zoomer sur l'élément",
-    "EDIT_FEATURE_LABEL": "Editer l'élément",
-    "EDIT_FEATURE_PROPERTIES_LABEL": "Editer les propriétés de l'élément",
-    "EDIT_FEATURE_STYLE_LABEL": "Editer le style",
+    "EDIT_FEATURE_LABEL": "Éditer l'élément",
+    "EDIT_FEATURE_PROPERTIES_LABEL": "Éditer les propriétés de l'élément",
+    "EDIT_FEATURE_STYLE_LABEL": "Éditer le style",
     "RESET_FEATURE_STYLE_LABEL": "Réinitialiser le style",
     "REMOVE_FEATURE_LABEL": "Supprimer l'élément",
     "REMOVE_FEATURE_DIALOG_TITLE": "Supprimer l'élément ?",
-    "REMOVE_FEATURE_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer l'élément de votre espace de travail ?",
+    "REMOVE_FEATURE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer l'élément de votre espace de travail ?",
     "REMOVE_FEATURES_DIALOG_TITLE": "Supprimer les éléments ?",
-    "REMOVE_FEATURES_DIALOG_MESSAGE": "Etes vous sûr de vouloir supprimer les éléments de votre espace de travail ?"
+    "REMOVE_FEATURES_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer les éléments de votre espace de travail ?"
   },
   "KLayerStyleForm": {
     "BASE": "Propriétés de base",
@@ -572,7 +572,7 @@
     "DEFAULT_POLYGON_LINE_STYLE": "Style de contour par défaut",
     "DEFAULT_POLYGON_FILL_STYLE": "Style de remplissage par défaut",
     "PROPERTY_POLYGON_LINE_STYLE": "Contour",
-    "PROPERTY_POLYGON_FILL_STYLE": "Remplisssage",
+    "PROPERTY_POLYGON_FILL_STYLE": "Remplissage",
     "WHEN_PROPERTY_IS_POLYGON_STYLE": "lorsque {property}",
     "POLYGON_LINE_WIDTH": "largeur ",
     "POLYGON_LINE_OPACITY": "opacité ",
@@ -593,7 +593,7 @@
     "LOWER_THAN": "<"
   },
   "KLayerStyleEditor": {
-    "EDIT_LAYER_STYLE_TITLE": "Editer le style de la couche"
+    "EDIT_LAYER_STYLE_TITLE": "Éditer le style de la couche"
   },
   "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "Aucune couche disponible",
@@ -697,8 +697,8 @@
     "ADD_RECTANGLE_FEATURES": "Ajouter des entités rectangulaires",
     "ADD_LINE_FEATURES": "Ajouter des entités linéaires",
     "ADD_POINT_FEATURES": "Ajouter des entités ponctuelles",
-    "EDIT_GEOMETRY": "Editer la géométrie des entités",
-    "EDIT_PROPERTIES": "Editer les propriétés des entités",
+    "EDIT_GEOMETRY": "Éditer la géométrie des entités",
+    "EDIT_PROPERTIES": "Éditer les propriétés des entités",
     "DRAG_FEATURES": "Déplacer des entités",
     "ROTATE_FEATURES": "Tourner des entités",
     "REMOVE_FEATURES": "Effacer des entités"
@@ -725,11 +725,11 @@
     "COMPUTING_PROFILE": "Calcul du profil en cours",
     "CENTER_ON": "Center la vue sur l'objet",    
     "COPY_PROFILE": "Copier le profil en mémoire",    
-    "PROFILE_COPIED": "Profil copiié en mémoire",
+    "PROFILE_COPIED": "Profil copié en mémoire",
     "CANNOT_COPY_PROFILE": "Impossible de copier le profil en mémoire",
     "EXPORT_PROFILE": "Exporter le profil",
     "PROFILE_EXPORTED": "Profil exporté dans le fichier {file}",
-    "CANNOT_EXPORT_PROFILE": "Imopssible d'exporter le profil",
+    "CANNOT_EXPORT_PROFILE": "Impossible d'exporter le profil",
     "CURVILINEAR_AXIS_LEGEND": "Abscisse curviligne ({unit})",
     "HEIGHT_AXIS_LEGEND": "Hauteur ({unit})",
     "TERRAIN_CHART_LEGEND": "Hauteur du terrain",
@@ -749,7 +749,7 @@
   "KPosition": {
     "COPY": "Copier les coordonnées",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",
-    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionalité",
+    "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionnalité",
     "OUTSIDE_MAP": "Position indéterminée"
   },
   "KDirectionField": {
@@ -767,9 +767,11 @@
   "KStyleEditor": {
     "NAME_LABEL": "Saisissez le nom du style",
     "STYLE_ALREADY_EXISTS": "Le style {style} existe déjà !",
-    "SECTION_TITLE_POINT": "Point",
-    "SECTION_TITLE_LINE": "Ligne",
-    "SECTION_TITLE_POLYGON": "Polygone",
+    "POINT_SECTION": "Point",
+    "LINE_SECTION": "Ligne",
+    "POLYGON_SECTION": "Polygone",
+    "STROKE_GROUP": "Contour",
+    "ICON_GROUP": "Icône",
     "COLOR": "Couleur",
     "FILL_COLOR": "Couleur de remplissage",
     "OPACITY": "Opacité",

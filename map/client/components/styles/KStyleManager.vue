@@ -101,6 +101,9 @@ const { getSelectedFeaturesByLayer, CurrentActivity, CurrentActivityContext } = 
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
+const defaultStyle = _.pick(_.get(CurrentActivityContext.config, 'engine.style'), ['point', 'line', 'polygon'])
+
+console.log(defaultStyle)
 
 // Computed
 const baseQuery = computed(() => {
@@ -108,10 +111,6 @@ const baseQuery = computed(() => {
 })
 const filterQuery = computed(() => {
   return Object.assign({}, Filter.get().query)
-})
-const defaultStyle = computed(() => {
-  const style = _.get(CurrentActivityContext.config, 'engine.style')
-  return _.pick(style, ['point', 'line', 'polygon'])
 })
 const toolbar = computed(() => {
   if (viewMode.value === 'editor') return []

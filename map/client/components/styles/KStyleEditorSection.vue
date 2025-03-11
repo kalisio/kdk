@@ -7,8 +7,8 @@
       :dense="dense"
     >
       <template v-slot:header>
-        <q-item-section v-if="title">
-          {{ $t(title) }}
+        <q-item-section v-if="label">
+          {{ $t(label) }}
         </q-item-section>
         <q-item-section v-if="!isOpened" side>
           <KStylePreview :style="style[type]" :type="type" />
@@ -39,7 +39,7 @@ import KStyleTip from './KStyleTip.vue'
 
 // Props
 defineProps({
-  title: {
+  label: {
     type: String,
     required: true
   },
