@@ -25,6 +25,7 @@
         anchor="top right"
         self="center middle"
         no-parent-event
+        @update:model-value="onUpdated"
       />
     </q-expansion-item>
 
@@ -71,5 +72,8 @@ watch(isOpened, (value) => {
 // Functions
 function onEnter () {
   showTip.value = true
+}
+function onUpdated (value) {
+  if (showTip.value !== value) showTip.value = value
 }
 </script>

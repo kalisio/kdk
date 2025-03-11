@@ -8,6 +8,7 @@
     :offset="offset"
     :delay="delay"
     :no-parent-event="noParentEvent"
+    @update:model-value="onUpdated"
   />
 </template>
 
@@ -59,6 +60,9 @@ const props = defineProps({
   }
 })
 
+// Emit
+const emit = defineEmits(['update:modelValue'])
+
 // Data
 const showTip = ref(null)
 const location = ref(null)
@@ -106,4 +110,9 @@ watch(() => props.modelValue, (value) => {
 watch(() => props.style, (value) => {
   location.value = refresh()
 }, { immediate: true, deep: true })
+
+// Functions
+function onUpdated (value) {
+  emit('update:modelValue', value)
+}
 </script>
