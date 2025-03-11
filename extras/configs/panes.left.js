@@ -1,11 +1,11 @@
 module.exports = {
-  activityLink: (name, icon, label) => {
+  activityLink: (name, icon, label, params = null) => {
     return {
       id: `${name}-activity-action`,
       icon,
       label,
       renderer: 'item',
-      route: { name: `${name}-activity` }
+      route: { name: `${name}-activity`, ...(params && params) }
     }
   },
   SETTINGS: {
@@ -47,11 +47,15 @@ module.exports = {
     handler: { name: 'launchTour', params: ['home'] },
     renderer: 'item'
   },
-  LOGOUT: {
-    id: 'logout-action',
-    icon: 'las la-sign-out-alt',
-    label: 'layout.LOGOUT',
-    route: { name: 'logout' },
-    renderer: 'item'
+  logout: (provider = null) => {
+    return {
+      id: 'logout-action',
+      icon: 'las la-sign-out-alt',
+      label: 'layout.LOGOUT',
+      route: {
+        name: 'logout', ...(provider && { params: { provider } })
+      },
+      renderer: 'item'
+    }
   }
 }
