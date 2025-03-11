@@ -80,9 +80,6 @@ export const Shapes = {
       translation: ['-50%', '-60%']
     },
     anchor: 'bottom-center'
-  },
-  add (name, shape) {
-    this[name] = shape
   }
 }
 
@@ -183,7 +180,7 @@ export function createShape (options) {
     const translation = shape.translation || [0, 0]
     const rotation = shape.rotation || 0
     beginSvgTag = `<svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" preserveAspectRatio="none"
-                  style="transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); ${extraShapeStyle}">`
+                   style="transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); ${extraShapeStyle}">`
     beginSvgTag = addTagAttribute(beginSvgTag, 'viewBox', _.join(shape.viewBox, ' '))
     svgShapeContent = shape.content
     svgClipPath = ''
@@ -212,7 +209,7 @@ export function createShape (options) {
         if (options.stroke.opacity) svgShapeContent = addSvgAttribute(svgShapeContent, 'stroke-opacity', options.stroke.opacity)
         const clipId = uid()
         // clip the shape to avoid stroke overflow
-        const clipPath = _.get(options.stroke, 'clipPath', true)
+        const clipPath = _.get(shape, 'clipPath', true)
         if (clipPath) {
           svgShapeContent = addSvgAttribute(svgShapeContent, 'clip-path', `url(#${clipId})`)
           svgClipPath = `<clipPath id="${clipId}">${_.clone(shape.content)}</clipPath>`
