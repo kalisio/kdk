@@ -1,7 +1,7 @@
 <template>
   <div class="full-width column">
     <div class="full-width row items-center no-wrap">
-      <q-toggle 
+      <q-toggle
         v-model="isActive"
         :label="label"
         size="sm"
@@ -14,9 +14,9 @@
     </div>
     <q-list v-if="isActive">
       <template v-for="property in properties" :key="property.key">
-        <KStyleProperty 
+        <KStyleProperty
           v-bind="property"
-          v-model="values[property.name]" 
+          v-model="values[property.name]"
           @update:model-value="onPropertyUpdated"
         />
       </template>
@@ -58,7 +58,7 @@ const values = ref(null)
 // Watch
 watch(() => props.modelValue, (value) => {
   values.value = _.clone(value)
-  isActive.value = _.isEmpty(value) ? false: true
+  isActive.value = !_.isEmpty(value)
 }, { immediate: true })
 
 // Function

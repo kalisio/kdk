@@ -33,7 +33,7 @@
           label="icon"
           :properties="pointIconProperties"
         />
-        <KStylePropertiesGroup 
+        <KStylePropertiesGroup
           v-model="style.point.stroke"
           label="stroke"
           :properties="pointStrokeProperties"
@@ -59,7 +59,7 @@
       >
         <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" />
         <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" />
-        <KStylePropertiesGroup 
+        <KStylePropertiesGroup
           v-model="style.polygon.stroke"
           label="stroke"
           :properties="polygonStrokeProperties"
@@ -167,7 +167,7 @@ const pointStrokeProperties = computed(() => {
 const pointIconProperties = computed(() => {
   return [
     { name: 'classes', label: 'KStyleEditor.ICON', type: 'color', default: defaultStyle.value.point.icon.classes },
-    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48,  default: defaultStyle.value.point.icon.size }
+    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: defaultStyle.value.point.icon.size }
   ]
 })
 const polygonStrokeProperties = computed(() => {
