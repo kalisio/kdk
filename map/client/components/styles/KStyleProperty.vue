@@ -8,7 +8,7 @@
     </q-item-section>
     <q-item-section style="max-width: 50px;">
       <!-- size/opacity type -->
-      <q-btn 
+      <q-btn
         v-if="['size', 'opacity'].includes(props.type)"
         :label="value"
         size="0.8rem"
@@ -63,7 +63,7 @@
               class="q-pa-xs row justify-center"
             />
           </q-item>
-          
+
         </template>
       </q-select>
       <!-- icon type -->
@@ -78,6 +78,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, watch, computed } from 'vue'
 import { utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
 import KShape from '../../../../core/client/components/media/KShape.vue'

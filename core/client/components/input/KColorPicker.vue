@@ -1,9 +1,9 @@
 <template>
   <div>
-    <q-btn 
+    <q-btn
       id="color-picker"
-      :size="size" 
-      round 
+      :size="size"
+      round
       :style="{ 'background-color': color }"
     />
     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
