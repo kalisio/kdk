@@ -89,19 +89,18 @@ export const baseMap = {
     refreshMap () {
       if (this.map) this.map.invalidateSize()
     },
-    setupMap (domEl, options) {
-      const viewerOptions = options ||
-        // For activities
-        _.get(this, 'activityOptions.engine.viewer', {
-          minZoom: 3,
-          maxZoom: 21,
-          center: [47, 3],
-          zoom: 6,
-          maxBounds: [[-90, -180], [90, 180]],
-          maxBoundsViscosity: 0.25,
-          scale: false,
-          geolocate: false
-        })
+    setupMap (domEl, options = {}) {
+      const viewerOptions = _.defaults(options, _.get(this, 'activityOptions.engine.viewer', {}), {
+        minZoom: 3,
+        maxZoom: 21,
+        center: [47, 3],
+        zoom: 6,
+        maxBounds: [[-90, -180], [90, 180]],
+        maxBoundsViscosity: 0.25,
+        scale: true,
+        geolocate: true,
+        rotateControl: false // Rotate plugin show this even if rotation is disabled
+      })
       // Initialize the map
       this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
       // Make sure geoman is initialized on the map
