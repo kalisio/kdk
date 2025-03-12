@@ -66,7 +66,7 @@ const showTip = ref(false)
 
 // Watch
 watch(isOpened, (value) => {
-  setTimeout(() => { showTip.value = value }, 300)
+  setTimeout(() => { showTip.value = value }, 500)
 })
 
 // Functions

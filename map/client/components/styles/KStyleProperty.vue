@@ -88,7 +88,11 @@ import KColorPicker from '../../../../core/client/components/input/KColorPicker.
 const props = defineProps({
   modelValue: {
     type: [String, Number, Object],
-    default: '#FF0000'
+    default: null
+  },
+  default: {
+    type: [String, Number, Object],
+    default: null
   },
   name: {
     type: String,
@@ -121,7 +125,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
-const value = ref(props.modelValue)
+const value = ref(props.modelValue || props.default)
 
 // Computed
 const min = computed(() => {

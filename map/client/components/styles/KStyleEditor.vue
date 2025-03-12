@@ -20,24 +20,24 @@
       <KStyleEditorSection
         v-if="canEditPoint"
         label="KStyleEditor.POINT_SECTION"
-        :style="style"
+        :style="model"
         type="point"
         :dense="dense"
       >
-        <KStyleProperty v-model="style.point.color" :name="$t('KStyleEditor.COLOR')" type="color" :dense="dense" />
-        <KStyleProperty v-model="style.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" :dense="dense" />
-        <KStyleProperty v-model="style.point.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :dense="dense" />
-        <KStyleProperty v-model="style.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" :dense="dense" />
+        <KStyleProperty v-model="model.point.color" :name="$t('KStyleEditor.COLOR')" type="color" :default="getDefaultValue('point.color')" :dense="dense" />
+        <KStyleProperty v-model="model.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" :default="getDefaultValue('point.size')" :dense="dense" />
+        <KStyleProperty v-model="model.point.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :default="getDefaultValue('point.opacity')" :dense="dense" />
+        <KStyleProperty v-model="model.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" :default="getDefaultValue('point.shape')" :dense="dense" />
         <KStylePropertiesGroup
           v-if="!is3D"
           label="KStyleEditor.ICON_GROUP"
-          v-model="style.point.icon"
+          v-model="model.point.icon"
           :properties="pointIconProperties"
           :dense="dense"
         />
         <KStylePropertiesGroup
           label="KStyleEditor.STROKE_GROUP"
-          v-model="style.point.stroke"
+          v-model="model.point.stroke"
           :properties="pointStrokeProperties"
           :dense="dense"
         />
@@ -46,27 +46,27 @@
       <KStyleEditorSection
         v-if="canEditLine"
         label="KStyleEditor.LINE_SECTION"
-        :style="style"
+        :style="model"
         type="line"
         :dense="dense"
       >
-        <KStyleProperty v-model="style.line.color" :name="$t('KStyleEditor.COLOR')" type="color" :dense="dense" />
-        <KStyleProperty v-model="style.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12" :dense="dense" />
-        <KStyleProperty v-model="style.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :dense="dense" />
+        <KStyleProperty v-model="model.line.color" :name="$t('KStyleEditor.COLOR')" type="color" :default="getDefaultValue('line.color')" :dense="dense" />
+        <KStyleProperty v-model="model.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12" :default="getDefaultValue('line.width')" :dense="dense" />
+        <KStyleProperty v-model="model.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :default="getDefaultValue('line.opacity')" :dense="dense" />
       </KStyleEditorSection>
       <!-- Polygon editor -->
       <KStyleEditorSection
         v-if="canEditPolygon"
         label="KStyleEditor.POLYGON_SECTION"
-        :style="style"
+        :style="model"
         type="polygon"
         :dense="dense"
       >
-        <KStyleProperty v-model="style.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" :dense="dense" />
-        <KStyleProperty v-model="style.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" :dense="dense" />
+        <KStyleProperty v-model="model.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" :default="getDefaultValue('polygon.color')" :dense="dense" />
+        <KStyleProperty v-model="model.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" :default="getDefaultValue('polygon.opacity')" :dense="dense" />
         <KStylePropertiesGroup
           label="KStyleEditor.STROKE_GROUP"
-          v-model="style.polygon.stroke"
+          v-model="model.polygon.stroke"
           :properties="polygonStrokeProperties"
           :dense="dense"
         />
@@ -85,9 +85,11 @@
 
 <script setup>
 import _ from 'lodash'
+import config from 'config'
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
 import { api, i18n, utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
+import { useCurrentActivity } from '../../composables'
 import KPanel from '../../../../core/client/components/KPanel.vue'
 import KStyleEditorSection from './KStyleEditorSection.vue'
 import KStylePropertiesGroup from './KStylePropertiesGroup.vue'
@@ -99,14 +101,6 @@ const props = defineProps({
   style: {
     type: Object,
     default: () => null
-  },
-  default: {
-    type: Object,
-    default: () => null
-  },
-  is3D: {
-    type: Boolean,
-    default: false
   },
   title: {
     type: String,
@@ -120,7 +114,7 @@ const props = defineProps({
     type: Array,
     default: null
   },
-  allowedStyles: {
+  allowedTypes: {
     type: Array,
     default: ['point', 'line', 'polygon']
   },
@@ -134,8 +128,9 @@ const props = defineProps({
 const emit = defineEmits(['applied', 'canceled'])
 
 // Data
+const { CurrentActivityContext } = useCurrentActivity()
 const formRef = ref(null)
-const style = ref(null)
+const model = ref(null)
 const mode = props.style ? 'edition' : 'creation'
 const formSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -160,27 +155,33 @@ const formValues = computed(() => {
   if (_.isEmpty(props.style)) return null
   return { name: _.get(props.style, 'name') }
 })
+const engine = computed(() => {
+  return _.get(CurrentActivityContext.config, 'engine', _.get(config, 'engines.leaflet'))
+})
+const is3D = computed(() => {
+  return engine.value === 'cesium'
+})
 const defaultStyle = computed(() => {
-  return _.defaultsDeep(props.default, DefaultStyle)
+  return _.merge(DefaultStyle, engine.value.style)
 })
 const pointStrokeProperties = computed(() => {
   return [
-    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: defaultStyle.value.point.stroke.color },
-    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: defaultStyle.value.point.stroke.width },
-    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: defaultStyle.value.point.stroke.opacity }
+    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('point.stroke.color') },
+    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: getDefaultValue('point.stroke.width') },
+    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('point.stroke.opacity') }
   ]
 })
 const pointIconProperties = computed(() => {
   return [
-    { name: 'classes', label: 'KStyleEditor.ICON', type: 'icon', default: defaultStyle.value.point.icon.classes },
-    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: defaultStyle.value.point.icon.size }
+    { name: 'classes', label: 'KStyleEditor.ICON', type: 'icon', default: getDefaultValue('point.icon.classes') },
+    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: getDefaultValue('point.icon.size') }
   ]
 })
 const polygonStrokeProperties = computed(() => {
   return [
-    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: defaultStyle.value.polygon.stroke.color },
-    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: defaultStyle.value.polygon.stroke.width },
-    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: defaultStyle.value.polygon.stroke.opacity }
+    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('polygon.stroke.color') },
+    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: getDefaultValue('polygon.stroke.width') },
+    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('polygon.stroke.opacity') }
   ]
 })
 const buttons = computed(() => {
@@ -201,16 +202,20 @@ const buttons = computed(() => {
     }
   ]
 })
-const canEditPoint = computed(() => props.allowedStyles.includes('point'))
-const canEditLine = computed(() => props.allowedStyles.includes('line'))
-const canEditPolygon = computed(() => props.allowedStyles.includes('polygon'))
+const canEditPoint = computed(() => props.allowedTypes.includes('point'))
+const canEditLine = computed(() => props.allowedTypes.includes('line'))
+const canEditPolygon = computed(() => props.allowedTypes.includes('polygon'))
 
 // Watch
 watch(() => props.style, (value) => {
-  style.value = value
+  if (!value) model.value = engine.value.style
+  else model.value = value
 }, { immediate: true })
 
 // Functions
+function getDefaultValue (path) {
+  return _.get(engine.value.style, path, _.get(DefaultStyle, path))
+}
 const onNameChanged = _.debounce(async (field, value) => {
   if (_.size(value) > 2) await checkName(value)
 }, 200)
@@ -230,13 +235,11 @@ async function apply () {
   const isUnique = await checkName(values.name)
   if (!isUnique) return false
   // create to patch the style
-  let data
+  const data = _.merge(model.value, values)
   if (mode === 'creation') {
-    data = _.merge(style.value, values)
     logger.debug('[KDK] Create style with values:', data)
     await service.create(data)
   } else {
-    data = _.merge(style.value, values)
     logger.debug(`[KDK] Patch style ${style._id} with values:`, data)
     await service.patch(style.value._id, data)
   }

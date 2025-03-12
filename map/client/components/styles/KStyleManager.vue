@@ -65,7 +65,6 @@
             <KStyleEditor
               ref="styleEditor"
               :style="style"
-              :default="defaultStyle"
               @canceled="onCanceled"
               @applied="onApplied"
               class="col"
@@ -92,7 +91,7 @@ import KStyleEditor from './KStyleEditor.vue'
 defineProps({
   title: {
     type: String,
-    default: ''
+    default: null
   }
 })
 
@@ -101,9 +100,6 @@ const { getSelectedFeaturesByLayer, CurrentActivity, CurrentActivityContext } = 
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
-const defaultStyle = _.pick(_.get(CurrentActivityContext.config, 'engine.style'), ['point', 'line', 'polygon'])
-
-console.log(defaultStyle)
 
 // Computed
 const baseQuery = computed(() => {

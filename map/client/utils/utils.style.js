@@ -146,6 +146,7 @@ export const DefaultStyle = {
   isSelectable: true,
   point: {
     color: 'red',
+    opacity: 1,
     size: 24,
     shape: 'circle',
     stroke: {
