@@ -2,8 +2,13 @@ module.exports = {
   locateUser: (renderer = 'button') => {
     return {
       id: 'locate-user', 
-      label: renderer === 'item' ? 'layout.LOCATE_SUER' : null,
-      tooltip: renderer === 'button' ? 'layout.LOCATE_SUER' : null,
+      label: renderer === 'item' ? 'layout.SHOW_USER_LOCATION' : null,
+      tooltip: renderer === 'button' ? 'layout.SHOW_USER_LOCATION' : null,
+      toggle: { 
+        label: renderer === 'item' ? 'layout.HIDE_USER_LOCATION' : null,
+        tooltip: renderer === 'button' ? 'layout.HIDE_USER_LOCATION': null,
+      },
+      renderer,
       component: 'tools/KGeolocateTool' 
     }
   },
@@ -13,7 +18,8 @@ module.exports = {
       icon: 'las la-search-location', 
       label: renderer === 'item' ? 'layout.SEARCH_LOCATION' : null,
       tooltip: renderer === 'button' ? 'layout.SEARCH_LOCATION' : null,
-      handler: { name: 'setTopPaneMode', params: ['search-location'] }
+      handler: { name: 'setTopPaneMode', params: [mode] },
+      renderer
     }
   },
   measureTool: (renderer = 'item', mode = 'measure-tool') => {
@@ -22,7 +28,8 @@ module.exports = {
       icon: 'las la-ruler-combined', 
       label: renderer === 'item' ? 'layout.MEASURE_TOOL' : null,
       tooltip: renderer === 'button' ? 'layout.MEASURE_TOOL' : null,
-      handler: { name: 'setTopPaneMode', params: ['measure-tool'] }
+      handler: { name: 'setTopPaneMode', params: [mode] },
+      renderer
     }
   },
   toggleLegend: (renderer = 'item') => {
