@@ -20,7 +20,9 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { getHtmlColor } from '../../utils'
 
+// Props
 const props = defineProps({
   modelValue: {
     type: String,
@@ -51,9 +53,14 @@ const props = defineProps({
   }
 })
 
+// Emit
 const emit = defineEmits(['update:modelValue'])
-const color = ref(props.modelValue)
+const color = ref(null)
 
+// Watch
+watch(() => props.modelValue, (value) => {
+  color.value = getHtmlColor(value)
+}, { immediate: true })
 watch(color, newColor => {
   emit('update:modelValue', newColor)
 })
