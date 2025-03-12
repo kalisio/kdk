@@ -19,7 +19,7 @@ module.exports = {
   },
   northArrow: (visible = true) => {
     return {
-      id: 'north-sticky', 
+      id: 'north-arrow-sticky', 
       position: 'bottom-left', 
       offset: [100, 2], 
       component: 'stickies/KNorthArrow',
@@ -31,7 +31,8 @@ module.exports = {
       id: 'attribution-sticky',
       position: 'bottom-right', 
       offset: [80, 24], 
-      component: 'stickies/KAttribution'
+      component: 'stickies/KAttribution',
+      visible
     }
   }
 }

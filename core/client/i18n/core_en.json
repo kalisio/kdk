@@ -36,7 +36,9 @@
     "ABOUT": "About",
     "ONLINE_HELP": "Online help",
     "CONTEXTUAL_HELP": "Contextual help",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "ENTER_FULLSCREEN": "Enter full screen mode",
+    "EXIT_FULLSCREEN": "Exit full screen mode"
   },
   "errors": {
     "400": "Operation cannot be performed: bad parameters",
@@ -720,15 +722,5 @@
     "FILE_TOO_LARGE": "File {file} is too large. The size must be less than {size}Mb",
     "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
-  },
-  "KToggleWidgetVisibility": {
-    "SHOW_LEGEND": "Show legend",
-    "HIDE_LEGEND": "Hide legend"
-  },
-  "KToggleStickyVisibility": {
-    "SHOW_POSITION": "Show geographical coordinates",
-    "HIDE_POSITION": "Hide geographical coordinates",
-    "SHOW_NORTH": "Show north arrow",
-    "HIDE_NORTH": "Hide north arrow"
   }
 }

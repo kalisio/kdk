@@ -7,6 +7,14 @@
   "CATALOG_LABEL": "Catalogue",
   "PROJECT_LAYERS_LABEL": "Données",
   "PROJECT_VIEWS_LABEL": "Vues",
+  "layout": {
+    "SHOW_LEGEND": "Afficher la légende",
+    "HIDE_LEGEND": "Masquer la légende",
+    "SHOW_POSITION": "Afficher les coordonnées géographiques",
+    "HIDE_POSITION": "Masquer les coordonnées géographiques",
+    "SHOW_NORTH": "Afficher la flèche d’orientation vers le nord",
+    "HIDE_NORTH": "Masquer la flèche d’orientation vers le nord"
+  },
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",
     "GEOLOCATION_ERROR": "Il nous est impossible de déterminer votre position, cela peut affecter certaines fonctionnalités de l'application.",

@@ -7,6 +7,14 @@
   "CATALOG_LABEL": "Catalog",
   "PROJECT_LAYERS_LABEL": "Data",
   "PROJECT_VIEWS_LABEL": "Views",
+  "layout": {
+    "SHOW_LEGEND": "Show legend",
+    "HIDE_LEGEND": "Hide legend",
+    "SHOW_POSITION": "Show geographical coordinates",
+    "HIDE_POSITION": "Hide geographical coordinates",
+    "SHOW_NORTH": "Show north arrow",
+    "HIDE_NORTH": "Hide north arrow"
+  },
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
     "GEOLOCATION_ERROR": "We are not able to locate your position, this might affect some features of the application.",
