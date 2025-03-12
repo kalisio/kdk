@@ -192,7 +192,7 @@ export async function authorise (hook) {
       // token targeting API gateway (sub = keyId) or app used through iframe (appId = keyId)
       if (!subject && (payload.sub || payload.appId)) {
         subject = Object.assign({ _id: (payload.sub || payload.appId) }, payload)
-      } else { // Otherwise we allow to "extend" user abilities by providing additional information in the token
+      } else if (subject) { // Otherwise we allow to "extend" user abilities by providing additional information in the token
         subject = Object.assign(subject, _.omit(payload, ['aud', 'iss', 'exp', 'sub', 'iat', 'jti', 'nbf']))
       }
     }
