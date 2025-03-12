@@ -8,6 +8,10 @@
   "PROJECT_LAYERS_LABEL": "Données",
   "PROJECT_VIEWS_LABEL": "Vues",
   "layout": {
+    "SHOW_USER_LOCATION": "Afficher ma localisation",      
+    "HIDE_USER_LOCATION": "Masquer ma localisation",
+    "SEARCH_LOCATION": "Recherche un lieu",
+    "MEASURE_TOOL": "Outil de mesure",
     "SHOW_LEGEND": "Afficher la légende",
     "HIDE_LEGEND": "Masquer la légende",
     "SHOW_POSITION": "Afficher les coordonnées géographiques",
@@ -77,9 +81,6 @@
       "ZOOM_OUT": "Dézoomer",
       "SHOW_USER_LOCATION": "Afficher ma localisation",      
       "HIDE_USER_LOCATION": "Masquer ma localisation",
-      "TOGGLE_SIDENAV": "Menu",
-      "ENTER_FULLSCREEN": "Basculer en mode plein écran",
-      "EXIT_FULLSCREEN": "Quitter le mode plein écran",
       "TOGGLE_CATALOG": "Catalogue",
       "TOGGLE_MAP": "Visualiser en 2D",
       "TOGGLE_GLOBE": "Visualiser en 3D",
@@ -717,7 +718,6 @@
     "ERROR_MESSAGE": "Une capture est déjà en cours"
   },
   "KMeasureTool": {
-    "TOOL_BUTTON_LABEL": "Afficher l'outil de mesures",
     "CLEAR": "Effacer les mesures",
     "MEASURE_DISTANCE": "Mesurer une distance",
     "MEASURE_AREA": "Mesurer une aire",

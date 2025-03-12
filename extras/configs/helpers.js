@@ -13,5 +13,8 @@ module.exports = {
       style: 'min-height: 1px;',
       color
     }
+  },
+  visible: (element, rule) => {
+    return Object.assign(element, { visible: rule })
   }
 }

@@ -1,12 +1,16 @@
 <template>
   <div class="row items-center no-padding">
     <span class="q-pl-md q-pr-md" @click="changeUnit">
-      <span v-html="measureValue"/>
+      <span v-html="measureValue" />
       <q-tooltip>
         {{ $t('KMeasureTool.CLICK_TO_CHANGE_UNIT') }}
       </q-tooltip>
     </span>
-    <k-panel id="toolbar-buttons" :content="buttons" action-renderer="button"/>
+    <KPanel 
+      id="toolbar-buttons" 
+      :content="buttons" 
+      action-renderer="button"
+    />
   </div>
 </template>
 

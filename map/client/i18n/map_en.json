@@ -8,6 +8,10 @@
   "PROJECT_LAYERS_LABEL": "Data",
   "PROJECT_VIEWS_LABEL": "Views",
   "layout": {
+    "SHOW_USER_LOCATION": "Display my location",      
+    "HIDE_USER_LOCATION": "Hide my location",
+    "SEARCH_LOCATION": "Search a location",
+    "MEASURE_TOOL": "Measure tool",
     "SHOW_LEGEND": "Show legend",
     "HIDE_LEGEND": "Hide legend",
     "SHOW_POSITION": "Show geographical coordinates",
@@ -75,9 +79,6 @@
       "ZOOM_TO_LABEL": "Zoom to",
       "ZOOM_IN": "Zoom in",
       "ZOOM_OUT": "Zoom out",
-      "SHOW_USER_LOCATION": "Display my location",      
-      "HIDE_USER_LOCATION": "Hide my location",
-      "TOGGLE_SIDENAV": "Menu",
       "ENTER_FULLSCREEN": "Toggle fullscreen mode",
       "EXIT_FULLSCREEN": "Exit fullscreen mode",
       "TOGGLE_CATALOG": "Catalog",
@@ -713,7 +714,6 @@
     "ERROR_MESSAGE": "One capture is already in progress"
   },
   "KMeasureTool": {
-    "TOOL_BUTTON_LABEL": "Display the measure tool",
     "CLEAR": "Clear all measurements",
     "MEASURE_DISTANCE": "Measure a distance",
     "MEASURE_AREA": "Measure an area",
