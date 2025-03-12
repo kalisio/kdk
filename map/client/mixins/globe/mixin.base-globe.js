@@ -33,24 +33,22 @@ export const baseGlobe = {
   methods: {
     refreshGlobe () {
     },
-    setupGlobe (domEl, token, options) {
-      this.viewerOptions = options ||
-        // For activities
-        _.get(this, 'activityOptions.engine.viewer', {
-          sceneMode: 3, // SceneMode.COLUMBUS_VIEW = 1, SceneMode.SCENE3D = 3,
-          sceneModePicker: false,
-          infoBox: false,
-          scene3DOnly: true,
-          homeButton: false,
-          geocoder: false,
-          navigationHelpButton: false,
-          baseLayerPicker: false,
-          vrButton: false,
-          fullscreenButton: false,
-          animation: false,
-          timeline: false,
-          depthTestAgainstTerrain: false
-        })
+    setupGlobe (domEl, token, options = {}) {
+      this.viewerOptions = _.defaults(options, _.get(this, 'activityOptions.engine.viewer', {}), {
+        sceneMode: 3, // SceneMode.COLUMBUS_VIEW = 1, SceneMode.SCENE3D = 3,
+        sceneModePicker: false,
+        infoBox: false,
+        scene3DOnly: true,
+        homeButton: false,
+        geocoder: false,
+        navigationHelpButton: false,
+        baseLayerPicker: false,
+        vrButton: false,
+        fullscreenButton: false,
+        animation: false,
+        timeline: false,
+        depthTestAgainstTerrain: false
+      })
       if (token) Ion.defaultAccessToken = token
       // If we don't need ion
       else Ion.defaultAccessToken = ''
