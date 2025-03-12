@@ -56,6 +56,7 @@ export function useLocation () {
   async function search (pattern, limit = 25) {
     const project = getActivityProject()
     const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())
+    console.log(planet)
     return searchLocation(planet, pattern, {
       geocoders: selectedGeocoders.value,
       viewbox: selectedViewbox.value,
