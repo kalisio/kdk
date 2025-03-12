@@ -237,8 +237,8 @@ async function apply () {
     logger.debug('[KDK] Create style with values:', data)
     await service.create(data)
   } else {
-    logger.debug(`[KDK] Patch style ${style._id} with values:`, data)
-    await service.patch(style.value._id, data)
+    logger.debug(`[KDK] Patch style ${model.value._id} with values:`, data)
+    await service.patch(model.value._id, data)
   }
   emit('applied', data)
   return true

@@ -96,7 +96,7 @@ defineProps({
 })
 
 // Data
-const { getSelectedFeaturesByLayer, CurrentActivity, CurrentActivityContext } = useCurrentActivity()
+const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
