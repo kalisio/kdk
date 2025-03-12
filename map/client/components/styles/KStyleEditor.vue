@@ -161,9 +161,6 @@ const engine = computed(() => {
 const is3D = computed(() => {
   return engine.value === 'cesium'
 })
-const defaultStyle = computed(() => {
-  return _.merge(DefaultStyle, engine.value.style)
-})
 const pointStrokeProperties = computed(() => {
   return [
     { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('point.stroke.color') },

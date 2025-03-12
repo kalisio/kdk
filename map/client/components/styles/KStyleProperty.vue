@@ -125,7 +125,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
-const value = ref(props.modelValue || props.default)
+const value = ref(props.modelValue)
 
 // Computed
 const min = computed(() => {
@@ -162,4 +162,6 @@ watch(value, newValue => {
   emit('update:modelValue', newValue)
 })
 
+// Immediate
+if (!value.value) value.value = props.default
 </script>
