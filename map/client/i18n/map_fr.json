@@ -12,8 +12,8 @@
     "HIDE_LEGEND": "Masquer la légende",
     "SHOW_POSITION": "Afficher les coordonnées géographiques",
     "HIDE_POSITION": "Masquer les coordonnées géographiques",
-    "SHOW_NORTH": "Afficher la flèche d’orientation vers le nord",
-    "HIDE_NORTH": "Masquer la flèche d’orientation vers le nord"
+    "SHOW_NORTH_ARROW": "Afficher la flèche d’orientation vers le nord",
+    "HIDE_NORTH_ARROW": "Masquer la flèche d’orientation vers le nord"
   },
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",

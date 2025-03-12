@@ -47,7 +47,7 @@ module.exports = {
   toggleNorthArrowVisibility: (renderer = 'item') => {
     return {
       id: 'toggle-north-arrow-sticky', 
-      component: 'action/layout', 
+      component: 'action/KToggleStickyVisibility', 
       stickyId: 'north-arrow-sticky', 
       icon: 'las la-location-arrow', 
       label: renderer === 'item' ? 'layout.SHOW_NORTH_ARROW' : null,

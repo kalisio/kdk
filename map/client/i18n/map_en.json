@@ -12,8 +12,8 @@
     "HIDE_LEGEND": "Hide legend",
     "SHOW_POSITION": "Show geographical coordinates",
     "HIDE_POSITION": "Hide geographical coordinates",
-    "SHOW_NORTH": "Show north arrow",
-    "HIDE_NORTH": "Hide north arrow"
+    "SHOW_NORTH_ARROW": "Show north arrow",
+    "HIDE_NORTH_ARROW": "Hide north arrow"
   },
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
