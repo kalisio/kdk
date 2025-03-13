@@ -1,6 +1,8 @@
 <template>
   <KItem
-    ref="item"
+    v-bind="$props"
+    :actions="itemActions"
+    :dense="dense"
   >
     <template v-slot:item-content>
       <div
@@ -23,24 +25,45 @@
   </KItem>
 </template>
 
-<script setup>
+<script>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { mixins as kdkCoreMixins } from '../../../../core/client'
 import KItem from '../../../../core/client/components/collection/KItem.vue'
 import KStylePreview from './KStylePreview.vue'
 
-// Props
-defineProps({
-  dense: Boolean,
-  default: false
-})
-
-// Data
-const item = ref(null)
-
-// Computed
-const name = computed(() => _.get(item.value, 'item.name', ''))
-const pointStyle = computed(() => _.get(item.value, 'item.point'))
-const lineStyle = computed(() => _.get(item.value, 'item.line'))
-const polygonStyle = computed(() => _.get(item.value, 'item.polygon'))
+export default {
+  mixins: [kdkCoreMixins.baseItem],
+  components: {
+    KItem,
+    KStylePreview
+  },
+  props: {
+    dense: {
+      type: Boolean,
+      default: true
+    }
+  },
+  computed: {
+    name () {
+      return this.item.name
+    },
+    pointStyle () {
+      return this.item.point
+    },
+    lineStyle () {
+      return this.item.line
+    },
+    polygonStyle () {
+      return this.item.polygon
+    }
+  },
+  methods: {
+    hasUserScope () {
+      return this.item.scope == 'user'
+    },
+    hasSystemScope () {
+      return this.item.scope == 'system'
+    }
+  }
+}
 </script>
