@@ -8,11 +8,10 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref } from 'vue'
 import KScreen from './KScreen.vue'
 
 // Data
-const message = ref(_.get(config, 'screens.error.message', 'KErrorScreen.MESSAGE'))
+const message = _.get(config, 'screens.error.message', 'KErrorScreen.MESSAGE')
 const defaultActions = [{
   id: 'go-home-action',
   icon: 'las la-home',
@@ -20,5 +19,5 @@ const defaultActions = [{
   renderer: 'form-button',
   route: { name: 'index' }
 }]
-const actions = ref(_.get(config, 'screens.error.actions', defaultActions))
+const actions = _.get(config, 'screens.error.actions', defaultActions)
 </script>
