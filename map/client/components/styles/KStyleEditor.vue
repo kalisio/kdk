@@ -1,5 +1,8 @@
 <template>
   <div id="style-editor" class="column">
+    <!-- 
+      Title
+    -->
     <div id="style-editor-header" v-if="title">
       <div class="ellipsis text-h6">
         {{ $tie(title) }}
@@ -9,14 +12,18 @@
       id="style-editor-content"
       class="full-width column"
     >
-      <!-- Name editor -->
+      <!-- 
+        Name editor 
+      -->
       <KForm
         ref="formRef"
         :values="formValues"
         :schema="formSchema"
         @field-changed="onNameChanged"
       />
-      <!-- Point editor -->
+      <!-- 
+        Point editor 
+      -->
       <KStyleEditorSection
         v-if="canEditPoint"
         label="KStyleEditor.POINT_SECTION"
@@ -42,7 +49,9 @@
           :dense="dense"
         />
       </KStyleEditorSection>
-      <!-- Line editor -->
+      <!-- 
+        Line editor 
+      -->
       <KStyleEditorSection
         v-if="canEditLine"
         label="KStyleEditor.LINE_SECTION"
@@ -51,10 +60,12 @@
         :dense="dense"
       >
         <KStyleProperty v-model="model.line.color" label="KStyleEditor.COLOR" type="color" :default="getDefaultValue('line.color')" :dense="dense" />
-        <KStyleProperty v-model="model.line.width" label="KStyleEditor.SIZE" type="size" :min="1" :max="12" :default="getDefaultValue('line.width')" :dense="dense" />
+        <KStyleProperty v-model="model.line.width" label="KStyleEditor.SIZE" type="size" :min="1" :max="16" :default="getDefaultValue('line.width')" :dense="dense" />
         <KStyleProperty v-model="model.line.opacity" label="KStyleEditor.OPACITY" type="opacity" :default="getDefaultValue('line.opacity')" :dense="dense" />
       </KStyleEditorSection>
-      <!-- Polygon editor -->
+      <!-- 
+        Polygon editor 
+      -->
       <KStyleEditorSection
         v-if="canEditPolygon"
         label="KStyleEditor.POLYGON_SECTION"
@@ -72,6 +83,9 @@
         />
       </KStyleEditorSection>
     </div>
+    <!-- 
+      Buttons
+    -->
     <div id="style-editor-footer" class="row justify-end q-mt-md" v-if="!hideButtons">
       <KPanel
         id="style-editor-buttons"
@@ -164,7 +178,7 @@ const is3D = computed(() => {
 const pointStrokeProperties = computed(() => {
   return [
     { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('point.stroke.color') },
-    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: getDefaultValue('point.stroke.width') },
+    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 16, default: getDefaultValue('point.stroke.width') },
     { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('point.stroke.opacity') }
   ]
 })
@@ -179,7 +193,7 @@ const pointIconProperties = computed(() => {
 const polygonStrokeProperties = computed(() => {
   return [
     { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('polygon.stroke.color') },
-    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 12, default: getDefaultValue('polygon.stroke.width') },
+    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 16, default: getDefaultValue('polygon.stroke.width') },
     { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('polygon.stroke.opacity') }
   ]
 })
