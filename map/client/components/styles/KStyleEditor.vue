@@ -232,8 +232,9 @@ async function apply () {
   const isUnique = await checkName(values.name)
   if (!isUnique) return false
   // create to patch the style
-  const data = _.merge(model.value, values)
+  let data = _.merge(model.value, values)
   if (mode === 'creation') {
+    data = _.merge(data, { type: 'style', scope: 'user' })
     logger.debug('[KDK] Create style with values:', data)
     await service.create(data)
   } else {
