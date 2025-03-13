@@ -360,6 +360,9 @@
     "MESSAGE": "Oups... page not found",
     "GO_HOME_LABEL": "Go home page"
   },
+  "KUnauthorizedScreen": {
+    "MESSAGE": "You are not authorized to access this page"
+  },
   "KLoginScreen": {
     "EMAIL_FIELD_LABEL": "@:KScreen.EMAIL_FIELD_LABEL",
     "PASSWORD_FIELD_LABEL": "Enter your password",
