@@ -6,9 +6,9 @@
         {{ $t('KMeasureTool.CLICK_TO_CHANGE_UNIT') }}
       </q-tooltip>
     </span>
-    <KPanel 
-      id="toolbar-buttons" 
-      :content="buttons" 
+    <KPanel
+      id="toolbar-buttons"
+      :content="buttons"
       action-renderer="button"
     />
   </div>

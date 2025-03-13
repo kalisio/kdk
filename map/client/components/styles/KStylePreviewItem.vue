@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { mixins as kdkCoreMixins } from '../../../../core/client'
 import KItem from '../../../../core/client/components/collection/KItem.vue'
 import KStylePreview from './KStylePreview.vue'
@@ -59,10 +58,10 @@ export default {
   },
   methods: {
     hasUserScope () {
-      return this.item.scope == 'user'
+      return this.item.scope === 'user'
     },
     hasSystemScope () {
-      return this.item.scope == 'system'
+      return this.item.scope === 'system'
     }
   }
 }
