@@ -24,10 +24,10 @@
         type="point"
         :dense="dense"
       >
-        <KStyleProperty v-model="model.point.color" :name="$t('KStyleEditor.COLOR')" type="color" :default="getDefaultValue('point.color')" :dense="dense" />
-        <KStyleProperty v-model="model.point.size" :name="$t('KStyleEditor.SIZE')" type="size" :min="8" :max="64" :default="getDefaultValue('point.size')" :dense="dense" />
-        <KStyleProperty v-model="model.point.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :default="getDefaultValue('point.opacity')" :dense="dense" />
-        <KStyleProperty v-model="model.point.shape" :name="$t('KStyleEditor.SHAPE')" type="shape" :default="getDefaultValue('point.shape')" :dense="dense" />
+        <KStyleProperty v-model="model.point.color" :label="'KStyleEditor.COLOR'" type="color" :default="getDefaultValue('point.color')" :dense="dense" />
+        <KStyleProperty v-model="model.point.size" :label="'KStyleEditor.SIZE'" type="size" :min="8" :max="64" :default="getDefaultValue('point.size')" :dense="dense" />
+        <KStyleProperty v-model="model.point.opacity" :label="'KStyleEditor.OPACITY'" type="opacity" :default="getDefaultValue('point.opacity')" :dense="dense" />
+        <KStyleProperty v-model="model.point.shape" :label="'KStyleEditor.SHAPE'" type="shape" :default="getDefaultValue('point.shape')" :dense="dense" />
         <KStylePropertiesGroup
           v-if="!is3D"
           label="KStyleEditor.ICON_GROUP"
@@ -50,9 +50,9 @@
         type="line"
         :dense="dense"
       >
-        <KStyleProperty v-model="model.line.color" :name="$t('KStyleEditor.COLOR')" type="color" :default="getDefaultValue('line.color')" :dense="dense" />
-        <KStyleProperty v-model="model.line.width" :name="$t('KStyleEditor.SIZE')" type="size" :min="1" :max="12" :default="getDefaultValue('line.width')" :dense="dense" />
-        <KStyleProperty v-model="model.line.opacity" :name="$t('KStyleEditor.OPACITY')" type="opacity" :default="getDefaultValue('line.opacity')" :dense="dense" />
+        <KStyleProperty v-model="model.line.color" label="KStyleEditor.COLOR" type="color" :default="getDefaultValue('line.color')" :dense="dense" />
+        <KStyleProperty v-model="model.line.width" label="KStyleEditor.SIZE" type="size" :min="1" :max="12" :default="getDefaultValue('line.width')" :dense="dense" />
+        <KStyleProperty v-model="model.line.opacity" label="KStyleEditor.OPACITY" type="opacity" :default="getDefaultValue('line.opacity')" :dense="dense" />
       </KStyleEditorSection>
       <!-- Polygon editor -->
       <KStyleEditorSection
@@ -62,8 +62,8 @@
         type="polygon"
         :dense="dense"
       >
-        <KStyleProperty v-model="model.polygon.color" :name="$t('KStyleEditor.FILL_COLOR')" type="color" :default="getDefaultValue('polygon.color')" :dense="dense" />
-        <KStyleProperty v-model="model.polygon.opacity" :name="$t('KStyleEditor.FILL_OPACITY')" type="opacity" :default="getDefaultValue('polygon.opacity')" :dense="dense" />
+        <KStyleProperty v-model="model.polygon.color" label="KStyleEditor.FILL_COLOR" type="color" :default="getDefaultValue('polygon.color')" :dense="dense" />
+        <KStyleProperty v-model="model.polygon.opacity" label="KStyleEditor.FILL_OPACITY" type="opacity" :default="getDefaultValue('polygon.opacity')" :dense="dense" />
         <KStylePropertiesGroup
           label="KStyleEditor.STROKE_GROUP"
           v-model="model.polygon.stroke"
@@ -171,7 +171,9 @@ const pointStrokeProperties = computed(() => {
 const pointIconProperties = computed(() => {
   return [
     { name: 'classes', label: 'KStyleEditor.ICON', type: 'icon', default: getDefaultValue('point.icon.classes') },
-    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: getDefaultValue('point.icon.size') }
+    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: getDefaultValue('point.icon.size') },
+    { name: 'color', label: 'KStyleEditor.ICON_COLOR', type: 'color', default: getDefaultValue('point.icon.color') },
+    { name: 'opacity', label: 'KStyleEditor.ICON_OPACITY', type: 'opacity', default: getDefaultValue('point.icon.opacity') }
   ]
 })
 const polygonStrokeProperties = computed(() => {

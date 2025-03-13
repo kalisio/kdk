@@ -4,7 +4,7 @@
       <q-icon :name="icon" :size="dense ? 'xs' : 'sm'"/>
     </q-item-section>
     <q-item-section>
-      <q-item-label class="ellipsis">{{ props.name }}</q-item-label>
+      <q-item-label class="ellipsis">{{ $t(props.label) }}</q-item-label>
     </q-item-section>
     <q-item-section style="max-width: 50px;">
       <!-- size/opacity type -->
@@ -42,47 +42,20 @@
         />
       </div>
       <!-- shape type -->
-      <q-select v-else-if="props.type === 'shape'"
-        v-model="value"
-        :options="getShapes()"
-        emit-value
-        map-options
-        hide-bottom-space
-        dense
-      >
-        <template v-slot:selected-item="scope">
-          <!--div class="full-width row justify-center"-->
-            <KShape :options="scope.opt" class="text-center" />
-          <!--/div-->
-        </template>
-        <template v-slot:option="scope">
-          <q-item clickable>
-            <KShape
-              v-bind="scope.itemProps"
-              :options="scope.opt"
-              class="q-pa-xs row justify-center"
-            />
-          </q-item>
-
-        </template>
-      </q-select>
+      <div v-else-if="props.type === 'shape'" class="row justify-center">
+        <KShapePicker v-model="value" />
+      </div>
       <!-- icon type -->
-      <q-select v-else-if="type === 'icon'"
-        v-model="value"
-        :options="['las la-ruler', 'las la-shapes', 'las la-fill']"
-        hide-bottom-space
-        dense
-      />
+      <div v-else-if="type === 'icon'" class="row justify-center">
+        <KIconPicker v-model="value" />
+      </div>
     </q-item-section>
   </q-item>
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { ref, watch, computed } from 'vue'
-import { utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
-import KShape from '../../../../core/client/components/media/KShape.vue'
-import KColorPicker from '../../../../core/client/components/input/KColorPicker.vue'
+import { KColorPicker, KIconPicker, KShapePicker } from '../../../../core/client/components/input/index.js'
 
 // Props
 const props = defineProps({
@@ -94,7 +67,7 @@ const props = defineProps({
     type: [String, Number, Object],
     default: null
   },
-  name: {
+  label: {
     type: String,
     default: ''
   },
@@ -151,11 +124,6 @@ const icon = computed(() => {
       return 'las la-adjust'
   }
 })
-function getShapes () {
-  return _.map(_.keys(_.omit(kdkCoreUtils.Shapes, 'add')), shape => {
-    return ({ value: shape, shape, size: 24, opacity: 0.1, color: 'primary', stroke: { color: 'primary', width: 2 } })
-  })
-}
 
 // Hooks
 watch(value, newValue => {

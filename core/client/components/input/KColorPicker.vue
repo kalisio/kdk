@@ -55,6 +55,8 @@ const props = defineProps({
 
 // Emit
 const emit = defineEmits(['update:modelValue'])
+
+// Data
 const color = ref(null)
 
 // Watch

@@ -157,6 +157,7 @@ export const DefaultStyle = {
     icon: {
       classes: '',
       color: 'black',
+      opacity: 1,
       size: 12
     }
   },

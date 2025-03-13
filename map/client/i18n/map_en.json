@@ -784,6 +784,8 @@
     "SHAPE": "Shape",
     "ICON": "Icon",
     "ICON_SIZE": "Icon size",
+    "ICON_COLOR": "Icon color",
+    "ICON_OPACITY": "Icon opacity",
     "STROKE_COLOR": "Stroke color",
     "STROKE_OPACITY": "Stroke opacity",
     "STROKE_WIDTH": "Stroke width"

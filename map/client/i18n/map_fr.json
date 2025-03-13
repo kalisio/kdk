@@ -604,7 +604,7 @@
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Éditer le style de la couche"
   },
-  "KLayersSelector": {
+    "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "Aucune couche disponible",
     "LAYER_DISABLED": "Zoomez davantage pour voir cette couche"
   },
@@ -788,6 +788,8 @@
     "SHAPE": "Forme",
     "ICON": "Icône",
     "ICON_SIZE": "Taille de l'icône",
+    "ICON_COLOR": "Couleur de l'icône",
+    "ICON_OPACITY": "Opacité de l'icône",
     "STROKE_COLOR": "Couleur du contour",
     "STROKE_OPACITY": "Opacité du contour",
     "STROKE_WIDTH": "Largeur du contour"
