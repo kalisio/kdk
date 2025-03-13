@@ -56,7 +56,6 @@ export function filterContent (content, filter) {
 
 // Perform binding between a configuration object and a given context object
 export function bindContent (content, context, omit = []) {
-  if (_.isNil(content) || _.isNil(context)) return content
   const components = _.flatMapDeep(content)
   _.forEach(components, (component) => {
     // Process component handlers
@@ -72,7 +71,6 @@ export function bindContent (content, context, omit = []) {
 }
 
 export function bindProperties (item, context, omit = []) {
-  if (_.isNil(item) || _.isNil(context)) return item
   if (Array.isArray(item)) {
     for (let i = 0; i < item.length; i++) {
       item[i] = bindProperties(item[i], context)
@@ -84,7 +82,6 @@ export function bindProperties (item, context, omit = []) {
         if (typeof value === 'string') {
           item[key] = getBoundValue(value, context)
         } else {
-
           item[key] = bindProperties(value, context)
         }
       }
@@ -141,14 +138,13 @@ export function generateHandler (context, name, params) {
 }
 
 export function bindParams (params, context, args) {
-  
+  if (_.isNil(params)) return params
   if (Array.isArray(params)) return params.map(param => bindParams(param, context, args))
   if (typeof params === 'object') return _.mapValues(params, (value, key) => bindParams(value, context, args))
   return getBoundValue(params, context, args)
 }
 
 export function getBoundValue (value, context, args) {
-  
   // A parameter like :xxx means xxx is a property of the context, not a static value.
   // In that case remove trailing : and get property value dynamically.
   // A parameter like :n means the nth argument of the handler, not a static value.
@@ -176,7 +172,7 @@ export function getBoundValue (value, context, args) {
       // FIXME: we should test if the path exists but this causes
       // a bug in production build with Vue proxy objects
       // if (_.has(context, path)) return _.get(context, path)
-      if (hasProperty(context, path)) return _.get(context, path, path)
+      if (hasProperty(context, path)) return _.get(context, path)
       // Workaround if not possible to correctly check the path first
       // but it causes problems with values initialized to null
       // const result = _.get(context, path)
