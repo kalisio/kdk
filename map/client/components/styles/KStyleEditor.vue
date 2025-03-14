@@ -1,6 +1,6 @@
 <template>
   <div id="style-editor" class="column">
-    <!-- 
+    <!--
       Title
     -->
     <div id="style-editor-header" v-if="title">
@@ -12,8 +12,8 @@
       id="style-editor-content"
       class="full-width column"
     >
-      <!-- 
-        Name editor 
+      <!--
+        Name editor
       -->
       <KForm
         ref="formRef"
@@ -21,8 +21,8 @@
         :schema="formSchema"
         @field-changed="onNameChanged"
       />
-      <!-- 
-        Point editor 
+      <!--
+        Point editor
       -->
       <KStyleEditorSection
         v-if="canEditPoint"
@@ -49,8 +49,8 @@
           :dense="dense"
         />
       </KStyleEditorSection>
-      <!-- 
-        Line editor 
+      <!--
+        Line editor
       -->
       <KStyleEditorSection
         v-if="canEditLine"
@@ -63,8 +63,8 @@
         <KStyleProperty v-model="model.line.width" label="KStyleEditor.SIZE" type="size" :min="1" :max="16" :default="getDefaultValue('line.width')" :dense="dense" />
         <KStyleProperty v-model="model.line.opacity" label="KStyleEditor.OPACITY" type="opacity" :default="getDefaultValue('line.opacity')" :dense="dense" />
       </KStyleEditorSection>
-      <!-- 
-        Polygon editor 
+      <!--
+        Polygon editor
       -->
       <KStyleEditorSection
         v-if="canEditPolygon"
@@ -83,7 +83,7 @@
         />
       </KStyleEditorSection>
     </div>
-    <!-- 
+    <!--
       Buttons
     -->
     <div id="style-editor-footer" class="row justify-end q-mt-md" v-if="!hideButtons">

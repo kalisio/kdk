@@ -35,7 +35,6 @@ const props = defineProps({
 
 // Computed
 const shapeOptions = computed(() => {
-
   const size = props.dense ? ['20px', '20px'] : ['24px', '24px']
   // Point
   if (props.type === 'point') {
