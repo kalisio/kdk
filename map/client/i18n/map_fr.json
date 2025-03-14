@@ -17,7 +17,9 @@
     "SHOW_POSITION": "Afficher les coordonnées géographiques",
     "HIDE_POSITION": "Masquer les coordonnées géographiques",
     "SHOW_NORTH_ARROW": "Afficher la flèche d’orientation vers le nord",
-    "HIDE_NORTH_ARROW": "Masquer la flèche d’orientation vers le nord"
+    "HIDE_NORTH_ARROW": "Masquer la flèche d’orientation vers le nord",
+    "SHOW_TIME_SERIES": "Afficher les graphiques temporels",
+    "HIDE_TIME_SERIES": "Masquer les graphiques temporels"
   },
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",
@@ -756,6 +758,7 @@
   },
   "KPosition": {
     "COPY": "Copier les coordonnées",
+    "CLOSE": "Fermer",
     "POSITION_COPIED":"Coordonnées copiées en mémoire",
     "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionnalité",
     "OUTSIDE_MAP": "Position indéterminée"
