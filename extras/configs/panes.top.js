@@ -89,12 +89,12 @@ module.exports = {
     // mode: mode to be restored 
     // icon: icon to be displayed, default is `las la-times`
     // tooltip: tooltip to be displayed
-    const params = Object.assign({ icon: "las-la-times" }, options)
+    const params = Object.assign({ icon: "las la-times" }, options)
     return {
       id: `restore-${params.mode}`, 
       icon: params.icon,
       tooltip: params.tooltip,
-      handler: { name: 'setTopPaneMode', params: [mode] }
+      handler: { name: 'setTopPaneMode', params: [params.mode] }
     }
   }
 }
