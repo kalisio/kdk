@@ -607,6 +607,22 @@
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Edit layer style"
   },
+  "KLayerEditor": {
+    "BASE": "Base properties",
+    "DISPLAY": "Propriétés d'affichage",
+    "DEFAULT_VISIBILITY": "Visible by default",
+    "ZOOM": "Visible entre les niveaux de zoom",
+    "POINT_CLUSTERING": "Cluster until level",
+    "CLUSTERING_PIXEL_RANGE": "Clustering range",
+    "SELECTABLE": "Selectable",
+    "OPACITY": "Opacity",
+    "POPUP": "Popup",
+    "ADD_POPUP": "Select target properties to use as popup",
+    "TOOLTIP": "Tooltip",
+    "ADD_TOOLTIP": "Select a target property to use as tooltip",
+    "INFOBOX": "Information box",
+    "ADD_INFOBOX": "Select target properties to use as information box"
+  },
   "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "No layer available",
     "LAYER_DISABLED": "Zoom in to visualise this layer"

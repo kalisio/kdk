@@ -606,6 +606,22 @@
   "KLayerStyleEditor": {
     "EDIT_LAYER_STYLE_TITLE": "Éditer le style de la couche"
   },
+  "KLayerEditor": {
+    "BASE": "Propriétés de base",
+    "DISPLAY": "Propriétés d'affichage",
+    "DEFAULT_VISIBILITY": "Visible par défaut",
+    "ZOOM": "Visible entre les niveaux de zoom",
+    "POINT_CLUSTERING": "Regrouper jusqu'au niveau",
+    "CLUSTERING_PIXEL_RANGE": "Distance de regroupement",
+    "SELECTABLE": "Sélectionnable",
+    "OPACITY": "Opacité",
+    "POPUP": "Bulle contextuelle",
+    "ADD_POPUP": "Sélectionnez des propriétés à afficher dans la bulle",
+    "TOOLTIP": "Bulle d'information",
+    "ADD_TOOLTIP": "Sélectionnez une propriété à afficher dans la bulle",
+    "INFOBOX": "Boîte d'information",
+    "ADD_INFOBOX": "Sélectionnez des propriétés à afficher dans la boîte"
+  },
     "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "Aucune couche disponible",
     "LAYER_DISABLED": "Zoomez davantage pour voir cette couche"
