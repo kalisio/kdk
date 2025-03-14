@@ -72,7 +72,7 @@ async function onClose () {
 
 onMounted(() => {
   // Show target sticky
-  if (!_.isEmpty(props.target)) Layout.showSticky(props.target)
+  if (!_.isEmpty(props.targetId)) Layout.showSticky(props.targetId)
   // Listen move events
   if (CurrentActivity.value) {
     CurrentActivity.value.$engineEvents.on('movestart', updatePosition)
@@ -84,7 +84,7 @@ onMounted(() => {
 })
 // Hooks
 onBeforeUnmount(() => {
-  if (!_.isEmpty(props.target)) Layout.hideSticky(props.target)
+  if (!_.isEmpty(props.targetId)) Layout.hideSticky(props.targetId)
   // Stop listening move events
   if (CurrentActivity.value) {
     CurrentActivity.value.$engineEvents.off('movestart', updatePosition)
