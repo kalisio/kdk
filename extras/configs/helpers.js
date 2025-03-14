@@ -20,6 +20,11 @@ module.exports = {
     }
   },
   toggleWidget: (options) => {
+    // widgetId: widget identifier
+    // icon: icon to be displayed
+    // showMessage: label or tooltip to be displayed when not toggled
+    // hideMessage: label or tooltip to be displayed when toggled
+    // renderer: renderer of the action
     const params = Object.assign({ renderer: 'item' }, options)
     return {
       id: `toggle-${params.widgetId}`, 
@@ -36,6 +41,11 @@ module.exports = {
     }
   },
   toggleSticky: (options) => {
+    // stickyId: sticky identifier
+    // icon: icon to be displayed
+    // showMessage: label or tooltip to be displayed when not toggled
+    // hideMessage: label or tooltip to be displayed when toggled
+    // renderer: renderer of the action
     const params = Object.assign({ renderer: 'item' }, options)
     return {
       id: `toggle-${params.stickyId}`, 
