@@ -2,7 +2,7 @@ module.exports = {
   LEGEND: {
     id: 'legend-widget',
     label: 'KLegend.LABEL',
-    icon: 'las la-list',
+    icon: 'las la-atlas',
     scrollable: true,
     content: { component: 'legend/KLegend' }
   },

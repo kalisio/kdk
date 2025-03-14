@@ -1,3 +1,5 @@
+const helpers = require('./helpers.js')
+
 module.exports = {
   locateUser: (renderer = 'button') => {
     return {
@@ -33,49 +35,40 @@ module.exports = {
     }
   },
   toggleLegend: (renderer = 'item') => {
-    return {
-      id: 'toggle-legend', 
-      icon: 'las la-list', 
-      label: renderer === 'item' ? 'layout.SHOW_LEGEND' : null,
-      tooltip: renderer === 'button' ? 'layout.SHOW_LEGEND': null,
-      toggle: { 
-        label: renderer === 'item' ? 'layout.HIDE_LEGEND' : null,
-        tooltip: renderer === 'button' ? 'layout.HIDE_LEGEND': null,
-      },
-      renderer,
-      component: 'action/KToggleWidgetVisibility', 
-      widgetId: 'legend-widget'
-    }
+    return helpers.toggleWidget({
+      widgetId: 'legend-widget', 
+      icon: 'las la-atlas', 
+      showMessage: 'layout.SHOW_LEGEND', 
+      hideMessage: 'layout.HIDE_LEGEND', 
+      renderer
+    })
+  },
+  toggleTimeSeries: (renderer = 'item') => {
+    return helpers.toggleWidget({
+      widgetId: 'time-series-widget', 
+      icon: 'las la-chart-line', 
+      showMessage: 'layout.SHOW_TIME_SERIES', 
+      hideMessage: 'layout.HIDE_TIME_SERIES', 
+      renderer
+  })
   },
   togglePosition: (renderer = 'item') => {
-    return {
-      id: 'toggle-position-sticky', 
-      icon: 'las la-plus',
-      label: renderer === 'item' ? 'layout.SHOW_POSITION' : null,
-      tooltip: renderer === 'button' ? 'layout.SHOW_POSITION': null,
-      toggle: { 
-        label: renderer === 'item' ? 'layout.HIDE_POSITION' : null,
-        tooltip: renderer === 'button' ? 'layout.HIDE_POSITION': null,
-      },    
-      renderer,
-      component: 'action/KToggleStickyVisibility', 
-      stickyId: 'position-sticky'
-    }
+    return helpers.toggleSticky({
+      stickyId: 'position-sticky', 
+      icon: 'las la-plus', 
+      showMessage: 'layout.SHOW_POSITION', 
+      hideMessage: 'layout.HIDE_POSITION', 
+      renderer
+    })
   },
   toggleNorthArrow: (renderer = 'item') => {
-    return {
-      id: 'toggle-north-arrow-sticky', 
+    return helpers.toggleSticky({
+      stickyId: 'north-arrow-sticky', 
       icon: 'las la-location-arrow', 
-      label: renderer === 'item' ? 'layout.SHOW_NORTH_ARROW' : null,
-      tooltip: renderer === 'button' ? 'layout.SHOW_NORTH_ARROW': null,
-      toggle: { 
-        label: renderer === 'item' ? 'layout.HIDE_NORTH_ARROW' : null,
-        tooltip: renderer === 'button' ? 'layout.HIDE_NORTH_ARROW': null,
-      },    
-      renderer,
-      component: 'action/KToggleStickyVisibility', 
-      stickyId: 'north-arrow-sticky'
-    }
+      showMessage: 'layout.SHOW_NORTH_ARROW', 
+      hideMessage: 'layout.HIDE_NORTH_ARROW', 
+      renderer
+    })
   },
   toggleFullscreen: (renderer = 'item') => {
     return {
@@ -92,11 +85,15 @@ module.exports = {
       renderer
     }
   },
-  restoreMode: (mode, tooltip, icon = 'las la-times') => {
+  restoreMode: (options) => {
+    // mode: mode to be restored 
+    // icon: icon to be displayed, default is `las la-times`
+    // tooltip: tooltip to be displayed
+    const params = Object.assign({ icon: "las-la-times" }, options)
     return {
-      id: `restore-${mode}`, 
-      icon,
-      tooltip,
+      id: `restore-${params.mode}`, 
+      icon: params.icon,
+      tooltip: params.tooltip,
       handler: { name: 'setTopPaneMode', params: [mode] }
     }
   }
