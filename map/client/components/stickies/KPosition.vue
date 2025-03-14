@@ -3,15 +3,22 @@
     id="position"
     class="row items-center no-padding k-position"
   >
-    <span class="text-caption q-pl-sm q-pr-sm">
+    <span class="text-weight-regular q-pl-sm q-pr-sm">
       {{ formattedPosition }}
     </span>
     <KAction
       id="copy-position"
       icon="las la-copy"
       tooltip="KPosition.COPY"
-      size="sm"
+      size="0.75rem"
       :handler="onCopy"
+    />
+    <KAction
+      id="close-position"
+      icon="cancel"
+      tooltip="KPosition.CLOSE"
+      size="0.75rem"
+      :handler="onClose"
     />
   </div>
 </template>
@@ -27,7 +34,11 @@ import KAction from '../../../../core/client/components/action/KAction.vue'
 
 // Props
 const props = defineProps({
-  target: {
+  stickyId: {
+    type: String,
+    default: 'position-sticky'
+  },
+  targetId: {
     type: String,
     default: 'target-sticky'
   }
@@ -39,7 +50,7 @@ const position = ref(null)
 
 // Computed
 const formattedPosition = computed(() => {
-  if (_.isNil(position.value)) return i18n.t('KPositionIndicator.OUTSIDE_MAP')
+  if (_.isNil(position.value)) return i18n.t('KPosition.OUTSIDE_MAP')
   return formatUserCoordinates(position.value.latitude, position.value.longitude, Store.get('locationFormat', 'FFf'))
 })
 
@@ -50,15 +61,18 @@ function updatePosition () {
 async function onCopy () {
   try {
     await copyToClipboard(formattedPosition.value)
-    Notify.create({ type: 'positive', message: i18n.t('KPositionIndicator.POSITION_COPIED') })
+    Notify.create({ type: 'positive', message: i18n.t('KPosition.POSITION_COPIED') })
   } catch (error) {
-    Notify.create({ type: 'negative', message: i18n.t('KPositionIndicator.CANNOT_COPY_POSITION') })
+    Notify.create({ type: 'negative', message: i18n.t('KPosition.CANNOT_COPY_POSITION') })
   }
+}
+async function onClose () {
+  if (!_.isEmpty(props.stickyId)) Layout.hideSticky(props.stickyId)
 }
 
 onMounted(() => {
   // Show target sticky
-  if (props.target) Layout.showSticky(props.target)
+  if (!_.isEmpty(props.target)) Layout.showSticky(props.target)
   // Listen move events
   if (CurrentActivity.value) {
     CurrentActivity.value.$engineEvents.on('movestart', updatePosition)
@@ -70,7 +84,7 @@ onMounted(() => {
 })
 // Hooks
 onBeforeUnmount(() => {
-  if (props.target) Layout.hideSticky(props.target)
+  if (!_.isEmpty(props.target)) Layout.hideSticky(props.target)
   // Stop listening move events
   if (CurrentActivity.value) {
     CurrentActivity.value.$engineEvents.off('movestart', updatePosition)
