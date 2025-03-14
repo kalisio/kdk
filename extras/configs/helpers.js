@@ -14,7 +14,13 @@ module.exports = {
       color
     }
   },
+  leftPane: (component = 'LeftPane') => {
+    return {
+      content: [{ component }]
+    }
+  },
   visible: (element, rule) => {
     return Object.assign(element, { visible: rule })
-  }
+  },
+
 }
