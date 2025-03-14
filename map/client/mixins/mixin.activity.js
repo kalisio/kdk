@@ -355,11 +355,12 @@ export const activity = {
       // Take care that if we only use the default options the specific options will be undefined
       this.activityOptions.engine = _.defaultsDeep(_.get(this.activityOptions, 'engine', {}), defaultOptions)
     }
-  },
-  mounted () {
+    // Listen to map events
     this.$engineEvents.on('map-ready', this.onEngineReady)
     this.$engineEvents.on('globe-ready', this.onEngineReady)
     this.$engineEvents.on('layer-added', this.configureLayerActions)
+  },
+  mounted () {
     // Target online/offline service depending on status
     this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
