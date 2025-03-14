@@ -1,4 +1,4 @@
-import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty, PrimitiveCollection } from 'cesium'
+import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty } from 'cesium'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
@@ -6,7 +6,7 @@ import { uid } from 'quasar'
 import { Time, Units } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
-import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle } from '../../cesium/utils/utils.style.js'
+import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle, convertToCesiumFromStyle } from '../../cesium/utils/utils.style.js'
 import { createPrimitiveWithMovingTexture, findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
@@ -88,6 +88,28 @@ export const geojsonLayers = {
 
         return
       }
+
+      // Apply Cesium entityStyle from style and geometry properties
+      // Can change feature geometry in some cases
+      // Can create new features in some cases
+      //  e.g. Cesium does not support stroke on "clampedToGround" polygons, so a new PolyLine is created to act as stroke
+      geoJson = await geoJson
+      if (geoJson) {
+        _.forEach(_.get(geoJson, 'features', []), feature => {
+          // Create style for each feature to store specific feature style
+          if (!_.get(feature, 'style')) {
+            _.set(feature, 'style', {})
+          }
+
+          // Use feature style to create entityStyle and additionalFeatures if needed
+          const cesiumStyle = convertToCesiumFromStyle(feature, options)
+          _.mergeWith(feature, _.get(cesiumStyle, 'convertedStyle', {}), (objValue, srcValue) => {
+            if (_.isArray(objValue)) return srcValue
+          })
+          _.set(geoJson, 'features', _.concat(_.get(geoJson, 'features', []), _.get(cesiumStyle, 'additionalFeatures', [])))
+        })
+      }
+
       // We use a separated source in order to load data otherwise Cesium will replace previous ones, causing flickering
       const loadingDataSource = new GeoJsonDataSource()
       loadingDataSource.notFromDrop = true
@@ -310,17 +332,14 @@ export const geojsonLayers = {
         // As a consequence we copy back any style information inside
         // We need to convert to simple-style spec as cesium manages this only
         // We also need to merge all styling properties as some entities requires eg both line/polygon style (wall polylines or corridor polygons)
-
         const stylePerType = {
           Point: getPointSimpleStyle(feature, options, engine),
           LineString: getLineSimpleStyle(feature, options, engine),
           Polygon: getPolygonSimpleStyle(feature, options, engine)
         }
 
-        let type = _.get(feature, 'geometry.type')
-        if (_.get(feature, 'properties.entityStyle.wall', false)) type = 'Polygon'
-
         // Apply the style according to the feature type to the end to prevent overriding
+        const type = getFeatureStyleType(feature)
         const simpleStyle = Object.assign(...Object.values(stylePerType), stylePerType[type])
 
         // Manage our extended simple-style spec

@@ -8,10 +8,8 @@ import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceE
          exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, Matrix3, Matrix4, DebugCameraPrimitive, DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
-import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject, convertToCesiumFromStyle } from '../../utils.globe.js'
+import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
-import { generateStyleTemplates, DefaultStyle } from '../../utils/utils.style.js'
-import { utils as kdkCoreUtils } from '../../../../core/client/index.js'
 
 // The URL on our server where CesiumJS's static files are hosted
 window.CESIUM_BASE_URL = '/Cesium/'
@@ -307,76 +305,6 @@ export const baseGlobe = {
     },
     async addGeoJsonLayer (layerSpec, geoJson) {
       if (!generateLayerDefinition(layerSpec, geoJson)) return
-      const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-
-      const engine = _.get(this, 'activityOptions.engine')
-      const defaultStyles = {}
-      _.forIn(DefaultStyle, (value, key) => {
-        // Dotify needed to use with generateStyleTemplates
-        defaultStyles[key] = kdkCoreUtils.dotify(value)
-      })
-
-      const styles = { point: [], line: [], polygon: [] }
-      const geometryToStyleTypeMapping = { Point: 'point', LineString: 'line', Polygon: 'polygon' }
-      _.forEach(features, feature => {
-        // Use feature style to create entityStyle and additionalFeatures if needed
-        const cesiumStyle = convertToCesiumFromStyle(feature)
-        _.mergeWith(feature, _.get(cesiumStyle, 'convertedStyle', {}), (objValue, srcValue) => {
-          if (_.isArray(objValue)) return srcValue
-        })
-        _.set(geoJson, 'features', _.concat(_.get(geoJson, 'features', []), _.get(cesiumStyle, 'additionalFeatures', [])))
-
-        // Generate style templates based on feature name property
-        const style = _.get(feature, 'style')
-        if (!style || !_.get(feature, 'properties.name') || !_.has(geometryToStyleTypeMapping, _.get(feature, 'geometry.type'))) return
-
-        let type = _.get(geometryToStyleTypeMapping, _.get(feature, 'geometry.type'))
-        // Special type cases
-        if (_.has(feature, 'properties.entityStyle')) {
-          if (_.has(feature, 'properties.entityStyle.wall')) type = 'polygon'
-          else if (_.has(feature, 'properties.entityStyle.corridor')) type = 'polygon'
-        }
-
-        // Bypass point because templating is not used for this geometry type for now
-        if (type === 'point') return
-
-        const templateStyle = {
-          operator: '===',
-          property: 'name',
-          value: _.get(feature, 'properties.name')
-        }
-
-        let addThisTemplate = false
-        _.forIn(defaultStyles[type], (value, key) => {
-          if (_.has(style, key)) {
-            // Add this template to list only if it has at least one style property
-            addThisTemplate = true
-            templateStyle[key] = _.get(style, key)
-          } else {
-            // Get engine style if defined or default value
-            templateStyle[key] = _.get(engine, 'style.' + key, value)
-          }
-        })
-
-        if (addThisTemplate) styles[type].push(templateStyle)
-      })
-
-      // Generate templates for each style type and save them in layer
-      _.forIn(styles, (style, type) => {
-        if (_.isEmpty(style)) return
-        const defaultStyle = _.get(defaultStyles, type)
-        const templates = generateStyleTemplates(_.keys(defaultStyle), type, defaultStyle, _.get(styles, type))
-        _.forIn(templates, (value, key) => {
-          if (key === 'template') {
-            _.set(layerSpec, 'leaflet.template', _.uniq(_.concat(_.get(layerSpec, 'leaflet.template', []), value)))
-            _.set(layerSpec, 'cesium.template', _.uniq(_.concat(_.get(layerSpec, 'cesium.template', []), value)))
-          } else {
-            _.set(layerSpec, 'leaflet.' + key, value)
-            _.set(layerSpec, 'cesium.' + key, value)
-          }
-        })
-      })
-
       // Create an empty layer
       await this.addLayer(layerSpec)
       // Update the layer with the geoJson content

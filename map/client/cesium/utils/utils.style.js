@@ -5,7 +5,7 @@ import { Color } from 'cesium'
 import { Time, Units, TemplateContext } from '../../../../core/client/index.js'
 import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
-  convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
+         convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
 import { Cesium } from './utils.cesium.js'
 
@@ -62,7 +62,7 @@ export function convertToCesiumFromSimpleStyle (style, inPlace) {
   return convertedStyle
 }
 
-export function convertToCesiumFromStyle (feature) {
+export function convertToCesiumFromStyle (feature, options) {
   const style = _.get(feature, 'style', false)
   if (!style || !_.get(feature, 'geometry')) return {}
 
@@ -73,6 +73,17 @@ export function convertToCesiumFromStyle (feature) {
   const additionalFeatures = []
 
   const entityStyle = {}
+
+  // Check for options to apply to all features
+  if (_.get(options, 'cesium.minZoom') || _.get(options, 'cesium.maxZoom')) {
+    entityStyle.distanceDisplayCondition = {
+      type: 'Cesium.DistanceDisplayCondition', 
+      options: [
+        _.get(options, 'cesium.minZoom', 0) || 0, 
+        _.get(options, 'cesium.maxZoom', Number.MAX_VALUE) || Number.MAX_VALUE] 
+    }
+  }
+
   _.forOwn(style, (value, key) => {
     if ((typeof value === 'string') && ['color'].includes(key)) {
       let cesiumColor = Color.fromCssColorString(value)
@@ -109,6 +120,15 @@ export function convertToCesiumFromStyle (feature) {
   if (geometryType === 'polygon' && !_.has(style, 'extrude') && (!_.has(style, 'altitudeMode') || style.altitudeMode === 'clampToGround')) {
     // Force perPositionHeight to false, for clamped to ground polygons
     _.set(entityStyle, 'perPositionHeight', false)
+
+    // Force altitude to 0.0 for clamped to ground polygons
+    if (_.get(feature, 'geometry.coordinates[0][0]', []).length < 3) {
+      _.forEach(_.get(feature, 'geometry.coordinates', []), (coordinates, index) => {
+        feature.geometry.coordinates[index] = _.map(coordinates, (coord) => {
+          return [coord[0], coord[1], 0.0]
+        })
+      })
+    }
 
     // Cesium does not support outlines for clamped to ground polygons, so we convert them to polylines
     // In the case of a clamped to ground filled polygon with outline, the outline will not display
