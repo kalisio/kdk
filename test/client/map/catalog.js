@@ -233,6 +233,7 @@ export async function createProject (page, name, options, wait = 2000) {
       await core.clickXPath(page, `//div[contains(text(), "${view}")]/../../preceding-sibling::div[contains(@class, "q-checkbox")]`)
     }
   }
+  await core.type(page, '#identifier-field', _.kebabCase(name))
   await core.clickAction(page, 'apply-button', 1000)
   await page.waitForTimeout(wait)
 }
