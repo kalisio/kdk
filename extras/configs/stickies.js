@@ -1,38 +1,38 @@
 module.exports = {
-  position: (visible = false) => {
-    return {
+  position: (options) => {
+    return Object.assign({
       id: 'position-sticky',
-      position: 'top',
+      visible: false,
       offset: [0, 42],
-      component: 'stickies/KPosition',
-      visible,
-    }
+      position: 'top',
+      component: 'stickies/KPosition'
+    }, options)
   },
-  target: (visible = false) => {
-    return {
-      id: 'target-sticky', 
-      position: 'center', 
+  target: (options) => {
+    return Object.assign({ 
+      id: 'target-sticky',
+      visible: false, 
       offset: [0, -20], 
-      component: 'stickies/KTarget',
-      visible
-    }
+      position: 'center',
+      component: 'stickies/KTarget'
+    }, options)
   },
-  northArrow: (visible = true) => {
-    return {
-      id: 'north-arrow-sticky', 
-      position: 'bottom-left', 
+  northArrow: (options) => {
+    return Object.assign({ 
+      id: 'north-arrow-sticky',
+      visible: true, 
       offset: [100, 2], 
-      component: 'stickies/KNorthArrow',
-      visible
-    }
+      position: 'bottom-left',
+      component: 'stickies/KNorthArrow' 
+    }, options)
   },
-  attribution: (visible = true) => {
-    return {
+  attribution: (options) => {
+    return Object.assign({
       id: 'attribution-sticky',
+      visible: true, 
       position: 'bottom-right', 
       offset: [80, 24], 
-      component: 'stickies/KAttribution',
-      visible
-    }
+      component: 'stickies/KAttribution'
+    }, options)
   }
 }
