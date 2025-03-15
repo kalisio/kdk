@@ -1,7 +1,9 @@
 const helpers = require('./helpers.js')
 
 module.exports = {
-  locateUser: (renderer = 'button') => {
+  locateUser: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'button'
     return {
       id: 'locate-user', 
       label: renderer === 'item' ? 'layout.SHOW_USER_LOCATION' : null,
@@ -14,7 +16,11 @@ module.exports = {
       component: 'tools/KGeolocateTool' 
     }
   },
-  searchLocation: (renderer = 'button', mode = 'search-location') => {
+  activeLocationSearchMode: (options) => {
+    // renderer: renderer to be used to display the action
+    // mode: the mode used to declare the measure tool
+    const renderer = options?.renderer || 'button'
+    const mode = options?.mode || 'search-location'
     return {
       id: 'search-location', 
       icon: 'las la-search-location', 
@@ -24,7 +30,26 @@ module.exports = {
       renderer
     }
   },
-  measureTool: (renderer = 'item', mode = 'measure-tool') => {
+  locationSearchMode: (options) => {
+    // geocoders: geocoders array to be used as the sources
+    // restoreMode: mode to be restored when closing the mode
+    const geocoders = options?.geocoders || []
+    const restoreMode = options?.restoreMode || 'default'
+    return [
+      module.exports.restoreMode({ mode: restoreMode, icon: options?.icon, tooltip: options?.tooltip }),
+      helpers.verticalSeparator(),
+      { 
+        component: 'tools/KSearchTool', 
+        geocoders,
+        autofocus: true 
+      }
+    ]
+  },
+  activeMeasureToolMode: (options) => {
+      // renderer: renderer to be used to display the action
+    // mode: the mode used to declare the location search
+    const renderer = options?.renderer || 'item'
+    const mode = options?.mode || 'measure-tool'
     return {
       id: 'measure-tool', 
       icon: 'las la-ruler-combined', 
@@ -34,7 +59,18 @@ module.exports = {
       renderer
     }
   },
-  toggleLegend: (renderer = 'item') => {
+  measureToolMode: (options) => {
+      // restoreMode: mode to be restored when closing the mode
+    const restoreMode = options?.restoreMode || 'default'
+    return [
+      module.exports.restoreMode({ mode: restoreMode, icon: options?.icon, tooltip: options?.tooltip }),
+      helpers.verticalSeparator(),
+      { component: 'KMeasureTool' }
+    ]
+  },
+  toggleLegend: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'    
     return helpers.toggleWidget({
       widgetId: 'legend-widget', 
       icon: 'las la-atlas', 
@@ -43,7 +79,9 @@ module.exports = {
       renderer
     })
   },
-  toggleTimeSeries: (renderer = 'item') => {
+  toggleTimeSeries: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'
     return helpers.toggleWidget({
       widgetId: 'time-series-widget', 
       icon: 'las la-chart-line', 
@@ -52,7 +90,9 @@ module.exports = {
       renderer
   })
   },
-  togglePosition: (renderer = 'item') => {
+  togglePosition: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'    
     return helpers.toggleSticky({
       stickyId: 'position-sticky', 
       icon: 'las la-plus', 
@@ -61,7 +101,9 @@ module.exports = {
       renderer
     })
   },
-  toggleNorthArrow: (renderer = 'item') => {
+  toggleNorthArrow: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'    
     return helpers.toggleSticky({
       stickyId: 'north-arrow-sticky', 
       icon: 'las la-location-arrow', 
@@ -70,7 +112,9 @@ module.exports = {
       renderer
     })
   },
-  toggleFullscreen: (renderer = 'item') => {
+  toggleFullscreen: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'    
     return {
       id: 'toggle-fullscreen',
       component: 'action/KToggleFullscreenAction',
@@ -86,15 +130,17 @@ module.exports = {
     }
   },
   restoreMode: (options) => {
-    // mode: mode to be restored 
+    // mode: mode to be restored. By default: 'default'
     // icon: icon to be displayed, default is `las la-times`
     // tooltip: tooltip to be displayed
-    const params = Object.assign({ icon: "las la-times" }, options)
+    const mode = options?.mode || 'default'
+    const icon = options?.icon || 'las la-times'
+    const tooltip = options?.tooltip || null
     return {
-      id: `restore-${params.mode}`, 
-      icon: params.icon,
-      tooltip: params.tooltip,
-      handler: { name: 'setTopPaneMode', params: [params.mode] }
+      id: `restore-${mode}`, 
+      icon,
+      tooltip,
+      handler: { name: 'setTopPaneMode', params: [mode] }
     }
   }
 }
