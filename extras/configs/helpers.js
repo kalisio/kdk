@@ -1,22 +1,21 @@
 module.exports = {
   verticalSeparator: (options) => {
     // color: color to be used. Default to `grey-4`
-    const color = options?.color || 'grey-4'
-    return {
+    return Object.assign({
       component: 'QSeparator',
       vertical: true,
-      color
-    }
+      color: 'grey-4',
+      style: 'margin-left: 2px; margin-right: 2px;'
+    }, options)
   },
   horizontalSeparator: (options) => {
     // color: color to be used. Default to `grey-4`
-    const color = options?.color || 'grey-4'
-    return {
+    return Object.assign({
       component: 'QSeparator',
       class: 'full-width',
       style: 'min-height: 1px;',
-      color
-    }
+      color: 'grey-4'
+    }, options)
   },
   leftPane: (options) => {
     // component: component to be used to render the leftPane. Default to 'LeftPane`
