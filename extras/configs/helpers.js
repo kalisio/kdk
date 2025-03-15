@@ -67,7 +67,10 @@ module.exports = {
       component: 'action/KToggleStickyVisibility'
     }
   },
-  visible: (element, rule) => {
-    return Object.assign(element, { visible: rule })
+  assign: (object, patch) => {
+    return Object.assign(object, patch)
+  },
+  visible: (object, rule) => {
+    return module.exports.assign(object, { visible: rule })
   }
 }

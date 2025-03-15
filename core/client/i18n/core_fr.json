@@ -12,7 +12,7 @@
   "DELETE": "Supprimer",
   "RESET": "Réinitialiser",
   "CLOSE": "Fermer",
-  "SEARCH": "Rechercher",
+  "SEARCH": "Rechercher...",
   "DONE": "Ok",
   "APPLY": "Appliquer",
   "RETRY": "Réessayer",
@@ -687,7 +687,7 @@
     "SERIES_EXPORT_FILE": "Series.csv"
   },
   "KFilter": {
-    "SEARCH_LABEL": "Rechercher"
+    "SEARCH_LABEL": "@:SEARCH"
   },
   "KTextArea": {
     "COLLAPSE": "Réduire"

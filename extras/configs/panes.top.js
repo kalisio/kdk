@@ -1,6 +1,15 @@
 const helpers = require('./helpers.js')
 
 module.exports = {
+  searchText: (options) => {
+    // fields: fields to search on
+    const fields = options?.fields || ['name', 'description']
+    return {
+      component: 'collection/KFilter', 
+      label: options?.label,
+      fields
+    }
+  },
   locateUser: (options) => {
     // renderer: renderer to be used to display the action
     const renderer = options?.renderer || 'button'
