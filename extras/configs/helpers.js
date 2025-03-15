@@ -12,9 +12,9 @@ module.exports = {
     // color: color to be used. Default to `grey-4`
     return Object.assign({
       component: 'QSeparator',
+      color: 'grey-4',
       class: 'full-width',
-      style: 'min-height: 1px;',
-      color: 'grey-4'
+      style: 'min-height: 1px;'
     }, options)
   },
   leftPane: (options) => {
