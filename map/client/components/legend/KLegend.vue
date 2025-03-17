@@ -118,7 +118,6 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
     }
     if (Store.get('context')) {
       sublegends.value = _.uniqBy(_.concat(sublegends.value, await getContextSublegends()), 'name')
-    
     }
   } else {
     sublegends.value = []
