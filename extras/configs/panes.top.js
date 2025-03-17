@@ -1,6 +1,25 @@
 const helpers = require('./helpers.js')
 
 module.exports = {
+  activityLink: (name, icon, tooltip, params = null) => {
+    return {
+      id: `${name}-activity-action`,
+      icon,
+      tooltip,
+      route: { name: `${name}-activity`, params }
+    }
+  },
+  activityStamp: (name, icon, label) => {
+    return {
+      id: `${name}-activity-stamp`,
+      component: 'KStamp',
+      icon,
+      iconSize: 'sm',
+      text: label,
+      direction: 'horizontal',
+      class: 'text-grey-7'
+    }
+  },
   searchText: (options) => {
     // fields: fields to search on
     const fields = options?.fields || ['name', 'description']
