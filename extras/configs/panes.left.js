@@ -31,7 +31,46 @@ module.exports = {
       component: 'app/KAbout', title: 'ABOUT', okAction: 'CLOSE'
     }
   },
-  onlineHelp: (url) => {
+  PLATFORM_INFO: {
+    id: 'platform-info',
+    icon: 'las la-desktop',
+    label: 'KAbout.PLATFORM_INFO',
+    stack: true,
+    dialog: {
+      title: 'KAbout.PLATFORM_INFO',
+      component: 'app/KPlatform',
+      okAction: 'CLOSE',
+      widthPolicy: 'narrow'
+    }
+  },
+  REPORT_BUG: {
+    id: 'report-bug',
+    icon: 'las la-bug',
+    label: 'KAbout.BUG_REPORT',
+    stack: true,
+    component: 'action/KBugReportAction'
+  },
+  legalNotice: (options) => {
+    return Object.assign({
+      id: 'legal-notice',
+      icon: 'las la-gavel',
+      label: 'LEGAL_NOTICE',
+      dialog: {
+      title: 'LEGAL_NOTICE',
+        component: 'document/KHtml',
+        'component.url': 'legal-notice.html',
+        okAction: 'CLOSE'
+      }
+    }, options)
+  },
+  privacyPolicy: (options) => {
+    return Object.assign({
+      id: 'privacy-policy',
+      icon: 'las la-shield-alt',
+      label: 'PRIVACY_POLICY'
+    }, options)
+  },
+  onlineHelp: (options) => {
     return {
       id: 'online-help-action',
       icon: 'las la-book',
