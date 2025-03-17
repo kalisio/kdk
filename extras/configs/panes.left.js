@@ -6,8 +6,6 @@ module.exports = {
     const params = options?.params
     return Object.assign({
       id: `${name}-activity-action`,
-      icon,
-      label,
       renderer: 'item',
       route: { name: `${name}-activity`, params }
     }, options)
@@ -41,7 +39,7 @@ module.exports = {
   },
   platformInfo: (options) => {
     return Object.assign({
-      id: 'platform-info',
+      id: 'platform-info-action',
       icon: 'las la-desktop',
       label: 'KAbout.PLATFORM_INFO',
       stack: true,
@@ -55,7 +53,7 @@ module.exports = {
   },
   reportBug: (options) => {
     return Object.assign({
-      id: 'report-bug',
+      id: 'report-bug-action',
       icon: 'las la-bug',
       label: 'KAbout.BUG_REPORT',
       stack: true,
@@ -64,7 +62,7 @@ module.exports = {
   },
   legalNotice: (options) => {
     return Object.assign({
-      id: 'legal-notice',
+      id: 'legal-notice-action',
       icon: 'las la-gavel',
       label: 'LEGAL_NOTICE',
       dialog: {
@@ -77,7 +75,7 @@ module.exports = {
   },
   privacyPolicy: (options) => {
     return Object.assign({
-      id: 'privacy-policy',
+      id: 'privacy-policy-action',
       icon: 'las la-shield-alt',
       label: 'PRIVACY_POLICY'
     }, options)

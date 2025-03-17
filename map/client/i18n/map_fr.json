@@ -16,8 +16,8 @@
     "HIDE_POSITION": "Masquer les coordonnées géographiques",
     "SHOW_NORTH_ARROW": "Afficher la flèche d’orientation vers le nord",
     "HIDE_NORTH_ARROW": "Masquer la flèche d’orientation vers le nord",
-    "SHOW_TIME_SERIES": "Afficher les graphiques temporels",
-    "HIDE_TIME_SERIES": "Masquer les graphiques temporels"
+    "SHOW_TIME_SERIES": "Afficher les séries chronologiques",
+    "HIDE_TIME_SERIES": "Masquer les séries chronologiques"
   },
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",
