@@ -114,15 +114,16 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
   if (props.sublegendsFromCatalog) {
     sublegends.value = await getSublegends()
     if (project) {
-      sublegends.value = sublegends.value.concat(await getProjectSublegends())
+      sublegends.value = _.uniqBy(_.concat(sublegends.value, await getProjectSublegends()), 'name')
     }
     if (Store.get('context')) {
-      sublegends.value = sublegends.value.concat(await getContextSublegends())
+      sublegends.value = _.uniqBy(_.concat(sublegends.value, await getContextSublegends()), 'name')
+    
     }
   } else {
     sublegends.value = []
   }
-  sublegends.value = sublegends.value.concat(props.sublegends)
+  sublegends.value = _.uniqBy(_.concat(sublegends.value, props.sublegends), 'name')
   // register legend translations
   _.forEach(sublegends.value, legend => {
     if (legend.i18n) i18n.registerTranslation(legend.i18n)
