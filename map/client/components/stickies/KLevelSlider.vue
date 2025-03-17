@@ -1,16 +1,21 @@
 <template>
   <div v-if="isVisible && props.visible"
     class="k-level-slider flex items-baseline justify-center bg-white q-px-sm q-py-md">
+    <p v-if="props.switchLabelSide" class="text-accent text-caption no-margin"
+      style="writing-mode: vertical-lr; transform-origin: center; transform: rotate(180deg);">
+      <b>{{ $t(CurrentActivity.selectableLevels.label) }} - {{ getFormatedLevel(CurrentActivity.selectedLevel) }}</b>
+    </p>
     <q-slider v-if="dataArray" snap class="text-primary" v-model="sliderVal" :vertical="props.vertical"
       :reverse="props.reverse ?? props.vertical" :height="150" :width="4" :markers="props.markers" :label-always="false"
       :max="dataArray.length - 1" label :label-value="getFormatedLevel(dataArray[sliderVal])"
-      :switch-label-side="props.switchLabelSide ?? props.vertical" @change="onLevelChanged" />
+      :switch-label-side="props.switchLabelSide ? !props.switchLabelSide : props.vertical" @change="onLevelChanged" />
     <q-slider v-else class="text-primary" :model-value="sliderVal" :vertical="props.vertical"
       :reverse="props.reverse ?? props.vertical" :height="150" :width="4" :markers="props.markers" :label-always="false"
       :min="sliderMinValue" :max="sliderMaxValue" :step="sliderInterval" label
-      :label-value="getFormatedLevel(sliderVal)" :switch-label-side="props.switchLabelSide ?? props.vertical"
-      @change="onLevelChanged" @update:model-value="val => sliderVal = val" />
-    <p class="text-accent text-caption no-margin"
+      :label-value="getFormatedLevel(sliderVal)"
+      :switch-label-side="props.switchLabelSide ? !props.switchLabelSide : props.vertical" @change="onLevelChanged"
+      @update:model-value="val => sliderVal = val" />
+    <p v-if="!props.switchLabelSide" class="text-accent text-caption no-margin"
       style="writing-mode: vertical-lr; transform-origin: center; transform: rotate(180deg);">
       <b>{{ $t(CurrentActivity.selectableLevels.label) }} - {{ getFormatedLevel(CurrentActivity.selectedLevel) }}</b>
     </p>
