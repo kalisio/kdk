@@ -1,12 +1,16 @@
 module.exports = {
-  activityLink: (name, icon, label, params = null) => {
-    return {
+  activityLink: (options) => {
+    // name: the activity name. It is required
+    // params: params to be added to the router
+    const name = options.name
+    const params = options?.params
+    return Object.assign({
       id: `${name}-activity-action`,
       icon,
       label,
       renderer: 'item',
       route: { name: `${name}-activity`, params }
-    }
+    }, options)
   },
   settings: (options) => {
     return Object.assign({
