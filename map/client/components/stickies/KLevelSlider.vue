@@ -26,7 +26,7 @@
 import { computed, ref } from 'vue'
 import { useCurrentActivity } from '../../../../core/client/composables'
 
-// ==PROPS==
+// Props
 const props = defineProps({
   vertical: {
     type: Boolean,
@@ -50,11 +50,9 @@ const props = defineProps({
   }
 })
 
-// ==REFS==
-const sliderVal = ref(0)
-
-// ==MISC HOOKS==
+// Data
 const { CurrentActivity } = useCurrentActivity()
+const sliderVal = ref(0)
 
 // ==COMPUTED==
 const isVisible = computed(() => sliderValues.value ? sliderValues.value.length > 0 : (sliderMinValue.value !== undefined && sliderMaxValue.value !== undefined))
@@ -66,14 +64,14 @@ const sliderMaxValue = computed(() => _.get(CurrentActivity.value.selectableLeve
 const sliderInterval = computed(() => _.get(CurrentActivity.value.selectableLevels, 'range.interval', 1))
 
 // ==MISC FUNCTIONS==
-function onLevelChanged(level) {
+function onLevelChanged (level) {
   if (dataArray.value) {
     CurrentActivity.value.setSelectedLevel(dataArray.value[level])
   } else {
     CurrentActivity.value.setSelectedLevel(level)
   }
 }
-function getFormatedLevel(level) {
+function getFormatedLevel (level) {
   const unit = _.get(CurrentActivity.value.selectableLevels, 'unit')
   return `${level || CurrentActivity.value.selectedLevel} ${unit}`
 }
