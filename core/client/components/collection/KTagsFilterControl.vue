@@ -7,10 +7,10 @@
       color="grey-9"
       flat
       direction="down"
-      :vertical-actions-align="responsiveAlignment"
+      :vertical-actions-align="computedAlignment"
       padding="xs"
-      @show="enableTooltip = false"
-      @hide="enableTooltip = true"
+      @show="showTooltip = false"
+      @hide="showTooltip = true"
     >
       <template v-for="tag in options" :key="tag.name">
         <q-fab-action
@@ -23,7 +23,7 @@
         />
       </template>
     </q-fab>
-    <q-tooltip v-if="enableTooltip">
+    <q-tooltip v-if="showTooltip">
       {{ $t('KTagsFilterControl.FILTER') }}
     </q-tooltip>
   </div>
@@ -46,25 +46,25 @@ const props = defineProps({
 const { Screen } = useScreen()
 const { CurrentActivityContext } = useCurrentActivity()
 const tagsFilter = CurrentActivityContext.state.tagsFilter
-const enableTooltip = ref(true)
+const showTooltip = ref(true)
 
 // Computed
 const selection = computed(() => {
-  return tagsFilter.selection
+  return _.get(tagsFilter, 'selection', [])
 })
 const options = computed(() => {
-  return _.difference(tagsFilter.options, tagsFilter.selection)
+  return _.difference(_.get(tagsFilter, 'options'), selection.value)
 })
 const hasOptions = computed(() => {
   return !_.isEmpty(options.value)
 })
-const responsiveAlignment = computed(() => {
+const computedAlignment = computed(() => {
   if (_.isString(props.alignment)) return props.alignment
   return _.get(props.alignment, Screen.name)
 })
 
 // Function
 function onTagAdded (tag) {
-  Object.assign(CurrentActivityContext.state.tagsFilter, { selection: _.concat(selection.value, [tag]) })
+  _.set(tagsFilter, 'selection', _.concat(selection.value, [tag]))
 }
 </script>

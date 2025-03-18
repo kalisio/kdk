@@ -22,18 +22,18 @@ defineProps({
 
 // Data
 const { CurrentActivityContext } = useCurrentActivity()
-const { state } = CurrentActivityContext
+const timeFilter = CurrentActivityContext.state.timeFilter
 
 // Computed
+const min = computed(() => _.get(timeFilter, 'min'))
+const max = computed(() => _.get(timeFilter, 'max'))
 const hasTimeRange = computed(() => {
-  return state.timeFilter && state.timeFilter.min !== state.timeFilter.max
+    return !_.isEmpty(min.value) && !_.isEmpty(max.value) && min.value !== max.value
 })
 
 // Functions
 async function showTimeRangeSlider () {
-  Object.assign(state.timeFilter, {
-    start: state.timeFilter.min,
-    end: state.timeFilter.max
-  })
+  _.set(timeFilter, 'start', min.value)
+  _.set(timeFilter, 'end', max.value)
 }
 </script>
