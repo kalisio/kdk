@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
 import { useCurrentActivity } from '../../composables'
 
@@ -28,7 +29,7 @@ const timeFilter = CurrentActivityContext.state.timeFilter
 const min = computed(() => _.get(timeFilter, 'min'))
 const max = computed(() => _.get(timeFilter, 'max'))
 const hasTimeRange = computed(() => {
-    return !_.isEmpty(min.value) && !_.isEmpty(max.value) && min.value !== max.value
+  return !_.isEmpty(min.value) && !_.isEmpty(max.value) && min.value !== max.value
 })
 
 // Functions
