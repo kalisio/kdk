@@ -6,12 +6,16 @@
   "PROJECT_LAYERS_LABEL": "Données",
   "PROJECT_VIEWS_LABEL": "Vues",
   "layout": {
-    "SHOW_USER_LOCATION": "Afficher ma localisation",      
+    "SHOW_USER_LOCATION": "Afficher ma localisation",
     "HIDE_USER_LOCATION": "Masquer ma localisation",
     "SEARCH_LOCATION": "Recherche un lieu",
     "MEASURE_TOOL": "Activer l'outil de mesure",
     "SHOW_LEGEND": "Afficher la légende",
     "HIDE_LEGEND": "Masquer la légende",
+    "SHOW_DISPLAY_SELECTION": "Afficher la sélection",
+    "HIDE_DISPLAY_SELECTION": "Masquer la sélection",
+    "SHOW_DISPLAY_STYLES": "Afficher les styles",
+    "HIDE_DISPLAY_STYLES": "Masquer les styles",
     "SHOW_POSITION": "Afficher les coordonnées géographiques",
     "HIDE_POSITION": "Masquer les coordonnées géographiques",
     "SHOW_NORTH_ARROW": "Afficher la flèche d’orientation vers le nord",
@@ -79,7 +83,7 @@
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
-      "SHOW_USER_LOCATION": "Afficher ma localisation",      
+      "SHOW_USER_LOCATION": "Afficher ma localisation",
       "HIDE_USER_LOCATION": "Masquer ma localisation",
       "TOGGLE_CATALOG": "Catalogue",
       "TOGGLE_MAP": "Visualiser en 2D",
@@ -376,7 +380,7 @@
       "EDIT_NEW_LAYER_LABEL": "Vous serez alors en mode édition des données de votre nouvelle couche sur la carte."
     },
     "create-view": {
-      "NAME_FIELD_LABEL":  "Saisissez le nom de la vue",
+      "NAME_FIELD_LABEL": "Saisissez le nom de la vue",
       "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la vue",
       "LAYERS_FIELD_LABEL": "Définissez si les couches actuellement actives seront restaurées par votre vue.",
       "APPLY_BUTTON_LABEL": "Confirmez la création de la vue"
@@ -441,7 +445,7 @@
     "PLACEHOLDER": "Naviguez pour voir les coordonnées",
     "COPY": "Copier les coordonnées",
     "CLEAR": "Effacer",
-    "POSITION_COPIED":"Coordonnées copiées en mémoire",
+    "POSITION_COPIED": "Coordonnées copiées en mémoire",
     "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionnalité",
     "OUTSIDE_MAP": "Position indéterminée"
   },
@@ -489,7 +493,7 @@
   },
   "KProjectEditor": {
     "BACKGROUND_LAYER_REQUIRED": "Un projet doit au moins contenir un fond cartographique."
-  }, 
+  },
   "KFeaturesFilter": {
     "TITLE": "Filtre des données de la couche",
     "SELECT_PROPERTY_LABEL": "Sélectionnez une propriété cible pour démarrer",
@@ -620,7 +624,7 @@
     "INFOBOX": "Boîte d'information",
     "ADD_INFOBOX": "Sélectionnez des propriétés à afficher dans la boîte"
   },
-    "KLayersSelector": {
+  "KLayersSelector": {
     "NO_LAYER_AVAILABLE": "Aucune couche disponible",
     "LAYER_DISABLED": "Zoomez davantage pour voir cette couche"
   },
@@ -633,7 +637,7 @@
     "LABEL": "Boîte d'information",
     "NO_FEATURE_PROPERTIES": "Aucune information disponible",
     "CENTER_ON": "Centrer la vue sur l'objet",
-    "COPY_PROPERTIES": "Copier les valeurs en mémoire",    
+    "COPY_PROPERTIES": "Copier les valeurs en mémoire",
     "PROPERTIES_COPIED": "Valeurs copiées en mémoire",
     "CANNOT_COPY_PROPERTIES": "Impossible de copier les valeurs en mémoire",
     "EXPORT_FEATURE": "Exporter l'object",
@@ -645,7 +649,7 @@
     "CENTER_ON": "Centrer la vue sur le marqueur Mapillary",
     "MOVE_CLOSE_TO": "Se positionner à l'image la plus proche",
     "NO_IMAGE_FOUND_CLOSE_TO": "Aucune image trouvée à proximité de votre position"
-  }, 
+  },
   "KLayerCategories": {
     "LAYER_CATEGORIES_LABEL": "Gérer mes catégories",
     "ADD_TITLE": "Ajouter une nouvelle catégorie",
@@ -694,8 +698,8 @@
     "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
     "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
     "CATALOG_SCHEMA_FIELD_LABEL": "@:schemas.CATALOG_SCHEMA_FIELD_LABEL",
-    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",       
-    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",    
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CREATE_BUTTON": "Créer"
   },
   "KAddView": {
@@ -747,8 +751,8 @@
     "NO_DATA_AVAILABLE": "Aucun profil",
     "INVALID_GEOMETRY": "Géométrie de l'objet sélectionné invalide",
     "COMPUTING_PROFILE": "Calcul du profil en cours",
-    "CENTER_ON": "Center la vue sur l'objet",    
-    "COPY_PROFILE": "Copier le profil en mémoire",    
+    "CENTER_ON": "Center la vue sur l'objet",
+    "COPY_PROFILE": "Copier le profil en mémoire",
     "PROFILE_COPIED": "Profil copié en mémoire",
     "CANNOT_COPY_PROFILE": "Impossible de copier le profil en mémoire",
     "EXPORT_PROFILE": "Exporter le profil",
@@ -773,7 +777,7 @@
   "KPosition": {
     "COPY": "Copier les coordonnées",
     "CLOSE": "Fermer",
-    "POSITION_COPIED":"Coordonnées copiées en mémoire",
+    "POSITION_COPIED": "Coordonnées copiées en mémoire",
     "CANNOT_COPY_POSITION": "Impossible de copier les coordonnées en mémoire. Votre navigateur ne supporte pas cette fonctionnalité",
     "OUTSIDE_MAP": "Position indéterminée"
   },

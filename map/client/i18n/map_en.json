@@ -6,12 +6,16 @@
   "PROJECT_LAYERS_LABEL": "Data",
   "PROJECT_VIEWS_LABEL": "Views",
   "layout": {
-    "SHOW_USER_LOCATION": "Display my location",      
+    "SHOW_USER_LOCATION": "Display my location",
     "HIDE_USER_LOCATION": "Hide my location",
     "SEARCH_LOCATION": "Search a location",
     "MEASURE_TOOL": "Active measure tool",
     "SHOW_LEGEND": "Show legend",
     "HIDE_LEGEND": "Hide legend",
+    "SHOW_DISPLAY_SELECTION": "Show display selection",
+    "HIDE_DISPLAY_SELECTION": "Hide display selection",
+    "SHOW_DISPLAY_STYLES": "Show display styles",
+    "HIDE_DISPLAY_STYLES": "Hide display styles",
     "SHOW_POSITION": "Show geographical coordinates",
     "HIDE_POSITION": "Hide geographical coordinates",
     "SHOW_NORTH_ARROW": "Show north arrow",
@@ -93,10 +97,10 @@
       "DISPLAY_STYLES": "Display styles",
       "HIDE_LEGEND": "Hide legend",
       "SEARCH_LOCATION": "Search a location",
-      "ADD_VIEW": "Add view",      
+      "ADD_VIEW": "Add view",
       "CREATE_VIEW": "Create view",
       "CREATE_PROJECT": "Create project",
-      "MANAGE_PROJECT": "Manage project",      
+      "MANAGE_PROJECT": "Manage project",
       "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
       "TOOLS": "Tools",
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
@@ -377,7 +381,7 @@
       "CREATE_NEW_LAYER_LABEL": "Confirm the creation of your new layer and start editing the data on the map."
     },
     "create-view": {
-      "NAME_FIELD_LABEL":  "Saisissez un nom pour votre nouvelle vue",
+      "NAME_FIELD_LABEL": "Saisissez un nom pour votre nouvelle vue",
       "DESCRIPTION_FIELD_LABEL": "Enter the name of your new view.",
       "LAYERS_FIELD_LABEL": "Select whether the currently active layers will be restaured with this view or not.",
       "APPLY_BUTTON_LABEL": "Confirm the creation of your new favorite view."
@@ -442,7 +446,7 @@
     "PLACEHOLDER": "Navigate the see the coordinates",
     "COPY": "Copy the coordinates",
     "CLEAR": "Clear",
-    "POSITION_COPIED":"Position copied to clipboard",
+    "POSITION_COPIED": "Position copied to clipboard",
     "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
     "OUTSIDE_MAP": "Indeterminated position"
   },
@@ -490,7 +494,7 @@
   },
   "KProjectEditor": {
     "BACKGROUND_LAYER_REQUIRED": "A project at least requires a background layer."
-  },  
+  },
   "KFeaturesFilter": {
     "TITLE": "Data filter for layer",
     "SELECT_PROPERTY_LABEL": "Select a target property to start",
@@ -633,8 +637,8 @@
   "KInformationBox": {
     "LABEL": "Information box",
     "NO_FEATURE_PROPERTIES": "No information available",
-    "CENTER_ON": "Center the view on the object",    
-    "COPY_PROPERTIES": "Copy the values to the clipboard",    
+    "CENTER_ON": "Center the view on the object",
+    "COPY_PROPERTIES": "Copy the values to the clipboard",
     "PROPERTIES_COPIED": "Values copied to clipboard",
     "CANNOT_COPY_PROPERTIES": "Unable to copy the values to clipboard. Your browser does not support this functionality",
     "EXPORT_FEATURE": "Export the object",
@@ -743,8 +747,8 @@
     "NO_DATA_AVAILABLE": "No profile available",
     "INVALID_GEOMETRY": "Selected object geometry is invalid",
     "COMPUTING_PROFILE": "Profile computation in progress",
-    "CENTER_ON": "Center the view on the object",    
-    "COPY_PROFILE": "Copy the profile to the clipboard",    
+    "CENTER_ON": "Center the view on the object",
+    "COPY_PROFILE": "Copy the profile to the clipboard",
     "PROFILE_COPIED": "Profile copied to clipboard",
     "CANNOT_COPY_PROFILE": "Unable to copy the profile to clipboard. Your browser does not support this functionality",
     "EXPORT_PROFILE": "Export the profile",
@@ -769,7 +773,7 @@
   "KPosition": {
     "COPY": "Copy the coordinates",
     "CLOSE": "Close",
-    "POSITION_COPIED":"Position copied to clipboard",
+    "POSITION_COPIED": "Position copied to clipboard",
     "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
     "OUTSIDE_MAP": "Undefined position"
   },

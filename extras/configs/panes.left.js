@@ -66,7 +66,7 @@ module.exports = {
       icon: 'las la-gavel',
       label: 'LEGAL_NOTICE',
       dialog: {
-      title: 'LEGAL_NOTICE',
+        title: 'LEGAL_NOTICE',
         component: 'document/KHtml',
         'component.url': 'legal-notice.html',
         okAction: 'CLOSE'
@@ -85,7 +85,6 @@ module.exports = {
       id: 'online-help-action',
       icon: 'las la-book',
       label: 'layout.ONLINE_HELP',
-      url,
       renderer: 'item'
     }, options)
   },
@@ -108,7 +107,8 @@ module.exports = {
       icon: 'las la-sign-out-alt',
       label: 'layout.LOGOUT',
       route: {
-        name: 'logout', ...(provider && { params: { provider } })
+        name: 'logout',
+        ...(provider && { params: { provider } })
       },
       renderer: 'item'
     }, options)
