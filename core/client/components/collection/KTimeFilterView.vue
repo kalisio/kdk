@@ -1,6 +1,6 @@
 <template>
   <div v-if="hasSelection"
-    class="q-px-sm q-py-xs row items-center q-gutter-x-sm k-time-filter no-wrap"
+    class="q-px-sm q-py-xs row items-center q-gutter-x-sm no-wrap k-time-filter"
     style="width: 800px; max-width: 90vw"
   >
     <KDateTimeRange

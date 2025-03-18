@@ -1,9 +1,9 @@
 <template>
   <KAction
     v-if="hasTimeRange"
-    id="time-filter-action"
+    id="time-filter-control"
     icon="las la-clock"
-    tooltip="C3XTimeFilterAction.FILTER"
+    tooltip="KTimeFilterControl.FILTER"
     :handler="showTimeRangeSlider"
   />
 </template>

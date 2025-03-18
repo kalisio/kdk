@@ -691,6 +691,12 @@
   "KFilter": {
     "SEARCH_LABEL": "@:SEARCH"
   },
+  "KTagsFilterControl": {
+    "FILTER": "Filtrer selon les propriétés"
+  },
+  "KTimeFilterControl": {
+    "FILTER": "Filtrer selon le temps"
+  },
   "KTextArea": {
     "COLLAPSE": "Réduire"
   },

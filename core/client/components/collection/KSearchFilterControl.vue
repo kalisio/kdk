@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-xs" :style="innerStyle">
+  <div class="q-pa-xs">
     <!--
       Input area
      -->
@@ -64,7 +64,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed } from 'vue'
-import { useCurrentActivity } from '../../composables'
+import { useCurrentActivity } from '../../composables/index.js'
 import { Search } from '../../search.js'
 
 // Props

@@ -2,6 +2,7 @@
   <div>
     <q-fab
       v-if="hasOptions"
+      id="tags-filter-control"
       icon="las la-filter"
       color="grey-9"
       flat
@@ -23,7 +24,7 @@
       </template>
     </q-fab>
     <q-tooltip v-if="enableTooltip">
-      {{ $t('C3XTagsFilterAction.FILTER') }}
+      {{ $t('KTagsFilterControl.FILTER') }}
     </q-tooltip>
   </div>
 </template>
