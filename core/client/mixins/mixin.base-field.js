@@ -18,6 +18,10 @@ export const baseField = {
     readOnly: {
       type: Boolean,
       default: false
+    },
+    dense: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

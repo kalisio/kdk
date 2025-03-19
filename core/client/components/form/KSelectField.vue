@@ -15,6 +15,7 @@
     emit-value
     map-options
     use-input
+    :dense="dense"
     :clearable="clearable"
     :error="hasError"
     :error-message="errorLabel"
@@ -27,6 +28,7 @@
     <!-- options display -->
     <template v-slot:option="scope">
       <q-item
+        :dense="dense"
         v-bind="scope.itemProps"
         :id="getId(scope.opt)"
       >
@@ -37,7 +39,7 @@
     </template>
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
-      <q-chip v-if="chips">
+      <q-chip v-if="chips" :dense="dense" :color="scope.opt.color" :textColor="scope.opt.textColor">
         <span :class="selectedClass()">
           {{ scope.opt.label }}
         </span>
