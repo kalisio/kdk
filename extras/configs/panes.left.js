@@ -33,7 +33,7 @@ module.exports = {
       label: 'layout.ABOUT',
       renderer: 'item',
       dialog: {
-        component: 'app/KAbout', title: 'ABOUT', okAction: 'CLOSE'
+        component: 'app/KAbout', title: 'layout.ABOUT', okAction: 'CLOSE'
       },
     }, options)
   },
