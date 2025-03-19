@@ -20,7 +20,7 @@ module.exports = {
       class: 'text-grey-7'
     }
   },
-  searchText: (options) => {
+  searchFilter: (options) => {
     // fields: fields to search on
     const fields = options?.fields || ['name', 'description']
     return {
@@ -28,6 +28,16 @@ module.exports = {
       label: options?.label,
       fields
     }
+  },
+  timeFilter: (options) => {
+    return Object.assign({
+      component: 'collection/KTimeFilterControl'
+    }, options)
+  },
+  tagsFilter: (options) => {
+    return Object.assign({
+      component: 'collection/KTagsFilterControl'
+    }, options)
   },
   locateUser: (options) => {
     // renderer: renderer to be used to display the action

@@ -1,4 +1,12 @@
 module.exports = {
+  filterView: (options) => {
+    return Object.assign({
+      id: 'filter-view-sticky',
+      position: 'top',
+      offset: [0, 50],
+      component: 'collection/KFilterView'
+    })
+  },  
   position: (options) => {
     return Object.assign({
       id: 'position-sticky',
