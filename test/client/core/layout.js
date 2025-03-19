@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { countElements, clickAction, isElementVisible, isActionVisible } from './utils.js'
+import { clickAction, countElements, isActionVisible, isElementVisible } from './utils.js'
 
 const debug = makeDebug('kdk:core:test:layout')
 
@@ -119,5 +119,5 @@ export async function countFabActions (page) {
 }
 
 export async function logout (page) {
-  await clickPaneAction(page, 'left', 'logout', 1000)
+  await clickPaneAction(page, 'left', 'logout-action', 1000)
 }
