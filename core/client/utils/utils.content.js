@@ -6,7 +6,7 @@ import { Store } from '../store.js'
 const Handlers = ['handler', 'visible', 'hidden', 'disabled', 'on.listener']
 // Some bindings are not managed when reading content from config but externally on-demand, e.g. by KContent or KAction
 // The content 'reserved' property is also used to recurse at caller level
-const ReservedBindings = ['content', 'visible', 'hidden', 'route', 'dialog']
+const ReservedBindings = ['content', 'visible', 'hidden', 'route']
 
 // Check if an object has a property according to its path.
 // Similar to lodash has function which causes a bug in production build with Vue proxy objects

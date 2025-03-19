@@ -149,7 +149,7 @@ export const activity = {
       
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
-      actions = bindContent(_.cloneDeep(actions), this)
+      actions = bindContent(_.cloneDeep(actions), this, ['dialog'])
       // Add 'virtual' actions used to trigger the layer/filters
       actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
       actions.push({ id: 'toggle-filter', handler: (filter) => this.onTriggerLayerFilter(layer, filter) })

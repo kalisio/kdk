@@ -278,7 +278,7 @@ async function onClicked (event) {
     if (component) {
       dialog = {
         component: 'KDialog',
-        componentProps: bindProperties(dialog, props.context)
+        componentProps: bindProperties(_.cloneDeep(dialog), props.context)
       }
     }
     $q.dialog(dialog)
