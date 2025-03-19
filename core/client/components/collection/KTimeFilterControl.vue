@@ -17,7 +17,7 @@ import { useCurrentActivity } from '../../composables'
 defineProps({
   service: {
     type: String,
-    default: 'events'
+    required: true
   }
 })
 
