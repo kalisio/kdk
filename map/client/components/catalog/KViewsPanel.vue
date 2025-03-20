@@ -43,7 +43,6 @@ const filterQuery = computed(() => {
   const query = {}
   if (project.value) Object.assign(query, { _id: { $in: _.map(project.value.views, '_id') } })
   Object.assign(query, filter.query)
-  console.log('filterQuery', query)
   return query
 })
 const toolbar = computed(() => {

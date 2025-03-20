@@ -34,7 +34,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 import { KStamp } from '../../../../core/client/components'
 import KLayersSelector from './KLayersSelector.vue'
 
@@ -57,6 +57,16 @@ const props = defineProps({
 // Data
 const model = ref('')
 const mode = ref('forecast')
+
+// Created
+let forecastModel = props.forecastModels.find(forecast => forecast.isDefault)
+if (!forecastModel) {
+  forecastModel = (props.forecastModels.length > 0 ? props.forecastModels[0] : '')
+}
+if (forecastModel) {
+  model.value = forecastModel.name
+  onModelChanged(forecastModel.name)
+}
 
 // Computed
 const models = computed(() => {
@@ -108,17 +118,4 @@ function onModelChanged (model) {
     if (toggleAction) toggleAction.handler()
   }
 }
-
-// Hooks
-onMounted(() => {
-  // Select default if any or first one
-  let forecastModel = props.forecastModels.find(forecast => forecast.isDefault)
-  if (!forecastModel) {
-    forecastModel = (props.forecastModels.length > 0 ? props.forecastModels[0] : '')
-  }
-  if (forecastModel) {
-    model.value = forecastModel.name
-    onModelChanged(forecastModel.name)
-  }
-})
 </script>
