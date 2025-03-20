@@ -383,7 +383,7 @@ onBeforeUnmount(() => {
   margin-bottom: 0px;
   opacity: 1.0; // override default opacity
   text-transform: capitalize;
-  font-weight: 500;
+  font-weight: 400;
 }
 .q-timeline__content {
   padding-bottom: 16px;
