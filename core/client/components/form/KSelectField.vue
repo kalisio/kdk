@@ -39,7 +39,7 @@
     </template>
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
-      <q-chip v-if="chips"
+      <q-chip v-if="chips && scope.opt.label"
         removable
         :dense="dense"
         :color="scope.opt.color"
