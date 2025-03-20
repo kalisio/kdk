@@ -53,6 +53,7 @@ export async function capture (values) {
         size: { width: +values.resolution.width, height: +values.resolution.height },
         layout: getLayout(values),
         time: dateArray[index],
+        basePath: _.has(values, 'basePath') ? values.basePath : '/#/home/',
         lang: getAppLocale()
       })
       const response = await fetch(endpoint, options)
