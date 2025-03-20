@@ -383,7 +383,7 @@ export function generateLayerDefinition(layerSpec, geoJson){
   }
   if (geoJson.type === 'FeatureCollection') {
     // Properties of the layer can be specified in the root level of the collection
-    _.defaultsDeep(layerSpec, _.omit(geoJson, ['type', 'properties', 'geometry']))
+    _.defaultsDeep(layerSpec, _.omit(geoJson, ['type', 'properties', 'features']))
     // Check for panes to be created if not provided in layer
     if (!_.has(layerSpec, 'leaflet.panes')) {
       const panes = []
