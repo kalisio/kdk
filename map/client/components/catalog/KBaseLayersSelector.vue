@@ -48,59 +48,55 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { computed } from 'vue'
 import { KStamp } from '../../../../core/client/components'
 
-export default {
-  name: 'k-base-layers-selector',
-  components: {
-    KStamp
+// Props
+const props = defineProps({
+  layers: {
+    type: Array,
+    default: () => []
   },
-  props: {
-    layers: {
-      type: Array,
-      default: () => []
-    },
-    options: {
-      type: Object,
-      default: () => {}
-    }
+  options: {
+    type: Object,
+    default: () => {}
+  }
+})
+
+// Computed
+const selectedLayer = computed({
+  get () {
+    // active layer is the one visible
+    const visibleLayer = _.find(props.layers, { isVisible: true })
+    return visibleLayer ? visibleLayer.name : null
   },
-  computed: {
-    selectedLayer: {
-      get: function () {
-        // active layer is the one visible
-        const visibleLayer = _.find(this.layers, { isVisible: true })
-        return visibleLayer ? visibleLayer.name : null
-      },
-      set: function (layer) {
-        // when defining the selected layer, just perform the action
-        // get will pickup the visible layer
-        const layerToUnselect = _.find(this.layers, { isVisible: true })
-        if (layerToUnselect) this.toggleLayer(layerToUnselect)
-        const unselectedLayerName = layerToUnselect ? layerToUnselect.name : undefined
-        const layerNameToSelect = layer.name
-        if (unselectedLayerName !== layerNameToSelect) {
-          const layerToSelect = _.find(this.layers, { name: layerNameToSelect })
-          if (layerToSelect) this.toggleLayer(layerToSelect)
-        }
-      }
-    }
-  },
-  methods: {
-    getId (layer) {
-      return _.kebabCase(layer.name)
-    },
-    toggleLayer (layer) {
-      const toggleAction = _.find(layer.actions, { id: 'toggle' })
-      if (toggleAction) toggleAction.handler()
-    },
-    onLayerSelected (layer) {
-      if (this.options.disableUnselect && this.selectedLayer && this.selectedLayer === layer.name) return
-      this.selectedLayer = layer
+  set (layer) {
+    // when defining the selected layer, just perform the action
+    // get will pickup the visible layer
+    const layerToUnselect = _.find(props.layers, { isVisible: true })
+    if (layerToUnselect) toggleLayer(layerToUnselect)
+    const unselectedLayerName = layerToUnselect ? layerToUnselect.name : undefined
+    const layerNameToSelect = layer.name
+    if (unselectedLayerName !== layerNameToSelect) {
+      const layerToSelect = _.find(props.layers, { name: layerNameToSelect })
+      if (layerToSelect) toggleLayer(layerToSelect)
     }
   }
+})
+
+// Functions
+function getId (layer) {
+  return _.kebabCase(layer.name)
+}
+function toggleLayer (layer) {
+  const toggleAction = _.find(layer.actions, { id: 'toggle' })
+  if (toggleAction) toggleAction.handler()
+}
+function onLayerSelected (layer) {
+  if (props.options.disableUnselect && selectedLayer.value && selectedLayer.value === layer.name) return
+  selectedLayer.value = layer
 }
 </script>
 

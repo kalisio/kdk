@@ -32,98 +32,93 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import _ from 'lodash'
+import { ref, computed, onMounted } from 'vue'
 import { KStamp } from '../../../../core/client/components'
 import KLayersSelector from './KLayersSelector.vue'
 
-export default {
-  name: 'k-weather-layers-selector',
-  components: {
-    KStamp,
-    KLayersSelector
+// Props
+const props = defineProps({
+  layers: {
+    type: Array,
+    default: () => []
   },
-  props: {
-    layers: {
-      type: Array,
-      default: () => []
-    },
-    forecastModels: {
-      type: Array,
-      default: () => []
-    },
-    options: {
-      type: Object,
-      default: () => {}
-    }
+  forecastModels: {
+    type: Array,
+    default: () => []
   },
-  computed: {
-    models () {
-      return this.forecastModels.map(forecastModel => Object.assign({
-        value: forecastModel.name
-      }, _.pick(forecastModel, ['label', 'description', 'icon', 'iconUrl'])))
-    },
-    filteredLayers () {
-      if (this.mode === 'forecast') return this.filterForecastLayers()
-      return this.filterArchiveLayers()
-    }
-  },
-  data () {
-    return {
-      model: '',
-      mode: 'forecast'
-    }
-  },
-  methods: {
-    hideLayer (layer) {
-      if (layer.isVisible) {
-        const action = _.find(layer.actions, { name: 'toggle' })
-        if (action) action.handler()
-      }
-    },
-    filterForecastLayers () {
-      const forecastLayers = []
-      _.forEach(this.layers, (layer) => {
-        if (!layer.tags.includes('archive')) forecastLayers.push(layer)
-        else this.hideLayer(layer)
-      })
-      return forecastLayers
-    },
-    filterArchiveLayers () {
-      const archiveLayers = []
-      _.forEach(this.layers, (layer) => {
-        if (layer.tags.includes('archive')) {
-          if (_.has(layer, 'meteo_model')) {
-            // check layer supports the current model
-            // either with default model, or with a specific source
-            if (_.get(layer.meteo_model, 'default.model') === this.model ||
-                _.find(layer.meteo_model.sources, { model: this.model })) archiveLayers.push(layer)
-            else this.hideLayer(layer)
-          } else {
-            this.hideLayer(layer)
-          }
-        } else this.hideLayer(layer)
-      })
-      return archiveLayers
-    },
-    onModelChanged (model) {
-      const forecastModel = this.forecastModels.find(forecast => forecast.name === model)
-      if (forecastModel) {
-        const toggleAction = _.find(forecastModel.actions, { id: 'toggle' })
-        if (toggleAction) toggleAction.handler()
-      }
-    }
-  },
-  created () {
-    // Select default if any or first one
-    let forecastModel = this.forecastModels.find(forecast => forecast.isDefault)
-    if (!forecastModel) {
-      forecastModel = (this.forecastModels.length > 0 ? this.forecastModels[0] : '')
-    }
-    if (forecastModel) {
-      this.model = forecastModel.name
-      this.onModelChanged(forecastModel.name)
-    }
+  options: {
+    type: Object,
+    default: () => {}
+  }
+})
+
+// Data
+const model = ref('')
+const mode = ref('forecast')
+
+// Computed
+const models = computed(() => {
+  return props.forecastModels.map(forecastModel => Object.assign({
+    value: forecastModel.name
+  }, _.pick(forecastModel, ['label', 'description', 'icon', 'iconUrl'])))
+})
+const filteredLayers = computed(() => {
+  if (mode.value === 'forecast') return filterForecastLayers()
+  return filterArchiveLayers()
+})
+
+// Functions
+function hideLayer (layer) {
+  if (layer.isVisible) {
+    const action = _.find(layer.actions, { name: 'toggle' })
+    if (action) action.handler()
   }
 }
+function filterForecastLayers () {
+  const forecastLayers = []
+  _.forEach(props.layers, (layer) => {
+    if (!layer.tags.includes('archive')) forecastLayers.push(layer)
+    else hideLayer(layer)
+  })
+  return forecastLayers
+}
+function filterArchiveLayers () {
+  const archiveLayers = []
+  _.forEach(props.layers, (layer) => {
+    if (layer.tags.includes('archive')) {
+      if (_.has(layer, 'meteo_model')) {
+        // check layer supports the current model
+        // either with default model, or with a specific source
+        if (_.get(layer.meteo_model, 'default.model') === model.value ||
+            _.find(layer.meteo_model.sources, { model: model.value })) archiveLayers.push(layer)
+        else hideLayer(layer)
+      } else {
+        hideLayer(layer)
+      }
+    } else hideLayer(layer)
+  })
+  return archiveLayers
+}
+function onModelChanged (model) {
+  const forecastModel = props.forecastModels.find(forecast => forecast.name === model)
+  if (forecastModel) {
+    const toggleAction = _.find(forecastModel.actions, { id: 'toggle' })
+    if (toggleAction) toggleAction.handler()
+  }
+}
+
+// Hooks
+onMounted(() => {
+  // Select default if any or first one
+  let forecastModel = props.forecastModels.find(forecast => forecast.isDefault)
+  if (!forecastModel) {
+    forecastModel = (props.forecastModels.length > 0 ? props.forecastModels[0] : '')
+  }
+  if (forecastModel) {
+    model.value = forecastModel.name
+    onModelChanged(forecastModel.name)
+  }
+})
 </script>
