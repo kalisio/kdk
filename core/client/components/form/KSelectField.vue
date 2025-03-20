@@ -39,8 +39,13 @@
     </template>
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
-      <q-chip v-if="chips" :dense="dense" :color="scope.opt.color" :textColor="scope.opt.textColor">
-        <span :class="selectedClass()">
+      <q-chip v-if="chips"
+        removable
+        dense
+        :tabindex="scope.tabindex"
+        @remove="scope.removeAtIndex(scope.index)"
+      >
+      <span :class="selectedClass()">
           {{ scope.opt.label }}
         </span>
       </q-chip>
