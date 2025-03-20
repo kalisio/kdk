@@ -712,6 +712,9 @@ export const baseGlobe = {
     this.clearLayers()
     this.viewer.camera.moveStart.removeEventListener(this.onCameraMoveStart)
     this.viewer.camera.moveEnd.removeEventListener(this.onCameraMoveEnd)
+    this.unregisterCesiumHandler('MOUSE_MOVE')
+    this.unregisterCesiumHandler('LEFT_CLICK')
+    this.unregisterCesiumHandler('RIGHT_CLICK')
   },
   unmounted () {
     this.viewer.destroy()
