@@ -41,7 +41,9 @@
     <template v-slot:selected-item="scope">
       <q-chip v-if="chips"
         removable
-        dense
+        :dense="dense"
+        :color="scope.opt.color"
+        :textColor="scope.opt.textColor"
         :tabindex="scope.tabindex"
         @remove="scope.removeAtIndex(scope.index)"
       >
