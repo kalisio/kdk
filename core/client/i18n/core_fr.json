@@ -577,7 +577,7 @@
     "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
     "8K_LABEL": "8K ou Full Ultra HD",
     "8K_DESCRIPTION": "16∶9, 7680 x 4320",
-    "PERSONALISED_LABEL": "Personnalisée"
+    "PERSONALIZED_LABEL": "Personnalisée"
   },
   "KFileField": {
     "INVALID_FILE_TYPE": "Type de fichier invalide, veuillez sélectionner un fichier du bon type",

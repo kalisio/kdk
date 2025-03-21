@@ -115,7 +115,7 @@ export default {
         { label: i18n.t('KResolutionField.QHD_LABEL'), description: i18n.t('KResolutionField.QHD_DESCRIPTION'), value: '2560x1440', readonly: true },
         { label: i18n.t('KResolutionField.2K_LABEL'), description: i18n.t('KResolutionField.2K_DESCRIPTION'), value: '2048x1080', readonly: true },
         { label: i18n.t('KResolutionField.4K_LABEL'), description: i18n.t('KResolutionField.4K_DESCRIPTION'), value: '3840x2160', readonly: true },
-        { label: i18n.t('KResolutionField.PERSONALISED_LABEL'), value: '1280x721', readonly: false }
+        { label: i18n.t('KResolutionField.PERSONALIZED_LABEL'), value: '1280x721', readonly: false }
       ]
     },
     updateModel () {
