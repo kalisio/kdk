@@ -576,7 +576,7 @@
     "4K_LABEL": "4K ou Ultra HD",
     "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
     "8K_LABEL": "8K ou Full Ultra HD",
-    "8K_DESCRIPTION": "16∶9, 7680 x 4320",
+    "8K_DESCRIPTION": "16:9, 7680 x 4320",
     "PERSONALIZED_LABEL": "Personnalisée"
   },
   "KFileField": {
