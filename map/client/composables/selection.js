@@ -70,7 +70,7 @@ export function useSelection (name, options = {}) {
     // Remove listeners on previous activity and set it on new one
     if (activity && activity.$engineEvents) {
       unlistenToFeaturesServiceEventsForLayers()
-      setSelectionEnabled()
+      selection.setSelectionEnabled()
       clearSelection()
       activity.$engineEvents.off('click', onClicked)
       if (options.boxSelection) activity.$engineEvents.off('boxselectionend', onBoxSelection)
