@@ -1,5 +1,18 @@
 <template>
   <q-card bordered class="no-shadow">
+    <!-- Message type -->
+    <div
+      v-if="item.type"
+      v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
+    >
+      <KChip
+        :icon="getKindIcon(item.type)"
+        :color="getKindColor(item.type)"
+        :label="getKindLabel(item.type)"
+        :textColor="getKindTextColor(item.type)"
+        :dense="dense"
+      />
+    </div>
     <!-- Message content -->
     <div v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }">
       <KTextArea :text="item.body" :minHeight="44" :dense="true" />
@@ -23,7 +36,7 @@
                 v-if="canViewAttachment(attachment)"
                 id="view-attachment"
                 icon="las la-eye"
-                label="MessageCard.VIEW_ATTACHMENT"
+                label="KMessageCard.VIEW_ATTACHMENT"
                 color="white"
                 :handler="() => viewAttachment(attachment)"
               />
@@ -35,7 +48,7 @@
               <KAction
                 id="download-attachment"
                 icon="las la-download"
-                label="MessageCard.DOWNLOAD_ATTACHMENT"
+                label="KMessageCard.DOWNLOAD_ATTACHMENT"
                 color="white"
                 :handler="() => downloadAttachment(attachment)"
               />
@@ -51,9 +64,11 @@
 import {
   Document,
   Storage,
+  i18n,
   composables as kdkCoreComposables,
   mixins as kdkCoreMixins
 } from '@kalisio/kdk/core.client'
+import config from 'config'
 import _ from 'lodash'
 import KTextArea from '../KTextArea.vue'
 
@@ -105,8 +120,29 @@ export default {
   setup () {
     // data
     const { dense } = kdkCoreComposables.useScreen()
+    const MessageTypes = config.messagesActivity.messages
+    // functions
+    function getKindIcon (type) {
+      return this.MessageTypes[type].icon
+    }
+    function getKindColor (type) {
+      return this.MessageTypes[type].color
+    }
+    function getKindTextColor (type) {
+      return this.MessageTypes[type].textColor
+    }
+    function getKindLabel (type) {
+      return i18n.t(MessageTypes[type].label)
+    }
     // expose
-    return { dense }
+    return {
+      dense,
+      MessageTypes,
+      getKindIcon,
+      getKindColor,
+      getKindTextColor,
+      getKindLabel
+    }
   }
 }
 </script>

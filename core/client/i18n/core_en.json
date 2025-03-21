@@ -605,6 +605,14 @@
     "UPLOAD": "Add",
     "NO_MEDIA": "There is no media to show, please add a media first with one of the action buttons."
   },
+  "KMessageCard": {
+    "VIEW_ATTACHMENT": "View attachment",
+    "DOWNLOAD_ATTACHMENT": "Download attachment"
+  },
+  "KMessageComposer": {
+    "OPEN_EDITOR": "Open editor",
+    "CLOSE_EDITOR": "Close editor"
+  },
   "KFab": {
     "CLOSE_ACTION": "@:CLOSE"
   },

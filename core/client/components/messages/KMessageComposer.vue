@@ -22,7 +22,11 @@
         <KAction
           id="format-message"
           :icon="editor ? 'las la-sms' : 'las la-edit'"
-          tooltip="Composer.OPEN_EDITOR"
+          :tooltip="
+            editor
+              ? 'KMessageComposer.CLOSE_EDITOR'
+              : 'KMessageComposer.OPEN_EDITOR'
+          "
           :handler="
             () => {
               editor = !editor

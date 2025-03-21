@@ -602,6 +602,14 @@
     "UPLOAD": "Ajouter",
     "NO_MEDIA": "Il n'y a aucun média à voir, ajoutez un média à l'aide d'une des actions disponibles."
   },
+  "KMessageCard": {
+    "VIEW_ATTACHMENT": "Voir la pièce jointe",
+    "DOWNLOAD_ATTACHMENT": "Télécharger la pièce jointe"
+  },
+  "KMessageComposer": {
+    "OPEN_EDITOR": "Ouvrir l'éditeur",
+    "CLOSE_EDITOR": "Fermer l'éditeur"
+  },
   "KFab": {
     "CLOSE_ACTION": "@:CLOSE"
   },
