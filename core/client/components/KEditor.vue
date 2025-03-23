@@ -86,7 +86,7 @@ async function apply () {
     if (mode === 'creation') {
       logger.debug('[KDK] Create object with data', response.values)
       try {
-        await service.create(values)
+        await service.create(response.values)
         if (_.has(props, 'notify.created.success')) Notify.create({ type: 'positive', message: i18n.t(_.get(props, 'notify.created.success')) })
       } catch (error) {
         if (_.has(props, 'notify.created.error')) Notify.create({ type: 'negative', message: i18n.t(_.get(props, 'notify.created.error')) })
