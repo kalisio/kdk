@@ -58,7 +58,7 @@
 <script setup>
 import _ from 'lodash'
 import { Dialog } from 'quasar'
-import { ref, computed, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import bbox from '@turf/bbox'
 import { Store, i18n } from '../../../../core/client'
@@ -340,15 +340,4 @@ function removeSelectedFeature (feature) {
     await CurrentActivity.value.removeFeatures(feature, props.item.layer)
   })
 }
-
-// Hooks
-// As long as the selection manager is visible we force highlights to appear in order to show the current selection
-onBeforeMount(() => {
-  CurrentActivity.value.setHighlightMode('all-layers')
-})
-// Cleanup on destroy
-onBeforeUnmount(() => {
-  // Activity might have been cleared already
-  if (CurrentActivity.value) CurrentActivity.value.setHighlightMode('highlightable-layers')
-})
 </script>
