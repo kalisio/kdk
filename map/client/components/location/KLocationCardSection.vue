@@ -60,7 +60,7 @@ const props = defineProps({
     type: String,
     default: 'map',
     validator: (value) => {
-      return ['map', 'tip', 'none'].includes(value)
+      return _.isNil(value) || ['map', 'tip'].includes(value)
     }
   },
   ...coreUtils.CardSectionProps
