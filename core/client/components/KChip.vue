@@ -126,7 +126,7 @@ const computedHPadding = computed(() => {
   return props.dense ? '0.5em' : '0.8em'
 })
 const computedVPadding = computed(() => {
-  return props.dense ? '0.5em' : '0.7em'
+  return props.dense ? '0.4em' : '0.6em'
 })
 
 // Function
@@ -144,9 +144,10 @@ function onResize () {
 }
 .q-chip {
   padding-right: v-bind(computedHPadding);
-  padding-left: -bind(computedHPadding);
+  padding-left: v-bind(computedHPadding);
   padding-top: v-bind(computedVPadding);
-  padding-bottom: -bind(computedVPadding);
+  padding-bottom: v-bind(computedVPadding);
+  border-color: v-bind(computedColor);
 }
 .q-chip__icon {
   color: v-bind(computedTextColor);
