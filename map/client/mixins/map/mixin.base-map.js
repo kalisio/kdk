@@ -103,6 +103,8 @@ export const baseMap = {
       })
       // Initialize the map
       this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
+      const backgroundColor = _.get(viewerOptions, 'backgroundColor')
+      if (backgroundColor) this.map._container.style.background = backgroundColor
       // Make sure geoman is initialized on the map
       if (this.map.pm === undefined) {
         this.map.options.pmIgnore = false
