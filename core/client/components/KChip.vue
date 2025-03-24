@@ -15,7 +15,7 @@
       {{ computedLabel }}
       <q-resize-observer @resize="onResize" />
     </div>
-    <q-tooltip v-if="tooltip && label ? isTruncated : true">
+    <q-tooltip v-if="tooltip && (label ? isTruncated : true)">
       {{ computedTooltip }}
     </q-tooltip>
     <slot />
