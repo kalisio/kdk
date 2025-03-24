@@ -610,8 +610,17 @@
     "DOWNLOAD_ATTACHMENT": "Download attachment"
   },
   "KMessageComposer": {
+    "FORMAT_MESSAGE": "Format message",
+    "ATTACH_FILE": "Attach file",
+    "WRITE_YOUR_MESSAGE": "Write your message...",
+    "SEND_MESSAGE": "Send message",
     "OPEN_EDITOR": "Open editor",
-    "CLOSE_EDITOR": "Close editor"
+    "CLOSE_EDITOR": "Close editor",
+    "message-type": {
+      "INFORMATION": "Information",
+      "WARNING": "Warning",
+      "ALERT": "Alert"
+    }
   },
   "KFab": {
     "CLOSE_ACTION": "@:CLOSE"

@@ -41,7 +41,7 @@
     <div class="q-pa-sm col">
       <q-editor
         v-if="editor"
-        :placeholder="$t('Composer.WRITE_YOUR_MESSAGE')"
+        :placeholder="$t('KMessageComposer.WRITE_YOUR_MESSAGE')"
         v-model="body"
         :toolbar="editorToolbar"
         toolbar-bg="grey-2"
@@ -51,7 +51,7 @@
       />
       <q-input
         v-else
-        :placeholder="$t('Composer.WRITE_YOUR_MESSAGE')"
+        :placeholder="$t('KMessageComposer.WRITE_YOUR_MESSAGE')"
         v-model="body"
         borderless
         dense
@@ -71,7 +71,7 @@
       <KAction
         id="send-message"
         icon="send"
-        tooltip="Composer.SEND_MESSAGE"
+        tooltip="KMessageComposer.SEND_MESSAGE"
         :disabled="!hasBody"
         :handler="sendMessage"
         color="primary"
@@ -94,10 +94,22 @@ import { useQuasar } from 'quasar'
 import { computed, ref } from 'vue'
 import KUploader from '../document/KUploader.vue'
 
+// Props
+const props = defineProps({
+  activity: {
+    type: String,
+    default: 'messagesActivity'
+  },
+  baseMessage: {
+    type: Object,
+    required: false
+  }
+})
+
 // Data
 const $q = useQuasar()
 const User = Store.get('user')
-const MessageTypes = config.messagesActivity.messages
+const MessageTypes = config[props.activity].messages
 const { createMessage } = kdkCoreComposables.useMessages()
 const editor = ref(false)
 const uploaderRef = ref(null)
@@ -142,6 +154,7 @@ async function sendMessage () {
     author: _.get(User.value, 'profile.name'),
     attachments: attachments.value
   }
+  if (props.baseMessage) _.merge(message, props.baseMessage)
   // create the message
   const result = await createMessage(message)
   // upload the files

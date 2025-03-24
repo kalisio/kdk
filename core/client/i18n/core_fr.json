@@ -607,8 +607,17 @@
     "DOWNLOAD_ATTACHMENT": "Télécharger la pièce jointe"
   },
   "KMessageComposer": {
+    "FORMAT_MESSAGE": "Formater le message",
+    "ATTACH_FILE": "Attacher un fichier",
+    "WRITE_YOUR_MESSAGE": "Rédigez votre message...",
+    "SEND_MESSAGE": "Envoyer le message",
     "OPEN_EDITOR": "Ouvrir l'éditeur",
-    "CLOSE_EDITOR": "Fermer l'éditeur"
+    "CLOSE_EDITOR": "Fermer l'éditeur",
+    "message-type": {
+      "INFORMATION": "Information",
+      "WARNING": "Attention",
+      "ALERT": "Alerte"
+    }
   },
   "KFab": {
     "CLOSE_ACTION": "@:CLOSE"
