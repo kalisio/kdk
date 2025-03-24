@@ -71,7 +71,7 @@ export function useSelection (name, options = {}) {
     if (activity && activity.$engineEvents) {
       unlistenToFeaturesServiceEventsForLayers()
       selection.setSelectionEnabled()
-      clearSelection()
+      selection.clearSelection()
       activity.$engineEvents.off('click', onClicked)
       if (options.boxSelection) activity.$engineEvents.off('boxselectionend', onBoxSelection)
       if (options.clusterSelection) activity.$engineEvents.off('spiderfied', onClusterSelection)
