@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeMount, onBeforeUnmount } from 'vue'
 import { loadComponent } from '../../../../core/client/utils'
 import KStamp from '../../../../core/client/components/KStamp.vue'
 import { useCurrentActivity } from '../../composables/activity.js'
@@ -42,7 +42,7 @@ const props = defineProps({
 })
 
 // Data
-const { getSelectedFeaturesByLayer } = useCurrentActivity()
+const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
 
 // Computed
 const itemRenderer = computed(() => {
@@ -58,4 +58,14 @@ const hasItems = computed(() => {
   return Object.keys(items.value).length > 0
 })
 
+// Hooks
+// As long as the selection manager is visible we force highlights to appear in order to show the current selection
+onBeforeMount(() => {
+  CurrentActivity.value.setHighlightMode('all-layers')
+})
+// Cleanup on destroy
+onBeforeUnmount(() => {
+  // Activity might have been cleared already
+  if (CurrentActivity.value) CurrentActivity.value.setHighlightMode('highlightable-layers')
+})
 </script>
