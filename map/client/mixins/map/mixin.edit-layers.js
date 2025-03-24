@@ -45,7 +45,7 @@ export const editLayers = {
         // Restore popup
         if (this.editedPopup) this.editedFeature.bindPopup(this.editedPopup)
         // Update feature after edition from DB or memory
-        const service = (this.editedLayer._id ? 'features' : 'features-edition')
+        const service = (this.editedLayer._id ? _.get(this.editedLayer, 'service', 'features') : 'features-edition')
         const feature = await this.$api.getService(service).get(this.editedFeature.feature._id)
         this.editableLayer.removeLayer(this.editedFeature)
         this.editableLayer.addData(feature)
