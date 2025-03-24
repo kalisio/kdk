@@ -13,11 +13,19 @@
         :minHeight="24"
         :maxHeight="204"
         :dense="true"
+        :class="{ 'cursor-pointer': renderer === 'tip'}"
       />
       <!-- Map  -->
       <KLocationMap
+        v-if="renderer === 'map'"
         v-model="feature"
         style="min-height: 120px"
+      />
+      <KLocationTip
+        v-else-if="renderer === 'tip'"
+        :location="feature"
+        anchor="bottom left"
+        self="top left"
       />
     </div>
     <div v-else style="height: 142px">
@@ -36,6 +44,7 @@ import _ from 'lodash'
 import { ref, watch } from 'vue'
 import { utils as coreUtils } from '../../../../core.client'
 import KLocationMap from './KLocationMap.vue'
+import KLocationTip from './KLocationTip.vue'
 
 // Props
 const props = defineProps({
@@ -46,6 +55,13 @@ const props = defineProps({
   namePath: {
     type: String,
     default: 'name'
+  },
+  renderer: {
+    type: String,
+    default: 'map',
+    validator: (value) => {
+      return ['map', 'tip', 'none'].includes(value)
+    }
   },
   ...coreUtils.CardSectionProps
 })
