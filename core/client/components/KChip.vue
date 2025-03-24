@@ -7,7 +7,7 @@
     @click="event => emit('click', event)"
     class="k-chip"
   >
-    <div v-if="computedLabel" 
+    <div v-if="computedLabel"
       :id="id"
       class="ellipsis"
       :class="{ 'q-pl-sm': !dense && icon, 'q-pl-xs': dense && icon }"
@@ -24,7 +24,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watchEffect, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { i18n } from '../i18n.js'
 import { getHtmlColor, getContrastColor } from '../utils'
