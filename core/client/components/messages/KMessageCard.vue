@@ -1,50 +1,77 @@
 <template>
-  <q-card bordered class="no-shadow">
-    <!-- Message content -->
-    <div v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }">
-      <KTextArea :text="item.body" :minHeight="44" :dense="true" />
-    </div>
-    <!-- Message attachments -->
-    <div
-      v-if="hasAttachments"
-      v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
-      class="full-width row justify-start items-center"
-    >
-      <template v-for="attachment in attachments" :key="attachment.name">
-        <q-chip :label="attachment.name" size="0.8rem" clickable>
-          <q-popup-proxy
-            auto-close
-            anchor="top middle"
-            self="bottom middle"
-            :breakpoint="300"
-          >
-            <div class="bg-grey-8 row items-center q-gutter-x-sm no-wrap">
-              <KAction
-                v-if="canViewAttachment(attachment)"
-                id="view-attachment"
-                icon="las la-eye"
-                label="KMessageCard.VIEW_ATTACHMENT"
-                color="white"
-                :handler="() => viewAttachment(attachment)"
-              />
-              <q-separator
-                v-if="canViewAttachment(attachment)"
-                vertical
-                class="bg-grey-7"
-              />
-              <KAction
-                id="download-attachment"
-                icon="las la-download"
-                label="KMessageCard.DOWNLOAD_ATTACHMENT"
-                color="white"
-                :handler="() => downloadAttachment(attachment)"
-              />
+  <KCard
+    v-bind="$props"
+    :header="computedHeader"
+    :sections="sections"
+    :footer="computedFooter"
+    :dense="dense"
+  >
+    <template v-slot:card-heading v-if="computedHeader">
+      <!-- Message actions -->
+      <div class="full-width row">
+        <div :class="{ 'col-12': dense, 'col-8': !dense }">
+          <div class="full-width row justify-between">
+            <!-- name -->
+            <div
+              class="text-subtitle1 text-weight-medium ellipsis-2-lines"
+              v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
+            >
+              {{ item.name }}
             </div>
-          </q-popup-proxy>
-        </q-chip>
-      </template>
-    </div>
-  </q-card>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template v-slot:card-content>
+      <!-- Message content -->
+      <div
+        v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
+      >
+        <KTextArea :text="item.body" :minHeight="44" :dense="true" />
+      </div>
+    </template>
+    <template v-slot:card-footer v-if="hasAttachments">
+      <!-- Message attachments -->
+      <div
+        v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
+        class="full-width row justify-start items-center"
+      >
+        <template v-for="attachment in attachments" :key="attachment.name">
+          <q-chip :label="attachment.name" size="0.8rem" clickable>
+            <q-popup-proxy
+              auto-close
+              anchor="top middle"
+              self="bottom middle"
+              :breakpoint="300"
+            >
+              <div class="bg-grey-8 row items-center q-gutter-x-sm no-wrap">
+                <KAction
+                  v-if="canViewAttachment(attachment)"
+                  id="view-attachment"
+                  icon="las la-eye"
+                  label="KMessageCard.VIEW_ATTACHMENT"
+                  color="white"
+                  :handler="() => viewAttachment(attachment)"
+                />
+                <q-separator
+                  v-if="canViewAttachment(attachment)"
+                  vertical
+                  class="bg-grey-7"
+                />
+                <KAction
+                  id="download-attachment"
+                  icon="las la-download"
+                  label="KMessageCard.DOWNLOAD_ATTACHMENT"
+                  color="white"
+                  :handler="() => downloadAttachment(attachment)"
+                />
+              </div>
+            </q-popup-proxy>
+          </q-chip>
+        </template>
+      </div>
+    </template>
+  </KCard>
 </template>
 
 <script>
@@ -56,10 +83,30 @@ import {
 } from '@kalisio/kdk/core.client'
 import _ from 'lodash'
 import KTextArea from '../KTextArea.vue'
+import KCard from '../collection/KCard.vue'
 
 export default {
   mixins: [kdkCoreMixins.baseItem],
+  props: {
+    header: {
+      type: [Array, Object],
+      default: () => null
+    },
+    sections: {
+      type: Object,
+      default: () => null
+    },
+    footer: {
+      type: [Array, Object],
+      default: () => null
+    },
+    dense: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
+    KCard,
     KTextArea
   },
   computed: {
@@ -72,6 +119,12 @@ export default {
     },
     hasAttachments () {
       return !_.isEmpty(this.attachments)
+    },
+    computedHeader () {
+      return _.filter(this.itemActions, { scope: 'header' })
+    },
+    computedFooter () {
+      return _.filter(this.itemActions, { scope: 'footer' })
     }
   },
   methods: {
@@ -100,6 +153,12 @@ export default {
     downloadAttachment (attachment) {
       const key = `messages/${this.item._id}/${attachment.name}`
       Storage.export({ file: attachment.name, key, context: this.contextId })
+    },
+    canEditMessage () {
+      return this.$can('update', 'messages')
+    },
+    canRemoveMessage () {
+      return this.$can('remove', 'messages')
     }
   },
   setup () {
