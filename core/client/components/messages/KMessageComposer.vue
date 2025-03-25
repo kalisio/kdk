@@ -151,7 +151,7 @@ async function sendMessage () {
   const message = {
     type: currentType.value,
     body: body.value,
-    author: _.get(User.value, 'profile.name'),
+    author: _.get(User, 'profile.name'),
     attachments: attachments.value
   }
   if (props.baseMessage) _.merge(message, props.baseMessage)
