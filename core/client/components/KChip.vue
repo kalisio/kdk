@@ -1,6 +1,6 @@
 <template>
   <q-chip
-    v-bind="_.omit(props, ['color', 'textColor', 'label', 'dense'])"
+    v-bind="_.omit(props, ['color', 'textColor', 'label', 'dense', 'outline'])"
     @updated:modelValue="state => emit('updated:modelValue', state)"
     @updated:selected="state => emit('updated:selected', state)"
     @remove="emit('remove')"
@@ -15,8 +15,8 @@
       {{ computedLabel }}
       <q-resize-observer @resize="onResize" />
     </div>
-    <q-tooltip v-if="tooltip && (label ? isTruncated : true)">
-      {{ computedTooltip }}
+    <q-tooltip v-if="computedTooltip">
+      <div v-html="Document.sanitizeHtml(computedTooltip)" />
     </q-tooltip>
     <slot />
   </q-chip>
@@ -27,6 +27,7 @@ import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { i18n } from '../i18n.js'
+import { Document } from '../document.js'
 import { getHtmlColor, getContrastColor } from '../utils'
 
 // Props
@@ -113,20 +114,27 @@ const computedLabel = computed(() => {
   return i18n.tie(props.label)
 })
 const computedTooltip = computed(() => {
-  return i18n.tie(props.tooltip)
-})
-const computedColor = computed(() => {
-  return getHtmlColor(props.color)
-})
-const computedTextColor = computed(() => {
-  if (_.isEmpty(props.textColor)) return getContrastColor(props.color)
-  return getHtmlColor(props.textColor)
+  if (props.tooltip) return i18n.tie(props.tooltip)
+  if (props.label && isTruncated.value) return computedLabel.value
 })
 const computedHPadding = computed(() => {
-  return props.dense ? '0.5em' : '0.8em'
+  return props.dense ? '0.4rem' : '0.6rem'
 })
 const computedVPadding = computed(() => {
-  return props.dense ? '0.4em' : '0.6em'
+  return props.dense ? '0.1rem' : '0.3rem'
+})
+const computedColor = computed(() => {
+  return props.outline ? 'transparent' : getHtmlColor(props.color)
+})
+const computedTextColor = computed(() => {
+  if (_.isEmpty(props.textColor)) {
+    if (props.outline) return computedBorderColor.value
+    return getContrastColor(props.color)
+  }
+  return getHtmlColor(props.textColor)
+})
+const computedBorderColor = computed(() => {
+  return props.outline ? getHtmlColor(props.color) : 'transparent'
 })
 
 // Function
@@ -147,7 +155,7 @@ function onResize () {
   padding-left: v-bind(computedHPadding);
   padding-top: v-bind(computedVPadding);
   padding-bottom: v-bind(computedVPadding);
-  border-color: v-bind(computedColor);
+  border: solid 1px v-bind(computedBorderColor);
 }
 .q-chip__icon {
   color: v-bind(computedTextColor);
