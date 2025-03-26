@@ -18,8 +18,8 @@
     "HIDE_DISPLAY_STYLES": "Masquer les styles",
     "SHOW_POSITION": "Afficher les coordonnées géographiques",
     "HIDE_POSITION": "Masquer les coordonnées géographiques",
-    "SHOW_NORTH_ARROW": "Afficher la flèche d’orientation vers le nord",
-    "HIDE_NORTH_ARROW": "Masquer la flèche d’orientation vers le nord",
+    "SHOW_NORTH_ARROW": "Afficher la flèche nord",
+    "HIDE_NORTH_ARROW": "Masquer la flèche nord",
     "SHOW_TIME_SERIES": "Afficher les séries chronologiques",
     "HIDE_TIME_SERIES": "Masquer les séries chronologiques"
   },
