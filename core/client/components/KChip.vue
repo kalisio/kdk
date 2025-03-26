@@ -1,6 +1,6 @@
 <template>
   <q-chip
-    v-bind="_.omit(props, ['color', 'textColor', 'label', 'dense', 'outline'])"
+    v-bind="_.omit(props, ['color', 'textColor', 'label', 'outline'])"
     @updated:modelValue="state => emit('updated:modelValue', state)"
     @updated:selected="state => emit('updated:selected', state)"
     @remove="emit('remove')"
@@ -117,12 +117,6 @@ const computedTooltip = computed(() => {
   if (props.tooltip) return i18n.tie(props.tooltip)
   if (props.label && isTruncated.value) return computedLabel.value
 })
-const computedHPadding = computed(() => {
-  return props.dense ? '0.4rem' : '0.6rem'
-})
-const computedVPadding = computed(() => {
-  return props.dense ? '0.1rem' : '0.3rem'
-})
 const computedColor = computed(() => {
   return props.outline ? 'transparent' : getHtmlColor(props.color)
 })
@@ -151,10 +145,6 @@ function onResize () {
   color: v-bind(computedTextColor);
 }
 .q-chip {
-  padding-right: v-bind(computedHPadding);
-  padding-left: v-bind(computedHPadding);
-  padding-top: v-bind(computedVPadding);
-  padding-bottom: v-bind(computedVPadding);
   border: solid 1px v-bind(computedBorderColor);
 }
 .q-chip__icon {
