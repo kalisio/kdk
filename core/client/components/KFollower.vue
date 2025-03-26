@@ -1,10 +1,11 @@
 <template>
   <Teleport v-if="targetAvailable" :to="'#' + targetId">
     <component
-      :is="loadComponent(follower)"
+      :is="loadComponent(follower.component)"
       :class="'teleported absolute-' + position"
       :style="dynamicStyles"
       ref="componentRef"
+      v-bind="{ ...follower, component: null }"
     />
   </Teleport>
 </template>
@@ -15,7 +16,7 @@ import { loadComponent } from '../utils'
 
 const props = defineProps({
   follower: {
-    type: String,
+    type: Object,
     required: true
   },
   targetId: {
