@@ -69,17 +69,21 @@
     <!--
       Footer section
     -->
-    <div v-if="hasFooter">
-      <q-separator />
-      <div :class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }">
-        <KPanel
-          id="card-footer-panel"
-          :content="computedFooter"
-          :context="$props"
-          class="full-width no-wrap"
-        />
+      <div>
+        <slot name="card-footer">
+          <div v-if="hasFooter">
+            <q-separator />
+            <div :class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }">
+              <KPanel
+                id="card-footer-panel"
+                :content="computedFooter"
+                :context="$props"
+                class="full-width no-wrap"
+              />
+            </div>
+          </div>
+        </slot>
       </div>
-    </div>
     <!--
       Expand action
     -->
