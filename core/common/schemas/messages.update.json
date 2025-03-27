@@ -5,11 +5,10 @@
   "type": "object",
   "properties": {
     "body": {
-      "type": "string", 
+      "type": "string",
       "minLength": 1,
       "field": {
-        "component": "form/KTextField",
-        "label": "schemas.MESSAGE_NAME_FIELD_LABEL"
+        "component": "form/KTextareaField"
       }
     }
   },
