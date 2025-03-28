@@ -70,7 +70,8 @@
       "AbortController",
       "localStorage",
       "DOMParser",
-      "caches"
+      "caches",
+      "MutationObserver"
     ]
   },
   "directories": {
