@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import chroma from 'chroma-js'
 import formatcoords from 'formatcoords'
 
 // Find the nearest time of a given one in a given moment time list
@@ -51,26 +50,6 @@ export function getFeatureLabel (feature, layer) {
     label = _.get(feature, `properties.${label}`)
     return (result ? result + ` - ${label}` : label)
   }, '')
-}
-
-export function formatUserCoordinates (lat, lon, format, options) {
-  if (format === 'aeronautical') {
-    const coords = formatcoords(lat, lon)
-    // longitude group: DDMMML where DD is degree (2 digits mandatory)
-    // MMM unit is in 0.1 minutes (trailing 0 optional)
-    // L is N/S
-    const latDeg = coords.latValues.degreesInt.toString().padStart(2, '0')
-    const latMin = Math.floor(coords.latValues.secondsTotal / 6).toString().padStart(3, '0')
-    const latDir = coords.north ? 'N' : 'S'
-    // longitude group: DDDMMML where DDD is degree (3 digits mandatory)
-    // MMM unit is in 0.1 minutes (trailing 0 optional)
-    // L is W/E
-    const lonDeg = coords.lonValues.degreesInt.toString().padStart(3, '0')
-    const lonMin = Math.floor(coords.lonValues.secondsTotal / 6).toString().padStart(3, '0')
-    const lonDir = coords.east ? 'E' : 'W'
-    return `${latDeg}${latMin}${latDir} ${lonDeg}${lonMin}${lonDir}`
-  }
-  return formatcoords(lat, lon).format(format, options)
 }
 
 export function coordinatesToGeoJSON (lat, lon, format, options) {

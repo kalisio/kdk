@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { ref } from 'vue'
 import { Store, i18n, api } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
+import { Geocoder } from '../geocoder.js'
 import { useCurrentActivity } from './activity.js'
 import { searchLocation, listGeocoders, filterGeocoders } from '../utils/utils.location.js'
 
@@ -16,16 +17,16 @@ export function useLocation () {
   // Functions
   // Input geocoders if given should be like { source: xxx, selected: true }
   async function setGeocoders (geocoders) {
-    const project = getActivityProject()
-    const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())
+  /*  const project = getActivityProject()
+    const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())*/
     if (_.isNull(geocoders)) {
       // clear the geocoders
       availableGeocoders.value = []
       selectedGeocoders.value = []
     } else {
       // check the capabilities to list the geocoders
-      let allGeocoders = await listGeocoders(planet)
-      allGeocoders = filterGeocoders(allGeocoders, project)
+      let allGeocoders = await Geocoder.getForwardCapabilities()
+      allGeocoders = filterGeocoders(allGeocoders, getActivityProject())
       if (_.isEmpty(geocoders)) {
         availableGeocoders.value = _.map(allGeocoders, geocoder => {
           return { value: geocoder, label: i18n.tie(`Geocoders.${geocoder}`) }
@@ -54,9 +55,10 @@ export function useLocation () {
     return Store.get('geolocation.location')
   }
   async function search (pattern, limit = 25) {
-    const project = getActivityProject()
-    const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())
-    return searchLocation(planet, pattern, {
+    /*const project = getActivityProject()
+    const planet = api.getConfig() // (project ? project.getPlanetApi().getConfig() : api.getConfig())
+    */
+    return Geocoder.queryForward(pattern, {
       geocoders: selectedGeocoders.value,
       viewbox: selectedViewbox.value,
       limit

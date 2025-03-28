@@ -1,35 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import config from 'config'
-import { Store, api, i18n, Events } from '../../../core.client.js'
-import { formatUserCoordinates } from './utils.js'
-
-// Format (reverse) geocoding output
-function formatGeocodingResult (result) {
-  const properties = result.properties
-  if (!properties) {
-    logger.warn('[KDK] invalid geocoding result: missing \'properties\' property')
-    return
-  }
-  // check whether the result as a valid formatted address
-  let label = properties.formattedAddress || ''
-  // try to build a formatted address
-  if (!label) {
-    if (properties.streetNumber) label += (properties.streetNumber + ', ')
-    if (properties.streetName) label += (properties.streetName + ' ')
-    if (properties.city) label += (properties.city + ' ')
-    if (properties.zipcode) label += (' (' + properties.zipcode + ')')
-  }
-  // otherwise retireve the match prop
-  if (!label) {
-    if (!_.has(result, 'geokoder.matchProp')) {
-      logger.warn('[KDK] invalid geocoding result: missing \'geokoder.matchProp\' property')
-      return
-    }
-    label = _.get(result, result.geokoder.matchProp, '')
-  }
-  return label
-}
+import formatcoords from 'formatcoords'
 
 export function parseCoordinates (str) {
   const coords = _.split(_.trim(str), ',')
@@ -44,63 +15,51 @@ export function parseCoordinates (str) {
   }
 }
 
-export async function queryGeocoder(planetConfig, path, query = '') {
-  const endpoint = planetConfig.gateway + '/geocoder'
-  const jwt = await api.get('storage').getItem(planetConfig.gatewayJwt)
-  let url = `${endpoint}/${path}`
-  if (query) url += `?${query}`
-  const response = await fetch(url, { headers: { Authorization: `Bearer ${jwt}` } })
-  const results = await response.json()
-  return results
+export function formatUserCoordinates (lat, lon, format, options) {
+  if (format === 'aeronautical') {
+    const coords = formatcoords(lat, lon)
+    // longitude group: DDMMML where DD is degree (2 digits mandatory)
+    // MMM unit is in 0.1 minutes (trailing 0 optional)
+    // L is N/S
+    const latDeg = coords.latValues.degreesInt.toString().padStart(2, '0')
+    const latMin = Math.floor(coords.latValues.secondsTotal / 6).toString().padStart(3, '0')
+    const latDir = coords.north ? 'N' : 'S'
+    // longitude group: DDDMMML where DDD is degree (3 digits mandatory)
+    // MMM unit is in 0.1 minutes (trailing 0 optional)
+    // L is W/E
+    const lonDeg = coords.lonValues.degreesInt.toString().padStart(3, '0')
+    const lonMin = Math.floor(coords.lonValues.secondsTotal / 6).toString().padStart(3, '0')
+    const lonDir = coords.east ? 'E' : 'W'
+    return `${latDeg}${latMin}${latDir} ${lonDeg}${lonMin}${lonDir}`
+  }
+  return formatcoords(lat, lon).format(format, options)
 }
 
-export async function searchLocation (planetConfig, pattern, options = {}) {
-  const locations = []
-  // Try to parse lat/long coordinates
-  const coordinates = parseCoordinates(pattern)
-  if (coordinates) {
-    locations.push({
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [coordinates.longitude, coordinates.latitude]
-      },
-      properties: {
-        name: formatUserCoordinates(coordinates.latitude, coordinates.longitude, Store.get('locationFormat', 'FFf'))
-      }
-    })
-  } else {
-    let filter = ''
-    // Take into account optional geocoders
-    if (!_.isEmpty(options.geocoders)) {
-      filter += '&sources=*(' + options.geocoders.join('|') + ')'
-    }
-    // Take into account optional viewbo
-    if (!_.isEmpty(options.viewbox)) {
-      filter += '&viewbox=' + options.viewbox.join(',')
-    }
-    // Define the limit
-    filter += '&limit=' + (options.limit || 20)
-    const results = await queryGeocoder(planetConfig, 'forward', `q=${pattern}${filter}`)
-    results.forEach(result => {
-      locations.push(
-        Object.assign(
-          _.pick(result, ['type', 'geometry']),
-          { properties: { name: formatGeocodingResult(result), source: result.geokoder.source } }))
-    })
+// Format results from forward query
+export function formatForwardGeocodingResult (result) {
+  const properties = result.properties
+  if (!properties) {
+    logger.warn('[KDK] invalid geocoding result: missing \'properties\' property')
+    return
   }
-  return locations
-}
-
-export async function listGeocoders (planetConfig) {
-  let response
-  try {
-    response = await queryGeocoder(planetConfig, 'capabilities/forward')
-    if (response.i18n) i18n.registerTranslation(response.i18n)
-  } catch (error) {
-    Events.emit('error', { message: i18n.t('errors.NETWORK_ERROR') })
+  // check whether the result as a valid formatted address
+  let label = properties.formattedAddress || ''
+  // try to build a formatted address
+  if (!label) {
+    if (properties.streetNumber) label += (properties.streetNumber + ', ')
+    if (properties.streetName) label += (properties.streetName + ' ')
+    if (properties.city) label += (properties.city + ' ')
+    if (properties.zipcode) label += (' (' + properties.zipcode + ')')
   }
-  return _.get(response, 'geocoders', [])
+  // otherwise retrieve the match prop
+  if (!label) {
+    if (!_.has(result, 'geokoder.matchProp')) {
+      logger.warn('[KDK] invalid geocoding result: missing \'geokoder.matchProp\' property')
+      return
+    }
+    label = _.get(result, result.geokoder.matchProp, '')
+  }
+  return label
 }
 
 // Filter geocoder sources based on given project

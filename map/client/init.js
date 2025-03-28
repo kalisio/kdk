@@ -7,6 +7,7 @@ import { Store, Reader, utils as kdkCoreUtils, hooks as kdkCoreHooks } from '../
 import * as kMapHooks from './hooks/index.js'
 import { Geolocation } from './geolocation.js'
 import { Planets } from './planets.js'
+import { Geocoder } from './geocoder.js'
 import { Navigator } from './navigator.js'
 import * as readers from './readers/index.js'
 
@@ -73,6 +74,7 @@ export default async function init () {
   // Initialize singletons that might be used globally first
   Geolocation.initialize()
   Planets.initialize()
+  Geocoder.initialize()
   Navigator.initialize()
 
   // Then, create the models listened by the different components
