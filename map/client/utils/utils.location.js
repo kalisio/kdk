@@ -67,8 +67,8 @@ export function filterGeocoders(geocoders, project) {
   return geocoders.filter(geocoder => {
     // Geocoder id can directly be a string or the value of UI elements with label/value
     const id = geocoder.value || geocoder
-    if (project && id.startsWith('kano:')) {
-      const service = id.replace('kano:', '')
+    if (project && id.includes('kano:')) {
+      const service = _.replace(id, /^(.*:)?kano:/g, '')
       // Depending on the layer the geocoding source (i.e. collection/service) is not the same
       let layer = _.find(project.layers, { service })
       if (!layer) layer = _.find(project.layers, { probeService: service })

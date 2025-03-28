@@ -19,6 +19,9 @@ export const Context = {
   get () {
     return Store.get('context')
   },
+  getId () {
+    return _.get(this.get(), '_id')
+  },
   getRef () {
     return Store.getRef('context')
   },

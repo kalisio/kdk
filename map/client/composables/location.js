@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import { ref } from 'vue'
-import { Store, i18n, api } from '../../../core.client.js'
+import { Store, Context, i18n } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
 import { Geocoder } from '../geocoder.js'
 import { useCurrentActivity } from './activity.js'
-import { searchLocation, listGeocoders, filterGeocoders } from '../utils/utils.location.js'
+import { filterGeocoders } from '../utils/utils.location.js'
 
 export function useLocation () {
   const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
@@ -17,8 +17,6 @@ export function useLocation () {
   // Functions
   // Input geocoders if given should be like { source: xxx, selected: true }
   async function setGeocoders (geocoders) {
-  /*  const project = getActivityProject()
-    const planet = (project ? project.getPlanetApi().getConfig() : api.getConfig())*/
     if (_.isNull(geocoders)) {
       // clear the geocoders
       availableGeocoders.value = []
@@ -33,9 +31,14 @@ export function useLocation () {
         })
         selectedGeocoders.value = allGeocoders
       } else {
-        availableGeocoders.value = geocoders
-          .filter(geocoder => allGeocoders.includes(geocoder.source))
-          .map(geocoder => ({ value: geocoder.source, label: i18n.tie(`Geocoders.${geocoder.source}`) }))
+        availableGeocoders.value = _.reduce(geocoders, (filteredGeocoders, geocoder) => {
+          const source = _.replace(geocoder.source, /^services:.*\//g, `services:${Context.getId()}/`)
+          const label = _.replace(geocoder.source, /^services:.*\//g, `services:*/`)
+          if (allGeocoders.includes(source)) {
+            filteredGeocoders.push({ value: source, label: i18n.tie(`Geocoders.${label}`) })
+          }
+          return filteredGeocoders
+        }, [])
         selectedGeocoders.value = _.map(_.filter(geocoders, geocoder => geocoder.selected), 'source')
       }
     }
@@ -55,9 +58,6 @@ export function useLocation () {
     return Store.get('geolocation.location')
   }
   async function search (pattern, limit = 25) {
-    /*const project = getActivityProject()
-    const planet = api.getConfig() // (project ? project.getPlanetApi().getConfig() : api.getConfig())
-    */
     return Geocoder.queryForward(pattern, {
       geocoders: selectedGeocoders.value,
       viewbox: selectedViewbox.value,
