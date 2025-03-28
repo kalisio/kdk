@@ -18,7 +18,7 @@ export const Geocoder = {
   getApiConfig () {
     const planet = Store.get('geocoder.planet')
     if (planet) return Planets.get(planet).getConfig()
-    return api.getConfig() 
+    return api.getConfig()
   },
   getApiPath () {
     return Store.get('geocoder.path')
@@ -26,6 +26,14 @@ export const Geocoder = {
   async query (path, query = '') {
     // retrieve required data
     const apiConfig = this.getApiConfig()
+    if (!_.has(apiConfig, 'gateway')) {
+      logger.error('[KDK] Invalid Geocoder configuration: missing \'gateway\' property')
+      return
+    }
+    if (!_.has(apiConfig, 'gatewayJwt')) {
+      logger.error('[KDK] Invalid Geocoder configuration: missing \'gatewayJwt\' property')
+      return
+    }
     const endpoint = `${apiConfig.gateway}/${this.getApiPath()}`
     const jwt = await api.get('storage').getItem(apiConfig.gatewayJwt)
     // setup the query url
@@ -92,5 +100,5 @@ export const Geocoder = {
     }
     return locations
   }
-  
+
 }
