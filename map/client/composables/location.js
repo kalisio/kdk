@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
 import { ref } from 'vue'
 import { Store, Context, i18n } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
@@ -26,7 +25,6 @@ export function useLocation () {
       // check the capabilities to list the geocoders
       let allGeocoders = await Geocoder.getForwardCapabilities()
       allGeocoders = filterGeocoders(allGeocoders, getActivityProject())
-      logger.debug('[KDK] Filtered geocoders:', allGeocoders)
       if (_.isEmpty(geocoders)) {
         availableGeocoders.value = _.map(allGeocoders, geocoder => {
           return { value: geocoder, label: i18n.tie(`Geocoders.${geocoder}`) }
@@ -36,14 +34,12 @@ export function useLocation () {
         availableGeocoders.value = _.reduce(geocoders, (reducedGeocoders, geocoder) => {
           const source = _.replace(geocoder.source, /^services:.*\//g, `services:${Context.getId()}/`)
           const label = _.replace(geocoder.source, /^services:.*\//g, `services:*/`)
-          logger.debug('[KDK] Is geocoder available', source, label)
           if (allGeocoders.includes(source)) {
             reducedGeocoders.push({ value: source, label: i18n.tie(`Geocoders.${label}`), selected: geocoder.selected })
           }
           return reducedGeocoders
         }, [])
         selectedGeocoders.value = _.reduce(availableGeocoders.value, (reducedGeocoders, geocoder) => {
-          console.log(geocoder)
           if (geocoder.selected) reducedGeocoders.push(geocoder.value)
           return reducedGeocoders
         }, [])
