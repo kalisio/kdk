@@ -29,7 +29,7 @@ module.exports = {
     return Object.assign({ 
       id: 'north-arrow-sticky',
       visible: true, 
-      offset: [100, 2], 
+      offset: [110, 2], 
       position: 'bottom-left',
       component: 'stickies/KNorthArrow' 
     }, options)
