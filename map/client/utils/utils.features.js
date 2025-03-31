@@ -526,20 +526,11 @@ export function getFeatureStyleType (feature) {
     logger.warn('[KDK] feature has undefined geometry')
     return
   }
-
-  let type
-  if (['Point', 'MultiPoint'].includes(geometryType)) type = 'point'
-  else if (['LineString', 'MultiLineString'].includes(geometryType)) type = 'line'
-  else if (['Polygon', 'MultiPolygon'].includes(geometryType)) type = 'polygon'
-  
-  if (_.has(feature, 'properties.entityStyle')) {
-    // Walls and corridors must be treated as polygons in style editor
-    if (_.has(feature, 'properties.entityStyle.wall')) type = 'polygon'
-    else if (_.has(feature, 'properties.entityStyle.corridor')) type = 'polygon'
-  }
-
-  if (!type) logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
-  return type
+  if (['Point', 'MultiPoint'].includes(geometryType)) return 'point'
+  if (['LineString', 'MultiLineString'].includes(geometryType)) return 'line'
+  if (['Polygon', 'MultiPolygon'].includes(geometryType)) return 'polygon'
+  logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
+  return
 }
 
 // Bind listeners to layer service events and store it in the returned object

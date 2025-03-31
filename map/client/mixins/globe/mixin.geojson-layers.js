@@ -339,7 +339,12 @@ export const geojsonLayers = {
         }
 
         // Apply the style according to the feature type to the end to prevent overriding
-        const type = getFeatureStyleType(feature)
+        let type = getFeatureStyleType(feature)
+        if (_.has(feature, 'properties.entityStyle')) {
+          // Walls and corridors must be treated as polygons in style editor
+          if (_.has(feature, 'properties.entityStyle.wall')) type = 'polygon'
+          else if (_.has(feature, 'properties.entityStyle.corridor')) type = 'polygon'
+        }
         const simpleStyle = Object.assign(...Object.values(stylePerType), stylePerType[type])
 
         // Manage our extended simple-style spec
