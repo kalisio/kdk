@@ -48,7 +48,7 @@ const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-clicked'])
 // Data
 let canvas = null
 let chart = null
-let hiddenSeries = []
+let hiddenDatasets = []
 const unit2axis = new Map()
 const hasData = ref(false)
 // Min/Max time (ie for x axis)
@@ -179,6 +179,7 @@ async function makeChartConfig () {
               chart.show(index)
               legendItem.hidden = false
             }
+            hiddenDatasets[legendItem.text] = legendItem.hidden
             emit('legend-clicked', legendItem, legend)
           }
         }
@@ -293,6 +294,7 @@ async function makeDatasets () {
       label,
       data,
       unit,
+      hidden: _.get(hiddenDatasets, label, false),
       targetUnit
     }, _.omit(_.get(timeSerie, 'variable.chartjs', {}), 'yAxis'))
     const xAxisKey = _.get(dataset, 'parsing.xAxisKey', props.xAxisKey)
