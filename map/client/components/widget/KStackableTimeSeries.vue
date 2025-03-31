@@ -22,6 +22,7 @@
           :end-time="endTime"
           @zoom-start="onZoomStart"
           @zoom-end="onZoomEnd"
+          @legend-clicked="onLegendClicked"
         />
         <KDataTable v-else
           :ref="components[index].onTableRef"
@@ -55,6 +56,7 @@
           :end-time="endTime"
           @zoom-start="onZoomStart"
           @zoom-end="onZoomEnd"
+          @legend-clicked="onLegendClicked"
         />
         <KDataTable v-else
           :ref="components[index].onTableRef"
@@ -84,11 +86,6 @@ import KPanel from '../../../../core/client/components/KPanel.vue'
 import KTimeSeriesChart from '../../../../core/client/components/chart/KTimeSeriesChart.vue'
 import KDataTable from '../../../../core/client/components/chart/KDataTable.vue'
 
-const emit = defineEmits(['zoom-start', 'zoom-end'])
-// const timeseries = [
-//   { label: 'group1', series: [] }
-//   { label: 'group2', series: [] }
-// ]
 const props = defineProps({
   timeSeries: { type: Array, default: () => [] },
   xAxisKey: { type: String, default: 'x' },
@@ -101,6 +98,9 @@ const props = defineProps({
   tableFormatters: { type: Object, defaul: () => null },
   exportOptions: { type: Object, default: () => ({}) }
 })
+
+// Emits
+const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-clicked'])
 
 // data
 const components = ref([])
@@ -194,6 +194,9 @@ function onZoomEnd ({ chart, start, end }) {
   startTime.value = moment.utc(start)
   endTime.value = moment.utc(end)
   emit('zoom-end', { chart, start, end, zoomHistory })
+}
+function onLegendClicked (legendItem, legend) {
+  emit('legend-clicked', legendItem, legend)
 }
 function update () {
   _.forEach(components.value, component => {

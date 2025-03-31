@@ -43,11 +43,12 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-click'])
+const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-clicked'])
 
 // Data
 let canvas = null
 let chart = null
+let hiddenSeries = []
 const unit2axis = new Map()
 const hasData = ref(false)
 // Min/Max time (ie for x axis)
@@ -178,7 +179,7 @@ async function makeChartConfig () {
               chart.show(index)
               legendItem.hidden = false
             }
-            emit('legend-click', { legendItem, legend })
+            emit('legend-clicked', legendItem, legend)
           }
         }
       }
@@ -328,7 +329,6 @@ async function makeDatasets () {
     }
     datasets.push(dataset)
   }
-
   return datasets
 }
 function makeAnnotation () {
