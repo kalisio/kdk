@@ -90,7 +90,7 @@ import {
 import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
-import { useQuasar } from 'quasar'
+import { Notify, useQuasar } from 'quasar'
 import { computed, ref } from 'vue'
 import KUploader from '../document/KUploader.vue'
 
@@ -155,6 +155,19 @@ async function sendMessage () {
     attachments: attachments.value
   }
   if (props.baseMessage) _.merge(message, props.baseMessage)
+  // check for invalid file type
+  if (
+    !_.isEmpty(attachments.value) &&
+    (_.some(attachments.value, (file) => !file.type) ||
+      _.some(attachments.value, (file) => !file.name))
+  ) {
+    console.error('Invalid file type')
+    Notify.create({
+      type: 'negative',
+      message: i18n.t('KUploader.INVALID_TYPE')
+    })
+    return
+  }
   // create the message
   const result = await createMessage(message)
   // upload the files

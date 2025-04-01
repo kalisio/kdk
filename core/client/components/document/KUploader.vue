@@ -69,6 +69,19 @@ async function upload (path) {
   for (const file of files.value) {
     const key = _.isEmpty(path) ? file.name : `${path}/${file.name}`
     logger.debug(`[KDK] Uploading file ${file.name} with key ${key}`)
+    // check for invalid file
+    if (!file.name || !file.type) {
+      logger.error(`[KDK] Uploading file ${file.name} failed: File Not Valid`)
+      Notify.create({
+        type: 'negative',
+        message: i18n.t('KUploader.INVALID_TYPE', { file: file.name })
+      })
+      uploading.value = false
+      files.value = []
+      onUpdated([])
+      return false
+    }
+    // if file is valid, begin upload
     Storage.upload({
       file: file.name,
       type: file.type,

@@ -744,6 +744,7 @@
   "KUploader": {
     "ADD_FILES": "Ajouter des fichiers...",
     "EMPTY_FILE": "Le fichier {file} est vide ou corrompu !",
+    "INVALID_TYPE": "Le type du fichier {file} est invalide !",
     "FILE_TOO_LARGE": "Le fichier {file} est trop volumineux. La taille doit être inférieure à {size}Mo",
     "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succès",
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"

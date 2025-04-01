@@ -746,7 +746,8 @@
   },
   "KUploader": {
     "ADD_FILES": "Add files...",
-    "EMPTY_FILE": "File {file] is empty or corrupted !",
+    "EMPTY_FILE": "File {file} is empty or corrupted !",
+    "INVALID_TYPE": "Type of file {file} is invalid !",
     "FILE_TOO_LARGE": "File {file} is too large. The size must be less than {size}Mb",
     "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
