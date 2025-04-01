@@ -57,7 +57,7 @@ export default {
       return this.model
     },
     props () {
-      return _.omit(_.get(this.properties, 'field'), ['component', 'dense'])
+      return _.omit(_.get(this.properties, 'field'), ['component', 'dense', 'label'])
     }
   },
   methods: {
