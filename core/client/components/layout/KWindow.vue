@@ -86,13 +86,18 @@
     >
       <q-resize-observer @resize="onWindowFooterResized" />
       <!-- window grip -->
-      <q-icon
-        v-if="currentWindow.controls.resize && currentWindow.state !== 'maximized'"
-        class="k-window-grip"
-        name="las la-slash"
-        size="10px"
-        v-touch-pan.prevent.mouse="onResized"
-      />
+      <div 
+        :id="`${placement}-window-resize-grip`"
+        class="row items-center"
+      >
+        <q-icon
+          v-if="currentWindow.controls.resize && currentWindow.state !== 'maximized'"
+          class="k-window-grip"
+          name="las la-slash"
+          size="10px"
+          v-touch-pan.prevent.mouse="onResized"
+        />
+      </div>
     </div>
   </div>
 </template>
