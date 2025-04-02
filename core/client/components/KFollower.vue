@@ -39,7 +39,7 @@ const targetElement = ref(null)
 
 // Computed
 const computedProps = computed(() => {
-  return _.omit(props.component, 'component')
+  return _.omit(props.follower, ['component'])
 })
 const computedStyle = computed(() => {
   const hOffset = `${props.offset[0]}px`
