@@ -66,6 +66,7 @@
         ref="uploaderRef"
         :path="`messages`"
         class="col"
+        :maxFileSize="props.maxFileSize"
         @files-updated="onUploaderUpdated"
       />
       <KAction
@@ -103,6 +104,10 @@ const props = defineProps({
   baseMessage: {
     type: Object,
     required: false
+  },
+  maxFileSize: {
+    type: Number,
+    default: 52428800
   }
 })
 
