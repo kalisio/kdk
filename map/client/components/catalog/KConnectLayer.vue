@@ -91,7 +91,7 @@ const propertiesFormSchema = computed(() => {
         }
       },
       description: {
-        type: 'string',
+        type: ['string', 'null'],
         default: layer.value ? layer.value.description || layer.value.display : '',
         field: {
           component: 'form/KTextField',

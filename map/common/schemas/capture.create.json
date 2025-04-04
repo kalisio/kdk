@@ -30,7 +30,7 @@
       }
     },
     "header": {
-      "type": "string",
+      "type": ["string", "null"],
       "maxLength": 200,
       "toolbar": {
         "xs": [
@@ -60,7 +60,7 @@
       }
     },
     "footer": {
-      "type": "string", 
+      "type": ["string", "null"],
       "toolbar": {
         "xs": [
           ["bold", "italic", "underline", "strike", "align"],

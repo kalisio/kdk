@@ -15,7 +15,7 @@
       }
     },
     "description": {
-      "type": "string", 
+      "type": ["string", "null"],
       "maxLength": 256,
       "field": {
         "component": "form/KTextField",
@@ -23,7 +23,7 @@
       }
     },
     "featureId": {
-      "type": "string", 
+      "type": ["string", "null"],
       "maxLength": 256,
       "field": {
         "component": "form/KTextField",
@@ -31,7 +31,7 @@
       }
     },
     "featureLabel": {
-      "type": "string", 
+      "type": ["string", "null"],
       "maxLength": 256,
       "field": {
         "component": "form/KTextField",

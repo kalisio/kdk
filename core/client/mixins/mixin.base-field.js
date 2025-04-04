@@ -87,7 +87,7 @@ export const baseField = {
       else this.fill(value)
     },
     emptyModel () {
-      return ''
+      return null
     },
     isEmpty () {
       return _.isEqual(this.model, this.emptyModel())

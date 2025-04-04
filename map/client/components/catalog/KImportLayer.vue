@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Forms section -->
-    <k-form
+    <KForm
       ref="fileForm"
       :schema="fileFormSchema"
       @field-changed="onFileFormFieldChanged"
@@ -80,7 +80,7 @@ const propertiesFormSchema = computed(() => {
         }
       },
       description: {
-        type: 'string',
+        type: ['string', 'null'],
         default: filename.value,
         field: {
           component: 'form/KTextField',
@@ -88,7 +88,7 @@ const propertiesFormSchema = computed(() => {
         }
       },
       featureId: {
-        type: 'string',
+        type: ['string', 'null'],
         default: guessFeatureId(),
         field: {
           component: 'form/KSelectField',

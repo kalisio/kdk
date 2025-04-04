@@ -217,7 +217,7 @@ const schema = {
       }
     },
     description: {
-      type: 'string',
+      type: ['string', 'null'],
       maxLength: 256,
       field: {
         component: 'form/KTextField',
@@ -225,7 +225,7 @@ const schema = {
       }
     },
     featureId: {
-      type: 'string',
+      type: ['string', 'null'],
       maxLength: 256,
       field: {
         component: 'form/KTextField',
@@ -233,7 +233,7 @@ const schema = {
       }
     },
     featureLabel: {
-      type: 'string',
+      type: ['string', 'null'],
       maxLength: 256,
       field: {
         component: 'form/KTextField',

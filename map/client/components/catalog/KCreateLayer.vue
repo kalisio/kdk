@@ -57,7 +57,7 @@ const propertiesFormSchema = computed(() => {
         }
       },
       description: {
-        type: 'string',
+        type: ['string', 'null'],
         field: {
           component: 'form/KTextField',
           label: 'KCreateLayer.DESCRIPTION_FIELD_LABEL'

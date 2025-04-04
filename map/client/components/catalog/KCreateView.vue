@@ -68,7 +68,7 @@ export default {
             }
           },
           description: {
-            type: 'string',
+            type: ['string', 'null'],
             maxLength: 256,
             field: {
               component: 'form/KTextField',
