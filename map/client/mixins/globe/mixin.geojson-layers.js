@@ -327,7 +327,7 @@ export const geojsonLayers = {
         // File import
         if (!options.featureId && !feature._id) feature._id = uid().toString()
         // Cesium expect id to be in a 'id' property
-        feature.id = getFeatureId(feature, options)
+        feature.id = feature._id || getFeatureId(feature, options)
         // We cannot access data outside the properties object of a feature in Cesium
         // As a consequence we copy back any style information inside
         // We need to convert to simple-style spec as cesium manages this only
