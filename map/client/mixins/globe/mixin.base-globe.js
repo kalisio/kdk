@@ -687,6 +687,7 @@ export const baseGlobe = {
     }
     `
             stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({ fragmentShader: fs }))
+            stage.selected = [] // Initialize empty selected set for postprocess.
             this.cesiumPostProcessStages[effect] = stage
           }
         }
