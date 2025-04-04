@@ -34,7 +34,7 @@
   "LEGAL_NOTICE": "Mentions légales",
   "PRIVACY_POLICY": "Politique de confidentialité",
   "layout": {
-    "SETTINGS": "Mes paramètres",
+    "MY_SETTINGS": "Mes paramètres",
     "ABOUT": "A propos",
     "ONLINE_HELP": "Aide en ligne",
     "CONTEXTUAL_HELP": "Aide contextuelle",

@@ -14,11 +14,11 @@ module.exports = {
     return Object.assign({
       id: 'settings-action',
       icon: 'las la-cog',
-      label: 'layout.SETTINGS',
+      label: 'layout.MY_SETTINGS',
       renderer: 'item',
       dialog: {
+        title: 'layout.MY_SETTINGS',
         component: 'app/KSettings',
-        title: 'SETTINGS',
         cancelAction: 'CANCEL',
         okAction: {
           id: 'apply-settings', label: 'APPLY', handler: 'apply'
@@ -33,7 +33,9 @@ module.exports = {
       label: 'layout.ABOUT',
       renderer: 'item',
       dialog: {
-        component: 'app/KAbout', title: 'layout.ABOUT', okAction: 'CLOSE'
+        title: 'layout.ABOUT',
+        component: 'app/KAbout', 
+        okAction: 'CLOSE'
       },
     }, options)
   },
