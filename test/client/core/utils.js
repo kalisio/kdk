@@ -52,11 +52,30 @@ export async function click (page, selector, wait = 500) {
   }
 }
 
+/* Helper function to hover on a given selector
+ */
+export async function hover (page, selector, wait = 500) {
+  try {
+    await page.waitForSelector(selector, { timeout: 2000 })
+    await page.hover(selector)
+    await page.waitForTimeout(wait)
+    debug(`[KDK] Hovered target ${selector}`)
+  } catch (error) {
+    console.error(`[KDK] Hover ${selector} failed.`)
+  }
+}
+
 /* Helper function to check whether an action is visible
  */
 export async function isActionVisible (page, action) {
   const selector = `#${action}`
   return isElementVisible(page, selector)
+}
+
+export async function containsText (page, selector, text) {
+  return await page.$eval(selector, (element, text) => {
+    return element ? element.textContent.includes(text) : false
+  }, text)
 }
 
 /* Helper function to click on an action selector
