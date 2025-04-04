@@ -122,8 +122,6 @@ export const baseMap = {
       // Add a special hidden pane, used to hide individual features
       const hiddenPane = this.map.createPane('kdk-hidden-features')
       hiddenPane.style.display = 'none'
-      // Performance issues on map rotation on low-end devices when rotating through touch events
-      if (_.has(viewerOptions, 'rotateThrottle')) this.map.setBearing = _.throttle(this.map.setBearing, _.get(viewerOptions, 'rotateThrottle'))
       this.onMapReady()
     },
     convertTouches (touches) {
