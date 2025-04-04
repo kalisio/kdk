@@ -167,6 +167,19 @@
         "helper": { "icon": "las la-question-circle", "url": "https://github.com/nerik/formatcoords#formatting" }
       }
     },
+    "navigator": {
+      "type": "string",
+      "group": "group-map",
+      "field": {
+        "component": "form/KSelectField",
+        "label": "schemas.NAVIGATOR_APP_LABEL",
+        "options": [
+          { "label": "Waze", "value": "waze" },
+          { "label": "Google Maps", "value": "google-maps" },
+          { "label": "Apple Plan", "value": "apple-plan" }
+        ]
+      }
+    },
     "defaultLength": {
       "type": "string",
       "group": "group-units",

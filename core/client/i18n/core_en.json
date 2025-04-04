@@ -226,7 +226,8 @@
     "AUTO_NOTATION_FIELD_LABEL": "Select the best-suited number notation",
     "FIXED_NOTATION_FIELD_LABEL": "Fixed precision number notation",
     "EXPONENTIAL_NOTATION_FIELD_LABEL": "Exponential number notation",
-    "PRECISION_FIELD_LABEL": "Default number of decimal or significant digits"
+    "PRECISION_FIELD_LABEL": "Default number of decimal or significant digits",
+    "NAVIGATOR_APP_LABEL": "Default navigation application"
   },
   "tours": {
     "APP_BAR_OVERFLOW_MENU_LABEL": "When not visible, you can find it using the popup menu.",

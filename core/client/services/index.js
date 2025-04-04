@@ -28,6 +28,7 @@ export default function init () {
     timeseriesSpan: 'timeseries.span',
     timeseriesGroupBy: 'timeseries.groupBy',
     location: 'locationFormat',
+    navigator: 'navigator',
     restoreView: 'restore.view',
     restoreLayers: 'restore.layers',
     defaultLength: 'units.default.length',

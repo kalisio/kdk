@@ -226,7 +226,8 @@
     "AUTO_NOTATION_FIELD_LABEL": "Sélectionne la notation numérique la plus adaptée",
     "FIXED_NOTATION_FIELD_LABEL": "Notation numérique à précision fixe",
     "EXPONENTIAL_NOTATION_FIELD_LABEL": "Notation numérique scientifique",
-    "PRECISION_FIELD_LABEL": "Nombre de chiffres décimaux ou significatifs par défaut"
+    "PRECISION_FIELD_LABEL": "Nombre de chiffres décimaux ou significatifs par défaut",
+    "NAVIGATOR_APP_LABEL": "Application de navigation par défaut"
   },
   "tours": {
     "APP_BAR_OVERFLOW_MENU_LABEL": "Lorsqu'il n'est pas visible, vous pourrez le retrouver dans ce menu déroulant.",
