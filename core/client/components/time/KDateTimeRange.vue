@@ -196,7 +196,7 @@ watch(() => props.min, (newValue, oldValue) => {
     if (duration > 0) rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
     else rangeModel.value.min = 0
   }
-  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+  triggerEmit()
 })
 watch(() => props.max, (newValue, oldValue) => {
   if (_.isEmpty(props.min)) return
@@ -209,7 +209,7 @@ watch(() => props.max, (newValue, oldValue) => {
     if (duration > 0) rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
     else rangeModel.value.max = 100
   }
-  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+  triggerEmit()
 })
 
 // Functions
@@ -228,7 +228,7 @@ function onRangeChanged () {
       rangeModel.value.max = 100
     }
   }
-  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+  triggerEmit()
 }
 function onSliderUpdated () {
   const min = moment(props.min)
@@ -243,8 +243,11 @@ function onSliderUpdated () {
   }
 }
 function onSliderChanged () {
-  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+  triggerEmit()
 }
+const triggerEmit = _.debounce(() => {
+  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+}, 100)
 
 // Hooks
 onMounted(() => {

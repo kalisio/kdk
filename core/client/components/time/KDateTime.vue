@@ -138,7 +138,7 @@ const computedDateModel = computed({
     const { YYYY, MM, DD } = toYMD(value)
     if (!dateTime.value) dateTime.value = moment({ year: YYYY, month: MM, date: DD })
     else dateTime.value.set({ year: YYYY, month: MM, date: DD })
-    emit('update:modelValue', dateTime.value.toISOString())
+    triggerEmit()
   }
 })
 const computedTimeModel = computed({
@@ -148,7 +148,7 @@ const computedTimeModel = computed({
   set: function (value) {
     const { HH, mm, ss } = toHMS(value)
     dateTime.value.set({ hour: HH, minute: mm, second: ss })
-    emit('update:modelValue', dateTime.value.toISOString())
+    triggerEmit()
   }
 })
 const computedDatePicker = computed(() => {
@@ -233,6 +233,9 @@ function toHMS (value) {
     ss: value.substring(6, 8)
   }
 }
+const triggerEmit = _.debounce(() => {
+  emit('update:modelValue', dateTime.value.toISOString())
+}, 100)
 
 // Immediate
 if (props.modelValue) dateTime.value = toLocalTimezone(props.modelValue, Time.getFormatTimezone())
