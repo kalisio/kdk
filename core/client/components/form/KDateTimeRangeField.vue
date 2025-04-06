@@ -59,11 +59,6 @@ export default {
     props () {
       return _.omit(_.get(this.properties, 'field'), ['component', 'dense'])
     }
-  },
-  methods: {
-    emptyModel () {
-      return null
-    }
   }
 }
 </script>
