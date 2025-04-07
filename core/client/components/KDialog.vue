@@ -85,6 +85,7 @@ const componentRef = ref()
 const attrs = useAttrs()
 const useModel = _.has(attrs, 'v-model')
 const model = ref(attrs['v-model'])
+const loading = ref(false)
 
 // Computed
 const computedButtons = computed(() => {
@@ -97,15 +98,16 @@ const computedButtons = computed(() => {
         label: props.cancelAction,
         outline: true,
         renderer: 'form-button',
+        disabled: loading.value,
         handler: onDialogCancel
       })
     } else {
       // clone the action to overload the handler
-      const cancelButton = _.clone(props.cancelAction)
+      const cancelButton = _.merge({ disabled: loading.value }, props.cancelAction)
       if (cancelButton.handler) {
         cancelButton.handler = async () => {
           // ! call the original handler to avoid recursive call
-          const result = await callHandler(props.cancelAction.handler)
+          const result = await callHandler(props.cancelAction.handler)          
           // close dialog whatever the result of the handler
           onDialogCancel(result)
         }
@@ -118,16 +120,19 @@ const computedButtons = computed(() => {
       id: 'ok-action',
       label: props.okAction,
       renderer: 'form-button',
+      loading: loading.value,
       handler: onDialogOK
     })
   } else {
     // clone the action to overload the handler
-    const okButton = _.clone(props.okAction)
+    const okButton = _.merge({ loading: loading.value }, props.okAction)
     if (okButton.handler) {
       // overload the handler to call Quasar onDialogOK
       okButton.handler = async () => {
         // ! call the orignal handler to avoid recursive call
+        loading.value = true
         const result = await callHandler(props.okAction.handler)
+        loading.value = false
         // close dialog if and only if the handler returns true
         if (result) onDialogOK(result)
       }
