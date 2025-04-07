@@ -30,7 +30,7 @@ export class Runner {
     const defaultRunDir = path.join('.', 'test', 'run', defaultBrowser, suite)
     // Set the runner options using default and overriden options
     this.options = _.mergeWith({
-      baseUrl: domain,
+      baseUrl: options?.path ? path.join(domain, options.path) : domain,
       browser: {
         product: defaultBrowser,
         headless: process.env.HEADLESS ? (process.env.HEADLESS ? 'new' : false) : false,
