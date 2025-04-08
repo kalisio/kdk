@@ -591,14 +591,22 @@ export const baseMap = {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     center (longitude, latitude, zoomLevel, bearing, options = {}) {
+      let center = new L.LatLng(latitude, longitude)
+      if (options.offset) {
+        // As map rotation is only from the center offset before rotating to make it rotate around the off-centered pivot point
+        this.map.panBy(L.point(-options.offset.x, -options.offset.y), { animate: false })
+      }
       if (typeof this.map.getBearing === 'function') {
         this.setBearing(_.isNil(bearing) ? this.map.getBearing() : bearing)
       }
       const duration = _.get(options, 'duration', 0)
       if (duration) {
-        this.map.flyTo(new L.LatLng(latitude, longitude), _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, options)
+        this.map.flyTo(center, _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, options)
       } else {
-        this.map.setView(new L.LatLng(latitude, longitude), _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, options)
+        this.map.setView(center, _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, { animate: false })
+        if (options.offset) {
+          this.map.panBy(L.point(options.offset.x, options.offset.y), { animate: false })
+        }
       }
     },
     getCenter () {
@@ -610,12 +618,19 @@ export const baseMap = {
         zoomLevel: zoom
       }
     },
-    setBearing(bearing) {
+    setBearing(bearing, options = {}) {
+      if (options.offset) {
+        // As map rotation is only from the center offset before rotating to make it rotate around the off-centered pivot point
+        this.map.panBy(L.point(-options.offset.x, -options.offset.y), { animate: false })
+      }
       if (typeof this.map.setBearing !== 'function') {
         logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
         return
       }
       this.map.setBearing(bearing)
+      if (options.offset) {
+        this.map.panBy(L.point(options.offset.x, options.offset.y), { animate: false })
+      }
     },
     getBearing () {
       if (typeof this.map.getBearing !== 'function') {
