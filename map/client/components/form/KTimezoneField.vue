@@ -12,7 +12,6 @@
         :options="options"
         use-input
         hide-dropdown-icon
-        clearable
         @update:model-value='onChanged'
         @filter="onAutocomplete"
         emit-value

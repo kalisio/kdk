@@ -80,7 +80,7 @@
       "group": "group-timeline",
       "field": {
         "component": "form/KSelectField",
-        "label": "schemas.TIMELINE_STEP",
+        "label": "schemas.TIMELINE_STEP",        
         "options": [
           { "label": "5m", "value": 5  },
           { "label": "10m", "value": 10 },
@@ -93,7 +93,8 @@
           { "label": "6H", "value": 360 },
           { "label": "12H", "value": 720 },
           { "label": "24H", "value": 1440 }
-        ]
+        ],
+        "clearable": false
       }
     },
     "timelineInterval": {
@@ -101,7 +102,7 @@
       "group": "group-timeline",
       "field": {
         "component": "form/KSelectField",
-        "label": "schemas.TIMELINE_INTERVAL",
+        "label": "schemas.TIMELINE_INTERVAL",        
         "options": [
           { "label": "10s", "value": 10  },
           { "label": "30s", "value": 30  },
@@ -110,7 +111,8 @@
           { "label": "10m", "value": 600 },
           { "label": "15m", "value": 900 },
           { "label": "30m", "value": 1800 }
-        ]
+        ],
+        "clearable": false
       }
     },
     "timeseriesSpan": {
@@ -118,7 +120,7 @@
       "group": "group-timeseries",
       "field": {
         "component": "form/KSelectField",
-        "label": "schemas.TIMESERIES_SPAN",
+        "label": "schemas.TIMESERIES_SPAN",      
         "options": [
           { "label": "3H", "value": 180 },
           { "label": "6H", "value": 360 },
@@ -127,7 +129,8 @@
           { "label": "48H", "value": 2880 },
           { "label": "72H", "value": 4320 },
           { "label": "96H", "value": 5760 }
-        ]
+        ],
+        "clearable": false
       }
     },
     "timeseriesGroupBy": {
@@ -139,7 +142,8 @@
         "options": [
           { "label": "schemas.TIMESERIES_GROUP_BY_VARIABLE", "value": "variable" },
           { "label": "schemas.TIMESERIES_GROUP_BY_FEATURE", "value": "feature", "selected": true }
-        ]
+        ],
+        "clearable": false
       }
     },
     "restoreView": {
@@ -177,7 +181,8 @@
           { "label": "Waze", "value": "waze" },
           { "label": "Google Maps", "value": "google-maps" },
           { "label": "Apple Plan", "value": "apple-plan" }
-        ]
+        ],
+        "clearable": false
       }
     },
     "defaultLength": {
@@ -253,7 +258,8 @@
           { "label": "schemas.AUTO_NOTATION_FIELD_LABEL", "value": "auto", "selected": true },
           { "label": "schemas.FIXED_NOTATION_FIELD_LABEL", "value": "fixed" },
           { "label": "schemas.EXPONENTIAL_NOTATION_FIELD_LABEL", "value": "exponential" }
-        ]
+        ],
+        "clearable": false
       }
     },
     "defaultPrecision": {
