@@ -39,6 +39,11 @@ export async function countElements (page, xpath) {
   return 0
 }
 
+export async function countChildren (page, selector) {
+  const count = await page.$eval(selector, element => { return element?.children.length || 0 })
+  return count
+}
+
 /* Helper function to click on a given selector
  */
 export async function click (page, selector, wait = 500) {
