@@ -3,7 +3,11 @@
     v-bind="$props"
     :layer="layer"
     @toggled="onToggled"
-  />
+  >
+    <template v-slot:status>
+      <slot name="status" />
+    </template>
+  </KLayerItem>
   <q-tree v-else
     :nodes="[layer]"
     node-key="label"
@@ -17,7 +21,11 @@
         v-bind="$props"
         :layer="layer"
         @toggled="onToggled"
-      />
+      >
+        <template v-slot:status>
+          <slot name="status" />
+        </template>
+      </KLayerItem>
       <!-- Filter rendering -->
       <div v-else class="row items-center q-pl-md q-pr-sm no-wrap">
         <!-- Filter toggle -->

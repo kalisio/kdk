@@ -9,7 +9,7 @@
     />
     <!-- Layer name -->
     <div
-      class="row ellipsis-2-lines"
+      class="row ellipsis-3-lines"
       :class="{
         'text-primary': layer.isVisible,
         'text-grey-6': layer.isDisabled
@@ -28,9 +28,11 @@
       </q-tooltip>
     </div>
     <q-space />
-    <q-icon name="las la-exclamation-circle" size="sm" color="warning" v-if="layer.isDisabled">
-      <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
-    </q-icon>
+    <slot name="status">
+      <q-icon name="las la-exclamation-circle" size="sm" color="warning" v-if="layer.isDisabled">
+        <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
+      </q-icon>
+    </slot>
     <!-- Layer actions -->
     <KPanel
       :id="`${layer.name}-actions`"
