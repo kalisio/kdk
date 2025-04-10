@@ -483,11 +483,9 @@ export const baseGlobe = {
     getCamera () {
       const position = this.viewer.camera.positionCartographic
       return {
-        position: {
-          longitude: CesiumMath.toDegrees(position.longitude),
-          latitude: CesiumMath.toDegrees(position.latitude),
-          altitude: position.height
-        },
+        longitude: CesiumMath.toDegrees(position.longitude),
+        latitude: CesiumMath.toDegrees(position.latitude),
+        altitude: position.height,
         heading: CesiumMath.toDegrees(this.viewer.camera.heading),
         pitch: CesiumMath.toDegrees(this.viewer.camera.pitch),
         roll: CesiumMath.toDegrees(this.viewer.camera.roll)
