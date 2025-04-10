@@ -45,7 +45,8 @@ export const baseGlobe = {
         fullscreenButton: false,
         animation: false,
         timeline: false,
-        depthTestAgainstTerrain: false
+        depthTestAgainstTerrain: false,
+        cameraMoveEventPercentage: 0.2
       })
       if (token) Ion.defaultAccessToken = token
       // If we don't need ion
@@ -92,6 +93,8 @@ export const baseGlobe = {
       this.registerCesiumHandler(this.getDefaultPickHandler, 'RIGHT_CLICK')
       this.viewer.camera.moveStart.addEventListener(this.onCameraMoveStart)
       this.viewer.camera.moveEnd.addEventListener(this.onCameraMoveEnd)
+      this.viewer.camera.percentageChanged = this.viewerOptions.cameraMoveEventPercentage
+      this.viewer.camera.changed.addEventListener(this.onCameraChanged)
       // Remove default Cesium handlers
       this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK)
       this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
@@ -672,12 +675,28 @@ export const baseGlobe = {
       }
     },
     onCameraMoveStart () {
+      let target = this.getCameraEllipsoidTarget()
+      if (target) {
+        target = { latlng: { lng: target.longitude, lat: target.latitude }, altitude: target.altitude }
+      }
       // Mimic Leaflet events
-      this.$engineEvents.emit('movestart', this.getCameraEllipsoidTarget())
+      this.$engineEvents.emit('movestart', this.viewerOptions, target)
     },
     onCameraMoveEnd () {
+      let target = this.getCameraEllipsoidTarget()
+      if (target) {
+        target = { latlng: { lng: target.longitude, lat: target.latitude }, altitude: target.altitude }
+      }
       // Mimic Leaflet events
-      this.$engineEvents.emit('moveend', this.getCameraEllipsoidTarget())
+      this.$engineEvents.emit('moveend', this.viewerOptions, target)
+    },
+    onCameraChanged () {
+      let target = this.getCameraEllipsoidTarget()
+      if (target) {
+        target = { latlng: { lng: target.longitude, lat: target.latitude }, altitude: target.altitude }
+      }
+      // Mimic Leaflet events
+      this.$engineEvents.emit('move', this.viewerOptions, target)
     },
     getPostProcessStage (effect) {
       return this.cesiumPostProcessStages[effect]
