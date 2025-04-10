@@ -4,6 +4,7 @@ import logger from 'loglevel'
 import moment from 'moment'
 import L from 'leaflet'
 import Emitter from 'tiny-emitter'
+import { point, rhumbDistance, rhumbBearing, rhumbDestination } from '@turf/turf'
 import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
 import 'leaflet-fullscreen'
@@ -31,6 +32,7 @@ import '../../leaflet/BoxSelection.js'
 import { Geolocation } from '../../geolocation.js'
 import { LeafletEvents, TouchEvents, bindLeafletEvents } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
+import * as maths from '../../../../core/client/utils/utils.math.js'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
@@ -590,23 +592,102 @@ export const baseMap = {
     zoomToBBox (bbox) {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
-    center (longitude, latitude, zoomLevel, bearing, options = {}) {
-      let center = new L.LatLng(latitude, longitude)
-      if (options.offset) {
-        // As map rotation is only from the center offset before rotating to make it rotate around the off-centered pivot point
-        this.map.panBy(L.point(-options.offset.x, -options.offset.y), { animate: false })
+    animateCenter (timestamp) {
+      if (this.centerAnimation.id) cancelAnimationFrame(this.centerAnimation.id)
+      const { id, duration, startTime,
+        animate: { center, zoom, bearing },
+        startLongitude, endLatitude, startLatitude, startZoom, startBearing,
+        endLongitude, endZoom, endBearing } = this.centerAnimation
+      const elapsed = timestamp - startTime
+      const percent = elapsed / (1000 * duration)
+      let percentCenter, percentZoom, percentBearing
+      if (percent <= 1) {
+        const currentCenter = this.getCenter()
+        if (center) {
+          const easingCenterFunction = _.get(center, 'easing.function')
+          const easingCenterParameters = _.get(center, 'easing.parameters', [])
+          percentCenter = maths[easingCenterFunction](percent, ...easingCenterParameters)
+        }
+        if (zoom) {
+          const easingZoomFunction = _.get(zoom, 'easing.function')
+          const easingZoomParameters = _.get(zoom, 'easing.parameters', [])
+          percentZoom = maths[easingZoomFunction](percent, ...easingZoomParameters)
+        }
+        if (bearing) {
+          const easingBearingFunction = _.get(bearing, 'easing.function')
+          const easingBearingParameters = _.get(bearing, 'easing.parameters', [])
+          percentBearing = maths[easingBearingFunction](percent, ...easingBearingParameters)
+        }
+        const dx = (center ? percentCenter * _.get(this.centerAnimation, 'offset.x', 0) : 0)
+        const dy = (center ? percentCenter * _.get(this.centerAnimation, 'offset.y', 0) : 0)
+        let dLongitude = currentCenter.longitude, dLatitude = currentCenter.latitude
+        if (center) {
+          if (center.rhumb) {
+            const destination = rhumbDestination(this.centerAnimation.rhumbStart, percentCenter * this.centerAnimation.rhumbDistance, this.centerAnimation.rhumbBearing)
+            dLongitude = _.get(destination, 'geometry.coordinates[0]')
+            dLatitude = _.get(destination, 'geometry.coordinates[1]')
+          } else {
+            dLongitude = startLongitude + percentCenter * (endLongitude - startLongitude)
+            dLatitude = startLatitude + percentCenter * (endLatitude - startLatitude)
+          }
+        }
+        const dZoom = (zoom ? startZoom + percentZoom * (endZoom - startZoom) : null)
+        let dBearing
+        if (!_.isNil(startBearing)) dBearing = (bearing ? startBearing + percentBearing * (endBearing - startBearing) : null)
+        this.center(dLongitude, dLatitude, dZoom, dBearing, { offset: { x: Math.round(dx), y: Math.round(dy) } })
+        this.centerAnimation.id = requestAnimationFrame(this.animateCenter)
+      } else {
+        this.centerAnimation.id = null
       }
-      if (typeof this.map.getBearing === 'function') {
-        this.setBearing(_.isNil(bearing) ? this.map.getBearing() : bearing)
-      }
+    },
+    center  (longitude, latitude, zoomLevel, bearing, options = {}) {
+      const offset = L.point(_.get(options, 'offset.x', 0), _.get(options, 'offset.y', 0))
+      if (_.isNil(zoomLevel)) zoomLevel = this.map.getZoom()
+      if (_.isNil(bearing)) bearing = this.map.getBearing()
+      // Keep bearing positive, required for interpolation to work correctly
+      if (bearing < 0) bearing += 360
+      
       const duration = _.get(options, 'duration', 0)
       if (duration) {
-        this.map.flyTo(center, _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, options)
-      } else {
-        this.map.setView(center, _.isNil(zoomLevel) ? this.map.getZoom() : zoomLevel, { animate: false })
-        if (options.offset) {
-          this.map.panBy(L.point(options.offset.x, options.offset.y), { animate: false })
+        _.defaultsDeep(options, {
+          animate: {
+            center: { easing: { function: 'cubicBezier' }, rhumb: true },
+            zoom: { easing: { function: 'cubicBezier' } },
+            bearing: { easing: { function: 'cubicBezier' } }
+          }
+        })
+        // Leaflet rotate does not manage animation so that we cannot rely on Leaflet built-in animation
+        if (_.has(this.centerAnimation, 'id')) cancelAnimationFrame(_.get(this.centerAnimation, 'id'))
+        const currentCenter = this.getCenter(options)
+        const rhumbStart = point([currentCenter.longitude, currentCenter.latitude])
+        const rhumbEnd = point([longitude, latitude])
+        this.centerAnimation = {
+          id: requestAnimationFrame(this.animateCenter),
+          ...options,
+          startTime: performance.now(),
+          startLongitude: currentCenter.longitude,
+          startLatitude: currentCenter.latitude,
+          startZoom: currentCenter.zoom,
+          endLongitude: longitude,
+          endLatitude: latitude,
+          rhumbStart,
+          rhumbEnd,
+          rhumbBearing: rhumbBearing(rhumbStart, rhumbEnd),
+          rhumbDistance: rhumbDistance(rhumbStart, rhumbEnd),
+          endZoom: zoomLevel
         }
+        if (typeof this.map.getBearing === 'function') {
+          Object.assign(this.centerAnimation, {
+            startBearing: this.getBearing(),
+            endBearing: bearing
+          })
+        }
+      } else {
+        if (typeof this.map.getBearing === 'function') {
+          this.setBearing(bearing, offset)
+        }
+        this.map.setView(new L.LatLng(latitude, longitude), zoomLevel, { animate: false, duration: 0 })
+        this.map.panBy(offset, { animate: false, duration: 0 })
       }
     },
     getCenter () {
@@ -619,18 +700,12 @@ export const baseMap = {
       }
     },
     setBearing(bearing, options = {}) {
-      if (options.offset) {
-        // As map rotation is only from the center offset before rotating to make it rotate around the off-centered pivot point
-        this.map.panBy(L.point(-options.offset.x, -options.offset.y), { animate: false })
-      }
       if (typeof this.map.setBearing !== 'function') {
         logger.warn(`[KDK] Map not configured to handle bearing, ignoring`)
         return
       }
-      this.map.setBearing(bearing)
-      if (options.offset) {
-        this.map.panBy(L.point(options.offset.x, options.offset.y), { animate: false })
-      }
+      const offset = L.point(_.get(options, 'offset.x', 0), _.get(options, 'offset.y', 0))
+      this.map.setBearing(bearing, offset)
     },
     getBearing () {
       if (typeof this.map.getBearing !== 'function') {
