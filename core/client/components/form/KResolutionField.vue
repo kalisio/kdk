@@ -1,53 +1,55 @@
 <template>
-  <div :class="labelClass">
-    <q-select
-      v-model="resolution"
-      :options="getResolutions()"
-      style="min-width: 30%"
-      dense
-      :label="label"
-      :borderless="borderless"
-      :disable="disabled"
-    >
-      <template v-slot:option="scope">
-        <q-item v-bind="scope.itemProps">
-          <q-item-section>
-            <q-item-label v-html="scope.opt.label" />
-          </q-item-section>
-          <q-item-section side>
-            <q-item-label caption>{{ scope.opt.description }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </template>
-    </q-select>
-    <q-input
-      v-model.number="width"
-      type="number"
-      min="256" max="4000"
-      mask="(#)###"
-      dense
-      :borderless="borderless"
-      input-class="text-center"
-      style="max-width: 54px"
-      :readonly="readonly"
-      :disable="disabled"
-      @update:model-value='updateModel()'
-    />
-    <span>x</span>
-    <q-input
-      v-model.number="height"
-      type="number"
-      min="256" max="4000"
-      mask="(#)###"
-      dense
-      :borderless="borderless"
-      input-class="text-center"
-      style="max-width: 54px"
-      :readonly="readonly"
-      :disable="disabled"
-      @update:model-value='updateModel()'
-    />
-  </div>
+  <q-select
+    v-model="resolution"
+    :options="getResolutions()"
+    style="min-width: 30%"
+    :label="label"
+    :borderless="borderless"
+    :disable="disabled"
+    class="full-width"
+  >
+    <template v-slot:option="scope">
+      <q-item v-bind="scope.itemProps">
+        <q-item-section>
+          <q-item-label v-html="scope.opt.label" />
+        </q-item-section>
+        <q-item-section side>
+          <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
+    <template v-slot:after>
+      <div class="row items-baseline q-gutter-x-sm">
+        <q-input
+          v-model.number="width"
+          type="number"
+          min="256" max="4000"
+          mask="(#)###"
+          dense
+          :borderless="borderless"
+          input-class="text-center"
+          style="max-width: 54px"
+          :readonly="readonly"
+          :disable="disabled"
+          @update:model-value='updateModel()'
+        />
+        <span class="text-body1">x</span>
+        <q-input
+          v-model.number="height"
+          type="number"
+          min="256" max="4000"
+          mask="(#)###"
+          dense
+          :borderless="borderless"
+          input-class="text-center"
+          style="max-width: 54px"
+          :readonly="readonly"
+          :disable="disabled"
+          @update:model-value='updateModel()'
+        />
+      </div>
+    </template>
+  </q-select>
 </template>
 
 <script>
@@ -93,9 +95,9 @@ export default {
     }
   },
   computed: {
-    labelClass () {
+    computedClass () {
       const classObject = {}
-      classObject['row items-center no-wrap q-gutter-x-xs q-pb-md items-start'] = true
+      classObject['full-width row items-center no-wrap q-gutter-x-xs q-pb-md'] = true
       if (this.properties.center) classObject['justify-center'] = true
       return classObject
     },
