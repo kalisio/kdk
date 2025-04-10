@@ -20,6 +20,8 @@
         :id="properties.name + '-field'"
         v-model="model"
         :options="options()"
+        :disable="disabled"
+        :color="disabled ? 'grey-7' : 'primary'"
         @update:model-value="onChanged"
         inline>
         <template v-slot:label="opt">
