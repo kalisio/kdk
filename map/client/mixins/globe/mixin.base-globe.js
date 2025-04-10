@@ -477,6 +477,19 @@ export const baseGlobe = {
       const east = CesiumMath.toDegrees(bounds.east)
       return [[south, west], [north, east]]
     },
+    getCamera () {
+      const position = this.viewer.camera.positionCartographic
+      return {
+        position: {
+          longitude: CesiumMath.toDegrees(position.longitude),
+          latitude: CesiumMath.toDegrees(position.latitude),
+          altitude: position.height
+        },
+        heading: CesiumMath.toDegrees(this.viewer.camera.heading),
+        pitch: CesiumMath.toDegrees(this.viewer.camera.pitch),
+        roll: CesiumMath.toDegrees(this.viewer.camera.roll)
+      }
+    },
     onEntityTracked (time) {
       if (this.viewerOptions.debug) {
         if (this.trackedFrameDebug) {
