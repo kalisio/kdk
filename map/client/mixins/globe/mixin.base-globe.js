@@ -42,6 +42,7 @@ export const baseGlobe = {
         homeButton: false,
         geocoder: false,
         navigationHelpButton: false,
+        baseLayer: false,
         baseLayerPicker: false,
         vrButton: false,
         fullscreenButton: false,
