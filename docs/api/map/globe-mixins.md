@@ -24,7 +24,8 @@ Make it possible to manage globe layers and extend supported layer types:
 * **registerCesiumConstructor(constructor)** registers a Cesium constructor function for a given type of layer
 * **center(longitude, latitude, altitude, heading, pitch, roll, options)** centers the globe view to visualize a given point at a given altitude with and orientation (default is pointing ground vertically [0, 0, -90]),
  some options like an animation `duration` can also be added
-* **getCenter()** get the current globe view center as longitude, latitude and altitude
+* **getCenter()** get the current globe view center as `longitude`, `latitude` and `altitude` (note that the projected position on the ground is the one of the camera, it only matches the 2D version with orientation [0, 0, -90])
+* **getCamera()** get the current globe view camera settings as `longitude`, `latitude` and `altitude` for position and `heading`, `pitch` and `roll` for orientation
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
 
 This mixin also adds the following internal data properties:

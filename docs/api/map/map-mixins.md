@@ -27,12 +27,38 @@ Make it possible to manage map layers and extend supported layer types:
 * **registerLeafletConstructor(constructor)** registers a Leaflet constructor function for a given type of layer
 * **center(longitude, latitude, zoomLevel, bearing, options)** centers the map view to visualize a given point at a given zoom level, and possibly bearing when the [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) plugin is active, some options like the following can also be added:
   * an animation `duration` in seconds to perform the changes,
-  * an `offset` with `x` and `y` coordinates in pixels for off-centered map rotation
-* **getCenter()** get the current map view center as longitude, latitude and zoom level
+  * an `offset` with `x` and `y` coordinates in pixels for off-centered map
+* **getCenter()** get the current map view center as `longitude`, `latitude` and `altitude`
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
 * **setBearing(bearing, options)** change the current bearing of the map when the [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) plugin is active, options like the following can also be added:
   * an `offset` with `x` and `y` coordinates in pixels for off-centered map rotation
 * **setCurrentTime(datetime)** sets the current time to be used for time-based visualisation (e.g. weather forecast data or dynamic features)
+
+You can perform smooth animation of map moves, including screen-space offset, with the `center()` method like this:
+```js
+center(longitude, latitude, zoomLevel, bearing, {
+  // Animate during 1 second
+  duration: 1,
+  animate: {
+    // Animate along rhumb line with cubic bezier easing function
+    center: { easing: { function: 'cubicBezier' }, rhumb: true },
+    // No animation on zoom
+    zoom: false,
+    bearing: { easing: { function: 'cubicBezier' } }
+  },
+  // Move the center 300 pixels down on the screen
+  offset: { x: 0, y: -300 }
+})
+```
+
+Available [easing functions](https://developer.mozilla.org/fr/docs/Web/CSS/easing-function) are `linear`, `easeOut` (ease power as parameter), `cubicBezier` (coordinates of points defining the curve - x1, y1, x2, y2 - as parameters): 
+```js
+animate: {
+  center: { easing: { function: 'linear' } },
+  zoom: { easing: { function: 'easeOut', parameters: [0.5] } },
+  bearing: { easing: { function: 'cubicBezier', parameters: [0.42, 0, 0.58, 1] } }
+}
+```
 
 This mixin also adds the following internal data properties:
 * **layers** available layers as [catalog layer descriptors](./services.md#catalog-service)
@@ -47,6 +73,7 @@ This mixin automatically includes some Leaflet plugins like:
 * [leaflet-geoman](https://github.com/geoman-io/leaflet-geoman) to edit layers,
 * [leaflet.geodesic](https://github.com/henrythasler/Leaflet.Geodesic) to draw geodesic lines and circles,
 * [leaflet-timedimension](https://github.com/socib/Leaflet.TimeDimension) to manage time dimension on some layers (typically WMS),
+* [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) to add rotation capabilities,
 * [Leaflet.VectorGrid](https://github.com/Leaflet/Leaflet.VectorGrid) to display [vector tiles](https://github.com/mapbox/vector-tile-spec).
 
 It also enhance the Leaflet Grid Layer class with an additional `edgeBufferTiles` property to control tiles pre-loading outside the current viewport like does this [plugin](https://github.com/TolonUK/Leaflet.EdgeBuffer).
