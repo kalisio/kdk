@@ -90,10 +90,6 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
-  },
-  disable: {
-    type: Boolean,
-    default: false
   }
 })
 
