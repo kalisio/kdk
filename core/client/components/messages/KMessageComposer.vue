@@ -1,7 +1,10 @@
 <template>
   <div class="column">
+    <!--
+      Header
+     -->
     <div class="row justify-between items-center no-wrap">
-      <div :class="{ 'q-pa-xs': $q.screen.xs, 'q-pa-sm': $q.screen.gt.xs }">
+      <div :class="{ 'q-pa-xs': $q.screen.xs, 'q-pa-sm': $q.screen.gt.xs, 'col-auto': true }">
         <q-fab
           :icon="getKindIcon(currentType)"
           :color="getKindColor(currentType)"
@@ -34,6 +37,7 @@
           "
         />
       </div>
+      <slot name="header"></slot>
     </div>
     <!--
       Editor
@@ -184,4 +188,8 @@ async function sendMessage () {
   currentType.value = _.head(_.keys(MessageTypes))
   body.value = ''
 }
+
+defineExpose({
+  currentType
+})
 </script>
