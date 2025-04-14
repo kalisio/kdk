@@ -1,7 +1,6 @@
 <template>
-  <div>
+  <div v-if="hasContent">
     <q-btn-dropdown
-      v-if="hasContent"
       :id="id"
       :icon="icon"
       :color="color"
@@ -17,7 +16,10 @@
       flat
       rounded
       no-caps
-      @click="onClicked">
+      @click="onClicked"
+      @before-show="enableTooltip = false"
+      @hide="enableTooltip = true"
+    >
         <template v-slot:label>
           <div class="row items-center no-wrap">
             <q-badge v-if="badge" v-bind="badge" />
@@ -37,7 +39,7 @@
           class="no-wrap"
         />
     </q-btn-dropdown>
-    <q-tooltip v-if="hasContent && tooltip">
+    <q-tooltip v-if="enableTooltip && tooltip">
       {{ tooltip }}
     </q-tooltip>
   </div>
@@ -45,7 +47,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { i18n } from '../../i18n.js'
 import KPanel from '../KPanel.vue'
 
@@ -135,6 +137,9 @@ const props = defineProps({
     }
   }
 })
+
+// Data
+const enableTooltip = ref(true)
 
 // Computed
 const hasContent = computed(() => {
