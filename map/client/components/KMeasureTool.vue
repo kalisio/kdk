@@ -518,7 +518,7 @@ export default {
 
       state.center = null
 
-      this.kActivity.$engineEvents.off('click', this.onMeasureCicleMapClick)
+      this.kActivity.$engineEvents.off('click', this.onMeasureCircleMapClick)
       this.kActivity.map.off('mousemove', this.onMeasureCircleMouseMove)
       this.kActivity.map._container.style.cursor = ''
     },
@@ -550,6 +550,10 @@ export default {
     // add a method on the activity to serialize measure tool layers as GeoJSON
     this.kActivity.getMeasureToolLayers = () => { return featureCollection(this.geojsons) }
 
+    // Disable selection on click while measuring
+    this.selectionEnabled = (typeof this.kActivity.isSelectionEnabled === 'function') ? this.kActivity.isSelectionEnabled() : false
+    if (typeof this.kActivity.setSelectionEnabled === 'function') this.kActivity.setSelectionEnabled(false)
+
     this.vertexIcon = L.divIcon({ className: 'measure-tool-vertex-icon' })
 
     this.beginMode('measure-distance')
@@ -560,6 +564,8 @@ export default {
 
     // remove method to fetch layers
     delete this.kActivity.getMeasureToolLayers
+    // Restore selection state
+    if (typeof this.kActivity.setSelectionEnabled === 'function') this.kActivity.setSelectionEnabled(this.selectionState)
   }
 }
 </script>
