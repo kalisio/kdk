@@ -215,9 +215,15 @@ export async function createDefaultCatalogLayers (options = {}) {
           .pipe(zlib.createGunzip())
           .pipe(fs.createWriteStream(extractedFileName))
           .on('close', async () => {
-            const geojson = fs.readJsonSync(extractedFileName)
+            let geojson = fs.readJsonSync(extractedFileName)
+            // We allow GeoJson collection or features array
+            geojson = Array.isArray(geojson) ? geojson : geojson.features
+            // We also allow for data exported from MongoDB, in this case remove any Mongo specific ID
+            geojson.forEach(feature => {
+              delete feature._id
+            })
             try {
-              await createFeaturesForLayer.call(app, geojson.features, defaultLayer, options)
+              await createFeaturesForLayer.call(app, geojson, defaultLayer, options)
             } catch (error) {
               console.error(error)
             }
