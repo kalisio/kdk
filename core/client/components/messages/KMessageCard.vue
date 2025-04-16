@@ -11,13 +11,15 @@
       <div class="full-width row">
         <div :class="{ 'col-12': dense, 'col-8': !dense }">
           <div class="full-width row justify-between">
-            <!-- name -->
-            <div
-              class="text-subtitle1 text-weight-medium ellipsis-2-lines"
-              v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
-            >
-              {{ item.name }}
-            </div>
+            <slot name="card-heading">
+              <!-- name -->
+              <div
+                class="text-subtitle1 text-weight-medium ellipsis-2-lines"
+                v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
+              >
+                {{ item.name }}
+              </div>
+            </slot>
           </div>
         </div>
       </div>
