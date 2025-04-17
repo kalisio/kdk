@@ -221,7 +221,7 @@ const canEditPolygon = computed(() => props.allowedTypes.includes('polygon'))
 
 // Watch
 watch(() => props.style, (value) => {
-  if (!value) model.value = engine.value.style
+  if (!value) model.value = _.clone(engine.value.style)
   else model.value = value
 }, { immediate: true })
 
@@ -252,7 +252,8 @@ async function apply () {
   if (mode === 'creation') {
     data = _.merge(data, { type: 'style', scope: 'user' })
     logger.debug('[KDK] Create style with values:', data)
-    await service.create(data)
+    const { _id } = await service.create(data)
+    _.set(data, '_id', _id)
   } else {
     logger.debug(`[KDK] Patch style ${model.value._id} with values:`, data)
     await service.patch(model.value._id, data)
