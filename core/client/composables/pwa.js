@@ -19,8 +19,8 @@ export function usePwa () {
     // check for basic conditions before prompting
     const isNotPWA = config.buildMode !== 'pwa'
     const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches
-    const isIFrame = _.get(Platform, 'within.iframe', false)
-    if (isNotPWA || isPWAInstalled || isIFrame) return
+    const withinIframe = _.get(Platform, 'within.iframe', false)
+    if (isNotPWA || isPWAInstalled || withinIframe) return
     // install prompt can be avoided, eg in tests
     if (!LocalStorage.get(installKey, true)) return
     // take care of install prompt
