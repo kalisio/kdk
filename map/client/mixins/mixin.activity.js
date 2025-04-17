@@ -169,7 +169,8 @@ export const activity = {
     },
     async onTriggerLayerFilter (layer, filter) {
       // Can only apply to realtime layers as we need to force a data refresh
-      if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name)
+      // removeMissing seems needed for 3d
+      if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name, null, { removeMissing: true})
     },
     onZoomIn () {
       const center = this.getCenter()

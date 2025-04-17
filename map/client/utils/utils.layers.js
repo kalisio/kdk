@@ -9,6 +9,7 @@ import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
 import { generatePropertiesSchema } from '../utils.map.js'
+import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates } from './utils.style.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
@@ -341,10 +342,44 @@ export function isMeasureLayer (layer) {
   return layer.variables && layer.service
 }
 
+async function parseFiltersFromLayer (layer) {
+  const filters = _.get(layer, 'filters', [])
+  if (!filters.length) return []
+  const styleService = api.getService('styles')
+  const styles = []
+  for (const filter of filters) {
+    if (!filter.style) continue
+    styles.push({
+      conditions: filterQueryToConditions(filter.active),
+      values: await styleService.get(filter.style)
+    })
+  }
+  return styles
+}
+
+async function generateStyleFromFilters (layer, defaultStyle) {
+  const filters = await parseFiltersFromLayer(layer)
+  if (!filters.length) return
+
+  const templates = generateStyleTemplates(defaultStyle, filters)
+  const result = Object.assign(
+    {},
+    _.mapKeys(templates, (value, key) => `leaflet.${key}`),
+    _.mapKeys(templates, (value, key) => `cesium.${key}`)
+  )
+  return result
+}
+
 export async function editLayerStyle (layer, style) {
   style = _.pick(style, ['point', 'line', 'polygon'])
   if (layer._id) {
-    await api.getService('catalog').patch(layer._id, { 'cesium.style': style, 'leaflet.style': style })
+    // Need to regenerate templates to update default style in them
+    const result = await generateStyleFromFilters(layer, style)
+    if (result) {
+      await api.getService('catalog').patch(layer._id, result)
+    } else {
+      await api.getService('catalog').patch(layer._id, { 'cesium.style': style, 'leaflet.style': style })
+    }
   } else {
     _.set(layer, 'cesium.style', style)
     _.set(layer, 'leaflet.style', style)
@@ -352,7 +387,16 @@ export async function editLayerStyle (layer, style) {
   return layer
 }
 
-export function generateLayerDefinition(layerSpec, geoJson){
+export async function updateLayerWithFiltersStyle (layer) {
+  if (!layer._id) return
+  const defaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+  const style = await generateStyleFromFilters(layer, defaultStyle)
+  if (!style) return
+
+  await api.getService('catalog').patch(layer._id, style)
+}
+
+export function generateLayerDefinition (layerSpec, geoJson) {
   // Check wether the geoJson content is a valid geoJson
   if (geoJson.type !== 'FeatureCollection' && geoJson.type !== 'Feature') {
     logger.error('invalid geoJson content')

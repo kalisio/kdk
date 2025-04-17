@@ -108,7 +108,7 @@ import KPanel from '../../../../core/client/components/KPanel.vue'
 import KStyleEditorSection from './KStyleEditorSection.vue'
 import KStylePropertiesGroup from './KStylePropertiesGroup.vue'
 import KStyleProperty from './KStyleProperty.vue'
-import { DefaultStyle } from '../../utils/index.js'
+import { DefaultStyle, updateLayerWithFiltersStyle } from '../../utils/index.js'
 
 // Props
 const props = defineProps({
@@ -142,7 +142,7 @@ const props = defineProps({
 const emit = defineEmits(['applied', 'canceled'])
 
 // Data
-const { CurrentActivityContext } = useCurrentActivity()
+const { CurrentActivityContext, CurrentActivity } = useCurrentActivity()
 const formRef = ref(null)
 const model = ref(null)
 const mode = props.style ? 'edition' : 'creation'
@@ -258,6 +258,12 @@ async function apply () {
     logger.debug(`[KDK] Patch style ${model.value._id} with values:`, data)
     await service.patch(model.value._id, data)
   }
+  // Update layers with filters that use this style
+  const layers = _.filter(CurrentActivity.value.getLayers(), layer =>
+    _.get(layer, 'scope') === 'user' &&
+    _.some(_.get(layer, 'filters', []), filter => _.get(filter, 'style') === data._id))
+  _.forEach(layers, layer => { updateLayerWithFiltersStyle(layer) })
+
   emit('applied', data)
   return true
 }

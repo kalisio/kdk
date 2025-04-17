@@ -307,7 +307,8 @@ export const geojsonLayers = {
           await this.loadGeoJson(dataSource, this.getFeatures(options), options, updateOptions)
         } else if (options.service) { // Check for feature service layers only, in this case update in place
           // If no probe reference, nothing to be initialized
-          await this.loadGeoJson(dataSource, this.getFeatures(options), options, updateOptions)
+          // Get original layer options to ensure we have the latest ones while getting features (e.g. filters toggle)
+          await this.loadGeoJson(dataSource, this.getFeatures(Object.assign({}, options, this.getLayerByName(options.name))), options, updateOptions)
         } else if (sourceTemplate) {
           const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() })
           if (!dataSource.lastFetchedSource || (dataSource.lastFetchedSource !== sourceToFetch)) {
@@ -479,10 +480,10 @@ export const geojsonLayers = {
       // these layers will be destroyed when hidden. We need to be able to restore
       // them when they get shown again
       const baseLayer = this.getLayerByName(name)
-      if (isInMemoryLayer(baseLayer)) {
+      if (isInMemoryLayer(baseLayer) && geoJson) {
         this.geojsonCache[name] = geoJson
       }
-      this.onLayerUpdated(baseLayer, layer, { features: geoJson.features || [geoJson] })
+      this.onLayerUpdated(baseLayer, layer, { features: geoJson ? geoJson.features || [geoJson] : [] })
     },
     onLayerUpdated (layer, cesiumLayer, data) {
       this.$emit('layer-updated', layer, cesiumLayer, data)
