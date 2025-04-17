@@ -105,8 +105,16 @@ export const geojsonLayers = {
         }
         _.forEach(_.get(geoJson, 'features', []), feature => {
           // Create style for each feature to store specific feature style
-          if (!_.get(feature, 'style')) {
-            _.set(feature, 'style', {})
+          if (!_.has(feature, 'style')) {
+            // No style means first load
+            // Get feature style from properties (simple style)
+            const type = getFeatureStyleType(feature)
+            const style = type === 'point'
+              ? convertSimpleStyleToPointStyle(feature.properties)
+              : type === 'line'
+                ? convertSimpleStyleToLineStyle(feature.properties)
+                : convertSimpleStyleToPolygonStyle(feature.properties)
+            _.set(feature, 'style', style)
           }
 
           // Use feature style to create entityStyle and additionalFeatures if needed

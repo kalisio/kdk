@@ -177,6 +177,8 @@ function processStyle (style, feature, options, mappings) {
     })
   }
 
+  // FIXME: type may be incorrect for walls or corridors
+  // since their geometries are lines, but they are rendered as polygons
   const type = getFeatureStyleType(feature)
 
   // visibility attribute can be used to hide individual features
@@ -193,27 +195,27 @@ function processStyle (style, feature, options, mappings) {
 export function getPointSimpleStyle (feature, options, engine, engineStylePath = 'style.point') {
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.cesium || options, 'layerPointStyle') : {}
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
-  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
-  processStyle({ style: { point: style } }, feature, options, PointStyleTemplateMappings)
+  const templateStyle = processStyle({ style: { point: _.merge({}, engineStyle, layerStyle) } }, feature, options, PointStyleTemplateMappings)
+  const featureStyle = _.get(feature, 'style', {})
+  const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.point : {}, featureStyle)
   return convertSimpleStyleColors(convertPointStyleToSimpleStyle(style))
 }
 
 export function getLineSimpleStyle (feature, options, engine, engineStylePath = 'style.line') {
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.cesium || options, 'layerLineStyle') : {}
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
-  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
-  processStyle({ style: { line: style } }, feature, options, LineStyleTemplateMappings)
+  const templateStyle = processStyle({ style: { line: _.merge({}, engineStyle, layerStyle) } }, feature, options, LineStyleTemplateMappings)
+  const featureStyle = _.get(feature, 'style', {})
+  const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.line : {}, featureStyle)
   return convertSimpleStyleColors(convertLineStyleToSimpleStyle(style))
 }
 
 export function getPolygonSimpleStyle (feature, options, engine, engineStylePath = 'style.polygon') {
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.cesium || options, 'layerPolygonStyle') : {}
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
-  const style = _.merge({}, engineStyle, layerStyle, featureStyle)
-  processStyle({ style: { polygon: style } }, feature, options, PolygonStyleTemplateMappings)
+  const templateStyle = processStyle({ style: { polygon: _.merge({}, engineStyle, layerStyle) } }, feature, options, PolygonStyleTemplateMappings)
+  const featureStyle = _.get(feature, 'style', {})
+  const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.polygon : {}, featureStyle)
   return convertSimpleStyleColors(convertPolygonStyleToSimpleStyle(style))
 }
 
