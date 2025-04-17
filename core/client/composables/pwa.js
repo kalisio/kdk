@@ -5,6 +5,7 @@ import { useQuasar } from 'quasar'
 import { Events } from '../events.js'
 import { i18n } from '../i18n.js'
 import { LocalStorage } from '../local-storage.js'
+import { Platform } from '../platform.js'
 import { InstallPwaPrompt, installFFDesktopPrompt, installSafariPrompt, installDefaultPrompt } from '../utils/utils.pwa.js'
 
 export function usePwa () {
@@ -15,18 +16,22 @@ export function usePwa () {
 
   // Functions
   function install () {
-    if (config.buildMode !== 'pwa' || window.matchMedia('(display-mode: standalone)').matches) return
-    // Install prompt can be avoided, eg in tests
+    // check for basic conditions before prompting
+    const isNotPWA = config.buildMode !== 'pwa'
+    const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches
+    const isIFrame = _.get(Platform, 'within.iframe', false)
+    if (isNotPWA || isPWAInstalled || isIFrame) return
+    // install prompt can be avoided, eg in tests
     if (!LocalStorage.get(installKey, true)) return
-    // Take care of install prompt
+    // take care of install prompt
     if (InstallPwaPrompt) installDefaultPrompt()
-    // Take care of iOS
+    // take care of iOS
     if ($q.platform.is.ios) installSafariPrompt()
-    // Take care of Firefox desktop
+    // take care of Firefox desktop
     if ($q.platform.is.firefox && $q.platform.is.desktop) installFFDesktopPrompt()
   }
   function update (registration) {
-    // Refresh the page once the update has been applied
+    // refresh the page once the update has been applied
     registration.waiting.addEventListener('statechange', (event) => {
       if (event.target.state === 'activated') {
         window.location.reload()
