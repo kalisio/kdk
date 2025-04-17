@@ -3,7 +3,8 @@ import common from 'feathers-hooks-common'
 import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import { filterLayers, updateLayerReferences, updateProjects,
-         getDefaultCategories, getDefaultSublegends } from '../../hooks/index.js'
+         getDefaultCategories, getDefaultSublegends, 
+         convertFilterQueriesToString, convertFilterQueriesToObject } from '../../hooks/index.js'
 
 const { setNow, discard, when } = common
 
@@ -16,7 +17,8 @@ export default {
     get: [],
     create: [
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'data.type') } }),
-      coreHooks.convertToString(['baseQuery', 'schema.content', 'filters']),
+      coreHooks.convertToString(['baseQuery', 'schema.content']),
+      convertFilterQueriesToString,
       setNow('createdAt', 'updatedAt'),
       // This allow to use keys for base queries like 'properties.xxx': 'yyy'
       (hook) => { _.set(hook, 'params.mongodb.checkKeys', false) }
@@ -24,14 +26,16 @@ export default {
     update: [
       coreHooks.populatePreviousObject,
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
-      coreHooks.convertToString(['baseQuery', 'schema.content', 'filters']),
+      coreHooks.convertToString(['baseQuery', 'schema.content']),
+      convertFilterQueriesToString,
       discard('createdAt', 'updatedAt'),
       setNow('updatedAt')
     ],
     patch: [
       coreHooks.populatePreviousObject,
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'params.previousItem.type') } }),
-      coreHooks.convertToString(['baseQuery', 'schema.content', 'filters']),
+      coreHooks.convertToString(['baseQuery', 'schema.content']),
+      convertFilterQueriesToString,
       discard('createdAt', 'updatedAt'),
       setNow('updatedAt')
     ],
@@ -42,7 +46,8 @@ export default {
 
   after: {
     all: [
-      coreHooks.convertToJson(['baseQuery', 'schema.content', 'filters']),
+      coreHooks.convertToJson(['baseQuery', 'schema.content']),
+      convertFilterQueriesToObject,
       coreHooks.convertObjectIDs(['baseQuery.layer'])
     ],
     find: [

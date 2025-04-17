@@ -2,6 +2,7 @@ import _ from 'lodash'
 import siftModule from 'sift'
 import common from 'feathers-hooks-common'
 import makeDebug from 'debug'
+import { toString, toJson } from '../../../core/api/hooks/index.js'
 
 const { getItems, replaceItems } = common
 const sift = siftModule.default
@@ -122,5 +123,35 @@ export async function updateProjects (hook) {
 
     debug(`Updated ${projects.length} projects after removing item ${removedItem.name} `)
   }
+  return hook
+}
+
+export function convertFilterQueriesToString (hook) {
+  let items = getItems(hook)
+  const isArray = Array.isArray(items)
+  items = (isArray ? items : [items])
+  items.forEach(item => {
+    const filters = _.get(item, 'filters', [])
+    _.forEach(filters, filter => {
+      toString(filter, ['active', 'inactive'])
+    })
+  })
+  replaceItems(hook, isArray ? items : items[0])
+
+  return hook
+}
+
+export function convertFilterQueriesToObject (hook) {
+  let items = getItems(hook)
+  const isArray = Array.isArray(items)
+  items = (isArray ? items : [items])
+  items.forEach(item => {
+    const filters = _.get(item, 'filters', [])
+    _.forEach(filters, filter => {
+      toJson(filter, ['active', 'inactive'])
+    })
+  })
+  replaceItems(hook, isArray ? items : items[0])
+
   return hook
 }
