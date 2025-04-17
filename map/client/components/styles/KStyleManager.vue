@@ -135,7 +135,7 @@ const layerMenuContent = computed(() => {
   const visibleLayers = CurrentActivity.value.getLayers().filter(sift({ isVisible: true, scope: 'user' }))
   return _.map(visibleLayers, layer => {
     return {
-      id: layer._id,
+      id: 'apply-style-to-layer',
       label: layer.name,
       handler: (styleToApply) => applyToLayer(layer, styleToApply.item)
     }
@@ -145,7 +145,7 @@ const layerMenuContent = computed(() => {
 // Functions
 async function applyToLayer (layer, styleToApply) {
   await editLayerStyle(layer, styleToApply)
-  if (!layer._id) {
+  if (CurrentActivity.value.isInMemoryLayer(layer)) {
     await CurrentActivity.value.resetLayer(layer)
   }
 }
@@ -153,14 +153,34 @@ function applyToSelection (styleToApply) {
   const type = { Point: 'point', LineString: 'line', Polygon: 'polygon' }
   _.forEach(getSelectedFeaturesByLayer(), layer => {
     if (isLayerStyleEditable(layer.layer)) {
-      _.forEach(layer.features, f => { f.style = _.get(styleToApply, ['item', _.get(type, f.geometry.type, 'point')], null) })
-      editFeaturesStyle({ type: 'FeatureCollection', features: layer.features }, layer.layer)
+      // In case of in-memory layer, we need to get geoJson and update
+      // each style of selected features
+      // We can't use resetLayer function because it will retrieve features from
+      // Cesium entities which will lose the style property
+      if (CurrentActivity.value.isInMemoryLayer(layer.layer)) {
+        const featuresToUpdate = _.map(layer.features, feature => feature._id)
+        const geoJson = CurrentActivity.value.toGeoJson(layer.layer.name)
+        if (geoJson) {
+          // Update style of selected features
+          _.forEach(geoJson.features, feature => {
+            if (featuresToUpdate.includes(feature._id)) {
+              _.set(feature, 'style', _.get(styleToApply, ['item', _.get(type, feature.geometry.type, 'point')], null))
+            }
+          })
+        }
+        CurrentActivity.value.updateLayer(layer.layer.name, geoJson)
+      } else {
+        _.forEach(layer.features, f => { 
+          _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, f.geometry.type, 'point')], null))
+        })
+        editFeaturesStyle({ type: 'FeatureCollection', features: layer.features }, layer.layer)
+      }
     }
   })
 }
 function editStyle (styleToEdit) {
   viewMode.value = 'editor'
-  style.value = _.get(styleToEdit, 'item')
+  style.value = _.get(styleToEdit, 'item', null)
 }
 function onApplied (style) {
   viewMode.value = 'list'

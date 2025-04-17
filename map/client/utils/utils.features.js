@@ -488,7 +488,7 @@ export async function editFeaturesStyle(geoJson, layer) {
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
-    if (feature._id) {
+    if (layer._id) {
       const updatedFeature = await api.getService(layer.service).patch(feature._id, _.pick(feature, ['style']))
       updatedFeatures.push(updatedFeature)
     }
