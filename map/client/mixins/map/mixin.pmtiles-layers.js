@@ -5,7 +5,7 @@ import sift from 'sift'
 import L from 'leaflet'
 import * as protomaps from 'protomaps-leaflet'
 import { mapbox_style } from '@kalisio/leaflet-pmtiles'
-import { Time, Units, TemplateContext } from '../../../../core/client/index.js'
+import { api, Time, Units, TemplateContext } from '../../../../core/client/index.js'
 
 export const pmtilesLayers = {
   methods: {
@@ -13,6 +13,17 @@ export const pmtilesLayers = {
       const leafletOptions = options.leaflet || options
       // Check for valid types
       if (leafletOptions.type !== 'pmtiles') return
+
+      // Token required by templating
+      const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
+      const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
+      const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
+      
+      const urlTemplate = _.get(leafletOptions, 'urlTemplate')
+      if (urlTemplate) leafletOptions.url = _.template(urlTemplate)({ apiJwt, gatewayJwt })
+      const styleTemplate = _.get(leafletOptions, 'styleTemplate')
+      if (styleTemplate) leafletOptions.style = _.template(styleTemplate)({ apiJwt, gatewayJwt })
+      
       // Optimize templating by creating compilers up-front
       const layerStyleTemplate = _.get(leafletOptions, 'template')
       if (layerStyleTemplate) {
