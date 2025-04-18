@@ -70,12 +70,7 @@
     <q-item-section class="col-1 items-center" v-if="!isUnique">
       <KPanel
         v-if="!isFirst"
-        :content="[{
-          id: 'remove-condition',
-          icon: 'las la-trash',
-          tooltip: 'KFeaturesFilterManager.REMOVE',
-          handler: () => onRemove(condition.index)
-        }]"
+        :content="panelContent"
       />
     </q-item-section>
   </q-item>
@@ -83,7 +78,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { api, i18n } from '../../../core/client'
 import { useCurrentActivity } from '../composables'
 
@@ -115,6 +110,12 @@ const props = defineProps({
 const emit = defineEmits(['onRemove', 'onApplied'])
 
 // Data
+const panelContent = [{
+  id: 'remove-condition',
+  icon: 'las la-trash',
+  tooltip: 'KFeaturesFilterManager.REMOVE',
+  handler: () => onRemove()
+}]
 const booleanOperators = [
   { label: i18n.t('KFilterCondition.OR'), value: 'or' },
   { label: i18n.t('KFilterCondition.AND'), value: 'and' }
@@ -130,8 +131,8 @@ const comparisonOperators = [
   { label: i18n.t('KFilterCondition.LESS_OR_EQUAL'), value: 'lte' }
 ]
 const { CurrentActivity } = useCurrentActivity()
-const layer = await getLayer()
-const properties = getProperties()
+let layer = null
+const properties = ref([])
 const booleanOperator = ref(_.get(props.condition, 'booleanOperator', null))
 const property = ref(_.get(props.condition, 'property', null))
 const comparisonOperator = ref(_.get(props.condition, 'comparisonOperator', null))
@@ -143,9 +144,6 @@ const hasBooleanOperatorErrors = ref(false)
 const hasPropertyErrors = ref(false)
 const hasComparisonOperatorErrors = ref(false)
 const hasValueErrors = ref(false)
-
-// Init
-await onPropertyChange(property.value)
 
 // Computed
 const filteredComparisonOperators = computed(() => {
@@ -223,7 +221,7 @@ function checkBooleanOperatorValidity (value) {
   return false
 }
 function checkPropertyValidity (value) {
-  if (value && _.find(properties, { value })) {
+  if (value && _.find(properties.value, { value })) {
     hasPropertyErrors.value = false
     return true
   }
@@ -254,13 +252,13 @@ function checkValueValidity (value) {
   hasValueErrors.value = true
   return false
 }
-function onRemove (index) {
-  emit('onRemove', index)
+function onRemove () {
+  emit('onRemove', _.get(props.condition, 'id'))
 }
 function generateDescription () {
   let description = ''
   const booleanLabel = _.get(_.find(booleanOperators, { value: booleanOperator.value }), 'label', '')
-  const propertyLabel = _.get(_.find(properties, { value: property.value }), 'label', '')
+  const propertyLabel = _.get(_.find(properties.value, { value: property.value }), 'label', '')
   const comparisonLabel = _.get(_.find(filteredComparisonOperators.value, { value: comparisonOperator.value }), 'label', '')
   if (!props.isFirst) description += ` ${booleanLabel} `
   description += `${propertyLabel} ${comparisonLabel} ${_.isArray(value.value) ? value.value.join(', ') : value.value}`
@@ -285,6 +283,13 @@ function validate () {
   }
   return { isValid: true, values: condition }
 }
+
+onMounted(async () => {
+  layer = await getLayer()
+  properties.value = getProperties()
+
+  await onPropertyChange(property.value)
+})
 
 // Expose
 defineExpose({

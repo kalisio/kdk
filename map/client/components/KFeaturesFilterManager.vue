@@ -23,30 +23,18 @@
       <q-tab-panels v-model="viewMode" animated>
         <q-tab-panel name="list">
           <q-list separator v-if="filters.length">
-            <template v-for="(item, index) in filters" :key="index">
-              <q-item v-if="item">
-                <q-item-section>
-                  <q-item-label>{{ item.label }}</q-item-label>
-                  <q-item-label caption>{{ item.description }}</q-item-label>
-                </q-item-section>
-                <q-item-section class="col-auto">
-                  <KPanel
-                    id="filter-actions"
-                    :content="[{
-                      id: 'edit-filter',
-                      tooltip: 'KFeaturesFilterManager.EDIT',
-                      icon: 'las la-edit',
-                      handler: () => editFilter(item, index)
-                    }, {
-                      id: 'remove-filter',
-                      tooltip: 'KFeaturesFilterManager.REMOVE',
-                      icon: 'las la-trash',
-                      handler: () => removeFilter(index)
-                    }]"
-                  />
-                </q-item-section>
-              </q-item>
-            </template>
+            <q-item v-for="item in filters" :key="item.id">
+              <q-item-section>
+                <q-item-label>{{ item.label }}</q-item-label>
+                <q-item-label caption>{{ item.description }}</q-item-label>
+              </q-item-section>
+              <q-item-section class="col-auto">
+                <KPanel
+                  id="filter-actions"
+                  :content="getPanelContent(item)"
+                />
+              </q-item-section>
+            </q-item>
           </q-list>
           <div v-else class="column items-center full-row">
             <KStamp
@@ -62,7 +50,7 @@
           <div class="full-width column">
             <KFeaturesFilterEditor
               ref="filterEditor"
-              :filter="filter"
+              :filter="filterToEdit"
               :layerId="layerId"
               :layerName="layerName"
               :hideButtons="true"
@@ -79,7 +67,8 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { uid } from 'quasar'
+import { ref, computed, onMounted } from 'vue'
 import { api } from '../../../core/client'
 import { useCurrentActivity } from '../composables'
 import { getDefaultStyleFromTemplates, generateStyleTemplates, filterQueryToConditions, DefaultStyle } from '../utils'
@@ -100,11 +89,10 @@ const props = defineProps({
 // Data
 const { CurrentActivity } = useCurrentActivity()
 const filterEditor = ref(null)
-const filter = ref(null)
-const index = ref(null)
+const filterToEdit = ref(null)
 const viewMode = ref('list')
-const layer = await getLayer()
-const filters = ref(_.clone(_.get(layer, 'filters', [])))
+let layer = null
+const filters = ref([])
 
 // Computed
 const toolbar = computed(() => {
@@ -128,19 +116,38 @@ async function getLayer () {
     return await api.getService('catalog').get(props.layerId)
   }
 }
-function editFilter (filterToEdit, filterIndex) {
-  filter.value = filterToEdit || null
-  index.value = (!filterIndex && !_.isNumber(filterIndex)) ? null : filterIndex
+function getFilters () {
+  const filters = _.clone(_.get(layer, 'filters', []))
+  _.forEach(filters, filter => { filter.id = uid() })
+  return filters
+}
+function getPanelContent (item) {
+  return [{
+    id: 'edit-filter',
+    tooltip: 'KFeaturesFilterManager.EDIT',
+    icon: 'las la-edit',
+    handler: () => editFilter(item)
+  }, {
+    id: 'remove-filter',
+    tooltip: 'KFeaturesFilterManager.REMOVE',
+    icon: 'las la-trash',
+    handler: () => removeFilter(item.id)
+  }]
+}
+function editFilter (filter) {
+  filterToEdit.value = filter || null
   viewMode.value = 'editor'
 }
-function removeFilter (index) {
-  filters.value[index] = null
+function removeFilter (id) {
+  filters.value = filters.value.filter(filter => filter.id !== id)
 }
 function onApplied (filter) {
-  if (index.value === null) {
-    filters.value.push(filter)
+  const targetIndex = _.get(filter, 'id') ? _.findIndex(filters.value, { id: filter.id }) : -1
+  if (targetIndex > -1) {
+    filters.value[targetIndex] = filter
   } else {
-    filters.value[index.value] = filter
+    Object.assign(filter, { id: uid() })
+    filters.value.push(filter)
   }
   viewMode.value = 'list'
 }
@@ -154,7 +161,7 @@ async function apply () {
     // Apply styles
     const styles = []
     const styleService = api.getService('styles')
-    const validFilters = _.compact(filters.value)
+    const validFilters = _.map(filters.value, filter => _.omit(filter, 'id'))
     for (const filter of validFilters) {
       if (!filter.style) return
       styles.push({
@@ -176,6 +183,11 @@ async function apply () {
     return true
   }
 }
+
+onMounted(async () => {
+  layer = await getLayer()
+  filters.value = getFilters()
+})
 
 defineExpose({
   apply

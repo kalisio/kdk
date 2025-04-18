@@ -25,9 +25,8 @@
           <q-item v-if="!hasUniqueCondition">
             <q-item-section>{{ $t('KFilterCondition.FILTER_WHEN') }}</q-item-section>
           </q-item>
-          <template v-for="(condition, index) in conditions" :key="index">
+          <template v-for="(condition, index) in conditions" :key="condition.id">
             <KFilterCondition
-              v-if="condition"
               :ref="(el) => conditionsRefs[index] = el"
               :condition="condition"
               :isFirst="index === 0"
@@ -84,7 +83,7 @@
         </template>
       </q-select>
       <KStyleEditor
-        v-if="style && style.value === styleOptions[1].value"
+        v-if="style && styleOptions.length > 0 && style.value === styleOptions[1].value"
         ref="styleEditorRef"
         v-model="styleValue"
         class="q-pa-md"
@@ -108,7 +107,8 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { uid } from 'quasar'
+import { ref, computed, onMounted } from 'vue'
 import { api, i18n } from '../../../core/client'
 import { filterQueryToConditions } from '../utils'
 import KFilterCondition from './KFilterCondition.vue'
@@ -150,10 +150,10 @@ const emit = defineEmits(['canceled', 'applied'])
 const formRef = ref(null)
 const styleEditorRef = ref(null)
 const conditionsRefs = ref([])
-const styles = await getStyles()
-const styleOptions = getStyleOptions()
+let styles = []
+const styleOptions = ref(getStyleOptions())
 const conditions = ref(getConditions())
-const style = ref(getStyle())
+const style = ref(null)
 let createdStyle = null
 const formSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -217,20 +217,20 @@ function getStyleOptions () {
   return options
 }
 function getConditions () {
-  if (_.isEmpty(props.filter)) return [{ index: 0 }]
+  if (_.isEmpty(props.filter)) return [{ id: uid() }]
   return filterQueryToConditions(_.get(props.filter, 'active'))
 }
 function getStyle () {
-  if (_.isEmpty(props.filter)) return styleOptions[0]
+  if (_.isEmpty(props.filter)) return styleOptions.value[0]
   const style = _.find(styles, { _id: _.get(props.filter, 'style') })
-  if (!style) return styleOptions[0]
+  if (!style) return styleOptions.value[0]
   return { label: style.name, value: style._id, data: style }
 }
 function addCondition () {
-  conditions.value.push({ index: conditions.value.length })
+  conditions.value.push({ id: uid() })
 }
-function removeCondition (index) {
-  conditions.value[index] = null
+function removeCondition (id) {
+  conditions.value = _.filter(conditions.value, condition => condition.id !== id)
 }
 function conditionsToQuery (conditions) {
   const value = { ['properties.' + conditions[0].property]: { ['$' + conditions[0].comparisonOperator]: conditions[0].value } }
@@ -253,7 +253,7 @@ async function apply () {
 
   let areConditionsValid = true
   const conditionsValues = []
-  _.forEach(conditionsRefs.value, (condition, index) => {
+  _.forEach(conditionsRefs.value, condition => {
     if (!condition) return
     const result = condition.validate()
     if (!result.isValid) {
@@ -266,13 +266,14 @@ async function apply () {
   if (!areConditionsValid) return
 
   let styleResult = null
-  if (style.value.value === styleOptions[1].value) {
+  if (style.value.value === styleOptions.value[1].value) {
     // Create a new style
     styleResult = await styleEditorRef.value.apply()
     if (!styleResult) return
   }
 
   const filter = {
+    id: _.get(props.filter, 'id'),
     label: formResult.values.name,
     description: _.join(_.map(conditionsValues, condition => condition.description), ''),
     isActive: true,
@@ -284,6 +285,12 @@ async function apply () {
   emit('applied', filter)
   return true
 }
+
+onMounted(async () => {
+  styles = await getStyles()
+  styleOptions.value = getStyleOptions()
+  style.value = getStyle()
+})
 
 // Expose
 defineExpose({
