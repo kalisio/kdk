@@ -6,7 +6,7 @@
     :footer="computedFooter"
     :dense="dense"
   >
-    <template v-slot:card-heading v-if="computedHeader">
+    <template v-slot:card-heading v-if="computedHeader || computedHeading">
       <!-- Message actions -->
       <div class="full-width row">
         <div :class="{ 'col-12': dense, 'col-8': !dense }">
@@ -17,7 +17,16 @@
                 class="text-subtitle1 text-weight-medium ellipsis-2-lines"
                 v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
               >
-                {{ item.name }}
+                <KPanel
+                  v-if="computedHeading"
+                  id="card-heading-panel"
+                  :content="computedHeading"
+                  :context="$props"
+                  class="full-width no-wrap"
+                />
+                <template v-else>
+                  {{ item.name }}
+                </template>
               </div>
             </slot>
           </div>
@@ -27,7 +36,7 @@
     <template v-slot:card-content>
       <!-- Message content -->
       <div
-        v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
+        v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
       >
         <KTextArea :text="item.body" :minHeight="44" :dense="true" />
       </div>
@@ -124,6 +133,9 @@ export default {
     },
     computedHeader () {
       return _.filter(this.itemActions, { scope: 'header' })
+    },
+    computedHeading () {
+      return _.filter(this.itemActions, { scope: 'heading' })
     },
     computedFooter () {
       return _.filter(this.itemActions, { scope: 'footer' })
