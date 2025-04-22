@@ -271,7 +271,8 @@ export const baseMap = {
       delete this.leafletPanes[paneName]
     },
     updateLeafletPanesVisibility () {
-      const zoom = this.map.getZoom()
+      // Take care to possible fractional zoom while panes uses integer zoom levels
+      const zoom = Math.floor(this.map.getZoom())
       // Check if we need to hide/show some panes based on current zoom level
       _.forOwn(this.leafletPanes, (pane, paneName) => {
         const hasMinZoom = !!_.get(pane, 'minZoom')
