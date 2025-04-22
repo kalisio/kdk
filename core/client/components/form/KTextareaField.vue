@@ -106,6 +106,11 @@ export default {
       })
       return configuration
     }
+  },
+  methods: {
+    emptyModel () {
+      return ''
+    }
   }
 }
 </script>
