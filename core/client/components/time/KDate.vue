@@ -46,6 +46,10 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  initializeIfEmpty: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -96,6 +100,6 @@ const computedPicker = computed(() => {
 })
 
 // Immediate
-if (_.isNull(props.modelValue) &&
+if (props.initializeIfEmpty && _.isEmpty(props.modelValue) &&
     _.isEmpty(props.placeholder)) computedModel.value = moment.utc().format(mask)
 </script>
