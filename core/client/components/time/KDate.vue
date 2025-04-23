@@ -96,6 +96,6 @@ const computedPicker = computed(() => {
 })
 
 // Immediate
-if (_.isEmpty(props.modelValue) &&
+if (_.isNull(props.modelValue) &&
     _.isEmpty(props.placeholder)) computedModel.value = moment.utc().format(mask)
 </script>
