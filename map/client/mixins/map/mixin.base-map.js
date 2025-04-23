@@ -636,7 +636,13 @@ export const baseMap = {
         }
         const dZoom = (zoom ? startZoom + percentZoom * (endZoom - startZoom) : null)
         let dBearing
-        if (!_.isNil(startBearing)) dBearing = (bearing ? startBearing + percentBearing * (endBearing - startBearing) : null)
+        if (!_.isNil(startBearing)) {
+          // Take care to animate using the shortest "path", eg from 355° to 5° avoid running counterclockwise
+          // First computes the smallest angle difference, either clockwise or counterclockwise.
+          const bearingDifference = (endBearing - startBearing + 540) % 360 - 180
+          // Then normalize the final result to be between 0 and 360
+          dBearing = (bearing ? (startBearing + percentBearing * bearingDifference + 360) % 360 : null)
+        }
         this.center(dLongitude, dLatitude, dZoom, dBearing, { offset: { x: Math.round(dx), y: Math.round(dy) } })
         this.centerAnimation.id = requestAnimationFrame(this.animateCenter)
       } else {
