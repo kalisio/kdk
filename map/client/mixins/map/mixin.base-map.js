@@ -594,13 +594,14 @@ export const baseMap = {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     animateCenter (timestamp) {
-      if (this.centerAnimation.id) cancelAnimationFrame(this.centerAnimation.id)
+      // Initialize animation time origin
+      if (!this.centerAnimation.startTime) this.centerAnimation.startTime = timestamp
       const { id, duration, startTime,
         animate: { center, zoom, bearing },
         startLongitude, endLatitude, startLatitude, startZoom, startBearing,
         endLongitude, endZoom, endBearing } = this.centerAnimation
       const elapsed = timestamp - startTime
-      const percent = elapsed / (1000 * duration)
+      const percent = Math.abs(elapsed / (1000 * duration))
       let percentCenter, percentZoom, percentBearing
       if (percent <= 1) {
         const currentCenter = this.getCenter()
@@ -665,7 +666,6 @@ export const baseMap = {
         this.centerAnimation = {
           id: requestAnimationFrame(this.animateCenter),
           ...options,
-          startTime: performance.now(),
           startLongitude: currentCenter.longitude,
           startLatitude: currentCenter.latitude,
           startZoom: currentCenter.zoom,
