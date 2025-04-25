@@ -68,7 +68,6 @@ const patternFilter = Store.get('filter')
 const schema = {
   timestampField: 'createdAt',
   authorField: 'author',
-  titleField: 'title',
   colorField: 'color',
   decorationField: 'decorations',
   bodyField: 'body'

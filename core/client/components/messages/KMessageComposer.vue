@@ -77,7 +77,7 @@
         id="send-message"
         icon="send"
         tooltip="KMessageComposer.SEND_MESSAGE"
-        :disabled="!hasBody"
+        :disabled="!hasBody || !canSendMessage"
         :handler="sendMessage"
         color="primary"
         renderer="fab"
@@ -112,6 +112,10 @@ const props = defineProps({
   maxFileSize: {
     type: Number,
     default: 52428800
+  },
+  canSendMessage: {
+    type: Boolean,
+    default: true
   }
 })
 
