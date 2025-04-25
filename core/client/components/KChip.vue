@@ -1,7 +1,17 @@
 <template>
   <q-chip
-    v-bind="_.omit(props, ['color', 'textColor', 'label', 'outline'])"
-    @updated:modelValue="state => emit('updated:modelValue', state)"
+    v-model="computedState"
+    :selected="selected"
+    :icon="icon"
+    :iconRight="iconRight"
+    :iconRemove="iconRemove"
+    :iconSelected="iconSelected"
+    :size="size"
+    :dense="dense"
+    :square="square"
+    :clickable="clickable"
+    :removable="removable"
+    :disable="disable"
     @updated:selected="state => emit('updated:selected', state)"
     @remove="emit('remove')"
     @click="event => emit('click', event)"
@@ -62,7 +72,7 @@ const props = defineProps({
   },
   selected: {
     type: Boolean,
-    default: false
+    default: null
   },
   color: {
     type: String,
@@ -110,6 +120,14 @@ const isTruncated = ref(false)
 const id = uid()
 
 // Computed
+const computedState = computed({
+  get: function () {
+    return props.modelValue
+  },
+  set: function (state) {
+    emit('updated:modelValue', state)
+  }
+})
 const computedLabel = computed(() => {
   return i18n.tie(props.label)
 })
