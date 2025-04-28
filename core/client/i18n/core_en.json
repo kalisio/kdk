@@ -608,7 +608,8 @@
   },
   "KMessageCard": {
     "VIEW_ATTACHMENT": "View attachment",
-    "DOWNLOAD_ATTACHMENT": "Download attachment"
+    "DOWNLOAD_ATTACHMENT": "Download attachment",
+    "EDIT_MESSAGE": "Edit message"
   },
   "KMessageComposer": {
     "FORMAT_MESSAGE": "Format message",

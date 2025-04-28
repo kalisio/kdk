@@ -35,19 +35,22 @@
     </template>
     <template v-slot:card-content>
       <!-- Message content -->
-      <div
-        v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }"
-      >
+      <div v-bind:class="{ 'q-py-xs': dense, 'q-py-sm': !dense }">
         <KTextArea :text="item.body" :minHeight="44" :dense="true" />
       </div>
     </template>
-    <template v-slot:card-footer v-if="hasAttachments">
+    <template v-slot:card-footer v-if="hasAttachments || computedFooter">
+      <q-separator />
       <!-- Message attachments -->
       <div
         v-bind:class="{ 'q-px-sm q-py-xs': dense, 'q-px-md q-py-sm': !dense }"
         class="full-width row justify-start items-center"
       >
-        <template v-for="attachment in attachments" :key="attachment.name">
+        <template
+          v-if="hasAttachments"
+          v-for="attachment in attachments"
+          :key="attachment.name"
+        >
           <q-chip :label="attachment.name" size="0.8rem" clickable>
             <q-popup-proxy
               auto-close
@@ -80,6 +83,13 @@
             </q-popup-proxy>
           </q-chip>
         </template>
+        <KPanel
+          v-if="computedFooter"
+          id="card-footer-panel"
+          :content="computedFooter"
+          :context="$props"
+          class="q-ml-auto"
+        />
       </div>
     </template>
   </KCard>
@@ -114,6 +124,14 @@ export default {
     dense: {
       type: Boolean,
       default: false
+    },
+    canEditMessageProp: {
+      type: [Boolean, null],
+      default: (message) => null
+    },
+    canRemoveMessageProp: {
+      type: [Boolean, null],
+      default: (message) => null
     }
   },
   components: {
@@ -169,10 +187,12 @@ export default {
       Storage.export({ file: attachment.name, key, context: this.contextId })
     },
     canEditMessage () {
-      return this.$can('update', 'messages')
+      if (this.canEditMessageProp === null) return this.$can('update', 'messages')
+      return this.canEditMessageProp(this.item)
     },
     canRemoveMessage () {
-      return this.$can('remove', 'messages')
+      if (this.canRemoveMessageProp === null) return this.$can('remove', 'messages')
+      return this.canRemoveMessageProp(this.item)
     }
   },
   setup () {

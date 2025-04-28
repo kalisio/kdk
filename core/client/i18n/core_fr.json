@@ -605,7 +605,8 @@
   },
   "KMessageCard": {
     "VIEW_ATTACHMENT": "Voir la pièce jointe",
-    "DOWNLOAD_ATTACHMENT": "Télécharger la pièce jointe"
+    "DOWNLOAD_ATTACHMENT": "Télécharger la pièce jointe",
+    "EDIT_MESSAGE": "Modifier le message"
   },
   "KMessageComposer": {
     "FORMAT_MESSAGE": "Formater le message",
