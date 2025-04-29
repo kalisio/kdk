@@ -126,11 +126,11 @@ export default {
       default: false
     },
     canEditMessageProp: {
-      type: [Boolean, null],
+      type: Function,
       default: (message) => null
     },
     canRemoveMessageProp: {
-      type: [Boolean, null],
+      type: Function,
       default: (message) => null
     }
   },
