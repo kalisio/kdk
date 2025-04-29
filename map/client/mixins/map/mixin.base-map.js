@@ -272,6 +272,20 @@ export const baseMap = {
       if (!pane) return
       delete this.leafletPanes[paneName]
     },
+    isPaneVisible (name) {
+      const pane = this.getLeafletPaneByName(name)
+      return pane && (pane.style.display === 'block')
+    },
+    showPane(name) {
+      const pane = this.getLeafletPaneByName(name)
+      if (!pane) return
+      pane.style.display = 'block'
+    },
+    hidePane(name) {
+      const pane = this.getLeafletPaneByName(name)
+      if (!pane) return
+      pane.style.display = 'none'
+    },
     updateLeafletPanesVisibility () {
       // Take care to possible fractional zoom while panes uses integer zoom levels
       const zoom = Math.floor(this.map.getZoom())
@@ -282,14 +296,14 @@ export const baseMap = {
         if (!hasMinZoom && !hasMaxZoom) return
         if (!pane.style) pane.style = {}
         if (hasMinZoom && (zoom < _.get(pane, 'minZoom'))) {
-          pane.style.display = 'none'
+          this.hidePane(paneName)
           return
         }
         if (hasMaxZoom && (zoom > _.get(pane, 'maxZoom'))) {
-          pane.style.display = 'none'
+          this.hidePane(paneName)
           return
         }
-        pane.style.display = 'block'
+        this.showPane(paneName)
       })
     },
     createLeafletLayer (options) {
