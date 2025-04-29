@@ -251,6 +251,10 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  timeFormat: {
+    type: String,
+    default: undefined
   }
 })
 
@@ -304,7 +308,10 @@ function getTitle (item) {
 }
 function getTimestamp (item) {
   const time = _.get(item, _.get(props.schema, 'timestampField'))
-  if (time) return `${Time.format(time, 'date.long')} - ${Time.format(time, 'time.long')}`
+  if (!props.timeFormat) {
+    if (time) return `${Time.format(time, 'date.long')} - ${Time.format(time, 'time.long')}`
+  }
+  if (time) return Time.format(time, props.timeFormat)
 }
 function getAuthor (item) {
   return _.get(item, _.get(props.schema, 'authorField'))
