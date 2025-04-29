@@ -24,6 +24,8 @@ Make it possible to manage map layers and extend supported layer types:
 * **getLeafletPaneByName(name)** retrieve the underlying Leaflet object for a given pane
 * **createLeafletPane(name)** creates the underlying Leaflet object for a pane
 * **removeLeafletPane(name)** destroys the underlying Leaflet object for a given pane
+* **isPaneVisible(name)** check if a given pane is visible
+* **showPane/hidePane(name)** (un)hides the given pane in map
 * **registerLeafletConstructor(constructor)** registers a Leaflet constructor function for a given type of layer
 * **center(longitude, latitude, zoomLevel, bearing, options)** centers the map view to visualize a given point at a given zoom level, and possibly bearing when the [leaflet-rotate](https://github.com/Raruto/leaflet-rotate) plugin is active, some options like the following can also be added:
   * an animation `duration` in seconds to perform the changes,
@@ -84,18 +86,33 @@ Although DOM-based layers like [Markers](https://leafletjs.com/reference.html#ma
 
 If you add a `zIndex` option to your layer descriptor we will create a dedicated pane for you under-the-hood so that the layer will be rendered at its right rank. Check the `z-index` value of [the default panes](https://leafletjs.com/reference.html#map-pane) to select the appropriate one.
 
-If you add a `panes` option to your layer descriptor we will create the dedicated panes for you under-the-hood so that you can then set in the `pane` option of any sublayer the pane it will belong to. Each pane must have a unique name and can be visible at specific zoom levels:
+If you add a `panes` option to your layer descriptor we will create the dedicated panes for you under-the-hood so that you can then set in the `pane` option of any sublayer the pane it will belong to. Each pane must have a unique name, an optional z-index and can be visible at specific zoom levels:
 ```js
 {
   name: 'Layer',
   ...
   panes: [{
     name: 'waypoints',
+    zIndex: 450,
     minZoom: 7,
     maxZoom: 14
   }]
 }
 ```
+
+::: tip
+In the case you only specify a `zIndex` the name will be the `zIndex` (as string)
+:::
+
+::: tip
+Features that are not attached to specific panes through the `pane` property in a layer will end up with the `zIndex` value of the layer (if none the default value is 400).
+:::
+
+::: danger
+Specifying `zIndex` or `minZoom/maxZoom` at layer level is mutually exclusive with defining `panes` at layer level.
+:::
+
+Althought the visibility of the panes will be automatically updated based on the current zoom level of your map, you can also programmatically change it using the `showPane/hidePane(name)` methods.
 
 ## Map Style
 
