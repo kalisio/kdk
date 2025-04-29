@@ -43,7 +43,7 @@ export class WcsGridSource extends GridSource {
 
     // use DescribeCoverage to find out bbox
     try {
-      const coverage = await wcs.DescribeCoverage(this.config.url, this.config.version, this.config.coverage)
+      const coverage = await wcs.DescribeCoverage(this.config.url, this.config.version, this.config.coverage, this.config.searchParams, this.config.headers)
       const bounds = wcs.GetCoverageSpatialBounds(coverage)
       const formats = wcs.GetSupportedFormats(coverage)
 
@@ -74,7 +74,7 @@ export class WcsGridSource extends GridSource {
 
     const wcsbbox = [reqMinLon, reqMinLat, reqMaxLon, reqMaxLat]
 
-    const image = await wcs.GetCoverage(abort, this.config.url, this.config.version, this.config.coverage, this.queryFormat, wcsbbox, width, height)
+    const image = await wcs.GetCoverage(abort, this.config.url, this.config.version, this.config.coverage, this.queryFormat, wcsbbox, width, height, this.config.searchParams, this.config.headers)
     // geotiff.js will try to use a FileReader to read from the blob
     // this class doesn't exist in node.js so we use fromArrayBuffer
     // .then(blob => GeoTIFF.fromBlob(blob))

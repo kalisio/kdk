@@ -97,7 +97,7 @@ export default {
       if (layer) {
         if (this.service.protocol === 'WFS') {
           try {
-            const desc = await wfs.DescribeFeatureType(this.service.baseUrl, this.service.version, layer.id, this.service.searchParams)
+            const desc = await wfs.DescribeFeatureType(this.service.baseUrl, this.service.version, layer.id, this.service.searchParams, this.service.headers)
             newModel.schema = wfs.generatePropertiesSchema(desc, layer.display)
             const decodedDesc = wfs.decodeFeatureType(desc)
             newModel.properties = decodedDesc.properties.map(prop => prop.name)

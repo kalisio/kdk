@@ -5,43 +5,43 @@ import { buildUrl } from '../../core/common/index.js'
 
 // https://www.opengeospatial.org/standards/wfs
 
-function fetchAsJson (query) {
-  return fetch(query, { redirect: 'follow' })
+function fetchAsJson (query, headers = {}) {
+  return fetch(query, { redirect: 'follow', headers })
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
-export function GetCapabilities (url, searchParams = {}) {
+export function GetCapabilities (url, searchParams = {}, headers = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
     REQUEST: 'GetCapabilities'
   }, searchParams))
-  return fetchAsJson(query)
+  return fetchAsJson(query, headers)
 }
 
-export function DescribeFeatureType (url, version, typeNames, searchParams = {}) {
+export function DescribeFeatureType (url, version, typeNames, searchParams = {}, headers = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
     VERSION: version,
     REQUEST: 'DescribeFeatureType',
     TYPENAMES: typeof typeNames === 'string' ? typeNames : typeNames.join(' ')
   }, searchParams))
-  return fetchAsJson(query)
+  return fetchAsJson(query, headers)
 }
 
-export function GetFeature (url, version, typeNames, searchParams = {}, { xml2json = true } = {}) {
+export function GetFeature (url, version, typeNames, searchParams = {}, headers = {}, { xml2json = true } = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WFS',
     VERSION: version,
     REQUEST: 'GetFeature',
     TYPENAMES: typeof typeNames === 'string' ? typeNames : typeNames.join(' ')
   }, searchParams))
-  return xml2json ? fetchAsJson(query) : fetch(query, { redirect: 'follow' }).then(response => response.json())
+  return xml2json ? fetchAsJson(query, headers) : fetch(query, { redirect: 'follow', headers }).then(response => response.json())
 }
 
-export async function discover (url, searchParams = {}, caps = null) {
+export async function discover (url, searchParams = {}, headers = {}, caps = null) {
   if (!caps) {
-    caps = await GetCapabilities(url, searchParams)
+    caps = await GetCapabilities(url, searchParams, headers)
   }
 
   const out = {

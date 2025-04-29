@@ -245,7 +245,7 @@ export const geojsonLayers = {
               SRSNAME: 'EPSG:4326', // result in 4326
               BBOX: `${query.south},${query.west},${query.north},${query.east},urn:ogc:def:crs:EPSG::4326` // request bbox
             }, options.wfs.searchParams)
-            return wfs.GetFeature(options.wfs.url, options.wfs.version, options.wfs.layer, searchParams, { xml2json: false })
+            return wfs.GetFeature(options.wfs.url, options.wfs.version, options.wfs.layer, searchParams, options.wfs.headers, { xml2json: false })
           }
         }
       } else if (_.has(leafletOptions, 'sourceTemplate')) {

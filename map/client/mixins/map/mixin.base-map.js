@@ -21,6 +21,7 @@ import '@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css'
 import 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import iso8601 from 'iso8601-js-period' // Required by leaflet.timedimension
+import 'leaflet-wms-header'
 import 'leaflet-timedimension/dist/leaflet.timedimension.src.js'
 import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
@@ -321,7 +322,7 @@ export const baseMap = {
       let args = _.get(leafletOptions, 'options', [])
       // Can be an array or a single object for a single additonnal argument
       if (typeof args === 'object') args = [args]
-      let layer
+      let layer, type = leafletOptions.type
       // We use the source option as the first parameter of leaflet layer constructors,
       // which is usually the base URL
       if (leafletOptions.source) {
@@ -329,9 +330,9 @@ export const baseMap = {
         // Remove it from options to avoid sending it twice
         // and side effects like https://github.com/kalisio/kdk/issues/219
         delete leafletOptions.source
-        layer = _.get(L, leafletOptions.type)(source, _.omit(leafletOptions, ['options']), ...args)
+        layer = _.get(L, type)(source, _.omit(leafletOptions, ['options']), ...args)
       } else {
-        layer = _.get(L, leafletOptions.type)(_.omit(leafletOptions, ['options']), ...args)
+        layer = _.get(L, type)(_.omit(leafletOptions, ['options']), ...args)
       }
       return layer
     },
@@ -353,7 +354,7 @@ export const baseMap = {
     createLeafletTimedWmsLayer (options) {
       const leafletOptions = options.leaflet || options
       // Check for valid type
-      if (leafletOptions.type !== 'tileLayer.wms') return
+      if ((leafletOptions.type !== 'tileLayer.wms') && (leafletOptions.type !== 'TileLayer.wmsHeader')) return
       let layer = this.createLeafletLayer(options)
       // Specific case of time dimension layer where we embed the underlying WMS layer
       const timeDimension = _.get(leafletOptions, 'timeDimension')
@@ -388,7 +389,11 @@ export const baseMap = {
           else if (periodAsDuration.months() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM')
           else if (periodAsDuration.days() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM-DD')
           else wmsParams.time = moment.utc(time).toISOString()
-          return new layer._baseLayer.constructor(layer._baseLayer.getURL(), wmsParams)
+          // Some Leaflet constructors can have additional arguments given as options
+          let args = _.get(leafletOptions, 'options', [])
+          // Can be an array or a single object for a single additonnal argument
+          if (typeof args === 'object') args = [args]
+          return new layer._baseLayer.constructor(layer._baseLayer.getURL(), wmsParams, ...args)
         }
       }
       return layer

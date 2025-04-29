@@ -5,23 +5,23 @@ import { buildUrl } from '../../core/common/index.js'
 
 // https://www.opengeospatial.org/standards/wmts
 
-function fetchAsJson (query) {
-  return fetch(query, { redirect: 'follow' })
+function fetchAsJson (query, headers = {}) {
+  return fetch(query, { redirect: 'follow' }, headers)
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
-export function GetCapabilities (url, searchParams = {}) {
+export function GetCapabilities (url, headers = {}, searchParams = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WMTS',
     REQUEST: 'GetCapabilities'
   }, searchParams))
-  return fetchAsJson(query)
+  return fetchAsJson(query, headers)
 }
 
-export async function discover (url, searchParams = {}, caps = null) {
+export async function discover (url, headers = {}, searchParams = {}, caps = null) {
   if (!caps) {
-    caps = await GetCapabilities(url, searchParams)
+    caps = await GetCapabilities(url, headers, searchParams)
   }
 
   const out = {

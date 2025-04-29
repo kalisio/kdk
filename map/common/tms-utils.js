@@ -3,16 +3,16 @@ import fetch from 'node-fetch'
 import xml2js from 'xml2js'
 import { buildUrl } from '../../core/common/index.js'
 
-function fetchAsJson (query) {
-  return fetch(query, { redirect: 'follow' })
+function fetchAsJson (query, headers = {}) {
+  return fetch(query, { redirect: 'follow', headers })
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
 
-export async function discover (tmsUrl, searchParams = {}, caps = null) {
+export async function discover (tmsUrl, searchParams = {}, headers = {}, caps = null) {
   // fetch root caps if not provided
   if (!caps) {
-    caps = await fetchAsJson(buildUrl(tmsUrl, searchParams))
+    caps = await fetchAsJson(buildUrl(tmsUrl, searchParams), headers)
   }
 
   // decode from caps
@@ -25,7 +25,7 @@ export async function discover (tmsUrl, searchParams = {}, caps = null) {
   const allPromises = []
   for (const layer of layerRoot) {
     // fetch detailed layer informations
-    const p = fetchAsJson(buildUrl(layer.$.href, searchParams)).then(json => {
+    const p = fetchAsJson(buildUrl(layer.$.href, searchParams), headers).then(json => {
       const obj = {
         id: _.get(json, 'TileMap.Title[0]'),
         display: _.get(json, 'TileMap.Title[0]'),

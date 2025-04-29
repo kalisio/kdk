@@ -220,6 +220,14 @@ async function onConnect () {
       timeDimension
     }, service.value.searchParams)
 
+    // When we are required to send headers we use the leaflet-wms-header plugin
+    const headers = service.value.headers
+    if (!_.isEmpty(headers)) {
+      newLayer.leaflet.type = 'TileLayer.wmsHeader'
+      // Last argument constructor in this case is the headers
+      newLayer.leaflet.options = _.reduce(headers, (result, value, header) => result.concat([{ header, value }]), [])
+    }
+
     // be explicit about requested CRS if probe list some
     if (layer.value.crs) {
       // these are what leaflet supports

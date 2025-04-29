@@ -5,8 +5,8 @@ import { buildUrl } from '../../core/common/index.js'
 
 // https://www.opengeospatial.org/standards/wms
 
-function fetchAsJson (query) {
-  return fetch(query, { redirect: 'follow' })
+function fetchAsJson (query, headers = {}) {
+  return fetch(query, { redirect: 'follow', headers })
     .then(response => response.text())
     .then(txt => xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] }))
 }
@@ -16,15 +16,15 @@ function parseVersion (version) {
   return parseInt(parts[0]) * 1000000 + parseInt(parts[1]) * 1000 + (parts.length > 2 ? parseInt(parts[2]) : 0)
 }
 
-export function GetCapabilities (url, searchParams = {}) {
+export function GetCapabilities (url, searchParams = {}, headers = {}) {
   const query = buildUrl(url, Object.assign({
     SERVICE: 'WMS',
     REQUEST: 'GetCapabilities'
   }, searchParams))
-  return fetchAsJson(query)
+  return fetchAsJson(query, headers)
 }
 
-export function makeGetLegendGraphic (url, version, layer, style, searchParams = {}) {
+export function makeGetLegendGraphic (url, version, layer, style, searchParams = {}, headers = {}) {
   const additionalParams = {}
   if (style) additionalParams.STYLE = style
   if (!version) version = '1.0.0'
@@ -38,9 +38,9 @@ export function makeGetLegendGraphic (url, version, layer, style, searchParams =
   }, additionalParams, searchParams))
 }
 
-export async function discover (url, searchParams = {}, caps = null) {
+export async function discover (url, searchParams = {}, headers = {}, caps = null) {
   if (!caps) {
-    caps = await GetCapabilities(url, searchParams)
+    caps = await GetCapabilities(url, searchParams, headers)
   }
 
   const root = caps.WMS_Capabilities ? caps.WMS_Capabilities : caps.WMT_MS_Capabilities
