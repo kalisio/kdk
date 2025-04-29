@@ -125,11 +125,11 @@ export default {
       type: Boolean,
       default: false
     },
-    canEditMessageProp: {
+    canEditMessageFn: {
       type: Function,
       default: (message) => null
     },
-    canRemoveMessageProp: {
+    canRemoveMessageFn: {
       type: Function,
       default: (message) => null
     }
@@ -187,12 +187,12 @@ export default {
       Storage.export({ file: attachment.name, key, context: this.contextId })
     },
     canEditMessage () {
-      if (this.canEditMessageProp === null) return this.$can('update', 'messages')
-      return this.canEditMessageProp(this.item)
+      if (this.canEditMessageFn === null) return this.$can('update', 'messages')
+      return this.canEditMessageFn(this.item)
     },
     canRemoveMessage () {
-      if (this.canRemoveMessageProp === null) return this.$can('remove', 'messages')
-      return this.canRemoveMessageProp(this.item)
+      if (this.canRemoveMessageFn === null) return this.$can('remove', 'messages')
+      return this.canRemoveMessageFn(this.item)
     }
   },
   setup () {
