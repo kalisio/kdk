@@ -4,7 +4,7 @@ import sift from 'sift'
 import logger from 'loglevel'
 import lineOffset from '@turf/line-offset'
 import { Time, Units, utils as kdkCoreUtils } from '../../../../core.client.js'
-import { getUpdateFeatureFunction, hasUnitInTemplate, GeoJsonLayerFilters } from '../../leaflet/utils/utils.geojson.js'
+import { getUpdateFeatureFunction, hasUnitInLeafletLayerTemplate, GeoJsonLeafletLayerFilters } from '../../leaflet/utils/utils.geojson.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
 import { 
@@ -380,7 +380,7 @@ export const geojsonLayers = {
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       // Need to update layers that require an update at a given frequency
-      const geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonLayerFilters.TimeUpdate))
+      const geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonLeafletLayerFilters.TimeUpdate))
       geoJsonlayers.forEach(async geoJsonlayer => {
         // Retrieve the layer
         const layer = this.getLeafletLayerByName(geoJsonlayer.name)
@@ -417,10 +417,10 @@ export const geojsonLayers = {
         const units = _.map(Units.getUnits(quantity), 'name')
         // Need to update layers with variables affected by the unit change,
         // ie which style depends on it
-        let geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonLayerFilters.UnitUpdate))
+        let geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonLeafletLayerFilters.UnitUpdate))
         // Check for each layer if it uses the target unit and templated style uses the unit system or not
         geoJsonlayers = geoJsonlayers.filter(layer => {
-          return hasUnitInTemplate(units, layer)
+          return hasUnitInLeafletLayerTemplate(units, layer)
         })
         // Then retrieve the engine layers and update
         geoJsonlayers.forEach(layer => {
@@ -436,7 +436,7 @@ export const geojsonLayers = {
     onMapZoomChangedGeoJsonLayers () {
       // Need to update layers with tooltip defining a minZoom/maxZoom
       // as we cannot do that in template because tooltip needs to be recreated/destroyed dynamically
-      const geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonLayerFilters.TooltipUpdate))
+      const geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonLeafletLayerFilters.TooltipUpdate))
       geoJsonlayers.forEach(async geoJsonlayer => {
         // Retrieve the layer
         const layer = this.getLeafletLayerByName(geoJsonlayer.name)

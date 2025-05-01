@@ -160,7 +160,7 @@ export function getUpdateFeatureFunction(leafletOptions) {
   }
 }
 
-export const GeoJsonLayerFilters = {
+export const GeoJsonLeafletLayerFilters = {
   // Filter to identify layers that require an update at a given frequency
   TimeUpdate: {
     // Possible for realtime layers only
@@ -183,8 +183,12 @@ export const GeoJsonLayerFilters = {
     //'variables': { $elemMatch: { unit: { $in: units } } },
     'variables': { $exists: true },
     isVisible: true,
-    'leaflet.style': { $exists: true },
-    'leaflet.template': { $exists: true }
+    $or: [{
+      'leaflet.style': { $exists: true },
+      'leaflet.template': { $exists: true }
+    }, {
+      'leaflet.tooltip.template': { $exists: true }
+    }]
   },
   // Filter to identify layers with tooltip defining a minZoom/maxZoom
   // thus affected by a zoom change
@@ -201,9 +205,10 @@ export const GeoJsonLayerFilters = {
   }
 }
 
-export function hasUnitInTemplate(units, layer) {
+export function hasUnitInLeafletLayerTemplate(units, layer) {
   const unit = _.intersection(units, _.map(layer.variables, 'unit'))
   if (_.isEmpty(unit)) return false
+  if (_.get(layer, 'leaflet.tooltip.template', '').includes('Units')) return true
   for (const template of layer.leaflet.template) {
     if (template.startsWith('style.')) {
       const style = _.get(layer.leaflet, template)
