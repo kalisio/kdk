@@ -8,6 +8,7 @@ import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInM
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle, convertToCesiumFromStyle } from '../../cesium/utils/utils.style.js'
 import { createPrimitiveWithMovingTexture, findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
+import { hasUnitInCesiumLayerTemplate, updateCesiumGeoJsonEntity, GeoJsonCesiumLayerFilters } from '../../cesium/utils/utils.geojson.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
 const CustomTypes = ['wall', 'corridor']
@@ -41,19 +42,6 @@ function removeCustomPrimitiveById (activity, dataSource, id) {
     activity.cesiumMaterials.splice(index, 1)
     dataSource.primitives.delete(id)
   }
-}
-
-function updateGeoJsonEntity (source, destination) {
-  destination.position = source.position
-  destination.orientation = source.orientation
-  destination.properties = source.properties
-  destination.description = source.description
-  // Points
-  if (source.billboard) destination.billboard = source.billboard
-  // Lines
-  if (source.polyline) destination.polyline = source.polyline
-  // Polygons
-  if (source.polygon) destination.polygon = source.polygon
 }
 
 export const geojsonLayers = {
@@ -134,7 +122,7 @@ export const geojsonLayers = {
       let entities = loadingDataSource.entities.values
       entities.forEach(entity => {
         const previousEntity = dataSource.entities.getById(entity.id)
-        if (previousEntity) updateGeoJsonEntity(entity, previousEntity)
+        if (previousEntity) updateCesiumGeoJsonEntity(entity, previousEntity)
         else dataSource.entities.add(entity)
       })
       // Remove any entity not existing anymore
@@ -491,19 +479,7 @@ export const geojsonLayers = {
     },
     onCurrentTimeChangedGeoJsonLayers (time) {
       // Need to update layers that require an update at a given frequency
-      const geoJsonlayers = _.values(this.layers).filter(sift({
-        // Possible for realtime layers only
-        'cesium.type': 'geoJson',
-        'cesium.realtime': true,
-        $or: [ // Supported by template URL or time-based features service
-          { 'cesium.sourceTemplate': { $exists: true } },
-          { service: { $exists: true } }
-        ],
-        // Skip layers powered by realtime service events
-        serviceEvents: { $ne: true },
-        // Skip invisible layers
-        isVisible: true
-      }))
+      const geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonCesiumLayerFilters.TimeUpdate))
       geoJsonlayers.forEach(async geoJsonlayer => {
         // Retrieve the layer
         const dataSource = this.getCesiumLayerByName(geoJsonlayer.name)
@@ -519,32 +495,15 @@ export const geojsonLayers = {
         const units = _.map(Units.getUnits(quantity), 'name')
         // Need to update layers with variables affected by the unit change,
         // ie which style depends on it
-        let geoJsonlayers = _.values(this.layers).filter(sift({
-          'cesium.type': 'geoJson',
-          'cesium.realtime': true,
-          // Not sure why but this does not seem to work with sift
-          //'variables': { $elemMatch: { unit: { $in: units } } },
-          'variables': { $exists: true },
-          isVisible: true,
-          'cesium.style': { $exists: true },
-          'cesium.template': { $exists: true }
-        }))
+        let geoJsonlayers = _.values(this.layers).filter(sift(GeoJsonCesiumLayerFilters.UnitUpdate))
         // Check for each layer if it uses the target unit and templated style uses the unit system or not
         geoJsonlayers = geoJsonlayers.filter(layer => {
-          const unit = _.intersection(units, _.map(layer.variables, 'unit'))
-          if (_.isEmpty(unit)) return false
-          for (const template of layer.cesium.template) {
-            if (template.startsWith('style.')) {
-              const style = _.get(layer.cesium, template)
-              if ((typeof style === 'string') && style.includes('Units')) return true
-            }
-          }
-          return false
+          return hasUnitInCesiumLayerTemplate(units, layer)
         })
         // Then retrieve the engine layers and update
         geoJsonlayers.forEach(layer => {
           // Retrieve the layer
-          const dataSource = this.getCesiumLayerByName(geoJsonlayer.name)
+          const dataSource = this.getCesiumLayerByName(layer.name)
           dataSource.updateGeoJson()
         })
       })
