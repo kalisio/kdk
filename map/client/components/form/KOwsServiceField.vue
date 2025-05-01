@@ -192,7 +192,6 @@ export default {
           for (const [k, v] of url.searchParams) result.searchParams[k] = v
           // fetch content and try to convert to json
           const query = url.href
-          const fetchOptions = { redirect: 'follow' }
           if (this.headerKey && this.headerValue) {
             Object.assign(result.headers, { [this.headerKey]: this.headerValue })
           }
