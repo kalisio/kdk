@@ -330,7 +330,32 @@ If you want to disable a default tooltip configuration like `tooltip: { property
 
 Make it possible to manage and style raw or time-based GeoJson map layers ([Leaflet.Realtime plugin](https://github.com/perliedman/leaflet-realtime) is used under-the-hood):
 * **createLeafletGeoJsonLayer(options)** automatically registered GeoJson Leaflet layer constructor
-* **updateLayer(name, geoJson, remove)** update underlying GeoJson data of a given layer, if `remove` is `true` it will remove given features from the layer, otherwise it will add new ones found and update matching ones based on the `featureId` option
+* **updateLayer(name, geoJson, options)** update underlying GeoJson data of a given layer, options like the following can also be added:
+  * `removeMissing` when `true` it will remove given features from the layer, otherwise it will add new ones found and update matching ones based on the `featureId` option
+  * `replace` when `true` it will replace given features from the layer, otherwise it will update matching ones based on the `featureId` option
+
+You can perform smooth animation of map features using the following `options`  with the `updateLayer()` method like this:
+```js
+updateLayer('MyLayer', { type: 'FeaturesCollection', features: [...] }, {
+  // Animate during 1 second
+  duration: 1,
+  animate: {
+    // Animate along rhumb line with cubic bezier easing function
+    geometry: { easing: { function: 'cubicBezier' }, rhumb: true },
+    // Animation on the feature track property, which is actually a bearing angle
+    track: { easing: { function: 'cubicBezier' }, bearing: true }
+  }
+})
+```
+
+Available [easing functions](https://developer.mozilla.org/fr/docs/Web/CSS/easing-function) are `linear`, `easeOut` (ease power as parameter), `cubicBezier` (coordinates of points defining the curve - x1, y1, x2, y2 - as parameters): 
+```js
+animate: {
+  geometry: { easing: { function: 'linear' } },
+  track: { easing: { function: 'easeOut', parameters: [0.5] }, bearing: true },
+  value: { easing: { function: 'cubicBezier', parameters: [0.42, 0, 0.58, 1] } }
+}
+```
 
 ::: danger
 The [style mixin](./mixins.md#map-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#map-tooltip) and/or [tooltip mixin](./mixins.md#map-tooltip).
