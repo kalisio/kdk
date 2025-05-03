@@ -2,7 +2,7 @@ import L from 'leaflet'
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
-import lineOffset from '@turf/line-offset'
+import { point, rhumbDistance, rhumbBearing, rhumbDestination, lineOffset } from '@turf/turf'
 import { Time, Units, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { getUpdateFeatureFunction, hasUnitInLeafletLayerTemplate, GeoJsonLeafletLayerFilters } from '../../leaflet/utils/utils.geojson.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
@@ -11,6 +11,7 @@ import {
   fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, getFeatureStyleType,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
+import * as maths from '../../../../core/client/utils/utils.math.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
 export const geojsonLayers = {
@@ -321,6 +322,93 @@ export const geojsonLayers = {
       }
       return geojsonOptions
     },
+    getUpdateAnimation(name, layer, options, geoJson) {
+      const { duration, removeMissing, animate } = options
+      const animatedProperties = _.keys(animate)
+      const features = (Array.isArray(geoJson) ? geoJson : (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]))
+      features.forEach(feature => {
+        const previousLayer = layer.getLayer(layer.options.getFeatureId(feature))
+        const previousFeature = (previousLayer ? previousLayer.feature : null)
+        if (previousFeature) {
+          Object.assign(feature, { previousFeature })
+          const startLongitude = _.get(feature.previousFeature, 'geometry.coordinates[0]')
+          const startLatitude = _.get(feature.previousFeature, 'geometry.coordinates[1]')
+          const endLongitude = _.get(feature, 'geometry.coordinates[0]')
+          const endLatitude = _.get(feature, 'geometry.coordinates[1]')
+          const rhumbStart = point([startLongitude, startLatitude])
+          const rhumbEnd = point([endLongitude, endLatitude])
+          Object.assign(feature, {
+            rhumbStart,
+            rhumbEnd,
+            rhumbBearing: rhumbBearing(rhumbStart, rhumbEnd),
+            rhumbDistance: rhumbDistance(rhumbStart, rhumbEnd)
+          })
+        }
+      })
+      return (timestamp) => {
+        // Initialize animation time origin
+        if (!options.startTime) options.startTime = timestamp
+        const { id, startTime } = options
+        const elapsed = timestamp - startTime
+        const percent = Math.abs(elapsed / (1000 * duration))
+        if (percent <= 1) {
+          const animatedFeatures = []
+          features.forEach(feature => {
+            if (!feature.previousFeature) {
+              animatedFeatures.push(feature)
+              return
+            }
+            const endLongitude = _.get(feature, 'geometry.coordinates[0]')
+            const endLatitude = _.get(feature, 'geometry.coordinates[1]')
+            let dLongitude = endLongitude, dLatitude = endLatitude
+            if (animate.geometry) {
+              const easingGeometryFunction = _.get(animate.geometry, 'easing.function')
+              const easingGeometryParameters = _.get(animate.geometry, 'easing.parameters', [])
+              const percentGeometry = maths[easingGeometryFunction](percent, ...easingGeometryParameters)
+              if (animate.geometry.rhumb) {
+                const destination = rhumbDestination(feature.rhumbStart, percentGeometry * feature.rhumbDistance, feature.rhumbBearing)
+                dLongitude = _.get(destination, 'geometry.coordinates[0]')
+                dLatitude = _.get(destination, 'geometry.coordinates[1]')
+              } else {
+                const startLongitude = _.get(feature.previousFeature, 'geometry.coordinates[0]')
+                const startLatitude = _.get(feature.previousFeature, 'geometry.coordinates[1]')
+                const dLongitude = startLongitude + percentGeometry * (endLongitude - startLongitude)
+                const dLatitude = startLatitude + percentGeometry * (endLatitude - startLatitude)
+              }
+            }
+            const properties = {}
+            animatedProperties.forEach(property => {
+              // Skip geometry as specifically managed above
+              if (property === 'geometry') return
+              const easingPropertyFunction = _.get(animate, `${property}.easing.function`, 'cubicBezier')
+              const easingPropertyParameters = _.get(animate, `${property}.easing.parameters`, [])
+              const percentProperty = maths[easingPropertyFunction](percent, ...easingPropertyParameters)
+              const startValue = _.get(feature.previousFeature, `properties.${property}`)
+              const endValue = _.get(feature, `properties.${property}`)
+              let dValue = startValue + percentProperty * (endValue - startValue)
+              if (_.get(animate, `${property}.bearing`, false)) {
+                // Take care to animate using the shortest "path", eg from 355° to 5° avoid running counterclockwise
+                // First computes the smallest angle difference, either clockwise or counterclockwise.
+                const bearingDifference = (endValue - startValue + 540) % 360 - 180
+                // Then normalize the final result to be between 0 and 360
+                dValue = (startValue + percentProperty * bearingDifference + 360) % 360
+              }
+              _.set(properties, property, dValue)
+            })
+            animatedFeatures.push(_.defaultsDeep({
+              geometry: {
+                coordinates: [dLongitude, dLatitude]
+              },
+              properties
+            }, feature))
+          })
+          layer._onNewData(_.isNil(removeMissing) ? layer.options.removeMissing : removeMissing, animatedFeatures)
+          options.id = requestAnimationFrame(options.step)
+        } else {
+          options.id = null
+        }
+      }
+    },
     updateLayer (name, geoJson, options = {}) {
       // Retrieve the layer
       let layer = this.getLeafletLayerByName(name)
@@ -357,7 +445,23 @@ export const geojsonLayers = {
           features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))
           layer.remove(features)
         } else if (geoJson) {
-          if (typeof layer._onNewData === 'function') layer._onNewData(removeMissing, geoJson)
+          if (typeof layer._onNewData === 'function') {
+            const duration = _.get(options, 'duration', 0)
+            if (duration) {
+              _.defaultsDeep(options, {
+                animate: {
+                  geometry: { easing: { function: 'cubicBezier' }, rhumb: true }
+                }
+              })
+              // Stop any scheduled animation on the same layer
+              if (_.has(this.updateAnimations, `${name}.id`)) cancelAnimationFrame(_.get(this.updateAnimations, `${name}.id`))
+              options.step = this.getUpdateAnimation(name, layer, options, geoJson)
+              options.id = requestAnimationFrame(options.step)
+              _.set(this.updateAnimations, name, options)
+            } else {
+              layer._onNewData(removeMissing, geoJson)
+            }
+          }
         } else { // Fetch new data or update in place
           if (layer.tiledLayer) layer.tiledLayer.redraw()
           else if (typeof layer.update === 'function') layer.update()
@@ -489,6 +593,8 @@ export const geojsonLayers = {
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
 
+    // Used to store animation options when animating a layer
+    this.updateAnimations = {}
     // Cache where we'll store geojson data for in memory layers we'll hide
     this.geojsonCache = {}
   },
