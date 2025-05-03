@@ -87,14 +87,19 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
 }
 
 export function getUpdateFeatureFunction(leafletOptions) {
-  return (feature, oldLayer) => {
+  const updateFeature = (feature, oldLayer) => {
     // A new feature is coming, create it
     if (!oldLayer) return
+    const oldType = _.get(oldLayer, 'feature.geometry.type')
+    const type = _.get(feature, 'geometry.type')
+    // The feature is changing its geometry type, recreate it
+    if (type !== oldType) return
     const staticGeometry = _.get(leafletOptions, 'staticGeometry', false)
     // Keep track of previous geometry if we don't want to update it
     // Indeed, styling might depend on it
     if (staticGeometry) feature.geometry = _.get(oldLayer, 'feature.geometry')
-
+    // Now update coordinates if not static geometry
+    if (staticGeometry) return oldLayer
     // An existing one is found, simply update styling, properties, etc.
     leafletOptions.onEachFeature(feature, oldLayer)
     if (oldLayer.setStyle) {
@@ -124,12 +129,6 @@ export function getUpdateFeatureFunction(leafletOptions) {
       // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
       return
     }
-    // Now update coordinates if not static geometry
-    if (staticGeometry) return oldLayer
-    // The feature is changing its geometry type, recreate it
-    const oldType = _.get(oldLayer, 'feature.geometry.type')
-    const type = _.get(feature, 'geometry.type')
-    if (type !== oldType) return
     const coordinates = feature.geometry.coordinates
     // FIXME: support others geometry types ?
     switch (type) {
@@ -158,6 +157,8 @@ export function getUpdateFeatureFunction(leafletOptions) {
     }
     return oldLayer
   }
+  
+  return updateFeature
 }
 
 export const GeoJsonLeafletLayerFilters = {
