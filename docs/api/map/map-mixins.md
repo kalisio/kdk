@@ -53,6 +53,10 @@ center(longitude, latitude, zoomLevel, bearing, {
 })
 ```
 
+::: tip
+The `rhumb` option is used to interpolate position along a [Rhumb line](https://en.wikipedia.org/wiki/Rhumb_line), otherwise the [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula) is used to account for global curvature.
+:::
+
 Available [easing functions](https://developer.mozilla.org/fr/docs/Web/CSS/easing-function) are `linear`, `easeOut` (ease power as parameter), `cubicBezier` (coordinates of points defining the curve - x1, y1, x2, y2 - as parameters): 
 ```js
 animate: {
@@ -348,6 +352,11 @@ updateLayer('MyLayer', { type: 'FeaturesCollection', features: [...] }, {
 })
 ```
 
+::: tip
+The `rhumb` option is used to interpolate position along a [Rhumb line](https://en.wikipedia.org/wiki/Rhumb_line), otherwise the [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula) is used to account for global curvature.
+The `bearing` option is used to properly interpolate angles in [0, 360°[ using the "shortest path" and not all the way round.
+:::
+
 Available [easing functions](https://developer.mozilla.org/fr/docs/Web/CSS/easing-function) are `linear`, `easeOut` (ease power as parameter), `cubicBezier` (coordinates of points defining the curve - x1, y1, x2, y2 - as parameters): 
 ```js
 animate: {
@@ -360,8 +369,6 @@ animate: {
 ::: danger
 The [style mixin](./mixins.md#map-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#map-tooltip) and/or [tooltip mixin](./mixins.md#map-tooltip).
 :::
-
-If your component has a **onLeafletFeature(feature, layer, options)** method it will be called each time a new GeoJson feature is created.
 
 ### Clustering
 
