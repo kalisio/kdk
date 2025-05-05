@@ -44,14 +44,8 @@ module.exports = {
     const renderer = options?.renderer || 'button'
     return {
       id: 'locate-user',
-      label: renderer === 'item' ? 'layout.SHOW_USER_LOCATION' : null,
-      tooltip: renderer === 'button' ? 'layout.SHOW_USER_LOCATION' : null,
-      toggle: {
-        label: renderer === 'item' ? 'layout.HIDE_USER_LOCATION' : null,
-        tooltip: renderer === 'button' ? 'layout.HIDE_USER_LOCATION' : null,
-      },
-      renderer,
-      component: 'tools/KGeolocateTool'
+      component: 'tools/KGeolocateTool',
+      renderer
     }
   },
   activeLocationSearchMode: (options) => {
@@ -112,8 +106,9 @@ module.exports = {
     return helpers.toggleWidget({
       widgetId: 'legend-widget',
       icon: 'las la-atlas',
-      showMessage: 'layout.SHOW_LEGEND',
-      hideMessage: 'layout.HIDE_LEGEND',
+      message: 'layout.LEGEND',
+      toggleIcon: { name: 'las la-atlas', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
+      hideMessage: 'layout.LEGEND',
       renderer
     })
   },
@@ -123,30 +118,30 @@ module.exports = {
     return helpers.toggleWidget({
       widgetId: 'time-series-widget',
       icon: 'las la-chart-line',
-      showMessage: 'layout.SHOW_TIME_SERIES',
-      hideMessage: 'layout.HIDE_TIME_SERIES',
+      message: 'layout.TIME_SERIES',
+      toggleIcon: { name: 'las la-chart-line', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
       renderer
     })
   },
-  toggleSelection: (options) => {
+  toggleSelectionManager: (options) => {
     // renderer: renderer to be used to display the action
     const renderer = options?.renderer || 'item'
     return helpers.toggleWidget({
       widgetId: 'selection-widget',
       icon: 'las la-object-group',
-      showMessage: 'layout.SHOW_DISPLAY_SELECTION',
-      hideMessage: 'layout.HIDE_DISPLAY_SELECTION',
+      message: 'layout.SELECTION_MANAGER',
+      toggleIcon: { name: 'las la-object-group', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
       renderer
     })
   },
-  toggleStyleManager: (options) => {
+  toggleStylesManager: (options) => {
     // renderer: renderer to be used to display the action
     const renderer = options?.renderer || 'item'
     return helpers.toggleWidget({
       widgetId: 'style-manager',
       icon: 'las la-paint-brush',
-      showMessage: 'layout.SHOW_DISPLAY_STYLES',
-      hideMessage: 'layout.HIDE_DISPLAY_STYLES',
+      message: 'layout.STYLES_MANAGER',
+      toggleIcon: { name: 'las la-paint-brush', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
       renderer
     })
   },
@@ -156,8 +151,8 @@ module.exports = {
     return helpers.toggleSticky({
       stickyId: 'position-sticky',
       icon: 'las la-plus',
-      showMessage: 'layout.SHOW_POSITION',
-      hideMessage: 'layout.HIDE_POSITION',
+      message: 'layout.POSITION',
+      toggleIcon: { name: 'las la-plus', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
       renderer
     })
   },
@@ -167,8 +162,8 @@ module.exports = {
     return helpers.toggleSticky({
       stickyId: 'north-arrow-sticky',
       icon: 'las la-location-arrow',
-      showMessage: 'layout.SHOW_NORTH_ARROW',
-      hideMessage: 'layout.HIDE_NORTH_ARROW',
+      message: 'layout.NORTH_ARROW',
+      toggleIcon: { name: 'las la-location-arrow', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
       renderer
     })
   },
@@ -186,6 +181,27 @@ module.exports = {
         label: renderer === 'item' ? 'layout.EXIT_FULLSCREEN' : null,
         tooltip: renderer === 'button' ? 'layout.EXIT_FULLSCREEN' : null
       },
+      renderer
+    }
+  },
+  printTool: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'
+    return {
+      id: 'print-tool',
+      icon: 'las la-print',
+      label: renderer === 'item' ? 'layout.PRINT_TOOL' : null,
+      tooltip: renderer === 'button' ? 'layout.PRINT_TOOL' : null,
+      dialog: { 
+        component: 'KCapture', 
+        title: 'layout.PRINT_TOOL', 
+        cancelAction: 'CANCEL', 
+        okAction: { 
+          id: 'print-button', 
+          label: 'layout.PRINT', 
+          handler: 'apply' 
+        } 
+      } ,
       renderer
     }
   },

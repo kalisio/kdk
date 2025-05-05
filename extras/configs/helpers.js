@@ -27,18 +27,20 @@ module.exports = {
   toggleWidget: (options) => {
     // widgetId: widget identifier
     // icon: icon to be displayed
-    // showMessage: label or tooltip to be displayed when not toggled
-    // hideMessage: label or tooltip to be displayed when toggled
+    // message: label or tooltip to be displayed when not toggled
+    // toggleIcon: icon to be displayed when toggled
+    // toggleMessage: label or tooltip to be displayed when toggled
     // renderer: renderer of the action
     const params = Object.assign({ renderer: 'item' }, options)
     return {
       id: `toggle-${params.widgetId}`, 
       icon: params.icon, 
-      label: params.renderer === 'item' ? params.showMessage : null,
-      tooltip: params.renderer === 'button' ? params.showMessage : null,
+      label: params.renderer === 'item' ? params.message : null,
+      tooltip: params.renderer === 'button' ? params.message : null,
       toggle: { 
-        label: params.renderer === 'item' ? params.hideMessage : null,
-        tooltip: params.renderer === 'button' ? params.hideMessage : null,
+        icon: params.toggleIcon,
+        label: params.renderer === 'item' ? params.toggleMessage : null,
+        tooltip: params.renderer === 'button' ? params.toggleMessage : null,
       },
       renderer: params.renderer,
       widgetId: params.widgetId,
@@ -55,11 +57,12 @@ module.exports = {
     return {
       id: `toggle-${params.stickyId}`, 
       icon: params.icon, 
-      label: params.renderer === 'item' ? params.showMessage : null,
-      tooltip: params.renderer === 'button' ? params.showMessage : null,
+      label: params.renderer === 'item' ? params.message : null,
+      tooltip: params.renderer === 'button' ? params.message : null,
       toggle: { 
-        label: params.renderer === 'item' ? params.hideMessage : null,
-        tooltip: params.renderer === 'button' ? params.hideMessage : null,
+        icon: params.toggleIcon,
+        label: params.renderer === 'item' ? params.toggleMessage : null,
+        tooltip: params.renderer === 'button' ? params.toggleMessage : null,
       },
       renderer: params.renderer,
       stickyId: params.stickyId,
