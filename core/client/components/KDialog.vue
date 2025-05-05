@@ -107,7 +107,7 @@ const computedButtons = computed(() => {
       if (cancelButton.handler) {
         cancelButton.handler = async () => {
           // ! call the original handler to avoid recursive call
-          const result = await callHandler(props.cancelAction.handler)          
+          const result = await callHandler(props.cancelAction.handler)
           // close dialog whatever the result of the handler
           onDialogCancel(result)
         }

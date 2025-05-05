@@ -433,8 +433,7 @@ export default {
       const state = this.measureCircle
 
       // We're only interested in clicks on the map, not on other layers
-      if (event.target !== this.kActivity.map)
-        return
+      if (event.target !== this.kActivity.map) { return }
 
       if (!state.center) {
         // we're placing circle center

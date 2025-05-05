@@ -170,7 +170,7 @@ function applyToSelection (styleToApply) {
         }
         CurrentActivity.value.updateLayer(layer.layer.name, geoJson)
       } else {
-        _.forEach(layer.features, f => { 
+        _.forEach(layer.features, f => {
           _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, f.geometry.type, 'point')], null))
         })
         editFeaturesStyle({ type: 'FeatureCollection', features: layer.features }, layer.layer)
