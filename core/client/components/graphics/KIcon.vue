@@ -3,8 +3,8 @@
     v-bind="computedIcon"
     class="k-icon"
   >
-    <div 
-      v-if="computedOverlay" 
+    <div
+      v-if="computedOverlay"
       class="k-icon-overlay"
     >
       <q-icon v-bind="computedOverlay" />

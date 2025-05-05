@@ -44,26 +44,26 @@ const computedProps = computed(() => {
 const computedStyle = computed(() => {
   const hOffset = `${props.offset[0]}px`
   const vOffset = `${props.offset[1]}px`
-  let style = {
+  const style = {
     position: 'fixed'
   }
   switch (props.position) {
     case 'top-right':
       style.top = vOffset
       style.right = hOffset
-      break;
+      break
     case 'top-left':
       style.top = vOffset
       style.left = hOffset
-      break;
+      break
     case 'bottom-left':
       style.bottom = vOffset
       style.left = hOffset
-      break;
+      break
     default: // bottom-right
       style.bottom = vOffset
       style.right = hOffset
-      break;
+      break
   }
   return style
 })

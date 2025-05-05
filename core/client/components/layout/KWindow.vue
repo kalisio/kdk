@@ -86,7 +86,7 @@
     >
       <q-resize-observer @resize="onWindowFooterResized" />
       <!-- window grip -->
-      <div 
+      <div
         :id="`${placement}-window-resize-grip`"
         class="row items-center"
       >

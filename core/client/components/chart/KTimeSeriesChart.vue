@@ -48,7 +48,7 @@ const emit = defineEmits(['zoom-start', 'zoom-end', 'legend-clicked'])
 // Data
 let canvas = null
 let chart = null
-let hiddenDatasets = []
+const hiddenDatasets = []
 const unit2axis = new Map()
 const hasData = ref(false)
 // Min/Max time (ie for x axis)

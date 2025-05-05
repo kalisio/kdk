@@ -7,7 +7,7 @@
     <!--
       Header section
     -->
-    <div 
+    <div
       v-if="hasHeader"
       :class="{ 'q-px-sm q-pt-xs': dense, 'q-px-md q-pt-sm': !dense }"
     >
