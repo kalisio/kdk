@@ -4,7 +4,7 @@ The `graphics` folder contains reusable components for rendering a variety of gr
 
 ## `KIcon`
 
-The `KIcon` component is a wrapper around [Quasar Icon](https://quasar.dev/vue-components/icon/) that enables displaying a primary icon with an optional stacked overlay icon. This is useful for creating composite or symbolic icons by layering one icon on top of another.
+The `KIcon` component is a wrapper around [Quasar Icon](https://quasar.dev/vue-components/icon/) that enables displaying a primary icon with an optional stacked overlay icon. This is useful for creating composite or symbolic icons by layering one icon on top of another. Moreover, and unlike **Quasar**'s built-in **QIcon**, `KIcon` supports any valid HTML color definition.
 
 ### Props
 
