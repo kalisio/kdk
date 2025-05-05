@@ -9,19 +9,15 @@
     "SHOW_USER_LOCATION": "Afficher ma localisation",
     "HIDE_USER_LOCATION": "Masquer ma localisation",
     "SEARCH_LOCATION": "Recherche un lieu",
-    "MEASURE_TOOL": "Activer l'outil de mesure",
-    "SHOW_LEGEND": "Afficher la légende",
-    "HIDE_LEGEND": "Masquer la légende",
-    "SHOW_DISPLAY_SELECTION": "Afficher la sélection",
-    "HIDE_DISPLAY_SELECTION": "Masquer la sélection",
-    "SHOW_DISPLAY_STYLES": "Afficher les styles",
-    "HIDE_DISPLAY_STYLES": "Masquer les styles",
-    "SHOW_POSITION": "Afficher les coordonnées géographiques",
-    "HIDE_POSITION": "Masquer les coordonnées géographiques",
-    "SHOW_NORTH_ARROW": "Afficher la flèche nord",
-    "HIDE_NORTH_ARROW": "Masquer la flèche nord",
-    "SHOW_TIME_SERIES": "Afficher les séries chronologiques",
-    "HIDE_TIME_SERIES": "Masquer les séries chronologiques"
+    "LEGEND": "Légende",
+    "SELECTION_MANAGER": "Gestionnaire de sélection",
+    "STYLES_MANAGER": "Gestionnaires de styles",
+    "TIME_SERIES": "Series temporelles",
+    "POSITION": "Coordonnées géographiques",
+    "NORTH_ARROW": "Flèche nord",
+    "MEASURE_TOOL": "Outil de mesure",
+    "PRINT_TOOL": "Outil d'impression",
+    "PRINT": "Imprimer"
   },
   "errors": {
     "GEOLOCATION_NOT_SUPPORTED": "La géolocalisation ne semble pas disponible sur votre appareil ou navigateur.",
@@ -91,11 +87,6 @@
       "ENTER_VR": "Basculer en mode RV",
       "EXIT_VR": "Quitter le mode RV",
       "PROBE": "Sonder",
-      "DISPLAY_POSITION": "Afficher les coordonnées",
-      "DISPLAY_LEGEND": "Afficher la légende",
-      "DISPLAY_SELECTION": "Afficher la sélection",
-      "DISPLAY_STYLES": "Afficher les styles",
-      "HIDE_LEGEND": "Masquer la légende",
       "SEARCH_LOCATION": "Rechercher un lieu",
       "ADD_VIEW": "Ajouter une vue",
       "CREATE_VIEW": "Créer une vue",
@@ -105,7 +96,7 @@
       "TOOLS": "Outils",
       "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",
       "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés",
-      "CAPTURE_VIEW": "Capturer la vue",
+      "PRINT_VIEW": "Imprimer la vue",
       "SAVE_LABEL": "Sauvegarder la couche",
       "REMOVE_LABEL": "Supprimer"
     },
@@ -699,8 +690,8 @@
     "REMOVE_FEATURES": "Effacer des entités"
   },
   "KCapture": {
-    "CAPTURE_ACTION": "Capturer la vue",
-    "CAPTURING_VIEW": "En attente de capture de la vue",
+    "PRINT_ACTION": "Imprimer la vue",
+    "PRINTING_VIEW": "En attente de d'impression de la vue",
     "ERROR_MESSAGE": "Une capture est déjà en cours"
   },
   "KMeasureTool": {

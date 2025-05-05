@@ -11,26 +11,36 @@ module.exports = {
     return Object.assign({
       id: 'position-sticky',
       visible: false,
+      position: 'top',      
       offset: [0, 42],
-      position: 'top',
       component: 'stickies/KPosition'
     }, options)
   },
   target: (options) => {
     return Object.assign({ 
       id: 'target-sticky',
-      visible: false, 
-      offset: [0, -20], 
+      visible: false,
       position: 'center',
+      offset: [0, -20], 
       component: 'stickies/KTarget'
+    }, options)
+  },
+  levelSlider: (options) => {
+    return Object.assign({ 
+      id: 'level-slider-sticky', 
+      visible: true,
+      position: 'right', 
+      offset: [40, 0], 
+      component: 'stickies/KLevelSlider',
+      vertical: true
     }, options)
   },
   northArrow: (options) => {
     return Object.assign({ 
       id: 'north-arrow-sticky',
       visible: true, 
-      offset: [110, 2], 
       position: 'bottom-left',
+      offset: [110, 2], 
       component: 'stickies/KNorthArrow' 
     }, options)
   },
