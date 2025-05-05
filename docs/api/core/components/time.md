@@ -33,7 +33,7 @@ To define a date input with the format `DD/MM/YY`, you can configure the `KDate`
 
 This component is a time picker button. It allows users to select a time by clicking a button that opens a popup calendar built using **Quasar** component [QTime](https://quasar.dev/vue-components/time)
 
-## Props
+### Props
 
 | **Prop**        | **Type**   | **Default**      | **Description** |
 |----------------|-----------|----------------|----------------|
@@ -63,8 +63,6 @@ To define a time input without an icon and that accounts for seconds, you can co
 This component provides a combined date and time picker, allowing users to select both a date and a time within a single UI element. It utilizes [KDate](#kdate) for the date selection and [KTime](#time) for the time selection, offering customization options for formatting, styling, and validation.
 
 ### Props
-
-## Props
 
 | **Prop**        | **Type**   | **Default**      | **Description** |
 |----------------|-----------|----------------|----------------|
@@ -103,8 +101,6 @@ To define a timestamp input with the format `DD/MM/YY` for the date and `HH:mm:s
 This component is a date-time range selector that allows users to pick a start and end date-time. It integrates two [KDateTime](#kdatetime) components with optional range slider support for easier selection. The component ensures valid date ranges, supports time zones, and allows custom formatting.
 
 ### Props
-
-### **Props Table**  
 
 | Prop Name         | Type    | Default          | Description | Additional Notes |
 |------------------|--------|----------------|-------------|----------------|

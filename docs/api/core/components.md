@@ -409,6 +409,8 @@ Checkout the [ChartActivity](https://github.com/kalisio/kApp/blob/master/src/com
 Have a look at the [choma color scales](https://gka.github.io/chroma.js/#color-scales) to see how to define your color scale.
 :::
 
+## [Graphics](./components/graphics.md)
+
 ## [Time](./components/time.md)
 
 ## User Account
