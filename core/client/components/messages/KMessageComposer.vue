@@ -101,9 +101,9 @@ import KUploader from '../document/KUploader.vue'
 
 // Props
 const props = defineProps({
-  activity: {
-    type: String,
-    default: 'messagesActivity'
+  messageTypes: {
+    type: Object,
+    default: null
   },
   baseMessage: {
     type: Object,
@@ -122,7 +122,7 @@ const props = defineProps({
 // Data
 const $q = useQuasar()
 const User = Store.get('user')
-const MessageTypes = config[props.activity].messages
+const MessageTypes = props.messageTypes ?? config.messagesActivity.messages
 const { createMessage } = kdkCoreComposables.useMessages()
 const editor = ref(false)
 const uploaderRef = ref(null)
