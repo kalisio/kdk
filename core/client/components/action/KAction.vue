@@ -7,8 +7,7 @@
     no-caps
     no-wrap
     :color="computedColor"
-    :icon="!iconRight ? computedIcon : undefined"
-    :icon-right="iconRight ? computedIcon : undefined"
+    :icon="undefined"
     :size="size"
     :flat="flat"
     :outline="outline"
@@ -20,7 +19,9 @@
     v-close-popup="closePopup"
     @click="onClicked"
     :class="{ 'k-action-toggled': isToggled }"
-  >
+  > 
+    <!-- icon -->
+    <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
     <!-- label -->
     <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
       {{ computedLabel }}
@@ -36,6 +37,8 @@
     <!-- extra content -->
     <slot>
     </slot>
+    <!-- icon -->
+    <KIcon v-if="iconRight && computedIcon" :icon="computedIcon" />
   </q-btn>
   <!--
     Form button renderer
@@ -68,10 +71,11 @@
     @click="onClicked"
   >
     <q-item-section v-if="computedIcon || badge" avatar>
-      <q-icon v-if="computedIcon" :name="computedIcon" :color="computedColor" :dense="dense" />
+      <!-- icon -->
+      <KIcon v-if="computedIcon" :icon="computedIcon" />
       <!-- badge -->
       <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
-        <q-icon v-if="badge.icon" v-bind="badge.icon" />
+        <KIcon v-if="badge.icon" v-bind="badge.icon" />
       </q-badge>
     </q-item-section>
     <q-item-section :class="'text-' + computedColor" no-wrap>
@@ -87,7 +91,6 @@
   <q-btn v-else-if="renderer === 'fab'"
     :id="id"
     class="k-action-fab"
-    :icon="computedIcon"
     :color="computedColor"
     :size="size"
     :round="true"
@@ -95,6 +98,8 @@
     :disable="computedDisabled"
     @click="onClicked"
   >
+    <!-- icon -->
+    <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
       {{ computedTooltip }}
@@ -121,13 +126,15 @@
     :disable="computedDisabled"
     @click="onClicked"
   >
+    <!-- icon -->
+    <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
     <!-- tooltip -->
     <q-tooltip v-if="computedTooltip" anchor="top middle" self="bottom right">
       {{ computedTooltip }}
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge">
-      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+      <KIcon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
   </q-fab-action>
   <!--
@@ -153,7 +160,7 @@
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
-      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+      <KIcon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
     <slot>
@@ -177,6 +184,7 @@ import { useQuasar, openURL } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { actionProps } from '../../utils/utils.actions'
 import { bindParams, bindProperties } from '../../utils/utils.content.js'
+import KIcon from '../graphics/KIcon.vue'
 
 // Props
 const props = defineProps(actionProps)
