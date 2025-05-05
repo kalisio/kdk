@@ -1,6 +1,6 @@
 # Graphics
 
-The `graphics` folder provides various components that allow users to display various graphical components.
+The `graphics` folder contains reusable components for rendering a variety of graphical elements.
 
 ## `KIcon`
 
@@ -21,7 +21,7 @@ The `KIcon` component is a wrapper around [Quasar Icon](https://quasar.dev/vue-c
 ```
 * And the same icon with a red slash through it:
 
-``html
+```html
 <KIcon
   :icon="{
     name: 'las la-home',
@@ -32,3 +32,4 @@ The `KIcon` component is a wrapper around [Quasar Icon](https://quasar.dev/vue-c
     }
   }"
 />
+```
