@@ -231,8 +231,10 @@ describe('map:services', () => {
     // Check for events
     eventsOn(vigicruesObsService)
     // Feed the collection
-    const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.json'))
-    await vigicruesObsService.create(observations)
+    const observationsH = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.H.json'))
+    await vigicruesObsService.create(observationsH)
+    const observationsQ = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.Q.json'))
+    await vigicruesObsService.create(observationsQ)
   })
   // Let enough time to process
     .timeout(5000)
@@ -257,11 +259,11 @@ describe('map:services', () => {
     const max = moment.utc('2018-11-23T08:06:00.000Z')
     const start = min
     const end = moment.utc('2018-10-23T00:00:00.000Z')
-    await vigicruesObsService.patch(null, { 'properties.ProjCoord': 27 }, { query: { time: { $gte: start, $lte: end } } })
-    await vigicruesObsService.remove(null, { query: { 'properties.ProjCoord': 27 } })
+    await vigicruesObsService.patch(null, { 'properties.ProjCoord': 27 }, { query: { time: { $gte: start, $lte: end }, 'properties.H': { $exists: true } } })
+    await vigicruesObsService.remove(null, { query: { 'properties.ProjCoord': 27, 'properties.H': { $exists: true } } })
     // Check for simplified events
     eventsOff(vigicruesObsService)
-    expect(getEventCount('created')).to.equal(1)
+    expect(getEventCount('created')).to.equal(2)
     let payload = getEventData('created')
     expect(payload.data).beUndefined()
     expect(payload.total).to.equal(1344)
@@ -292,7 +294,7 @@ describe('map:services', () => {
     payload = getEventData('removed')
     expect(payload.data).beUndefined()
     expect(payload.total).to.equal(3)
-    expect(payload.query).to.deep.equal({ 'properties.ProjCoord': 27 })
+    expect(payload.query).to.deep.equal({ 'properties.ProjCoord': 27, 'properties.H': { $exists: true } })
     expect(payload.startTime).toExist()
     expect(payload.endTime).toExist()
     expect(payload.startTime.format()).to.equal(start.format())
@@ -461,6 +463,25 @@ describe('map:services', () => {
     expect(feature.properties.maxH).toExist()
     expect(typeof feature.properties.maxH).to.equal('number')
     expect(feature.properties.maxH).to.equal(0.39)
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('performs multiple elements aggregation on vigicrues observations service', async () => {
+    const result = await vigicruesObsService.find({
+      query: Object.assign(aggregationQuery, { $aggregate: ['H', 'Q'] })
+    })
+    expect(result.features.length).to.equal(1)
+    const feature = result.features[0]
+    expect(feature.time).toExist()
+    expect(feature.time.H).toExist()
+    expect(feature.time.Q).toExist()
+    expect(feature.time.H.length === 5).beTrue()
+    expect(feature.time.Q.length === 5).beTrue()
+    expect(feature.time.H[0].isBefore(feature.time.H[1])).beTrue()
+    expect(feature.time.Q[0].isBefore(feature.time.Q[1])).beTrue()
+    expect(feature.properties.H.length === 5).beTrue()
+    expect(feature.properties.Q.length === 5).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
