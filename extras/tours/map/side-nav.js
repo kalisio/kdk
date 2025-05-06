@@ -1,5 +1,5 @@
 module.exports = [{
-  target: '#logout',
+  target: '#logout-action',
   title: 'tours.side-nav.LOGOUT_LABEL',
   content: 'tours.side-nav.SESSION_LABEL',
   params: {
