@@ -259,7 +259,7 @@ async function apply () {
     await service.patch(model.value._id, data)
   }
   // Update layers with filters that use this style
-  const layers = _.filter(CurrentActivity.value.getLayers(), layer =>
+  const layers = _.filter(CurrentActivity.value?.getLayers ? CurrentActivity.value.getLayers() : [], layer =>
     _.get(layer, 'scope') === 'user' &&
     _.some(_.get(layer, 'filters', []), filter => _.get(filter, 'style') === data._id))
   _.forEach(layers, layer => { updateLayerWithFiltersStyle(layer) })
