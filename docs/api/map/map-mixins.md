@@ -335,8 +335,9 @@ If you want to disable a default tooltip configuration like `tooltip: { property
 Make it possible to manage and style raw or time-based GeoJson map layers ([Leaflet.Realtime plugin](https://github.com/perliedman/leaflet-realtime) is used under-the-hood):
 * **createLeafletGeoJsonLayer(options)** automatically registered GeoJson Leaflet layer constructor
 * **updateLayer(name, geoJson, options)** update underlying GeoJson data of a given layer, options like the following can also be added:
-  * `removeMissing` when `true` it will remove given features from the layer, otherwise it will add new ones found and update matching ones based on the `featureId` option
-  * `replace` when `true` it will replace given features from the layer, otherwise it will update matching ones based on the `featureId` option
+  * `removeMissing` when `true` it will remove features from the layer that do not exist in the updated data, otherwise it will add new ones found and update matching ones based on the `featureId` property of the layer definition
+  * `remove` when `true` it will remove given features from the layer based on the `featureId` property of the layer definition
+  * `replace` when `true` it will replace given features from the layer, otherwise it will update matching ones based on the `featureId` property of the layer definition
 
 You can perform smooth animation of map features using the following `options`  with the `updateLayer()` method like this:
 ```js

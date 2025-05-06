@@ -122,7 +122,9 @@ If you want to disable a default tooltip configuration like `tooltip: { property
 
 Make it possible to manage and style raw or time-based GeoJson map layers:
 * **createCesiumGeoJsonLayer(options)** automatically registered GeoJson Cesium layer constructor
-* **updateLayer(name, geoJson)** update underlying GeoJson data of a given layer
+* **updateLayer(name, geoJson, options)** update underlying GeoJson data of a given layer, options like the following can also be added:
+  * `removeMissing` when `true` it will remove given features from the layer, otherwise it will add new ones found and update matching ones based on the `featureId` property of the layer definition
+  * `remove` when `true` it will remove given features from the layer based on the `featureId` property of the layer definition
 
 ::: danger
 The [style mixin](./mixins.md#globe-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#globe-tooltip) and/or [tooltip mixin](./mixins.md#globe-tooltip).
