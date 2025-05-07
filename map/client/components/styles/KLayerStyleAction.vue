@@ -24,7 +24,7 @@ const { CurrentActivity } = useCurrentActivity()
 
 const styles = ref([])
 
-const props = defineProps({
+defineProps({
   label: {
     type: String,
     required: true
