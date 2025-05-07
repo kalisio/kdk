@@ -82,7 +82,11 @@ export const baseMap = {
     'layer-shown',
     'layer-hidden',
     'layer-enabled',
-    'layer-disabled'
+    'layer-disabled',
+    'pane-added',
+    'pane-removed',
+    'pane-shown',
+    'pane-hidden'
   ],
   data () {
     return {
@@ -260,7 +264,12 @@ export const baseMap = {
         _.set(pane, 'style.zIndex', zIndex || 400) // Defaults for overlay in Leaflet
       }
       this.leafletPanes[paneName] = pane
+      this.onPaneAdded(paneName, pane)
       return pane
+    },
+    onPaneAdded (name, leafletPane) {
+      this.$emit('pane-added', name, leafletPane)
+      this.$engineEvents.emit('pane-added', name, leafletPane)
     },
     getLeafletPaneByName (paneOrZIndex) {
       const paneName = paneOrZIndex.toString()
@@ -271,6 +280,11 @@ export const baseMap = {
       const pane = this.getLeafletPaneByName(paneName)
       if (!pane) return
       delete this.leafletPanes[paneName]
+      this.onPaneRemoved(paneName, pane)
+    },
+    onPaneRemoved (name, leafletPane) {
+      this.$emit('pane-removed', name, leafletPane)
+      this.$engineEvents.emit('pane-removed', name, leafletPane)
     },
     isPaneVisible (name) {
       const pane = this.getLeafletPaneByName(name)
@@ -278,13 +292,23 @@ export const baseMap = {
     },
     showPane(name) {
       const pane = this.getLeafletPaneByName(name)
-      if (!pane) return
+      if (!pane || (pane.style.display === 'block')) return
       pane.style.display = 'block'
+      this.onPaneShown(name, pane)
+    },
+    onPaneShown (name, leafletPane) {
+      this.$emit('pane-shown', name, leafletPane)
+      this.$engineEvents.emit('pane-shown', name, leafletPane)
     },
     hidePane(name) {
       const pane = this.getLeafletPaneByName(name)
-      if (!pane) return
+      if (!pane || (pane.style.display === 'none')) return
       pane.style.display = 'none'
+      this.onPaneHidden(name, pane)
+    },
+    onPaneHidden (name, leafletPane) {
+      this.$emit('pane-hidden', name, leafletPane)
+      this.$engineEvents.emit('pane-hidden', name, leafletPane)
     },
     updateLeafletPanesVisibility () {
       // Take care to possible fractional zoom while panes uses integer zoom levels
