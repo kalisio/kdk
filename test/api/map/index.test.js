@@ -432,7 +432,7 @@ describe('map:services', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('performs sorted single element aggregation on vigicrues observations service', async () => {
+  it('performs sorted single time element aggregation on vigicrues observations service', async () => {
     const result = await vigicruesObsService.find({
       query: Object.assign({ $sort: { time: -1 }, $limit: 1 }, aggregationQuery)
     })
@@ -469,7 +469,7 @@ describe('map:services', () => {
 
   it('performs multiple elements aggregation on vigicrues observations service', async () => {
     const result = await vigicruesObsService.find({
-      query: Object.assign(aggregationQuery, { $aggregate: ['H', 'Q'] })
+      query: Object.assign({}, aggregationQuery, { $aggregate: ['H', 'Q'] })
     })
     expect(result.features.length).to.equal(1)
     const feature = result.features[0]
@@ -482,6 +482,27 @@ describe('map:services', () => {
     expect(feature.time.Q[0].isBefore(feature.time.Q[1])).beTrue()
     expect(feature.properties.H.length === 5).beTrue()
     expect(feature.properties.Q.length === 5).beTrue()
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('performs sorted single time multiple elements aggregation on vigicrues observations service', async () => {
+    const result = await vigicruesObsService.find({
+      query: Object.assign({ $sort: { time: -1 }, $limit: 1 }, aggregationQuery, { $aggregate: ['H', 'Q'] })
+    })
+    expect(result.features.length).to.equal(1)
+    const feature = result.features[0]
+    expect(feature.time).toExist()
+    expect(feature.time.H).toExist()
+    expect(feature.time.H.isValid()).beTrue()
+    expect(feature.time.Q).toExist()
+    expect(feature.time.Q.isValid()).beTrue()
+    expect(feature.properties.H).toExist()
+    expect(feature.properties.Q).toExist()
+    expect(typeof feature.properties.H).to.equal('number')
+    expect(typeof feature.properties.Q).to.equal('number')
+    expect(feature.properties.H).to.equal(0.38)
+    expect(feature.properties.Q).to.equal(0.40)
   })
   // Let enough time to process
     .timeout(5000)
