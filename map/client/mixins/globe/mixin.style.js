@@ -57,7 +57,9 @@ export const style = {
         const entityStyle = _.cloneDeep(cesiumOptions.entityStyle)
         entityStyleTemplate.forEach(entry => {
           // Perform templating, set using simple spec mapping first then raw if property not found
-          let value = entry.compiler({ properties, chroma, moment, Units, Time })
+          // The whole feature is lost by Cesium so that top-level properties have disappeared
+          // but we try to keep track of it eg in GeoJson layers
+          let value = entry.compiler({ feature: entity.feature || { properties }, properties, chroma, moment, Units, Time })
           const property = entry.property
           // Handle specific case of orientation
           if ((property === 'orientation') && entity.position) {
