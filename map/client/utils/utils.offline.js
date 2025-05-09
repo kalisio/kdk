@@ -21,7 +21,7 @@ export async function createOfflineServices () {
 export async function cacheView (view, layers, options = {}) {
   const views = await LocalCache.getItem('views')
   if (views) {
-    views[view._id] = true
+    views[view._id] = options
     await LocalCache.setItem('views', views)
   } else {
     await LocalCache.setItem('views', { [view._id]: options })
@@ -57,6 +57,8 @@ export async function cacheView (view, layers, options = {}) {
 
 export async function uncacheView (view, layers, options = {}) {
   const views = await LocalCache.getItem('views') || {}
+  // Nothing to do if not cached
+  if (!views[view._id]) return
   // Retrieve stored options in cache
   Object.assign(options, views[view._id] || {})
   for (let i = 0; i < layers.length; i++) {
