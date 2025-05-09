@@ -38,8 +38,9 @@ export const tooltip = {
             if (text && (typeof text.toString === 'function')) text = text.toString()
           } else if (tooltipStyle.template) {
             const compiler = tooltipStyle.compiler
-            // FIXME: the whole feature is lost by Cesium so that top-level properties have disappeared
-            text = compiler({ feature: { properties }, properties, $t: this.$t, Units, Time, moment })
+            // The whole feature is lost by Cesium so that top-level properties have disappeared
+            // but we try to keep track of it eg in GeoJson layers
+            text = compiler({ feature: entity.feature || { properties }, properties, $t: this.$t, Units, Time, moment })
           }
         }
         if (text) {

@@ -58,10 +58,9 @@ export const geojsonLayers = {
     },
     async loadGeoJson (dataSource, geoJson, options, updateOptions = {}) {
       const cesiumOptions = options.cesium
+      const features = (Array.isArray(geoJson) ? geoJson : (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]))
       // Remove mode
       if (_.get(updateOptions, 'remove', false)) {
-        const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
-
         features.forEach(feature => {
           const id = getFeatureId(feature, options)
           CustomTypes.forEach(type => {
@@ -121,6 +120,8 @@ export const geojsonLayers = {
       // Now we process loaded entities to merge with existing ones if any or add new ones
       let entities = loadingDataSource.entities.values
       entities.forEach(entity => {
+        // Find matching feature if any and keep track of it as Cesium only keeps properties
+        entity.feature = features.find(feature => getFeatureId(feature, options) === entity.id)
         const previousEntity = dataSource.entities.getById(entity.id)
         if (previousEntity) updateCesiumGeoJsonEntity(entity, previousEntity)
         else dataSource.entities.add(entity)
@@ -468,8 +469,8 @@ export const geojsonLayers = {
       // these layers will be destroyed when hidden. We need to be able to restore
       // them when they get shown again
       const baseLayer = this.getLayerByName(name)
-      if (isInMemoryLayer(baseLayer) && geoJson) {
-        this.geojsonCache[name] = geoJson
+      if (isInMemoryLayer(baseLayer)) {
+        this.geojsonCache[name] = await this.toGeoJson(name)
       }
       this.onLayerUpdated(baseLayer, layer, { features: geoJson ? geoJson.features || [geoJson] : [] })
     },
