@@ -158,6 +158,11 @@
     "MICROSIEVERT_PER_HOUR_LABEL": "Microsieverts per hour",
     "NANOSIEVERT_PER_HOUR_LABEL": "Nanosieverts per hour"
   },
+  "directives": {
+    "ALL_FILES_ARE_UNSUPPORTED": "File is not supported | None of the files are supported",
+    "SOME_FILES_ARE_UNSUPPORTED": "Some files will be ignored due to unsupported types",
+    "DROP_FILES": "Drop file here | Drop files here"
+  },
   "mixins": {
     "baseItem": {
       "REMOVE_ITEM_TITLE": "Are you sure you want to delete <b>{name}</b> ?",

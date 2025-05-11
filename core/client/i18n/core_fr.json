@@ -158,9 +158,14 @@
     "MICROSIEVERT_PER_HOUR_LABEL": "Microsieverts par heure",
     "NANOSIEVERT_PER_HOUR_LABEL": "Nanosieverts par heure"
   },
+  "directives": {
+    "ALL_FILES_ARE_UNSUPPORTED": "Fichier non pris en charge | Aucun des fichiers n'est pris en charge",
+    "SOME_FILES_ARE_UNSUPPORTED": "Certains fichiers seront ignorés en raison de types non pris en charge",
+    "DROP_FILES": "Déposez le fichier ici | Déposez les fichiers ici"
+  },
   "mixins": {
     "baseItem": {
-      "REMOVE_ITEM_TITLE": "Etes vous sûr de vouloir supprimer <b>{name}</b> ?",
+      "REMOVE_ITEM_TITLE": "Êtes vous sûr de vouloir supprimer <b>{name}</b> ?",
       "REMOVE_ITEM_MESSAGE": "Merci de saisir le nom pour confirmer la suppression",
       "ITEM_EXPORTED": "Export du contenu de {name} dans {file}",
       "CANNOT_EXPORT_ITEM": "Impossible d'exporter {name}. Votre navigateur supporte t'il la fonctionnalité ?"
