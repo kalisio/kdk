@@ -150,6 +150,7 @@
               :options="properties"
               :disable="!values.infobox.enabled"
               :label="$t('KLayerEditor.ADD_INFOBOX')"
+              id="layer-infobox-field"
               use-chips multiple>
               <!-- Options display -->
               <template v-slot:option="scope">
@@ -309,7 +310,7 @@ function getValues () {
       },
       clustering: {
         leaflet: {
-          enabled: _.get(layer, 'leaflet.cluster', false) !== false,
+          enabled: !!(_.get(layer, 'leaflet.cluster') || _.get(activityOptions, 'cluster')),
           min: leafletZoomBounds.min,
           max: leafletZoomBounds.max,
           value: _.get(layer, 'leaflet.cluster.disableClusteringAtZoom', _.get(activityOptions, 'cluster.disableClusteringAtZoom', _.get(DefaultStyle, 'leaflet.cluster.disableClusteringAtZoom')))
@@ -339,7 +340,7 @@ function getValues () {
       property: null
     },
     infobox: {
-      enabled: _.get(layer, 'leaflet.infobox.pick', _.get(activityOptions, 'infobox.pick', true)) !== false,
+      enabled: _.get(layer, 'leaflet.infobox', _.get(activityOptions, 'infobox', true)) !== false,
       properties: []
     }
   }

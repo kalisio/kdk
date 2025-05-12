@@ -306,3 +306,31 @@ export async function moveSlider (page, action, direction, times, wait = 500) {
   debug(`[KDK] Pressed ${key} ${times} times to move slider ${action}`)
   await page.waitForTimeout(wait)
 }
+
+/**
+ * Move a range thumb (leftThumb or rightThumb) in a chosen direction (right or left), for a specific times
+ */
+export async function moveRange (page, action, target, direction, times, wait = 500) {
+  target = ['leftThumb', 'rightThumb'].includes(target) ? target : 'leftThumb'
+  const lastOfType = target === 'rightThumb' ? ':last-of-type' : ''
+  const selector = `#${action} .q-slider__thumb${lastOfType} .q-slider__focus-ring`
+  const key = (direction === 'left') ? 'ArrowLeft' : 'ArrowRight'
+
+  await page.waitForSelector(selector, { timeout: 2000 })
+  const element = await page.$(selector)
+  const box = await element.boundingBox()
+  const x = box.x + box.width / 2
+  const y = box.y + box.height / 2
+
+  await page.mouse.move(x, y)
+  await page.mouse.down()
+
+  for (let i = 0; i < times; i++) {
+    await page.keyboard.press(key)
+  }
+
+  await page.mouse.up()
+
+  debug(`[KDK] Pressed ${key} ${times} times to move range ${action} (${target === 'rightThumb' ? 'right thumb' : 'left thumb'})`)
+  await page.waitForTimeout(wait)
+}
