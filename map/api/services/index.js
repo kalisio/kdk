@@ -173,7 +173,7 @@ export async function createDefaultCatalogLayers (options = {}) {
     let featuresService
     try {
       // Used to filter properties only used to initialize a layer and related data
-      const reservedProperties = ['filter', 'url', 'fileName']
+      const reservedProperties = ['filter', 'url', 'fileName', 'forceDataUpdate']
       // Create or update the layer removing any option only used to manage layer setup
       if (!isLayerAlreadyCreated) {
         app.logger.info('Adding default layer (name = ' + defaultLayer.name + ')')
@@ -194,10 +194,12 @@ export async function createDefaultCatalogLayers (options = {}) {
       console.error(error)
     }
     // And if we need to initialize some data as well
-    if (!isLayerAlreadyCreated && featuresService && (defaultLayer.url || defaultLayer.fileName)) {
+    if ((!isLayerAlreadyCreated || defaultLayer.forceDataUpdate) && featuresService && (defaultLayer.url || defaultLayer.fileName)) {
+      app.logger.info('Updating data for default layer (name = ' + defaultLayer.name + ')')
       // Cleanup
       try {
-        await featuresService.remove(null, { query: {} })
+        // Keep track of user-created content for editable layer, ie features having a layer ID
+        await featuresService.remove(null, { query: { layer: { $exists: false } } })
       } catch (error) {
         console.error(error)
       }

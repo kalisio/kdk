@@ -127,6 +127,9 @@ If the layer is a feature layer based on a [feature service](./services.md#featu
 * **serviceEvents**: if `true` means the layer will be automatically updated as events are received from the underlying feature service, otherwise the data will be updated at a constant frequency as per **every** and **queryFrom** options (see hereafter)
 * **probeService**: the name of the underlying feature service containing probe locations
 * **dbName** : the database holding service data if different from application database
+* **fileName**: the name of a geojson or gzip geojson file used to initialize service data
+* **url**: the URL of a geojson collection used to initialize service data
+* **forceDataUpdate**: `true` to update service data from file/URL content even if the layer already exists, otherwise it will only be used when creating the layer in the first place
 * **ttl**: time to live of features in the service collection in seconds
 * **featureId**: the name of the unique feature identifier in feature (relative to the nested `properties` object) - could be an array for compound identifiers
 * **chronicleId**: the name of the unique timeseries identifier in feature (relative to the nested `properties` object) for measure features - could be an array for compound identifiers
