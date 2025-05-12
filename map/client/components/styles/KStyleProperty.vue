@@ -54,6 +54,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { ref, watch, computed } from 'vue'
 import { KColorPicker, KIconPicker, KShapePicker } from '../../../../core/client/components/input/index.js'
 
