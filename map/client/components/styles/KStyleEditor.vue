@@ -30,11 +30,12 @@
         :style="model"
         type="point"
         :dense="dense"
+        id="style-editor-point-section"
       >
-        <KStyleProperty v-model="model.point.color" :label="'KStyleEditor.COLOR'" type="color" :default="getDefaultValue('point.color')" :dense="dense" />
-        <KStyleProperty v-model="model.point.size" :label="'KStyleEditor.SIZE'" type="size" :min="8" :max="64" :default="getDefaultValue('point.size')" :dense="dense" />
-        <KStyleProperty v-model="model.point.opacity" :label="'KStyleEditor.OPACITY'" type="opacity" :default="getDefaultValue('point.opacity')" :dense="dense" />
-        <KStyleProperty v-model="model.point.shape" :label="'KStyleEditor.SHAPE'" type="shape" :default="getDefaultValue('point.shape')" :dense="dense" />
+        <KStyleProperty id="style-point-color" v-model="model.point.color" :label="'KStyleEditor.COLOR'" type="color" :default="getDefaultValue('point.color')" :dense="dense" />
+        <KStyleProperty id="style-point-size" v-model="model.point.size" :label="'KStyleEditor.SIZE'" type="size" :min="8" :max="64" :default="getDefaultValue('point.size')" :dense="dense" />
+        <KStyleProperty id="style-point-opacity" v-model="model.point.opacity" :label="'KStyleEditor.OPACITY'" type="opacity" :default="getDefaultValue('point.opacity')" :dense="dense" />
+        <KStyleProperty id="style-point-shape" v-model="model.point.shape" :label="'KStyleEditor.SHAPE'" type="shape" :default="getDefaultValue('point.shape')" :dense="dense" />
         <KStylePropertiesGroup
           v-if="!is3D"
           label="KStyleEditor.ICON_GROUP"
@@ -58,10 +59,11 @@
         :style="model"
         type="line"
         :dense="dense"
+        id="style-editor-line-section"
       >
-        <KStyleProperty v-model="model.line.color" label="KStyleEditor.COLOR" type="color" :default="getDefaultValue('line.color')" :dense="dense" />
-        <KStyleProperty v-model="model.line.width" label="KStyleEditor.SIZE" type="size" :min="1" :max="16" :default="getDefaultValue('line.width')" :dense="dense" />
-        <KStyleProperty v-model="model.line.opacity" label="KStyleEditor.OPACITY" type="opacity" :default="getDefaultValue('line.opacity')" :dense="dense" />
+        <KStyleProperty id="style-line-color" v-model="model.line.color" label="KStyleEditor.COLOR" type="color" :default="getDefaultValue('line.color')" :dense="dense" />
+        <KStyleProperty id="style-line-width" v-model="model.line.width" label="KStyleEditor.SIZE" type="size" :min="1" :max="16" :default="getDefaultValue('line.width')" :dense="dense" />
+        <KStyleProperty id="style-line-opacity" v-model="model.line.opacity" label="KStyleEditor.OPACITY" type="opacity" :default="getDefaultValue('line.opacity')" :dense="dense" />
       </KStyleEditorSection>
       <!--
         Polygon editor
@@ -72,9 +74,10 @@
         :style="model"
         type="polygon"
         :dense="dense"
+        id="style-editor-polygon-section"
       >
-        <KStyleProperty v-model="model.polygon.color" label="KStyleEditor.FILL_COLOR" type="color" :default="getDefaultValue('polygon.color')" :dense="dense" />
-        <KStyleProperty v-model="model.polygon.opacity" label="KStyleEditor.FILL_OPACITY" type="opacity" :default="getDefaultValue('polygon.opacity')" :dense="dense" />
+        <KStyleProperty id="style-polygon-color" v-model="model.polygon.color" label="KStyleEditor.FILL_COLOR" type="color" :default="getDefaultValue('polygon.color')" :dense="dense" />
+        <KStyleProperty id="style-polygon-opacity" v-model="model.polygon.opacity" label="KStyleEditor.FILL_OPACITY" type="opacity" :default="getDefaultValue('polygon.opacity')" :dense="dense" />
         <KStylePropertiesGroup
           label="KStyleEditor.STROKE_GROUP"
           v-model="model.polygon.stroke"
@@ -108,7 +111,7 @@ import KPanel from '../../../../core/client/components/KPanel.vue'
 import KStyleEditorSection from './KStyleEditorSection.vue'
 import KStylePropertiesGroup from './KStylePropertiesGroup.vue'
 import KStyleProperty from './KStyleProperty.vue'
-import { DefaultStyle, updateLayerWithFiltersStyle } from '../../utils/index.js'
+import { DefaultStyle } from '../../utils/index.js'
 
 // Props
 const props = defineProps({
@@ -142,7 +145,7 @@ const props = defineProps({
 const emit = defineEmits(['applied', 'canceled'])
 
 // Data
-const { CurrentActivityContext, CurrentActivity } = useCurrentActivity()
+const { CurrentActivityContext } = useCurrentActivity()
 const formRef = ref(null)
 const model = ref(null)
 const mode = props.style ? 'edition' : 'creation'
@@ -170,45 +173,45 @@ const formValues = computed(() => {
   return { name: _.get(props.style, 'name') }
 })
 const engine = computed(() => {
-  return _.get(CurrentActivityContext.config, 'engine', _.get(config, 'engines.leaflet'))
+  return _.cloneDeep(_.get(CurrentActivityContext.config, 'engine', _.get(config, 'engines.leaflet')))
 })
 const is3D = computed(() => {
   return engine.value === 'cesium'
 })
 const pointStrokeProperties = computed(() => {
   return [
-    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('point.stroke.color') },
-    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 16, default: getDefaultValue('point.stroke.width') },
-    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('point.stroke.opacity') }
+    { id: 'style-point-stroke-color', name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('point.stroke.color') },
+    { id: 'style-point-stroke-width', name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 16, default: getDefaultValue('point.stroke.width') },
+    { id: 'style-point-stroke-opacity', name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('point.stroke.opacity') }
   ]
 })
 const pointIconProperties = computed(() => {
   return [
-    { name: 'classes', label: 'KStyleEditor.ICON', type: 'icon', default: getDefaultValue('point.icon.classes') },
-    { name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: getDefaultValue('point.icon.size') },
-    { name: 'color', label: 'KStyleEditor.ICON_COLOR', type: 'color', default: getDefaultValue('point.icon.color') },
-    { name: 'opacity', label: 'KStyleEditor.ICON_OPACITY', type: 'opacity', default: getDefaultValue('point.icon.opacity') }
+    { id: 'style-point-icon-classes', name: 'classes', label: 'KStyleEditor.ICON', type: 'icon', default: getDefaultValue('point.icon.classes') },
+    { id: 'style-point-icon-size', name: 'size', label: 'KStyleEditor.ICON_SIZE', type: 'size', min: 8, max: 48, default: getDefaultValue('point.icon.size') },
+    { id: 'style-point-icon-color', name: 'color', label: 'KStyleEditor.ICON_COLOR', type: 'color', default: getDefaultValue('point.icon.color') },
+    { id: 'style-point-icon-opacity', name: 'opacity', label: 'KStyleEditor.ICON_OPACITY', type: 'opacity', default: getDefaultValue('point.icon.opacity') }
   ]
 })
 const polygonStrokeProperties = computed(() => {
   return [
-    { name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('polygon.stroke.color') },
-    { name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 16, default: getDefaultValue('polygon.stroke.width') },
-    { name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('polygon.stroke.opacity') }
+    { id: 'style-polygon-stroke-color', name: 'color', label: 'KStyleEditor.STROKE_COLOR', type: 'color', default: getDefaultValue('polygon.stroke.color') },
+    { id: 'style-polygon-stroke-width', name: 'width', label: 'KStyleEditor.STROKE_WIDTH', type: 'size', min: 1, max: 16, default: getDefaultValue('polygon.stroke.width') },
+    { id: 'style-polygon-stroke-opacity', name: 'opacity', label: 'KStyleEditor.STROKE_OPACITY', type: 'opacity', default: getDefaultValue('polygon.stroke.opacity') }
   ]
 })
 const buttons = computed(() => {
   if (props.buttons !== null) return props.buttons
   return [
     {
-      id: 'close-button',
+      id: 'close-style-editor',
       label: 'CANCEL',
       renderer: 'form-button',
       outline: true,
       handler: () => emit('canceled')
     },
     {
-      id: 'apply-button',
+      id: 'apply-style',
       label: 'APPLY',
       renderer: 'form-button',
       handler: apply
@@ -227,7 +230,7 @@ watch(() => props.style, (value) => {
 
 // Functions
 function getDefaultValue (path) {
-  return _.get(engine.value.style, path, _.get(DefaultStyle, path))
+  return _.get(engine.value.style, path, _.cloneDeep(_.get(DefaultStyle, path)))
 }
 const onNameChanged = _.debounce(async (field, value) => {
   if (_.size(value) > 2) await checkName(value)
@@ -258,11 +261,6 @@ async function apply () {
     logger.debug(`[KDK] Patch style ${model.value._id} with values:`, data)
     await service.patch(model.value._id, data)
   }
-  // Update layers with filters that use this style
-  const layers = _.filter(CurrentActivity.value?.getLayers ? CurrentActivity.value.getLayers() : [], layer =>
-    _.get(layer, 'scope') === 'user' &&
-    _.some(_.get(layer, 'filters', []), filter => _.get(filter, 'style') === data._id))
-  _.forEach(layers, layer => { updateLayerWithFiltersStyle(layer) })
 
   emit('applied', data)
   return true

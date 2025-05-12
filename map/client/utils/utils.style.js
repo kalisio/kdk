@@ -146,7 +146,7 @@ export const DefaultStyle = {
   isSelectable: true,
   point: {
     color: 'red',
-    opacity: 1,
+    opacity: 0.5,
     size: 24,
     shape: 'circle',
     stroke: {
@@ -168,7 +168,7 @@ export const DefaultStyle = {
   },
   polygon: {
     color: 'red',
-    opacity: 1,
+    opacity: 0.5,
     stroke: {
       color: 'red',
       width: 3,

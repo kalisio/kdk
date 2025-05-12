@@ -131,5 +131,5 @@ watch(value, newValue => {
 })
 
 // Immediate
-if (!value.value) value.value = props.default
+if (_.isNil(value.value)) value.value = props.default
 </script>
