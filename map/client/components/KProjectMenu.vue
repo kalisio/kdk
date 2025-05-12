@@ -19,8 +19,10 @@
       <template v-slot:default>
         <KGrid
           service="projects"
-          :base-query="{ _id: { $ne: projectId } }"
+          :base-query="baseQuery"
           :dense="true"
+          append-items
+          :renderer="renderer"
           @selection-changed="onProjectSelected"
         />
       </template>
@@ -39,12 +41,16 @@ export default {
   },
   inject: ['kActivity'],
   computed: {
-    computedStyle () {
-      if (this.$q.screen.lt.sm) return 'min-width: 100vw;'
-      if (this.$q.screen.lt.md) return 'min-width: 80vw;'
-      if (this.$q.screen.lt.lg) return 'min-width: 60vw;'
-      if (this.$q.screen.lt.xl) return 'min-width: 40vw;'
-      return 'min-width: 20vw;'
+    baseQuery () {
+      return {
+        _id: { $ne: this.projectId }
+      }
+    },
+    renderer () {
+      return {
+        component: 'collection/KItem',
+        class: 'col-12' // One item per row in menu
+      }
     },
     label () {
       return (this.$q.screen.gt.sm && this.project ? this.project.name : '')
