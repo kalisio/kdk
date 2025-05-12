@@ -78,6 +78,14 @@ export function convertToGeoJsonWithStyle (document) {
       return typeof value === 'string' ? value.trim() : value
     })
     _.set(feature, 'properties', trimmedProperties)
+
+    // Add label for points if they have a name
+    if (_.get(feature, 'geometry.type') === 'Point' && _.has(feature, 'properties.name')) {
+      _.set(feature, 'properties.icon-text', feature.properties.name)
+      _.set(feature, 'properties.entityStyle.label', {
+        heightReference: 'Cesium.HeightReference.RELATIVE_TO_GROUND'
+      })
+    }
   })
 
   return geoJson
