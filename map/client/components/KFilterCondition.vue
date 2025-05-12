@@ -11,6 +11,7 @@
         :error-message="$t('KFilterCondition.CANNOT_BE_EMPTY')"
         @update:model-value="checkBooleanOperatorValidity"
         emit-value map-options dense
+        id="condition-boolean"
       />
       <div v-else-if="isUnique">{{ $t('KFilterCondition.FILTER_WHEN') }}</div>
     </q-item-section>
@@ -27,6 +28,7 @@
         :error-message="$t('KFilterCondition.CANNOT_BE_EMPTY')"
         @update:model-value="onPropertyChange"
         emit-value map-options dense
+        id="condition-property"
       />
     </q-item-section>
     <q-item-section class="col-auto items-center">
@@ -41,6 +43,7 @@
         :error-message="$t('KFilterCondition.CANNOT_BE_EMPTY')"
         @update:model-value="onComparisonOperatorChange"
         emit-value map-options dense
+        id="condition-comparison"
       />
     </q-item-section>
     <q-item-section>
@@ -55,6 +58,7 @@
         :error-message="$t('KFilterCondition.CANNOT_BE_EMPTY')"
         @update:model-value="checkValueValidity"
         emit-value map-options dense
+        id="condition-value"
       />
       <q-input
         v-else
@@ -65,6 +69,7 @@
         :error-message="$t('KFilterCondition.CANNOT_BE_EMPTY')"
         @update:model-value="checkValueValidity"
         dense
+        id="condition-value"
       />
     </q-item-section>
     <q-item-section class="col-1 items-center" v-if="!isUnique">

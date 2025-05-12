@@ -163,7 +163,7 @@ async function apply () {
     const styleService = api.getService('styles')
     const validFilters = _.map(filters.value, filter => _.omit(filter, 'id'))
     for (const filter of validFilters) {
-      if (!filter.style) return
+      if (!filter.style) continue
       styles.push({
         conditions: filterQueryToConditions(filter.active),
         values: await styleService.get(filter.style)
