@@ -26,7 +26,7 @@ import { useProject } from '../../composables'
 
 // Data
 const viewsForm = ref(null)
-const project = await getProject()
+const { project, projectId } = await getProject()
 
 // Emits
 const emit = defineEmits(['done'])
@@ -77,7 +77,7 @@ async function onSelect () {
   const viewsResult = viewsForm.value.validate()
   if (!viewsResult.isValid) return
   const projectService = api.getService('projects')
-  await projectService.patch(project.projectId.value, { views: viewsResult.values.views })
+  await projectService.patch(projectId.value, { views: viewsResult.values.views })
   emit('done')
 }
 </script>
