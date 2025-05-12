@@ -68,7 +68,7 @@ function onShapeSelected (selectedShape) {
 
 // Computed
 const shapeConfig = computed(() => {
-  const targetShape = getShapes().find(s => s.shape === shape.value)
+  const targetShape = getShapes().find(s => s.shape === shape.value) || getShapes()[0]
   targetShape.size = _.has(shapeSizes, props.size) ? shapeSizes[props.size] : props.size
   return targetShape
 })
