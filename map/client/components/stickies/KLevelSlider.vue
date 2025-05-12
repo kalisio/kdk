@@ -31,7 +31,7 @@ import { useCurrentActivity } from '../../../../core/client/composables'
 const props = defineProps({
   vertical: {
     type: Boolean,
-    default: false
+    default: true
   },
   reverse: {
     type: Boolean,
