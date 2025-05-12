@@ -82,7 +82,7 @@ import sift from 'sift'
 import { computed, ref } from 'vue'
 import { Filter, Sorter } from '@kalisio/kdk/core.client'
 import { useCurrentActivity } from '../../composables/activity.js'
-import { isLayerStyleEditable, editLayerStyle } from '../../utils/utils.layers.js'
+import { isLayerStyleEditable, editLayerStyle, updateLayerWithFiltersStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'
 import KGrid from '../../../../core/client/components/collection/KGrid.vue'
 import KStyleEditor from './KStyleEditor.vue'
@@ -123,7 +123,7 @@ const toolbar = computed(() => {
     { component: 'collection/KFilter', style: 'max-width: 200px;' },
     { component: 'QSpace' },
     {
-      id: 'add-layer-category',
+      id: 'add-style',
       icon: 'las la-plus-circle',
       tooltip: 'KStyleManager.CREATE_STYLE',
       size: '1rem',
@@ -153,26 +153,12 @@ function applyToSelection (styleToApply) {
   const type = { Point: 'point', LineString: 'line', Polygon: 'polygon' }
   _.forEach(getSelectedFeaturesByLayer(), layer => {
     if (isLayerStyleEditable(layer.layer)) {
-      // In case of in-memory layer, we need to get geoJson and update
-      // each style of selected features
-      // We can't use resetLayer function because it will retrieve features from
-      // Cesium entities which will lose the style property
+      _.forEach(layer.features, f => {
+        _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, f.geometry.type, 'point')], null))
+      })
       if (CurrentActivity.value.isInMemoryLayer(layer.layer)) {
-        const featuresToUpdate = _.map(layer.features, feature => feature._id)
-        const geoJson = CurrentActivity.value.toGeoJson(layer.layer.name)
-        if (geoJson) {
-          // Update style of selected features
-          _.forEach(geoJson.features, feature => {
-            if (featuresToUpdate.includes(feature._id)) {
-              _.set(feature, 'style', _.get(styleToApply, ['item', _.get(type, feature.geometry.type, 'point')], null))
-            }
-          })
-        }
-        CurrentActivity.value.updateLayer(layer.layer.name, geoJson)
+        CurrentActivity.value.resetLayer(layer.layer)
       } else {
-        _.forEach(layer.features, f => {
-          _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, f.geometry.type, 'point')], null))
-        })
         editFeaturesStyle({ type: 'FeatureCollection', features: layer.features }, layer.layer)
       }
     }
@@ -184,6 +170,12 @@ function editStyle (styleToEdit) {
 }
 function onApplied (style) {
   viewMode.value = 'list'
+
+  // Update layers with filters that use this style
+  const layers = _.filter(CurrentActivity.value?.getLayers ? CurrentActivity.value.getLayers() : [], layer =>
+    _.get(layer, 'scope') === 'user' &&
+    _.some(_.get(layer, 'filters', []), filter => _.get(filter, 'style') === style._id))
+  _.forEach(layers, layer => { updateLayerWithFiltersStyle(layer) })
 }
 function onCanceled () {
   viewMode.value = 'list'
