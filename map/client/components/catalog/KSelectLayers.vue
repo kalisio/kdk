@@ -26,7 +26,7 @@ import { useProject } from '../../composables'
 
 // Data
 const layersForm = ref(null)
-const project = await getProject()
+const { project, projectId } = await getProject()
 
 // Emits
 const emit = defineEmits(['done'])
@@ -77,7 +77,7 @@ async function onSelect () {
   const layersResult = layersForm.value.validate()
   if (!layersResult.isValid) return
   const projectService = api.getService('projects')
-  await projectService.patch(project.projectId.value, { layers: layersResult.values.layers })
+  await projectService.patch(projectId.value, { layers: layersResult.values.layers })
   emit('done')
 }
 </script>
