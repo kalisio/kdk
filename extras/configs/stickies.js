@@ -31,8 +31,7 @@ module.exports = {
       visible: true,
       position: 'right', 
       offset: [40, 0], 
-      component: 'stickies/KLevelSlider',
-      vertical: true
+      component: 'stickies/KLevelSlider'
     }, options)
   },
   northArrow: (options) => {
