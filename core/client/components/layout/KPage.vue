@@ -19,7 +19,9 @@
      -->
     <template v-for="sticky in stickiesComponents" :key="sticky.id">
       <q-page-sticky
+        :ref="onStickyCreated"
         :id="sticky.id"
+        :pointer-events="sticky.pointerEvents"
         :position="getStickyPosition(sticky)"
         :offset="getStickyOffset(sticky)"
         class="k-sticky"
@@ -345,6 +347,15 @@ function getStickyOffset (sticky) {
     return [0, heightOffset]
   }
   return sticky.offset
+}
+function onStickyCreated (reference) {
+  if (reference) {
+    const pointerEvents = _.get(reference, '$attrs.pointer-events')
+        if (pointerEvents) {
+      const div = reference.$el.querySelector('div')
+      div.style.pointerEvents = pointerEvents
+    }
+  }
 }
 function onContentResized (size) {
   Layout.setElementSize('page', [size.width, size.height])

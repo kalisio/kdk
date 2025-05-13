@@ -22,6 +22,7 @@ module.exports = {
       visible: false,
       position: 'center',
       offset: [0, -20], 
+      pointerEvents: 'none',
       component: 'stickies/KTarget'
     }, options)
   },
@@ -40,6 +41,7 @@ module.exports = {
       visible: true, 
       position: 'bottom-left',
       offset: [110, 2], 
+      pointerEvents: 'none',
       component: 'stickies/KNorthArrow' 
     }, options)
   },
