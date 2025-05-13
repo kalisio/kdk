@@ -32,8 +32,9 @@ const ExporterQueue = {
         filename = `${_.get(request, 'basename', request.service)}_${timestamp}.${request.format}`
         if (_.get(request, 'gzip', true)) filename += '.gz'
       }
-      // retrienve the target service path
-      const servicePath = api.getServicePath(request.service).substring(1)
+      // retrieve the target service path
+      let servicePath = api.getServicePath(request.service)
+      if (servicePath.startsWith('/')) servicePath = servicePath.substring(1)
       // retrieve the transform assigned to the format
       const transform = _.get(request, 'transform.' + request.format)
       // create the export request
