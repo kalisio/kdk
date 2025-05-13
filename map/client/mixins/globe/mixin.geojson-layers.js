@@ -325,7 +325,7 @@ export const geojsonLayers = {
         // File import
         if (!options.featureId && !feature._id) feature._id = uid().toString()
         // Cesium expect id to be in a 'id' property
-        feature.id = feature._id || getFeatureId(feature, options)
+        feature.id = getFeatureId(feature, options)
 
         let type = getFeatureStyleType(feature)
         if (_.has(feature, 'properties.entityStyle')) {
