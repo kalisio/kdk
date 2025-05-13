@@ -31,7 +31,7 @@
         text-color="white"
         square
         size=".85rem"
-        :label="$t(`Roles.${computedRole}`)"
+        :label="$t(`roles.${computedRole}`)"
       />
     </div>
   </div>
