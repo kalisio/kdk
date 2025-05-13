@@ -1,38 +1,49 @@
 <template>
-  <div v-if="User" class="q-pb-md column content-center q-gutter-md bg-grey-4">
+  <div v-if="User" class="full-width column">
     <!-- Header -->
     <KPanel
       id="profile-header"
       :content="header"
       :context="User"
-      class="full-width justify-end no-wrap"
+      class="q-py-sm full-width justify-end no-wrap"
       @triggered="onTriggered"
     />
     <!-- Avatar -->
-    <div class="row justify-center">
+    <div v-if="avatar && computedAvatar" class="q-py-sm column items-center">
       <KAvatar
-        :subject="avatar"
-        size="7rem"
+        :subject="computedAvatar"
+        size="5rem"
       />
     </div>
     <!-- Information -->
-    <div class="column">
-      <div class="row justify-center text-subtitle1 text-weight-bold">
-        {{ name }}
+    <div class="q-py-sm column items-center">
+      <div class="text-subtitle1 text-weight-medium">
+        {{ computedName }}
       </div>
-      <div class="row justify-center">
-        {{ description }}
+      <div v-if="description && computedDescription" class="text-caption">
+        {{ computedDescription }}
       </div>
+    </div>
+    <!-- Role -->
+    <div v-if="role && computedRole" class="q-py-sm column items-center">
+      <KChip
+        color="primary"
+        text-color="white"
+        square
+        size=".85rem"
+        :label="$t(`Roles.${computedRole}`)"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
 import { Store } from '../../store.js'
 import KAvatar from '../KAvatar.vue'
 import KPanel from '../KPanel.vue'
-import _ from 'lodash'
+import KChip from '../KChip.vue'
 
 // Props
 const props = defineProps({
@@ -41,6 +52,18 @@ const props = defineProps({
     default: true
   },
   manageable: {
+    type: Boolean,
+    default: true
+  },
+  avatar: {
+    type: Boolean,
+    default: true
+  },
+  description: {
+    type: Boolean,
+    default: true
+  },
+  role: {
     type: Boolean,
     default: true
   }
@@ -59,6 +82,7 @@ const header = computed(() => {
     actions.push({
       id: 'edit-profile',
       icon: 'las la-edit',
+      size: '0.75rem',
       tooltip: 'KProfile.EDIT_PROFILE',
       dialog: {
         component: 'editor/KEditor',
@@ -79,6 +103,7 @@ const header = computed(() => {
     const manageAccountAction = {
       id: 'manage-account',
       icon: 'las la-cog',
+      size: '0.75rem',
       tooltip: 'KProfile.MANAGE_ACCOUNT',
       dialog: {
         component: 'account/KAccount',
@@ -98,9 +123,22 @@ const header = computed(() => {
   }
   return actions
 })
-const name = computed(() => _.get(User.value, 'profile.name', ''))
-const description = computed(() => _.get(User.value, 'profile.description', ''))
-const avatar = computed(() => _.get(User.value, 'profile', {}))
+const computedName = computed(() => {
+  return _.get(User.value, 'profile.name', '')
+})
+const computedDescription = computed(() => {
+  return _.get(User.value, 'profile.description', '')
+})
+const computedAvatar = computed(() => {
+  return _.get(User.value, 'profile', {})
+})
+const computedRole = computed(() => {
+  const permissions = _.get(User.value, 'permissions')
+  if (permissions) {
+    if (_.isString(permissions)) return permissions
+    return permissions[0]
+  }
+})
 
 // Functions
 function onTriggered (args) {
