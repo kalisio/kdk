@@ -1,85 +1,114 @@
 <template>
-  <div v-if="isVisible && props.visible"
-    class="k-level-slider flex items-baseline justify-center bg-white q-px-sm q-py-md">
-    <p v-if="props.switchLabelSide" class="text-accent text-caption no-margin"
-      style="writing-mode: vertical-lr; transform-origin: center; transform: rotate(180deg);">
-      <b>{{ $t(CurrentActivity.selectableLevels.label) }} - {{ getFormattedLevel(CurrentActivity.selectedLevel) }}</b>
-    </p>
-    <q-slider v-if="dataArray" snap class="text-primary" v-model="sliderVal" :vertical="props.vertical"
-      :reverse="props.reverse ?? props.vertical" :height="150" :width="4" :markers="props.markers" :label-always="false"
-      :max="dataArray.length - 1" label :label-value="getFormattedLevel(dataArray[sliderVal])"
-      :switch-label-side="props.switchLabelSide ? !props.switchLabelSide : props.vertical" @change="onLevelChanged" />
-    <q-slider v-else class="text-primary" :model-value="sliderVal" :vertical="props.vertical"
-      :reverse="props.reverse ?? props.vertical" :height="150" :width="4" :markers="props.markers" :label-always="false"
-      :min="sliderMinValue" :max="sliderMaxValue" :step="sliderInterval" label
-      :label-value="getFormattedLevel(sliderVal)"
-      :switch-label-side="props.switchLabelSide ? !props.switchLabelSide : props.vertical" @change="onLevelChanged"
-      @update:model-value="val => sliderVal = val" />
-    <p v-if="!props.switchLabelSide" class="text-accent text-caption no-margin"
-      style="writing-mode: vertical-lr; transform-origin: center; transform: rotate(180deg);">
-      <b>{{ $t(CurrentActivity.selectableLevels.label) }} - {{ getFormattedLevel(CurrentActivity.selectedLevel) }}</b>
-    </p>
+  <div 
+    v-if="levels" 
+    class="q-pa-sm col row items-center k-level-slider"
+  >
+    <div v-if="switchLabelSide">
+      <div
+        class="text-caption text-grey-9"
+        style="writing-mode: vertical-rl; min-width: 1rem;"
+      >
+        {{ $t(label) }} - {{ getFormattedLevel(CurrentActivity.selectedLevel) }}
+      </div>
+    </div>
+    <q-slider 
+      v-model="level" 
+      vertical
+      reverse
+      :min="sliderMin" 
+      :max="sliderMax" 
+      :step="sliderStep" 
+      :markers="markers" 
+      snap
+      label
+      :label-value="getFormattedLevel(level)" 
+      :switch-label-side="!switchLabelSide"
+      @change="onLevelChanged"
+      class="q-py-sm text-primary" 
+      :style="`height: ${height - 18}px;`"
+    />
+    <div v-if="!switchLabelSide">
+      <div
+        class="text-caption text-grey-9"
+        style="writing-mode: vertical-lr; min-width: 1rem;"
+      >
+        {{ $t(label) }} - {{ getFormattedLevel(CurrentActivity.selectedLevel) }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import _ from 'lodash'
-import { computed, ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useCurrentActivity } from '../../../../core/client/composables'
 
 // Props
 const props = defineProps({
-  vertical: {
-    type: Boolean,
-    default: true
+  height: {
+    type: Number,
+    default: 300
   },
-  reverse: {
-    type: Boolean,
-    default: null
-  },
-  visible: {
+  markers: {
     type: Boolean,
     default: true
   },
   switchLabelSide: {
     type: Boolean,
     default: null
-  },
-  markers: {
-    type: Boolean,
-    default: true
   }
 })
 
 // Data
 const { CurrentActivity } = useCurrentActivity()
-const sliderVal = ref(0)
+const level = ref(0)
 
 // Computed
-const isVisible = computed(() => sliderValues.value ? sliderValues.value.length > 0 : (sliderMinValue.value !== undefined && sliderMaxValue.value !== undefined))
-// const isLazy = computed(() => _.get(CurrentActivity.value.selectableLevels, 'lazy', true))
-const sliderValues = computed(() => _.get(CurrentActivity.value.selectableLevels, 'values'))
-const dataArray = computed(() => sliderValues.value ? [...sliderValues.value].sort((a, b) => a - b) : null)
-const sliderMinValue = computed(() => _.get(CurrentActivity.value.selectableLevels, 'range.min'))
-const sliderMaxValue = computed(() => _.get(CurrentActivity.value.selectableLevels, 'range.max'))
-const sliderInterval = computed(() => _.get(CurrentActivity.value.selectableLevels, 'range.interval', 1))
+const levels = computed(() => {
+  const selectableLevels = _.get(CurrentActivity.value, 'selectableLevels')
+  return !_.isEmpty(selectableLevels) ? selectableLevels : null
+})
+const label = computed(() => {
+  return _.get(levels.value, 'label')
+})
+const sliderMin = computed(() => {
+  if (levels.value.values) return 0
+  return _.get(levels.value.range, 'min', 0)
+})
+const sliderMax = computed(() => {
+  if (levels.value.values) return _.size(levels.value.values) - 1
+  return _.get(levels.value.range, 'max', 100)
+})
+const sliderStep = computed(() => {
+  if (levels.value.values) return 1
+  return _.get(levels.value, 'range.interval', 10)
+})
+
+// Watch
+watch(() => CurrentActivity.value.selectableLevels, (levels) => {
+  if (levels.values) level.value = _.head(levels.values)
+  else if (levels.range) level.value = _.get(levels.range, 'min', 0)
+  else level.value = 0
+})
 
 // Functions
 function onLevelChanged (level) {
-  if (dataArray.value) {
-    CurrentActivity.value.setSelectedLevel(dataArray.value[level])
+  if (levels.value.values) {
+    CurrentActivity.value.setSelectedLevel(levels.value.values[level])
   } else {
     CurrentActivity.value.setSelectedLevel(level)
   }
 }
 function getFormattedLevel (level) {
   const unit = _.get(CurrentActivity.value.selectableLevels, 'unit')
-  return `${level || CurrentActivity.value.selectedLevel} ${unit}`
+  if (levels.value.values) return `${levels.value.values[level]} ${unit}`
+  return `${level} ${unit}`
 }
 </script>
 
 <style>
 .k-level-slider {
   border: 1px solid lightgrey;
+  background: white;
 }
 </style>
