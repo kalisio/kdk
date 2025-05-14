@@ -140,6 +140,12 @@ async function makeChartConfig () {
               const y = _.get(context, 'parsed.y')
               return label + ': ' + Units.format(y, targetUnit?.name || unit.name, targetUnit?.name || unit.name)
             }
+          },
+          filter: function (tooltipItem, currentIndex, tooltipItems) {
+            // On zoomed out graph, hovering mouse picks a lot of data for x-axis and displays them all in tooltip.
+            // This returns only first item from each dataset from hover picked items passed
+            // to tooltip, so it can be correctly displayed in tooltip for different datasets
+            return tooltipItems[currentIndex].datasetIndex !== tooltipItems[currentIndex - 1]?.datasetIndex
           }
         },
         annotation,
