@@ -53,7 +53,6 @@ async function applyToLayer (layer, styleToApply) {
 
 onMounted(async () => {
   const res = await api.getService('styles').find()
-  console.log(res)
   styles.value = res.data
 })
 </script>
