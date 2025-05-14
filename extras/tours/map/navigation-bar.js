@@ -44,15 +44,15 @@ module.exports = [{
   title: 'tours.navigation-bar.LOCATION_SEARCHING_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: ['#back', '#restore-default'],
+    clickOnPrevious: '#restore-default',
     previousDelay: 500
   }
 }, {
-  target: ['#back', '#restore-default'],
+  target: '#restore-default',
   title: 'tours.navigation-bar.SEARCH_BACK_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: ['#back', '#restore-default'],
+    clickOnNext: '#restore-default',
     nextDelay: 500
   }
 }, {
@@ -79,7 +79,7 @@ module.exports = [{
   title: 'tours.navigation-bar.LOCATION_TRACKING_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: ['#back', '#restore-default'],
+    clickOnPrevious: '#restore-default',
     previousDelay: 500
   }
 }, {
@@ -89,7 +89,7 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: ['#back', '#restore-default'],
+  target: '#restore-default',
   title: 'tours.navigation-bar.TRACK_BACK_LABEL',
   params: {
     placement: 'bottom',
@@ -110,7 +110,7 @@ module.exports = [{
   content: 'tours.navigation-bar.MEASURE_DISTANCE_DETAILS_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: ['#back', '#restore-default'],
+    clickOnPrevious: '#restore-default',
     previousDelay: 500
   }
 }, {
@@ -141,7 +141,7 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: ['#back', '#restore-default'],
+  target: '#restore-default',
   title: 'tours.navigation-bar.MEASURE_BACK_LABEL',
   params: {
     placement: 'bottom',
@@ -164,11 +164,11 @@ module.exports = [{
 //     placement: 'bottom',
 //   }
 // }, {
-//   target: ['#back', '#restore-default'],
+//   target: '#restore-default',
 //   title: 'tours.navigation-bar.CAPTURE_BACK_LABEL',
 //   params: {
 //     placement: 'bottom',
-//     clickOnNext: ['#back', '#restore-default'],
+//     clickOnNext: '#restore-default',
 //     nextDelay: 500
 //   }
 // },
