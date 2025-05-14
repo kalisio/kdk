@@ -26,6 +26,7 @@
         no-swipe-open
         no-swipe-close
         no-swipe-backdrop
+        class="k-left-drawer"
       >
         <q-scroll-area class="fit">
           <KPanel
@@ -162,5 +163,9 @@ function onFooterResized (size) {
 <style lang="scss">
 .k-left-pane-sticky {
   z-index: v-bind('leftPane.zIndex');
+}
+.k-left-drawer {
+  background-color: #FFFFFF;
+  border-right: solid 1px lightgrey;
 }
 </style>
