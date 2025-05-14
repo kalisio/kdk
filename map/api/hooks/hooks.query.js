@@ -303,6 +303,8 @@ export async function aggregateFeaturesQuery (hook) {
     // Ensure we do not mix results with/without relevant element values
     // by separately querying each element then merging
     let aggregatedResults
+    // Associative map used to optimize merging between aggregated elements
+    const aggregatedResultsMap = new Map()
     const aggregateOptions = {
       allowDiskUse: true
     }
@@ -353,6 +355,10 @@ export async function aggregateFeaturesQuery (hook) {
           // Delete accumulator
           _.unset(result, element)
         }
+        // Keep track of result in map to improve search later
+        const resultKeys = keys.map(key => _.get(singleTime ? result : result._id, key))
+        const resultKey = resultKeys.join('-')
+        if (!aggregatedResultsMap.has(resultKey)) aggregatedResultsMap.set(resultKey, result)
       })
       // Now merge with previous element results
       if (!aggregatedResults) {
@@ -360,11 +366,15 @@ export async function aggregateFeaturesQuery (hook) {
       } else {
         elementResults.forEach(result => {
           // When single time no aggregation is performed at all so we only have raw features
-          const resultKeys = _.pick(singleTime ? result : result._id, keys)
+          const resultKeys = keys.map(key => _.get(singleTime ? result : result._id, key))
+          /* Optimize previous result search with map, kept the naive code here for reference/debug purpose
           const previousResult = aggregatedResults.find(aggregatedResult => {
-            const aggregatedResultKeys = _.pick(singleTime ? aggregatedResult : aggregatedResult._id, keys)
+            const aggregatedResultKeys = keys.map(key => _.get(singleTime ? result : result._id, key))
             return _.isEqual(aggregatedResultKeys, resultKeys)
           })
+          */
+          const resultKey = resultKeys.join('-')
+          const previousResult = aggregatedResultsMap.get(resultKey)
           // Merge with previous matching feature if any
           if (previousResult) {
             Object.assign(previousResult.time, result.time)
