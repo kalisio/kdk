@@ -168,4 +168,7 @@ function onFooterResized (size) {
   background-color: #FFFFFF;
   border-right: solid 1px lightgrey;
 }
+.k-left-drawer:hover {
+  border-right: solid 1px $primary;
+}
 </style>
