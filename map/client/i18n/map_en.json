@@ -6,7 +6,8 @@
   "PROJECT_LAYERS_LABEL": "Data",
   "PROJECT_VIEWS_LABEL": "Views",
   "layout": {
-    "USER_LOCATION": "My location",
+    "SHOW_USER_LOCATION": "Show my location",
+    "HIDE_USER_LOCATION": "Hide my location",
     "SEARCH_LOCATION": "Search a location",
     "LEGEND": "Legend",
     "SELECTION_MANAGER": "Selection manager",
