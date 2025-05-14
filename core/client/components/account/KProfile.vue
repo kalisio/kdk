@@ -124,7 +124,7 @@ const header = computed(() => {
   return actions
 })
 const computedName = computed(() => {
-  return _.get(User.value, 'profile.name', '')
+  return _.get(User.value, 'profile.name', _.get(User.value, 'profile.username', _.get(User.value, 'email', '')))
 })
 const computedDescription = computed(() => {
   return _.get(User.value, 'profile.description', '')
