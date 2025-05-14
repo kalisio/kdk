@@ -2,7 +2,7 @@ module.exports = [{
   target: '#top-pane',
   title: 'tours.navigation-bar.NAVIGATION_BAR_LABEL',
   params: {
-    placement: 'bottom',
+    placement: 'bottom'
   }
 }, {
   target: '#toggle-map',
@@ -44,15 +44,15 @@ module.exports = [{
   title: 'tours.navigation-bar.LOCATION_SEARCHING_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: '#back',
+    clickOnPrevious: ['#back', '#restore-default'],
     previousDelay: 500
   }
 }, {
-  target: '#back',
+  target: ['#back', '#restore-default'],
   title: 'tours.navigation-bar.SEARCH_BACK_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: '#back',
+    clickOnNext: ['#back', '#restore-default'],
     nextDelay: 500
   }
 }, {
@@ -79,7 +79,7 @@ module.exports = [{
   title: 'tours.navigation-bar.LOCATION_TRACKING_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: '#back',
+    clickOnPrevious: ['#back', '#restore-default'],
     previousDelay: 500
   }
 }, {
@@ -89,11 +89,11 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#back',
+  target: ['#back', '#restore-default'],
   title: 'tours.navigation-bar.TRACK_BACK_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: ['#back', '#tools'],
+    clickOnNext: ['#back', '#restore-default', '#tools'],
     nextDelay: 500
   }
 }, {
@@ -110,7 +110,7 @@ module.exports = [{
   content: 'tours.navigation-bar.MEASURE_DISTANCE_DETAILS_LABEL',
   params: {
     placement: 'bottom',
-    clickOnPrevious: '#back',
+    clickOnPrevious: ['#back', '#restore-default'],
     previousDelay: 500
   }
 }, {
@@ -141,11 +141,11 @@ module.exports = [{
     placement: 'bottom'
   }
 }, {
-  target: '#back',
+  target: ['#back', '#restore-default'],
   title: 'tours.navigation-bar.MEASURE_BACK_LABEL',
   params: {
     placement: 'bottom',
-    clickOnNext: ['#back', '#tools'],
+    clickOnNext: ['#back', '#restore-default', '#tools'],
     nextDelay: 500
   }
 }, {
@@ -156,7 +156,7 @@ module.exports = [{
     clickOnNext: ['#tools', '#capture-map'],
     nextDelay: 500
   }
-}, 
+},
 // {
 //   target: '#capture-button',
 //   title: 'tours.navigation-bar.CAPTURE_BUTTON_LABEL',
@@ -164,14 +164,14 @@ module.exports = [{
 //     placement: 'bottom',
 //   }
 // }, {
-//   target: '#back',
+//   target: ['#back', '#restore-default'],
 //   title: 'tours.navigation-bar.CAPTURE_BACK_LABEL',
 //   params: {
 //     placement: 'bottom',
-//     clickOnNext: '#back',
+//     clickOnNext: ['#back', '#restore-default'],
 //     nextDelay: 500
 //   }
-// }, 
+// },
 {
   target: '#toggle-vr',
   title: 'tours.navigation-bar.TOGGLE_VR_LABEL',
