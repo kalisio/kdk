@@ -239,7 +239,7 @@ async function checkName (name) {
   if (mode === 'edition' && name === props.style.name) return true
   const service = api.getService('styles')
   const hasName = await kdkCoreUtils.containsText(service, 'name', name)
-  if (!hasName) return true
+  if (!hasName || !formRef.value) return true
   formRef.value.getField('name').reference.invalidate(i18n.t('KStyleEditor.STYLE_ALREADY_EXISTS', { style: name }))
   return false
 }
