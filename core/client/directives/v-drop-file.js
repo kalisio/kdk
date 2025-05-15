@@ -74,12 +74,14 @@ export const vDropFile = {
         color = colors.getPaletteColor('warning')
         message = i18n.t('directives.SOME_FILES_ARE_UNSUPPORTED')
       }
-      overlay.style.background = colors.changeAlpha(color, 0.05)
+      overlay.style.background = '#0007'
       const overlayBox = overlay.querySelector('.drag-overlay-box')
       overlayBox.textContent = message
       overlayBox.style.borderColor = color
-      overlayBox.style.color = color
-      overlayBox.style.textShadow = '-2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 0 0 ' + el.__state.fontSize + ' ' + color
+      overlayBox.style.color = 'white'
+      overlayBox.style.textShadow = '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black'
+      overlayBox.style.padding = '20px;'
+      
       // show the overlay
       dragCounter++
       showOverlay()
