@@ -95,6 +95,7 @@
       "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
       "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
       "SAVE_LABEL": "Save layer",
+      "PRINT_VIEW": "Print view",
       "OFFLINE_LABEL": "Make available offline",
       "ONLINE_LABEL": "Make available online",
       "REMOVE_LABEL": "Remove"
@@ -330,7 +331,7 @@
       "TIMELINE_LABEL": "The timeline allows to quickly execute actions related to the time of displayed data.",
       "DATE_LABEL": "Jump to any given date by using this button.",
       "PICK_DAY_LABEL": "Pick a given day.",
-      "PICK_HOUR_LABEL": "Or pick time.",
+      "PICK_TIMES_LABEL": "Or pick time.",
       "NOW_LABEL": "Activate to real-time using this button.",
       "STEP_LABEL": "Update step using this button.",
       "NEXT_STEP_LABEL": "Go forward in time to the next step as configured.",
@@ -620,7 +621,6 @@
     "REMOVE_CATEGORY": "@:REMOVE"
   },
   "KAddLayer": {
-    "TITLE": "Add a new layer",
     "NAME_FIELD_LABEL": "Enter the name of the new layer",
     "DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
     "CATEGORY_FIELD_LABEL": "Select or enter a category",
