@@ -390,7 +390,6 @@
     "ACCEPT_TERMS_LABEL": "I accept the terms and policies",
     "ACCEPT_TERMS_ERROR_LABEL": "You must accept our terms and policies to register",
     "REGISTER_LABEL": "Register",
-    "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?",
     "EMAIL_ALREADY_TAKEN": "Email already taken !",
     "REGISTER_ERROR": "Wrong input or service unavailable, please try again",
     "CONTEXTUAL_HELP": "@:NEED_HELP"
@@ -477,7 +476,7 @@
   },
   "KDescriptionCardSection": {
     "TITLE": "Description",
-    "NO_DESCRIPTION_LABEL": "No description"
+    "NO_DESCRIPTION": "No description"
   },
   "KColorChooser": {
     "CANCEL_BUTTON": "@:CANCEL",
@@ -565,9 +564,6 @@
       "writing": "writing"
     }
   },
-  "KTagField": {
-    "CREATE_TAG": "Create <b>c</b>"
-  },
   "KTextAreaField": {
     "CLEAR_TOOLTIP": "Clear content"
   },
@@ -604,8 +600,8 @@
     "REMOVE_MEDIA_ACTION": "Remove the media",
     "REMOVE_DIALOG_TITLE": "Remove the media {media} ?",
     "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove the media <b>{media}</b> ?",
-    "ADD_MEDIA_ACTION": "Add a media",
-    "ADD_PHOTO_ACTION": "Add a photo",
+    "ADD_MEDIA_LABEL": "Add a media",
+    "ADD_PHOTO_LABEL": "Add a photo",
     "UPLOAD_TITLE": "Add a media",
     "UPLOAD_FILE_FIELD_LABEL": "Select a file",
     "UPLOAD": "Add",
@@ -732,7 +728,7 @@
     "PREVIOUS_HOUR": "Previous hour",
     "PREVIOUS_DAY": "Previous day",
     "START_REALTIME": "Start real-time",
-    "STTOP_REALTIME": "Stop real-time",
+    "STOP_REALTIME": "Stop real-time",
     "SET_DATETIME": "Set date and time",
     "SET_STEP": "Set step",
     "NEXT_DAY": "Next day",

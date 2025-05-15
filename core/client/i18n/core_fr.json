@@ -390,7 +390,6 @@
     "ACCEPT_TERMS_LABEL": "J'accepte les conditions générales",
     "ACCEPT_TERMS_ERROR_LABEL": "Vous devez accepter nos conditions générales pour vous enregistrer",
     "REGISTER_LABEL": "S'enregistrer",
-    "ALREADY_HAVE_AN_ACCOUNT_LABEL": "Déjà un compte ?",
     "EMAIL_ALREADY_TAKEN": "Mail déjà utilisé !",
     "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer",
     "CONTEXTUAL_HELP": "@:NEED_HELP"
