@@ -234,7 +234,7 @@ export async function distinct (hook) {
 export function checkUnique (options = {}) {
   return async (hook) => {
     const serviceConfig = hook.app.get(hook.service.name)
-    if (serviceConfig.checkUnique) options = serviceConfig.checkUnique
+    if (serviceConfig && serviceConfig.checkUnique) options = serviceConfig.checkUnique
     const service = (options.service ? hook.app.getService(options.service) : hook.service)
     const field = options.field || 'name'
     const id = _.get(hook, `data.${field}`)
