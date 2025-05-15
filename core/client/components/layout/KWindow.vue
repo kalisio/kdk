@@ -37,7 +37,7 @@
       </div>
       <!-- window controls -->
       <KMenu
-        v-if="currentWindow.xs"
+        v-if="controlsMenuBreakpoint && currentWindow[controlsMenuBreakpoint]"
         id="window-controls"
         dropdown-icon="las la-ellipsis-h"
         size="sm"
@@ -189,6 +189,10 @@ const menu = computed(() => {
     })
   }
   return menu
+})
+const controlsMenuBreakpoint = computed(() => {
+  console.log(currentWindow)
+  return currentWindow.controlsMenuBreakpoint
 })
 const headerControls = computed(() => {
   return [{
