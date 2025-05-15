@@ -96,8 +96,6 @@
       "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
       "SAVE_LABEL": "Save layer",
       "PRINT_VIEW": "Print view",
-      "OFFLINE_LABEL": "Make available offline",
-      "ONLINE_LABEL": "Make available online",
       "REMOVE_LABEL": "Remove"
     },
     "timeseries": {
