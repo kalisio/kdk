@@ -79,8 +79,6 @@
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
-      "SHOW_USER_LOCATION": "Afficher ma localisation",
-      "HIDE_USER_LOCATION": "Masquer ma localisation",
       "TOGGLE_CATALOG": "Catalogue",
       "TOGGLE_MAP": "Visualiser en 2D",
       "TOGGLE_GLOBE": "Visualiser en 3D",
@@ -96,8 +94,8 @@
       "TOOLS": "Outils",
       "SAVE_LAYER_EDITION_CHANGES": "Sauver les changements apportés",
       "DISCARD_LAYER_EDITION_CHANGES": "Rejeter les changements apportés",
-      "PRINT_VIEW": "Imprimer la vue",
       "SAVE_LABEL": "Sauvegarder la couche",
+      "PRINT_VIEW": "Imprimer la vue",
       "REMOVE_LABEL": "Supprimer"
     },
     "timeseries": {
@@ -289,10 +287,10 @@
       "MEASURE_CIRCLE_DETAILS_LABEL": "Dessinez le(s) cercle(s) à mesurer sur la carte et survolez-le(s) pour obtenir des informations détaillées.",
       "MEASURE_FEATURE_LABEL": "Mesurez une entité géographique via ce bouton.",
       "MEASURE_FEATURE_DETAILS_LABEL": "Sélectionnez l'entité à mesurer sur la carte pour obtenir des informations détaillées.",
-      "CAPTURE_MAP_LABEL": "Capturez la vue via ce bouton.",
+      "PRINT_MAP_LABEL": "Imprimez la vue via ce bouton.",
       "CAPTURE_BUTTON_LABEL": "Capturez et télécharger la vue via ce bouton.",
-      "CLEAR_MEASURE_LABEL": "Effacez vos mesures via ce bouton.",
       "CAPTURE_BACK_LABEL": "Arrêtez la capture en retournant aux actions.",
+      "CLEAR_MEASURE_LABEL": "Effacez vos mesures via ce bouton.",
       "MEASURE_BACK_LABEL": "Arrêtez de mesurer en retournant aux actions.",
       "TOGGLE_VR_LABEL": "Basculez en mode <b>Réalité Virtuelle</b> (VR) avec ce bouton.",
       "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
@@ -367,8 +365,7 @@
       "CONNECT_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
       "CREATE_LAYER_LABEL": "Créer une nouvelle couche vierge sur la base d'un schéma de données.",
       "CREATE_LAYER_LINK_LABEL": "Voir comment créer une nouvelle couche de données",
-      "CREATE_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche.",
-      "EDIT_NEW_LAYER_LABEL": "Vous serez alors en mode édition des données de votre nouvelle couche sur la carte."
+      "CREATE_NEW_LAYER_LABEL": "Confirmez la création de votre nouvelle couche."
     },
     "create-view": {
       "NAME_FIELD_LABEL": "Saisissez le nom de la vue",
@@ -622,8 +619,6 @@
     "REMOVE_CATEGORY": "@:REMOVE"
   },
   "KAddLayer": {
-    "TITLE": "Ajouter une nouvelle couche",
-    "PROJECT_TITLE": "Sélectionner les couches",
     "NAME_FIELD_LABEL": "Saisissez le nom de la nouvelle couche",
     "DESCRIPTION_FIELD_LABEL": "Saisissez une description de la nouvelle couche",
     "CATEGORY_FIELD_LABEL": "Sélectionnez ou saisissez une catégorie",
@@ -658,10 +653,6 @@
     "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
     "CREATE_BUTTON": "Créer"
-  },
-  "KAddView": {
-    "TITLE": "Ajouter une vue",
-    "PROJECT_TITLE": "Sélectionner les vues"
   },
   "KSelectViews": {
     "VIEWS_FIELD_LABEL": "Choisissez les vues du projets",
