@@ -634,7 +634,8 @@
     "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
     "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
-    "IMPORT_BUTTON": "Importer"
+    "IMPORT_BUTTON": "Importer",
+    "LAYER_ALREADY_EXISTS": "La couche {layer} existe déjà !"
   },
   "KConnectLayer": {
     "SERVICE_FIELD_LABEL": "Saisissez la requête pour récupérer les capacités du service distant",

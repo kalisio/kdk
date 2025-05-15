@@ -27,7 +27,7 @@ import _ from 'lodash'
 import path from 'path-browserify'
 import { ref, computed } from 'vue'
 import { generatePropertiesSchema } from '../../utils'
-import { i18n } from '../../../../core/client'
+import { Events, i18n } from '../../../../core/client'
 import { KPanel } from '../../../../core/client/components'
 import { useCurrentActivity } from '../../composables'
 import KForm from '../../../../core/client/components/form/KForm.vue'
@@ -147,6 +147,9 @@ async function onImport () {
   const fileResult = fileForm.value.validate()
   const propertiesResult = propertiesForm.value.validate()
   if (!fileResult.isValid || !propertiesResult.isValid) return
+  if (CurrentActivity.value.hasLayer(propertiesResult.values.name)) {
+    Events.emit('error', { message: i18n.t('KImportLayer.LAYER_ALREADY_EXISTS', { layer: propertiesResult.values.name }) })
+  }
   this.importing = true
   await CurrentActivity.value.addGeoJsonLayer({
     name: propertiesResult.values.name,

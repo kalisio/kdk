@@ -636,7 +636,8 @@
     "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
     "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
     "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
-    "IMPORT_BUTTON": "Import"
+    "IMPORT_BUTTON": "Import",
+    "LAYER_ALREADY_EXISTS": "Layer {layer} already exists !"
   },
   "KConnectLayer": {
     "SERVICE_FIELD_LABEL": "Select or enter a query to get the capabilities of the remote service",
