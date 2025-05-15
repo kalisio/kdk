@@ -44,7 +44,7 @@ import { ref, computed, watch } from 'vue'
 import { useCurrentActivity } from '../../../../core/client/composables'
 
 // Props
-const props = defineProps({
+defineProps({
   height: {
     type: Number,
     default: 300
