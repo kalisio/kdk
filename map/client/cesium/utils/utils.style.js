@@ -189,7 +189,7 @@ export function getPointSimpleStyle (feature, options, engine, engineStylePath =
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.cesium || options, 'layerPointStyle') : {}
   const templateStyle = processStyle({ style: { point: _.merge({}, engineStyle, layerStyle) } }, feature, options, PointStyleTemplateMappings)
-  const featureStyle = _.get(feature, 'style', {})
+  const featureStyle = _.get(options, 'ignoreFeatureStyle') ? {} : _.get(feature, 'style', {})
   const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.point : {}, featureStyle)
   return convertSimpleStyleColors(convertPointStyleToSimpleStyle(style))
 }
@@ -198,7 +198,7 @@ export function getLineSimpleStyle (feature, options, engine, engineStylePath = 
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.cesium || options, 'layerLineStyle') : {}
   const templateStyle = processStyle({ style: { line: _.merge({}, engineStyle, layerStyle) } }, feature, options, LineStyleTemplateMappings)
-  const featureStyle = _.get(feature, 'style', {})
+  const featureStyle = _.get(options, 'ignoreFeatureStyle') ? {} : _.get(feature, 'style', {})
   const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.line : {}, featureStyle)
   return convertSimpleStyleColors(convertLineStyleToSimpleStyle(style))
 }
@@ -207,7 +207,7 @@ export function getPolygonSimpleStyle (feature, options, engine, engineStylePath
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.cesium || options, 'layerPolygonStyle') : {}
   const templateStyle = processStyle({ style: { polygon: _.merge({}, engineStyle, layerStyle) } }, feature, options, PolygonStyleTemplateMappings)
-  const featureStyle = _.get(feature, 'style', {})
+  const featureStyle = _.get(options, 'ignoreFeatureStyle') ? {} : _.get(feature, 'style', {})
   const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.polygon : {}, featureStyle)
   return convertSimpleStyleColors(convertPolygonStyleToSimpleStyle(style))
 }

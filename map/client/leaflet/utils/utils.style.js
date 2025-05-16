@@ -184,7 +184,7 @@ export function getDefaultPointStyle (feature, options, engine, engineStylePath 
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPointStyle') : {}
   const templateStyle = processStyle({ style: { point: _.merge({}, engineStyle, layerStyle) } }, feature, options, PointStyleTemplateMappings)
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
+  const featureStyle = _.get(options, 'ignoreFeatureStyle') ? {} : feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPointStyle(feature.properties)
   const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.point : {}, featureStyle)
   return style
 }
@@ -193,7 +193,7 @@ export function getDefaultLineStyle (feature, options, engine, engineStylePath =
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerLineStyle') : {}
   const templateStyle = processStyle({ style: { line: _.merge({}, engineStyle, layerStyle) } }, feature, options, LineStyleTemplateMappings)
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
+  const featureStyle = _.get(options, 'ignoreFeatureStyle') ? {} : feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToLineStyle(feature.properties)
   const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.line : {}, featureStyle)
   return convertLineStyleToLeafletPath(style)
 }
@@ -202,7 +202,7 @@ export function getDefaultPolygonStyle (feature, options, engine, engineStylePat
   const engineStyle = _.get(engine, engineStylePath, {})
   const layerStyle = options ? _.get(options.leaflet || options, 'layerPolygonStyle') : {}
   const templateStyle = processStyle({ style: { polygon: _.merge({}, engineStyle, layerStyle) } }, feature, options, PolygonStyleTemplateMappings)
-  const featureStyle = feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
+  const featureStyle = _.get(options, 'ignoreFeatureStyle') ? {} : feature.style ? _.get(feature, 'style', {}) : convertSimpleStyleToPolygonStyle(feature.properties)
   const style = _.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.polygon : {}, featureStyle)
   return convertPolygonStyleToLeafletPath(style)
 }
