@@ -594,7 +594,7 @@
     "COPY_PROPERTIES": "Copier les valeurs en mémoire",
     "PROPERTIES_COPIED": "Valeurs copiées en mémoire",
     "CANNOT_COPY_PROPERTIES": "Impossible de copier les valeurs en mémoire",
-    "EXPORT_FEATURE": "Exporter l'object",
+    "EXPORT_FEATURE": "Exporter l'objet",
     "FEATURE_EXPORTED": "Objet exporté dans le fichier {file}",
     "CANNOT_EXPORT_FEATURE": "Impossible d'exporter l'objet"
   },
