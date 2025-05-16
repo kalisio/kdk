@@ -332,6 +332,10 @@ export function isLayerDataEditable (layer) {
   return _.get(layer, 'isDataEditable', isUserLayer(layer) && isFeatureLayer(layer))
 }
 
+export function isLayerFilterEditable (layer) {
+  return _.get(layer, 'isFilterEditable', isUserLayer(layer) && isFeatureLayer(layer))
+}
+
 export function isTerrainLayer (layer) {
   if (layer.type === 'TerrainLayer') return true
   const cesiumOptions = layer.cesium || layer

@@ -127,6 +127,7 @@ export const activity = {
     setLayerCached: layers.setLayerCached,
     setLayerUncached: layers.setLayerUncached,
     isLayerEditable: layers.isLayerEditable,
+    isLayerFilterEditable: layers.isLayerFilterEditable,
     isLayerRemovable: layers.isLayerRemovable,
     isLayerStyleEditable: layers.isLayerStyleEditable,
     isLayerDataEditable: layers.isLayerDataEditable,
