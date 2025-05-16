@@ -8,11 +8,10 @@ import { LocalStorage } from '../local-storage.js'
 import { Platform } from '../platform.js'
 import { InstallPwaPrompt, installFFDesktopPrompt, installSafariPrompt, installDefaultPrompt } from '../utils/utils.pwa.js'
 
-export function usePwa () {
+export function usePwa (options = { updateTimeout: 5000 }) {
   // Data
   const $q = useQuasar()
   const installKey = 'install'
-  const changelogKey = 'appChangelog'
 
   // Functions
   function install () {
@@ -37,27 +36,16 @@ export function usePwa () {
         window.location.reload()
       }
     })
-    const changelog = _.get(config, changelogKey)
-    $q.dialog({
-      title: i18n.t('composables.pwa.UPDATE_TITLE'),
-      message: changelog ? i18n.t('composables.pwa.UPDATE_MESSAGE', { changelog }) : undefined,
+    $q.notify({
+      message: i18n.t('composables.pwa.UPDATE_MESSAGE'),
+      type: 'info',
       html: true,
-      cancel: {
-        id: 'ignore-button',
-        label: i18n.t('composables.pwa.IGNORE'),
-        color: 'primary',
-        outline: true
-      },
-      ok: {
-        id: 'update-button',
-        label: i18n.t('composables.pwa.UPDATE'),
-        color: 'primary'
-      },
-      persistent: true,
-      position: 'bottom'
-    }).onOk(() => {
-      registration.waiting.postMessage({ type: 'SKIP_WAITING' })
+      timeout: options.updateTimeout,
+      spinner: true
     })
+    setTimeout(() => {
+      registration.waiting.postMessage({ type: 'SKIP_WAITING' })
+    }, options.updateTimeout)
   }
 
   // Hooks

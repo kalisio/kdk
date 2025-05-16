@@ -180,10 +180,7 @@
       "INFORMATION": "Information"
     },
     "pwa": {
-      "UPDATE_TITLE": "Update available",
-      "UPDATE_MESSAGE": "To find out more consult the <a href=\"{changelog}\" target=\"_\">release note</a>",
-      "UPDATE": "Update",
-      "IGNORE": "Ignore"
+      "UPDATE_MESSAGE": "<b>A new version is available</b>, the application will be updated in a couple of seconds."
     },
     "context": {
       "REMOVED_MESSAGE": "The context object has been removed. You will be redirected to the home page."
