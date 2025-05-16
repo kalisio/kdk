@@ -545,18 +545,23 @@ export const geojsonLayers = {
       const layer = this.getCesiumLayerByName(layerName)
       if (!layer) return
       // Expect layer to be a datasource
-      if (!layer.entities) return
+      if (!layer.entities && !layer.primitives.size) return
 
-      const ids = Array.isArray(featureIds) ? featureIds : [ featureIds ]
+      const ids = Array.isArray(featureIds) ? featureIds : [featureIds]
       const primitives = []
       ids.forEach((id) => {
         // Lookup entity based on featureId
         const entity = layer.entities.getById(id)
-        if (!entity) return
-        // Lookup associated primitive
-        const primitive = findPrimitiveForEntity(entity, this.viewer)
+        let primitive = null;
+        if (entity) {
+          // Lookup associated primitive
+          primitive = findPrimitiveForEntity(entity, this.viewer)
+        } else {
+          // Lookup primitive based on featureId
+          primitive = layer.primitives.get(id)
+          primitive = _.get(primitive, 'primitive')
+        }
         if (!primitive) return
-
         primitives.push(primitive)
       })
 

@@ -68,6 +68,20 @@ export const baseGlobe = {
         this.viewer.scene.globe.undergroundColor = (undergroundColor ? createCesiumObject('Color', ...undergroundColor) : Color.BLACK)
       }
 
+      // Enable picking for primitives. Usefull for primitives selection with post processing
+      if (!_.has(Cesium.Primitive.prototype, 'pickIds')) {
+        Object.defineProperties(Cesium.Primitive.prototype, {
+          pickIds: {
+            get: function () {
+              return this._pickIds
+            },
+            set: function (value) {
+              this._pickIds = value
+            }
+          }
+        })
+      }
+
       // Cesium pre-render callback used to update moving materials (animated walls/corridors)
       this.viewer.scene.preRender.addEventListener(() => {
         if (!this.cesiumMaterials) return
