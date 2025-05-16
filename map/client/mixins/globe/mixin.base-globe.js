@@ -5,7 +5,8 @@ import Emitter from 'tiny-emitter'
 import { getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, Matrix3, Matrix4, DebugCameraPrimitive, DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
+         exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
+         DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
 import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
@@ -519,6 +520,24 @@ export const baseGlobe = {
           this.viewer.scene.primitives.add(this.trackedFrameDebug)
         }
       }
+
+      // Make camera follow entity orientation
+      if (!this.viewer.trackedEntity || !_.get(this.entityTrackingOptions, 'orientation')) return
+      const targetPosition = this.viewer.trackedEntity.position.getValue(time)
+      const orientation = this.viewer.trackedEntity.orientation.getValue(time)
+      if (orientation) {
+        const distance = _.get(this.entityTrackingOptions, 'distance', 10)
+        const heightAbove = _.get(this.entityTrackingOptions, 'heightAbove', 0)
+
+        const headingPitchRoll = HeadingPitchRoll.fromQuaternion(orientation)
+        const cameraOffset = new HeadingPitchRange(
+          headingPitchRoll.heading + CesiumMath.toRadians(_.get(this.entityTrackingOptions, 'headingOffset', 0)),
+          CesiumMath.toRadians(_.get(this.entityTrackingOptions, 'pitchOffset', 0)),
+          Math.sqrt(distance * distance + heightAbove * heightAbove)
+        )
+
+        this.viewer.camera.lookAt(new Cartesian3(targetPosition.x, targetPosition.y, targetPosition.z + 10), cameraOffset)
+      }
     },
     trackEntity (entityId, options = {}) {
       // Check for entities directly added to the viewer
@@ -539,6 +558,7 @@ export const baseGlobe = {
         })
       }
       if (this.viewer.trackedEntity) {
+        this.entityTrackingOptions = options
         this.viewer.clock.onTick.addEventListener(this.onEntityTracked)
       }
     },
@@ -548,6 +568,7 @@ export const baseGlobe = {
         this.viewer.clock.onTick.removeEventListener(this.onEntityTracked)
       }
       this.viewer.trackedEntity = null
+      this.entityTrackingOptions = {}
     },
     async showUserLocation () {
       if (Geolocation.hasLocation()) {
