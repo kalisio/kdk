@@ -1,6 +1,7 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import 'leaflet-realtime'
+import { lineOffset } from '@turf/turf'
 import { GradientPath, buildSVGOverlayFromGradientPath } from '../GradientPath.js'
 
 // Override default remove handler for leaflet-realtime due to
