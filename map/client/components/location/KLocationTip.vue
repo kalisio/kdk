@@ -22,7 +22,7 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import KLocationMap from './KLocationMap.vue'
 
 // Props
