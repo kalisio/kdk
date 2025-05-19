@@ -35,7 +35,7 @@ export async function capture (values) {
   dismiss = Notify.create({
     group: 'capture',
     icon: 'las la-hourglass-half',
-    message: i18n.t('KCapture.CAPTURING_VIEW'),
+    message: i18n.t('KCapture.PRINTING_VIEW'),
     color: 'primary',
     timeout: 0,
     spinner: true
