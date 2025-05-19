@@ -191,7 +191,6 @@ const menu = computed(() => {
   return menu
 })
 const controlsMenuBreakpoint = computed(() => {
-  console.log(currentWindow)
   return currentWindow.controlsMenuBreakpoint
 })
 const headerControls = computed(() => {
