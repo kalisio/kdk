@@ -350,7 +350,7 @@ describe('map:alerts', () => {
     vigicruesObsService = app.getService('vigicrues-observations')
     expect(vigicruesObsService).toExist()
     // Feed the collection
-    const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.json'))
+    const observations = fs.readJsonSync(path.join(__dirname, 'data/vigicrues.observations.H.json'))
     // Update time to tomorrow so that alert will trigger correctly
     await vigicruesObsService.create(observations.map(observation => Object.assign({}, observation, {
       time: moment.utc(observation.time).date(tomorrow.date()).month(tomorrow.month()).year(tomorrow.year())
