@@ -166,23 +166,23 @@ describe('core:push', () => {
       subscriptionProperty: 'subscriptions',
       subscriptionFilter: { _id: user._id }
     })
-    // Check that expired subscriptions have been deleted
     const users = await userService.find({ query: { email: gmailUser } })
     expect(users.data.length > 0).beTrue()
     user = users.data[0]
+    // Check that expired subscriptions have been deleted
     expect(user.subscriptions.length === 1).beTrue()
     expect(operation).toExist()
     expect(operation.succesful.length === 1).beTrue()
     expect(operation.succesful[0].statusCode).to.equal(201)
     expect(operation.failed.length === 1).beTrue()
-    expect(operation.failed[0].statusCode).to.equal(410)
+    expect(operation.failed[0].statusCode).to.equal(404)
     expect(operation.failed[0].endpoint).to.equal(expiredSubscription.endpoint)
   })
   // Let enough time to process
     .timeout(10000)
 
   it('a user should be able to delete its subscription', async () => {
-    await removeSubscription(user, user.subscriptions[0], 'subscriptions')
+    await Promise.all(user.subscriptions.map(subscription => removeSubscription(user, subscription, 'subscriptions')))
     expect(user.subscriptions.length === 0).beTrue()
   })
   // Let enough time to process
