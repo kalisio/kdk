@@ -12,6 +12,7 @@
   >
     <KLocationMap
       v-model="locationModel"
+      :engine-options="engineOptions"
       style="min-width: 200px; min-height: 200px;"
     />
     <q-icon name="target" class="fixed-center" />
@@ -19,7 +20,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import _ from 'lodash'
+import config from 'config'
+import { ref, computed } from 'vue'
 import KLocationMap from './KLocationMap.vue'
 
 // Props
@@ -74,5 +77,10 @@ const locationModel = computed({
   get: function () {
     return props.location
   }
+})
+const engineOptions = computed(() => {
+  const options = _.cloneDeep(_.get(config, 'engines.leaflet'))
+  options.viewer.scale = false
+  return options
 })
 </script>
