@@ -134,21 +134,27 @@ export default {
       }
       baseField.methods.apply.call(this, object, field)
     },
-    async submitted (object, field) {
-      // Check wether we need to upload file content
-      if (this.changed && _.get(this.model, 'key')) {
+    async upload (object, field) {
+      if (_.get(this.model, 'key')) {
         // The template generates the final context for storage service
         let context = _.get(this.properties, 'field.storage.context')
         if (context) context = _.template(context)(Object.assign({}, { fileName: this.model.name }, object))
         const query = _.get(this.properties, 'field.storage.uploadQuery')
         logger.debug(`[KDK] Uploading file ${this.model.name} with key ${this.model.key}`)
-        Storage.upload({
+        return Storage.upload({
           file: this.model.name,
           type: this.model.type,
           key: this.model.key,
           blob: this.file,
           context
         }, { query })
+      }
+    },
+    async submitted (object, field) {
+      // Check wether we need to upload file content
+      if (this.changed) {
+        // The template generates the final context for storage service
+        this.upload(object, field)
           .then(() => {
             this.$notify({
               type: 'positive',
