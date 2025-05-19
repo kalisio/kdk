@@ -537,33 +537,51 @@ export const geojsonLayers = {
         delete this.geojsonCache[layer.name]
       }
     },
-    selectFeaturesForPostProcess (effect, layerName, featureIds) {
+    selectFeaturesForPostProcess (effect, layerNames, featureIds) {
       // Make sure post process is enabled
       const stage = this.getPostProcessStage(effect)
       if (!stage) return
-      // Make sure layer exists
-      const layer = this.getCesiumLayerByName(layerName)
-      if (!layer) return
-      // Expect layer to be a datasource
-      if (!layer.entities && !layer.primitives.size) return
-
-      const ids = Array.isArray(featureIds) ? featureIds : [featureIds]
       const primitives = []
-      ids.forEach((id) => {
-        // Lookup entity based on featureId
-        const entity = layer.entities.getById(id)
-        let primitive = null;
-        if (entity) {
-          // Lookup associated primitive
-          primitive = findPrimitiveForEntity(entity, this.viewer)
-        } else {
-          // Lookup primitive based on featureId
-          primitive = layer.primitives.get(id)
-          primitive = _.get(primitive, 'primitive')
-        }
-        if (!primitive) return
-        primitives.push(primitive)
-      })
+      // We allow features from multiple layers so that the code is based on arrays
+      // but the input can be a single element
+      const multipleLayers = Array.isArray(layerNames)
+      if (!multipleLayers) {
+        layerNames = [layerNames]
+        featureIds = [featureIds]
+      }
+      for (let i = 0; i < layerNames.length; i++) {
+        const layerName = layerNames[i]
+        const layerIds = featureIds[i]
+        // Make sure layer exists
+        const layer = this.getCesiumLayerByName(layerName)
+        if (!layer) return
+        // Expect layer to be a datasource
+        if (!layer.entities && !layer.primitives.size) return
+
+        const ids = Array.isArray(layerIds) ? layerIds : [layerIds]
+        ids.forEach((id) => {
+          // Lookup entity based on featureId
+          const entity = layer.entities.getById(id)
+          let primitive = null
+          if (entity) {
+            // Lookup associated primitive
+            primitive = findPrimitiveForEntity(entity, this.viewer)
+          } else {
+            // Lookup primitive based on featureId
+            primitive = layer.primitives.get(id)
+            // Take care we also generate IDs based on specific entity types
+            CustomTypes.forEach(type => {
+              // Already found ?
+              if (primitive) return
+              const customId = getCustomEntityId(id, type)
+              primitive = layer.primitives.get(customId)
+            })
+            primitive = _.get(primitive, 'primitive')
+          }
+          if (!primitive) return
+          primitives.push(primitive)
+        })
+      }
 
       stage.selected = primitives
     }
