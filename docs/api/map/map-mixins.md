@@ -116,7 +116,7 @@ Althought the visibility of the panes will be automatically updated based on the
 
 ## Map Style
 
-**KDK** intoduces its own style specification as described below:
+**KDK** introduces its own style specification as described below:
 
 ```js
 style: {
@@ -229,7 +229,6 @@ The mixin automatically registers defaults styling for the the following type: `
 All these style properties can be templated using [lodash string templates](https://lodash.com/docs/4.17.15#template). Their final values will be computed at creation/update time.
 :::
 
-
 ::: details Example
 
 The following collection is rendered as illustrated below:
@@ -292,7 +291,7 @@ The following collection is rendered as illustrated below:
 }
 ```
 
-![Map rendering](../../.vitepress/public/images/kano-style.png)
+![Map rendering](../../.vitepress/public/images/kano-style-2D.png)
 :::
 
 ## Map Popup
@@ -359,7 +358,7 @@ animate: {
 ```
 
 ::: danger
-The [style mixin](./mixins.md#map-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./mixins.md#map-tooltip) and/or [tooltip mixin](./mixins.md#map-tooltip).
+The [style mixin](./map-mixins.md#map-style) is mandatory when using this mixin. If you'd like to support popups/tooltips you should also use the [popup mixin](./map-mixins.md#map-tooltip) and/or [tooltip mixin](./map-mixins.md#map-tooltip).
 :::
 
 If your component has a **onLeafletFeature(feature, layer, options)** method it will be called each time a new GeoJson feature is created.
