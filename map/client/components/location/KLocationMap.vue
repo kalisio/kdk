@@ -250,7 +250,7 @@ export default {
       if (container) {
         if (!this.mapReady) {
           // setup map
-          logger.debug('[KDK] Create map with options', this.engineOptions.viewer)
+          logger.debug('[KDK] Create location map with viewer options', this.engineOptions.viewer)
           this.setupMap(container, this.engineOptions.viewer)
           this.mapReady = true
           // setup base layer
