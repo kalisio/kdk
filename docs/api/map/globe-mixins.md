@@ -57,7 +57,7 @@ We currently only support `desaturate` post process. The `options` parameter in 
 
 ## Globe Style
 
-Globe partly supports KDK style specification as detailled for [map](./mixins.md#map-style) but provide additionnal capabilities specific to 3D entities.
+Globe partly supports KDK style specification as detailled for [map](./mixins.md#map-style): color, width, opacity, [maki icons](https://labs.mapbox.com/maki-icons/) as shape by relying on the [pin builder](https://cesium.com/learn/ion-sdk/ref-doc/PinBuilder.html). It also provides additionnal capabilities specific to 3D entities defined in layers or features as an `entityStyle` property.
 
 ::: tip
 All style properties can be templated using [lodash string templates](https://lodash.com/docs/4.17.15#template). Their final values will be computed at creation/update time.
