@@ -159,7 +159,8 @@
     "NANOSIEVERT_PER_HOUR_LABEL": "Nanosieverts per hour"
   },
   "directives": {
-    "ALL_FILES_ARE_UNSUPPORTED": "File is not supported | None of the files are supported",
+    "MAX_FILES_REACHED": "Oops ! You can only drop only one file | Oops! You can only drop up to {n} files at once",
+    "ALL_FILES_ARE_UNSUPPORTED": "Oops ! File is not supported | Oops ! None of the files are supported",
     "SOME_FILES_ARE_UNSUPPORTED": "Some files will be ignored due to unsupported types",
     "DROP_FILES": "Drop file here | Drop files here"
   },

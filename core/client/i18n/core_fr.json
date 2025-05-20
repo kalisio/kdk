@@ -159,7 +159,8 @@
     "NANOSIEVERT_PER_HOUR_LABEL": "Nanosieverts par heure"
   },
   "directives": {
-    "ALL_FILES_ARE_UNSUPPORTED": "Fichier non pris en charge | Aucun des fichiers n'est pris en charge",
+    "MAX_FILES_REACHED": "Oups ! Vous ne pouvez déposer qu'un seul fichier | Oups ! Vous ne pouvez déposer que jusqu’à {n} fichiers à la fois",
+    "ALL_FILES_ARE_UNSUPPORTED": "Oups ! Fichier non pris en charge | Oups ! Aucun des fichiers n'est pris en charge",
     "SOME_FILES_ARE_UNSUPPORTED": "Certains fichiers seront ignorés en raison de types non pris en charge",
     "DROP_FILES": "Déposez le fichier ici | Déposez les fichiers ici"
   },

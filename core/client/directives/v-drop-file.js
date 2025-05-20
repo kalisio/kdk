@@ -8,8 +8,9 @@ export const vDropFile = {
 
   mounted (el, binding) {
     el.__state = {
-      acceptedTypes:  _.get(binding.value, 'mimeTypes'),
       dropCallback: _.get(binding.value, 'dropCallback'),
+      acceptedTypes:  _.get(binding.value, 'mimeTypes'),
+      maxFiles:  _.get(binding.value, 'maxFiles'),
       fontSize: _.get(binding.value, 'fontSize', '2rem'),
       enabled: _.get(binding.value, 'enabled', true)
     }
@@ -47,33 +48,40 @@ export const vDropFile = {
     const showOverlay = () => overlay.style.display = 'flex'
     const hideOverlay = () => overlay.style.display = 'none'
     let dragCounter = 0
+    let canDrop = false
 
     const onDragEnter = (e) => {
       // check whether the directive is enabled
       if (!el.__state.enabled) return
       e.preventDefault()
-      // filter the items
+      // check the dragged items
       const items = e.dataTransfer.items
       let rejectedItems = []
       let acceptedItems = []
-      for (const item of items) {
-        if (item.kind === 'file' && el.__state.acceptedTypes.includes(item.type)) acceptedItems.push(item)
-        else rejectedItems.push(item)
-      }
-      // customize the elements
       let color, message
-      if (_.isEmpty(acceptedItems)) {
+      if (el.__state.maxFiles && _.size(items) > el.__state.maxFiles) {
         color = colors.getPaletteColor('negative')
-        message = i18n.tc('directives.ALL_FILES_ARE_UNSUPPORTED', rejectedItems.length)
+        message = i18n.tc('directives.MAX_FILES_REACHED', el.__state.maxFiles)
+      } else {
+        for (const item of items) {
+          if (item.kind === 'file' && _.includes(el.__state.acceptedTypes, item.type)) acceptedItems.push(item)
+          else rejectedItems.push(item)
+        }  
+        if (_.isEmpty(acceptedItems)) {
+          color = colors.getPaletteColor('negative')
+          message = i18n.tc('directives.ALL_FILES_ARE_UNSUPPORTED', rejectedItems.length)
+        }
+        else if (_.isEmpty(rejectedItems)) {
+          color = colors.getPaletteColor('positive')
+          message = i18n.tc('directives.DROP_FILES', acceptedItems.length)
+        }
+        else {
+          color = colors.getPaletteColor('warning')
+          message = i18n.t('directives.SOME_FILES_ARE_UNSUPPORTED')
+        }
       }
-      else if (_.isEmpty(rejectedItems)) {
-        color = colors.getPaletteColor('positive')
-        message = i18n.tc('directives.DROP_FILES', acceptedItems.length)
-      }
-      else {
-        color = colors.getPaletteColor('warning')
-        message = i18n.t('directives.SOME_FILES_ARE_UNSUPPORTED')
-      }
+      canDrop = _.size(acceptedItems) > 0
+      // customize the overlay
       overlay.style.background = '#0007'
       const overlayBox = overlay.querySelector('.drag-overlay-box')
       overlayBox.textContent = message
@@ -81,7 +89,6 @@ export const vDropFile = {
       overlayBox.style.color = 'white'
       overlayBox.style.textShadow = '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black'
       overlayBox.style.padding = '20px;'
-      
       // show the overlay
       dragCounter++
       showOverlay()
@@ -98,6 +105,7 @@ export const vDropFile = {
       e.preventDefault()
       dragCounter = 0
       hideOverlay()
+      if (!canDrop) return
       const files = Array.from(e.dataTransfer.files)
       // call the provided handler with the accepted files
       if (el.__state.dropCallback && typeof el.__state.dropCallback === 'function') {
@@ -120,8 +128,9 @@ export const vDropFile = {
     // Handle arguments changes
     if (binding.value !== binding.oldValue) {
       el.__state = {
-        acceptedTypes:  _.get(binding.value, 'mimeTypes'),
         dropCallback: _.get(binding.value, 'dropCallback'),
+        acceptedTypes:  _.get(binding.value, 'mimeTypes'),
+        maxFiles:  _.get(binding.value, 'maxFiles'),
         fontSize: _.get(binding.value, 'fontSize', '2rem'),
         enabled: _.get(binding.value, 'enabled', true)
       }
