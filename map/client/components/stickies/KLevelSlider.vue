@@ -1,6 +1,6 @@
 <template>
-  <div 
-    v-if="levels" 
+  <div
+    v-if="levels"
     class="q-pa-sm col row items-center k-level-slider"
   >
     <div v-if="switchLabelSide">
@@ -11,20 +11,20 @@
         {{ $t(label) }} - {{ getFormattedLevel(CurrentActivity.selectedLevel) }}
       </div>
     </div>
-    <q-slider 
-      v-model="level" 
+    <q-slider
+      v-model="level"
       vertical
       reverse
-      :min="sliderMin" 
-      :max="sliderMax" 
-      :step="sliderStep" 
-      :markers="markers" 
+      :min="sliderMin"
+      :max="sliderMax"
+      :step="sliderStep"
+      :markers="markers"
       snap
       label
-      :label-value="getFormattedLevel(level)" 
+      :label-value="getFormattedLevel(level)"
       :switch-label-side="!switchLabelSide"
       @change="onLevelChanged"
-      class="q-py-sm text-primary" 
+      class="q-py-sm text-primary"
       :style="`height: ${height - 18}px;`"
     />
     <div v-if="!switchLabelSide">
