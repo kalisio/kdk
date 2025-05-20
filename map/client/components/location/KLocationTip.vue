@@ -80,7 +80,7 @@ const locationModel = computed({
 })
 const engineOptions = computed(() => {
   const options = _.cloneDeep(_.get(config, 'engines.leaflet'))
-  options.viewer.scale = false
+  _.set(options, 'viewer.scale', false)
   return options
 })
 </script>
