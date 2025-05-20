@@ -150,7 +150,7 @@ export function convertToCesiumFromStyle (feature, options) {
   }
 
   _.set(convertedStyle, ['properties', 'entityStyle', geometryType], entityStyle)
-  _.defaults(convertedStyle.properties.entityStyle, _.get(feature, 'properties.entityStyle', {}))
+  _.defaultsDeep(convertedStyle.properties.entityStyle, _.get(feature, 'properties.entityStyle', {}))
 
   return convertedStyle
 }
