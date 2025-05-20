@@ -272,6 +272,7 @@
       "GEOLOCATE_LABEL": "Recenter the map on your location and display it using this button.",
       "SEARCH_LOCATION_LABEL": "Seek for an address using this button.",
       "LOCATION_SEARCHING_LABEL": "Type part of your address and select among the proposed locations to center the map on.",
+      "LOCATION_BACK_LABEL": "Close the coordinates widget by clicking this button.",
       "SEARCH_BACK_LABEL": "Then stop searching by going back to the actions.",
       "TOOLS_LABEL": "Select among available tools using this button.",
       "TRACK_LOCATION_LABEL": "Display the coordinates of a location using this button.",
@@ -294,7 +295,8 @@
       "MEASURE_BACK_LABEL": "Then stop measuring by going back to the actions.",
       "TOGGLE_VR_LABEL": "Switch to Virtual Reality (VR) mode with this button.",
       "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
-      "TOGGLE_CATALOG_LABEL": "Open the catalog with this button."
+      "TOGGLE_CATALOG_LABEL": "Open the catalog with this button.",
+      "NORTH_ARROW_LABEL": "Display or hide the north arrow using this button."
     },
     "catalog-panel": {
       "CATALOG_LABEL": "The <b>catalog</b> allows to manage data displayed on your map.<br/>The catalogd is divided into 3 different tabs.",

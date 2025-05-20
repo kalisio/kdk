@@ -272,6 +272,7 @@
       "GEOLOCATE_LABEL": "Recentrez la carte sur <b>votre position</b> et affichez là avec ce bouton.",
       "SEARCH_LOCATION_LABEL": "Recherchez une <b>adresse</b> via ce bouton.",
       "LOCATION_SEARCHING_LABEL": "Tapez tout ou partie de votre adresse puis sélectionnez parmi les propositions pour recentrer la carte.",
+      "LOCATION_BACK_LABEL": "Fermez l'affichage des coordonnées via ce bouton.",
       "SEARCH_BACK_LABEL": "Arrêtez la recherche en retournant aux actions.",
       "TOOLS_LABEL": "Sélectionnez un outil parmi ceux disponibles via ce bouton.",
       "TRACK_LOCATION_LABEL": "Affichez les coordonnées d'une position via ce bouton.",
@@ -294,7 +295,8 @@
       "MEASURE_BACK_LABEL": "Arrêtez de mesurer en retournant aux actions.",
       "TOGGLE_VR_LABEL": "Basculez en mode <b>Réalité Virtuelle</b> (VR) avec ce bouton.",
       "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
-      "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton."
+      "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton.",
+      "NORTH_ARROW_LABEL": "Affichez ou cachez la flèche nord avec ce bouton."
     },
     "catalog-panel": {
       "CATALOG_LABEL": "Le <b>catalogue</b> permet de gérer les données affichées sur votre carte.<br/>Le catalogue se décompose en 3 onglets.",
