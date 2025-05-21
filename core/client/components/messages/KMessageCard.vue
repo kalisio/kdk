@@ -187,11 +187,11 @@ export default {
       Storage.export({ file: attachment.name, key, context: this.contextId })
     },
     canEditMessage () {
-      if (this.canEditMessageFn === null) return this.$can('update', 'messages')
+      if (this.canEditMessageFn() === null) return this.$can('update', 'messages')
       return this.canEditMessageFn(this.item)
     },
     canRemoveMessage () {
-      if (this.canRemoveMessageFn === null) return this.$can('remove', 'messages')
+      if (this.canRemoveMessageFn() === null) return this.$can('remove', 'messages')
       return this.canRemoveMessageFn(this.item)
     }
   },
