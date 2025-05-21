@@ -49,6 +49,14 @@ const props = defineProps({
   baseQueryProp: {
     type: Object,
     default: { $sort: { createdAt: -1 } }
+  },
+  canEditMessageFn: {
+    type: Function,
+    default: (message) => null
+  },
+  canRemoveMessageFn: {
+    type: Function,
+    default: (message) => null
   }
 })
 
@@ -78,7 +86,9 @@ const renderer = computed(() => {
   return {
     component: 'messages/KMessageCard',
     actions: props.itemActions,
-    dense: dense.value
+    dense: dense.value,
+    canEditMessageFn: props.canEditMessageFn,
+    canRemoveMessageFn: props.canRemoveMessageFn
   }
 })
 const computedFilterQuery = computed(() => {
