@@ -351,7 +351,7 @@ function getStickyOffset (sticky) {
 function onStickyCreated (reference) {
   if (reference) {
     const pointerEvents = _.get(reference, '$attrs.pointer-events')
-        if (pointerEvents) {
+    if (pointerEvents) {
       const div = reference.$el.querySelector('div')
       div.style.pointerEvents = pointerEvents
     }
