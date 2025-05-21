@@ -71,10 +71,10 @@ const footerClass = ref(_.get(config, 'attribution.footerClass', ''))
 
 // Computed
 const sanitizedAttributions = computed(() => {
-  let content = ''
-  _.forOwn(attributions.value, (attribution, layer) => {
-    content += `${attribution}<br>`
-  })
+  const filteredAttributions = _.uniq(_.map(attributions.value))
+  let content = _.reduce(filteredAttributions, (content, attribution) => {
+    return content += `${attribution}<br>`
+  }, '')
   return Document.sanitizeHtml(content)
 })
 
