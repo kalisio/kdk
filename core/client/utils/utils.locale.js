@@ -19,7 +19,7 @@ export function getBrowserLocale () {
 
 export function getLocale () {
   const localeConfig = config.locale || {}
-  return localeConfig.default || detectLocale()
+  return localeConfig.default || getBrowserLocale()
 }
 
 export function getFallbackLocale () {
