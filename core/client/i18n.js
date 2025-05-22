@@ -29,17 +29,9 @@ async function loadTranslationBundles (bundles, locale, fallbackLocale) {
 
 export const i18n = {
   async initialize (app, bundles) {
-    // Define the locale to be used
+    // Create i18n instance using the translation bundles
     const fallbackLocale = getFallbackLocale()
     const locale = getLocale()
-    // Install Quasar langage pack
-    try {
-      const langagePack = await import(`quasar/lang/${locale}.js`)
-      if (langagePack) Quasar.lang.set(langagePack.default)
-    } catch (error) {
-      logger.error(error)
-    }
-    // Create i18n instance using the translation bundles
     this.i18n = createI18n({
       locale,
       fallbackLocale,
@@ -47,6 +39,14 @@ export const i18n = {
       silentFallbackWarn: true
     })
     app.use(this.i18n)
+    // Install Quasar langage pack
+    try {
+      const langagePack = await import(`quasar/lang/${getLocale(false)}.js`)
+      if (langagePack) Quasar.lang.set(langagePack.default)
+    } catch (error) {
+      logger.error(error)
+    }
+    
   },
   registerTranslation (translation) {
     if (!this.i18n) {

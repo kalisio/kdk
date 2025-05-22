@@ -3,7 +3,6 @@ import logger from 'loglevel'
 import config from 'config'
 import { getFingerprint, getFingerprintData } from '@thumbmarkjs/thumbmarkjs'
 import { Platform as QPlatform } from 'quasar'
-import { getLocale } from './utils/utils.locale.js'
 
 export const Platform = {
   async initialize () {
@@ -12,8 +11,6 @@ export const Platform = {
     // use fingerprint data
     this.fingerprint = await getFingerprint()
     this.fingerprintData = await getFingerprintData()
-    // use locale
-    this.locale = getLocale()
     // use build data
     this.is.pwa = _.get(config, 'buildMode', 'spa') === 'pwa'
     logger.debug('[KDK] Platform initialized with:', this)
