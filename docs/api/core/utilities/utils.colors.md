@@ -7,7 +7,7 @@ The `utils.colors.js` module provides utilities for managing and manipulating co
 
 It leverages external libraries such as `lodash`, `loglevel`, `quasar`, and `chroma-js` for efficient color handling.
 
-## **Constants**
+## Constants
 
 ### `HtmlColors`
 
@@ -17,7 +17,7 @@ A collection of standard HTML color names mapped to their corresponding hex valu
 
 A predefined palette of commonly used colors, including primary and secondary shades.
 
-## **Functions**
+## Functions
 
 ### **`getHtmlColor(color, defaultColor)`**
 
