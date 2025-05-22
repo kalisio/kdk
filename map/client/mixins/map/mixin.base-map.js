@@ -28,7 +28,7 @@ import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet-rotate/dist/leaflet-rotate-src.js'
 import { Time } from '../../../../core/client/time.js'
-import { getAppLocale } from '../../../../core/client/utils/index.js'
+import { getLocale } from '../../../../core/client/utils/index.js'
 import '../../leaflet/BoxSelection.js'
 import '../../leaflet/WindBarb.js'
 import { Geolocation } from '../../geolocation.js'
@@ -117,7 +117,7 @@ export const baseMap = {
       if (this.map.pm === undefined) {
         this.map.options.pmIgnore = false
         L.PM.reInitLayer(this.map)
-        this.map.pm.setLang(getAppLocale())
+        this.map.pm.setLang(getLocale())
       }
       // Leaflet does not really manage touch events, it provides compatibility mapping with mouse events
       // but it will not really trigger touch event from the map object, as a consequence we manage this by ourselves

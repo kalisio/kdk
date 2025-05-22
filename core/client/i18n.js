@@ -2,7 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { Quasar } from 'quasar'
 import { createI18n } from 'vue-i18n'
-import { getAppLocale, getAppFallbackLocale } from './utils/utils.locale.js'
+import { getLocale, getFallbackLocale } from './utils/utils.locale.js'
 
 // Helper function to load a translation file
 // @i18n alias shoud be added in the quasar.config build section
@@ -30,8 +30,8 @@ async function loadTranslationBundles (bundles, locale, fallbackLocale) {
 export const i18n = {
   async initialize (app, bundles) {
     // Define the locale to be used
-    const fallbackLocale = getAppFallbackLocale()
-    const locale = getAppLocale()
+    const fallbackLocale = getFallbackLocale()
+    const locale = getLocale()
     // Install Quasar langage pack
     try {
       const langagePack = await import(`quasar/lang/${locale}.js`)

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import config from 'config'
 
-export function getLocale () {
+export function getBrowserLocale () {
   const locale =
     navigator.language ||
     navigator.languages[0] ||
@@ -17,12 +17,11 @@ export function getLocale () {
   // return undefined by default
 }
 
-export function getAppLocale () {
+export function getLocale () {
   const localeConfig = config.locale || {}
-  const localeBrowser = getLocale()
-  return localeConfig.default || localeBrowser
+  return localeConfig.default || detectLocale()
 }
 
-export function getAppFallbackLocale () {
+export function getFallbackLocale () {
   return config.fallbackLocale || 'en'
 }

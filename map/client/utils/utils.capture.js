@@ -4,7 +4,7 @@ import config from 'config'
 import moment from 'moment'
 import { i18n, Events, Store, api, Layout } from '../../../core/client/index.js'
 import * as composables from '../../../core/client/composables/index.js'
-import { base64Encode, getAppLocale } from '../../../core/client/utils/index.js'
+import { base64Encode, getLocale } from '../../../core/client/utils/index.js'
 import { exportFile, Notify } from 'quasar'
 import { image } from '@pdfme/schemas'
 import { generate } from '@pdfme/generator'
@@ -54,7 +54,7 @@ export async function capture (values) {
         layout: getLayout(values),
         time: dateArray[index],
         basePath: _.has(values, 'basePath') ? values.basePath : '/#/home/',
-        lang: getAppLocale()
+        lang: getLocale()
       })
       const response = await fetch(endpoint, options)
       if (response.ok) {
