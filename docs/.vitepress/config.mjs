@@ -76,7 +76,8 @@ function getGuidesSidebar () {
       text: 'Migration', 
       collapsed: true, 
       items: [
-        { text: 'v2.5', link: '/guides/migration/v2.5' }
+        { text: 'v2.5', link: '/guides/migration/v2.5' },
+        { text: 'v2.6', link: '/guides/migration/v2.6' }
       ]
     }
   ]
