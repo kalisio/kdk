@@ -355,14 +355,16 @@ export async function aggregateFeaturesQuery (hook) {
           // Delete accumulator
           _.unset(result, element)
         }
-        // Keep track of result in map to improve search later
-        const resultKeys = keys.map(key => _.get(singleTime ? result : result._id, key))
-        const resultKey = resultKeys.join('-')
-        if (!aggregatedResultsMap.has(resultKey)) aggregatedResultsMap.set(resultKey, result)
       })
       // Now merge with previous element results
       if (!aggregatedResults) {
         aggregatedResults = elementResults
+        aggregatedResults.forEach(result => {
+          // Keep track of result in map to improve search later
+          const resultKeys = keys.map(key => _.get(singleTime ? result : result._id, key))
+          const resultKey = resultKeys.join('-')
+          aggregatedResultsMap.set(resultKey, result)
+        })
       } else {
         elementResults.forEach(result => {
           // When single time no aggregation is performed at all so we only have raw features
@@ -385,6 +387,7 @@ export async function aggregateFeaturesQuery (hook) {
             _.set(previousResult, prefix + element, _.get(result, prefix + element))
           } else {
             aggregatedResults.push(result)
+            aggregatedResultsMap.set(resultKey, result)
           }
         })
       }
