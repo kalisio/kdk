@@ -64,16 +64,17 @@ import KShape from '../../../../core/client/components/media/KShape.vue'
 // Data
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const attributions = ref({})
-const header = ref(_.get(config, 'attribution.header', []))
-const headerClass = ref(_.get(config, 'attribution.headerClass', ''))
-const footer = ref(_.get(config, 'attribution.footer', []))
-const footerClass = ref(_.get(config, 'attribution.footerClass', ''))
+const header = _.get(config, 'attribution.header', [])
+const headerClass = _.get(config, 'attribution.headerClass', '')
+const footer = _.get(config, 'attribution.footer', [])
+const footerClass = _.get(config, 'attribution.footerClass', '')
 
 // Computed
 const sanitizedAttributions = computed(() => {
   const filteredAttributions = _.uniq(_.map(attributions.value))
-  let content = _.reduce(filteredAttributions, (content, attribution) => {
-    return content += `${attribution}<br>`
+  const content = _.reduce(filteredAttributions, (content, attribution) => {
+    content += `${attribution}<br>`
+    return content
   }, '')
   return Document.sanitizeHtml(content)
 })
