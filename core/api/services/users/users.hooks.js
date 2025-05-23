@@ -56,9 +56,10 @@ export default {
     ],
     find: [],
     get: [],
-    create: [updateAbilities()],
-    update: [],
-    patch: [sendNewSubscriptionEmail],
+    create: [updateAbilities({ subjectAsItem: true })],
+    update: [updateAbilities({ subjectAsItem: true })],
+    // Fetch user in this case as we might only have partial data and miss permission properties
+    patch: [updateAbilities({ subjectAsItem: true, fetchSubject: true }), sendNewSubscriptionEmail],
     remove: []
   },
 
