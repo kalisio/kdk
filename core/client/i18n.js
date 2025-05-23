@@ -46,7 +46,6 @@ export const i18n = {
     } catch (error) {
       logger.error(error)
     }
-    
   },
   registerTranslation (translation) {
     if (!this.i18n) {

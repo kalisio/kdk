@@ -50,7 +50,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
-import { api, i18n, Store } from '../../../../core/client'
+import { i18n } from '../../../../core/client'
 import { getLayersBySublegend } from '../../utils'
 import { useCurrentActivity } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
@@ -141,9 +141,9 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
 // Functions
 function onShowLayer (layer, engine) {
   const layerLegend = layer.legend
-  // Check whether the layer has a legend
+  // check whether the layer has a legend
   if (!layerLegend) return
-  // Check wehther the legend is already registered for that layer
+  // check whether the legend is already registered for that layer
   if (_.find(layers.value, { name: layer.name })) {
     logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
     return
