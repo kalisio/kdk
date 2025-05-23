@@ -31,9 +31,9 @@ import { useCurrentActivity, useScreen } from '../../composables'
 
 // Props
 defineProps({
-  dateOnly: {
-    type: Boolean,
-    default: false
+  dateFormat: {
+    type: String,
+    default: null
   }
 })
 
@@ -71,9 +71,6 @@ const timeRangeModel = computed({
       end: value.end
     })
   }
-})
-const dateFormat = computed(() => {
-  return dense.value ? 'DD/MM/YY' : 'DD/MM/YYYY'
 })
 const textClass = computed(() => {
   return dense.value ? 'text-caption' : 'text-body2 text-weight-regular'

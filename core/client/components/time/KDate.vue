@@ -71,14 +71,10 @@ const computedModel = computed({
 const computedButton = computed(() => {
   // compute format
   let format = props.format
-  if (_.isEmpty(format)) {
-    const dateFormat = _.get(Time.getFormat(), 'date.short')
-    const yearFormat = _.get(Time.getFormat(), 'year.long')
-    format = `${dateFormat}/${yearFormat}`
-  }
+  if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'date.short')
   // compute label
   let label
-  if (!_.isEmpty(computedModel.value)) label = moment(computedModel.value, mask).format(format)
+  if (!_.isEmpty(computedModel.value)) label = moment(computedModel.value).format(format)
   else label = i18n.tie(props.placeholder)
   // define button spec
   const spec = {
