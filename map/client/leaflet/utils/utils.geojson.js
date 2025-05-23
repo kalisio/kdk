@@ -93,14 +93,13 @@ export function getUpdateFeatureFunction(leafletOptions) {
     if (!oldLayer) return
     const oldType = _.get(oldLayer, 'feature.geometry.type')
     const type = _.get(feature, 'geometry.type')
-    // The feature is changing its geometry type, recreate it
-    if (type !== oldType) return
     const staticGeometry = _.get(leafletOptions, 'staticGeometry', false)
+    // The feature is changing its geometry type, recreate it except for static geometry
+    // as we'd like the geometry of the features tu remain stable in this case (eg lines in for probes vs bbox for measures)
+    if (!staticGeometry && (type !== oldType)) return
     // Keep track of previous geometry if we don't want to update it
     // Indeed, styling might depend on it
     if (staticGeometry) feature.geometry = _.get(oldLayer, 'feature.geometry')
-    // Now update coordinates if not static geometry
-    if (staticGeometry) return oldLayer
     // An existing one is found, simply update styling, properties, etc.
     leafletOptions.onEachFeature(feature, oldLayer)
     if (oldLayer.setStyle) {
@@ -130,6 +129,8 @@ export function getUpdateFeatureFunction(leafletOptions) {
       // oldLayer.setIcon(_.get(leafletOptions.pointToLayer(feature, oldLayer.getLatLng()), 'options.icon'))
       return
     }
+    // Now update coordinates if not static geometry
+    if (staticGeometry) return oldLayer
     const coordinates = feature.geometry.coordinates
     // FIXME: support others geometry types ?
     switch (type) {
