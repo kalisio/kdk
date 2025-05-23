@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import path, { dirname } from 'path'
 import assert from 'assert'
 import fs from 'fs-extra'
