@@ -4,6 +4,7 @@ import fs from 'fs-extra'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
+import spies from 'chai-spies'
 import core, { kdk, hooks, permissions, createMessagesService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
@@ -13,10 +14,12 @@ const { util, expect } = chai
 
 describe('core:services', () => {
   let app, server, port, baseUrl, accessToken,
-    userService, userObject, authorisationService, messagesService, messageObject
+    userService, userObject, authorisationService, messagesService, messageObject,
+    spyUpdateAbilities
 
   before(async () => {
     chailint(chai, util)
+    chai.use(spies)
 
     // Register default rules for all users
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)
@@ -52,6 +55,7 @@ describe('core:services', () => {
     authorisationService.hooks({
       before: { create: hooks.preventEscalation, remove: hooks.preventEscalation }
     })
+    spyUpdateAbilities = chai.spy.on(authorisationService, 'updateAbilities')
     // Now app is configured launch the server
     server = await app.listen(port)
     await new Promise(resolve => server.once('listening', () => resolve()))
@@ -129,42 +133,37 @@ describe('core:services', () => {
   // Let enough time to process
     .timeout(20000)
 
-  it('creates a user', () => {
+  it('creates a user', async () => {
     // Test password generation
     const hook = hooks.generatePassword()({ type: 'before', data: {}, params: {}, app })
-    return userService.create({
+    userObject = await userService.create({
       email: 'test@test.org',
       password: hook.data.password,
       name: 'test-user',
       profile: { phone: '0623256968' }
     }, { checkAuthorisation: true })
-      .then(user => {
-        userObject = user
-        // Keep track of clear password
-        userObject.clearPassword = hook.data.password
-        return userService.find({ query: { 'profile.name': 'test-user' } })
-      })
-      .then(users => {
-        expect(users.data.length > 0).beTrue()
-        expect(users.data[0].email).toExist()
-        expect(users.data[0].clearPassword).beUndefined()
-        expect(users.data[0].profile).toExist()
-        expect(users.data[0].profile.name).toExist()
-        expect(users.data[0].profile.description).toExist()
-      })
+    expect(spyUpdateAbilities).to.have.been.called.once
+    spyUpdateAbilities.reset()
+    // Keep track of clear password
+    userObject.clearPassword = hook.data.password
+    const users = await userService.find({ query: { 'profile.name': 'test-user' } })
+    expect(users.data.length > 0).beTrue()
+    expect(users.data[0].email).toExist()
+    expect(users.data[0].clearPassword).beUndefined()
+    expect(users.data[0].profile).toExist()
+    expect(users.data[0].profile.name).toExist()
+    expect(users.data[0].profile.description).toExist()
   })
   // Let enough time to process
     .timeout(10000)
 
-  it('changing user password keeps password history', () => {
-    return userService.patch(userObject._id.toString(), { password: userObject.password })
-      .then(() => {
-        return userService.get(userObject._id.toString())
-      })
-      .then(user => {
-        expect(user.previousPasswords).toExist()
-        expect(user.previousPasswords).to.deep.equal([userObject.password])
-      })
+  it('changing user password keeps password history', async () => {
+    await userService.patch(userObject._id.toString(), { password: userObject.password })
+    expect(spyUpdateAbilities).to.have.been.called.once
+    spyUpdateAbilities.reset()
+    const user = await userService.get(userObject._id.toString())
+    expect(user.previousPasswords).toExist()
+    expect(user.previousPasswords).to.deep.equal([userObject.password])
   })
 
   it('authenticates a user', () => {
@@ -257,8 +256,8 @@ describe('core:services', () => {
   // Let enough time to process
     .timeout(5000)
 
-  it('creates an authorisation', () => {
-    return authorisationService.create({
+  it('creates an authorisation', async () => {
+    const authorisation = await authorisationService.create({
       scope: 'authorisations',
       permissions: 'manager',
       subjects: userObject._id.toString(),
@@ -268,16 +267,13 @@ describe('core:services', () => {
     }, {
       user: userObject
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.get(userObject._id.toString())
-      })
-      .then(user => {
-        userObject = user
-        expect(user.authorisations).toExist()
-        expect(user.authorisations.length > 0).beTrue()
-        expect(user.authorisations[0].permissions).to.deep.equal('manager')
-      })
+    expect(authorisation).toExist()
+    expect(spyUpdateAbilities).to.have.been.called.once
+    spyUpdateAbilities.reset()
+    userObject = await userService.get(userObject._id.toString())
+    expect(userObject.authorisations).toExist()
+    expect(userObject.authorisations.length > 0).beTrue()
+    expect(userObject.authorisations[0].permissions).to.deep.equal('manager')
   })
   // Let enough time to process
     .timeout(5000)
@@ -323,8 +319,8 @@ describe('core:services', () => {
       })
   })
 
-  it('removes an authorisation', () => {
-    return authorisationService.remove(messageObject._id, {
+  it('removes an authorisation', async () => {
+    const authorisation = await authorisationService.remove(messageObject._id, {
       query: {
         scope: 'authorisations',
         subjects: userObject._id.toString(),
@@ -334,14 +330,12 @@ describe('core:services', () => {
       user: userObject,
       checkEscalation: true
     })
-      .then(authorisation => {
-        expect(authorisation).toExist()
-        return userService.get(userObject._id.toString())
-      })
-      .then(user => {
-        expect(user.authorisations).toExist()
-        expect(user.authorisations.length === 0).beTrue()
-      })
+    expect(authorisation).toExist()
+    expect(spyUpdateAbilities).to.have.been.called.once
+    spyUpdateAbilities.reset()
+    const user = await userService.get(userObject._id.toString())
+    expect(user.authorisations).toExist()
+    expect(user.authorisations.length === 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)
@@ -365,21 +359,15 @@ describe('core:services', () => {
       })
   })
 
-  it('removes a user', () => {
-    return userService.remove(userObject._id, {
+  it('removes a user', async () => {
+    await userService.remove(userObject._id, {
       user: userObject,
       checkAuthorisation: true
     })
-      .then(user => {
-        return userService.find({ query: { name: 'test-user' } })
-      })
-      .then(users => {
-        expect(users.data.length === 0).beTrue()
-        return messagesService.find({ query: { title: 'Title' } })
-      })
-      .then(messages => {
-        expect(messages.data.length === 0).beTrue()
-      })
+    const users = await userService.find({ query: { name: 'test-user' } })
+    expect(users.data.length === 0).beTrue()
+    const messages = await messagesService.find({ query: { title: 'Title' } })
+    expect(messages.data.length === 0).beTrue()
   })
   // Let enough time to process
     .timeout(5000)

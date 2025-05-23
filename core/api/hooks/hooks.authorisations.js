@@ -284,8 +284,7 @@ export function updateAbilities (options = {}) {
     if (options.fetchSubject) {
       subject = await app.getService('users').get(subject._id.toString())
     }
-    const abilities = await authorisationService.updateAbilities(subject)
-    debug('Abilities updated on subject', subject, abilities.rules)
+    await authorisationService.updateAbilities(subject)
     return hook
   }
 }

@@ -42,7 +42,6 @@ export default {
       }, {
         user: params.user
       })
-      await this.updateAbilities(subject)
       debug('Authorisation ' + data.permissions + ' set for subject ' + subject._id + ' on resource ' + params.resource._id + ' with scope ' + scopeName)
       return subject
     }))
@@ -75,7 +74,6 @@ export default {
           }, {
             user: params.user
           })
-          await this.updateAbilities(subject)
           debug('Authorisation unset for subject ' + subject._id + ' on resource ' + id + ' with scope ' + scopeName)
           return subject
         }
@@ -119,7 +117,7 @@ export default {
     const abilities = await defineAbilities(subject, this.app)
 
     if (cacheKey) {
-      debug('Updating user abilities of subject ' + (subject ? subject._id : ANONYMOUS_USER) + ' with cache key ' + cacheKey)
+      debug('Updating abilities of subject ' + (subject ? subject._id : ANONYMOUS_USER) + ' with cache key ' + cacheKey)
       this.cache.set(cacheKey, abilities)
     }
 
