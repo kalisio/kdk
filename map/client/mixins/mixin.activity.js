@@ -4,7 +4,7 @@ import config from 'config'
 import { Store } from '../../../core/client/index.js'
 import { filterContent, bindContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
-import { setEngineJwt, getLayers, getCategories } from '../utils/utils.catalog.js'
+import { setEngineJwt, getLayers, getCategories, getSublegends } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
@@ -83,6 +83,14 @@ export const activity = {
       const context = Store.get('context')
       if (context) categories = categories.concat(await getCategories({ context }))
       return categories
+    },
+    async getCatalogSublegends () {
+      // We get sublegends coming from global catalog first if any
+      let sublegends = await getSublegends()
+      // Then we get categories coming from contextual catalog if any
+      const context = Store.get('context')
+      if (context) sublegends = sublegends.concat(await getSublegends({ context }))
+      return sublegends
     },
     async addCatalogCategory (category) {
       this.layerCategories.push(category)

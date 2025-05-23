@@ -52,7 +52,7 @@ import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
 import { api, i18n, Store } from '../../../../core/client'
 import { getLayersBySublegend } from '../../utils'
-import { useCurrentActivity, useCatalog } from '../../composables'
+import { useCurrentActivity } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
 
 // Props
@@ -86,18 +86,6 @@ const props = defineProps({
   }
 })
 
-// Get current project for activity if any
-const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
-const project = getActivityProject()
-// We expect the project object to expose the underlying API
-const planetApi = project && typeof project.getPlanetApi === 'function' ? project.getPlanetApi() : api
-// Use target catalog according to project
-const { getSublegends: getProjectSublegends } = useCatalog({ project, planetApi })
-// Use global catalog
-const { getSublegends } = useCatalog({ context: 'global' })
-// Use local catalog if any
-const { getSublegends: getContextSublegends } = useCatalog({ context: Store.get('context') })
-
 // Data
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const sublegends = ref([])
@@ -112,13 +100,7 @@ const layersBySublegend = computed(() => getLayersBySublegend(layers.value, subl
 watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
   // Retrieve the legends from catalog if required
   if (props.sublegendsFromCatalog) {
-    sublegends.value = await getSublegends()
-    if (project) {
-      sublegends.value = _.uniqBy(_.concat(sublegends.value, await getProjectSublegends()), 'name')
-    }
-    if (Store.get('context')) {
-      sublegends.value = _.uniqBy(_.concat(sublegends.value, await getContextSublegends()), 'name')
-    }
+    sublegends.value = await CurrentActivity.value.getCatalogSublegends()
   } else {
     sublegends.value = []
   }
