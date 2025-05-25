@@ -126,7 +126,7 @@ const emit = defineEmits(['update:modelValue'])
 const dateTime = ref(null)
 const minDateTime = ref(null)
 const maxDateTime = ref(null)
-const dateMask = 'YYYY/MM/DD'
+const dateMask = 'YYYY-MM-DD'
 const timeMask = 'HH:mm:ss'
 
 // Computed

@@ -57,7 +57,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 // Data
-const mask = 'YYYY/MM/DD'
+const mask = 'YYYY-MM-DD'
 
 // Computed
 const computedModel = computed({
