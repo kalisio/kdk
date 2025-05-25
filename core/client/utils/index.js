@@ -188,6 +188,7 @@ export function dotify (object) {
 const checkForHexRegExp = /^[0-9a-fA-F]{24}$/
 
 // Check if a string is a valid MongoDB Object ID
+// We don't use ObjectID.isValid as it returns true for any string that contains 12 characters: https://jira.mongodb.org/browse/NODE-4912.
 export function isObjectID (id) {
   return (id.length === 24 && checkForHexRegExp.test(id))
 }
