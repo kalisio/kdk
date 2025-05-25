@@ -18,7 +18,11 @@ export function getServiceNameAndContext (servicePath) {
   // Then without context if any
   const lastSlash = name.lastIndexOf('/')
   const contextId = (lastSlash >= 0 ? name.substring(0, lastSlash) : '')
-  if (contextId && ObjectID.isValid(contextId)) {
+  // Check if a string is a valid MongoDB Object ID.
+  // We don't use ObjectID.isValid as it returns true for any string that contains 12 characters: https://jira.mongodb.org/browse/NODE-4912.
+  // Regular expression that checks for hex value
+  const checkForHexRegExp = /^[0-9a-fA-F]{24}$/
+  if (contextId && (contextId.length === 24) && checkForHexRegExp.test(contextId)) {
     name = name.replace(contextId + '/', '')
     return { name, contextId }
   } else {
