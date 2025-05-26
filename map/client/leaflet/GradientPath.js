@@ -10,7 +10,7 @@ import 'leaflet-pixi-overlay'
 // The svg points (inside the svg element) will be populated with coordinates in spherical mercator scaled between [0,1] on both x and y
 // We do this to prevent numerical issues affecting rendering due to spherical mercator coordinates being huge numbers.
 // The svg overlay will be placed in the map covering the bbox of the geojson
-function buildSVGOverlayFromGradientPath (geojson, style)
+function buildSVGFromGradientPath (geojson)
 {
   const defs = []  // We'll push every linearGradient we need here
   const lines = [] // and every line segment we need here
@@ -18,8 +18,12 @@ function buildSVGOverlayFromGradientPath (geojson, style)
   const bbox = turfbbox(geojson)
   // Grow the bbox a bit because we use it to position the svgOverlay. If it matches exaclty
   // it'll crop the svg lines when using a big stroke-width, they'll exceed the geojson bbox ...
-  const width = bbox[2] - bbox[0]
-  const height = bbox[3] - bbox[1]
+  // TODO: we should use stroke width * extent it represent at zoom level 2 or 3 ...
+  let width = bbox[2] - bbox[0]
+  let height = bbox[3] - bbox[1]
+  // This is to handle single points
+  if (width === 0) width = 0.1
+  if (height === 0) height = 0.1
   bbox[0] -= width * 0.1
   bbox[1] -= height * 0.1
   bbox[2] += width * 0.1
@@ -56,33 +60,61 @@ function buildSVGOverlayFromGradientPath (geojson, style)
   }
 
   // Create svg HTML element
-  var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+  var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+  svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg")
   // Viewbox is used to define which part of the svg must be displayed in it's html element, and is in svg coordinates.
   // For us it's 0 0 scale.x scale.y since we rescaled everything
   svgElement.setAttribute('viewBox', `0 0 ${scale.x} ${scale.y}`)
   // svg html content, round linecap + stroke-width
   svgElement.innerHTML = `<g stroke-linecap="round" stroke-width="${geojson.properties.weight}"><defs>${defs.join('')}</defs>${lines.join('')}</g>`
-  var svgElementBounds = [ [ bbox[1], bbox[0] ], [ bbox[3], bbox[2] ] ];
 
-  // Custom svgOverlay overload to make the svg html element interactive for leaflet
-  // We don't simply use the options.interactive constructor option since it also add 'leaflet-interactive' class
-  // on the svg html element and this requests 'pointer' cursor on the whole svg, even if there's nothing drawn.
-  // Instead we just declare the layer interactive for leaflet, without adding the 'leaflet-interactive' class.
-  // 'leaflet-interactive' is set in 'path' elements, which are actually rendered.
-  const SVGOverlayOverload = L.SVGOverlay.extend({
-    onAdd() {
-      L.SVGOverlay.prototype.onAdd.call(this)
-      this.addInteractiveTarget(this._image)
-    }
-  })
-  const layer = new SVGOverlayOverload(svgElement, svgElementBounds, { interactive: false })
-  const opacity = _.get(geojson.properties, 'opacity')
-  if (opacity !== undefined)
-    layer.setOpacity(opacity)
-  layer.getCenter = () => L.latLng((bbox[1]+bbox[3])/2,(bbox[0]+bbox[2])/2)
-  return layer
+  return { svg: svgElement, bounds: L.latLngBounds(L.latLng(bbox[1], bbox[0]), L.latLng(bbox[3], bbox[2])) }
 }
+
+const SVGGradientPath = L.SVGOverlay.extend({
+  initialize (geojson, options) {
+    const path = buildSVGFromGradientPath(geojson)
+
+    // We don't simply use the options.interactive constructor option since it also add 'leaflet-interactive' class
+    // on the svg html element and this requests 'pointer' cursor on the whole svg, even if there's nothing drawn.
+    // Instead we just declare the layer interactive for leaflet (see onAdd()), without adding the 'leaflet-interactive' class.
+    // 'leaflet-interactive' is set in 'path' elements of the svg element, which are actually rendered.
+    L.SVGOverlay.prototype.initialize.call(this, path.svg, path.bounds, Object.assign({ interactive: false }, options))
+
+    const opacity = _.get(geojson.properties, 'opacity')
+    if (opacity !== undefined)
+      this.setOpacity(opacity)
+  },
+
+  getCenter () {
+    return this._bounds.getCenter()
+  },
+
+  // This method is called when source data changes
+  setData (geojson) {
+    // Remove old svg
+    this.onRemove()
+
+    // Build new one
+    const path = buildSVGFromGradientPath(geojson)
+    // Mess with ImageOverlay and SVGOverlay internals to update element
+    this._url = path.svg
+    this._initImage()
+    this.setBounds(path.bounds)
+    const opacity = _.get(geojson.properties, 'opacity')
+    if (opacity !== undefined)
+      this.setOpacity(opacity)
+
+    // Add new svg
+    this.onAdd()
+  },
+
+  onAdd () {
+    L.SVGOverlay.prototype.onAdd.call(this)
+    // See constructor explanation
+    this.addInteractiveTarget(this._image)
+  }
+})
 
 const GradientPath = L.PixiOverlay.extend({
 
@@ -254,7 +286,12 @@ const GradientPath = L.PixiOverlay.extend({
 })
 
 L.GradientPath = GradientPath
+L.SVGGradientPath = SVGGradientPath
 L.gradientPath = function (options) {
   return new L.GradientPath(options)
 }
-export { GradientPath, buildSVGOverlayFromGradientPath }
+L.svgGradientPath = function (options) {
+  return new L.SVGGradientPath(options)
+}
+
+export { GradientPath, SVGGradientPath }

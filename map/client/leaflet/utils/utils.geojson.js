@@ -2,7 +2,7 @@ import L from 'leaflet'
 import _ from 'lodash'
 import 'leaflet-realtime'
 import { lineOffset } from '@turf/turf'
-import { GradientPath, buildSVGOverlayFromGradientPath } from '../GradientPath.js'
+import { GradientPath, SVGGradientPath } from '../GradientPath.js'
 
 // Override default remove handler for leaflet-realtime due to
 // https://github.com/perliedman/leaflet-realtime/issues/177
@@ -63,10 +63,8 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
     }
   }
   if (geometry && properties && properties.gradient) {
-    if (geometry.type === 'LineString') {
-      const style = options.style(geojson)
-      return properties.svg ? buildSVGOverlayFromGradientPath(geojson, style) : new GradientPath(geojson, style)
-    }
+    const style = options.style(geojson)
+    return properties.svg ? new SVGGradientPath(geojson, style) : new GradientPath(geojson, style)
   }
   if (geometry && properties && properties.mask) {
     if (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon') {

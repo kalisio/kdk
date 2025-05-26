@@ -83,21 +83,20 @@ export async function buildGradientPath(geoJson, options) {
     const geometries = feature.geometry.geometries.map(g => g.coordinates)
     const values = feature.properties[variable.name]
 
+    const gradient = values.map(value => scale(value).hex())
+
     // Check if the feature has at least two geometries and they are different
-    if (geometries.length < 2 || _.uniqBy(geometries, JSON.stringify).length < 2) {
-      console.error('Invalid GeoJSON, at least two geometries are required to construct a line')
-      // convert it to a point
+    if (geometries.length < 2) {
+      // Make it a line
       return {
         type: 'Feature',
         geometry: {
-          type: 'Point',
-          coordinates: geometries[0],
+          type: 'LineString',
+          coordinates: [ geometries[0], geometries[0] ]
         },
-        properties: feature.properties,
+        properties: Object.assign({ gradient: [ gradient[0], gradient[0] ] }, _.omit(feature.properties, variable.name), variable.gradientPath.properties)
       }
     }
-
-    const gradient = values.map(value => scale(value).hex())
 
     return {
       type: 'Feature',
