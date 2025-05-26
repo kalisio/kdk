@@ -28,7 +28,7 @@ export function useCollectionFilter (options = {}) {
   })
 
   // Watch
-  watch(selectedTags, () => refreshFilterQuery())
+  watch(selectedTags, () => refreshFilterQuery(), { immediate: true })
   watch(selectedTime, (newTimeRange, oldTimeRange) => {
     if (oldTimeRange && oldTimeRange.start !== null && oldTimeRange.end !== null) refreshFilterQuery()
   }, { deep: true })
