@@ -87,20 +87,20 @@ export const editLayers = {
           if (isLine) {
             // Skip line editing style if not editing lines
             if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('LineString') && !geometryTypes.includes('MultiLineString')) return style(feature)
-            else return getDefaultLineStyle(feature, layerStyle,  _.get(this, 'activityOptions.engine'), 'style.edition.line')
+            else return getDefaultLineStyle(feature, layerStyle, _.get(this, 'activityOptions.engine.style.edition.line'))
           }
           const isPolygon = ((feature.geometry.type === 'Polygon') || (feature.geometry.type === 'MultiPolygon'))
           if (isPolygon) {
             // Skip polygon editing style if not editing polygons
             if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Polygon') && !geometryTypes.includes('MultiPolygon')) return style(feature)
-            else return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.polygon')
+            else return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine.style.edition.polygon'))
           }
           logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
         },
         pointToLayer: (feature, latlng) => {
           // Skip point editing style if not editing points
           if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Point') && !geometryTypes.includes('MultiPoint')) return pointToLayer(feature, layer)
-          const style = getDefaultPointStyle(feature, layerStyle, _.get(this, 'activityOptions.engine'), 'style.edition.point')
+          const style = getDefaultPointStyle(feature, layerStyle, _.get(this, 'activityOptions.engine.style.edition.point'))
           style.options = { pmIgnore: false } // Allow geoman edition
           return createMarkerFromPointStyle(latlng, style)
         }

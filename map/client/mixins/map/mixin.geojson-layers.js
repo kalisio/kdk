@@ -309,10 +309,10 @@ export const geojsonLayers = {
             logger.warn(`[KDK] cannot get a style type from the feature of geometry type ${feature.geometry.type}`)
             return
           }
-          return this.generateStyle(styleType, feature, options, _.get(this, 'activityOptions.engine'))
+          return this.generateStyle(styleType, feature, options, _.get(this, `activityOptions.engine.style.${styleType}`), this.map.getZoom())
         },
         pointToLayer: (feature, latlng) => {
-          const style = this.generateStyle('point', feature, options, _.get(this, 'activityOptions.engine'))
+          const style = this.generateStyle('point', feature, options, _.get(this, 'activityOptions.engine.style.point'), this.map.getZoom())
           if (!style) {
             logger.warn('[KDK] cannot generate point style from a feature')
             return

@@ -93,8 +93,8 @@ function addSvgAttribute (svg, attribute, value) {
   return svg.slice(0, -2) + ` ${attribute}="${value}" />`
 }
 function getSize (size) {
-  if (!Array.isArray(size)) return { width: size, height: size }
-  return { width: size[0], height: size[1] }
+  if (!Array.isArray(size)) return { width: _.toNumber(size), height: _.toNumber(size) }
+  return { width: _.toNumber(size[0]), height: _.toNumber(size[1]) }
 }
 
 /*

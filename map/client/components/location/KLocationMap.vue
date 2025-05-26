@@ -186,11 +186,11 @@ export default {
               logger.warn(`[KDK] cannot get a style type from the feature of geometry type ${feature.geometry.type}`)
               return
             }
-            if (styleType === 'line') return getDefaultLineStyle(feature, null, this.engineOptions, 'style.location.line')
-            return getDefaultPolygonStyle(feature, null, this.engineOptions, 'style.location.polygon')
+            if (styleType === 'line') return getDefaultLineStyle(feature, null, _.get(this.engineOptions, 'style.location.line'))
+            return getDefaultPolygonStyle(feature, null, _.get(this.engineOptions, 'style.location.polygon'))
           },
           pointToLayer: (feature, latlng) => {
-            const style = getDefaultPointStyle(feature, null, this.engineOptions, 'style.location.point')
+            const style = getDefaultPointStyle(feature, null, _.get(this.engineOptions, 'style.location.point'))
             if (!style) {
               logger.warn('[KDK] cannot generate point style from a feature')
               return
