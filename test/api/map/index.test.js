@@ -18,7 +18,7 @@ describe('map:services', () => {
   let app, server, port, // baseUrl,
     userService, userObject, catalogService, defaultLayers,
     zones, zonesService, vigicruesStationsService, nbStations, vigicruesObsService,
-    adsbObsService, items, eventListeners, eventCount, eventData
+    adsbObsService, openradiationService, items, eventListeners, eventCount, eventData
 
   function eventsOn (service) {
     eventListeners = {}
@@ -617,6 +617,64 @@ describe('map:services', () => {
   // Let enough time to process
     .timeout(10000)
 
+  it('create and feed the openradiation service', async () => {
+    // Create the service
+    const openradiationLayer = _.find(defaultLayers, { name: 'openradiation' })
+    expect(openradiationLayer).toExist()
+    expect(openradiationLayer.service === 'openradiation').beTrue()
+    await createFeaturesService.call(app, {
+      collection: openradiationLayer.service,
+      featureId: openradiationLayer.featureId,
+      featureLabel: openradiationLayer.featureLabel,
+      variables: openradiationLayer.variables,
+      // Raise simplified events
+      skipEvents: ['updated'],
+      simplifyEvents: ['created', 'patched', 'removed']
+    })
+    openradiationService = app.getService(openradiationLayer.service)
+    expect(openradiationService).toExist()
+    // Feed the collection
+    const observations = fs.readJsonSync(path.join(__dirname, 'data/openradiation.json'))
+    await openradiationService.create(observations)
+  })
+  // Let enough time to process
+    .timeout(5000)
+
+  it('performs geometry and value aggregation on openradiation service, similar to gradient path query', async () => {
+    const aggregationQuery = {
+      "properties.userId": 'Yann29',
+      time: {
+        $gte: new Date('2025-05-24T12:00:00.00Z').toISOString(),
+        $lte: new Date('2025-05-24T18:15:00.00Z').toISOString()
+      },
+      $groupBy: 'apparatusId',
+      $aggregate: ['geometry', 'value'],
+      $sort: { time: 1 }
+    }
+    // Aggregation requires feature ID index to be built so we add some time to do so
+    await utility.promisify(setTimeout)(5000)
+    const result = await openradiationService.find({ query: Object.assign({}, aggregationQuery) })
+    expect(result.features.length).to.equal(1)
+    result.features.forEach(feature => {
+      expect(feature.time).toExist()
+      expect(feature.time.geometry).toExist()
+      expect(feature.time.geometry.length).to.equal(82)
+      expect(feature.time.geometry[0].isBefore(feature.time.geometry[1])).beTrue()
+      expect(feature.time.value).toExist()
+      expect(feature.time.value.length).to.equal(82)
+      expect(feature.time.value[0].isBefore(feature.time.value[1])).beTrue()
+      expect(feature.time.value[0].isSame(feature.time.geometry[0])).beTrue()
+      expect(feature.geometry.type).to.equal('GeometryCollection')
+      expect(feature.geometry.geometries).toExist()
+      expect(feature.geometry.geometries.length).to.equal(82)
+      expect(feature.properties).toExist()
+      expect(feature.properties.value).toExist()
+      expect(feature.properties.value.length).to.equal(82)
+    })
+  })
+  // Let enough time to process
+    .timeout(10000)
+
   it('clears the layers', async () => {
     for (let i = 0; i < defaultLayers.length; ++i) {
       await catalogService.remove(defaultLayers[i]._id)
@@ -641,6 +699,7 @@ describe('map:services', () => {
     await vigicruesStationsService.Model.drop()
     await vigicruesObsService.Model.drop()
     await adsbObsService.Model.drop()
+    await openradiationService.Model.drop()
     await catalogService.Model.drop()
     await userService.Model.drop()
     await app.db.disconnect()

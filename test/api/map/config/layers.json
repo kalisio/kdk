@@ -35,6 +35,15 @@
     "type" : "OverlayLayer",
     "service": "zones",
     "featureId": "OBJECTID"
+  },
+  {
+    "name": "openradiation",
+    "iconUrl" : "https://s3.eu-central-1.amazonaws.com/kalisioscope/assets/adsb-icon.png",
+    "attribution" : "",
+    "type" : "OverlayLayer",
+    "service": "openradiation",
+    "featureId": "apparatusId",
+    "history": 604800
   }
 ]
 
