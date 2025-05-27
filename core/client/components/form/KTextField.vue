@@ -14,6 +14,7 @@
     :error="hasError"
     :error-message="errorLabel"
     bottom-slots
+    :debounce="debounce"
     @blur="onChanged"
     @update:model-value='onChanged'
   >
@@ -47,6 +48,9 @@ export default {
       } else {
         return this.model
       }
+    },
+    debounce () {
+      return _.get(this.properties, 'field.debounce', 0)
     }
   },
   methods: {
