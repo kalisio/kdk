@@ -642,7 +642,7 @@ describe('map:services', () => {
 
   it('performs geometry and value aggregation on openradiation service, similar to gradient path query', async () => {
     const aggregationQuery = {
-      "properties.userId": 'Yann29',
+      'properties.userId': 'Yann29',
       time: {
         $gte: new Date('2025-05-24T12:00:00.00Z').toISOString(),
         $lte: new Date('2025-05-24T18:15:00.00Z').toISOString()
