@@ -160,18 +160,21 @@ export default {
         this.map.removeLayer(this.locationLayer)
         this.locationLayer = null
       }
-      // update the location
+      // update the location 
       this.location = this.modelValue
+      // check wether it holds some features
       if (!this.location) return
+      const featureType = this.location.type
+      if (featureType === 'FeatureCollection' && _.isEmpty(this.location.features)) return
       // backward compatibility with old format with only lat/lon or a geometry, not a feature
-      if (this.location.type !== 'Feature') {
+      if (featureType !== 'Feature' && featureType !== 'FeatureCollection') {
         const feature = { type: 'Feature', geometry: this.location, properties: { name: this.location.name } }
         if (!_.has(feature, 'geometry.type')) feature.geometry = { type: 'Point', coordinates: [this.location.longitude, this.location.latitude] }
         this.location = feature
       }
       // create a new layer
-      const type = _.get(this.location, 'geometry.type')
-      if (type === 'Point') {
+      const geometryType = _.get(this.location, 'geometry.type')
+      if (geometryType === 'Point') {
         const coordinates = _.get(this.location, 'geometry.coordinates')
         const style = _.get(this.location, 'style', _.get(this.engineOptions, 'style.location.point'))
         this.locationLayer = createMarkerFromPointStyle([coordinates[1], coordinates[0]],
