@@ -551,15 +551,17 @@ export const baseMap = {
       this.$emit('layer-added', layer)
       this.$engineEvents.emit('layer-added', layer)
     },
-    async addGeoJsonLayer (layerSpec, geoJson) {
+    async addGeoJsonLayer (layerSpec, geoJson, zoom = true) {
       if (!generateLayerDefinition(layerSpec, geoJson)) return
       // Create an empty layer used as a container
       await this.addLayer(layerSpec)
       // Set the content
       await this.updateLayer(layerSpec.name, geoJson)
-      // Zoom to it
-      if (geoJson.bbox) this.zoomToBBox(geoJson.bbox)
-      else this.zoomToLayer(layerSpec.name)
+      // Zoom to the layer
+      if (zoom) {
+        if (geoJson.bbox) this.zoomToBBox(geoJson.bbox)
+        else this.zoomToLayer(layerSpec.name)
+      }
     },
     renameLayer (previousName, newName) {
       const layer = this.getLayerByName(previousName)

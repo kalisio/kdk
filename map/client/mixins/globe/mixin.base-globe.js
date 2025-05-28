@@ -322,15 +322,17 @@ export const baseGlobe = {
       this.$emit('layer-added', layer)
       this.$engineEvents.emit('layer-added', layer)
     },
-    async addGeoJsonLayer (layerSpec, geoJson) {
+    async addGeoJsonLayer (layerSpec, geoJson, zoom) {
       if (!generateLayerDefinition(layerSpec, geoJson)) return
       // Create an empty layer
       await this.addLayer(layerSpec)
       // Update the layer with the geoJson content
       await this.updateLayer(layerSpec.name, geoJson)
       // Zoom to the layer
-      if (geoJson.bbox) this.zoomToBBox(geoJson.bbox)
-      else this.zoomToLayer(layerSpec.name)
+      if (zoom) {
+        if (geoJson.bbox) this.zoomToBBox(geoJson.bbox)
+        else this.zoomToLayer(layerSpec.name)
+      }
     },
     renameLayer (previousName, newName) {
       const layer = this.getLayerByName(previousName)
