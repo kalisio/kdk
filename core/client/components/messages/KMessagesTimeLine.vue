@@ -25,7 +25,7 @@ import {
   composables as kdkCoreComposables
 } from '@kalisio/kdk/core.client'
 import _ from 'lodash'
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { i18n } from '../../i18n'
 
 // Props
@@ -64,8 +64,6 @@ const props = defineProps({
 const emit = defineEmits(['messages-refreshed'])
 
 // Data
-const { CurrentActivityContext } = kdkCoreComposables.useCurrentActivity()
-const { state } = CurrentActivityContext
 const { dense, wide } = kdkCoreComposables.useScreen()
 const baseQuery = ref({})
 const { filterQuery, hasTimeSelection, hasTagsSelection } =
@@ -140,11 +138,6 @@ function process (messages) {
 function onCollectionRefreshed (messages) {
   emit('messages-refreshed', messages)
 }
-function clearTimeFilter () {
-  Object.assign(state.timeFilter, { start: null, end: null, min: null, max: null })
-}
-
-onUnmounted(() => clearTimeFilter())
 </script>
 
 <style lang="scss" scoped>
