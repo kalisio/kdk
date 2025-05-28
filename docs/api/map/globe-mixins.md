@@ -29,11 +29,16 @@ Make it possible to manage globe layers and extend supported layer types:
     * `{ x, y, z }` as an additional translation,
     * `{ heading, pitch, roll }` as an additional rotation,
 * **trackEntity (entityId, options)/untrackEntity()** set or unset the entity that the camera is currently tracking with the following options:
-  * `orientation` as `true` to enable camera auto orientation otherwise only the position is tracked,
-  * `distance` as the horizontal distance from entity when orientation is tracked,
-  * `heighAbove` as the vertical distance from entity when orientation is tracked,
-  * `headingOffset` as the heading offset angle in degrees when orientation is tracked,
-  * `pitchOffset` as the pitch offset angle in degrees when orientation is tracked,
+  * `mode` as the mode of tracking, between theses two options
+    * `followOrientation`: camera will track the target entity orientation, preventing the user from moving the camera
+    * `freeLook`: the user can freely move the camera around the target entity
+  * `resetHeading` at `true` to make the camera face north when switching to `freeLook` mode
+  * `duration` as the duration of the animation when switching mode
+  * `easing` as an objet with `{ function: 'cubicBezier', parameters: [] }` (see [animate option of `center` method in map mixins](./map-mixins.md#base-map))
+  * `distance` as the distance from entity,
+  * `offset` 
+    * `{ x, y, z }` as an additional translation,
+    * `{ heading, pitch }` as an additional rotation,
 * **getCenter()** get the current globe view center as `longitude`, `latitude` and `altitude` (note that the projected position on the ground is the one of the camera, it only matches the 2D version with orientation [0, 0, -90])
 * **getCamera()** get the current globe view camera settings as `longitude`, `latitude` and `altitude` for position and `heading`, `pitch` and `roll` for orientation
 * **getBounds()** get the current map view bounds as `[ [south, west], [north, east] ]`
