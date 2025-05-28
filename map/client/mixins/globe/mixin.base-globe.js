@@ -11,6 +11,7 @@ import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
 import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
+import * as maths from '../../../../core/client/utils/utils.math.js'
 
 // The URL on our server where CesiumJS's static files are hosted
 window.CESIUM_BASE_URL = '/Cesium/'
@@ -509,44 +510,109 @@ export const baseGlobe = {
         roll: CesiumMath.toDegrees(this.viewer.camera.roll)
       }
     },
+    getAnimatedHeading (timestamp) {
+      if (!this.headingAnimation.startTime) this.headingAnimation.startTime = timestamp
+      const { duration, startTime, easing, startHeading, endHeading } = this.headingAnimation
+      const elapsed = timestamp - startTime
+      const percent = Math.abs(elapsed / (1000 * duration))
+      if (percent > 1) {
+        return endHeading
+      }
+
+      const easingFunction = _.get(easing, 'function', 'cubicBezier')
+      const easingParameters = _.get(easing, 'parameters', [])
+      const percentHeading = maths[easingFunction](percent, ...easingParameters)
+
+      return CesiumMath.lerp(
+        startHeading,
+        endHeading,
+        percentHeading
+      )
+    },
     onEntityTracked (time) {
+      const getSmallestAngle = (start, end) => {
+        let diff = (end - start + Math.PI) % (2 * Math.PI)
+        if (diff < 0) diff += 2 * Math.PI
+        return diff - Math.PI
+      }
+
       if (this.viewerOptions.debug) {
         if (this.trackedFrameDebug) {
           this.trackedFrameDebug.modelMatrix = this.viewer.trackedEntity.computeModelMatrix(time)
         } else {
           this.trackedFrameDebug = new DebugModelMatrixPrimitive({
-            modelMatrix : this.viewer.trackedEntity.computeModelMatrix(time),
-            length : 25,
-            width : 5
+            modelMatrix: this.viewer.trackedEntity.computeModelMatrix(time),
+            length: 25,
+            width: 5
           })
           this.viewer.scene.primitives.add(this.trackedFrameDebug)
         }
       }
 
-      // Make camera follow entity orientation
-      if (!this.viewer.trackedEntity || !_.get(this.entityTrackingOptions, 'orientation')) return
+      if (!this.viewer.trackedEntity || !_.get(this.entityTrackingOptions, 'mode')) return
+      const mode = this.entityTrackingOptions.mode
+      const currentTime = Date.now()
+      // If we are in free look mode, we don't want to force camera position
+      if (mode === 'freeLook' && !_.get(this.entityTrackingOptions, 'resetHeading')) return
+
       const targetPosition = this.viewer.trackedEntity.position.getValue(time)
       const orientation = this.viewer.trackedEntity.orientation.getValue(time)
-      if (orientation) {
-        const distance = _.get(this.entityTrackingOptions, 'distance', 10)
-        const heightAbove = _.get(this.entityTrackingOptions, 'heightAbove', 0)
+      if (!orientation) return
 
-        const headingPitchRoll = HeadingPitchRoll.fromQuaternion(orientation)
-        const cameraOffset = new HeadingPitchRange(
-          headingPitchRoll.heading + CesiumMath.toRadians(_.get(this.entityTrackingOptions, 'headingOffset', 0)),
-          CesiumMath.toRadians(_.get(this.entityTrackingOptions, 'pitchOffset', 0)),
-          Math.sqrt(distance * distance + heightAbove * heightAbove)
-        )
+      const distance = _.get(this.entityTrackingOptions, 'distance', 10)
+      const headingOffset = CesiumMath.toRadians(_.get(this.entityTrackingOptions, 'offset.heading', 0))
+      const pitchOffset = CesiumMath.toRadians(_.get(this.entityTrackingOptions, 'offset.pitch', 0))
+      const headingPitchRoll = HeadingPitchRoll.fromQuaternion(orientation)
+      if (_.get(this.entityTrackingOptions, 'animate')) {
+        if (!this.headingAnimation) {
+          this.headingAnimation = {
+            ...this.entityTrackingOptions,
+            startTime: currentTime,
+            startHeading: this.viewer.camera.heading - headingOffset,
+            endHeading: mode === 'freeLook' ? 0 - headingOffset : headingPitchRoll.heading
+          }
 
-        this.viewer.camera.lookAt(new Cartesian3(targetPosition.x, targetPosition.y, targetPosition.z + 10), cameraOffset)
+          // Fix endHeading to get shortest angle
+          this.headingAnimation.endHeading = this.headingAnimation.startHeading + getSmallestAngle(this.headingAnimation.startHeading, this.headingAnimation.endHeading)
+        } else if (mode === 'followOrientation') {
+          // If we are already animating, update the end heading
+          this.headingAnimation.endHeading = this.headingAnimation.startHeading + getSmallestAngle(this.headingAnimation.startHeading, headingPitchRoll.heading)
+        }
       }
+
+      // Compute heading with animation
+      let heading = 0
+      if (_.get(this.entityTrackingOptions, 'animate')) {
+        heading = this.getAnimatedHeading(currentTime)
+        if (heading === this.headingAnimation.endHeading) {
+          _.set(this.entityTrackingOptions, 'animate', false)
+          _.set(this.entityTrackingOptions, 'resetHeading', false)
+          this.headingAnimation = null
+        }
+      } else if (mode === 'followOrientation') {
+        heading = headingPitchRoll.heading
+      }
+
+      const position = new Cartesian3(
+        targetPosition.x + _.get(this.entityTrackingOptions, 'offset.x', 0),
+        targetPosition.y + _.get(this.entityTrackingOptions, 'offset.y', 0),
+        targetPosition.z + _.get(this.entityTrackingOptions, 'offset.z', 0)
+      )
+      const cameraOffset = new HeadingPitchRange(
+        heading + headingOffset,
+        pitchOffset,
+        distance
+      )
+
+      this.viewer.camera.lookAt(new Cartesian3(position.x, position.y, position.z), cameraOffset)
     },
     trackEntity (entityId, options = {}) {
+      let newEntity = null
       // Check for entities directly added to the viewer
       this.viewer.entities.values.forEach(entity => {
         if (entityId === entity.id) {
           // Make the camera track this entity
-          this.viewer.trackedEntity = entity
+          newEntity = entity
         }
       })
       // Check for external data sources
@@ -555,14 +621,20 @@ export const baseGlobe = {
         source.entities.values.forEach(entity => {
           if (entityId === entity.id) {
             // Make the camera track this entity
-            this.viewer.trackedEntity = entity
+            newEntity = entity
           }
         })
       }
-      if (this.viewer.trackedEntity) {
-        this.entityTrackingOptions = options
-        this.viewer.clock.onTick.addEventListener(this.onEntityTracked)
-      }
+
+      if (!newEntity) return
+      this.entityTrackingOptions = options
+      _.set(this.entityTrackingOptions, 'animate', true)
+      if (newEntity === this.viewer.trackedEntity) return
+
+      // Untrack previous entity
+      this.untrackEntity()
+      this.viewer.trackedEntity = newEntity
+      this.viewer.clock.onTick.addEventListener(this.onEntityTracked)
     },
     untrackEntity () {
       if (this.viewer.trackedEntity) {
@@ -570,7 +642,6 @@ export const baseGlobe = {
         this.viewer.clock.onTick.removeEventListener(this.onEntityTracked)
       }
       this.viewer.trackedEntity = null
-      this.entityTrackingOptions = {}
     },
     async showUserLocation () {
       if (Geolocation.hasLocation()) {
