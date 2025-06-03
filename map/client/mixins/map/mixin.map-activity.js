@@ -11,7 +11,10 @@ export const activity = {
     },
     storeView () {
       // Check if the activity is using context restoration
-      if (typeof this.storeContext === 'function') this.storeContext('view')
+      if (typeof this.storeContext === 'function') {
+        // Do not store context on each animation frame to avoid too much CPU consumption
+        if (!_.get(this.centerAnimation, 'id')) this.storeContext('view')
+      }
     },
     onMapResized (size) {
       // Avoid to refresh the layout when leaving the component
