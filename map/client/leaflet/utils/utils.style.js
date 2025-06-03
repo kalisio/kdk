@@ -126,7 +126,9 @@ export function createMarkerFromPointStyle (latlng, style) {
     logger.warn(`[KDK] 'latlng' should be defined`)
     return
   }
-  return L.shapeMarker(latlng, style)
+  const shape = _.get(style, 'shape', 'circle')
+  if (_.has(kdkCoreUtils.Shapes, shape)) return L.shapeMarker(latlng, style)
+  return L[shape](latlng, style)
 }
 
 export function convertLineStyleToLeafletPath (style) {
