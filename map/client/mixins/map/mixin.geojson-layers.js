@@ -348,9 +348,24 @@ export const geojsonLayers = {
       return (timestamp) => {
         // Initialize animation time origin
         if (!options.startTime) options.startTime = timestamp
-        const { id, startTime } = options
-        const elapsed = timestamp - startTime
-        const percent = Math.abs(elapsed / (1000 * duration))
+        const { id, startTime, fps } = options
+        const elapsedSinceStart = timestamp - startTime
+        // If we target a specific frame rate check if we need to update or not
+        if (fps && options.lastTime) {
+          const elapsedSinceLastFrame = timestamp - options.lastTime
+          const fpsInterval = 1000 / fps
+          if (elapsedSinceLastFrame < fpsInterval) {
+            options.id = requestAnimationFrame(options.step)
+            // For debug purpose only, avoid floodign the browser
+            //logger.debug('[KDK] Skipping update layer animation frame')
+            return
+          } else {
+            // For debug purpose only, avoid floodign the browser
+            //logger.debug('[KDK] Drawing update layer animation frame')
+          }
+        }
+        // Else animate if animation not yet finished
+        const percent = Math.abs(elapsedSinceStart / (1000 * duration))
         if (percent <= 1) {
           const animatedFeatures = []
           features.forEach(feature => {
@@ -372,8 +387,8 @@ export const geojsonLayers = {
               } else {
                 const startLongitude = _.get(feature.previousFeature, 'geometry.coordinates[0]')
                 const startLatitude = _.get(feature.previousFeature, 'geometry.coordinates[1]')
-                const dLongitude = startLongitude + percentGeometry * (endLongitude - startLongitude)
-                const dLatitude = startLatitude + percentGeometry * (endLatitude - startLatitude)
+                dLongitude = startLongitude + percentGeometry * (endLongitude - startLongitude)
+                dLatitude = startLatitude + percentGeometry * (endLatitude - startLatitude)
               }
             }
             const properties = {}
@@ -403,6 +418,7 @@ export const geojsonLayers = {
             }, feature))
           })
           layer._onNewData(_.isNil(removeMissing) ? layer.options.removeMissing : removeMissing, animatedFeatures)
+          options.lastTime = timestamp
           options.id = requestAnimationFrame(options.step)
         } else {
           options.id = null
@@ -450,7 +466,7 @@ export const geojsonLayers = {
             if (duration) {
               _.defaultsDeep(options, {
                 animate: {
-                  geometry: { easing: { function: 'cubicBezier' }, rhumb: true }
+                  geometry: { easing: { function: 'linear' }, rhumb: false }
                 }
               })
               // Stop any scheduled animation on the same layer

@@ -642,12 +642,27 @@ export const baseMap = {
     animateCenter (timestamp) {
       // Initialize animation time origin
       if (!this.centerAnimation.startTime) this.centerAnimation.startTime = timestamp
-      const { id, duration, startTime,
+      const { id, duration, startTime, fps,
         animate: { center, zoom, bearing },
         startLongitude, endLatitude, startLatitude, startZoom, startBearing,
         endLongitude, endZoom, endBearing } = this.centerAnimation
-      const elapsed = timestamp - startTime
-      const percent = Math.abs(elapsed / (1000 * duration))
+      const elapsedSinceStart = timestamp - startTime
+      // If we target a specific frame rate check if we need to update or not
+      if (fps && this.centerAnimation.lastTime) {
+        const elapsedSinceLastFrame = timestamp - this.centerAnimation.lastTime
+        const fpsInterval = 1000 / fps
+        if (elapsedSinceLastFrame < fpsInterval) {
+          this.centerAnimation.id = requestAnimationFrame(this.animateCenter)
+          // For debug purpose only, avoid floodign the browser
+          //logger.debug('[KDK] Skipping center animation frame')
+          return
+        } else {
+          // For debug purpose only, avoid floodign the browser
+          //logger.debug('[KDK] Drawing center animation frame')
+        }
+      }
+      // Else animate if animation not yet finished
+      const percent = Math.abs(elapsedSinceStart / (1000 * duration))
       let percentCenter, percentZoom, percentBearing
       if (percent <= 1) {
         const currentCenter = this.getCenter()
@@ -689,6 +704,7 @@ export const baseMap = {
           dBearing = (bearing ? (startBearing + percentBearing * bearingDifference + 360) % 360 : null)
         }
         this.center(dLongitude, dLatitude, dZoom, dBearing, { offset: { x: Math.round(dx), y: Math.round(dy) } })
+        this.centerAnimation.lastTime = timestamp
         this.centerAnimation.id = requestAnimationFrame(this.animateCenter)
       } else {
         this.centerAnimation.id = null
@@ -705,9 +721,9 @@ export const baseMap = {
       if (duration) {
         _.defaultsDeep(options, {
           animate: {
-            center: { easing: { function: 'cubicBezier' }, rhumb: true },
-            zoom: { easing: { function: 'cubicBezier' } },
-            bearing: { easing: { function: 'cubicBezier' } }
+            center: { easing: { function: 'linear' }, rhumb: false },
+            zoom: { easing: { function: 'linear' } },
+            bearing: { easing: { function: 'linear' } }
           }
         })
         // Leaflet rotate does not manage animation so that we cannot rely on Leaflet built-in animation
