@@ -395,7 +395,7 @@ export const geojsonLayers = {
             animatedProperties.forEach(property => {
               // Skip geometry as specifically managed above
               if (property === 'geometry') return
-              const easingPropertyFunction = _.get(animate, `${property}.easing.function`, 'cubicBezier')
+              const easingPropertyFunction = _.get(animate, `${property}.easing.function`, 'linear')
               const easingPropertyParameters = _.get(animate, `${property}.easing.parameters`, [])
               const percentProperty = maths[easingPropertyFunction](percent, ...easingPropertyParameters)
               const startValue = _.get(feature.previousFeature, `properties.${property}`)
