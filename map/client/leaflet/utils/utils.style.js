@@ -127,7 +127,7 @@ export function createMarkerFromPointStyle (latlng, style) {
     return
   }
   const shape = _.get(style, 'shape', 'circle')
-  if (_.has(kdkCoreUtils.Shapes, shape)) return L.shapeMarker(latlng, style)
+  if (shape === 'none' || _.has(kdkCoreUtils.Shapes, shape)) return L.shapeMarker(latlng, style)
   return L[shape](latlng, style)
 }
 
