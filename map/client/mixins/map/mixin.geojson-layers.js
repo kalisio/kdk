@@ -330,6 +330,9 @@ export const geojsonLayers = {
         const previousLayer = layer.getLayer(layer.options.getFeatureId(feature))
         const previousFeature = (previousLayer ? previousLayer.feature : null)
         if (previousFeature) {
+          // Remove reference to previous feature otherwise it will create a reference tree that will grow as timle passes by
+          // and that will never be clear by garbage collector unless the layer is destroyed
+          _.unset(previousFeature, 'previousFeature')
           Object.assign(feature, { previousFeature })
           const startLongitude = _.get(feature.previousFeature, 'geometry.coordinates[0]')
           const startLatitude = _.get(feature.previousFeature, 'geometry.coordinates[1]')
