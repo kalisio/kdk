@@ -41,6 +41,8 @@ You can perform smooth animation of map moves, including screen-space offset, wi
 center(longitude, latitude, zoomLevel, bearing, {
   // Animate during 1 second
   duration: 1,
+  // Cap target frame rate to avoid too much CPU consumption otherwise it will run as fast as possible
+  fps: 30,
   animate: {
     // Animate along rhumb line with cubic bezier easing function
     center: { easing: { function: 'cubicBezier' }, rhumb: true },
@@ -339,6 +341,8 @@ You can perform smooth animation of map features using the following `options`  
 updateLayer('MyLayer', { type: 'FeaturesCollection', features: [...] }, {
   // Animate during 1 second
   duration: 1,
+  // Cap target frame rate to avoid too much CPU consumption otherwise it will run as fast as possible
+  fps: 30,
   animate: {
     // Animate along rhumb line with cubic bezier easing function
     geometry: { easing: { function: 'cubicBezier' }, rhumb: true },
