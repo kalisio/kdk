@@ -14,7 +14,7 @@ const ExporterQueue = {
     this.exportService = api.getService('import-export')
     this.exportService.on('export-created', params => this.onRequestCreated(params))
     this.exportService.on('export-completed', params => this.onRequestCompleted(params))
-    logger.debug(`[KDK] Exported initialized with '${maxConcurrentRequests}' maxConcurrentRequests`)
+    logger.debug(`[KDK] Initialized 'Exporter' with '${maxConcurrentRequests}' maxConcurrentRequests`)
   },
   push (request) {
     this.pendingRequests.push(request)
