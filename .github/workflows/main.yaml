@@ -24,7 +24,7 @@ jobs:
     name: Run tests
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.run_tests ||
-      github.event_name == 'push')
+      github.event_name == 'push'
       }}
     runs-on: ubuntu-22.04
     steps:
