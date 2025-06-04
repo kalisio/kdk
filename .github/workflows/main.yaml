@@ -1,9 +1,31 @@
 name: ci
-on: [ push, workflow_dispatch ]
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: "Run tests"
+        default: false
+        required: false
+        type: boolean
+      additional_tests:
+        description: "Additional tests"
+        default: false
+        required: false
+        type: boolean
+      build_docs:
+        description: "Build docs"
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   run_tests:
     name: Run tests
+    if: ${{
+      github.event_name == 'workflow_dispatch' && inputs.run_tests ||
+      github.event_name == 'push')
+      }}
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
@@ -28,7 +50,10 @@ jobs:
         node: [ 20, 22 ]
         mongo: [ 8 ]
     name: Additional tests
-    if: ${{ contains(github.event.head_commit.message, 'additional tests') }}
+    if: ${{
+      github.event_name == 'workflow_dispatch' && inputs.additional_tests ||
+      github.event_name == 'push' && contains(github.event.head_commit.message, 'additional tests')
+      }}
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
@@ -48,7 +73,10 @@ jobs:
 
   build_docs:
     name: Build doc
-    if: ${{ startsWith(github.event.head_commit.message, 'docs:') || contains(github.event.head_commit.message, 'build doc') }}
+    if: ${{
+      github.event_name == 'workflow_dispatch' && inputs.build_docs ||
+      github.event_name == 'push' && contains(github.event.head_commit.message, 'doc')
+      }}
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
