@@ -580,9 +580,12 @@
     "INFOBOX": "Boîte d'information",
     "ADD_INFOBOX": "Sélectionnez des propriétés à afficher dans la boîte"
   },
-  "KLayersSelector": {
+  "KLayersList": {
     "NO_LAYER_AVAILABLE": "Aucune couche disponible",
     "LAYER_DISABLED": "Zoomez davantage pour voir cette couche"
+  },
+  "KLayersSelector": {
+    "SELECT_LAYERS": "Sélectionnez des couches"
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Prévisions",

@@ -580,9 +580,12 @@
     "INFOBOX": "Information box",
     "ADD_INFOBOX": "Select target properties to use as information box"
   },
-  "KLayersSelector": {
+  "KLayersList": {
     "NO_LAYER_AVAILABLE": "No layer available",
     "LAYER_DISABLED": "Zoom in to visualise this layer"
+  },
+  "KLayersSelector": {
+    "SELECT_LAYERS": "Select layers"
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Forecasts",

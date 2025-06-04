@@ -1,34 +1,69 @@
 <template>
-  <div>
-    <slot name="header" />
-    <div v-if="layers.length > 0">
-      <template v-for="layer in layers">
-        <component
-          :is="layerRenderer.component"
-          v-bind="layerRenderer.options"
-          :layer="layer"
-          @toggled="onLayerToggled"
-          @filter-toggled="onLayerFilterToggled"
-        />
+  <div v-if="layers.length > 0">
+    <k-layers-list :layers="filteredLayers" :options="options">
+      <template v-slot:header>
+        <div class="q-ma-sm">
+          <q-select
+            for="bdxeo-sensor-model"
+            id="bdxeo-sensor-model"
+            :placeholder="$t('KLayersSelector.SELECT_LAYERS')"
+            autocomplete="off"
+            v-model="model"
+            :options="selectOptions"
+            filled
+            use-input
+            use-chips
+            map-options
+            emit-value
+            multiple
+            clearable
+            @filter="filter"
+            @add="toggleLayer"
+            @remove="toggleLayer"
+            @clear="clear"
+          >
+            <template v-slot:prepend>
+              <q-icon name="las la-map-marker" />
+            </template>
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps" :id="scope.opt.name">
+                <q-item-section avatar>
+                  <q-icon
+                    v-if="!scope.opt.iconUrl"
+                    :name="scope.opt.icon || 'las la-map-marker'"
+                  />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label lines="1">
+                    {{ scope.opt.label }}
+                  </q-item-label>
+                  <q-item-label caption lines="2">
+                    {{ scope.opt.description }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
       </template>
-    </div>
-    <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pa-sm">
-      <KStamp
-        icon="las la-exclamation-circle"
-        icon-size="sm"
-        :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')"
-        direction="horizontal"
-      />
-    </div>
-    <slot name="footer" />
+    </k-layers-list>
+  </div>
+  <div v-else class="row justify-center q-pa-sm">
+    <KStamp
+      icon="las la-exclamation-circle"
+      icon-size="sm"
+      :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')"
+      text-size="0.9rem"
+      direction="horizontal"
+    />
   </div>
 </template>
 
 <script setup>
-import _ from 'lodash'
-import { computed } from 'vue'
-import { utils } from '../../../../core/client'
-import KStamp from '../../../../core/client/components/KStamp.vue'
+import { computed, ref } from 'vue'
+import { KStamp } from '../../../../core/client/components'
+import KLayersList from './KLayersList.vue'
+import { i18n } from '../../../../core.client'
 
 // Props
 const props = defineProps({
@@ -42,38 +77,37 @@ const props = defineProps({
   }
 })
 
+// Data
+const model = ref([])
+const selectOptions = ref(
+  props.layers.map((layer) => ({ label: layer.label, value: layer._id }))
+)
+
 // Computed
-const layerRenderer = computed(() => {
-  return {
-    component: utils.loadComponent(_.get(props.options, 'renderer', 'catalog/KFilteredLayerItem')),
-    options: _.get(props.options, 'renderer.options', {})
-  }
-})
+const filteredLayers = computed(() =>
+  model.value
+    ? props.layers.filter((layer) => model.value.includes(layer._id))
+    : []
+)
 
 // Functions
-function toggleLayer (layer) {
+function toggleLayer (layerId) {
+  const layer = props.layers.find((l) => l._id === layerId.value)
   const toggleAction = _.find(layer.actions, { id: 'toggle' })
   if (toggleAction) toggleAction.handler()
 }
-async function onLayerToggled (layer) {
-  if (layer.isDisabled) return
-  if (props.options.exclusive) {
-    // Due to v-model the visible flag has already been changed on the layer
-    // Simply reset others layers before activating the new one to avoid any problem
-    const visibleLayers = _.filter(props.layers, { isVisible: true })
-    for (let i = 0; i < visibleLayers.length; i++) {
-      const visibleLayer = visibleLayers[i]
-      if (visibleLayer !== layer) await toggleLayer(visibleLayers[i])
-    }
+function clear () {
+  for (const layer of props.layers) {
+    if (layer?.isVisible) toggleLayer({ value: layer._id })
   }
-  await toggleLayer(layer)
+  model.value = []
 }
-function toggleLayerFilter (layer, filter) {
-  const toggleFilterAction = _.find(layer.actions, { id: 'toggle-filter' })
-  if (toggleFilterAction) toggleFilterAction.handler(filter)
-}
-function onLayerFilterToggled (layer, filter) {
-  if (layer.isDisabled) return
-  toggleLayerFilter(layer, filter)
+function filter (val, update, abort) {
+  update(() => {
+    const needle = val.toLowerCase()
+    selectOptions.value = props.layers
+      .filter((layer) => layer.label.toLowerCase().indexOf(needle) > -1)
+      .map((layer) => ({ label: layer.label, value: layer._id }))
+  })
 }
 </script>

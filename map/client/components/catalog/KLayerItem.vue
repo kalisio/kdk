@@ -30,7 +30,7 @@
     <q-space />
     <slot name="status">
       <q-icon name="las la-exclamation-circle" size="sm" color="warning" v-if="layer.isDisabled">
-        <q-tooltip>{{ $t('KLayersSelector.LAYER_DISABLED') }}</q-tooltip>
+        <q-tooltip>{{ $t('KLayersList.LAYER_DISABLED') }}</q-tooltip>
       </q-icon>
     </slot>
     <!-- Layer actions -->

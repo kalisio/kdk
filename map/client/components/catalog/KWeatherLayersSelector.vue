@@ -1,6 +1,6 @@
 <template>
   <div v-if="forecastModels.length > 0">
-    <k-layers-selector :layers="filteredLayers" :options="options">
+    <k-layers-list :layers="filteredLayers" :options="options">
       <template v-slot:header>
         <div class="q-ma-sm">
           <q-select for="forecast-model" id="forecast-model" v-model="model" :options="models" filled map-options emit-value @update:model-value="onModelChanged">
@@ -25,7 +25,7 @@
           </q-select>
         </div>
       </template>
-    </k-layers-selector>
+    </k-layers-list>
   </div>
   <div v-else class="row justify-center q-pa-sm">
     <KStamp icon="las la-exclamation-circle" icon-size="sm" :text="$t('KWeatherLayersSelector.NO_MODEL_AVAILABLE')" text-size="0.9rem" direction="horizontal" />
@@ -36,7 +36,7 @@
 import _ from 'lodash'
 import { computed, ref } from 'vue'
 import { KStamp } from '../../../../core/client/components'
-import KLayersSelector from './KLayersSelector.vue'
+import KLayersList from './KLayersList.vue'
 
 // Props
 const props = defineProps({

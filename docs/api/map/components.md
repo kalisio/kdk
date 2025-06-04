@@ -15,7 +15,7 @@ The **k-catalog** is used to list all available layers in [catalog](./services.m
 ![Catalog](../../.vitepress/public/images/layers-panel.png)
 
 This component relies on some others internal components:
-* **k-layers-selector** used to list a set of layers and manage the selection
+* **k-layers-list** used to list a set of layers and manage the selection
 * **k-weather-layers-selector** used to list all available weather related layers (forecasts and archives) and for each model provided by **Weacast**
 
 ## Color legend

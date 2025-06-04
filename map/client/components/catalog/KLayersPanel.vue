@@ -24,7 +24,7 @@
         />
       </slot>
       <!-- Orphan layers -->
-      <KLayersSelector
+      <KLayersList
         :layers="orphanLayers"
         :options="orphanLayersOptions"
       />
@@ -77,7 +77,7 @@ import { ref, watchEffect, onMounted } from 'vue'
 import { utils as coreUtils } from '../../../../core/client'
 import { getLayersByCategory, getOrphanLayers } from '../../utils'
 import { useProject } from '../../composables'
-import KLayersSelector from './KLayersSelector.vue'
+import KLayersList from './KLayersList.vue'
 import KCategoryItem from './KCategoryItem.vue'
 
 // Props
@@ -170,7 +170,7 @@ function refresh () {
   const categoriesFilter = (typeof props.layerCategoriesFilter === 'object' ? sift(props.layerCategoriesFilter) : props.layerCategoriesFilter)
   filteredCategories.value = _.filter(props.layerCategories, categoriesFilter)
   _.forEach(filteredCategories.value, category => {
-    const component = _.get(category, 'component', 'catalog/KLayersSelector')
+    const component = _.get(category, 'component', 'catalog/KLayersList')
     if (!category.componentInstance) category.componentInstance = coreUtils.loadComponent(component)
   })
   // compute layers by categories and orphans layers

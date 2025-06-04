@@ -41,7 +41,7 @@
       <KStamp
         icon="las la-exclamation-circle"
         icons-size="sm"
-        :text="$t('KLayersSelector.NO_LAYER_AVAILABLE')"
+        :text="$t('KLayersList.NO_LAYER_AVAILABLE')"
         direction="horizontal"
       />
     </div>
