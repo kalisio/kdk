@@ -60,10 +60,10 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed, ref } from 'vue'
 import { KStamp } from '../../../../core/client/components'
 import KLayersList from './KLayersList.vue'
-import { i18n } from '../../../../core.client'
 
 // Props
 const props = defineProps({

@@ -160,7 +160,7 @@ export default {
         this.map.removeLayer(this.locationLayer)
         this.locationLayer = null
       }
-      // update the location 
+      // update the location
       this.location = this.modelValue
       // check wether it holds some features
       if (!this.location) return
