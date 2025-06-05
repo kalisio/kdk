@@ -1,3 +1,4 @@
+const minimatch = require('minimatch')
 const makeDebug = require('debug')
 const debug = makeDebug('kdk:map:config:layers')
 
@@ -22,22 +23,36 @@ module.exports = function (layerFiles, context) {
   })
   debug(`Found ${layers.length} layer definitions to build catalog from`)
 
-  // No layers by default
-  let filter = []
-  // Now build filter according any env filter
+  let allow = [] // Patterns for allowed layers
+  let skip = []  // Patterns for skipped layers
+  // Extract patterns from LAYERS_FILTER env var, patterns starting with '-' are skip patterns
   if (process.env.LAYERS_FILTER) {
-    // Check for wildcard to get all layers
-    if (process.env.LAYERS_FILTER === '*') filter = layers.map(layer => layer.name.replace('Layers.', ''))
-    // Check for list with separator, whitespace or comma is supported
-    else if (process.env.LAYERS_FILTER.includes(',')) filter = process.env.LAYERS_FILTER.split(',')
-    else filter = process.env.LAYERS_FILTER.split(' ')
+    const patterns = process.env.LAYERS_FILTER.includes(',')
+          ? process.env.LAYERS_FILTER.split(',')
+          : process.env.LAYERS_FILTER.split(' ')
+    patterns.forEach((pattern) => {
+      if (pattern[0] == '-') {
+        skip.push(pattern.substring(1))
+      } else {
+        allow.push(pattern)
+      }
+    })
   }
+
+  // Compile patterns
+  const allowPattern = new minimatch.Minimatch(`+(${allow.join('|')})`) // Allowing if string matches one or more 'allow' patterns
+  const skipPattern = new minimatch.Minimatch(`+(${skip.join('|')})`)   // Skipping if string matches one or more 'skip' patterns
+
   // Now filter layers
-  // Manage translation keys starting with 'Layers.'
-  debug('Applying layer filter', filter)
+  debug('Allowing layers matching', allow)
+  debug('Skipping layers matching', skip)
   return layers.filter(layer => {
-    const isFiltered = !filter.includes(layer.name.replace('Layers.', ''))
-    if (isFiltered) debug(`Filtering ${layer.name} from catalog`)
-    return !isFiltered
+    // Manage translation keys starting with 'Layers.'
+    const name = layer.name.replace('Layers.', '')
+    const allowed = allowPattern.match(name)
+    const skipped = skipPattern.match(name)
+    if (skipped) debug(`'${layer.name}' was explicitely skipped from catalog`)
+    if (!allowed) debug(`'${layer.name}' was not explicitely allowed to be added to catalog`)
+    return allowed && !skipped
   })
 }
