@@ -640,6 +640,9 @@ export const baseMap = {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     animateCenter (timestamp) {
+      // Note: as this callback is called frequently by the animation system
+      // we don't use lodash utility functions like _.get/_.set to improve performances
+      
       // Initialize animation time origin
       if (!this.centerAnimation.startTime) this.centerAnimation.startTime = timestamp
       const { id, duration, startTime, fps,
@@ -653,11 +656,11 @@ export const baseMap = {
         const fpsInterval = 1000 / fps
         if (elapsedSinceLastFrame < fpsInterval) {
           this.centerAnimation.id = requestAnimationFrame(this.animateCenter)
-          // For debug purpose only, avoid floodign the browser
+          // For debug purpose only, avoid flooding the browser
           //logger.debug('[KDK] Skipping center animation frame')
           return
         } else {
-          // For debug purpose only, avoid floodign the browser
+          // For debug purpose only, avoid flooding the browser
           //logger.debug('[KDK] Drawing center animation frame')
         }
       }
@@ -667,28 +670,29 @@ export const baseMap = {
       if (percent <= 1) {
         const currentCenter = this.getCenter()
         if (center) {
-          const easingCenterFunction = _.get(center, 'easing.function')
-          const easingCenterParameters = _.get(center, 'easing.parameters', [])
+          const easingCenterFunction = center.easing.function
+          const easingCenterParameters = center.easing.parameters || []
           percentCenter = maths[easingCenterFunction](percent, ...easingCenterParameters)
         }
         if (zoom) {
-          const easingZoomFunction = _.get(zoom, 'easing.function')
-          const easingZoomParameters = _.get(zoom, 'easing.parameters', [])
+          const easingZoomFunction = zoom.easing.function
+          const easingZoomParameters = zoom.easing.parameters || []
           percentZoom = maths[easingZoomFunction](percent, ...easingZoomParameters)
         }
         if (bearing) {
-          const easingBearingFunction = _.get(bearing, 'easing.function')
-          const easingBearingParameters = _.get(bearing, 'easing.parameters', [])
+          const easingBearingFunction = bearing.easing.function
+          const easingBearingParameters = bearing.easing.parameters || []
           percentBearing = maths[easingBearingFunction](percent, ...easingBearingParameters)
         }
-        const dx = (center ? percentCenter * _.get(this.centerAnimation, 'offset.x', 0) : 0)
-        const dy = (center ? percentCenter * _.get(this.centerAnimation, 'offset.y', 0) : 0)
+        const offset = this.centerAnimation.offset
+        const dx = (center && offset ? percentCenter * offset.x || 0 : 0)
+        const dy = (center && offset ? percentCenter * offset.y || 0 : 0)
         let dLongitude = currentCenter.longitude, dLatitude = currentCenter.latitude
         if (center) {
           if (center.rhumb) {
             const destination = rhumbDestination(this.centerAnimation.rhumbStart, percentCenter * this.centerAnimation.rhumbDistance, this.centerAnimation.rhumbBearing)
-            dLongitude = _.get(destination, 'geometry.coordinates[0]')
-            dLatitude = _.get(destination, 'geometry.coordinates[1]')
+            dLongitude = destination.geometry.coordinates[0]
+            dLatitude = destination.geometry.coordinates[1]
           } else {
             dLongitude = startLongitude + percentCenter * (endLongitude - startLongitude)
             dLatitude = startLatitude + percentCenter * (endLatitude - startLatitude)
