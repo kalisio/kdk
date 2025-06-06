@@ -707,7 +707,7 @@ export const baseMap = {
           // Then normalize the final result to be between 0 and 360
           dBearing = (bearing ? (startBearing + percentBearing * bearingDifference + 360) % 360 : null)
         }
-        this.center(dLongitude, dLatitude, dZoom, dBearing, { offset: { x: Math.round(dx), y: Math.round(dy) } })
+        this.center(dLongitude, dLatitude, dZoom, dBearing, { offset: { x: Math.round(dx), y: Math.round(dy) }, bearingTolerance: this.centerAnimation.bearingTolerance })
         this.centerAnimation.lastTime = timestamp
         this.centerAnimation.id = requestAnimationFrame(this.animateCenter)
       } else {
@@ -751,12 +751,12 @@ export const baseMap = {
         }
         if (typeof this.map.getBearing === 'function') {
           Object.assign(this.centerAnimation, {
-            startBearing: this.getBearing(),
+            startBearing: this.map.getBearing(),
             endBearing: bearing
           })
         }
       } else {
-        if (typeof this.map.getBearing === 'function') {
+        if (typeof this.map.setBearing === 'function') {
           this.setBearing(bearing, options)
         }
         this.map.setView(new L.LatLng(latitude, longitude), zoomLevel, { animate: false, duration: 0 })
@@ -778,7 +778,11 @@ export const baseMap = {
         return
       }
       const offset = L.point(_.get(options, 'offset.x', 0), _.get(options, 'offset.y', 0))
-      this.map.setBearing(bearing, offset)
+      // As rotating is costly by default we don't really rotate unless the human eye is able to perceive it
+      const tolerance = _.get(options, 'bearingTolerance', 0.01)
+      if (Math.abs(this.map.getBearing() - bearing) >= tolerance) {
+        this.map.setBearing(bearing, offset)
+      }
     },
     getBearing () {
       if (typeof this.map.getBearing !== 'function') {
