@@ -757,7 +757,7 @@ export const baseMap = {
         }
       } else {
         if (typeof this.map.getBearing === 'function') {
-          this.setBearing(bearing, offset)
+          this.setBearing(bearing, options)
         }
         this.map.setView(new L.LatLng(latitude, longitude), zoomLevel, { animate: false, duration: 0 })
         this.map.panBy(offset, { animate: false, duration: 0 })
