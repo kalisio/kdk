@@ -779,7 +779,7 @@ export const baseMap = {
       }
       const offset = L.point(_.get(options, 'offset.x', 0), _.get(options, 'offset.y', 0))
       // As rotating is costly by default we don't really rotate unless the human eye is able to perceive it
-      const tolerance = _.get(options, 'bearingTolerance', 0.01)
+      const tolerance = _.get(options, 'bearingTolerance', 0.1)
       if (Math.abs(this.map.getBearing() - bearing) >= tolerance) {
         this.map.setBearing(bearing, offset)
       }
