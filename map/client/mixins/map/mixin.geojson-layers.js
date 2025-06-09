@@ -481,10 +481,10 @@ export const geojsonLayers = {
             let duration = _.get(options, 'duration', 0)
             const features = (Array.isArray(geoJson) ? geoJson : (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]))
             // Nothing to animate in this case
-            if (features.length === 0) {
+            if (duration && (features.length === 0)) {
               duration = 0
             }
-            if (_.some(features, feature => (getType(feature) !== 'Point'))) {
+            if (duration && _.some(features, feature => (getType(feature) !== 'Point'))) {
               logger.warn(`Impossible to animate layer ${name} as it does not contain only point geometries`)
               duration = 0
             }
