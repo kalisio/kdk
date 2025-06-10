@@ -114,11 +114,8 @@ function filter (val, update, abort) {
 onMounted(() => {
   // set default layers
   if (props.options.defaultLayers.length > 0) {
-    for (const countryCode of props.options.defaultLayers) {
-      const layer = props.layers.find(
-        (l) =>
-          l.service.split('-')[l.service.split('-').length - 1] === countryCode
-      )
+    for (const layerName of props.options.defaultLayers) {
+      const layer = props.layers.find((l) => l.name === layerName)
       const toggleAction = _.find(layer.actions, { id: 'toggle' })
       if (toggleAction) toggleAction.handler()
       model.value.push(layer._id)
