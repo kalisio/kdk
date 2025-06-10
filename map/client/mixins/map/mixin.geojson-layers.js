@@ -437,7 +437,7 @@ export const geojsonLayers = {
           options.lastTime = timestamp
           options.id = requestAnimationFrame(options.step)
         } else {
-          options.id = null
+          delete options.id
         }
       }
     },
@@ -449,12 +449,11 @@ export const geojsonLayers = {
         logger.warn(`Impossible to update non-realtime layer ${name}`)
         return // Cannot update non-realtime layer
       }
-
       const replace = _.get(options, 'replace', false)
       if (replace) {
         // Replace given features, we first remove them to add them back afterwards
         this.updateLayer(name, geoJson, { remove: true })
-        this.updateLayer(name, geoJson)
+        this.updateLayer(name, geoJson, options)
       } else {
         // Backward compatibility when third parameter was the remove flag
         const remove = (typeof options === 'boolean' ? options : options.remove)
@@ -489,17 +488,21 @@ export const geojsonLayers = {
               duration = 0
             }
             if (duration) {
+              // For debug purpose only, avoid flooding the browser
+              //logger.debug(`Calling updateLayer(${name}) with`, options)
               _.defaultsDeep(options, {
                 animate: {
                   geometry: { easing: { function: 'linear' }, rhumb: false }
                 }
               })
               // Stop any scheduled animation on the same layer
-              if (_.has(this.updateAnimations, `${name}.id`)) cancelAnimationFrame(_.get(this.updateAnimations, `${name}.id`))
+              const frameId = _.get(this.updateAnimations, `${name}.id`)
+              if (!_.isNil(frameId)) cancelAnimationFrame(frameId)
               options.step = this.getUpdateAnimation(name, layer, options, geoJson)
               options.id = requestAnimationFrame(options.step)
               _.set(this.updateAnimations, name, options)
             } else {
+              _.unset(this.updateAnimations, name)
               layer._onNewData(removeMissing, geoJson)
             }
           }

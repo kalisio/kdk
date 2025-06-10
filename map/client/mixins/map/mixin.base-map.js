@@ -720,9 +720,10 @@ export const baseMap = {
       if (_.isNil(bearing)) bearing = this.map.getBearing()
       // Keep bearing positive, required for interpolation to work correctly
       if (bearing < 0) bearing += 360
-      
       const duration = _.get(options, 'duration', 0)
       if (duration) {
+        // For debug purpose only, avoid flooding the browser
+        //logger.debug('Calling center() with', longitude, latitude, options)
         _.defaultsDeep(options, {
           animate: {
             center: { easing: { function: 'linear' }, rhumb: false },
