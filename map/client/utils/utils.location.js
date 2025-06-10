@@ -3,15 +3,32 @@ import logger from 'loglevel'
 import formatcoords from 'formatcoords'
 
 export function parseCoordinates (str) {
-  const coords = _.split(_.trim(str), ',')
-  if (coords.length !== 2) return
-  const latitude = Number(coords[0])
-  if (_.isNaN(latitude)) return
-  const longitude = Number(coords[1])
-  if (_.isNaN(longitude)) return
-  return {
-    latitude,
-    longitude
+  let longitude, latitude
+  // DD Formatted form
+  const DDRegexp = /(-?\d+(?:\.\d+)?)°\s*([NSEW])\s+(-?\d+(?:\.\d+)?)°\s*([NSEW])/
+  let match = str.match(DDRegexp)
+  if (match) {
+    if (match[2] === 'N' || match[2] === 'S') {
+      latitude = parseFloat(match[1])
+      if (match[2] === 'S') latitude = -latitude
+      longitude = parseFloat(match[3])
+      if (match[4] === 'W') longitude = -longitude
+      return { longitude, latitude }
+    } else {
+      longitude = parseFloat(match[1])
+      if (match[2] === 'W') longitude = -longitude
+      latitude = parseFloat(match[3])
+      if (match[4] === 'S') latitude = -latitude
+      return { longitude, latitude }
+    }
+  }
+  // Simple regexp
+  const simpleRegexp = /(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/
+  match = str.match(simpleRegexp)
+  if (match) {
+    longitude = parseFloat(match[1])
+    latitude = parseFloat(match[2])
+    return { longitude, latitude }
   }
 }
 
