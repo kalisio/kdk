@@ -61,7 +61,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { KStamp } from '../../../../core/client/components'
 import KLayersList from './KLayersList.vue'
 
@@ -110,4 +110,19 @@ function filter (val, update, abort) {
       .map((layer) => ({ label: layer.label, value: layer._id }))
   })
 }
+
+onMounted(() => {
+  // set default layers
+  if (props.options.defaultLayers.length > 0) {
+    for (const countryCode of props.options.defaultLayers) {
+      const layer = props.layers.find(
+        (l) =>
+          l.service.split('-')[l.service.split('-').length - 1] === countryCode
+      )
+      const toggleAction = _.find(layer.actions, { id: 'toggle' })
+      if (toggleAction) toggleAction.handler()
+      model.value.push(layer._id)
+    }
+  }
+})
 </script>
