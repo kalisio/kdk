@@ -3,7 +3,7 @@ import { hooks as kdkCoreHooks } from '../../../../core/api/index.js'
 
 export default {
   before: {
-    all: [],
+    all: [kdkCoreHooks.marshallHttpQuery],
     find: [
       fuzzySearch({ fields: ['name'] }),
       kdkCoreHooks.diacriticSearch()
