@@ -56,7 +56,7 @@ export function createStorageService (options = {}) {
   return app.createService('storage', Object.assign({
     servicesPath,
     modelsPath,
-    methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject'],
+    methods: ['create', 'get', 'find', 'remove', 'createMultipartUpload', 'completeMultipartUpload', 'uploadPart', 'putObject', 'uploadFile', 'downloadFile'],
     events: ['multipart-upload-created', 'multipart-upload-completed', 'part-uploaded', 'object-put'],
     id: '_id'
   }, options))
