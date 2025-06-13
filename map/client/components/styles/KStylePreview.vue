@@ -35,7 +35,7 @@ const props = defineProps({
 
 // Computed
 const shapeOptions = computed(() => {
-  const size = props.dense ? ['20px', '20px'] : ['24px', '24px']
+  const size = props.dense ? [20, 20] : [24, 24]
   // Point
   if (props.type === 'point') {
     let stroke = _.get(props.style, 'stroke')
