@@ -453,7 +453,8 @@ export const geojsonLayers = {
       if (replace) {
         // Replace given features, we first remove them to add them back afterwards
         this.updateLayer(name, geoJson, { remove: true })
-        this.updateLayer(name, geoJson, options)
+        // Avoid infinite regression by removing the replace option
+        this.updateLayer(name, geoJson, _.omit(options, ['replace']))
       } else {
         // Backward compatibility when third parameter was the remove flag
         const remove = (typeof options === 'boolean' ? options : options.remove)
