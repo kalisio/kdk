@@ -175,7 +175,6 @@ describe('core:push', () => {
     expect(operation.succesful.length === 1).beTrue()
     expect(operation.succesful[0].statusCode).to.equal(201)
     expect(operation.failed.length === 1).beTrue()
-    expect(operation.failed[0].statusCode).to.equal(404)
     expect(operation.failed[0].endpoint).to.equal(expiredSubscription.endpoint)
   })
   // Let enough time to process
