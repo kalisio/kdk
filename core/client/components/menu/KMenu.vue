@@ -28,16 +28,18 @@
             </div>
           </div>
         </template>
-        <KPanel
-          id="menu-entries"
-          :content="content"
-          :mode="mode"
-          :context="context"
-          :filter="filter"
-          :action-renderer="actionRenderer"
-          :direction="direction"
-          class="no-wrap"
-        />
+        <div class="row">
+          <KPanel
+            id="menu-entries"
+            :content="content"
+            :mode="mode"
+            :context="context"
+            :filter="filter"
+            :action-renderer="actionRenderer"
+            :direction="direction"
+            class="no-wrap"
+          />
+        </div>
     </q-btn-dropdown>
     <q-tooltip v-if="enableTooltip && tooltip">
       {{ tooltip }}
