@@ -154,7 +154,13 @@ function applyToSelection (styleToApply) {
   _.forEach(getSelectedFeaturesByLayer(), layer => {
     if (isLayerStyleEditable(layer.layer)) {
       _.forEach(layer.features, f => {
-        _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, f.geometry.type, 'point')], null))
+        let geometryType = f.geometry.type
+        if (_.has(f, 'properties.entityStyle')) {
+          // Walls and corridors must be treated as polygons in style editor
+          if (_.has(f, 'properties.entityStyle.wall')) geometryType = 'Polygon'
+          else if (_.has(f, 'properties.entityStyle.corridor')) geometryType = 'Polygon'
+        }
+        _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, geometryType, 'point')], null))
       })
       if (CurrentActivity.value.isInMemoryLayer(layer.layer)) {
         CurrentActivity.value.resetLayer(layer.layer)
