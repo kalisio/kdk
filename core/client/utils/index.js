@@ -6,7 +6,6 @@ import { defineAsyncComponent, markRaw } from 'vue'
 
 export * from './utils.account.js'
 export * from './utils.actions.js'
-export * from './utils.buildTours.js'
 export * from './utils.collection.js'
 export * from './utils.colors.js'
 export * from './utils.content.js'
@@ -21,6 +20,7 @@ export * from './utils.services.js'
 export * from './utils.shapes.js'
 export * from './utils.session.js'
 export * from './utils.time.js'
+export * from './utils.tours.js'
 
 Notify.setDefaults({
   position: 'bottom-left',
