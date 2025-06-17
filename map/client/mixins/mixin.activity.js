@@ -180,6 +180,7 @@ export const activity = {
       // Can only apply to realtime layers as we need to force a data refresh
       // removeMissing seems needed for 3d
       if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name, null, { removeMissing: true})
+      this.$emit('layer-filter-toggled', layer, filter)
     },
     onZoomIn () {
       const center = this.getCenter()

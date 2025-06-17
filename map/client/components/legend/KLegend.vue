@@ -116,6 +116,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     oldActivity.value.$engineEvents.off('zoomend', onZoomChanged)
     oldActivity.value.$engineEvents.off('layer-shown', onShowLayer)
     oldActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
+    oldActivity.value.$engineEvents.off('layer-filter-toggled', onToggleLayerFilter)
     // clear legend
     sublegends.value = []
     layers.value = []
@@ -132,6 +133,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
       }
     })
     // install listeners
+    newActivity.$engineEvents.on('layer-filter-toggled', onToggleLayerFilter)
     newActivity.$engineEvents.on('layer-shown', onShowLayer)
     newActivity.$engineEvents.on('layer-hidden', onHideLayer)
     newActivity.$engineEvents.on('zoomend', onZoomChanged)
@@ -140,9 +142,10 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
 
 // Functions
 function onShowLayer (layer, engine) {
-  const layerLegend = layer.legend
-  // check whether the layer has a legend
-  if (!layerLegend) return
+  const hasLegend = layer.legend
+  const hasFilterLegend = Array.isArray(layer.filters) ? layer.filters.some((filter) => filter.legend) : false
+  // check whether the layer (or its filters) has a legend
+  if (!hasLegend && !hasFilterLegend) return
   // check whether the legend is already registered for that layer
   if (_.find(layers.value, { name: layer.name })) {
     logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
@@ -152,9 +155,15 @@ function onShowLayer (layer, engine) {
   layers.value.push(layer)
 }
 function onHideLayer (layer) {
-  if (!layer.legend) return
+  const hasLegend = layer.legend
+  const hasFilterLegend = Array.isArray(layer.filters) ? layer.filters.some((filter) => filter.legend) : false
+  if (!hasLegend && !hasFilterLegend) return
   logger.debug(`[KDK] Unregister '${layer.name}' legend`)
   _.remove(layers.value, { name: layer.name })
+}
+function onToggleLayerFilter(layer, filter) {
+  _.remove(layers.value, { name: layer.name })
+  layers.value.push(layer)
 }
 function onZoomChanged () {
   zoom.value = CurrentActivity.value.getCenter().zoomLevel

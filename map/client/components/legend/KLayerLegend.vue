@@ -42,6 +42,15 @@ const legends = computed(() => {
   const result = []
   let layerLegends = props.layer.legend || []
   if (!Array.isArray(layerLegends)) layerLegends = [layerLegends]
+  // Check if layer has filters with own legend
+  if (Array.isArray(props.layer.filters)) {
+    props.layer.filters.forEach((filter) => {
+      // Include when filter is active and has a legend
+      if (!filter.isActive || !filter.legend)
+        return
+      layerLegends.push(...filter.legend)
+    })
+  }
   layerLegends.forEach(legend => {
     const minZoom = _.get(legend, 'minZoom', _.get(props.layer, `${props.engine}.minZoom`, 0))
     const maxZoom = _.get(legend, 'maxZoom', _.get(props.layer, `${props.engine}.maxZoom`, 99))
