@@ -29,9 +29,9 @@ import KShape from '../media/KShape.vue'
 const props = defineProps({
   modelValue: {
     type: String,
-    default: 'rect',
+    default: 'circle',
     validator: (value) => {
-      return _.keys(kdkCoreUtils.Shapes).includes(value)
+      return _.concat(['none'], _.keys(kdkCoreUtils.Shapes)).includes(value)
     }
   },
   size: {
@@ -45,8 +45,8 @@ const emit = defineEmits(['update:modelValue'])
 
 // Data
 const popupProxyRef = ref(null)
-const shape = ref(props.modelValue)
-const shapeTypes = _.keys(kdkCoreUtils.Shapes)
+const shapeTypes = _.concat(['none'], _.keys(kdkCoreUtils.Shapes))
+const shape = ref(shapeTypes.includes(props.modelValue) ? props.modelValue : 'circle')
 const shapeSizes = {
   xs: 14,
   sm: 16,
