@@ -224,7 +224,7 @@ const canEditPolygon = computed(() => props.allowedTypes.includes('polygon'))
 
 // Watch
 watch(() => props.style, (value) => {
-  if (!value) model.value = _.clone(engine.value.style)
+  if (!value) model.value = _.clone(_.pick(engine.value.style, ['point', 'line', 'polygon']))
   else model.value = value
 }, { immediate: true })
 
