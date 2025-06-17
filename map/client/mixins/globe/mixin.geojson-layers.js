@@ -138,7 +138,8 @@ export const geojsonLayers = {
               outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth,
               outline: new ConstantProperty(true)
-            }
+            },
+            feature: entity.feature
           })
           entitiesToRemove.push(entity)
         }
@@ -172,8 +173,10 @@ export const geojsonLayers = {
                 outlineColor: new ConstantProperty(stroke),
                 outlineWidth: strokeWidth,
                 outline: new ConstantProperty(true)
-              }
+              },
+              feature: entity.feature
             })
+            entitiesToRemove.push(entity)
           }
         }
         // Corridors
@@ -206,7 +209,8 @@ export const geojsonLayers = {
                 outlineColor: new ConstantProperty(stroke),
                 outlineWidth: strokeWidth,
                 outline: new ConstantProperty(true)
-              }
+              },
+              feature: entity.feature
             })
             entitiesToRemove.push(entity)
           }
@@ -234,7 +238,8 @@ export const geojsonLayers = {
               outlineColor: new ConstantProperty(stroke),
               outlineWidth: strokeWidth
             },
-            billboard: billboardImage ? { image: billboardImage } : undefined
+            billboard: billboardImage ? { image: billboardImage } : undefined,
+            feature: entity.feature
           })
           entitiesToRemove.push(entity)
         }
@@ -257,7 +262,8 @@ export const geojsonLayers = {
                 width: strokeWidth,
                 material: stroke,
                 clampToGround: true
-              }
+              },
+              feature: entity.feature
             }
             entitiesToAdd.push(strokeEntity)
             if (dataSource.entities.getById(strokeEntity.id)) {
