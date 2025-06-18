@@ -32,7 +32,7 @@
         class="text-caption text-grey-9"
         style="writing-mode: vertical-lr; min-width: 1rem;"
       >
-        {{ $t(label) }} - {{ getFormattedLevel(CurrentActivity.selectedLevel) }}
+        {{ $t(label) }} - {{ getFormattedLevel(level) }}
       </div>
     </div>
   </div>
@@ -68,6 +68,10 @@ const levels = computed(() => {
   const selectableLevels = _.get(CurrentActivity.value, 'selectableLevels')
   return !_.isEmpty(selectableLevels) ? selectableLevels : null
 })
+const unit = computed(() => {
+  const selectableLevels = _.get(CurrentActivity.value, 'selectableLevels')
+  return !_.isEmpty(selectableLevels) ? selectableLevels.unit : ''
+})
 const label = computed(() => {
   return _.get(levels.value, 'label')
 })
@@ -85,10 +89,9 @@ const sliderStep = computed(() => {
 })
 
 // Watch
-watch(() => CurrentActivity.value.selectableLevels, (levels) => {
-  if (levels.values) level.value = _.head(levels.values)
-  else if (levels.range) level.value = _.get(levels.range, 'min', 0)
-  else level.value = 0
+watch(() => CurrentActivity.value.selectedLevel, (selectedLevel) => {
+  if (levels.value.values) level.value = levels.value.values.indexOf(selectedLevel)
+  else level.value = selectedLevel
 })
 
 // Functions
@@ -100,9 +103,8 @@ function onLevelChanged (level) {
   }
 }
 function getFormattedLevel (level) {
-  const unit = _.get(CurrentActivity.value.selectableLevels, 'unit')
-  if (levels.value.values) return `${levels.value.values[level]} ${unit}`
-  return `${level} ${unit}`
+  if (levels.value.values) return `${levels.value.values[level]} ${unit.value}`
+  return `${level} ${unit.value}`
 }
 </script>
 
