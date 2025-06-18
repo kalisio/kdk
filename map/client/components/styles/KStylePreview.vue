@@ -11,6 +11,7 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
+import { getShapeFromPointStyle, getShapeFromLineStyle, getShapeFromPolygonStyle } from '../../utils/utils.style.js'
 import KShape from '../../../../core/client/components/media/KShape.vue'
 import KStyleTip from './KStyleTip.vue'
 
@@ -36,29 +37,13 @@ const props = defineProps({
 // Computed
 const shapeOptions = computed(() => {
   const size = props.dense ? [20, 20] : [24, 24]
-  // Point
-  if (props.type === 'point') {
-    let stroke = _.get(props.style, 'stroke')
-    if (stroke) {
-      let width = _.get(stroke, 'width', 1)
-      if (width > 1) width = width / 4
-      stroke = { stroke: { width } }
-    }
-    return _.merge({}, props.style, { size }, stroke)
+  switch (props.type) {
+    case 'point':
+      return getShapeFromPointStyle(props.style, size)
+    case 'line':
+      return getShapeFromLineStyle(props.style, size)
+    default:
+      return getShapeFromPolygonStyle(props.style, size)
   }
-  // Line
-  if (props.type === 'line') {
-    let width = _.get(props.style, 'width', 1)
-    if (width > 1) width = width / 4
-    return { shape: 'polyline', stroke: _.merge({}, props.style, { width }) }
-  }
-  // Polygon
-  let stroke = _.get(props.style, 'stroke')
-  if (stroke) {
-    let width = _.get(stroke, 'width', 1)
-    if (width > 1) width = width / 4
-    stroke = { stroke: { width } }
-  }
-  return _.merge({}, props.style, { shape: 'polygon' }, { size }, stroke)
 })
 </script>

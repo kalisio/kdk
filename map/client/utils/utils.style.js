@@ -230,9 +230,35 @@ export function convertSimpleStyleToPolygonStyle (style) {
   return style ? convertStyle(style, SimpleStyleToPolygonStyle) : {}
 }
 
+export function getShapeFromPointStyle (style, size = [20, 20]) {
+  let stroke = _.get(style, 'stroke')
+  if (stroke) {
+    let width = _.get(stroke, 'width', 1)
+    if (width > 1) width = width / 4
+    stroke = { stroke: { width } }
+  }
+  return _.merge({}, style, { size }, stroke)
+}
+
+export function getShapeFromLineStyle (style, size = [20, 20]) {
+  let width = _.get(style, 'width', 1)
+  if (width > 1) width = width / 4
+  return { shape: 'polyline', stroke: _.merge({}, style, { width }), size }
+}
+
+export function getShapeFromPolygonStyle (style, size = [20, 20]) {
+  let stroke = _.get(style, 'stroke')
+  if (stroke) {
+    let width = _.get(stroke, 'width', 1)
+    if (width > 1) width = width / 4
+    stroke = { stroke: { width } }
+  }
+  return _.merge({}, style, { shape: 'polygon' }, { size }, stroke)
+}
+
 // Only gets the default style from templates
 // Meaning the values in the last else statement
-export function getDefaultStyleFromTemplates(options) {
+export function getDefaultStyleFromTemplates (options) {
   const out = {}
   options = kdkCoreUtils.dotify(options)
   _.forIn(options, (value, key) => {
