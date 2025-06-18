@@ -162,7 +162,7 @@ function onHideLayer (layer) {
   _.remove(layers.value, { name: layer.name })
 }
 function onToggleLayerFilter(layer, filter) {
-  const index = layers.value.findIndex((l) => { l.name === layer.name })
+  const index = layers.value.findIndex((l) => l.name === layer.name)
   if (index === -1)
     return
 
