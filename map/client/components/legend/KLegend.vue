@@ -162,7 +162,11 @@ function onHideLayer (layer) {
   _.remove(layers.value, { name: layer.name })
 }
 function onToggleLayerFilter(layer, filter) {
-  _.remove(layers.value, { name: layer.name })
+  const index = layers.value.findIndex((l) => { l.name === layer.name })
+  if (index === -1)
+    return
+
+  layers.value.splice(index, 1)
   layers.value.push(layer)
 }
 function onZoomChanged () {
