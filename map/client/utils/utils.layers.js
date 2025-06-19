@@ -48,8 +48,6 @@ export function isLayerStorable (layer) {
 }
 
 export function isLayerEditable (layer) {
-  // Only possible when saved by default
-  if (!layer._id) return false
   return _.get(layer, 'isEditable', isUserLayer(layer))
 }
 
