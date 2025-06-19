@@ -111,15 +111,22 @@ function filter (val, update, abort) {
   })
 }
 
-onMounted(() => {
-  // set default layers
-  if (props.options.defaultLayers.length > 0) {
-    for (const layerName of props.options.defaultLayers) {
-      const layer = props.layers.find((l) => l.name === layerName)
-      const toggleAction = _.find(layer.actions, { id: 'toggle' })
-      if (toggleAction) toggleAction.handler()
-      model.value.push(layer._id)
-    }
+// set default layers from layer.leaflet.isVisible property
+if (props.layers.length > 0) {
+  for (const layer of props.layers) {
+    const isLayerVisible = _.get(layer, 'leaflet.isVisible')
+    if (isLayerVisible && !model.value.includes(layer._id)) model.value.push(layer._id)
   }
-})
+}
+
+// set default layers using props.defaultLayers (if exists)
+if (props.options.defaultLayers.length > 0) {
+  for (const layerName of props.options.defaultLayers) {
+    const layer = props.layers.find((l) => l.name === layerName)
+    const toggleAction = _.find(layer.actions, { id: 'toggle' })
+    if (toggleAction) toggleAction.handler()
+    if (!model.value.includes(layer._id)) model.value.push(layer._id)
+  }
+}
+
 </script>
