@@ -139,6 +139,15 @@ export const activity = {
     isLayerRemovable: layers.isLayerRemovable,
     isLayerStyleEditable: layers.isLayerStyleEditable,
     isLayerDataEditable: layers.isLayerDataEditable,
+    canCreateLayer () {
+      return this.$can('create', 'catalog')
+    },
+    canUpdateLayer (layer) {
+      return layers.isInMemoryLayer(layer) || this.$can('update', 'catalog')
+    },
+    canRemoveLayer (layer) {
+      return layers.isInMemoryLayer(layer) || this.$can('remove', 'catalog')
+    },
     async resetLayer (layer) {
       // Keep track of data as we will reset the layer
       let geoJson
