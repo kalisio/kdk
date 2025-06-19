@@ -61,7 +61,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { KStamp } from '../../../../core/client/components'
 import KLayersList from './KLayersList.vue'
 
@@ -118,15 +118,4 @@ if (props.layers.length > 0) {
     if (isLayerVisible && !model.value.includes(layer._id)) model.value.push(layer._id)
   }
 }
-
-// set default layers using props.defaultLayers (if exists)
-if (props.options.defaultLayers.length > 0) {
-  for (const layerName of props.options.defaultLayers) {
-    const layer = props.layers.find((l) => l.name === layerName)
-    const toggleAction = _.find(layer.actions, { id: 'toggle' })
-    if (toggleAction) toggleAction.handler()
-    if (!model.value.includes(layer._id)) model.value.push(layer._id)
-  }
-}
-
 </script>
