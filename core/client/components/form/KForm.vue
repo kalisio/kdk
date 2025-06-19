@@ -1,5 +1,9 @@
 <template>
-  <form v-if="schema" class="column">
+  <q-form 
+    v-if="schema" 
+    @submit.prevent="onSubmit"
+    class="column"
+  >
     <!--
       Non-grouped fields
     -->
@@ -63,7 +67,7 @@
         </q-card>
       </q-expansion-item>
     </template>
-  </form>
+  </q-form>
 </template>
 
 <script setup>
@@ -86,6 +90,10 @@ const props = defineProps({
   filter: {
     type: [String, Array],
     default: () => null
+  },
+  onSubmit: {
+    type: Function,
+    default: (event) => false
   },
   dense: {
     type: Boolean,
