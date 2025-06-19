@@ -13,10 +13,11 @@ import translate from '@turf/transform-translate'
 import { api, Time } from '../../../core/client/index.js'
 import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { isInMemoryLayer, isFeatureLayer } from './utils.layers.js'
+import { getGeoJsonFeatures } from '../utils.map.js'
 import chroma from 'chroma-js'
 
 export function processFeatures(geoJson, processor) {
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   if (typeof processor === 'function') {
     features.forEach(feature => processor(feature))
   } else if (typeof processor === 'string') {
@@ -26,7 +27,7 @@ export function processFeatures(geoJson, processor) {
 }
 
 export function transformFeatures(geoJson, transform) {
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   features.forEach(feature => {
     const scaling = _.get(transform, 'scale')
     const rotation = _.get(transform, 'rotate')
@@ -385,7 +386,7 @@ export function checkFeatures(geoJson, options = {
   kinks: true,
   redundantCoordinates: true
 }) {
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   // Removes redundant coordinates
   if (options.redundantCoordinates) {
     features.forEach(feature => clean(feature, { mutate: true }))
@@ -408,7 +409,7 @@ export function checkFeatures(geoJson, options = {
 
 export async function createFeatures(geoJson, layer, chunkSize = 5000, processCallback) {
   if (!layer) return
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   features.forEach(feature => {
     // Remove any temporary ID as we will use the one from MongoDB
     delete feature._id
@@ -457,7 +458,7 @@ export async function createFeatures(geoJson, layer, chunkSize = 5000, processCa
 }
 
 export async function editFeaturesGeometry(geoJson, layer) {
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
@@ -470,7 +471,7 @@ export async function editFeaturesGeometry(geoJson, layer) {
 }
 
 export async function editFeaturesProperties(geoJson, layer) {
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
@@ -483,7 +484,7 @@ export async function editFeaturesProperties(geoJson, layer) {
 }
 
 export async function editFeaturesStyle(geoJson, layer) {
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
@@ -500,7 +501,7 @@ export async function removeFeatures(geoJson, layer) {
   if (!geoJson) {
     await api.getService(layer.service).remove(null, { query: { layer: layer._id } })
   } else {
-    const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+    const features = getGeoJsonFeatures(geoJson)
     for (let i = 0; i < features.length; i++) {
       const feature = features[i]
       if (feature._id) await api.getService(layer.service).remove(feature._id)

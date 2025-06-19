@@ -64,3 +64,7 @@ export function coordinatesToGeoJSON (lat, lon, format, options) {
     }
   }
 }
+
+export function getGeoJsonFeatures (geoJson) {
+  return (Array.isArray(geoJson) ? geoJson : (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]))
+}

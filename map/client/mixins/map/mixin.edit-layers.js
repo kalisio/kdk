@@ -6,7 +6,7 @@ import { uid } from 'quasar'
 import { Store } from '../../../../core/client/store.js'
 import { Units } from '../../../../core/client/units.js'
 import { 
-  bindLeafletEvents, unbindLeafletEvents, 
+  getGeoJsonFeatures, bindLeafletEvents, unbindLeafletEvents, 
   getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
   formatUserCoordinates, getFeatureId, listenToFeaturesServiceEventsForLayer, unlistenToFeaturesServiceEventsForLayer
@@ -194,7 +194,7 @@ export const editLayers = {
       // Move source layers to edition layers, required as eg clusters are not supported
       // and also to manage partial edition of large datasets
       const geoJson = leafletLayer.toGeoJSON()
-      let editedFeatures = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+      let editedFeatures = getGeoJsonFeatures(geoJson)
       if (_.isEmpty(features) && _.isEmpty(geometryTypes)) {
         leafletLayer.clearLayers()
       } else if (!_.isEmpty(features)) {
@@ -290,7 +290,7 @@ export const editLayers = {
       // for in memory edition, clear service
       if (this.editedLayer._id === undefined) {
         const geoJson = this.editableLayer.toGeoJSON()
-        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        const features = getGeoJsonFeatures(geoJson)
         const service = this.$api.getService('features-edition')
         await Promise.all(features.map((f) => service.remove(f._id)))
       } else {
@@ -443,7 +443,7 @@ export const editLayers = {
       if (this.editedLayer._id) {
         await this.editFeaturesGeometry(geoJson, this.editedLayer)
       } else {
-        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        const features = getGeoJsonFeatures(geoJson)
         const service = this.$api.getService('features-edition')
         // Remember those operations because we need to make sure we wait for completion
         // before clearing the in memory edition service in stopEditLayer
@@ -471,7 +471,7 @@ export const editLayers = {
       if (this.editedLayer._id) {
         await this.removeFeatures(geoJson, this.editedLayer)
       } else {
-        const features = geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]
+        const features = getGeoJsonFeatures(geoJson)
         const service = this.$api.getService('features-edition')
         await Promise.all(features.map((f) => service.remove(f._id)))
       }

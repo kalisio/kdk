@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { utils as kCoreUtils } from '../../../core/client/index.js'
+import { getGeoJsonFeatures } from '../utils.map.js'
 
 // Get JSON schema from GeoJson feature' properties
 export function generatePropertiesSchema (geoJson, name) {
@@ -12,7 +13,7 @@ export function generatePropertiesSchema (geoJson, name) {
     }
   }
   // Enumerate all available properties/values in all features
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   features.forEach(feature => {
     // FIXME: we don't yet support nested objects in schema
     const properties = (feature.properties ? kCoreUtils.dotify(feature.properties) : {})

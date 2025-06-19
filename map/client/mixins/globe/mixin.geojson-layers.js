@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import sift from 'sift'
 import { uid } from 'quasar'
 import { Time, Units } from '../../../../core.client.js'
-import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
+import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer, getGeoJsonFeatures } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle, convertToCesiumFromStyle } from '../../cesium/utils/utils.style.js'
 import { createPrimitiveWithMovingTexture, findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
@@ -58,7 +58,7 @@ export const geojsonLayers = {
     },
     async loadGeoJson (dataSource, geoJson, options, updateOptions = {}) {
       const cesiumOptions = options.cesium
-      const features = (Array.isArray(geoJson) ? geoJson : (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]))
+      const features = getGeoJsonFeatures(geoJson)
       // Remove mode
       if (_.get(updateOptions, 'remove', false)) {
         features.forEach(feature => {

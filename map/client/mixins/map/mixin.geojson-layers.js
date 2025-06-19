@@ -8,7 +8,7 @@ import { getUpdateFeatureFunction, hasUnitInLeafletLayerTemplate, GeoJsonLeaflet
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
 import { 
-  fetchGeoJson, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, getFeatureStyleType,
+  fetchGeoJson, getGeoJsonFeatures, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, getFeatureStyleType,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
@@ -61,7 +61,7 @@ export const geojsonLayers = {
                 // Use probes as reference
                 const geoJson = await this.getProbeFeatures(options)
                 // When probes are fetched, we flag them with a 'measureRequestIssued' property that we may use in dynamic styling
-                const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+                const features = getGeoJsonFeatures(geoJson)
                 features.forEach(feature => { feature.measureRequestIssued = true })
                 successCallback(geoJson)
                 initialized = true
@@ -330,7 +330,7 @@ export const geojsonLayers = {
           [property]: { easing: { function: 'linear' }, bearing: false }
         })
       })
-      const features = (Array.isArray(geoJson) ? geoJson : (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]))
+      const features = getGeoJsonFeatures(geoJson)
       features.forEach(feature => {
         const previousLayer = layer.getLayer(layer.options.getFeatureId(feature))
         const previousFeature = (previousLayer ? previousLayer.feature : null)
@@ -471,7 +471,7 @@ export const geojsonLayers = {
         */
         if (remove) {
           if (typeof layer.remove !== 'function') return
-          let features = (Array.isArray(geoJson) ? geoJson : (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson]))
+          let features = getGeoJsonFeatures(geoJson)
           // Filter features to ensure some have not been already removed
           // FIXME: indeed it seems to causes a bug with clustering, see https://github.com/kalisio/kdk/issues/140
           features = features.filter(feature => layer.getLayer(layer.options.getFeatureId(feature)))

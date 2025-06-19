@@ -8,7 +8,7 @@ import { checkFeatures, createFeatures, removeFeatures } from './utils.features.
 import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
-import { generatePropertiesSchema } from '../utils.map.js'
+import { generatePropertiesSchema, getGeoJsonFeatures } from '../utils.map.js'
 import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates } from './utils.style.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
@@ -483,7 +483,7 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   _.set(layer, 'service', 'features')
   if (_.has(layer, 'leaflet')) _.set(layer, 'leaflet.source', '/api/features')
   if (_.has(layer, 'cesium')) _.set(layer, 'cesium.source', '/api/features')
-  const features = (geoJson.type === 'FeatureCollection' ? geoJson.features : [geoJson])
+  const features = getGeoJsonFeatures(geoJson)
   // If too much data use tiling
   // The threshold is based on the number of points and not features.
   // Indeed otherwise the complexity will be different depending on the geometry type
