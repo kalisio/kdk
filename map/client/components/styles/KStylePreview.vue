@@ -9,7 +9,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { computed } from 'vue'
 import { getShapeFromPointStyle, getShapeFromLineStyle, getShapeFromPolygonStyle } from '../../utils/utils.style.js'
 import KShape from '../../../../core/client/components/media/KShape.vue'
