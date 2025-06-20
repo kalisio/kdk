@@ -34,7 +34,7 @@ export async function isElementVisible (page, selector) {
 /* Count the elements that match the given XPath expresion
  */
 export async function countElements (page, xpath) {
-  const elements = await page.$x(xpath)
+  const elements = await page.$$('xpath/.' + xpath)
   if (elements) return elements.length
   return 0
 }
@@ -50,7 +50,7 @@ export async function click (page, selector, wait = 500) {
   try {
     await page.waitForSelector(selector, { timeout: 2000 })
     await page.click(selector)
-    await page.waitForTimeout(wait)
+    await waitForTimeout(wait)
     debug(`[KDK] Clicked target ${selector}`)
   } catch (error) {
     console.error(`[KDK] Click ${selector} failed.`)
@@ -63,7 +63,7 @@ export async function hover (page, selector, wait = 500) {
   try {
     await page.waitForSelector(selector, { timeout: 2000 })
     await page.hover(selector)
-    await page.waitForTimeout(wait)
+    await waitForTimeout(wait)
     debug(`[KDK] Hovered target ${selector}`)
   } catch (error) {
     console.error(`[KDK] Hover ${selector} failed.`)
@@ -96,8 +96,8 @@ export async function clickAction (page, action, wait = 500) {
 export async function clickMenuItem (page, wait = 500) {
   const xpath = '(//div[@class="q-item__label"])'
   try {
-    await page.waitForXPath(xpath)
-    await page.waitForTimeout(wait)
+    await page.waitForSelector('xpath/.' + xpath)
+    await waitForTimeout(wait)
   } catch (error) {
     console.error(`[KDK] Click ${xpath} failed.`)
   }
@@ -107,11 +107,11 @@ export async function clickMenuItem (page, wait = 500) {
  */
 export async function clickXPath (page, xpath, wait = 500) {
   try {
-    await page.waitForXPath(xpath, { timeout: 2000 })
-    const elements = await page.$x(xpath)
+    await page.waitForSelector('xpath/.' + xpath, { timeout: 2000 })
+    const elements = await page.$$('xpath/.' + xpath)
     if (elements.length > 0) {
       elements[0].click()
-      await page.waitForTimeout(wait)
+      await waitForTimeout(wait)
       debug(`[KDK] Clicked target ${xpath}`)
     }
   } catch (error) {
@@ -138,7 +138,7 @@ export async function clickSelect (page, selector, entry, wait = 500) {
       await page.waitForSelector(entry)
       await page.click(entry)
     }
-    await page.waitForTimeout(wait)
+    await waitForTimeout(wait)
     debug(`[KDK) Clicked entry ${selector}`)
   } catch (error) {
     console.error(`[KDK) Select ${entry} in ${selector} failed.`)
@@ -152,7 +152,7 @@ export async function clear (page, selector, wait = 500) {
   try {
     await page.waitForSelector(selector, { timeout: 2000 })
     await page.$eval(selector, element => { element.value = '' })
-    await page.waitForTimeout(wait)
+    await waitForTimeout(wait)
   } catch (error) {
     console.error(`[KDK] Clear ${selector} failed.`)
   }
@@ -172,7 +172,7 @@ export async function type (page, selector, text, enter = false, replace = false
     }
     await page.type(selector, text)
     if (enter) await page.keyboard.press('Enter')
-    await page.waitForTimeout(wait)
+    await waitForTimeout(wait)
   } catch (error) {
     console.error(`[KDK] Type ${text} in ${selector} failed.`)
   }
@@ -184,7 +184,7 @@ export async function type (page, selector, text, enter = false, replace = false
  */
 export async function typeXPath (page, selector, text, enter = false, replace = false, wait = 500) {
   try {
-    await page.waitForXPath(selector, { timeout: 2000 })
+    await page.waitForSelector('xpath/.' + selector, { timeout: 2000 })
     if (replace) {
       await page.clickXPath(selector, { clickCount: 3 })
       await page.keyboard.press('Backspace')
@@ -193,7 +193,7 @@ export async function typeXPath (page, selector, text, enter = false, replace = 
     }
     await page.type(selector, text)
     if (enter) await page.keyboard.press('Enter')
-    await page.waitForTimeout(wait)
+    await waitForTimeout(wait)
   } catch (error) {
     console.error(`[KDK] Type ${text} in ${selector} failed.`)
   }
@@ -205,7 +205,7 @@ export async function uploadFile (page, selector, filePath, wait = 2000) {
   try {
     const element = await page.$(selector, { timeout: 2000 })
     await element.uploadFile(filePath)
-    await page.waitForTimeout(wait)
+    await waitForTimeout(wait)
   } catch (error) {
     console.error(`[KDK] Upload ${filePath} in ${selector} failed.`)
   }
@@ -215,21 +215,21 @@ export async function uploadFile (page, selector, filePath, wait = 2000) {
  */
 export async function chooseIcon (page, name, color, wait = 1000) {
   const iconXpath = `//div[contains(@class, "q-dialog")]//i[contains(@class, "${name}")]`
-  const icons = await page.$x(iconXpath)
+  const icons = await page.$$('xpath/.' + iconXpath)
   if (icons.length > 0) {
     icons[0].click()
-    await page.waitForTimeout(500)
+    await waitForTimeout(500)
   }
   const colorXpath = `//div[contains(@class, "q-dialog")]//button[contains(@class, "${color}")]`
-  const colors = await page.$x(colorXpath)
+  const colors = await page.$$('xpath/.' + colorXpath)
   if (colors.length > 0) {
     colors[0].click()
-    await page.waitForTimeout(500)
+    await waitForTimeout(500)
   }
   await click(page, '.q-dialog #choose-button', wait)
 }
 
-/* Helper function that wait until all images are loaded
+/* Helper function that waits until all images are loaded
  */
 export async function waitForImagesLoaded (page) {
   await page.evaluate(async () => {
@@ -243,6 +243,14 @@ export async function waitForImagesLoaded (page) {
       }))
     })
     await Promise.all(imgPromises)
+  })
+}
+
+/* Helper function that waits for a set amount of time (in ms)
+ */
+export async function waitForTimeout (wait) {
+  return await new Promise(resolve => {
+    setTimeout(resolve, wait)
   })
 }
 
@@ -304,7 +312,7 @@ export async function moveSlider (page, action, direction, times, wait = 500) {
     await page.keyboard.press(key)
   }
   debug(`[KDK] Pressed ${key} ${times} times to move slider ${action}`)
-  await page.waitForTimeout(wait)
+  await waitForTimeout(wait)
 }
 
 /**
@@ -332,5 +340,5 @@ export async function moveRange (page, action, target, direction, times, wait = 
   await page.mouse.up()
 
   debug(`[KDK] Pressed ${key} ${times} times to move range ${action} (${target === 'rightThumb' ? 'right thumb' : 'left thumb'})`)
-  await page.waitForTimeout(wait)
+  await waitForTimeout(wait)
 }

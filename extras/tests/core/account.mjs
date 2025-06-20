@@ -1,9 +1,9 @@
-import { click, clickAction, type, uploadFile } from './utils.mjs'
+import { click, clickAction, type, uploadFile, waitForTimeout } from './utils.mjs'
 import { clickPaneAction } from './layout.mjs'
 
 export async function updateAccountProfile (page, name, avatarPath, wait = 3000) {
   await clickPaneAction(page, 'left', 'edit-profile')
-  await page.waitForTimeout(wait)
+  await waitForTimeout(wait)
   await type(page, '#name-field', name, false, true)
   if (avatarPath) await uploadFile(page, '#avatar-field', avatarPath)
   await clickAction(page, 'ok-button', wait)
@@ -32,5 +32,5 @@ export async function deleteAccount (page, name, wait = 10000) {
   await click(page, '#delete-account', 1000)
   await type(page, '.q-dialog-plugin input', name)
   await click(page, '.q-dialog-plugin button:nth-child(2)')
-  await page.waitForTimeout(wait)
+  await waitForTimeout(wait)
 }

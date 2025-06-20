@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { clickAction, countElements, isActionVisible, isElementVisible } from './utils.mjs'
+import { clickAction, countElements, isActionVisible, isElementVisible, waitForTimeout } from './utils.mjs'
 
 const debug = makeDebug('kdk:core:test:layout')
 
@@ -14,7 +14,7 @@ export async function isFooterVisible (page) {
 export async function clickOpener (page, placement) {
   const selector = `#${placement}-opener`
   await page.evaluate((selector) => document.querySelector(selector).click(), selector)
-  await page.waitForTimeout(500)
+  await waitForTimeout(500)
 }
 
 export async function isPaneVisible (page, placement) {

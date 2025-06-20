@@ -32,7 +32,7 @@ export class Runner {
     this.options = _.mergeWith({
       baseUrl: options?.path ? path.join(domain, options.path) : domain,
       browser: {
-        product: defaultBrowser,
+        browser: defaultBrowser,
         headless: process.env.HEADLESS ? (process.env.HEADLESS ? 'new' : false) : false,
         devtools: (process.env.NODE_ENV === 'development'),
         defaultViewport: {

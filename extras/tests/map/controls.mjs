@@ -17,7 +17,7 @@ export async function zoomToExtent (page, bbox, wait = 2000) {
   await page.goto(newUrl)
   await page.goto(newUrl)
   await page.waitForNetworkIdle()
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 // Accuracy is required to get some desired behaviours

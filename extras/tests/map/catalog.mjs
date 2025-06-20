@@ -7,7 +7,7 @@ export function getLayerId (layer) {
 
 export async function getLayerCategoryId (page, layerId) {
   const xpath = `//div[contains(@class, "q-expansion-item q-item-type") and .//div[@id="${layerId}"]]`
-  const elements = await page.$x(xpath)
+  const elements = await page.$$('xpath/.' + xpath)
   if (elements.length > 0) return (await elements[0].getProperty('id')).jsonValue()
   return undefined
 }
@@ -57,7 +57,7 @@ export async function clickLayer (page, tabId, layer, wait = 1000) {
   }
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
   await page.waitForNetworkIdle()
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function zoomToLayer (page, tabId, layer, wait = 1000) {
@@ -75,7 +75,7 @@ export async function zoomToLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickPaneAction(page, 'right', categoryId, 500)
   }
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function saveLayer (page, tabId, layer, wait = 1000) {
@@ -93,7 +93,7 @@ export async function saveLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickPaneAction(page, 'right', categoryId, 500)
   }
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function removeLayer (page, tabId, layer, wait = 1000) {
@@ -112,7 +112,7 @@ export async function removeLayer (page, tabId, layer, wait = 1000) {
     if (!isCategoryOpened) await core.clickPaneAction(page, 'right', categoryId, 500)
   }
   if (!isCatalogOpened) await core.clickOpener(page, 'right')
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function dropFile (page, filePath, wait = 2000) {
@@ -120,25 +120,25 @@ export async function dropFile (page, filePath, wait = 2000) {
   const loader = await page.$(loaderSelector)
   await loader.uploadFile(filePath)
   await page.waitForNetworkIdle()
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function addLayer (page) {
   await core.clickFab(page)
   await core.clickAction(page, 'add-layer')
-  await page.waitForTimeout(1000)
+  await core.waitForTimeout(1000)
 }
 
 export async function addView (page) {
   await core.clickFab(page)
   await core.clickAction(page, 'create-view')
-  await page.waitForTimeout(1000)
+  await core.waitForTimeout(1000)
 }
 
 export async function addProject (page) {
   await core.clickFab(page)
   await core.clickAction(page, 'create-project')
-  await page.waitForTimeout(1000)
+  await core.waitForTimeout(1000)
 }
 
 export async function importLayer (page, filePath, featureId = undefined, wait = 2000) {
@@ -150,7 +150,7 @@ export async function importLayer (page, filePath, featureId = undefined, wait =
   }
   await core.clickAction(page, 'import-layer-action')
   await page.waitForNetworkIdle()
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function connectLayer (page, service, layerId, layerName, featureId, wait = 2000) {
@@ -166,7 +166,7 @@ export async function connectLayer (page, service, layerId, layerName, featureId
   }
   await core.clickAction(page, 'connect-layer-action', 2000)
   await page.waitForNetworkIdle()
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function createLayer (page, layerName, schemaPath, featureId, wait = 2000) {
@@ -178,7 +178,7 @@ export async function createLayer (page, layerName, schemaPath, featureId, wait 
   await core.click(page, '#featureId-field', 500)
   await core.click(page, `#${featureId}`, 500)
   await core.clickAction(page, 'create-layer-action', 1000)
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function createView (page, name, saveLayers, wait = 2000) {
@@ -187,7 +187,7 @@ export async function createView (page, name, saveLayers, wait = 2000) {
   await core.type(page, '#description-field', `${name} description`)
   if (saveLayers) await core.click(page, '#layers-field .q-toggle')
   await core.clickAction(page, 'apply-button', 1000)
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function viewExists (page, tabId, name) {
@@ -235,7 +235,7 @@ export async function createProject (page, name, options, wait = 2000) {
   }
   await core.type(page, '#identifier-field', _.kebabCase(name))
   await core.clickAction(page, 'apply-button', 1000)
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function projectExists (page, tabId, name) {
@@ -257,13 +257,13 @@ export async function switchProject (page, name, wait = 2000) {
   await core.click(page, '#project-menu', 2000)
   await core.clickXPath(page, `//div[contains(@component, "collection/KCard") and contains(., "${name}")]`, 1000)
   await page.waitForNetworkIdle()
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function closeProject (page, wait = 2000) {
   await core.click(page, '#close-project')
   await page.waitForNetworkIdle()
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
 
 export async function removeProject (page, tabId, name) {

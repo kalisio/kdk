@@ -8,11 +8,11 @@ export async function moveMap (page, direction, times, wait = 500) {
   let dir
   if (direction === 'up') { dir = 'ArrowUp' } else if (direction === 'down') { dir = 'ArrowDown' } else if (direction === 'left') { dir = 'ArrowLeft' } else if (direction === 'right') { dir = 'ArrowRight' } else if (direction === 'in') { dir = '+' } else if (direction === 'out') { dir = '-' }
   await page.focus('#map')
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
   let i = 0
   for (i = 0; i < times; i++) {
     await page.keyboard.press(dir)
-    await page.waitForTimeout(wait)
+    await core.waitForTimeout(wait)
   }
 }
 
@@ -25,5 +25,5 @@ export async function zoomToLevel (page, storePath, level, wait = 500) {
   const diff = level - zoom
   const action = (level > zoom) ? 'in' : 'out'
   await moveMap(page, action, Math.abs(diff), wait)
-  await page.waitForTimeout(wait)
+  await core.waitForTimeout(wait)
 }
