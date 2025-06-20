@@ -9,6 +9,9 @@ import * as layers from '../utils/utils.layers.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
 export const activity = {
+  emits: [
+    'layer-filter-toggled'
+  ],
   data () {
     return {
       layerCategories: [],
