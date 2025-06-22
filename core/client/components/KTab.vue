@@ -1,5 +1,5 @@
 <template>
-  <div v-if="hasTabs" class="fit column">
+  <div v-if="hasTabs && current" class="fit column">
     <!-- Tabs -->
     <q-tabs
       v-model="current"
@@ -8,9 +8,14 @@
       mobile-arrows
       :dense="dense"
       class="full-width text-primary"
+      @update:model-value="onTabChanged"
     >
       <template v-for="(tab, index) in tabs" :key="tab">
-        <q-tab :name="tab" :id="tab" :label="getLabel(index) || tab" />
+        <q-tab 
+          :name="tab" 
+          :id="tab" 
+          :label="getLabel(index) || tab" 
+        />
       </template>
     </q-tabs>
     <q-separator />
@@ -20,7 +25,7 @@
       :content="panel"
       :mode="current"
       :filter="filter"
-      @triggered="onTriggered"
+      @triggered="onContentTriggered"
       class="col full-width"
     />
   </div>
@@ -28,7 +33,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { i18n } from '../i18n.js'
 import KContent from './KContent.vue'
 
@@ -65,10 +70,10 @@ const props = defineProps({
 })
 
 // Emit
-const emit = defineEmits(['triggered'])
+const emit = defineEmits(['tab-changed', 'triggered'])
 
 // Data
-const current = ref(props.mode || _.head(getModes()))
+const current = ref(null)
 
 // Computed
 const hasTabs = computed(() => {
@@ -81,6 +86,11 @@ const panel = computed(() => {
   return _.get(props.content, current.value)
 })
 
+// Watch
+watch(() => props.mode, (mode) => {
+  current.value = mode
+}, { immediate: true })
+
 // Function
 function getModes () {
   return _.keys(props.content)
@@ -89,7 +99,10 @@ function getLabel (index) {
   const label = _.nth(props.labels, index)
   if (label) return i18n.tie(label)
 }
-function onTriggered (params) {
+function onTabChanged (params) {
+  emit('tab-changed', params)
+}
+function onContentTriggered (params) {
   emit('triggered', params)
 }
 </script>
