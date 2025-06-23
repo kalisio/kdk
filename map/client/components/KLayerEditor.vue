@@ -430,7 +430,11 @@ function apply () {
 
   const layer = CurrentActivity.value.getLayerByName(props.layerName)
   if (isInMemoryLayer(layer)) {
+    const previousName = _.get(layer, 'name', '')
     _.merge(layer, updatedLayer)
+    if (previousName !== layer.name) {
+      CurrentActivity.value.renameLayer(previousName, layer.name)
+    }
     CurrentActivity.value.resetLayer(layer)
   } else {
     // Dotify the layer to avoid patching the whole object
