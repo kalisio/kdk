@@ -46,8 +46,7 @@ const legends = computed(() => {
   if (Array.isArray(props.layer.filters)) {
     props.layer.filters.forEach((filter) => {
       // Include when filter is active and has a legend
-      if (!filter.isActive || !filter.legend)
-        return
+      if (!filter.isActive || !filter.legend) { return }
       layerLegends.push(...filter.legend)
     })
   }

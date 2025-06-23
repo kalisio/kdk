@@ -11,10 +11,10 @@
       @update:model-value="onTabChanged"
     >
       <template v-for="(tab, index) in tabs" :key="tab">
-        <q-tab 
-          :name="tab" 
-          :id="tab" 
-          :label="getLabel(index) || tab" 
+        <q-tab
+          :name="tab"
+          :id="tab"
+          :label="getLabel(index) || tab"
         />
       </template>
     </q-tabs>

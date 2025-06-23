@@ -1,6 +1,6 @@
 <template>
-  <q-form 
-    v-if="schema" 
+  <q-form
+    v-if="schema"
     @submit.prevent="onSubmit"
     class="column"
   >

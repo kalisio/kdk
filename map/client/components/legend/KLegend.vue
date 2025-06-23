@@ -161,10 +161,9 @@ function onHideLayer (layer) {
   logger.debug(`[KDK] Unregister '${layer.name}' legend`)
   _.remove(layers.value, { name: layer.name })
 }
-function onToggleLayerFilter(layer, filter) {
+function onToggleLayerFilter (layer, filter) {
   const index = layers.value.findIndex((l) => l.name === layer.name)
-  if (index === -1)
-    return
+  if (index === -1) { return }
 
   layers.value.splice(index, 1)
   layers.value.push(layer)
