@@ -80,7 +80,6 @@
 
 <script>
 import _ from 'lodash'
-import fetch from 'node-fetch'
 import xml2js from 'xml2js'
 import { mixins as kCoreMixins } from '../../../../core/client'
 import { KAction } from '../../../../core/client/components'

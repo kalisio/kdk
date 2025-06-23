@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import fetch from 'node-fetch'
 import parser from 'jsdap/src/parser.js'
 import xdr from 'jsdap/src/xdr.js'
 import { BaseGrid } from './grid.js'
