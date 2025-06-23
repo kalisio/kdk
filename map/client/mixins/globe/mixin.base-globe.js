@@ -507,7 +507,10 @@ export const baseGlobe = {
         altitude: position.height,
         heading: CesiumMath.toDegrees(this.viewer.camera.heading),
         pitch: CesiumMath.toDegrees(this.viewer.camera.pitch),
-        roll: CesiumMath.toDegrees(this.viewer.camera.roll)
+        roll: CesiumMath.toDegrees(this.viewer.camera.roll),
+        fovy: this.viewer.camera.frustum.fovy,
+        viewMatrix: this.viewer.camera.viewMatrix,
+        inverseViewMatrix: this.viewer.camera.inverseViewMatrix
       }
     },
     getAnimatedHeading (timestamp) {
