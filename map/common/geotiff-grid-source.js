@@ -58,8 +58,7 @@ export class GeoTiffGridSource extends GridSource {
     this.rgb = config.rgb
 
     try {
-      // forceXHR is useful for tests because nock doesn't know how to intercept fetch
-      this.geotiff = await GeoTIFF.fromUrl(config.url, { forceXHR: _.get(config, 'forceXHR', false) })
+      this.geotiff = await GeoTIFF.fromUrl(config.url)
     } catch (error) {
       // fetching may fail, in this case the source
       // will remain in unusable state
