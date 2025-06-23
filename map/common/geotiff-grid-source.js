@@ -1,5 +1,4 @@
 import * as GeoTIFF from 'geotiff'
-import _ from 'lodash'
 import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
 // pack r,g,b in an uint32
