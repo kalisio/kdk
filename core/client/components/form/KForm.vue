@@ -185,31 +185,35 @@ function hasFieldError (field, errors) {
   return null
 }
 async function build () {
+  if (!props.schema) throw new Error('Cannot build the form without schema')
   fields.value = []
   nbReadyFields.value = 0
   isReady.value = false
-  if (!props.schema) throw new Error('Cannot build the form without schema')
   // As we have some async operations here and build() can be trigerred async
   // from different places (watch, mount, ...) we flag it to avoid reentrance
   buildInProgress = true
   // Compile the schema
   await compileSchema(props.schema, props.filter)
   // Build the fields
-  _.forOwn(schema.value.properties, (field, property) => {
-    // clone and configure the field
-    const cloneField = _.clone(field)
-    cloneField.name = property // assign a name to allow binding between properties and fields
-    let component = _.get(field.field, 'component', '')
-    if (!component) {
-      // Provide a default component based on schema value type when none is specified
-      if (field.type === 'number' || field.type === 'integer') { component = 'form/KNumberField' } else if (field.type === 'boolean') { component = 'form/KToggleField' } else if (field.type === 'string') { component = 'form/KTextField' }
-    }
-    cloneField.component = loadComponent(component)
-    cloneField.reference = null // will be set once te field is rendered
-    cloneField.required = _.includes(schema.value.required, property) // add extra required info
-    // add the field to the list of fields to be rendered
-    fields.value.push(cloneField)
-  })
+  if (!_.isEmpty(schema.value.properties)) {
+    _.forOwn(schema.value.properties, (field, property) => {
+      // clone and configure the field
+      const cloneField = _.clone(field)
+      cloneField.name = property // assign a name to allow binding between properties and fields
+      let component = _.get(field.field, 'component', '')
+      if (!component) {
+        // Provide a default component based on schema value type when none is specified
+        if (field.type === 'number' || field.type === 'integer') component = 'form/KNumberField'
+        else if (field.type === 'boolean') component = 'form/KToggleField' 
+        else if (field.type === 'string') component = 'form/KTextField'
+      }
+      cloneField.component = loadComponent(component)
+      cloneField.reference = null // will be set once te field is rendered
+      cloneField.required = _.includes(schema.value.required, property) // add extra required info
+      // add the field to the list of fields to be rendered
+      fields.value.push(cloneField)
+    })
+  } else isReady.value = true
   buildInProgress = false
 }
 function values () {
