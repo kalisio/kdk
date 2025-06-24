@@ -90,7 +90,7 @@ const sliderStep = computed(() => {
 
 // Watch
 watch(() => CurrentActivity.value.selectedLevel, (selectedLevel) => {
-  if (levels.value.values) level.value = levels.value.values.indexOf(selectedLevel)
+  if (levels.value && levels.value.values) level.value = levels.value.values.indexOf(selectedLevel)
   else level.value = selectedLevel
 })
 
