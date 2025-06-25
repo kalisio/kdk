@@ -32,7 +32,7 @@
     "lint:core": "standard core/**/*.js core/**/*.vue --fix",
     "lint:map": "standard map/**/*.js map/**/*.vue --fix",
     "lint:test:api": "standard test/api/core/**/*.js test/api/map/**/*.js --fix",
-    "lint:test:client": "standard extras/tests/core/**/*.js extras/tests/map/**/*.js --fix",
+    "lint:test:client": "standard extras/tests/core/**/*.mjs extras/tests/map/**/*.mjs --fix",
     "lint": "npm-run-all --serial lint:**",
     "mocha:core": "cross-env NODE_CONFIG_DIR=./test/api/core/config/ mocha test/api/core/**/*.test.js --exit",
     "mocha:map": "cross-env NODE_CONFIG_DIR=./test/api/map/config/ mocha test/api/map/**/*.test.js --exit",
