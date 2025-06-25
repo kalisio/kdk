@@ -1,4 +1,5 @@
 import authentication from '@feathersjs/authentication'
+import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import core, { kdk } from '../../../core/api/index.js'
