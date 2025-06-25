@@ -32,7 +32,7 @@
     "lint:core": "standard core/**/*.js core/**/*.vue --fix",
     "lint:map": "standard map/**/*.js map/**/*.vue --fix",
     "lint:test:api": "standard test/api/core/**/*.js test/api/map/**/*.js --fix",
-    "lint:test:client": "standard test/client/core/**/*.js test/client/map/**/*.js --fix",
+    "lint:test:client": "standard extras/tests/core/**/*.js extras/tests/map/**/*.js --fix",
     "lint": "npm-run-all --serial lint:**",
     "mocha:core": "cross-env NODE_CONFIG_DIR=./test/api/core/config/ mocha test/api/core/**/*.test.js --exit",
     "mocha:map": "cross-env NODE_CONFIG_DIR=./test/api/map/config/ mocha test/api/map/**/*.test.js --exit",
@@ -131,7 +131,6 @@
     "password-validator": "^4.0.0",
     "sanitize-html": "^2.13.0",
     "sift": "^8.0.0",
-    "superagent": "^5.1.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0",
     "xml2js": "^0.4.22"
@@ -160,9 +159,7 @@
     "mocha": "^9.1.1",
     "nock": "^14.0.5",
     "npm-run-all": "^4.1.1",
-    "pixelmatch": "^5.2.0",
     "pngjs": "^5.0.0",
-    "puppeteer-core": "^20.5.0",
     "shx": "^0.3.2",
     "standard": "^17.1.2"
   }
