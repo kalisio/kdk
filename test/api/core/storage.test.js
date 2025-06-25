@@ -1,7 +1,6 @@
 import path, { dirname } from 'path'
 import fs from 'fs-extra'
 import { fileURLToPath } from 'url'
-import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import { Blob } from 'buffer'

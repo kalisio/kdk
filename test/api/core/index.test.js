@@ -2,7 +2,6 @@
 import path, { dirname } from 'path'
 import assert from 'assert'
 import fs from 'fs-extra'
-import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'

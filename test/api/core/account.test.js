@@ -1,5 +1,4 @@
 import common from 'feathers-hooks-common'
-import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import config from 'config'
