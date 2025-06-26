@@ -131,6 +131,7 @@
     "password-validator": "^4.0.0",
     "sanitize-html": "^2.13.0",
     "sift": "^8.0.0",
+    "superagent": "^5.1.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0",
     "xml2js": "^0.4.22"
@@ -161,7 +162,6 @@
     "npm-run-all": "^4.1.1",
     "pngjs": "^5.0.0",
     "shx": "^0.3.2",
-    "standard": "^17.1.2",
-    "superagent": "^5.1.0"
+    "standard": "^17.1.2"
   }
 }
