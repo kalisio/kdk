@@ -4,8 +4,8 @@
       <template v-slot:header>
         <div class="q-ma-sm">
           <q-select
-            for="bdxeo-sensor-model"
-            id="bdxeo-sensor-model"
+            for="layer-model"
+            id="layer-model"
             :placeholder="$t('KLayersSelector.SELECT_LAYERS')"
             autocomplete="off"
             v-model="model"
