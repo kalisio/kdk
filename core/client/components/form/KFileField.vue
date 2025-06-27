@@ -1,11 +1,18 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    <q-chip v-if="model.name" icon="las la-cloud-upload-alt">
+    <q-chip v-if="!multiple && model?.name">
       {{ model.name }}
     </q-chip>
+    <q-chip v-else
+      v-for="file in [].concat(model)"
+      :key="file.name"
+      icon="las la-cloud-upload-alt"
+    >
+      {{ file.name }}
+    </q-chip>
   </div>
-  <!-- -->
-  <q-field v-else-if="model"
+
+  <q-field v-else-if="model && !multiple"
     :for="properties.name + '-field'"
     v-model="model"
     :label="label"
@@ -17,9 +24,10 @@
       {{ model.name }}
     </template>
   </q-field>
+
   <q-file v-else
     :for="properties.name + '-field'"
-    v-model="file"
+    v-model="files"
     :label="label"
     :accept="acceptedTypes"
     :filter="filterSelectedFiles"
@@ -27,6 +35,11 @@
     :error-message="errorLabel"
     bottom-slots
     :disable="disabled"
+    :multiple="true"
+    :append="multiple"
+    :clearable="multiple"
+    :use-chips="multiple"
+    :max-files="maxFiles"
     @update:model-value="onFileChanged"
     @rejected="onFileRejected">
     <!-- Helper -->
@@ -59,7 +72,7 @@ export default {
   mixins: [baseField],
   data () {
     return {
-      file: null,
+      files: null,
       changed: false
     }
   },
@@ -69,104 +82,122 @@ export default {
     },
     maxFileSize () {
       return _.get(this.properties, 'field.maxSize', 1024 * 1024)
+    },
+    maxFiles () {
+      return _.get(this.properties, 'field.maxFiles', 1)
+    },
+    multiple () {
+      return _.get(this.properties, 'field.multiple', false)
     }
   },
   methods: {
     emptyModel () {
-      return null
+      return this.multiple ? [] : null
     },
     filterSelectedFiles (files) {
       const filter = _.get(this.properties, 'field.filter')
       if (!filter) return files
-      return _.filter(files, file => { return file.name.includes(filter) })
+      return _.filter(files, file => file.name.includes(filter))
     },
     onFileCleared () {
-      this.file = null
+      this.files = null
       this.error = ''
       this.onChanged()
     },
     async onFileChanged () {
-      if (this.file) {
-        // Check the size to display an explicit message
-        if (this.file.size < this.maxFileSize) {
-          // Check whether the file will be uploaded without being read
-          if (!_.get(this.properties, 'field.readContent', true)) {
-            this.model = { name: this.file.name, type: this.file.type }
-            this.onChanged()
-            this.changed = true
-            return
-          }
-          // Check whether the file type is registered to be read by a reader
-          const acceptedFiles = Reader.filter([this.file])
-          if (acceptedFiles.length === 1) {
-            const file = acceptedFiles[0]
-            try {
-              const content = await Reader.read(file)
-              // Avoid making file content reactive as it might be large and it is not used in UI
-              this.model = { name: this.file.name, type: this.file.type, content: markRaw(content) }
-              this.onChanged()
-              this.changed = true
-            } catch (error) {
-              this.error = error
-              this.model = this.emptyModel()
-            }
-          } else {
-            this.error = 'KFileField.INVALID_FILE_TYPE'
-            this.model = this.emptyModel()
+      const selectedFiles = [].concat(this.files || [])
+      const result = []
+
+      for (const file of selectedFiles) {
+        if (file.size > this.maxFileSize) {
+          this.error = 'KFileField.INVALID_FILE_SIZE'
+          continue
+        }
+
+        // Check whether the file will be uploaded without being read
+        if (!_.get(this.properties, 'field.readContent', true)) {
+          result.push({ name: file.name, type: file.type })
+          continue
+        }
+
+        // Check whether the file type is registered to be read by a reader
+        const accepted = Reader.filter([file])
+        if (accepted.length === 1) {
+          try {
+            const content = await Reader.read(file)
+            // Avoid making file content reactive as it might be large and it is not used in UI
+            result.push({ name: file.name, type: file.type, content: markRaw(content) })
+          } catch (err) {
+            this.error = err
           }
         } else {
-          this.error = 'KFileField.INVALID_FILE_SIZE'
-          this.model = this.emptyModel()
+          this.error = 'KFileField.INVALID_FILE_TYPE'
         }
       }
+
+      this.model = this.multiple ? result : result[0] || this.emptyModel()
+      this.changed = true
+      this.onChanged()
     },
-    onFileRejected (file) {
-      this.error = 'KFileField.INVALID_FILE_TYPE'
+    onFileRejected (errs) {
+      const errors = [].concat(errs)
+      for (const error of errors) {
+        if (error?.failedPropValidation === 'max-files') this.error = i18n.tc('directives.MAX_FILES_REACHED', this.maxFiles)
+        else this.error = 'KFileField.INVALID_FILE_TYPE'
+      }
     },
     async apply (object, field) {
       // A template generates the final path for the file in storage based on object context so that we can only do it here
       // Check wether we need to upload file content
-      if (this.model && _.get(this.properties, 'field.storage')) {
-        let path = _.get(this.properties, 'field.storage.path')
-        // The template generates the final path for the file in storage
-        if (path) path = _.template(path)(Object.assign({}, { fileName: this.model.name }, object))
-        this.model.key = path || this.model.name
+      const files = this.multiple ? this.model || [] : [this.model]
+      for (const file of files) {
+        if (file && _.get(this.properties, 'field.storage')) {
+          let path = _.get(this.properties, 'field.storage.path')
+          // The template generates the final path for the file in storage
+          if (path) path = _.template(path)({ ...object, fileName: file.name })
+          file.key = this.multiple ? path + '/' + file.name : path || file.name
+        }
       }
       baseField.methods.apply.call(this, object, field)
     },
     async upload (object, field) {
-      if (_.get(this.model, 'key')) {
-        // The template generates the final context for storage service
-        let context = _.get(this.properties, 'field.storage.context')
-        if (context) context = _.template(context)(Object.assign({}, { fileName: this.model.name }, object))
-        const query = _.get(this.properties, 'field.storage.uploadQuery')
-        logger.debug(`[KDK] Uploading file ${this.model.name} with key ${this.model.key}`)
-        return Storage.upload({
-          file: this.model.name,
-          type: this.model.type,
-          key: this.model.key,
-          blob: this.file,
-          context
-        }, { query })
-      }
+      const files = this.multiple ? this.model || [] : [this.model]
+      const promises = files.map(async file => {
+        if (file && file.key) {
+          // The template generates the final context for storage service
+          let context = _.get(this.properties, 'field.storage.context')
+          if (context) context = _.template(context)({ ...object, fileName: file.name })
+          const query = _.get(this.properties, 'field.storage.uploadQuery')
+          logger.debug(`[KDK] Uploading file ${file.name} with key ${file.key}`)
+          return Storage.upload({
+            file: file.name,
+            type: file.type,
+            key: file.key,
+            blob: (this.files || []).find(f => f.name === file.name),
+            context
+          }, { query })
+        }
+      })
+      return Promise.all(promises)
     },
     async submitted (object, field) {
-      // Check wether we need to upload file content
+      // Check whether we need to upload file content
       if (this.changed) {
         // The template generates the final context for storage service
         this.upload(object, field)
           .then(() => {
+            const files = this.multiple ? this.model : [this.model]
             this.$notify({
               type: 'positive',
-              message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED',
-                { file: this.model.name })
+              message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED', {
+                file: files.map(f => f.name).join(', ')
+              })
             })
           })
           .catch(error => {
             this.$notify({
               type: 'negative',
-              message: i18n.t('KFileField.UPLOAD_FILE_ERRORED',
-                { file: this.model.name })
+              message: i18n.t('KFileField.UPLOAD_FILE_ERRORED')
             })
             logger.error(error)
           })
