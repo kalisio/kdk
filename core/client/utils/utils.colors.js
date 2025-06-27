@@ -181,6 +181,8 @@ export const Colors = {
 export function getHtmlColor (color, defaultColor) {
   if (!color) return defaultColor
   if (color.startsWith('#')) return color
+  if (color.startsWith('hsl')) return color
+  if (color.startsWith('rgb')) return color
   if (_.has(HtmlColors, color)) return color
   return colors.getPaletteColor(color)
 }
