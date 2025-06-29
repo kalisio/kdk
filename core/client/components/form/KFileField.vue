@@ -107,7 +107,6 @@ export default {
     async onFileChanged () {
       const selectedFiles = [].concat(this.files || [])
       const result = []
-
       for (const file of selectedFiles) {
         if (file.size > this.maxFileSize) {
           this.error = 'KFileField.INVALID_FILE_SIZE'
@@ -124,17 +123,21 @@ export default {
         const accepted = Reader.filter([file])
         if (accepted.length === 1) {
           try {
-            const content = await Reader.read(file)
+            const content = await Reader.read(accepted[0])
+            
+            console.log('toto', content)
             // Avoid making file content reactive as it might be large and it is not used in UI
             result.push({ name: file.name, type: file.type, content: markRaw(content) })
+            console.log('titi', result)
           } catch (err) {
+            console.log(err)
             this.error = err
           }
         } else {
           this.error = 'KFileField.INVALID_FILE_TYPE'
         }
       }
-
+      console.log(result)
       this.model = this.multiple ? result : result[0] || this.emptyModel()
       this.changed = true
       this.onChanged()
