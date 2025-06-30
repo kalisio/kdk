@@ -18,6 +18,16 @@ module.exports = {
     label: 'KStyleManager.TITLE',
     icon: 'las la-paint-brush',
     scrollable: true,
-    content: { component: 'styles/KStyleManager' }
+    content: { component: 'styles/KStyleManager' },
+    fab: {
+      content: [{
+        id: 'create-style',
+        icon: 'las la-plus',
+        label: 'KStyleManager.CREATE_STYLE',
+        handler: 'createStyle'
+      }],
+      color: 'grey-7',
+      padding: 'sm'
+    }
   }
 }

@@ -16,8 +16,8 @@ export const DefaultZIndex = {
 const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
-const windowsDefaultControls = { menu: true, pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
-const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowsDefaultControls, controlsMenuBreakpoint: 'xs', zIndex: 980 }
+const windowDefaultControls = { menu: true, pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowDefaultControls, controlsMenuBreakpoint: 'xs', zIndex: 980 }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
   floating: { position: [0, 0], size: [300, 200] },
@@ -391,8 +391,8 @@ export const Layout = {
     return this.getElement(`windows.${placement}`)
   },
   setWindow (placement, options, context) {
-    // Take care to not bind widget headers here as they will be when creating widgets
-    this.setElement(`windows.${placement}`, options, context, ['header'])
+    // Take care to not bind widget header/fab here as they will be when creating widgets
+    this.setElement(`windows.${placement}`, options, context, ['header', 'fab'])
   },
   setWindowMode (placement, mode) {
     this.setElementMode(`windows.${placement}`, mode)
@@ -404,7 +404,7 @@ export const Layout = {
     this.setElementVisible(`windows.${placement}`, visible)
   },
   setWindowControls (placement, controls) {
-    for (const key of _.keys(windowsDefaultControls)) {
+    for (const key of _.keys(windowDefaultControls)) {
       if (!_.has(controls, key)) {
         logger.warn(`[KDK] Invalid window control key ${key}`)
         return

@@ -109,9 +109,11 @@
     >
       <KFab
         id="fab"
-        v-if="fab.visible"
+        v-if="hasFabComponents && fab.visible"
+        :content="fab.components"
+        :icon="fab.icon"
         :direction="fabBehavior.direction"
-        :actions-align="fabBehavior.actionsAlign"
+        :alignment="fabBehavior.alignment"
       />
     </q-page-sticky>
     <!-- left Window -->
@@ -309,12 +311,15 @@ const bottomWindowSize = computed(() => {
 const bottomWindowStyle = computed(() => {
   return { maxWidth: bottomWindowSize[0] + 'px', maxHeight: bottomWindowSize[1] + 'px' }
 })
+const hasFabComponents = computed(() => {
+  return !_.isEmpty(fab.components)
+})
 const fabBehavior = computed(() => {
   switch (fab.position) {
-    case 'bottom-right': return { direction: 'up', actionsAlign: 'left' }
-    case 'bottom-left': return { direction: 'up', actionsAlign: 'right' }
-    case 'top-right': return { direction: 'down', actionsAlign: 'left' }
-    case 'top-left': return { direction: 'down', actionsAlign: 'right' }
+    case 'bottom-right': return { direction: 'up', alignment: 'left' }
+    case 'bottom-left': return { direction: 'up', alignment: 'right' }
+    case 'top-right': return { direction: 'down', alignment: 'left' }
+    case 'top-left': return { direction: 'down', alignment: 'right' }
   }
 })
 const stickiesComponents = computed(() => {

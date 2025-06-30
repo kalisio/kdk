@@ -7,18 +7,20 @@
       id="fab"
       v-model="isOpened"
       :icon="icon"
-      class="k-fab"
-      :vertical-actions-align="actionsAlign"
+      :padding="padding"
+      vertical-actions-align="center"
       :direction="direction"
-      color="primary"
-      persistent>
+      :color="color"
+      persistent
+      class="k-fab"
+    >
       <!-- Render a grid menu if the number of actions is higher than the expandable limit -->
       <q-menu v-if="actions.length > expandableLimit" v-model="isOpened" ref="menu" persistent fit anchor="top left" self="bottom right">
         <div class="q-pa-sm row" style="max-width: 50vw">
           <template v-for="action in actions" :key="action.id">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
               <KAction
-                color="primary"
+                :color="color"
                 v-bind="action"
                 renderer="item"
                 v-on="action.on ? { [action.on.event]: action.on.listener } : {}"
@@ -32,11 +34,11 @@
       <div v-else>
         <template v-for="action in actions" :key="action.id">
           <KAction
-            color="primary"
+            :color="color"
             v-bind="action"
             renderer="fab-action"
+            :iconRight="alignment === 'left' ? true : false"
             v-on="action.on ? { [action.on.event]: action.on.listener } : {}"
-            :iconRight="actionsAlign === 'left' ? true : false"
           />
         </template>
       </div>
@@ -45,9 +47,9 @@
       Render a non expandable fab if a single action is provided
      -->
     <KAction v-else-if="actions.length === 1"
-      color="primary"
+      :color="color"
       v-bind="actions[0]"
-      size="1.15rem"
+      :size="size"
       renderer="fab"
       v-on="actions[0].on ? { [actions[0].on.event]: actions[0].on.listener } : {}"
     />
@@ -57,14 +59,25 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed } from 'vue'
-import { Layout } from '../../layout'
 import KAction from '../action/KAction.vue'
 
 // Props
-defineProps({
-  expandableLimit: {
-    type: Number,
-    default: 8
+const props = defineProps({
+  content:{
+    type: Array,
+    default: () => null
+  },
+  icon: {
+    type: String,
+    default: 'las la-ellipsis-v'
+  },
+  color: {
+    type: String,
+    default: 'primary'
+  },
+  padding: {
+    type: String,
+    default: 'md'
   },
   direction: {
     type: String,
@@ -73,27 +86,28 @@ defineProps({
       return ['up', 'down'].includes(value)
     }
   },
-  actionsAlign: {
+  alignment: {
     type: String,
     required: true,
     validator: (value) => {
       return ['left', 'right'].includes(value)
     }
+  },
+  expandableLimit: {
+    type: Number,
+    default: 8
   }
 })
 
 // Data
-const fab = Layout.getFab()
+//const fab = Layout.getFab()
 const isOpened = ref(false)
 
 // Computed
-const icon = computed(() => {
-  return fab.icon || 'las la-ellipsis-v'
-})
 const actions = computed(() => {
   const actions = []
   // Apply filtering
-  _.forEach(fab.components, (action) => {
+  _.forEach(props.content, (action) => {
     let isVisible = _.get(action, 'visible', true)
     // Can be a functional call
     if (typeof isVisible === 'function') {

@@ -89,6 +89,7 @@
       <div
         :id="`${placement}-window-resize-grip`"
         class="row items-center"
+        style="position: relative"
       >
         <q-icon
           v-if="currentWindow.controls.resize && currentWindow.state !== 'maximized'"
@@ -96,6 +97,17 @@
           name="las la-slash"
           size="10px"
           v-touch-pan.prevent.mouse="onResized"
+        />
+        <KFab
+          :id="`${placement}-window-fab`"
+          v-if="widgetFab"
+          :content="widgetFab.content"
+          :icon="widgetFab.icon"
+          :padding="widgetFab.padding"
+          :color="widgetFab.color"
+          :direction="widgetFabDirection"
+          alignment="right"
+          style="position: absolute; right: 8px; bottom: 8px;"
         />
       </div>
     </div>
@@ -114,6 +126,7 @@ import { loadComponent, bindContent, computeResponsiveSize } from '../../utils'
 import KPanel from '../KPanel.vue'
 import KScrollArea from '../KScrollArea.vue'
 import KMenu from '../menu/KMenu.vue'
+import KFab from './KFab.vue'
 
 // Props
 const props = defineProps({
@@ -262,6 +275,16 @@ const widgetWidth = computed(() => {
 })
 const widgetHeight = computed(() => {
   return currentWindow.size[1] - windowHeaderHeight.value - windowFooterHeight.value
+})
+const widgetFab = computed(() => {
+  if (!widget.value) return null
+  let fab = _.cloneDeep(widget.value.fab)
+  fab = bindContent(fab, widgetRef.value)
+  return fab
+})
+const widgetFabDirection = computed(() => {
+  if (props.placement === 'top') return 'down'
+  return 'up'
 })
 
 // Watch
