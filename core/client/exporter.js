@@ -30,7 +30,6 @@ const ExporterQueue = {
       if (!filename) {
         const timestamp = moment().toISOString().replace(/:/g, '-')
         filename = `${_.get(request, 'basename', request.service)}_${timestamp}.${request.format}`
-        if (_.get(request, 'gzip', true)) filename += '.gz'
       }
       // retrieve the target service path
       let servicePath = api.getServicePath(request.service)
