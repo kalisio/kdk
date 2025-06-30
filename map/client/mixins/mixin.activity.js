@@ -152,16 +152,19 @@ export const activity = {
       return layers.isInMemoryLayer(layer) || this.$can('remove', 'catalog')
     },
     async resetLayer (layer) {
-      // Keep track of data as we will reset the layer
-      let geoJson
-      if (typeof this.toGeoJson === 'function') geoJson = await this.toGeoJson(layer.name)
-      // Reset layer with new setup but keep track of current visibility state
-      // as adding the layer back will restore default visibility state
+      // This requires to recreate the layer in the underlying engine with the new setup.
+      // So it's only necessary if the layer is already visible.
       const isVisible = this.isLayerVisible(layer.name)
-      await this.removeLayer(layer.name)
-      await this.addLayer(layer)
-      if (isVisible) await this.showLayer(layer.name)
-      if (geoJson && (typeof this.toGeoJson === 'function')) this.updateLayer(layer.name, geoJson)
+      if (isVisible) {
+        // Keep track of data as the reset will los it for in-memory layers
+        let geoJson
+        if (layers.isInMemoryLayer(layer) && (typeof this.toGeoJson === 'function')) geoJson = await this.toGeoJson(layer.name)
+        await this.hideLayer(layer.name)
+        await this.showLayer(layer.name)
+        if (geoJson) this.updateLayer(layer.name, geoJson)
+        // If min/max zoom configuration has changed we need to refresh this state as well
+        if (typeof this.updateLayerDisabled === 'function') this.updateLayerDisabled(layer)
+      }
     },
     configureLayerActions (layer) {
       let actions = _.get(this, 'activityOptions.layers.actions', [])
