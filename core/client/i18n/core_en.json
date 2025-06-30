@@ -296,7 +296,10 @@
     "MESSAGE": "Select the file format to export",
     "EXPORT": "Export",
     "EXPORTING": "Please wait while exporting data",
-    "EXPORTS_LIMIT_REACHED": "You have reached the maximum number of exports allowed"
+    "EXPORTS_LIMIT_REACHED": "You have reached the maximum number of exports allowed",
+    "SUCCEEDED": "Export successful. Your data has been saved to the file <b>{filename}</b>",
+    "NO_DATA": "Export skipped: no data found to export",
+    "ERRORED": "Oops! Export failed: an error occurred while exporting data"
   },
   "reader": {
     "READING_FILE": "Reading file {file}"

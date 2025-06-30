@@ -293,10 +293,13 @@
   },
   "exporter": {
     "TITLE": "Exporter les données",
-    "MESSAGE": "Séléctionner le format de fichier à exporter",
+    "MESSAGE": "Sélectionnez le format de fichier à exporter",
     "EXPORT": "Exporter",
     "EXPORTING": "Merci de patienter pendant l'export des données",
-    "EXPORTS_LIMIT_REACHED": "Vous avez atteint le nombre maximum d'exports autorisés"
+    "EXPORTS_LIMIT_REACHED": "Vous avez atteint le nombre maximum d'exports autorisés",
+    "SUCCEEDED": "Exportation terminée : les données ont été exportées dans le fichier <b>{filename}</b>",
+    "NO_DATA": "Exportation annulée : Aucune donnée trouvée à exporter",
+    "ERROR": "Oops ! Échec de l’exportation : une erreur est survenue durant l'export des données"
   },
   "reader": {
     "READING_FILE": "Lecture de {file} en cours"
