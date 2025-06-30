@@ -32,7 +32,7 @@
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
-      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+      <KIcon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
     <!-- extra content -->
     <slot>
@@ -90,13 +90,13 @@
    -->
   <q-btn v-else-if="renderer === 'fab'"
     :id="id"
-    class="k-action-fab"
     :color="computedColor"
     :size="size"
     :round="true"
     :dense="dense"
     :disable="computedDisabled"
     @click="onClicked"
+    class="k-action-fab"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -106,7 +106,7 @@
     </q-tooltip>
     <!-- badge -->
     <q-badge v-if="badge" v-bind="badge" :label="computedBadgeLabel">
-      <q-icon v-if="badge.icon" v-bind="badge.icon" />
+      <KIcon v-if="badge.icon" v-bind="badge.icon" />
     </q-badge>
   </q-btn>
   <!--
@@ -114,9 +114,8 @@
   -->
   <q-fab-action v-else-if="renderer === 'fab-action'"
     :id="id"
-    class="k-action-fab-action"
     no-caps
-    :icon="computedIcon"
+    :icon="iconRight ? computedIcon : undefined"
     :color="computedColor"
     :label="computedLabel"
     square
@@ -125,6 +124,7 @@
     label-class="bg-primary text-white text-caption k-fab-action"
     :disable="computedDisabled"
     @click="onClicked"
+    class="k-action-fab-action"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
