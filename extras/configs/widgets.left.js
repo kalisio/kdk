@@ -23,7 +23,7 @@ module.exports = {
       content: [{
         id: 'create-style',
         icon: 'las la-plus',
-        label: 'KStyleManager.CREATE_STYLE',
+        tooltip: 'KStyleManager.CREATE_STYLE',
         handler: 'createStyle'
       }],
       color: 'grey-7',

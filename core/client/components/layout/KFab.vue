@@ -49,7 +49,6 @@
     <KAction v-else-if="actions.length === 1"
       :color="color"
       v-bind="actions[0]"
-      :size="size"
       renderer="fab"
       v-on="actions[0].on ? { [actions[0].on.event]: actions[0].on.listener } : {}"
     />
@@ -100,7 +99,6 @@ const props = defineProps({
 })
 
 // Data
-//const fab = Layout.getFab()
 const isOpened = ref(false)
 
 // Computed
