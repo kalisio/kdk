@@ -96,7 +96,7 @@
     :dense="dense"
     :disable="computedDisabled"
     @click="onClicked"
-    class="k-action-fab"
+    class="k-fab"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -121,10 +121,10 @@
     square
     external-label
     :label-position="iconRight ? 'left' : 'right'"
-    label-class="bg-primary text-white text-caption k-fab-action"
+    label-class="text-white text-caption"
     :disable="computedDisabled"
     @click="onClicked"
-    class="k-action-fab-action"
+    class="k-fab-action"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -141,7 +141,7 @@
     Tab renderer
   -->
   <q-btn v-else-if="renderer === 'tab'"
-    :class="{'k-action-tab-active': isToggled }"
+    :class="{'k-tab-action-active': isToggled }"
     :id="id"
     no-caps
     no-wrap
@@ -314,11 +314,11 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-.k-action-fab, .k-action-fab-action {
+.k-fab, .k-fab-action {
   border: 2px solid;
   border-color: v-bind(computedColor) - 75%; 
 }
-.k-action-tab-active {
+.k-tab-action-active {
   border-bottom: solid 2px;
 }
 .k-action-toggled {
