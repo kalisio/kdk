@@ -24,12 +24,12 @@ const props = defineProps({
     type: String,
     required: true
   },
-  position: {
+  anchor: {
     type: String,
     default: 'top-right'
   },
   offset: {
-    type: [Number, Array],
+    type: Array,
     default: [0, 0]
   }
 })
@@ -45,9 +45,9 @@ const computedStyle = computed(() => {
   const hOffset = `${props.offset[0]}px`
   const vOffset = `${props.offset[1]}px`
   const style = {
-    position: 'fixed'
+    position: 'absolute'
   }
-  switch (props.position) {
+  switch (props.anchor) {
     case 'top-right':
       style.top = vOffset
       style.right = hOffset

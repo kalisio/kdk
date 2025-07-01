@@ -98,15 +98,8 @@
           size="10px"
           v-touch-pan.prevent.mouse="onResized"
         />
-        <KFab
-          :id="`${placement}-window-fab`"
-          v-if="widgetFab"
-          :content="widgetFab.content"
-          :icon="widgetFab.icon"
-          :color="widgetFab.color"
-          :padding="widgetFab.padding"
-          :direction="widgetFabDirection"
-          alignment="right"
+        <div
+          :id="`${placement}-window-magnet`"
           style="position: absolute; right: 8px; bottom: 8px;"
         />
       </div>
@@ -126,7 +119,6 @@ import { loadComponent, bindContent, computeResponsiveSize } from '../../utils'
 import KPanel from '../KPanel.vue'
 import KScrollArea from '../KScrollArea.vue'
 import KMenu from '../menu/KMenu.vue'
-import KFab from './KFab.vue'
 
 // Props
 const props = defineProps({
@@ -275,16 +267,6 @@ const widgetWidth = computed(() => {
 })
 const widgetHeight = computed(() => {
   return currentWindow.size[1] - windowHeaderHeight.value - windowFooterHeight.value
-})
-const widgetFab = computed(() => {
-  if (!widget.value) return null
-  let fab = _.cloneDeep(widget.value.fab)
-  fab = bindContent(fab, widgetRef.value)
-  return fab
-})
-const widgetFabDirection = computed(() => {
-  if (props.placement === 'top') return 'down'
-  return 'up'
 })
 
 // Watch
