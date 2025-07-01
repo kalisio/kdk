@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
+import { api, i18n, Store } from '../../../core/client/index.js'
 import { buildUrl } from '../../../core/common/index.js'
-import { i18n, api, Store } from '../../../core/client/index.js'
 
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
@@ -129,6 +129,19 @@ export async function getCategories (options = {}) {
     categories = categories.concat(response.data)
   }
   return categories
+}
+
+export async function updateCategory (id, data, options = {}) {
+  _.defaults(options, {
+    context: '',
+    planetApi: api
+  })
+
+  const catalogService = options.planetApi.getService('catalog', options.context)
+  if (catalogService && id && data) {
+    const response = await catalogService.patch(id, data)
+    return response
+  }
 }
 
 export async function getSublegends (options = {}) {

@@ -29,7 +29,7 @@
         :options="orphanLayersOptions"
       />
       <!-- Categorized layers -->
-      <template v-for="category in filteredCategories">
+      <template v-for="(category, index) in internalCategories">
         <KCategoryItem
           v-if="isCategoryVisible(category)"
           :key="getCategoryId(category)"
@@ -37,7 +37,27 @@
           :category="category"
           :layers="layersByCategory[category.name]"
           :forecastModels="forecastModels"
-        />
+        >
+          <template v-slot:header>
+            <div
+              :key="index"
+              class="draggable-category"
+              :draggable="isDraggable(category?._id)"
+              @dragstart="onDragStart($event, index, category)"
+              @drop="onDrop($event, index)"
+              @dragover.prevent
+              @dragenter.prevent
+            >
+              <q-item-section v-if="isDraggable(category?._id)" avatar class="drag-handle">
+                <q-icon name="las la-braille" color="primary" text-color="black" />
+              </q-item-section>
+
+              <q-item-section>
+                {{ category?._id ? category.name : i18n.t(category.name) }}
+              </q-item-section>
+            </div> 
+          </template>       
+        </KCategoryItem>
       </template>
       <!-- Custom content -->
       <slot name="after-content">
@@ -73,12 +93,12 @@ export default {
 <script setup>
 import _ from 'lodash'
 import sift from 'sift'
-import { ref, watchEffect, onMounted } from 'vue'
-import { utils as coreUtils } from '../../../../core/client'
-import { getLayersByCategory, getOrphanLayers } from '../../utils'
+import { onMounted, ref, watchEffect } from 'vue'
+import { api, utils as coreUtils, i18n } from '../../../../core/client'
 import { useProject } from '../../composables'
-import KLayersList from './KLayersList.vue'
+import { getLayersByCategory, getOrphanLayers } from '../../utils'
 import KCategoryItem from './KCategoryItem.vue'
+import KLayersList from './KLayersList.vue'
 
 // Props
 const props = defineProps({
@@ -142,6 +162,8 @@ const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
 const orphanLayers = ref([])
+const internalCategories = ref([])
+const draggedIndex = ref(null)
 
 // Watch
 watchEffect(() => { refresh() })
@@ -176,10 +198,67 @@ function refresh () {
   // compute layers by categories and orphans layers
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
   orphanLayers.value = getOrphanLayers(filteredLayers, layersByCategory.value)
+  internalCategories.value = filteredCategories.value.map(category => ({ ...category, order: category?.order ?? 0 }))
 }//, 100)
+
+function onDragStart (event, index, category) {
+  draggedIndex.value = index
+  event.dataTransfer.dropEffect = 'move'
+  event.dataTransfer.effectAllowed = 'move'
+  event.dataTransfer.setData('categoryID', category._id)
+}
+
+function onDrop (event, targetIndex) {
+  console.log(internalCategories.value)
+  const categoryID = event.dataTransfer.getData('categoryID')
+  const category = internalCategories.value.find((c) => c._id === categoryID)
+  category.order = targetIndex
+  const otherCategories = internalCategories.value.filter((c) => c._id !== categoryID)
+  for (const otherCategory of otherCategories) {
+    if (targetIndex > draggedIndex.value) {
+      if (otherCategory.order <= targetIndex && otherCategory.order > draggedIndex.value) otherCategory.order--
+    }
+    if (targetIndex < draggedIndex.value) {
+      if (otherCategory.order >= targetIndex && otherCategory.order < draggedIndex.value) otherCategory.order++
+    }
+  }
+  internalCategories.value.sort((a, b) => a.order - b.order)
+}
+
+function isDraggable (categoryId) {
+  return !!categoryId && api.can('update', 'catalog')
+}
 
 // Hooks
 onMounted(() => {
   refresh()
 })
 </script>
+
+<style scoped>
+.draggable-category {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+.drag-handle {
+  visibility: hidden;
+  opacity: 0;
+  min-width: 0;
+  width: 1px;
+  cursor: move;
+  transform: scaleX(0.001);
+  margin-left: 0px;
+  margin-right: 0px;
+  padding: 0px;
+  user-select: none;
+  transition: visibility 0s, opacity 0.2s, margin-right 0.2s, margin-left 0.2s, transform 0.2s linear;
+}
+.draggable-category:hover .drag-handle {
+  margin-right: 32px;
+  transform: scaleX(1);
+  visibility: visible;
+  opacity: 1;
+  transition-duration: 0.2s;
+}
+</style>

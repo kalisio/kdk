@@ -7,11 +7,20 @@
     expand-separator
     @update:model-value="onToggled"
   >
+    <template v-slot:header>
+      <slot name="header">
+        <q-item-section>
+          {{ name }}
+        </q-item-section>
+      </slot>
+    </template>
     <component
       :is="category.componentInstance"
+      :category="category"
       :layers="layers"
       :forecastModels="forecastModels"
-      :options="category.options || category">
+      :options="category.options || category"
+      >
     </component>
   </q-expansion-item>
 </template>
