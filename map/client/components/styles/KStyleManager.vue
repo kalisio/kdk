@@ -2,7 +2,7 @@
   <div class="column">
     <div id="style-manager-header"
       v-if="title || (toolbar && toolbar.length)"
-      class="q-px-md q-mt-md"
+      class="full-width"
     >
       <div v-if="title" class="ellipsis text-h6">
         {{ $tie(title) }}
@@ -10,6 +10,7 @@
       <KPanel
         id="style-manager-toolbar"
         :content="toolbar"
+        class="q-pr-sm no-wrap"
       />
       <QSeparator inset />
     </div>
@@ -59,6 +60,21 @@
               class: 'col-12'
             }"
           />
+          <KFollower
+            :follower="{ 
+              component: 'layout/KFab',
+              direction: 'up',
+              alignment: 'right',
+              content: [{
+                id: 'create-style',
+                icon: 'las la-plus',
+                tooltip: 'KStyleManager.CREATE_STYLE',
+                handler: editStyle
+              }]
+            }"
+            targetId="left-window-magnet"
+            anchor="bottom-right"
+          />
         </q-tab-panel>
         <q-tab-panel name="editor">
           <div class="full-width column">
@@ -85,6 +101,7 @@ import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle, updateLayerWithFiltersStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'
 import KGrid from '../../../../core/client/components/collection/KGrid.vue'
+import KFollower from '../../../../core/client/components/KFollower.vue'
 import KStyleEditor from './KStyleEditor.vue'
 
 // Props
@@ -120,15 +137,7 @@ const toolbar = computed(() => {
         { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
       ]
     },
-    { component: 'collection/KFilter', style: 'max-width: 200px;' },
-    { component: 'QSpace' },
-    {
-      id: 'add-style',
-      icon: 'las la-plus-circle',
-      tooltip: 'KStyleManager.CREATE_STYLE',
-      size: '1rem',
-      handler: () => { editStyle() }
-    }
+    { component: 'collection/KFilter' }
   ]
 })
 const layerMenuContent = computed(() => {
