@@ -388,7 +388,10 @@
   "KOwsServiceField": {
     "INVALID_URL": "Invalid URL",
     "CANNOT_FETCH_URL": "Failed fetching resource.",
-    "WFS_MISSING_GEOJSON_SUPPORT": "The WFS service has no support for GeoJSON, which is required."
+    "WFS_MISSING_GEOJSON_SUPPORT": "The WFS service has no support for GeoJSON, which is required.",
+    "HEADER_KEY": "Token header key",
+    "HEADER_VALUE": "Token value",
+    "UNAUTHORIZED_MESSAGE": "You do not seem to be authorized to access this service, you might need to add an API key in the request header."
   },
   "KOwsLayerField": {
     "UNABLE_TO_DESCRIBE_FEATURE_TYPE": "Failed fetching layer's description.",

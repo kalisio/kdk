@@ -388,7 +388,10 @@
   "KOwsServiceField": {
     "INVALID_URL": "URL invalide",
     "CANNOT_FETCH_URL": "Impossible de récupérer la ressource.",
-    "WFS_MISSING_GEOJSON_SUPPORT": "Le service WFS ne supporte pas le format GeoJSON qui est un prérequis."
+    "WFS_MISSING_GEOJSON_SUPPORT": "Le service WFS ne supporte pas le format GeoJSON qui est un prérequis.",
+    "HEADER_KEY": "Clef d'en-tête du jeton",
+    "HEADER_VALUE": "Valeur du jeton",
+    "UNAUTHORIZED_MESSAGE": "Vous ne semblez pas autorisé(e) à accéder à ce service, un jeton d'accès dans l'en-tête de requête peut être nécessaire."
   },
   "KOwsLayerField": {
     "UNABLE_TO_DESCRIBE_FEATURE_TYPE": "Impossible de récupérer la description des propriétés de la couche.",
