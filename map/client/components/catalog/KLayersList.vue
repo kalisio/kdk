@@ -2,10 +2,10 @@
   <div>
     <slot name="header" />
 
-    <div v-if="internalLayers.length > 0" :key="layersKey">
+    <div v-if="layers && layers.length > 0">
       <div
-        v-for="(layer, index) in internalLayers"
-        :key="layer._id"
+        v-for="(layer, index) in layers"
+        :key="index"
         class="draggable-layer"
         :draggable="isDraggable(layer?.scope)"
         @dragstart="onDragStart($event, index, layer)"
@@ -43,7 +43,7 @@ import _ from 'lodash'
 import { computed, ref } from 'vue'
 import { api, utils } from '../../../../core/client'
 import KStamp from '../../../../core/client/components/KStamp.vue'
-import { getCategories } from '../../utils.map'
+import { getCategories, updateCategory } from '../../utils.map'
 
 // Props
 const props = defineProps({
@@ -62,15 +62,17 @@ const props = defineProps({
 })
 
 // Local state for layers to allow reordering
-const internalLayers = ref(props.layers.map((layer, i) => ({ ...layer, order: i })))
+// const internalLayers = ref(props.layers.map((layer, i) => ({ ...layer, order: i })))
 const draggedIndex = ref(null)
+
+// Emits
+const emit = defineEmits(['layerMoved'])
 
 // Computed
 const layerRenderer = computed(() => ({
   component: utils.loadComponent(_.get(props.options, 'renderer', 'catalog/KFilteredLayerItem')),
   options: _.get(props.options, 'renderer.options', {})
 }))
-const layersKey = computed(() => props.layers.map(l => l._id).join('-'))
 
 // watch(() => props.layers, (newLayers) => { internalLayers.value = [...newLayers] }, { deep: true })
 
@@ -79,34 +81,32 @@ function onDragStart (event, index, layer) {
   draggedIndex.value = index
   event.dataTransfer.dropEffect = 'move'
   event.dataTransfer.effectAllowed = 'move'
-  event.dataTransfer.setData('layerName', layer.name)
+  event.dataTransfer.setData('layerName', layer?.name)
+  event.dataTransfer.setData('categoryID', props.category?._id)
 }
 
 async function onDrop (event, targetIndex) {
   const layerName = event.dataTransfer.getData('layerName')
-  const categories = await getCategories()
+  const sourceCategoryId = event.dataTransfer.getData('categoryID')
+  if (!(sourceCategoryId.length > 0) || !props.category?._id) return
+  // const categories = await getCategories()
   // TODO if layerId is unavailable because of user scope object lacking the property, use something else in the dataTransfer
   if (layerName) { // target is layer
-    const layer = internalLayers.value.find((l) => l?.name === layerName)
-    const isLayerFromCurrentCategory = props.category?.layers?.includes(layerName)
+    const isLayerFromCurrentCategory = props.category._id === sourceCategoryId
     if (isLayerFromCurrentCategory) {
-      // TODO: instead of doing all that, send event upwards to splice category
-      layer.order = targetIndex
-      const otherLayers = internalLayers.value.filter((l) => l.name !== layerName)
-      for (const otherLayer of otherLayers) {
-        if (targetIndex > draggedIndex.value) {
-          if (otherLayer.order <= targetIndex && otherLayer.order > draggedIndex.value) otherLayer.order--
-        }
-        if (targetIndex < draggedIndex.value) {
-          if (otherLayer.order >= targetIndex && otherLayer.order < draggedIndex.value) otherLayer.order++
-        }
-      }
-      internalLayers.value.sort((a, b) => a.order - b.order)
+      const categoryLayers = props.category.layers
+      categoryLayers.splice(targetIndex, 0, categoryLayers.splice(draggedIndex.value, 1)[0])
+      updateCategory(props.category._id, { layers: categoryLayers })
     } else { // layer isn't from current category
-
+      const currentCategoryLayers = props.category.layers
+      const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
+      const sourceCategoryLayers = sourceCategory[0].layers
+      currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
+      updateCategory(props.category._id, { layers: currentCategoryLayers })
+      updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
     }
   } else {
-    const categoryID = null
+    const categoryID = event.dataTransfer.getData('categoryID')
     if (categoryID) { // target is category
 
     }

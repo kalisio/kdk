@@ -29,7 +29,7 @@
         :options="orphanLayersOptions"
       />
       <!-- Categorized layers -->
-      <template v-for="(category, index) in internalCategories">
+      <template v-for="(category, index) in filteredCategories">
         <KCategoryItem
           v-if="isCategoryVisible(category)"
           :key="getCategoryId(category)"
@@ -37,6 +37,7 @@
           :category="category"
           :layers="layersByCategory[category.name]"
           :forecastModels="forecastModels"
+          @layerMoved="handleLayerMove"
         >
           <template v-slot:header>
             <div
@@ -162,7 +163,6 @@ const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
 const orphanLayers = ref([])
-const internalCategories = ref([])
 const draggedIndex = ref(null)
 
 // Watch
@@ -198,7 +198,6 @@ function refresh () {
   // compute layers by categories and orphans layers
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
   orphanLayers.value = getOrphanLayers(filteredLayers, layersByCategory.value)
-  internalCategories.value = filteredCategories.value.map(category => ({ ...category, order: category?.order ?? 0 }))
 }//, 100)
 
 function onDragStart (event, index, category) {
@@ -209,24 +208,15 @@ function onDragStart (event, index, category) {
 }
 
 function onDrop (event, targetIndex) {
-  console.log(internalCategories.value)
   const categoryID = event.dataTransfer.getData('categoryID')
-  const category = internalCategories.value.find((c) => c._id === categoryID)
-  category.order = targetIndex
-  const otherCategories = internalCategories.value.filter((c) => c._id !== categoryID)
-  for (const otherCategory of otherCategories) {
-    if (targetIndex > draggedIndex.value) {
-      if (otherCategory.order <= targetIndex && otherCategory.order > draggedIndex.value) otherCategory.order--
-    }
-    if (targetIndex < draggedIndex.value) {
-      if (otherCategory.order >= targetIndex && otherCategory.order < draggedIndex.value) otherCategory.order++
-    }
-  }
-  internalCategories.value.sort((a, b) => a.order - b.order)
 }
 
 function isDraggable (categoryId) {
   return !!categoryId && api.can('update', 'catalog')
+}
+
+function handleLayerMove(draggedIndex, targetIndex) {
+  console.log("layer moved")
 }
 
 // Hooks
