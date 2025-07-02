@@ -97,7 +97,7 @@ import sift from 'sift'
 import { onMounted, ref, watchEffect } from 'vue'
 import { api, utils as coreUtils, i18n } from '../../../../core/client'
 import { useProject } from '../../composables'
-import { getLayersByCategory, getOrphanLayers } from '../../utils'
+import { getLayersByCategory, getOrphanLayers, updateCategory } from '../../utils'
 import KCategoryItem from './KCategoryItem.vue'
 import KLayersList from './KLayersList.vue'
 
@@ -208,7 +208,20 @@ function onDragStart (event, index, category) {
 }
 
 function onDrop (event, targetIndex) {
-  const categoryID = event.dataTransfer.getData('categoryID')
+  const sourceCategoryId = event.dataTransfer.getData('categoryID')
+  const layerName = event.dataTransfer.getData('layerName')
+  const draggedLayerIndex = event.dataTransfer.getData('draggedIndex')
+  if (layerName && layerName.length > 0) { // drag source is layer: change layer category
+    const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
+    const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
+    currentCategoryLayers.splice(0, 0, sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
+    updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+    updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+  } else { // drag source is category: reorder category
+    if (sourceCategoryId) {
+
+    }
+  }
 }
 
 function isDraggable (categoryId) {

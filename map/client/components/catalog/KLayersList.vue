@@ -81,6 +81,7 @@ function onDragStart (event, index, layer) {
   draggedIndex.value = index
   event.dataTransfer.dropEffect = 'move'
   event.dataTransfer.effectAllowed = 'move'
+  event.dataTransfer.setData('draggedIndex', draggedIndex.value)
   event.dataTransfer.setData('layerName', layer?.name)
   event.dataTransfer.setData('categoryID', props.category?._id)
 }
@@ -104,11 +105,6 @@ async function onDrop (event, targetIndex) {
       currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
       updateCategory(props.category._id, { layers: currentCategoryLayers })
       updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
-    }
-  } else {
-    const categoryID = event.dataTransfer.getData('categoryID')
-    if (categoryID) { // target is category
-
     }
   }
 }
