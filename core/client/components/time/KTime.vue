@@ -97,8 +97,4 @@ const computedPicker = computed(() => {
   }
   return _.merge({}, props.picker, picker)
 })
-
-// Immediate
-if (_.isEmpty(props.modelValue) &&
-    _.isEmpty(props.placeholder)) computedModel.value = moment.utc().format(mask)
 </script>
