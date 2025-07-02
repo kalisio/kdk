@@ -90,22 +90,24 @@ async function onDrop (event, targetIndex) {
   const layerName = event.dataTransfer.getData('layerName')
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
   if (!(sourceCategoryId.length > 0) || !props.category?._id) return
-  // const categories = await getCategories()
-  // TODO if layerId is unavailable because of user scope object lacking the property, use something else in the dataTransfer
-  if (layerName) { // target is layer
+  if (layerName && layerName.length > 0) { // source is layer
     const isLayerFromCurrentCategory = props.category._id === sourceCategoryId
-    if (isLayerFromCurrentCategory) {
+    if (isLayerFromCurrentCategory) { // reorder layers in category
       const categoryLayers = props.category.layers
       categoryLayers.splice(targetIndex, 0, categoryLayers.splice(draggedIndex.value, 1)[0])
       updateCategory(props.category._id, { layers: categoryLayers })
-    } else { // layer isn't from current category
-      const currentCategoryLayers = props.category.layers
+    } else { // layer isn't from current category: move layer to current category
+      // we are cloning currentCategoryLayers to avoid triggering unneeded reactivity
+      // (reactivity isn't needed here because updateCategory will trigger a refresh anyway)
+      const currentCategoryLayers = _.clone(props.category.layers)
       const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
       const sourceCategoryLayers = sourceCategory[0].layers
       currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
       updateCategory(props.category._id, { layers: currentCategoryLayers })
       updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
     }
+  } else { // drag source is category: reorder categories with target layer's category
+    console.log('category reorder change')
   }
 }
 

@@ -219,7 +219,7 @@ function onDrop (event, targetIndex) {
     updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
   } else { // drag source is category: reorder category
     if (sourceCategoryId) {
-
+      console.log("category order change")
     }
   }
 }

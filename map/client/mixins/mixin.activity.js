@@ -389,7 +389,7 @@ export const activity = {
     this.$engineEvents.on('layer-added', this.configureLayerActions)
   },
   mounted () {
-    this.debouncedRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 500)
+    this.debouncedRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
     // Target online/offline service depending on status
     this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
