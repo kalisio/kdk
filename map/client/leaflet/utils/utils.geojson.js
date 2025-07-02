@@ -1,23 +1,62 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import 'leaflet-realtime'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster'
 import { lineOffset } from '@turf/turf'
 import { GradientPath, SVGGradientPath } from '../GradientPath.js'
 
-// Override default remove handler for leaflet-realtime due to
-// https://github.com/perliedman/leaflet-realtime/issues/177
 const Realtime = L.Realtime.extend({
-  remove: function (geojson) {
+  // Override default remove handler for leaflet-realtime due to
+  // https://github.com/perliedman/leaflet-realtime/issues/177
+  remove(geojson) {
     if (typeof geojson === 'undefined') {
       return L.Layer.prototype.remove.call(this)
     } else {
       return L.Realtime.prototype.remove.call(this, geojson)
     }
+  },
+  // Add FeatureGroup interface so that layer edition works as well
+  toGeoJSON() {
+    return { type: 'FeatureCollection', features: _.values(this._features) }
+  },
+  clearLayers() {
+    this._onNewData(true, { type: 'FeatureCollection', features: [] })
+  },
+  getLayers() {
+    _.values(this._featureLayers)
+  },
+  addLayer(geoJsonLayer) {
+    this._onNewData(false, geoJsonLayer.toGeoJSON())
+  },
+  removeLayer(geoJsonLayer) {
+    this.remove(geoJsonLayer.toGeoJSON())
+  },
+  // Add additional missing features
+  bringToFront() {
+    this._container.bringToFront()
+  },
+  bringToBack() {
+    this._container.bringToBack()
   }
 })
 L.realtime = function (src, options) {
   return new Realtime(src, options)
 }
+const MarkerClusterGroup = L.MarkerClusterGroup.extend({
+  // Override invoke as used by eg bringToFront/bringToBack
+  invoke(methodName, ...args) {
+    L.MarkerClusterGroup.prototype.invoke.call(this, methodName, args)
+    this._featureGroup.invoke(methodName, args)
+    this._nonPointGroup.invoke(methodName, args)
+    return this
+  }
+})
+L.markerClusterGroup = function (options) {
+  return new MarkerClusterGroup(options)
+}
+
 // Override default Polyline simplify function to manage offset
 const simplifyPoints = L.Polyline.prototype._simplifyPoints
 L.Polyline.include({

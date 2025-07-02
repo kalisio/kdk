@@ -247,13 +247,6 @@ export const geojsonLayers = {
           }
           // Bind event
           layer.on('update', (data) => this.onLayerUpdated(options, layer, data))
-          if (leafletOptions.container) layer.once('add', () => leafletOptions.container.addTo(this.map))
-          // Add FeatureGroup interface so that layer edition works as well
-          layer.toGeoJSON = () => ({ type: 'FeatureCollection', features: _.values(layer._features) })
-          layer.clearLayers = () => layer._onNewData(true, { type: 'FeatureCollection', features: [] })
-          layer.getLayers = () => _.values(layer._featureLayers)
-          layer.addLayer = (geoJsonLayer) => layer._onNewData(false, geoJsonLayer.toGeoJSON())
-          layer.removeLayer = (geoJsonLayer) => layer.remove(geoJsonLayer.toGeoJSON())
           // We launch a first update to initialize data
           layer.update()
         } else {

@@ -9,9 +9,6 @@ import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
 import 'leaflet-fullscreen'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
-import 'leaflet.markercluster/dist/MarkerCluster.css'
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
-import 'leaflet.markercluster'
 import '@kalisio/leaflet.donutcluster/src/Leaflet.DonutCluster.css'
 import '@kalisio/leaflet.donutcluster'
 import 'leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js'
@@ -638,6 +635,26 @@ export const baseMap = {
     },
     zoomToBBox (bbox) {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
+    },
+    bringLayerToFront (name) {
+      const leafletLayer = this.getLeafletLayerByName(name)
+      if (!leafletLayer) return
+      // Handle case where there's clustering on top (cf. updateLayer)
+      if (leafletLayer instanceof L.MarkerClusterGroup) {
+        const container = leafletLayer
+        leafletLayer = leafletLayer.getLayers().find(layer => layer._container === container)
+      }
+      if (leafletLayer && (typeof leafletLayer.bringToFront === 'function')) leafletLayer.bringToFront()
+    },
+    bringLayerToBack (name) {
+      const leafletLayer = this.getLeafletLayerByName(name)
+      if (!leafletLayer) return
+      // Handle case where there's clustering on top (cf. updateLayer)
+      if (leafletLayer instanceof L.MarkerClusterGroup) {
+        const container = leafletLayer
+        leafletLayer = leafletLayer.getLayers().find(layer => layer._container === container)
+      }
+      if (leafletLayer && (typeof leafletLayer.bringToBack === 'function')) leafletLayer.bringToBack()
     },
     animateCenter (timestamp) {
       // Note: as this callback is called frequently by the animation system
