@@ -78,7 +78,7 @@ export function getLayersByCategory (layers, categories) {
       [(layer) => _.get(layer, _.get(category, 'options.orderBy', '_id'))],
       [_.get(category, 'options.order', 'asc')])
 
-    if (layers.length > 0) {
+    if (layers.length > 0 && category?.layers) {
       layersByCategory[category.name] = category.layers.map(layerName => layers.find(l => l.name === layerName))
     }
   })
