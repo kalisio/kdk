@@ -37,7 +37,6 @@
           :category="category"
           :layers="layersByCategory[category.name]"
           :forecastModels="forecastModels"
-          @layerMoved="handleLayerMove"
         >
           <template v-slot:header>
             <div
@@ -96,24 +95,16 @@ import _ from 'lodash'
 import sift from 'sift'
 import { onMounted, ref, watchEffect } from 'vue'
 import { api, utils as coreUtils, i18n } from '../../../../core/client'
-import { useProject } from '../../composables'
-import { getLayersByCategory, getOrphanLayers, updateCategory } from '../../utils'
+import { useCurrentActivity, useProject } from '../../composables'
+import { getLayersByCategory, getOrphanLayers, updateCategoriesOrder, updateCategory } from '../../utils'
 import KCategoryItem from './KCategoryItem.vue'
 import KLayersList from './KLayersList.vue'
 
 // Props
 const props = defineProps({
-  layers: {
-    type: [Object, Array],
-    default: () => []
-  },
   layersFilter: {
     type: [Object, Function],
     default: () => {}
-  },
-  layerCategories: {
-    type: Array,
-    default: () => []
   },
   layerCategoriesFilter: {
     type: [Object, Function],
@@ -159,6 +150,8 @@ const props = defineProps({
 
 // Data
 const { hasProject } = useProject()
+const { CurrentActivity } = useCurrentActivity()
+const { layerCategories, layers, forecastModels, refreshLayerCategories } = CurrentActivity.value
 const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
@@ -187,10 +180,10 @@ function isCategoryVisible (category) {
 function refresh () {
   // filter layers
   const layersFilter = (typeof props.layersFilter === 'object' ? sift(props.layersFilter) : props.layersFilter)
-  const filteredLayers = _.filter(props.layers, layersFilter)
+  const filteredLayers = _.filter(layers, layersFilter)
   // filter categories
   const categoriesFilter = (typeof props.layerCategoriesFilter === 'object' ? sift(props.layerCategoriesFilter) : props.layerCategoriesFilter)
-  filteredCategories.value = _.filter(props.layerCategories, categoriesFilter)
+  filteredCategories.value = _.filter(layerCategories, categoriesFilter)
   _.forEach(filteredCategories.value, category => {
     const component = _.get(category, 'component', 'catalog/KLayersList')
     if (!category.componentInstance) category.componentInstance = coreUtils.loadComponent(component)
@@ -207,7 +200,7 @@ function onDragStart (event, index, category) {
   event.dataTransfer.setData('categoryID', category._id)
 }
 
-function onDrop (event, targetIndex) {
+async function onDrop (event, targetIndex) {
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
   const layerName = event.dataTransfer.getData('layerName')
   const draggedLayerIndex = event.dataTransfer.getData('draggedIndex')
@@ -215,21 +208,18 @@ function onDrop (event, targetIndex) {
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
     const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
     currentCategoryLayers.splice(0, 0, sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
-    updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
-    updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+    await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+    await updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
   } else { // drag source is category: reorder category
     if (sourceCategoryId) {
-      console.log("category order change")
+      await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)
+      refreshLayerCategories()
     }
   }
 }
 
 function isDraggable (categoryId) {
   return !!categoryId && api.can('update', 'catalog')
-}
-
-function handleLayerMove(draggedIndex, targetIndex) {
-  console.log("layer moved")
 }
 
 // Hooks

@@ -20,7 +20,6 @@
       :layers="layers"
       :forecastModels="forecastModels"
       :options="category.options || category"
-      @layerMoved="(draggedIndex, targetIndex) => $emit('layerMoved', draggedIndex, targetIndex)"
       >
     </component>
   </q-expansion-item>
@@ -49,9 +48,6 @@ const props = defineProps({
 
 // Data
 const localStorageKey = 'catalog-categories'
-
-// Emits
-const emit = defineEmits(['layerMoved'])
 
 // Computed
 const name = computed(() => {

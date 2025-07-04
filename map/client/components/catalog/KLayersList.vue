@@ -100,6 +100,7 @@ async function onDrop (event, targetIndex) {
       // we are cloning currentCategoryLayers to avoid triggering unneeded reactivity
       // (reactivity isn't needed here because updateCategory will trigger a refresh anyway)
       const currentCategoryLayers = _.clone(props.category.layers)
+      // TODO: use something like getCatalogCategories instead to let apps overload the method
       const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
       const sourceCategoryLayers = sourceCategory[0].layers
       currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
