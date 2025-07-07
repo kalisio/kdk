@@ -7,7 +7,7 @@ import { Time, Units } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle, convertToCesiumFromStyle } from '../../cesium/utils/utils.style.js'
-import { createPrimitiveWithMovingTexture, findPrimitiveForEntity } from '../../cesium/utils/utils.cesium.js'
+import { createPrimitiveWithMovingTexture, getPrimitivesForEntity } from '../../cesium/utils/utils.cesium.js'
 import { hasUnitInCesiumLayerTemplate, updateCesiumGeoJsonEntity, GeoJsonCesiumLayerFilters } from '../../cesium/utils/utils.geojson.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
@@ -554,7 +554,7 @@ export const geojsonLayers = {
       // Make sure post process is enabled
       const stage = this.getPostProcessStage(effect)
       if (!stage) return
-      const primitives = []
+      let primitives = []
       // We allow features from multiple layers so that the code is based on arrays
       // but the input can be a single element
       const multipleLayers = Array.isArray(layerNames)
@@ -574,25 +574,24 @@ export const geojsonLayers = {
         const ids = Array.isArray(layerIds) ? layerIds : [layerIds]
         ids.forEach((id) => {
           // Lookup entity based on featureId
-          const entity = layer.entities.getById(id)
-          let primitive = null
+          let entity = layer.entities.getById(id)
+          let primitive = layer.primitives.get(id)
+          // Take care we also generate IDs based on specific entity types
+          CustomTypes.forEach(type => {
+            if (entity || primitive) return
+            const customId = getCustomEntityId(id, type)
+            entity = layer.entities.getById(customId)
+            primitive = layer.primitives.get(customId)
+          })
           if (entity) {
             // Lookup associated primitive
-            primitive = findPrimitiveForEntity(entity, this.viewer)
+            primitive = getPrimitivesForEntity(entity, this.viewer)
           } else {
-            // Lookup primitive based on featureId
-            primitive = layer.primitives.get(id)
-            // Take care we also generate IDs based on specific entity types
-            CustomTypes.forEach(type => {
-              // Already found ?
-              if (primitive) return
-              const customId = getCustomEntityId(id, type)
-              primitive = layer.primitives.get(customId)
-            })
             primitive = _.get(primitive, 'primitive')
           }
           if (!primitive) return
-          primitives.push(primitive)
+          // An entity can have multiple primitives, so we need to handle that
+          primitives = _.concat(primitives, _.isArray(primitive) ? primitive : [primitive])
         })
       }
 
