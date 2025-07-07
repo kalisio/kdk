@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
+import { api, i18n, Store } from '../../../core/client/index.js'
 import { buildUrl } from '../../../core/common/index.js'
-import { i18n, api, Store } from '../../../core/client/index.js'
 
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
@@ -77,6 +77,10 @@ export function getLayersByCategory (layers, categories) {
     layersByCategory[category.name] = _.orderBy(layersByCategory[category.name],
       [(layer) => _.get(layer, _.get(category, 'options.orderBy', '_id'))],
       [_.get(category, 'options.order', 'asc')])
+
+    if (layers.length > 0 && category?.layers) {
+      layersByCategory[category.name] = category.layers.map(layerName => layers.find(l => l.name === layerName))
+    }
   })
   return layersByCategory
 }
@@ -129,6 +133,35 @@ export async function getCategories (options = {}) {
     categories = categories.concat(response.data)
   }
   return categories
+}
+
+export async function updateCategory (id, data, options = {}) {
+  _.defaults(options, {
+    context: '',
+    planetApi: api
+  })
+
+  const catalogService = options.planetApi.getService('catalog', options.context)
+  if (catalogService && id && data) {
+    const response = await catalogService.patch(id, data)
+    return response
+  }
+}
+
+export async function updateCategoriesOrder (sourceCategoryId, targetCategoryId, options = {}) {
+  _.defaults(options, {
+    planetApi: api
+  })
+
+  const configurationsService = options.planetApi.getService('configurations')
+  if (configurationsService && sourceCategoryId && targetCategoryId) {
+    const userCategoriesOrderObject = (await configurationsService.find({ query: { name: 'userCategoriesOrder' }, paginate: false })).data[0]
+    const userCategoriesOrder = userCategoriesOrderObject.value
+    const sourceCategoryIndex = userCategoriesOrder.findIndex(c => c === sourceCategoryId)
+    const targetCategoryIndex = userCategoriesOrder.findIndex(c => c === targetCategoryId)
+    userCategoriesOrder.splice(targetCategoryIndex, 0, userCategoriesOrder.splice(sourceCategoryIndex, 1)[0])
+    return (await configurationsService.patch(userCategoriesOrderObject._id, { value: userCategoriesOrder }))
+  } else return
 }
 
 export async function getSublegends (options = {}) {
