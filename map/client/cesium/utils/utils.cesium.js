@@ -356,51 +356,18 @@ export function createPrimitiveWithMovingTexture (type, options) {
   }
 }
 
-export function findPrimitiveForEntity (entity, viewer) {
-  const deepSearch = function (object, id, ids = []) {
-    if (object._id) {
-      if (object._id._id === id) return object
-      return null
-    }
-    if (object._guid) {
-      if (ids.includes(object._guid)) {
-        return null
-      }
-      ids.push(object._guid)
-    }
-    if (object._external) {
-      return deepSearch(object._external, id, ids)
-    }
-    if (object.collection) {
-      return deepSearch(object.collection, id, ids)
-    }
+export function getPrimitivesForEntity (entity, viewer) {
+  const pickObjects = viewer.scene.context._pickObjects
+  const primitives = []
+  for (const k in pickObjects) {
+    const object = pickObjects[k]
+    const objectEntity = _.get(object, 'id')
+    if (!objectEntity) continue
 
-    if (object._composites) {
-      for (const k in object._composites) {
-        const primitive = deepSearch(object._composites[k], id, ids)
-        if (primitive) return primitive
-      }
-    }
-
-    if (object._primitives) {
-      for (const o of object._primitives) {
-        if (o._guid) {
-          if (ids.includes(o._guid)) {
-            continue
-          }
-          ids.push(o._guid)
-        }
-        const primitive = deepSearch(o, id, ids)
-        if (primitive) return primitive
-      }
+    if (objectEntity === entity) {
+      const primitive = _.get(object, 'primitive')
+      if (primitive) primitives.push(primitive)
     }
   }
-
-  const primitives = viewer.scene.primitives
-  for (let i = 0; i < primitives.length; i++) {
-    const out = deepSearch(primitives.get(i), entity.id)
-    if (out) return out
-  }
-
-  return null
+  return primitives
 }
