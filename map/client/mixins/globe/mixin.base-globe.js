@@ -49,7 +49,8 @@ export const baseGlobe = {
         animation: false,
         timeline: false,
         depthTestAgainstTerrain: false,
-        cameraMoveEventPercentage: 0.2
+        cameraMoveEventPercentage: 0.2,
+        entityLoadTextureDelay: 24
       })
       if (token) Ion.defaultAccessToken = token
       // If we don't need ion

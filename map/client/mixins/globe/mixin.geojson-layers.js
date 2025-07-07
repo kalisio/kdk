@@ -25,13 +25,20 @@ function getOriginalEntityId (customId, type) {
 function addCustomPrimitive (activity, dataSource, id, primitive, material) {
   const oldCustom = dataSource.primitives.get(id)
   if (oldCustom) {
-    activity.viewer.scene.primitives.remove(oldCustom.primitive)
-    const index = activity.cesiumMaterials.indexOf(oldCustom.material)
-    activity.cesiumMaterials.splice(index, 1)
+    // Delay removal of the old primitive to avoid flickering
+    setTimeout(() => {
+      activity.viewer.scene.primitives.remove(oldCustom.primitive)
+      const index = activity.cesiumMaterials.indexOf(oldCustom.material)
+      activity.cesiumMaterials.splice(index, 1)
+    }, activity.viewerOptions.entityLoadTextureDelay)
   }
   dataSource.primitives.set(id, { primitive, material })
   activity.viewer.scene.primitives.add(primitive)
   activity.cesiumMaterials.push(material)
+  // Delay opacity change to avoid white material when texture is not loaded
+  setTimeout(() => {
+    material.material.uniforms.opacity = 1.0
+  }, activity.viewerOptions.entityLoadTextureDelay)
 }
 
 function removeCustomPrimitiveById (activity, dataSource, id) {
