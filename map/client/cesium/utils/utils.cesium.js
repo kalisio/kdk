@@ -356,17 +356,17 @@ export function createPrimitiveWithMovingTexture (type, options) {
   }
 }
 
-export function getPrimitivesForEntity (entity, viewer) {
+export function getPrimitivesForEntity(entityId, viewer) {
   const pickObjects = viewer.scene.context._pickObjects
   const primitives = []
   for (const k in pickObjects) {
     const object = pickObjects[k]
-    const objectEntity = _.get(object, 'id')
-    if (!objectEntity) continue
+    const id = _.get(object, 'id._id')
+    if (!id) continue
 
-    if (objectEntity === entity) {
+    if (entityId.toString() === id) {
       const primitive = _.get(object, 'primitive')
-      if (primitive) primitives.push(primitive)
+      if (primitive && !primitives.includes(primitive)) primitives.push(primitive)
     }
   }
   return primitives

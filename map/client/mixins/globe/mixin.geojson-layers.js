@@ -585,7 +585,7 @@ export const geojsonLayers = {
           })
           if (entity) {
             // Lookup associated primitive
-            primitive = getPrimitivesForEntity(entity, this.viewer)
+            primitive = getPrimitivesForEntity(id, this.viewer)
           } else {
             primitive = _.get(primitive, 'primitive')
           }
