@@ -254,19 +254,19 @@ function createMaterialWithMovingTexture (options) {
     throw new Error('Load material from type is not working')
   } catch (e) {
     const shaderSource = `
-        czm_material czm_getMaterial(czm_materialInput materialInput) {
-            czm_material material = czm_getDefaultMaterial(materialInput);
+      czm_material czm_getMaterial(czm_materialInput materialInput) {
+          czm_material material = czm_getDefaultMaterial(materialInput);
 
-            vec2 st = materialInput.st * repeat + offset;
+          vec2 st = materialInput.st * repeat + offset;
 
-            // Loop texture with fract
-            st = fract(st);
+          // Loop texture with fract
+          st = fract(st);
 
-            vec4 color = texture(image, st);
-            material.${options.useAsDiffuse ? 'diffuse' : 'emission'} = color.rgb;
-            material.alpha = color.a;
-            return material;
-        }`
+          vec4 color = texture(image, st);
+          material.${options.useAsDiffuse ? 'diffuse' : 'emission'} = color.rgb;
+          material.alpha = color.a * opacity;
+          return material;
+      }`
 
     material = new Cesium.Material({
       fabric: {
@@ -275,7 +275,8 @@ function createMaterialWithMovingTexture (options) {
         uniforms: {
           image: options.image,
           repeat: new Cesium.Cartesian2(1.0, 1.0),
-          offset: new Cesium.Cartesian2(0.0, 0.0)
+          offset: new Cesium.Cartesian2(0.0, 0.0),
+          opacity: 0.0
         }
       },
       translucent: _.get(options, 'translucent', false)
