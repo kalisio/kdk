@@ -43,7 +43,8 @@ import _ from 'lodash'
 import { computed, ref } from 'vue'
 import { api, utils } from '../../../../core/client'
 import KStamp from '../../../../core/client/components/KStamp.vue'
-import { getCategories, updateCategory } from '../../utils.map'
+import { useCurrentActivity } from '../../composables'
+import { getCategories, updateCategoriesOrder, updateCategory } from '../../utils.map'
 
 // Props
 const props = defineProps({
@@ -61,9 +62,10 @@ const props = defineProps({
   }
 })
 
-// Local state for layers to allow reordering
-// const internalLayers = ref(props.layers.map((layer, i) => ({ ...layer, order: i })))
+// Data
 const draggedIndex = ref(null)
+const { CurrentActivity } = useCurrentActivity()
+const { refreshLayerCategories } = CurrentActivity.value
 
 // Emits
 const emit = defineEmits(['layerMoved'])
@@ -108,7 +110,12 @@ async function onDrop (event, targetIndex) {
       updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
     }
   } else { // drag source is category: reorder categories with target layer's category
-    console.log('category reorder change')
+    const sourceCategoryId = event.dataTransfer.getData('categoryID')
+    const targetCategoryId = props.category._id
+    if (sourceCategoryId && targetCategoryId) {
+      await updateCategoriesOrder(sourceCategoryId, targetCategoryId)
+      refreshLayerCategories()
+    }
   }
 }
 
