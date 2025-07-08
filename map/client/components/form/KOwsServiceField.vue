@@ -55,7 +55,7 @@
       </template>
     </q-select>
     <!-- Header -->
-    <div class="row" v-if="showHeader">
+    <div class="row" v-if="unhautorized">
       <q-input class="col"
         :for="properties.name + '-header-key-field'"
         :id="properties.name + '-header-key-field'"
@@ -98,7 +98,7 @@ export default {
     return {
       request: '',
       availableServices: [],
-      showHeader: false,
+      unhautorized: false,
       headerKey: '',
       headerValue: '',
       loading: false
@@ -126,26 +126,25 @@ export default {
       let response = null
       this.loading = true
       if (request) {
-        try {
-          // Check if related to registered service in cas we need headers
-          const service = _.find(this.availableServices, { request })
-          const url = new URL(request)
-          response = await this.probeEndpoint(url, _.get(service, 'headers', {}))
-          if (response) {
-            // make sure WFS server supports GeoJSON output
-            if (response.protocol === 'WFS' && !response.geoJsonOutputFormat) {
-              this.error = 'KOwsServiceField.WFS_MISSING_GEOJSON_SUPPORT'
-            } else {
-              this.model = response
-              this.error = ''
-            }
+        // Check if related to registered service in case we need headers
+        const service = _.find(this.availableServices, { request })
+        const url = new URL(request)
+        response = await this.probeEndpoint(url, _.get(service, 'headers', {}))
+        if (response) {
+          // make sure WFS server supports GeoJSON output
+          if (response.protocol === 'WFS' && !response.geoJsonOutputFormat) {
+            this.error = 'KOwsServiceField.WFS_MISSING_GEOJSON_SUPPORT'
+          } else {
+            this.model = response
+            this.error = ''
           }
-        } catch (error) {
-          this.error = 'KOwsServiceField.INVALID_URL'
+        } else if (this.unhautorized) {
+          // Remove any previous headers as token might have expired or so
+          _.unset(service, 'headers')
         }
       }
       this.loading = false
-      if (this.model) this.onChanged()
+      if (this.model && !this.error) this.onChanged()
     },
     async onAddService () {
       // Delete the available layers before saving the service
@@ -196,9 +195,11 @@ export default {
           }
           const resp = await fetch(query, { redirect: 'follow', headers: result.headers })
           if ((resp.status === 401) || (resp.status === 403)) {
-            this.showHeader = true
+            this.unhautorized = true
             this.error = 'KOwsServiceField.UNAUTHORIZED_MESSAGE'
             return null
+          } else {
+            this.unhautorized = false
           }
           const txt = await resp.text()
           caps = await xml2js.parseStringPromise(txt, { tagNameProcessors: [xml2js.processors.stripPrefix] })
