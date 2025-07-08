@@ -33,7 +33,7 @@ const Realtime = L.Realtime.extend({
   removeLayer(geoJsonLayer) {
     this.remove(geoJsonLayer.toGeoJSON())
   },
-  // Add additional missing features
+  // Additional missing features
   bringToFront() {
     this._container.bringToFront()
   },
