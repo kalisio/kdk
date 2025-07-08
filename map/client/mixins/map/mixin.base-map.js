@@ -573,6 +573,18 @@ export const baseMap = {
       this.layers[newName] = layer
       delete this.layers[previousName]
     },
+    reorganizeLayers (layerCategories) {
+      if (this.leafletLayers && !_.isEmpty(this.leafletLayers)) {
+        for (let i = layerCategories.length - 1; i >= 0; i--) {
+          const category = layerCategories[i]
+          if (!category?.layers) continue
+          for (let j = category.layers.length - 1; j >= 0; j--) {
+            const layer = category.layers[j]
+            this.bringLayerToFront(layer)
+          }
+        }
+      }
+    },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return

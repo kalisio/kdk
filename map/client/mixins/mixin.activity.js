@@ -319,8 +319,8 @@ export const activity = {
       }
       // Retrieve the layers
       try {
-        await this.refreshLayerCategories()
         await this.refreshLayers()
+        await this.refreshLayerCategories()
         if (hasContext) await this.restoreContext('layers')
       } catch (error) {
         logger.error('[KDK]', error)
@@ -343,7 +343,7 @@ export const activity = {
       switch (object.type) {
         case 'Category':
           // In any case we rebuild categories
-          this.debouncedRefreshLayerCategories()
+          await this.debouncedRefreshLayerCategories()
           break
         case 'Context':
         case 'Service':
