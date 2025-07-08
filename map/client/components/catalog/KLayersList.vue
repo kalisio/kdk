@@ -7,13 +7,13 @@
         v-for="(layer, index) in layers"
         :key="index"
         class="draggable-layer"
-        :draggable="isDraggable(layer?.scope)"
+        :draggable="isDraggable()"
         @dragstart="onDragStart($event, index, layer)"
         @drop="onDrop($event, index)"
         @dragover.prevent
         @dragenter.prevent
       >
-        <div v-if="isDraggable(layer?.scope)" class="drag-handle">☰</div>
+        <div v-if="isDraggable()" class="drag-handle">☰</div>
         <component
           :is="layerRenderer.component"
           v-bind="layerRenderer.options"
@@ -44,7 +44,7 @@ import { computed, ref } from 'vue'
 import { api, utils } from '../../../../core/client'
 import KStamp from '../../../../core/client/components/KStamp.vue'
 import { useCurrentActivity } from '../../composables'
-import { getCategories, updateCategoriesOrder, updateCategory } from '../../utils.map'
+import { getCategories, updateCategory } from '../../utils.map'
 
 // Props
 const props = defineProps({
@@ -56,6 +56,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  layersDraggable: {
+    type: Boolean,
+    default: false
+  },
   options: {
     type: Object,
     default: () => {}
@@ -65,7 +69,7 @@ const props = defineProps({
 // Data
 const draggedIndex = ref(null)
 const { CurrentActivity } = useCurrentActivity()
-const { refreshLayerCategories } = CurrentActivity.value
+const { refreshLayerCategories, updateCategoriesOrder } = CurrentActivity.value
 
 // Emits
 const emit = defineEmits(['layerMoved'])
@@ -106,15 +110,16 @@ async function onDrop (event, targetIndex) {
       const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
       const sourceCategoryLayers = sourceCategory[0].layers
       currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
-      updateCategory(props.category._id, { layers: currentCategoryLayers })
-      updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+      if (api.can('update', 'catalog')) {
+        updateCategory(props.category._id, { layers: currentCategoryLayers })
+        updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+      }
     }
   } else { // drag source is category: reorder categories with target layer's category
     const sourceCategoryId = event.dataTransfer.getData('categoryID')
     const targetCategoryId = props.category._id
-    if (sourceCategoryId && targetCategoryId) {
+    if (api.can('update', 'catalog') && sourceCategoryId && targetCategoryId) {
       await updateCategoriesOrder(sourceCategoryId, targetCategoryId)
-      refreshLayerCategories()
     }
   }
 }
@@ -149,8 +154,8 @@ function onLayerFilterToggled (layer, filter) {
 }
 
 // Misc functions
-function isDraggable (scope) {
-  return scope && scope === 'user' && api.can('update', 'catalog')
+function isDraggable () {
+  return props.layersDraggable
 }
 </script>
 

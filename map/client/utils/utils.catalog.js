@@ -148,22 +148,6 @@ export async function updateCategory (id, data, options = {}) {
   }
 }
 
-export async function updateCategoriesOrder (sourceCategoryId, targetCategoryId, options = {}) {
-  _.defaults(options, {
-    planetApi: api
-  })
-
-  const configurationsService = options.planetApi.getService('configurations')
-  if (configurationsService && sourceCategoryId && targetCategoryId) {
-    const userCategoriesOrderObject = (await configurationsService.find({ query: { name: 'userCategoriesOrder' }, paginate: false })).data[0]
-    const userCategoriesOrder = userCategoriesOrderObject.value
-    const sourceCategoryIndex = userCategoriesOrder.findIndex(c => c === sourceCategoryId)
-    const targetCategoryIndex = userCategoriesOrder.findIndex(c => c === targetCategoryId)
-    userCategoriesOrder.splice(targetCategoryIndex, 0, userCategoriesOrder.splice(sourceCategoryIndex, 1)[0])
-    return (await configurationsService.patch(userCategoriesOrderObject._id, { value: userCategoriesOrder }))
-  } else return
-}
-
 export async function getSublegends (options = {}) {
   _.defaults(options, {
     query: {},

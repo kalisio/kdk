@@ -104,6 +104,10 @@ export const activity = {
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
+      this.reorganizeLayers(layerCategories)
+    },
+    async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
+      this.refreshLayerCategories()
     },
     async refreshLayers () {
       // Clear layers and variables
@@ -184,6 +188,8 @@ export const activity = {
     async onTriggerLayer (layer) {
       if (!this.isLayerVisible(layer.name)) {
         await this.showLayer(layer.name)
+        const layerCategories = await this.getCatalogCategories()
+        this.reorganizeLayers(layerCategories)
       } else {
         await this.hideLayer(layer.name)
       }

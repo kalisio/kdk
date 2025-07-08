@@ -36,6 +36,7 @@
           :id="getCategoryId(category)"
           :category="category"
           :layers="layersByCategory[category.name]"
+          :layersDraggable="layersDraggable"
           :forecastModels="forecastModels"
         >
           <template v-slot:header>
@@ -96,7 +97,7 @@ import sift from 'sift'
 import { onMounted, ref, watchEffect } from 'vue'
 import { api, utils as coreUtils, i18n } from '../../../../core/client'
 import { useCurrentActivity, useProject } from '../../composables'
-import { getLayersByCategory, getOrphanLayers, updateCategoriesOrder, updateCategory } from '../../utils'
+import { getLayersByCategory, getOrphanLayers, updateCategory } from '../../utils'
 import KCategoryItem from './KCategoryItem.vue'
 import KLayersList from './KLayersList.vue'
 
@@ -109,6 +110,14 @@ const props = defineProps({
   layerCategoriesFilter: {
     type: [Object, Function],
     default: () => {}
+  },
+  layersDraggable: {
+    type: Boolean,
+    default: false
+  },
+  categoriesDraggable: {
+    type: Boolean,
+    default: false
   },
   forecastModels: {
     type: Array,
@@ -151,7 +160,7 @@ const props = defineProps({
 // Data
 const { hasProject } = useProject()
 const { CurrentActivity } = useCurrentActivity()
-const { layerCategories, layers, forecastModels, refreshLayerCategories } = CurrentActivity.value
+const { layerCategories, layers, forecastModels, refreshLayerCategories, updateCategoriesOrder } = CurrentActivity.value
 const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
@@ -208,18 +217,19 @@ async function onDrop (event, targetIndex) {
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
     const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
     currentCategoryLayers.splice(0, 0, sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
-    await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
-    await updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+    if (api.can('update', 'catalog')) {
+      await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+      await updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+    }
   } else { // drag source is category: reorder category
-    if (sourceCategoryId) {
+    if (api.can('update', 'catalog') && sourceCategoryId) {
       await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)
-      refreshLayerCategories()
     }
   }
 }
 
 function isDraggable (categoryId) {
-  return !!categoryId && api.can('update', 'catalog')
+  return !!categoryId && props.categoriesDraggable
 }
 
 // Hooks

@@ -20,6 +20,7 @@
       :layers="layers"
       :forecastModels="forecastModels"
       :options="category.options || category"
+      :layersDraggable="layersDraggable"
       >
     </component>
   </q-expansion-item>
@@ -39,6 +40,10 @@ const props = defineProps({
   layers: {
     type: Array,
     required: true
+  },
+  layersDraggable: {
+    type: Boolean,
+    default: false
   },
   forecastModels: {
     type: Array,
