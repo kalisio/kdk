@@ -58,6 +58,9 @@ export function defineUserAbilities (subject, can, cannot) {
   // Allow push registration
   can('service', 'push')
   can('create', 'push')
+  // Allow tag management
+  can('service', 'tags')
+  can('create', 'tags')
   if (subject && subject._id) {
     // Read user profiles for authorizing
     can('read', 'users')
