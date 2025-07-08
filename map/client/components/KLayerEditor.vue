@@ -286,7 +286,7 @@ function getValues () {
       isVisible: _.get(layer, 'leaflet.isVisible', _.get(DefaultStyle, 'isVisible')),
       zoom: {
         leaflet: {
-          enabled: !!(_.get(layer, 'leaflet.minZoom') || _.get(layer, 'leaflet.maxZoom')),
+          enabled: _.get(layer, 'leaflet.minZoom', _.get(layer, 'leaflet.maxZoom'), false) !== false,
           min: leafletZoomBounds.min,
           max: leafletZoomBounds.max,
           step: 1,
@@ -296,7 +296,7 @@ function getValues () {
           }
         },
         cesium: {
-          enabled: !!(_.get(layer, 'cesium.minZoom') || _.get(layer, 'cesium.maxZoom')),
+          enabled: _.get(layer, 'cesium.minZoom', _.get(layer, 'cesium.maxZoom'), false) !== false,
           min: leafletZoomBounds.min,
           max: leafletZoomBounds.max,
           step: 1,
@@ -310,7 +310,7 @@ function getValues () {
       },
       clustering: {
         leaflet: {
-          enabled: !!(_.get(layer, 'leaflet.cluster') || _.get(activityOptions, 'cluster')),
+          enabled: _.get(layer, 'leaflet.cluster', _.get(activityOptions, 'cluster', false)) !== false,
           min: leafletZoomBounds.min,
           max: leafletZoomBounds.max,
           value: _.get(layer, 'leaflet.cluster.disableClusteringAtZoom', _.get(activityOptions, 'cluster.disableClusteringAtZoom', _.get(DefaultStyle, 'leaflet.cluster.disableClusteringAtZoom')))
