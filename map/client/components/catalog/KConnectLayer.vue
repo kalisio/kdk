@@ -201,7 +201,7 @@ async function onConnect () {
 
     newLayer.cesium = {
       type: 'WebMapService',
-      url: service.value.baseUrl,
+      url: service.value.getMapUrl || service.value.baseUrl,
       layers: layer.value.id,
       parameters: Object.assign({
         version: service.value.version,
@@ -211,7 +211,7 @@ async function onConnect () {
     }
     newLayer.leaflet = Object.assign({
       type: 'tileLayer.wms',
-      source: service.value.baseUrl,
+      source: service.value.getMapUrl || service.value.baseUrl,
       layers: layer.value.id,
       version: service.value.version,
       format: 'image/png',

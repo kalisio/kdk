@@ -241,6 +241,7 @@ export default {
           result.availableLayers = decoded.availableLayers
           result.version = this.findQueryParameter(url.searchParams, 'VERSION')
           if (!result.version) result.version = decoded.version
+          if (decoded.getMapUrl) result.getMapUrl = decoded.getMapUrl
         } else if (result.protocol === 'WFS') {
           const decoded = await wfs.discover(result.baseUrl, result.searchParams, result.headers, caps)
           result.availableLayers = decoded.availableLayers
