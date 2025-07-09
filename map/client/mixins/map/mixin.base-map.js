@@ -29,7 +29,7 @@ import { getLocale } from '../../../../core/client/utils/index.js'
 import '../../leaflet/BoxSelection.js'
 import '../../leaflet/WindBarb.js'
 import { Geolocation } from '../../geolocation.js'
-import { LeafletEvents, TouchEvents, bindLeafletEvents } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
+import { LeafletEvents, TouchEvents, bindLeafletEvents, getNearestTime } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
 
@@ -399,7 +399,14 @@ export const baseMap = {
         _.set(timeDimension, 'period', 'P1D')
         const timeRange = _.get(timeDimension, 'times')
         const timeRangeComponents = (typeof timeRange === 'string' ? timeRange.split('/') : [])
-        if (timeRangeComponents.length === 2) {
+        const timeList = (typeof timeRange === 'string' ? timeRange.split(',') : [])
+        let times = [] // Time list as moment objects to ease search
+        if (!_.isEmpty(timeList)) {
+          // In this case there is no period as time list should be ISO
+          _.unset(timeDimension, 'period')
+          // Convert to moment objects
+          times = _.sortBy(timeList.map(time => moment.utc(time)), (time) => time.valueOf())
+        } else if (timeRangeComponents.length === 2) {
           _.set(timeDimension, 'times', `${timeRange}/P1D`)
         } else if (timeRangeComponents.length === 3) {
           _.set(timeDimension, 'period', timeRangeComponents[2])
@@ -414,16 +421,30 @@ export const baseMap = {
           currentTime: Time.getCurrentTime().toDate().getTime()
         })
         // This allow the layer to conform our internal time interface
-        layer.setCurrentTime = (datetime) => { layer._timeDimension.setCurrentTime(datetime.toDate().getTime()) }
+        layer.setCurrentTime = (datetime) => {
+          layer._timeDimension.setCurrentTime(datetime.toDate().getTime())
+        }
         // Default implementation always generate ISO datetime that might break some servers with eg day period only
         layer._createLayerForTime = (time) => {
+          time = moment.utc(time)
           // Remove some internals to avoid polluting request
           const wmsParams = _.omit(layer._baseLayer.options, ['timeDimension', 'isVisible', 'type'])
           // Format time according to period
-          if (periodAsDuration.years() > 0) wmsParams.time = moment.utc(time).format('YYYY').toISOString()
-          else if (periodAsDuration.months() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM')
-          else if (periodAsDuration.days() > 0) wmsParams.time = moment.utc(time).format('YYYY-MM-DD')
-          else wmsParams.time = moment.utc(time).toISOString()
+          if (periodAsDuration.years() > 0) {
+            wmsParams.time = time.format('YYYY').toISOString()
+          } else if (periodAsDuration.months() > 0) {
+            wmsParams.time = time.format('YYYY-MM')
+          } else if (periodAsDuration.days() > 0) {
+            wmsParams.time = time.format('YYYY-MM-DD')
+          } else if (!_.isEmpty(times)) {
+            // Find nearest available time, as we keep the list ordered it could use a faster algorithm in utility function
+            const { index, difference } = getNearestTime(time, times, true)
+            // Keep original time format in any case it is not ISO
+            if (index >= 0) wmsParams.time = timeList[index]
+            else wmsParams.time = time.toISOString()
+          } else {
+            wmsParams.time = time.toISOString()
+          }
           // Some Leaflet constructors can have additional arguments given as options
           let args = _.get(leafletOptions, 'options', [])
           // Can be an array or a single object for a single additonnal argument

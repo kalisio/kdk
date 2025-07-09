@@ -2,18 +2,29 @@ import _ from 'lodash'
 import formatcoords from 'formatcoords'
 
 // Find the nearest time of a given one in a given moment time list
-export function getNearestTime (time, times) {
+// if the time list is already sorted in ascending order use the last argument to speed up search
+export function getNearestTime (time, times, sorted = false) {
   // Look for the nearest time
-  let timeIndex = -1
-  let minDiff = Infinity
-  times.forEach((currentTime, index) => {
-    const diff = Math.abs(time.diff(currentTime))
-    if (diff < minDiff) {
-      minDiff = diff
-      timeIndex = index
+  if (sorted) {
+    let timeIndex = 0
+    for (; timeIndex < times.length; timeIndex++) {
+      if (time.valueOf() < times[timeIndex].valueOf()) break
     }
-  })
-  return { index: timeIndex, difference: minDiff }
+    // We've found the first index greater than the time so return the previous
+    if (timeIndex > 0) timeIndex--
+    return { index: timeIndex, difference: Math.abs(time.diff(times[timeIndex])) }
+  } else {
+    let timeIndex = -1
+    let minDiff = Infinity
+    times.forEach((currentTime, index) => {
+      const diff = Math.abs(time.diff(currentTime))
+      if (diff < minDiff) {
+        minDiff = diff
+        timeIndex = index
+      }
+    })
+    return { index: timeIndex, difference: minDiff }
+  }
 }
 
 // Find the minimum or maximum time interval in a given moment time list
