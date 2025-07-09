@@ -26,6 +26,7 @@
       <!-- Orphan layers -->
       <KLayersList
         :layers="orphanLayers"
+        :layersDraggable="layersDraggable"
         :options="orphanLayersOptions"
       />
       <!-- Categorized layers -->
@@ -215,12 +216,20 @@ async function onDrop (event, targetIndex) {
   const draggedLayerIndex = event.dataTransfer.getData('draggedIndex')
   if (layerName && layerName.length > 0) { // drag source is layer: change layer category
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
-    const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
-    currentCategoryLayers.splice(0, 0, sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
-    if (api.can('update', 'catalog')) {
-      await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
-      await updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+    if (sourceCategoryId === "undefined") { // source is orphan layer
+      currentCategoryLayers.unshift(layerName)
+      if (api.can('update', 'catalog')) {
+        await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+      }
+    } else {
+      const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
+      currentCategoryLayers.unshift(sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
+      if (api.can('update', 'catalog')) {
+        await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+        await updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+      }
     }
+   
   } else { // drag source is category: reorder category
     if (api.can('update', 'catalog') && sourceCategoryId) {
       await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)

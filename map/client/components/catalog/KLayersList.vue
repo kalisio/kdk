@@ -95,24 +95,31 @@ function onDragStart (event, index, layer) {
 async function onDrop (event, targetIndex) {
   const layerName = event.dataTransfer.getData('layerName')
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
-  if (!(sourceCategoryId.length > 0) || !props.category?._id) return
+  if (!props.category?._id) return
   if (layerName && layerName.length > 0) { // source is layer
     const isLayerFromCurrentCategory = props.category._id === sourceCategoryId
     if (isLayerFromCurrentCategory) { // reorder layers in category
       const categoryLayers = props.category.layers
       categoryLayers.splice(targetIndex, 0, categoryLayers.splice(draggedIndex.value, 1)[0])
-      updateCategory(props.category._id, { layers: categoryLayers })
+      if (api.can('update', 'catalog')) await updateCategory(props.category._id, { layers: categoryLayers })
     } else { // layer isn't from current category: move layer to current category
       // we are cloning currentCategoryLayers to avoid triggering unneeded reactivity
       // (reactivity isn't needed here because updateCategory will trigger a refresh anyway)
       const currentCategoryLayers = _.clone(props.category.layers)
-      // TODO: use something like getCatalogCategories instead to let apps overload the method
-      const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
-      const sourceCategoryLayers = sourceCategory[0].layers
-      currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
-      if (api.can('update', 'catalog')) {
-        updateCategory(props.category._id, { layers: currentCategoryLayers })
-        updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+      if (sourceCategoryId === "undefined") { // source is orphan layer
+        currentCategoryLayers.splice(targetIndex, 0, layerName)
+        if (api.can('update', 'catalog')) {
+          await updateCategory(props.category._id, { layers: currentCategoryLayers })
+        }
+      } else { // source isn't orphan layer
+        // TODO: make custom method instead of using getCategories to let apps overload the method
+        const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
+        const sourceCategoryLayers = sourceCategory[0].layers
+        currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
+        if (api.can('update', 'catalog')) {
+          await updateCategory(props.category._id, { layers: currentCategoryLayers })
+          await updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
+        }
       }
     }
   } else { // drag source is category: reorder categories with target layer's category
