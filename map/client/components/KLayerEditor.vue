@@ -286,7 +286,7 @@ function getValues () {
       isVisible: _.get(layer, 'leaflet.isVisible', _.get(DefaultStyle, 'isVisible')),
       zoom: {
         leaflet: {
-          enabled: _.get(layer, 'leaflet.minZoom', _.get(layer, 'leaflet.maxZoom'), false) !== false,
+          enabled: _.get(layer, 'leaflet.minZoom', _.get(layer, 'leaflet.maxZoom', false)) !== false,
           min: leafletZoomBounds.min,
           max: leafletZoomBounds.max,
           step: 1,
