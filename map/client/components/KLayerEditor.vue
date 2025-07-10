@@ -296,7 +296,7 @@ function getValues () {
           }
         },
         cesium: {
-          enabled: _.get(layer, 'cesium.minZoom', _.get(layer, 'cesium.maxZoom'), false) !== false,
+          enabled: _.get(layer, 'cesium.minZoom', _.get(layer, 'cesium.maxZoom', false)) !== false,
           min: leafletZoomBounds.min,
           max: leafletZoomBounds.max,
           step: 1,
