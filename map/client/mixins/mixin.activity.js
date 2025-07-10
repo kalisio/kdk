@@ -232,7 +232,10 @@ export const activity = {
       // Reset layer with new setup
       // It should be triggerred by real-time event
       // but as we might not always use sockets perform it anyway
-      if (createdLayer) await this.resetLayer(createdLayer)
+      if (createdLayer) {
+        layer._id = createdLayer._id
+        await this.resetLayer(createdLayer)
+      }
     },
     editLayerByName (name, editOptions = {}) {
       // this one is used through postRobot to trigger edition
@@ -350,10 +353,9 @@ export const activity = {
           // Nothing to do
           break
         default: {
-          // Updating a layer requires to remove/add it again to cover all use cases
-          // (eg style edition, etc.)
-          // Here we find layer by ID as renaming could have occured from another client
-          const layer = this.getLayerById(object._id)
+          // Updating a layer requires to remove/add it again to cover all use cases (eg style edition, etc.)
+          // Here we preferably find layer by ID as renaming could have occured from another client
+          const layer = this.getLayerById(object._id) || this.getLayerByName(object.name)
           let planetApi
           if (layer && (typeof layer.getPlanetApi === 'function')) {
             planetApi = layer.getPlanetApi()
