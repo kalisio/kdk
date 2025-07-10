@@ -755,5 +755,17 @@
     "FILE_TOO_LARGE": "File {file} is too large. The size must be less than {size}Mb",
     "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
     "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
+  },
+  "KTagManager": {
+    "TITLE": "Tags",
+    "CREATE_TAG": "Create a tag",
+    "EDIT_TAG": "Edit tag",
+    "DELETE_TAG": "Delete tag",
+    "SORT_TAGS": "Sort tags",
+    "CREATE_TAG_ON_THE_FLY": "Create tag",
+    "TAG_NAME": "Tag name",
+    "TAG_SERVICE": "Tag type",
+    "TAG_DESCRIPTION": "Tag description",
+    "TAG_COLOR": "Tag color"
   }
 }

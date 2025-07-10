@@ -125,7 +125,7 @@ const computedState = computed({
     return props.modelValue
   },
   set: function (state) {
-    emit('updated:modelValue', state)
+    emit('update:modelValue', state)
   }
 })
 const computedLabel = computed(() => {

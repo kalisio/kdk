@@ -755,5 +755,17 @@
     "FILE_TOO_LARGE": "Le fichier {file} est trop volumineux. La taille doit être inférieure à {size}Mo",
     "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succès",
     "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
+  },
+  "KTagManager": {
+    "TITLE": "Étiquettes",
+    "CREATE_TAG": "Créer une étiquette",
+    "EDIT_TAG": "Modifier l'étiquette",
+    "DELETE_TAG": "Supprimer l'étiquette",
+    "SORT_TAGS": "Trier les étiquettes",
+    "CREATE_TAG_ON_THE_FLY": "Créer le tag",
+    "TAG_NAME": "Nom du tag",
+    "TAG_SERVICE": "Type de tag",
+    "TAG_DESCRIPTION": "Description du tag",
+    "TAG_COLOR": "Couleur du tag"
   }
 }

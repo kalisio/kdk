@@ -19,6 +19,7 @@ export * from './utils.screen.js'
 export * from './utils.services.js'
 export * from './utils.shapes.js'
 export * from './utils.session.js'
+export * from './utils.tags.js'
 export * from './utils.time.js'
 export * from './utils.tours.js'
 
