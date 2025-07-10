@@ -109,6 +109,9 @@ export const activity = {
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
       this.refreshLayerCategories()
     },
+    async updateLayersOrder (sourceCategoryId, data) {
+      this.refreshLayerCategories()
+    },
     async refreshLayers () {
       // Clear layers and variables
       this.clearLayers()

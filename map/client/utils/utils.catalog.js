@@ -135,19 +135,6 @@ export async function getCategories (options = {}) {
   return categories
 }
 
-export async function updateCategory (id, data, options = {}) {
-  _.defaults(options, {
-    context: '',
-    planetApi: api
-  })
-
-  const catalogService = options.planetApi.getService('catalog', options.context)
-  if (catalogService && id && data) {
-    const response = await catalogService.patch(id, data)
-    return response
-  }
-}
-
 export async function getSublegends (options = {}) {
   _.defaults(options, {
     query: {},

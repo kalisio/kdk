@@ -96,9 +96,9 @@ export default {
 import _ from 'lodash'
 import sift from 'sift'
 import { onMounted, ref, watchEffect } from 'vue'
-import { api, utils as coreUtils, i18n } from '../../../../core/client'
+import { utils as coreUtils, i18n } from '../../../../core/client'
 import { useCurrentActivity, useProject } from '../../composables'
-import { getLayersByCategory, getOrphanLayers, updateCategory } from '../../utils'
+import { getLayersByCategory, getOrphanLayers } from '../../utils'
 import KCategoryItem from './KCategoryItem.vue'
 import KLayersList from './KLayersList.vue'
 
@@ -161,7 +161,7 @@ const props = defineProps({
 // Data
 const { hasProject } = useProject()
 const { CurrentActivity } = useCurrentActivity()
-const { layerCategories, layers, forecastModels, refreshLayerCategories, updateCategoriesOrder } = CurrentActivity.value
+const { layerCategories, layers, forecastModels, updateCategoriesOrder, updateLayersOrder } = CurrentActivity.value
 const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
@@ -218,22 +218,16 @@ async function onDrop (event, targetIndex) {
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
     if (sourceCategoryId === "undefined") { // source is orphan layer
       currentCategoryLayers.unshift(layerName)
-      if (api.can('update', 'catalog')) {
-        await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
-      }
+      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
     } else {
       const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
       currentCategoryLayers.unshift(sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
-      if (api.can('update', 'catalog')) {
-        await updateCategory(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
-        await updateCategory(sourceCategoryId, { layers: sourceCategoryLayers })
-      }
+      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+      await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers })
     }
    
   } else { // drag source is category: reorder category
-    if (api.can('update', 'catalog') && sourceCategoryId) {
-      await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)
-    }
+    await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)
   }
 }
 
