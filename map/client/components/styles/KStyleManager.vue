@@ -13,6 +13,9 @@
         class="q-pr-sm no-wrap"
       />
       <QSeparator inset />
+      <div class="row justify-center q-mt-xs">
+        <KTagSelection :selection="tagsSelection" @selection-changed="onTagSelectionChanged" />
+      </div>
     </div>
     <div id="style-manager-content">
       <q-tab-panels v-model="viewMode" animated>
@@ -61,7 +64,7 @@
             }"
           />
           <KFollower
-            :follower="{ 
+            :follower="{
               component: 'layout/KFab',
               direction: 'up',
               alignment: 'right',
@@ -95,14 +98,15 @@
 <script setup>
 import _ from 'lodash'
 import sift from 'sift'
-import { computed, ref } from 'vue'
-import { Filter, Sorter } from '@kalisio/kdk/core.client'
+import { computed, ref, onMounted } from 'vue'
 import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle, updateLayerWithFiltersStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'
+import { getTagsFilterOptions } from '../../../../core/client/utils/utils.tags.js'
 import KGrid from '../../../../core/client/components/collection/KGrid.vue'
 import KFollower from '../../../../core/client/components/KFollower.vue'
 import KStyleEditor from './KStyleEditor.vue'
+import KTagSelection from '../../../../core/client/components/tags/KTagSelection.vue'
 
 // Props
 defineProps({
@@ -117,27 +121,52 @@ const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
+const baseQuery = ref({})
+const searchString = ref('')
+const tagsOptions = ref([])
+const tagsSelection = ref([])
 
 // Computed
-const baseQuery = computed(() => {
-  return Object.assign({}, Sorter.get().query)
-})
 const filterQuery = computed(() => {
-  return Object.assign({}, Filter.get().query)
+  const query = {}
+  if (!_.isEmpty(searchString.value)) {
+    query.name = { $regex: searchString.value }
+  }
+  if (!_.isEmpty(tagsSelection.value)) {
+    query['tags.name'] = { $in: _.map(tagsSelection.value, el => el.name) }
+  }
+  return query
 })
 const toolbar = computed(() => {
   if (viewMode.value === 'editor') return []
   return [
     {
-      component: 'collection/KSorter',
+      component: 'collection/KItemsSorter',
       id: 'style-manager-sorter-options',
       tooltip: 'KStyleManager.SORT',
       options: [
         { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
         { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
-      ]
+      ],
+      onOptionChanged: (option) => {
+        baseQuery.value = { $sort: { [option.field]: option.order } }
+      }
     },
-    { component: 'collection/KFilter' }
+    {
+      component: 'tags/KTagFilter',
+      id: 'style-manager-tags-filter',
+      selection: tagsSelection.value,
+      options: tagsOptions.value,
+      onSelectionChanged: onTagSelectionChanged
+    },
+    {
+      component: 'collection/KItemsFilter',
+      class: 'col',
+      value: searchString.value,
+      onSearch: (value) => {
+        searchString.value = value
+      }
+    }
   ]
 })
 const layerMenuContent = computed(() => {
@@ -152,6 +181,9 @@ const layerMenuContent = computed(() => {
 })
 
 // Functions
+function onTagSelectionChanged (selection) {
+  tagsSelection.value = selection
+}
 async function applyToLayer (layer, styleToApply) {
   await editLayerStyle(layer, styleToApply)
   if (CurrentActivity.value.isInMemoryLayer(layer)) {
@@ -195,4 +227,8 @@ function onApplied (style) {
 function onCanceled () {
   viewMode.value = 'list'
 }
+
+onMounted(async () => {
+  tagsOptions.value = await getTagsFilterOptions('styles')
+})
 </script>

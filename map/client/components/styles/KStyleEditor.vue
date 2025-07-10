@@ -162,6 +162,29 @@ const formSchema = {
         component: 'form/KTextField',
         label: 'KStyleEditor.NAME_LABEL'
       }
+    },
+    tags: {
+      type: 'array',
+      minLength: 3,
+      maxLength: 256,
+      services: [
+        {
+          service: 'tags',
+          field: 'name',
+          description: 'label',
+          baseQuery: {
+            service: 'styles'
+          }
+        }
+      ],
+      field: {
+        component: 'form/KTagField',
+        label: 'KTagManager.TITLE',
+        service: 'styles',
+        property: 'tags'
+      },
+      multiselect: true,
+      minCharsToSearch: 0
     }
   },
   required: ['name']
@@ -170,7 +193,7 @@ const formSchema = {
 // Computed
 const formValues = computed(() => {
   if (_.isEmpty(props.style)) return null
-  return { name: _.get(props.style, 'name') }
+  return { name: _.get(props.style, 'name'), tags: _.get(props.style, 'tags', []) }
 })
 const engine = computed(() => {
   return _.cloneDeep(_.get(CurrentActivityContext.config, 'engine', _.get(config, 'engines.leaflet')))
@@ -233,6 +256,7 @@ function getDefaultValue (path) {
   return _.get(engine.value.style, path, _.cloneDeep(_.get(DefaultStyle, path)))
 }
 const onNameChanged = _.debounce(async (field, value) => {
+  if (field !== 'name' || !value) return
   if (_.size(value) > 2) await checkName(value)
 }, 200)
 async function checkName (name) {
@@ -252,6 +276,8 @@ async function apply () {
   if (!isUnique) return false
   // create to patch the style
   let data = _.merge(model.value, values)
+  // keep only usefull data from tags
+  data.tags = _.map(values.tags, tag => _.pick(tag, ['name', 'description', 'color']))
   if (mode === 'creation') {
     data = _.merge(data, { type: 'style', scope: 'user' })
     logger.debug('[KDK] Create style with values:', data)
