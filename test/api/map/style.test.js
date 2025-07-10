@@ -56,13 +56,13 @@ describe('map:styles', () => {
     .timeout(10000)
 
   it('create and update tag', async () => {
-    const tag = await tagsService.create({ service: 'styles', property: 'tags', value: 'emissary', description: 'My description', color: '#F05F40' })
-    const style = await stylesService.create({ name: 'style2', tags: [{ value: 'emissary', description: 'My description', color: '#F05F40' }] })
+    const tag = await tagsService.create({ service: 'styles', property: 'tags', name: 'emissary', description: 'My description', color: '#F05F40' })
+    const style = await stylesService.create({ name: 'style2', tags: [{ name: 'emissary', description: 'My description', color: '#F05F40' }] })
     const response = await stylesService.find({ query: { name: 'style2' } })
     expect(response.data.length > 0).beTrue()
     expect(response.data[0]._id.toString()).to.equal(style._id.toString())
     expect(response.data[0].tags.length).to.equal(1)
-    expect(response.data[0].tags[0].value).to.equal('emissary')
+    expect(response.data[0].tags[0].name).to.equal('emissary')
 
     // Update tag
     const updatedTag = await tagsService.patch(tag._id, { color: '#FF0000' })
@@ -73,7 +73,7 @@ describe('map:styles', () => {
   })
 
   it('delete tag', async () => {
-    const tag = await tagsService.find({ query: { value: 'emissary' } })
+    const tag = await tagsService.find({ query: { name: 'emissary' } })
     expect(tag.data.length > 0).beTrue()
     const deletedTag = await tagsService.remove(tag.data[0]._id)
     expect(deletedTag._id.toString()).to.equal(tag.data[0]._id.toString())
