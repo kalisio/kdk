@@ -8,8 +8,8 @@ export const ShapeMarker = L.Marker.extend({
   initialize (latlng, options) {
     // Forward extra options for different purposes, i.e. clustering, panes, ...
     const markerOptions = _.get(options, 'options', {})
-    // We allow to specify panes directly at root level
-    Object.assign(markerOptions, _.pick(options, ['pane', 'shadowPane', 'interactive', 'draggable']))
+    // We allow to specify some like panes directly at root level, eg when options are coming from a layer definition.
+    Object.assign(markerOptions, _.pick(options, ['interactive', 'draggable', 'pane', 'shadowPane']))
     if (options.icon instanceof L.Icon) { // We allow to directly provide the icon
       L.Marker.prototype.initialize.call(this, latlng, {
         icon: options.icon,
@@ -51,6 +51,7 @@ export const ShapeMarker = L.Marker.extend({
     if (this._shadow) L.DomUtil.toFront(this._shadow)
   },
   bringToBack() {
+    // See comment in bringToFront().
     if (this._icon) L.DomUtil.toBack(this._icon)
     if (this._shadow) L.DomUtil.toBack(this._shadow)
   }

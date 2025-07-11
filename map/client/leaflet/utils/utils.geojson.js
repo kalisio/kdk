@@ -35,10 +35,21 @@ const Realtime = L.Realtime.extend({
   },
   // Additional missing features
   bringToFront() {
-    this._container.bringToFront()
+    // If we get a custom pane we need to push it front to make it on top of others with the same z-index.
+    // Otherwise pushing container to front only in the parent pane will not have any effect on layers in others panes like the global default one.
+    if (this.options.pane !== 'overlayPane') {
+      L.DomUtil.toFront(this.getPane(this.options.pane))
+    } else if (this._container) { // Pushing container to front in the parent pane when its the global default one will be sufficient
+      this._container.bringToFront()
+    }
   },
   bringToBack() {
-    this._container.bringToBack()
+    // See comments in bringToFront().
+    if (this.options.pane !== 'overlayPane') {
+      L.DomUtil.toBack(this.getPane(this.options.pane))
+    } else if (this._container) {
+      this._container.bringToBack()
+    }
   }
 })
 L.realtime = function (src, options) {

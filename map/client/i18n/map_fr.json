@@ -79,6 +79,8 @@
       "ZOOM_TO_LABEL": "Zoomer sur",
       "ZOOM_IN": "Zoomer",
       "ZOOM_OUT": "Dézoomer",
+      "BRING_TO_FRONT_LABEL": "Afficher à l'avant",
+      "BRING_TO_BACK_LABEL": "Afficher à l'arrière",
       "TOGGLE_CATALOG": "Catalogue",
       "TOGGLE_MAP": "Visualiser en 2D",
       "TOGGLE_GLOBE": "Visualiser en 3D",

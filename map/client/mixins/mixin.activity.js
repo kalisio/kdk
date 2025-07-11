@@ -219,6 +219,12 @@ export const activity = {
     onZoomToLayer (layer) {
       this.zoomToLayer(layer.name)
     },
+    onBringLayerToFront (layer) {
+      if (typeof this.bringLayerToFront === 'function') this.bringLayerToFront(layer.name)
+    },
+    onBringLayerToBack (layer) {
+      if (typeof this.bringLayerToBack === 'function') this.bringLayerToBack(layer.name)
+    },
     async onSaveLayer (layer) {
       // Stop any running edition
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('accept')

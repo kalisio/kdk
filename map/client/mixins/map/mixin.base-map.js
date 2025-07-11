@@ -328,30 +328,35 @@ export const baseMap = {
       })
     },
     createLeafletLayer (options) {
+      const name = options.name
       const leafletOptions = options.leaflet || options
-      // Manage panes to make z-index work for all types of layers
+      // Manage panes to make z-index work for all types of layers.
       // Indeed, although DOM-based layers can use setZIndex() to manage rendering order
-      // SVG/Canvas-based layers provide no mean to manage render order except using bringToFront() or bringToBack()
+      // SVG/Canvas-based layers provide no mean to manage render order except using bringToFront() or bringToBack().
       // This is why Leaflet 1.0 introduced panes: https://leafletjs.com/reference.html#map-pane & https://leafletjs.com/examples/map-panes/
-      // By implicitely create a pane for each provided z-index makes this transparent for the user
-      let zIndex = _.has(leafletOptions, 'zIndex')
-      let pane = _.has(leafletOptions, 'pane')
-      // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
-      if (zIndex && !pane) {
-        zIndex = _.get(leafletOptions, 'zIndex')
-        this.createLeafletPane(zIndex)
-        // Set layer to use target pane
-        _.set(leafletOptions, 'pane', zIndex.toString())
+      // By implicitely create a pane for each provided z-index makes this transparent for the user.
+      const layerPane = { name }
+      const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
+      const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
+      const hasZIndex = !!_.get(leafletOptions, 'zIndex')
+      if (hasMinZoom) layerPane.minZoom = _.get(leafletOptions, 'minZoom')
+      if (hasMaxZoom) layerPane.maxZoom = _.get(leafletOptions, 'maxZoom')
+      if (hasZIndex) layerPane.zIndex = _.get(leafletOptions, 'zIndex')
+      if (hasZIndex) {
+        this.createLeafletPane(layerPane)
+        // Set layer to use its default pane as target
+        // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
+        if (!_.has(leafletOptions, 'pane')) _.set(leafletOptions, 'pane', layerPane.name)
       }
       // Different panes inside a layer can be used to manage visibility according to zoom level
-      const panes = _.get(leafletOptions, 'panes')
+      const panes = _.get(leafletOptions, 'panes', [])
       if (panes) {
         panes.forEach(paneOptions => {
           const pane = this.createLeafletPane(paneOptions)
           Object.assign(pane, paneOptions)
         })
-        this.updateLeafletPanesVisibility()
       }
+      this.updateLeafletPanesVisibility()
 
       // Some Leaflet constructors can have additional arguments given as options
       let args = _.get(leafletOptions, 'options', [])
@@ -503,8 +508,6 @@ export const baseMap = {
       this.map.addLayer(leafletLayer)
       layer.isVisible = true
 
-      // Ensure base layer will not pop on top of others
-      if (layer.type === 'BaseLayer') leafletLayer.bringToBack()
       // Apply the current time if needed
       if (typeof leafletLayer.setCurrentTime === 'function') leafletLayer.setCurrentTime(Time.getCurrentTime())
       this.onLayerShown(layer, leafletLayer)
@@ -574,14 +577,12 @@ export const baseMap = {
       delete this.layers[previousName]
     },
     reorganizeLayers (layerCategories) {
-      if (this.leafletLayers && !_.isEmpty(this.leafletLayers)) {
-        for (let i = layerCategories.length - 1; i >= 0; i--) {
-          const category = layerCategories[i]
-          if (!category?.layers) continue
-          for (let j = category.layers.length - 1; j >= 0; j--) {
-            const layer = category.layers[j]
-            this.bringLayerToFront(layer)
-          }
+      for (let i = layerCategories.length - 1; i >= 0; i--) {
+        const category = layerCategories[i]
+        if (!category?.layers) continue
+        for (let j = category.layers.length - 1; j >= 0; j--) {
+          const layer = category.layers[j]
+          this.bringLayerToFront(layer)
         }
       }
     },
@@ -651,6 +652,15 @@ export const baseMap = {
     bringLayerToFront (name) {
       const leafletLayer = this.getLeafletLayerByName(name)
       if (!leafletLayer) return
+      // If panes are declared on this layer push it front to make it on top of others should be sufficient.
+      const panes = _.get(leafletLayer, 'options.panes')
+      if (panes) {
+        panes.forEach(paneOptions => {
+          const pane = this.getLeafletPaneByName(this.getLeafletPaneName(paneOptions))
+          if (pane) L.DomUtil.toFront(pane)
+        })
+        return
+      }
       // Handle case where there's clustering on top (cf. updateLayer)
       if (leafletLayer instanceof L.MarkerClusterGroup) {
         const container = leafletLayer
@@ -661,6 +671,15 @@ export const baseMap = {
     bringLayerToBack (name) {
       const leafletLayer = this.getLeafletLayerByName(name)
       if (!leafletLayer) return
+      // If panes are declared on this layer push it back to make it under others should be sufficient.
+      const panes = _.get(leafletLayer, 'options.panes')
+      if (panes) {
+        panes.forEach(paneOptions => {
+          const pane = this.getLeafletPaneByName(this.getLeafletPaneName(paneOptions))
+          if (pane) L.DomUtil.toBack(pane)
+        })
+        return
+      }
       // Handle case where there's clustering on top (cf. updateLayer)
       if (leafletLayer instanceof L.MarkerClusterGroup) {
         const container = leafletLayer
