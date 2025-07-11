@@ -6,7 +6,7 @@ import map, { hooks } from '../../../map/api/index.js'
 const { util, expect } = chai
 
 describe('map:styles', () => {
-  let app, server, port, usersService, stylesService
+  let app, server, port, usersService, stylesService, tagsService
 
   before(async () => {
     chailint(chai, util)
@@ -22,6 +22,8 @@ describe('map:styles', () => {
     await app.configure(core)
     usersService = app.getService('users')
     expect(usersService).toExist()
+    tagsService = app.getService('tags')
+    expect(tagsService).toExist()
     await app.configure(map)
     stylesService = app.getService('styles')
     expect(stylesService).toExist()
@@ -52,6 +54,33 @@ describe('map:styles', () => {
     expect(doublonStyle).beUndefined()
   })
     .timeout(10000)
+
+  it('create and update tag', async () => {
+    const tag = await tagsService.create({ service: 'styles', property: 'tags', name: 'emissary', description: 'My description', color: '#F05F40' })
+    const style = await stylesService.create({ name: 'style2', tags: [{ name: 'emissary', description: 'My description', color: '#F05F40' }] })
+    const response = await stylesService.find({ query: { name: 'style2' } })
+    expect(response.data.length > 0).beTrue()
+    expect(response.data[0]._id.toString()).to.equal(style._id.toString())
+    expect(response.data[0].tags.length).to.equal(1)
+    expect(response.data[0].tags[0].name).to.equal('emissary')
+
+    // Update tag
+    const updatedTag = await tagsService.patch(tag._id, { color: '#FF0000' })
+    expect(updatedTag.color).to.equal('#FF0000')
+    const updatedStyle = await stylesService.get(style._id)
+    expect(updatedStyle.tags.length).to.equal(1)
+    expect(updatedStyle.tags[0].color).to.equal('#FF0000')
+  })
+
+  it('delete tag', async () => {
+    const tag = await tagsService.find({ query: { name: 'emissary' } })
+    expect(tag.data.length > 0).beTrue()
+    const deletedTag = await tagsService.remove(tag.data[0]._id)
+    expect(deletedTag._id.toString()).to.equal(tag.data[0]._id.toString())
+    const style = await stylesService.find({ query: { name: 'style2' } })
+    expect(style.data.length > 0).beTrue()
+    expect(style.data[0].tags.length).to.equal(0)
+  })
 
   // Cleanup
   after(async () => {

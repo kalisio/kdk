@@ -122,5 +122,6 @@ module.exports = {
       publicationDelay: 5000
     }
   },
-  styles: {}
+  styles: {},
+  tags: {}
 }

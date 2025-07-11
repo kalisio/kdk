@@ -19,5 +19,17 @@ module.exports = {
     icon: 'las la-paint-brush',
     scrollable: true,
     content: { component: 'styles/KStyleManager' }
+  },
+  TAG_MANAGER: {
+    id: 'tag-manager',
+    label: 'KTagManager.TITLE',
+    icon: 'las la-tags',
+    scrollable: true,
+    content: {
+      component: 'tags/KTagManager',
+      services: [
+        { name: 'styles', property: 'tags', label: 'KStyleManager.TITLE' }
+      ]
+    }
   }
 }

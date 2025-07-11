@@ -93,6 +93,14 @@ export function removeDatabasesService (options = {}) {
   return app.removeService(app.getService('databases', options.context))
 }
 
+export function createTagsService (options = {}) {
+  const app = this
+  return app.createService('tags', Object.assign({
+    servicesPath,
+    modelsPath
+  }, options))
+}
+
 export default async function () {
   const app = this
 
@@ -145,5 +153,11 @@ export default async function () {
   if (pushConfig) {
     await app.createService('push', { servicesPath })
     debug('\'push\' service created')
+  }
+
+  const tagsConfig = app.get('tags')
+  if (tagsConfig) {
+    await createTagsService.call(app)
+    debug('\'tags\' service created')
   }
 }
