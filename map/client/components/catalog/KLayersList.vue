@@ -71,9 +71,6 @@ const draggedIndex = ref(null)
 const { CurrentActivity } = useCurrentActivity()
 const { updateCategoriesOrder, updateLayersOrder } = CurrentActivity.value
 
-// Emits
-const emit = defineEmits(['layerMoved'])
-
 // Computed
 const layerRenderer = computed(() => ({
   component: utils.loadComponent(_.get(props.options, 'renderer', 'catalog/KFilteredLayerItem')),
