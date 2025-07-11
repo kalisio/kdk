@@ -191,8 +191,6 @@ export const activity = {
     async onTriggerLayer (layer) {
       if (!this.isLayerVisible(layer.name)) {
         await this.showLayer(layer.name)
-        const layerCategories = await this.getCatalogCategories()
-        this.reorganizeLayers(layerCategories)
       } else {
         await this.hideLayer(layer.name)
       }
