@@ -95,7 +95,7 @@ export default {
 <script setup>
 import _ from 'lodash'
 import sift from 'sift'
-import { onMounted, ref, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { utils as coreUtils, i18n } from '../../../../core/client'
 import { useCurrentActivity, useProject } from '../../composables'
 import { getLayersByCategory, getOrphanLayers } from '../../utils'
@@ -234,11 +234,6 @@ async function onDrop (event, targetIndex) {
 function isDraggable (categoryId) {
   return !!categoryId && props.categoriesDraggable
 }
-
-// Hooks
-onMounted(() => {
-  refresh()
-})
 </script>
 
 <style scoped>

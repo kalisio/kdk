@@ -1,5 +1,5 @@
 <template>
-  <KLayerItem v-if="!layer.filters"
+  <KLayerItem v-if="!layer?.filters && layer?.isVisible !== undefined"
     v-bind="$props"
     :layer="layer"
     @toggled="onToggled"
@@ -8,7 +8,7 @@
       <slot name="status" />
     </template>
   </KLayerItem>
-  <q-tree v-else
+  <q-tree v-else-if="layer?.label"
     :nodes="[layer]"
     node-key="label"
     label-key="label"
@@ -17,7 +17,7 @@
   >
     <template v-slot:default-header="prop">
       <!-- Layer rendering -->
-      <KLayerItem v-if="prop.node.name"
+      <KLayerItem v-if="prop.node.name && layer?.isVisible !== undefined"
         v-bind="$props"
         :layer="layer"
         @toggled="onToggled"
