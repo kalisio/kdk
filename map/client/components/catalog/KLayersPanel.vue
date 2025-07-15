@@ -44,13 +44,13 @@
             <div
               :key="index"
               class="draggable-category"
-              :draggable="isDraggable(category?._id)"
+              :draggable="isDraggable(category)"
               @dragstart="onDragStart($event, index, category)"
               @drop="onDrop($event, index)"
               @dragover.prevent
               @dragenter.prevent
             >
-              <q-item-section v-if="isDraggable(category?._id)" avatar class="drag-handle">
+              <q-item-section v-if="isDraggable(category)" avatar class="drag-handle">
                 <q-icon name="las la-braille" color="primary" text-color="black" />
               </q-item-section>
 
@@ -113,12 +113,12 @@ const props = defineProps({
     default: () => {}
   },
   layersDraggable: {
-    type: Boolean,
+    type: [Boolean, Function],
     default: false
   },
   categoriesDraggable: {
-    type: Boolean,
-    default: false
+    type: [Boolean, Function],
+    default: () => false
   },
   forecastModels: {
     type: Array,
@@ -231,8 +231,8 @@ async function onDrop (event, targetIndex) {
   }
 }
 
-function isDraggable (categoryId) {
-  return !!categoryId && props.categoriesDraggable
+function isDraggable (category) {
+  return !category._id && (typeof props.categoriesDraggable === 'function' ? props.categoriesDraggable(category) : props.categoriesDraggable)
 }
 </script>
 

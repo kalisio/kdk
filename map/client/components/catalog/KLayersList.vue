@@ -57,8 +57,8 @@ const props = defineProps({
     default: () => []
   },
   layersDraggable: {
-    type: Boolean,
-    default: false
+    type: [Boolean, Function],
+    default: () => false
   },
   options: {
     type: Object,
@@ -151,9 +151,8 @@ function onLayerFilterToggled (layer, filter) {
   toggleLayerFilter(layer, filter)
 }
 
-// Misc functions
 function isDraggable () {
-  return props.layersDraggable
+  return (typeof props.layersDraggable === 'function' ? props.layersDraggable(props.category) : props.layersDraggable)
 }
 </script>
 

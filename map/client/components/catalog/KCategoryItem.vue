@@ -42,8 +42,8 @@ const props = defineProps({
     required: true
   },
   layersDraggable: {
-    type: Boolean,
-    default: false
+    type: [Boolean, Function],
+    default: () => false
   },
   forecastModels: {
     type: Array,

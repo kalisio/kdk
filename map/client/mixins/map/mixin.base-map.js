@@ -576,9 +576,9 @@ export const baseMap = {
       this.layers[newName] = layer
       delete this.layers[previousName]
     },
-    reorganizeLayers (layerCategories) {
-      for (let i = layerCategories.length - 1; i >= 0; i--) {
-        const category = layerCategories[i]
+    reorganizeLayers () {
+      for (let i = this.layerCategories.length - 1; i >= 0; i--) {
+        const category = this.layerCategories[i]
         if (!category?.layers) continue
         for (let j = category.layers.length - 1; j >= 0; j--) {
           const layer = category.layers[j]

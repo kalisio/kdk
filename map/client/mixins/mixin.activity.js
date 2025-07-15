@@ -104,7 +104,7 @@ export const activity = {
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
-      this.reorganizeLayers(layerCategories)
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
       this.refreshLayerCategories()
