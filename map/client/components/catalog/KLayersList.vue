@@ -107,7 +107,6 @@ async function onDrop (event, targetIndex) {
         currentCategoryLayers.splice(targetIndex, 0, layerName)
         await updateLayersOrder(props.category._id, { layers: currentCategoryLayers })
       } else { // source isn't orphan layer
-        // TODO: make custom method instead of using getCategories to let apps overload the method
         const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
         const sourceCategoryLayers = sourceCategory[0].layers
         currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
