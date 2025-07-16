@@ -149,27 +149,45 @@ export const geojsonLayers = {
       if (leafletOptions.type !== 'geoJson') return
 
       try {
-        // min/max zoom are automatically managed on tiled layers by inheriting GridLayer
-        // on non-tiled layers we need to use a pane to manage it
+        // Min/Max zoom are automatically managed on tiled layers by inheriting GridLayer
+        // but on non-tiled layers we need to use a pane to manage it.
+        // However, as we'd like to be able to easily control layer display order we create a pane for each layer by default anyway.
         const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
         const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
         const hasZIndex = !!_.get(leafletOptions, 'zIndex')
-        if (!leafletOptions.tiled && (hasMinZoom || hasMaxZoom)) {
-          const pane = { name: options.name }
-          if (hasMinZoom) pane.minZoom = _.get(leafletOptions, 'minZoom')
-          if (hasMaxZoom) pane.maxZoom = _.get(leafletOptions, 'maxZoom')
-          if (hasZIndex) pane.zIndex = _.get(leafletOptions, 'zIndex')
-          leafletOptions.panes = [pane]
-          leafletOptions.pane = options.name
-          leafletOptions.shadowPane = options.name
-          // Make pane available to styles as well as eg shape markers are created from here
-          for (const type of ['point', 'line', 'polygon']) {
-            if (_.has(leafletOptions, `style.${type}`)) {
-              _.set(leafletOptions, `style.${type}.pane`, options.name)
-              _.set(leafletOptions, `style.${type}.shadowPane`, options.name)
-            }
-          }
+        const name = options.name
+        // Default pane will be automatically used for Leaflet vector layers (ie polygons/lines)
+        const layerPane = { name }
+        if (hasMinZoom) layerPane.minZoom = _.get(leafletOptions, 'minZoom')
+        if (hasMaxZoom) layerPane.maxZoom = _.get(leafletOptions, 'maxZoom')
+        if (hasZIndex) layerPane.zIndex = _.get(leafletOptions, 'zIndex')
+        const panes = _.get(leafletOptions, 'panes', [])
+        if (!_.find(panes, { name: layerPane.name })) panes.push(layerPane)
+        // Set layer to use its default pane as target
+        // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
+        if (!_.has(leafletOptions, 'pane')) leafletOptions.pane = layerPane.name
+        if (!_.has(leafletOptions, 'shadowPane')) leafletOptions.shadowPane = layerPane.name
+        // Make default pane available to styles as well as eg shape markers are created from here
+        for (const type of ['point', 'line', 'polygon']) {
+          _.set(leafletOptions, `style.${type}.pane`, layerPane.name)
+          _.set(leafletOptions, `style.${type}.shadowPane`, layerPane.name)
         }
+        // If we only use this default pane all elements of a layer will be affected to this pane.
+        // We prefer the markers and their shadows to be affected to different panes than others elements like Leaflet does by default.
+        // This is notably required if we'd like to be able to control the rendering order of the elements with bringToFront/bringToBack functions.
+        // Except if a z-index is specified as in this case the user wants to control the order by himself
+        if (!hasZIndex) {
+          // No z-index means that the pane will use the default for overlays in Leaflet which is 400
+          // so that we use the default for markers and shadows in Leaflet as well.
+          if (!_.find(panes, { name: `${name}-markers` })) panes.push(Object.assign({ name: `${name}-markers`, zIndex: 600 }, _.omit(layerPane, ['name'])))
+          if (!_.find(panes, { name: `${name}-shadows` })) panes.push(Object.assign({ name: `${name}-shadows`, zIndex: 500 }, _.omit(layerPane, ['name'])))
+          // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
+          if (!_.has(leafletOptions, 'shadowPane')) leafletOptions.shadowPane = `${name}-shadows`
+          // Make panes available to styles as eg shape markers are created from here
+          _.set(leafletOptions, 'style.point.pane', `${name}-markers`)
+          _.set(leafletOptions, 'style.point.shadowPane', `${name}-shadows`)
+        }
+        leafletOptions.panes = panes
         // If not explicitely disable use defaults for clustering
         if (!_.has(leafletOptions, 'cluster') && _.get(this, 'activityOptions.engine.cluster')) {
           // Merge existing config or create a new one on layer

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
+import { api, i18n, Store } from '../../../core/client/index.js'
 import { buildUrl } from '../../../core/common/index.js'
-import { i18n, api, Store } from '../../../core/client/index.js'
 
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
@@ -77,6 +77,10 @@ export function getLayersByCategory (layers, categories) {
     layersByCategory[category.name] = _.orderBy(layersByCategory[category.name],
       [(layer) => _.get(layer, _.get(category, 'options.orderBy', '_id'))],
       [_.get(category, 'options.order', 'asc')])
+
+    if (layers.length > 0 && category?.layers) {
+      layersByCategory[category.name] = category.layers.map(layerName => layers.find(l => l.name === layerName))
+    }
   })
   return layersByCategory
 }

@@ -1,10 +1,10 @@
+import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
-import config from 'config'
 import { Store } from '../../../core/client/index.js'
-import { filterContent, bindContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
+import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
-import { setEngineJwt, getLayers, getCategories, getSublegends } from '../utils/utils.catalog.js'
+import { getCategories, getLayers, getSublegends, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
@@ -104,6 +104,13 @@ export const activity = {
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
+    },
+    async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
+      // virtual method
+    },
+    async updateLayersOrder (sourceCategoryId, data) {
+      // virtual method
     },
     async refreshLayers () {
       // Clear layers and variables
@@ -170,7 +177,7 @@ export const activity = {
       let actions = _.get(this, 'activityOptions.layers.actions', [])
       // Apply filtering
       actions = filterContent(actions, _.get(this, 'activityOptions.layers.filter', {}))
-      
+
       // As context is different for each item we need to clone the global action configuration
       // otherwise context will always reference the last processed item
       actions = bindContent(_.cloneDeep(actions), this, ['dialog'])
@@ -194,7 +201,7 @@ export const activity = {
     async onTriggerLayerFilter (layer, filter) {
       // Can only apply to realtime layers as we need to force a data refresh
       // removeMissing seems needed for 3d
-      if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name, null, { removeMissing: true})
+      if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name, null, { removeMissing: true })
 
       this.$emit('layer-filter-toggled', layer, filter)
       this.$engineEvents.emit('layer-filter-toggled', layer, filter)
@@ -209,6 +216,12 @@ export const activity = {
     },
     onZoomToLayer (layer) {
       this.zoomToLayer(layer.name)
+    },
+    onBringLayerToFront (layer) {
+      if (typeof this.bringLayerToFront === 'function') this.bringLayerToFront(layer.name)
+    },
+    onBringLayerToBack (layer) {
+      if (typeof this.bringLayerToBack === 'function') this.bringLayerToBack(layer.name)
     },
     async onSaveLayer (layer) {
       // Stop any running edition
@@ -322,8 +335,8 @@ export const activity = {
       }
       // Retrieve the layers
       try {
-        await this.refreshLayerCategories()
         await this.refreshLayers()
+        await this.refreshLayerCategories()
         if (hasContext) await this.restoreContext('layers')
       } catch (error) {
         logger.error('[KDK]', error)
@@ -346,7 +359,7 @@ export const activity = {
       switch (object.type) {
         case 'Category':
           // In any case we rebuild categories
-          this.refreshLayerCategories()
+          await this.debouncedRefreshLayerCategories()
           break
         case 'Context':
         case 'Service':
@@ -391,6 +404,7 @@ export const activity = {
     this.$engineEvents.on('layer-added', this.configureLayerActions)
   },
   mounted () {
+    this.debouncedRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
     // Target online/offline service depending on status
     this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
