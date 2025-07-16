@@ -232,7 +232,7 @@ async function onDrop (event, targetIndex) {
 }
 
 function isDraggable (category) {
-  return !category._id && (typeof props.categoriesDraggable === 'function' ? props.categoriesDraggable(category) : props.categoriesDraggable)
+  return !!category._id && (typeof props.categoriesDraggable === 'function' ? props.categoriesDraggable(category) : props.categoriesDraggable)
 }
 </script>
 

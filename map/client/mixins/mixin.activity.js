@@ -107,10 +107,10 @@ export const activity = {
       if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
-      this.refreshLayerCategories()
+      // virtual method
     },
     async updateLayersOrder (sourceCategoryId, data) {
-      this.refreshLayerCategories()
+      // virtual method
     },
     async refreshLayers () {
       // Clear layers and variables
