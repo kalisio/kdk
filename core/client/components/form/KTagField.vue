@@ -94,6 +94,7 @@ export default {
       return _.get(item, service.field || 'name', '')
     },
     getActions (item) {
+      if (item.scope !== 'user') return []
       const actions = [{
         id: 'item-field-actions',
         component: 'menu/KMenu',
@@ -167,7 +168,7 @@ export default {
         const hasInvalidMaxLength = pattern.length > _.get(this.properties, 'maxLength', 256)
         if (hasInvalidMinLength || hasInvalidMaxLength) return
         this.options = _.filter(this.options, (item) => !item.create)
-        if (pattern !== '' && (this.options.length === 0 || pattern !== this.options[0].name)) {
+        if (pattern !== '' && !_.find(results, { name: pattern })) {
           this.options.push({
             name: pattern,
             color: 'grey',
@@ -178,15 +179,14 @@ export default {
     },
     async onSelected (value) {
       if (value) {
-        // FIXME: ???
-        if (this.properties.multiselect) this.model = this.items
-        else this.model = this.items
+        this.model = this.items
       } else this.model = this.emptyModel()
       this.options = []
       this.$refs.select.updateInputValue('')
       this.onChanged()
 
-      for (const item of value) {
+      if (!this.model) return
+      for (const item of this.model) {
         if (item.create) {
           const service = api.getService('tags')
 
@@ -202,14 +202,15 @@ export default {
             return
           }
 
-          await service.create({
+          _.defaults(item, {
             service: this.properties.field.service,
             property: this.properties.field.property,
-            name: item.name,
-            color: item.color || 'grey',
+            scope: 'user',
+            color: 'grey',
             description: ''
           })
           delete item.create
+          await service.create(item)
         }
       }
     },

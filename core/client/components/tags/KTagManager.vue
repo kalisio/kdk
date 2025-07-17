@@ -29,6 +29,19 @@
             service: 'tags',
             object: ':item',
             hideButtons: true,
+            baseObject: getBaseObject(),
+            beforeRequest: (values) => {
+              // If more than one service is available, we need to set the property in which the tags will be stored
+              if (!_.isEmpty(props.services) && props.services.length > 1) {
+                _.forEach(props.services, (service) => {
+                  if (service.name === values.service) {
+                    values.property = service.property
+                  }
+                })
+                if (!_.get(values, 'property')) return { isOk: false }
+              }
+              return { isOk: true, values }
+            },
             schema: schema,
             cancelAction: 'CANCEL',
             okAction: {
@@ -60,7 +73,7 @@ const props = defineProps({
 })
 
 // Data
-const baseQuery = ref({})
+const baseQuery = ref({ $sort: { name: 1 } })
 const filterQuery = ref({})
 
 // Computed
@@ -125,10 +138,10 @@ const schema = computed(() => {
         }
       }
     },
-    required: ['name', 'service']
+    required: ['name']
   }
 
-  if (!_.isEmpty(props.services) && props.services.length > 1) {
+  if (!hasOneService()) {
     tagSchema.properties.service = {
       type: 'string',
       field: {
@@ -188,5 +201,18 @@ const viewRenderer = computed(() => {
     }
   }
 })
+
+// Functions
+function hasOneService () {
+  return !_.isEmpty(props.services) && props.services.length === 1
+}
+function getBaseObject () {
+  const object = { scope: 'user' }
+  if (hasOneService()) {
+    object.service = _.get(props, 'services.[0].name')
+    object.property = _.get(props, 'services.[0].property')
+  }
+  return object
+}
 
 </script>

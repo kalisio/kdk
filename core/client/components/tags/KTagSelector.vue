@@ -1,7 +1,7 @@
 <template>
   <KItem
     v-bind="$props"
-    :actions="itemActions"
+    :actions="userScopeActions"
     :dense="dense"
   >
     <template v-slot:item-content>
@@ -44,6 +44,9 @@ export default {
     },
     textColor () {
       return getContrastColor(getColorFromPalette(this.color))
+    },
+    userScopeActions () {
+      return this.item.scope === 'user' ? this.itemActions : []
     }
   }
 }

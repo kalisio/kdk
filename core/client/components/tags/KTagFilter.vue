@@ -14,7 +14,7 @@
     >
       <template v-for="tag in options" :key="tag.name">
         <q-fab-action
-          :label="$tie(tag.label)"
+          :label="$tie(getLabel(tag))"
           :style="'background-color: ' + tag.color"
           :text-color="getTextColor(tag)"
           padding="1px"
@@ -31,7 +31,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { getContrastColor } from '../../../../core/client/utils/utils.colors.js'
 import { useScreen } from '../../composables'
 
@@ -62,21 +62,28 @@ const emit = defineEmits(['selection-changed'])
 const { Screen } = useScreen()
 const showTooltip = ref(true)
 const currentSelection = ref(props.selection)
-const baseOptions = ref(props.options)
 
 // Computed
 const options = computed(() => {
-  return _.difference(baseOptions.value, currentSelection.value)
+  return _.difference(props.options, currentSelection.value)
 })
 const hasOptions = computed(() => {
-  return !_.isEmpty(baseOptions.value)
+  return !_.isEmpty(props.options)
 })
 const computedAlignment = computed(() => {
   if (_.isString(props.alignment)) return props.alignment
   return _.get(props.alignment, Screen.name)
 })
 
+// Watch
+watch(() => props.selection, (newSelection) => {
+  currentSelection.value = newSelection
+})
+
 // Functions
+function getLabel (tag) {
+  return _.get(tag, 'label', tag.name)
+}
 function getTextColor (tag) {
   return tag.textColor || getContrastColor(tag.color)
 }

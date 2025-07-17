@@ -145,6 +145,17 @@ module.exports = {
       renderer
     })
   },
+  toggleTagsManager: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'
+    return helpers.toggleWidget({
+      widgetId: 'tag-manager',
+      icon: 'las la-tags',
+      message: 'layout.TAGS_MANAGER',
+      toggleIcon: { name: 'las la-tags', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
+      renderer
+    })
+  },
   togglePosition: (options) => {
     // renderer: renderer to be used to display the action
     const renderer = options?.renderer || 'item'
