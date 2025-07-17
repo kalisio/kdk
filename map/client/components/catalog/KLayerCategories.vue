@@ -233,6 +233,7 @@ export default {
           throw error
         }
         this.mode = 'list'
+        this.addForm = null
       }
     },
     async onEdit () {
@@ -248,6 +249,7 @@ export default {
         }
         this.editedCategory = null
         this.mode = 'list'
+        this.editForm = null
       }
     },
     refreshCategories (items) {
