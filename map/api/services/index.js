@@ -266,6 +266,23 @@ export function removeStylesService (options = {}) {
   return app.removeService(app.getService('styles', options.context))
 }
 
+export async function createDefaultStyles () {
+  const app = this
+  const defaultStyles = app.get('styles').defaultStyles
+  if (!defaultStyles) return
+  const stylesService = app.getService('styles')
+  // Create default styles if not already done
+  const styles = await stylesService.find({ paginate: false })
+  for (let i = 0; i < defaultStyles.length; i++) {
+    const defaultStyle = defaultStyles[i]
+    const createdStyle = _.find(styles, { name: defaultStyle.name })
+    if (!createdStyle) {
+      app.logger.info('Initializing default style (name = ' + defaultStyle.name + ')')
+      await stylesService.create(defaultStyle)
+    }
+  }
+}
+
 export default async function () {
   const app = this
 
