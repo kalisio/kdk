@@ -175,7 +175,7 @@ async function apply () {
     const templates = generateStyleTemplates(_.merge({}, DefaultStyle, engineStyle, layerDefaultStyle), styles)
     const result = Object.assign(
       {},
-      { filters: validFilters },
+      (!_.isEmpty(validFilters) ? { filters: validFilters } : { $unset: { filters: true } }),
       _.mapKeys(templates, (value, key) => `leaflet.${key}`),
       _.mapKeys(templates, (value, key) => `cesium.${key}`)
     )
