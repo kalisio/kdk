@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import configuration from 'config'
 import { api, LocalCache } from '../../../core/client/index.js'
 import { setLayerCached, setLayerUncached } from './utils.layers.js'
 
@@ -19,6 +20,20 @@ export async function createOfflineServices () {
 }
 
 export async function cacheView (view, layers, options = {}) {
+  // Create automerge document for it
+  const { url } = await api.getService('offline').create({
+    // TODO: setup query according to view setup
+    query: {
+      catalog: {},
+      projects: {},
+      features: {}
+    }
+  })
+  options.documentUrl = url
+  const repo = api.get('repo')
+  if (repo) {
+    options.documentHandle = await repo.find(url)
+  }
   const views = await LocalCache.getItem('views')
   if (views) {
     views[view._id] = options

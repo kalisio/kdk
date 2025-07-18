@@ -7,6 +7,7 @@ import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
 import createOfflineService from '@kalisio/feathers-localforage'
+import { createBrowserRepo, AutomergeService } from '@kalisio/feathers-automerge'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
@@ -27,6 +28,9 @@ export async function createClient (config) {
   }
   // Initiate the client
   const api = feathers()
+  if (configuration.automerge) {
+    api.set('repo', createBrowserRepo(window.location.origin))
+  }
   // Initialize connection state/listeners
   api.isDisconnected = !navigator.onLine
   addEventListener('online', () => {
@@ -183,7 +187,10 @@ export async function createClient (config) {
       const services = await LocalCache.getItem('services') || {}
       _.set(services, serviceName, serviceOptions)
       await LocalCache.setItem('services', services)
+      const { data: syncServices } = await api.service(configuration.automerge.syncServicePath).find({ service: serviceName })
+      const handle = api.get('repo').find(syncServices[0].url)
       offlineService = api.createService(offlineServiceName, {
+        /*
         service: createOfflineService({
           id: '_id',
           name: 'offline_services',
@@ -195,6 +202,11 @@ export async function createClient (config) {
           // does not explicitly set the limit it will get a lot of data
           paginate: { default: 5000, max: 5000 }
         }),
+        */
+        service: new AutomergeService(options.documentHandle, {
+          idField: '_id',
+          path: serviceName
+        }),
         // Set required default hooks
         hooks: _.defaultsDeep(_.get(options, 'hooks'), {
           before: {
@@ -205,11 +217,12 @@ export async function createClient (config) {
         ...serviceOptions
       })
     }
-
+    /* Snapshot is automatically made by automerge now
     if (_.get(options, 'snapshot', true)) {
       const service = api.getOnlineService(serviceName)
       await makeServiceSnapshot(service, Object.assign({ offlineService }, options))
     }
+    */
 
     return offlineService
   }
