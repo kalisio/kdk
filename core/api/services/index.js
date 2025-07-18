@@ -101,6 +101,23 @@ export function createTagsService (options = {}) {
   }, options))
 }
 
+export async function createDefaultTags () {
+  const app = this
+  const defaultTags = app.get('tags').defaultTags
+  if (!defaultTags) return
+  const tagsService = app.getService('tags')
+  // Create default tags if not already done
+  const tags = await tagsService.find({ paginate: false })
+  for (let i = 0; i < defaultTags.length; i++) {
+    const defaultTag = defaultTags[i]
+    const createdTag = _.find(tags, { name: defaultTag.name })
+    if (!createdTag) {
+      app.logger.info('Initializing default tag (name = ' + defaultTag.name + ')')
+      await tagsService.create(defaultTag)
+    }
+  }
+}
+
 export default async function () {
   const app = this
 
