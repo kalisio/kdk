@@ -149,6 +149,10 @@ const { CurrentActivityContext } = useCurrentActivity()
 const formRef = ref(null)
 const model = ref(null)
 const mode = props.style ? 'edition' : 'creation'
+const formValues = {
+  name: _.get(props.style, 'name', ''),
+  tags: _.get(props.style, 'tags', [])
+}
 const formSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   $id: 'http://kalisio.xyz/schemas/style-editor#',
@@ -191,10 +195,6 @@ const formSchema = {
 }
 
 // Computed
-const formValues = computed(() => {
-  if (_.isEmpty(props.style)) return null
-  return { name: _.get(props.style, 'name'), tags: _.get(props.style, 'tags', []) }
-})
 const engine = computed(() => {
   return _.cloneDeep(_.get(CurrentActivityContext.config, 'engine', _.get(config, 'engines.leaflet')))
 })
