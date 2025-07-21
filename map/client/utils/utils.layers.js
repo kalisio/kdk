@@ -378,13 +378,17 @@ export async function editLayerStyle (layer, style) {
     // Need to regenerate templates to update default style in them
     const result = await generateStyleFromFilters(layer, style)
     if (result) {
+      // Update legend
+      Object.assign(result, await getUpdatedLayerLegend(Object.assign({}, layer, result)))
       await api.getService('catalog').patch(layer._id, result)
     } else {
-      await api.getService('catalog').patch(layer._id, { 'cesium.style': style, 'leaflet.style': style })
+      const legend = await getUpdatedLayerLegend(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
+      await api.getService('catalog').patch(layer._id, Object.assign({}, { 'cesium.style': style, 'leaflet.style': style }, legend))
     }
   } else {
     _.set(layer, 'cesium.style', style)
     _.set(layer, 'leaflet.style', style)
+    Object.assign(layer, await getUpdatedLayerLegend(layer))
   }
   return layer
 }
@@ -426,9 +430,99 @@ export async function editFilterStyle (layer, filter, engineStyle, style) {
     {},
     _.mapKeys(templates, (value, key) => `leaflet.${key}`),
     _.mapKeys(templates, (value, key) => `cesium.${key}`),
-    { filters: layerFilters },
+    { filters: layerFilters }
   )
+  // Update legend
+  Object.assign(patch, await getUpdatedLayerLegend(Object.assign({}, layer, { filters: layerFilters })))
   await api.getService('catalog').patch(layer._id, patch)
+}
+
+async function getLayerFiltersWithStyle (layer) {
+  const filters = _.get(layer, 'filters', [])
+  if (!filters.length) return []
+  const styleService = api.getService('styles')
+  const filtersWithStyle = []
+  for (const filter of filters) {
+    const filterWithStyle = _.cloneDeep(filter)
+    if (filter.style) {
+      filterWithStyle.linkedStyle = _.isObject(filter.style) ? filter.style : await styleService.get(filter.style)
+    }
+    filtersWithStyle.push(filterWithStyle)
+  }
+  return filtersWithStyle
+}
+
+// Return updated legend or filters for a layer without mutating it
+// Create generic legend if not existing
+export async function getUpdatedLayerLegend (layer) {
+  const updateOrGenerate = (root, style) => {
+    if (!_.has(root, 'legend')) {
+      // Generate generic legend if not existing
+      const styles = [{ shape: 'circle', type: 'point' }, { shape: 'polyline', type: 'line' }, { shape: 'rect', type: 'polygon' }]
+      root.legend = {
+        type: 'symbols',
+        label: _.get(layer, 'label', _.get(layer, 'name')),
+        content: {
+          symbols: _.map(styles, s => {
+            return {
+              symbol: { 'media/KShape': { options: _.merge({ shape: s.shape }, _.omit(_.get(style, s.type), ['size'])) } },
+              label: _.get(root, 'label', _.get(root, 'name'))
+            }
+          })
+        }
+      }
+    } else {
+      // if legend already exists update it
+      if (_.isArray(_.get(root, 'legend'))) {
+        _.forEach(root.legend, legend => {
+          updateExisting(legend, style)
+        })
+      } else {
+        updateExisting(root.legend, style)
+      }
+    }
+  }
+
+  const updateExisting = (legend, style) => {
+    if (legend.type === 'symbols' && legend.content && legend.content.symbols) {
+      _.forEach(legend.content.symbols, symbol => {
+        if (symbol.symbol && symbol.symbol['media/KShape'] && symbol.symbol['media/KShape'].options) {
+          switch (symbol.symbol['media/KShape'].options.shape) {
+            case 'rect':
+              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'rect' }, _.get(style, 'polygon')), ['size'])
+              break
+            case 'polyline':
+              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'polyline' }, _.get(style, 'line')), ['size'])
+              break
+            default:
+              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'circle' }, _.get(style, 'point')), ['size'])
+              break
+          }
+        }
+      })
+    }
+  }
+
+  if (_.has(layer, 'filters') && !_.isEmpty(layer.filters)) {
+    const filtersWithStyle = await getLayerFiltersWithStyle(layer)
+    let hasFilterWithStyle = false
+    _.forEach(filtersWithStyle, filter => {
+      if (!_.has(filter, 'linkedStyle')) return
+      hasFilterWithStyle = true
+
+      updateOrGenerate(filter, filter.linkedStyle)
+    })
+    const legend = { filters: _.map(filtersWithStyle, filter => _.omit(filter, 'linkedStyle')) }
+    // Check if we have at least one filter with a style before removing the layer legend
+    // as features in filter without style keep layer style
+    // Currently, if at least one filter has a style we remove the layer legend, even if some features are affected by a filter without style
+    if (hasFilterWithStyle) Object.assign(legend, { $unset: { legend: '' } })
+    return legend
+  } else {
+    const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+    updateOrGenerate(layer, layerStyle)
+    return { legend: layer.legend }
+  }
 }
 
 export function generateLayerDefinition (layerSpec, geoJson) {
