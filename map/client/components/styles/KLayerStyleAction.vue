@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed, onMounted, ref } from 'vue'
 import { api } from '../../../../core/client'
 import { useCurrentActivity } from '../../composables'
