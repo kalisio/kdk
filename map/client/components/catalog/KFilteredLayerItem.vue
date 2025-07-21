@@ -27,7 +27,7 @@
         </template>
       </KLayerItem>
       <!-- Filter rendering -->
-      <div v-else class="row items-center q-pl-md q-pr-sm no-wrap">
+      <div v-else class="row col items-center q-pl-md q-pr-sm no-wrap">
         <!-- Filter toggle -->
         <q-toggle
           :ref="onToggleRefCreated(prop.node)"
@@ -39,7 +39,8 @@
         />
         <div :class="{
             'text-primary': layer.isVisible,
-            'text-grey-6': layer.isDisabled || !layer.isVisible || !prop.node.isActive
+            'text-grey-6': layer.isDisabled || !layer.isVisible || !prop.node.isActive,
+            'col': true
           }"
         >
           {{ $tie(prop.node.label) }}
@@ -51,6 +52,13 @@
             {{ prop.node.tooltip || prop.node.description }}
           </q-tooltip>
         </div>
+        <!-- Filter actions -->
+        <KPanel
+          :id="`${layer.name}-${prop.node.label}-filter-actions`"
+          :content="filterActions"
+          :context="{ layer, filter: prop.node }"
+          :filter="{ id: { $nin: ['toggle', 'toggle-filter'] } }"
+        />
       </div>
     </template>
   </q-tree>
@@ -58,8 +66,9 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import KLayerItem from './KLayerItem.vue'
+import KPanel from '../../../../core/client/components/KPanel.vue'
 
 // Props
 const props = defineProps({
@@ -74,6 +83,17 @@ const emit = defineEmits(['toggled', 'filter-toggled'])
 
 // Datas
 const filters = ref([])
+
+// Computed
+const filterActions = computed(() => {
+  const filterActions = _.cloneDeep(props.layer.actions)
+  _.forEach(filterActions, (action) => {
+    action.content = _.filter(action.content, (item) => {
+      return _.get(item, 'isFilterAction')
+    })
+  })
+  return filterActions
+})
 
 // Functions
 function onToggleRefCreated (node) {

@@ -18,7 +18,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { api } from '../../../../core/client'
 import { useCurrentActivity } from '../../composables'
-import { editLayerStyle } from '../../utils.map'
+import { editLayerStyle, editFilterStyle } from '../../utils.map'
+import KSubMenu from '../../../../core/client/components/menu/KSubMenu.vue'
 
 const { CurrentActivity } = useCurrentActivity()
 
@@ -32,6 +33,10 @@ defineProps({
   icon: {
     type: String,
     required: false
+  },
+  tags: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -45,9 +50,14 @@ const menuContent = computed(() => {
 })
 
 async function applyToLayer (layer, styleToApply) {
-  await editLayerStyle(layer, styleToApply)
-  if (CurrentActivity.value.isInMemoryLayer(layer)) {
-    await CurrentActivity.value.resetLayer(layer)
+  if (_.get(layer, 'filter')) {
+    const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
+    await editFilterStyle(layer.layer, layer.filter, engineStyle, styleToApply)
+  } else {
+    await editLayerStyle(layer, styleToApply)
+    if (CurrentActivity.value.isInMemoryLayer(layer)) {
+      await CurrentActivity.value.resetLayer(layer)
+    }
   }
 }
 

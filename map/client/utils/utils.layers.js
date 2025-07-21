@@ -9,7 +9,7 @@ import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
 import { generatePropertiesSchema, getGeoJsonFeatures } from '../utils.map.js'
-import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates } from './utils.style.js'
+import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle } from './utils.style.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
@@ -353,7 +353,7 @@ async function parseFiltersFromLayer (layer) {
     if (!filter.style) continue
     styles.push({
       conditions: filterQueryToConditions(filter.active),
-      values: await styleService.get(filter.style)
+      values: _.isObject(filter.style) ? filter.style : await styleService.get(filter.style)
     })
   }
   return styles
@@ -396,6 +396,39 @@ export async function updateLayerWithFiltersStyle (layer) {
   if (!style) return
 
   await api.getService('catalog').patch(layer._id, style)
+}
+
+export async function editFilterStyle (layer, filter, engineStyle, style) {
+  if (!layer._id) return
+  const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+
+  const filters = await parseFiltersFromLayer(layer)
+  const targetFilterCondition = filterQueryToConditions(filter.active)
+  // Update filter style
+  _.forEach(filters, f => {
+    if (_.isEqual(f.conditions, targetFilterCondition)) {
+      f.values = style
+    }
+  })
+
+  // Generate new templates
+  const templates = generateStyleTemplates(_.merge({}, DefaultStyle, engineStyle, layerDefaultStyle), filters)
+  const layerFilters = _.cloneDeep(_.get(layer, 'filters', []))
+  // Update filters in layer
+  _.forEach(layerFilters, f => {
+    if (_.isEqual(f.label, filter.label) && _.isEqual(f.active, filter.active)) {
+      f.style = style._id
+    }
+  })
+
+  // Patch layer with new templates and filters
+  const patch = Object.assign(
+    {},
+    _.mapKeys(templates, (value, key) => `leaflet.${key}`),
+    _.mapKeys(templates, (value, key) => `cesium.${key}`),
+    { filters: layerFilters },
+  )
+  await api.getService('catalog').patch(layer._id, patch)
 }
 
 export function generateLayerDefinition (layerSpec, geoJson) {
