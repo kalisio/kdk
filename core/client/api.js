@@ -6,8 +6,7 @@ import jwtdecode from 'jwt-decode'
 import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
 import reactive from 'feathers-reactive/dist/feathers-reactive.js'
-import createOfflineService from '@kalisio/feathers-localforage'
-import { createBrowserRepo, AutomergeService } from '@kalisio/feathers-automerge'
+import { createBrowserRepo, AutomergeService } from '@kalisio/feathers-automerge/lib/index.js'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
@@ -29,7 +28,7 @@ export async function createClient (config) {
   // Initiate the client
   const api = feathers()
   if (configuration.automerge) {
-    api.set('repo', createBrowserRepo(window.location.origin))
+    api.set('repo', createBrowserRepo(window.location.origin + '/' + (configuration.automerge.syncServerWsPath || '')))
   }
   // Initialize connection state/listeners
   api.isDisconnected = !navigator.onLine
@@ -183,12 +182,10 @@ export async function createClient (config) {
 
     if (!offlineService) {
       // Pass options not used internally for offline management as service options and store it along with service
-      const serviceOptions = _.omit(options, ['hooks', 'snapshot', 'clear', 'baseQuery', 'baseQueries', 'dataPath'])
+      const serviceOptions = _.omit(options, ['hooks', 'documentHandle'])
       const services = await LocalCache.getItem('services') || {}
       _.set(services, serviceName, serviceOptions)
       await LocalCache.setItem('services', services)
-      const { data: syncServices } = await api.service(configuration.automerge.syncServicePath).find({ service: serviceName })
-      const handle = api.get('repo').find(syncServices[0].url)
       offlineService = api.createService(offlineServiceName, {
         /*
         service: createOfflineService({

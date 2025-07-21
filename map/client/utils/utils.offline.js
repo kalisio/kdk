@@ -6,34 +6,52 @@ import { setLayerCached, setLayerUncached } from './utils.layers.js'
 export async function createOfflineServices () {
   const services = await LocalCache.getItem('services')
   if (services) {
+    const offlineDocument = await LocalCache.getItem('offlineDocument')
+    const repo = api.get('repo')
+    const documentHandle = await repo.find(offlineDocument.url)
     const serviceNames = Object.keys(services)
     for (let i = 0; i < serviceNames.length; i++) {
       const serviceName = serviceNames[i]
       const serviceOptions = services[serviceName]
       if (serviceOptions.features) {
-        await api.createOfflineFeaturesService(serviceName, { snapshot: false, ...serviceOptions })
+        await api.createOfflineFeaturesService(serviceName, { documentHandle, ...serviceOptions })
       } else {
-        await api.createOfflineService(serviceName, { snapshot: false, ...serviceOptions })
+        await api.createOfflineService(serviceName, { documentHandle, ...serviceOptions })
       }
     }
   }
 }
 
 export async function cacheView (view, layers, options = {}) {
-  // Create automerge document for it
-  const { url } = await api.getService('offline').create({
-    // TODO: setup query according to view setup
+  // Take care that catalog only returns items of layer types by default
+  const catalogQuery = { $or: [{ type: { $nin: ['Context', 'Service', 'Category'] } }, { type: { $in: ['Context', 'Service', 'Category'] } }] }
+  // Take care that projects are not populated by default
+  const projectQuery = { populate: true }
+  // Take care to only retrieve features in bbox
+  let featuresQuery = _.pick(view, ['south', 'north', 'west', 'east'])
+  // Create automerge document for it if required
+  // at the current time any change in query requires a new document
+  let offlineDocument = await LocalCache.getItem('offlineDocument')
+  if (offlineDocument) {
+    // TODO: delete existing document is not yet available
+    // await api.getService('offline').remove(offlineDocument.url)
+    
+    // We need to update the document queries for the new view
+    // At the present time only the new bbox needs to be added as we synchronize the whole catalog/projects service
+    featuresQuery = (_.has(offlineDocument, 'query.featuresQuery.$or') ?
+      { $or: [featuresQuery].concat(_.get(offlineDocument, 'query.featuresQuery.$or')) } :
+      { $or: [featuresQuery, _.get(offlineDocument, 'query.featuresQuery')] })
+  }
+  offlineDocument = await api.getService('offline').create({
     query: {
-      catalog: {},
-      projects: {},
-      features: {}
+      catalog: catalogQuery,
+      projects: projectQuery,
+      features: featuresQuery
     }
   })
-  options.documentUrl = url
-  const repo = api.get('repo')
-  if (repo) {
-    options.documentHandle = await repo.find(url)
-  }
+  await LocalCache.setItem('offlineDocument', offlineDocument)
+  const documentUrl = offlineDocument.url
+  const documentHandle = await api.get('repo').find(documentUrl)
   const views = await LocalCache.getItem('views')
   if (views) {
     views[view._id] = options
@@ -42,25 +60,17 @@ export async function cacheView (view, layers, options = {}) {
     await LocalCache.setItem('views', { [view._id]: options })
   }
   // We need at least catalog/project/features offline services
-  // If they already exist this will update internal data
-
-  // Take care that catalog only returns items of layer types by default
-  const catalogQueries = [{ type: { $nin: ['Context', 'Service', 'Category'] } }, { type: { $in: ['Context', 'Service', 'Category'] } }]
-  await api.createOfflineService('catalog', {
-    baseQueries: catalogQueries
-  })
+  // If they already exist this should update internal data
+  await api.createOfflineService('catalog', { documentHandle })
   if (options.contextId) {
     await api.createOfflineService('catalog', {
-      baseQueries: catalogQueries,
+      documentHandle,
       context: options.contextId
     })
   }
-  // Take care that projects are not populated by default
-  const projectQuery = { populate: true }
-  await api.createOfflineService('projects', {
-    baseQuery: projectQuery
-  })
+  await api.createOfflineService('projects', { documentHandle })
   await api.createOfflineFeaturesService('features', {
+    documentHandle,
     context: options.contextId
   })
   // Then data layer

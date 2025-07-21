@@ -32,7 +32,7 @@ export function setupApi (configuration) {
   }
   // We also add some features related to offline mode
   api.createOfflineFeaturesService = async function (serviceName, options = {}) {
-    options = Object.assign(_.omit(options, ['hooks', 'dataPath']), {
+    options = Object.assign(_.omit(options, ['hooks']), {
       // Set required default hooks and data path for snapshot as the service responds in GeoJson format
       hooks: _.defaultsDeep(_.get(options, 'hooks'), {
         before: {
@@ -44,7 +44,6 @@ export function setupApi (configuration) {
           find: [kMapHooks.geoJsonPaginationHook, kMapHooks.intersectBBoxHook]
         }
       }),
-      dataPath: 'features',
       // Here are service options used to manage offline features services
       features: true
     })
