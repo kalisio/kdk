@@ -25,9 +25,10 @@
       </slot>
       <!-- Orphan layers -->
       <KLayersList
-        :layers="orphanLayers"
+        :layers="orphanLayersState"
         :layersDraggable="layersDraggable"
         :options="orphanLayersOptions"
+        @orphanLayerUpdated="onOrphanLayerUpdated"
       />
       <!-- Categorized layers -->
       <template v-for="(category, index) in filteredCategories">
@@ -98,7 +99,7 @@ import sift from 'sift'
 import { ref, watchEffect } from 'vue'
 import { utils as coreUtils, i18n } from '../../../../core/client'
 import { useCurrentActivity, useProject } from '../../composables'
-import { getLayersByCategory, getOrphanLayers } from '../../utils'
+import { getLayersByCategory } from '../../utils'
 import KCategoryItem from './KCategoryItem.vue'
 import KLayersList from './KLayersList.vue'
 
@@ -161,11 +162,11 @@ const props = defineProps({
 // Data
 const { hasProject } = useProject()
 const { CurrentActivity } = useCurrentActivity()
-const { layerCategories, layers, forecastModels, updateCategoriesOrder, updateLayersOrder } = CurrentActivity.value
+const { forecastModels, updateCategoriesOrder, updateLayersOrder, updateOrphanLayersOrder } = CurrentActivity.value
 const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
-const orphanLayers = ref([])
+const orphanLayersState = ref([])
 const draggedIndex = ref(null)
 
 // Watch
@@ -188,6 +189,7 @@ function isCategoryVisible (category) {
   return true
 }
 function refresh () {
+  const { layers, layerCategories, orphanLayers } = CurrentActivity.value
   // filter layers
   const layersFilter = (typeof props.layersFilter === 'object' ? sift(props.layersFilter) : props.layersFilter)
   const filteredLayers = _.filter(layers, layersFilter)
@@ -198,10 +200,16 @@ function refresh () {
     const component = _.get(category, 'component', 'catalog/KLayersList')
     if (!category.componentInstance) category.componentInstance = coreUtils.loadComponent(component)
   })
-  // compute layers by categories and orphans layers
+  // compute layers by categories
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
-  orphanLayers.value = getOrphanLayers(filteredLayers, layersByCategory.value)
+  orphanLayersState.value = orphanLayers
 }//, 100)
+
+async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
+  const { orphanLayers } = CurrentActivity.value
+  orphanLayers.splice(targetIndex, 0, orphanLayers.splice(draggedIndex, 1)[0])
+  await updateOrphanLayersOrder(orphanLayers ? orphanLayers.map(l => l?._id) : [])
+}
 
 function onDragStart (event, index, category) {
   draggedIndex.value = index
@@ -225,7 +233,6 @@ async function onDrop (event, targetIndex) {
       await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
       await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers })
     }
-   
   } else { // drag source is category: reorder category
     await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)
   }
