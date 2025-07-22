@@ -10,7 +10,6 @@ import { createBrowserRepo, AutomergeService } from '@kalisio/feathers-automerge
 import configuration from 'config'
 import { permissions } from '../common/index.js'
 import { Store } from './store.js'
-import { LocalCache } from './local-cache.js'
 import { Events } from './events.js'
 import * as hooks from './hooks/index.js'
 import { makeServiceSnapshot } from '../common/utils.js'
@@ -183,9 +182,8 @@ export async function createClient (config) {
     if (!offlineService) {
       // Pass options not used internally for offline management as service options and store it along with service
       const serviceOptions = _.omit(options, ['hooks', 'documentHandle'])
-      const services = await LocalCache.getItem('services') || {}
-      _.set(services, serviceName, serviceOptions)
-      await LocalCache.setItem('services', services)
+      // Take care that feathers strip slashes, go from /api to api/
+      const path = config.apiPath.substr(1) + '/' + serviceName
       offlineService = api.createService(offlineServiceName, {
         /*
         service: createOfflineService({
@@ -202,7 +200,7 @@ export async function createClient (config) {
         */
         service: new AutomergeService(options.documentHandle, {
           idField: '_id',
-          path: serviceName
+          path
         }),
         // Set required default hooks
         hooks: _.defaultsDeep(_.get(options, 'hooks'), {

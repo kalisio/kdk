@@ -43,9 +43,7 @@ export function setupApi (configuration) {
         after: {
           find: [kMapHooks.geoJsonPaginationHook, kMapHooks.intersectBBoxHook]
         }
-      }),
-      // Here are service options used to manage offline features services
-      features: true
+      })
     })
 
     const offlineService = await api.createOfflineService(serviceName, options)

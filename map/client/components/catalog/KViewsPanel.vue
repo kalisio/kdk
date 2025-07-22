@@ -24,7 +24,6 @@ import { ref, computed } from 'vue'
 import { Filter, Sorter, utils, i18n, api, LocalCache, Store } from '../../../../core/client'
 import { KGrid } from '../../../../core/client/components'
 import { useCurrentActivity, useProject } from '../../composables'
-import { cacheView, uncacheView } from '../../utils/utils.offline.js'
 import { Dialog, Notify } from 'quasar'
 
 // Data
@@ -161,7 +160,7 @@ async function onViewSelected (view, action) {
           timeout: 0,
           spinner: true
         })
-        await cacheView(view, getProjectLayers(), {
+        await CurrentActivity.value.cacheView(view, getProjectLayers(), {
           contextId: Store.get('context'),
           ...values
         })
@@ -179,7 +178,7 @@ async function onViewSelected (view, action) {
         timeout: 0,
         spinner: true
       })
-      await uncacheView(view, getProjectLayers(), {
+      await CurrentActivity.value.uncacheView(view, getProjectLayers(), {
         contextId: Store.get('context')
       })
       view.isCached = false
@@ -205,7 +204,7 @@ async function removeView (view) {
     }
   })
   if (!result.ok) return false
-  await uncacheView(view, getProjectLayers())
+  await CurrentActivity.value.uncacheView(view, getProjectLayers())
   await api.getService('catalog').remove(view._id)
 }
 </script>

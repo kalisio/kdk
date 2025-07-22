@@ -6,6 +6,7 @@ import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEve
 import { Geolocation } from '../geolocation.js'
 import { getCategories, getLayers, getSublegends, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
+import * as offline from '../utils/utils.offline.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
 export const activity = {
@@ -293,6 +294,8 @@ export const activity = {
       }
       // Removing the layer should automatically update all projects
     },
+    cacheView: offline.cacheView,
+    uncacheView: offline.uncacheView,
     onEngineReady (engine) {
       this.engine = engine
       this.engineReady = true
