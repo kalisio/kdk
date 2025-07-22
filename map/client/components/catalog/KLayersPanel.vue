@@ -52,11 +52,13 @@
               @dragenter.prevent
             >
               <q-item-section v-if="isDraggable(category)" avatar class="drag-handle">
-                <q-icon name="las la-braille" color="primary" text-color="black" />
+                <q-icon name="las la-bars" color="primary" text-color="black" size="20px" />
               </q-item-section>
 
+              <q-icon v-else :name="getCategoryIcon(category)" color="primary" text-color="black" size="20px" style="margin-right: 16px;" />
+
               <q-item-section>
-                {{ category?._id ? category.name : i18n.t(category.name) }}
+                {{ i18n.tie(category.name) }}
               </q-item-section>
             </div> 
           </template>       
@@ -176,6 +178,9 @@ watchEffect(() => { refresh() })
 function getCategoryId (category) {
   return _.kebabCase(category.name)
 }
+function getCategoryIcon (category) {
+  return _.get(category, 'icon.name', _.get(category, 'icon'), 'las la-bars')
+}
 function isCategoryVisible (category) {
 // Show a built-in category only if it has some layers.
 // Indeed, depending on the app configuration, none might be available for this category.
@@ -202,7 +207,8 @@ function refresh () {
   })
   // compute layers by categories
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
-  orphanLayersState.value = orphanLayers
+  // check if is not catalog layers mode
+  if (props.layerCategoriesFilter?._id?.$exists !== false) orphanLayersState.value = orphanLayers
 }//, 100)
 
 async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
@@ -250,23 +256,12 @@ function isDraggable (category) {
   flex-grow: 1;
 }
 .drag-handle {
-  visibility: hidden;
-  opacity: 0;
   min-width: 0;
   width: 1px;
   cursor: move;
-  transform: scaleX(0.001);
   margin-left: 0px;
-  margin-right: 0px;
+  margin-right: 32px;
   padding: 0px;
   user-select: none;
-  transition: visibility 0s, opacity 0.2s, margin-right 0.2s, margin-left 0.2s, transform 0.2s linear;
-}
-.draggable-category:hover .drag-handle {
-  margin-right: 32px;
-  transform: scaleX(1);
-  visibility: visible;
-  opacity: 1;
-  transition-duration: 0.2s;
 }
 </style>

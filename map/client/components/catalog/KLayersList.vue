@@ -166,23 +166,9 @@ function isDraggable () {
   align-items: center;
 }
 .drag-handle {
-  visibility: hidden;
-  opacity: 0;
-  width: 0;
   cursor: move;
-  transform: scaleX(0.001);
-  margin-left: 0px;
-  margin-right: 0px;
+  margin-left: 16px;
   font-size: 18px;
   user-select: none;
-  transition: visibility 0s, opacity 0.2s, margin-right 0.2s, margin-left 0.2s, transform 0.2s linear;
-}
-.draggable-layer:hover .drag-handle {
-  margin-right: 0px;
-  margin-left: 16px;
-  transform: scaleX(1);
-  visibility: visible;
-  opacity: 1;
-  transition-duration: 0.2s;
 }
 </style>
