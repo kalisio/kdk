@@ -275,7 +275,7 @@ async function apply () {
   const isUnique = await checkName(values.name)
   if (!isUnique) return false
   // create to patch the style
-  let data = _.merge(model.value, values)
+  let data = Object.assign({}, model.value, values)
   // keep only usefull data from tags
   data.tags = _.map(values.tags, tag => _.pick(tag, ['name', 'description', 'color']))
   if (mode === 'creation') {
