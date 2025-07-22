@@ -365,8 +365,14 @@ export function filterQueryToConditions (query) {
       value = subquery[nextBoolOp][0][property][comparisonOperator]
     } else {
       property = _.keys(subquery)[0]
-      comparisonOperator = _.keys(subquery[property])[0]
-      value = subquery[property][comparisonOperator]
+      if (!_.isObject(subquery[property])) {
+        // If the comparison operator is not a standard one, we assume it is a property name
+        comparisonOperator = '$eq'
+        value = subquery[property]
+      } else {
+        comparisonOperator = _.keys(subquery[property])[0]
+        value = subquery[property][comparisonOperator]
+      }
     }
 
     conditions.push({

@@ -25,9 +25,10 @@
       </slot>
       <!-- Orphan layers -->
       <KLayersList
-        :layers="orphanLayers"
+        :layers="orphanLayersState"
         :layersDraggable="layersDraggable"
         :options="orphanLayersOptions"
+        @orphanLayerUpdated="onOrphanLayerUpdated"
       />
       <!-- Categorized layers -->
       <template v-for="(category, index) in filteredCategories">
@@ -51,11 +52,13 @@
               @dragenter.prevent
             >
               <q-item-section v-if="isDraggable(category)" avatar class="drag-handle">
-                <q-icon name="las la-braille" color="primary" text-color="black" />
+                <q-icon name="las la-bars" color="primary" text-color="black" size="20px" />
               </q-item-section>
 
+              <q-icon v-else :name="getCategoryIcon(category)" color="primary" text-color="black" size="20px" style="margin-right: 16px;" />
+
               <q-item-section>
-                {{ category?._id ? category.name : i18n.t(category.name) }}
+                {{ i18n.tie(category.name) }}
               </q-item-section>
             </div> 
           </template>       
@@ -98,7 +101,7 @@ import sift from 'sift'
 import { ref, watchEffect } from 'vue'
 import { utils as coreUtils, i18n } from '../../../../core/client'
 import { useCurrentActivity, useProject } from '../../composables'
-import { getLayersByCategory, getOrphanLayers } from '../../utils'
+import { getLayersByCategory } from '../../utils'
 import KCategoryItem from './KCategoryItem.vue'
 import KLayersList from './KLayersList.vue'
 
@@ -161,11 +164,11 @@ const props = defineProps({
 // Data
 const { hasProject } = useProject()
 const { CurrentActivity } = useCurrentActivity()
-const { layerCategories, layers, forecastModels, updateCategoriesOrder, updateLayersOrder } = CurrentActivity.value
+const { forecastModels, updateCategoriesOrder, updateLayersOrder, updateOrphanLayersOrder } = CurrentActivity.value
 const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
-const orphanLayers = ref([])
+const orphanLayersState = ref([])
 const draggedIndex = ref(null)
 
 // Watch
@@ -174,6 +177,9 @@ watchEffect(() => { refresh() })
 // Functions
 function getCategoryId (category) {
   return _.kebabCase(category.name)
+}
+function getCategoryIcon (category) {
+  return _.get(category, 'icon.name', _.get(category, 'icon'), 'las la-bars')
 }
 function isCategoryVisible (category) {
 // Show a built-in category only if it has some layers.
@@ -188,6 +194,7 @@ function isCategoryVisible (category) {
   return true
 }
 function refresh () {
+  const { layers, layerCategories, orphanLayers } = CurrentActivity.value
   // filter layers
   const layersFilter = (typeof props.layersFilter === 'object' ? sift(props.layersFilter) : props.layersFilter)
   const filteredLayers = _.filter(layers, layersFilter)
@@ -198,10 +205,17 @@ function refresh () {
     const component = _.get(category, 'component', 'catalog/KLayersList')
     if (!category.componentInstance) category.componentInstance = coreUtils.loadComponent(component)
   })
-  // compute layers by categories and orphans layers
+  // compute layers by categories
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
-  orphanLayers.value = getOrphanLayers(filteredLayers, layersByCategory.value)
+  // check if is not catalog layers mode
+  if (props.layerCategoriesFilter?._id?.$exists !== false) orphanLayersState.value = orphanLayers
 }//, 100)
+
+async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
+  const { orphanLayers } = CurrentActivity.value
+  orphanLayers.splice(targetIndex, 0, orphanLayers.splice(draggedIndex, 1)[0])
+  await updateOrphanLayersOrder(orphanLayers ? orphanLayers.map(l => l?._id) : [])
+}
 
 function onDragStart (event, index, category) {
   draggedIndex.value = index
@@ -225,7 +239,6 @@ async function onDrop (event, targetIndex) {
       await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
       await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers })
     }
-   
   } else { // drag source is category: reorder category
     await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)
   }
@@ -243,23 +256,12 @@ function isDraggable (category) {
   flex-grow: 1;
 }
 .drag-handle {
-  visibility: hidden;
-  opacity: 0;
   min-width: 0;
   width: 1px;
   cursor: move;
-  transform: scaleX(0.001);
   margin-left: 0px;
-  margin-right: 0px;
+  margin-right: 32px;
   padding: 0px;
   user-select: none;
-  transition: visibility 0s, opacity 0.2s, margin-right 0.2s, margin-left 0.2s, transform 0.2s linear;
-}
-.draggable-category:hover .drag-handle {
-  margin-right: 32px;
-  transform: scaleX(1);
-  visibility: visible;
-  opacity: 1;
-  transition-duration: 0.2s;
 }
 </style>

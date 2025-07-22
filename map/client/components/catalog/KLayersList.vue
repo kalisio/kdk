@@ -13,7 +13,7 @@
         @dragover.prevent
         @dragenter.prevent
       >
-        <div v-if="isDraggable()" class="drag-handle">☰</div>
+        <q-icon v-if="isDraggable()" name="las la-grip-lines" color="primary" text-color="black" class="drag-handle" />
         <component
           :is="layerRenderer.component"
           v-bind="layerRenderer.options"
@@ -66,6 +66,9 @@ const props = defineProps({
   }
 })
 
+// Emits
+const emit = defineEmits(['orphan-layer-updated'])
+
 // Data
 const draggedIndex = ref(null)
 const { CurrentActivity } = useCurrentActivity()
@@ -76,8 +79,6 @@ const layerRenderer = computed(() => ({
   component: utils.loadComponent(_.get(props.options, 'renderer', 'catalog/KFilteredLayerItem')),
   options: _.get(props.options, 'renderer.options', {})
 }))
-
-// watch(() => props.layers, (newLayers) => { internalLayers.value = [...newLayers] }, { deep: true })
 
 // Drag & Drop handlers
 function onDragStart (event, index, layer) {
@@ -92,7 +93,11 @@ function onDragStart (event, index, layer) {
 async function onDrop (event, targetIndex) {
   const layerName = event.dataTransfer.getData('layerName')
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
-  if (!props.category?._id) return
+  if (!props.category?._id) { // source and target are orphan layers
+    if (sourceCategoryId !== 'undefined') return
+    emit('orphan-layer-updated', targetIndex, draggedIndex.value)
+    return
+  }
   if (layerName && layerName.length > 0) { // source is layer
     const isLayerFromCurrentCategory = props.category._id === sourceCategoryId
     if (isLayerFromCurrentCategory) { // reorder layers in category
@@ -161,23 +166,9 @@ function isDraggable () {
   align-items: center;
 }
 .drag-handle {
-  visibility: hidden;
-  opacity: 0;
-  width: 0;
   cursor: move;
-  transform: scaleX(0.001);
-  margin-left: 0px;
-  margin-right: 0px;
+  margin-left: 16px;
   font-size: 18px;
   user-select: none;
-  transition: visibility 0s, opacity 0.2s, margin-right 0.2s, margin-left 0.2s, transform 0.2s linear;
-}
-.draggable-layer:hover .drag-handle {
-  margin-right: 16px;
-  margin-left: 8px;
-  transform: scaleX(1);
-  visibility: visible;
-  opacity: 1;
-  transition-duration: 0.2s;
 }
 </style>

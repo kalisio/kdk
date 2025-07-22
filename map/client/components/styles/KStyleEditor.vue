@@ -149,6 +149,10 @@ const { CurrentActivityContext } = useCurrentActivity()
 const formRef = ref(null)
 const model = ref(null)
 const mode = props.style ? 'edition' : 'creation'
+const formValues = {
+  name: _.get(props.style, 'name', ''),
+  tags: _.get(props.style, 'tags', [])
+}
 const formSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   $id: 'http://kalisio.xyz/schemas/style-editor#',
@@ -191,10 +195,6 @@ const formSchema = {
 }
 
 // Computed
-const formValues = computed(() => {
-  if (_.isEmpty(props.style)) return null
-  return { name: _.get(props.style, 'name'), tags: _.get(props.style, 'tags', []) }
-})
 const engine = computed(() => {
   return _.cloneDeep(_.get(CurrentActivityContext.config, 'engine', _.get(config, 'engines.leaflet')))
 })
@@ -275,7 +275,7 @@ async function apply () {
   const isUnique = await checkName(values.name)
   if (!isUnique) return false
   // create to patch the style
-  let data = _.merge(model.value, values)
+  let data = Object.assign({}, model.value, values)
   // keep only usefull data from tags
   data.tags = _.map(values.tags, tag => _.pick(tag, ['name', 'description', 'color']))
   if (mode === 'creation') {

@@ -87,7 +87,8 @@ export const baseMap = {
   ],
   data () {
     return {
-      layers: {}
+      layers: {},
+      orphanLayers: []
     }
   },
   methods: {
@@ -494,6 +495,9 @@ export const baseMap = {
     getLayerByName (name) {
       return this.layers[name]
     },
+    getOrphanLayerByName (name) {
+      return this.orphanLayers.find(l => l?.name === name)
+    },
     getLeafletLayerByName (name) {
       return this.leafletLayers[name]
     },
@@ -606,6 +610,10 @@ export const baseMap = {
           this.bringLayerToFront(layer)
         }
       }
+      for (let i = this.orphanLayers.length - 1; i >= 0; i--) {
+        const layer = this.orphanLayers[i]
+        this.bringLayerToFront(layer.name)
+      }
     },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
@@ -622,6 +630,7 @@ export const baseMap = {
     },
     clearLayers () {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
+      this.orphanLayers.forEach((layer) => this.removeLayer(layer))
     },
     toGeoJson (name) {
       if (!this.isLayerVisible(name)) {

@@ -104,13 +104,16 @@ export const activity = {
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
-      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
+      if (typeof this.refreshOrphanLayers === 'function') await this.refreshOrphanLayers()
     },
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
-      // virtual method
+      this.reorganizeLayers()
     },
     async updateLayersOrder (sourceCategoryId, data) {
-      // virtual method
+      this.reorganizeLayers()
+    },
+    async updateOrphanLayersOrder (orphanLayers) {
+      this.reorganizeLayers()
     },
     async refreshLayers () {
       // Clear layers and variables
@@ -128,6 +131,9 @@ export const activity = {
         const baseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer'))
         if (baseLayer) await this.showLayer(baseLayer.name)
       }
+    },
+    async refreshOrphanLayers () {
+      this.reorganizeLayers()
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,
@@ -335,8 +341,8 @@ export const activity = {
       }
       // Retrieve the layers
       try {
-        await this.refreshLayers()
         await this.refreshLayerCategories()
+        await this.refreshLayers()
         if (hasContext) await this.restoreContext('layers')
       } catch (error) {
         logger.error('[KDK]', error)

@@ -36,7 +36,7 @@
     <!-- Layer actions -->
     <KPanel
       :id="`${layer.name}-actions`"
-      :content="layer.actions"
+      :content="layerActions"
       :context="layer"
       :filter="{ id: { $nin: ['toggle', 'toggle-filter'] } }"
     />
@@ -73,6 +73,16 @@ const id = computed(() => {
 const label = computed(() => {
   const label = _.get(props.layer, 'label')
   return Document.sanitizeHtml(label || _.get(props.layer, 'name'))
+})
+const layerActions = computed(() => {
+  const layerActions = _.cloneDeep(_.get(props.layer, 'actions', []))
+  _.forEach(layerActions, (action) => {
+    if (!_.has(action, 'content')) return
+    action.content = _.filter(action.content, (item) => {
+      return !_.get(item, 'isFilterAction')
+    })
+  })
+  return layerActions
 })
 
 // Functions

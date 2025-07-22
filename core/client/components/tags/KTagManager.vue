@@ -159,7 +159,7 @@ const schema = computed(() => {
 })
 const viewRenderer = computed(() => {
   return {
-    component: 'tags/KTagSelector',
+    component: 'tags/KTagItem',
     class: 'col-12',
     actions: [{
       id: 'tag-menu',

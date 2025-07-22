@@ -26,42 +26,7 @@
             :base-query="baseQuery"
             :filter-query="filterQuery"
             class="fit"
-            :renderer="{
-              component: 'styles/KStylePreviewItem',
-              options: {
-                avatar: false
-              },
-              actions: [
-                {
-                  id: 'apply-to-layer',
-                  component: 'menu/KMenu',
-                  icon: 'las la-layer-group',
-                  tooltip: 'KStyleManager.APPLY_TO_LAYER',
-                  actionRenderer: 'item',
-                  content: layerMenuContent
-                },
-                {
-                  id: 'apply-to-selection',
-                  icon: 'las la-object-group',
-                  tooltip: 'KStyleManager.APPLY_TO_SELECTION',
-                  handler: applyToSelection
-                },
-                {
-                  id: 'edit-style',
-                  icon: 'las la-edit',
-                  tooltip: 'KStyleManager.EDIT',
-                  handler: editStyle
-                },
-                {
-                  id: 'delete-style',
-                  icon: 'las la-trash',
-                  tooltip: 'KStyleManager.DELETE',
-                  handler: { name: 'removeItem', params: ['confirm'] }
-                },
-              ],
-              dense: true,
-              class: 'col-12'
-            }"
+            :renderer="renderer"
           />
           <KFollower
             :follower="{
@@ -169,15 +134,51 @@ const toolbar = computed(() => {
     }
   ]
 })
-const layerMenuContent = computed(() => {
+const renderer = computed(() => {
   const visibleLayers = CurrentActivity.value.getLayers().filter(sift({ isVisible: true, scope: 'user' }))
-  return _.map(visibleLayers, layer => {
+  const layerMenuContent = _.map(visibleLayers, layer => {
     return {
       id: 'apply-style-to-layer',
       label: layer.name,
       handler: (styleToApply) => applyToLayer(layer, styleToApply.item)
     }
   })
+  return {
+    component: 'styles/KStylePreviewItem',
+    options: {
+      avatar: false
+    },
+    actions: [
+      {
+        id: 'apply-to-layer',
+        component: 'menu/KMenu',
+        icon: 'las la-layer-group',
+        tooltip: 'KStyleManager.APPLY_TO_LAYER',
+        actionRenderer: 'item',
+        content: layerMenuContent
+      },
+      {
+        id: 'apply-to-selection',
+        icon: 'las la-object-group',
+        tooltip: 'KStyleManager.APPLY_TO_SELECTION',
+        handler: applyToSelection
+      },
+      {
+        id: 'edit-style',
+        icon: 'las la-edit',
+        tooltip: 'KStyleManager.EDIT',
+        handler: editStyle
+      },
+      {
+        id: 'delete-style',
+        icon: 'las la-trash',
+        tooltip: 'KStyleManager.DELETE',
+        handler: { name: 'removeItem', params: ['confirm'] }
+      }
+    ],
+    dense: true,
+    class: 'col-12'
+  }
 })
 
 // Functions
