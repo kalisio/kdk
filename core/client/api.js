@@ -12,7 +12,6 @@ import { permissions } from '../common/index.js'
 import { Store } from './store.js'
 import { Events } from './events.js'
 import * as hooks from './hooks/index.js'
-import { makeServiceSnapshot } from '../common/utils.js'
 
 // Disable default feathers behavior of re-authenticating on disconnect
 feathers.authentication.AuthenticationClient.prototype.handleSocket = () => {}
@@ -212,12 +211,6 @@ export async function createClient (config) {
         ...serviceOptions
       })
     }
-    /* Snapshot is automatically made by automerge now
-    if (_.get(options, 'snapshot', true)) {
-      const service = api.getOnlineService(serviceName)
-      await makeServiceSnapshot(service, Object.assign({ offlineService }, options))
-    }
-    */
 
     return offlineService
   }

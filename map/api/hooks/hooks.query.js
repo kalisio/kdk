@@ -31,6 +31,27 @@ function getGeometryQueryForBBox (bbox) {
   }
 }
 
+function getQueryForBBox ({ south, north, west, east }) {
+  south = _.toNumber(south)
+  north = _.toNumber(north)
+  west = _.toNumber(west)
+  east = _.toNumber(east)
+  
+  // FIXME: MongoDB should allow to support queries with a single-ringed GeoJSON polygon
+  // whose area is greater than or equal to a single hemisphere.
+  // However, we did not succeeed in making it work as expected, for now on we split large polygon into two halfs.
+  if ((east-west) <= 180) {
+    // BBox as a polygon also requires the closing point.
+    const bbox = [[west, south], [east, south], [east, north], [west, north], [west, south]]
+    return { geometry: getGeometryQueryForBBox(bbox) }
+  } else {
+    // BBox as a polygon also requires the closing point.
+    const leftHalfBbox = [[west, south], [0.5*(west+east), south], [0.5*(west+east), north], [west, north], [west, south]]
+    const rightHalfBbox = [[0.5*(west+east), south], [east, south], [east, north], [0.5*(west+east), north], [0.5*(west+east), south]]
+    return { $or: [{ geometry: getGeometryQueryForBBox(leftHalfBbox) }, { geometry: getGeometryQueryForBBox(rightHalfBbox) }] }
+  }
+}
+
 export function marshallGeoJsonQuery (hook) {
   const query = hook.params.query
   if (query) {
@@ -84,31 +105,26 @@ export function marshallSpatialQuery (hook) {
         }
       }
     }
-    // Shortcut for bbox query
+    // Shortcut for bbox query, we allow multiple bboxes with arrays
     if (!_.isNil(query.south) && !_.isNil(query.north) && !_.isNil(query.west) && !_.isNil(query.east)) {
-      const south = _.toNumber(query.south)
-      const north = _.toNumber(query.north)
-      const west = _.toNumber(query.west)
-      const east = _.toNumber(query.east)
       // Transform to MongoDB spatial request
+      if (Array.isArray(query.south)) {
+        // Make a OR of all bboxes
+        if (!query.$or) query.$or = []
+        query.south.forEach((south, index) => {
+          const geometryQuery = getQueryForBBox({ south, north: query.north[index], west: query.west[index], east: query.east[index] })
+          // Simply concatenate if already a $or
+          if (geometryQuery.$or) query.$or = query.$or.concat(geometryQuery.$or)
+          else query.$or.push(geometryQuery)
+        })
+      } else {
+        Object.assign(query, getQueryForBBox(query))
+      }
+      // Remove unecessary query parameters
       delete query.south
       delete query.north
       delete query.west
       delete query.east
-      
-      // FIXME: MongoDB should allow to support queries with a single-ringed GeoJSON polygon
-      // whose area is greater than or equal to a single hemisphere.
-      // However, we did not succeeed in making it work as expected, for now on we split large polygon into two halfs.
-      if ((east-west) <= 180) {
-        // BBox as a polygon also requires the closing point.
-        const bbox = [[west, south], [east, south], [east, north], [west, north], [west, south]]
-        query.geometry = getGeometryQueryForBBox(bbox)
-      } else {
-        // BBox as a polygon also requires the closing point.
-        const leftHalfBbox = [[west, south], [0.5*(west+east), south], [0.5*(west+east), north], [west, north], [west, south]]
-        const rightHalfBbox = [[0.5*(west+east), south], [east, south], [east, north], [0.5*(west+east), north], [0.5*(west+east), south]]
-        query.$or = [{ geometry: getGeometryQueryForBBox(leftHalfBbox) }, { geometry: getGeometryQueryForBBox(rightHalfBbox) }]
-      }
     }
     // Shortcut for location query
     if (!_.isNil(query.longitude) && !_.isNil(query.latitude)) {

@@ -1,15 +1,15 @@
 import _ from 'lodash'
-import configuration from 'config'
 import { api, LocalCache, utils } from '../../../core/client/index.js'
 import { setLayerCached, setLayerUncached } from './utils.layers.js'
 
-export async function createOfflineServicesForViews () {
+export async function createOfflineServicesForViews (offlineDocument) {
+  const { metadata } = offlineDocument
   // We at least need catalog/project/features
-  await utils.addServiceToCache('catalog', {})
-  await utils.addServiceToCache('projects', {})
+  await utils.addServiceToCache('catalog', Object.assign({}, _.get(metadata, 'catalog')))
+  await utils.addServiceToCache('projects', Object.assign({}, _.get(metadata, 'projects')))
   // Specific service option used to manage offline features services
-  await utils.addServiceToCache('features', { features: true })
-  await utils.createOfflineServices()
+  await utils.addServiceToCache('features', Object.assign({ features: true }, _.get(metadata, 'features')))
+  await utils.createOfflineServices(offlineDocument)
 }
 
 export async function removeOfflineServicesForViews () {
@@ -26,8 +26,13 @@ export async function getOfflineDocumentQueryForViews() {
   const catalogQuery = { type: { $exists: true } }
   // Take care that projects are not populated by default
   const projectQuery = { populate: true }
-  // Take care to only retrieve features in bbox
-  const featuresQuery = { $or: views.map(view => _.pick(view, ['south', 'north', 'west', 'east'])) }
+  // Take care to only retrieve features in view bboxes
+  const featuresQuery = {
+    south: views.map(view => view.south),
+    north: views.map(view => view.north),
+    west: views.map(view => view.west),
+    east: views.map(view => view.east)
+  }
   return {
     catalog: catalogQuery,
     projects: projectQuery,
@@ -71,9 +76,10 @@ export async function cacheView (view, layers, options = {}) {
   await addViewToCache(view, options)
   // Generate offline document for views in cache
   const query = await getOfflineDocumentQueryForViews()
-  await utils.createOfflineDocument(query)
+  const offlineDocument = await utils.createOfflineDocument(query)
+  await utils.getOfflineDocumentContent(offlineDocument)
   // Then offline services
-  await createOfflineServicesForViews()
+  await createOfflineServicesForViews(offlineDocument)
   // Then data layer
   await cacheLayersForView(view, layers, options)
 }

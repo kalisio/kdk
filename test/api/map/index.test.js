@@ -333,6 +333,26 @@ describe('map:services', () => {
       paginate: false
     })
     expect(result.features.length).to.equal(nbStations)
+    // Split world into two bboxes, this should given the same result when merged
+    result = await vigicruesStationsService.find({
+      query: { south: -90, north: 0, east: 180, west: -180 },
+      paginate: false
+    })
+    expect(result.features.length).to.be.most(nbStations)
+    const firstHalf = result.features.length
+    result = await vigicruesStationsService.find({
+      query: { south: 0, north: 90, east: 180, west: -180 },
+      paginate: false
+    })
+    expect(result.features.length).to.be.most(nbStations)
+    const secondHalf = result.features.length
+    expect(firstHalf + secondHalf).to.equal(nbStations)
+    // Split world into two bboxes, this should given the same result
+    result = await vigicruesStationsService.find({
+      query: { south: [-90, 0], north: [0, 90], east: [180, 180], west: [-180, -180] },
+      paginate: false
+    })
+    expect(result.features.length).to.equal(nbStations)
     result = await vigicruesStationsService.find({
       query: { south: 80, north: 85, east: 180, west: -180 },
       paginate: false

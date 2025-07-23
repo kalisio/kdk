@@ -41,7 +41,7 @@ export function setupApi (configuration) {
           remove: kMapHooks.referenceCountRemoveHook
         },
         after: {
-          find: [kMapHooks.geoJsonPaginationHook, kMapHooks.intersectBBoxHook]
+          find: [kMapHooks.intersectBBoxHook, kMapHooks.geoJsonPaginationHook]
         }
       })
     })

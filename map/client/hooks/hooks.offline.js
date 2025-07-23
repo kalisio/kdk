@@ -71,7 +71,8 @@ export async function referenceCountRemoveHook(context) {
 export function geoJsonPaginationHook(context) {
   const result = context.result
   const features = result.data
-  if (_.get(features, '[0].type') !== 'Feature') return
+  // Not features ?
+  if ((features.length > 0) && (_.get(features, '[0].type') !== 'Feature')) return
   context.result = Object.assign({
     type: 'FeatureCollection',
     features: result.data
@@ -81,15 +82,14 @@ export function geoJsonPaginationHook(context) {
 export async function intersectBBoxHook(context) {
   const params = context.params
   if (!_.has(params, 'east') || !_.has(params, 'west') || !_.has(params, 'north') || !_.has(params, 'south')) return context
-  const service = context.service
-  const query = await service._find(_.omit(params, ['east', 'west', 'north', 'south']))
-  const features = query.data
+  const result = context.result
+  const features = result.data
   const bbox = polygon([[[params.east, params.south], [params.west, params.south], [params.west, params.north], [params.east, params.north], [params.east, params.south]]])
-  let result = []
+  let featuresInBbox = []
   for (let feature of features) {
     if (booleanIntersects(bbox, feature)) {
-      result.push(feature)
+      featuresInBbox.push(feature)
     }
   }
-  _.set(context, 'result.data', result)
+  _.set(context, 'result.data', featuresInBbox)
 }
