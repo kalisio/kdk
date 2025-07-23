@@ -292,6 +292,7 @@ export const activity = {
         // but as we might not always use sockets perform it anyway
         this.removeLayer(layer.name)
       }
+      await this.refreshOrphanLayers()
       // Removing the layer should automatically update all projects
     },
     cacheView: offline.cacheView,
