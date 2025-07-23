@@ -33,12 +33,10 @@ export function setupApi (configuration) {
   // We also add some features related to offline mode
   api.createOfflineFeaturesService = async function (serviceName, options = {}) {
     options = Object.assign(_.omit(options, ['hooks']), {
-      // Set required default hooks and data path for snapshot as the service responds in GeoJson format
+      // Set required default hooks as the service responds in GeoJson format
       hooks: _.defaultsDeep(_.get(options, 'hooks'), {
         before: {
-          all: [kdkCoreHooks.ensureSerializable, kdkCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters],
-          create: [kdkCoreHooks.generateId, kMapHooks.referenceCountCreateHook],
-          remove: kMapHooks.referenceCountRemoveHook
+          all: [kdkCoreHooks.removeServerSideParameters, kMapHooks.removeServerSideParameters]
         },
         after: {
           find: [kMapHooks.intersectBBoxHook, kMapHooks.geoJsonPaginationHook]
