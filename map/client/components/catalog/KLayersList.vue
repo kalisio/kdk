@@ -3,26 +3,28 @@
     <slot name="header" />
 
     <div v-if="layers && layers.length > 0">
-      <div
-        v-for="(layer, index) in layers"
-        :key="index"
-        class="draggable-layer"
-        :draggable="isDraggable()"
-        @dragstart="onDragStart($event, index, layer)"
-        @drop="onDrop($event, index)"
-        @dragover.prevent
-        @dragenter.prevent
-      >
-        <q-icon v-if="isDraggable()" name="las la-grip-lines" color="primary" text-color="black" class="drag-handle" />
-        <component
-          :is="layerRenderer.component"
-          v-bind="layerRenderer.options"
-          :layer="layer"
-          @toggled="onLayerToggled"
-          @filter-toggled="onLayerFilterToggled"
-          style="flex-grow: 1;"
-        />
-      </div>
+      <template v-for="(layer, index) in layers">
+        <div
+          v-if="layer"
+          :key="index"
+          class="draggable-layer"
+          :draggable="isDraggable()"
+          @dragstart="onDragStart($event, index, layer)"
+          @drop="onDrop($event, index)"
+          @dragover.prevent
+          @dragenter.prevent
+        >
+          <q-icon v-if="isDraggable()" name="las la-grip-lines" color="primary" text-color="black" class="drag-handle" />
+          <component
+            :is="layerRenderer.component"
+            v-bind="layerRenderer.options"
+            :layer="layer"
+            @toggled="onLayerToggled"
+            @filter-toggled="onLayerFilterToggled"
+            style="flex-grow: 1;"
+          />
+        </div>
+      </template>
     </div>
 
     <div v-else-if="!options.hideIfEmpty" class="row justify-center q-pa-sm">
