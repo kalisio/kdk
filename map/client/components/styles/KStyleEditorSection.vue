@@ -5,12 +5,19 @@
       group="editor"
       header-class="bg-grey-2"
       :dense="dense"
+      :disable="!isEnabled"
     >
       <template v-slot:header>
+        <q-item-section v-if="canBeDisabled" class="col-auto">
+          <q-checkbox
+            v-model="isEnabled"
+            size="xs"
+          />
+        </q-item-section>
         <q-item-section v-if="label">
           {{ $t(label) }}
         </q-item-section>
-        <q-item-section v-if="!isOpened" side>
+        <q-item-section v-if="!isOpened && isEnabled" side>
           <KStylePreview :style="style[type]" :type="type" />
         </q-item-section>
       </template>
@@ -38,7 +45,11 @@ import KStylePreview from './KStylePreview.vue'
 import KStyleTip from './KStyleTip.vue'
 
 // Props
-defineProps({
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
+  },
   label: {
     type: String,
     required: true
@@ -57,16 +68,30 @@ defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  canBeDisabled: {
+    type: Boolean,
+    default: true
   }
 })
 
+// Emits
+const emit = defineEmits(['update:model-value'])
+
 // Data
+const isEnabled = ref(props.modelValue)
 const isOpened = ref(false)
 const showTip = ref(false)
 
 // Watch
 watch(isOpened, (value) => {
   setTimeout(() => { showTip.value = value }, 500)
+})
+watch(() => props.modelValue, (value) => {
+  isEnabled.value = value
+})
+watch(isEnabled, (value) => {
+  emit('update:model-value', value)
 })
 
 // Functions

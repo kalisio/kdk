@@ -26,6 +26,7 @@
       -->
       <KStyleEditorSection
         v-if="canEditPoint"
+        v-model="enabledSections.point"
         label="KStyleEditor.POINT_SECTION"
         :style="model"
         type="point"
@@ -55,6 +56,7 @@
       -->
       <KStyleEditorSection
         v-if="canEditLine"
+        v-model="enabledSections.line"
         label="KStyleEditor.LINE_SECTION"
         :style="model"
         type="line"
@@ -70,6 +72,7 @@
       -->
       <KStyleEditorSection
         v-if="canEditPolygon"
+        v-model="enabledSections.polygon"
         label="KStyleEditor.POLYGON_SECTION"
         :style="model"
         type="polygon"
@@ -149,6 +152,7 @@ const { CurrentActivityContext } = useCurrentActivity()
 const formRef = ref(null)
 const model = ref(null)
 const mode = props.style ? 'edition' : 'creation'
+const enabledSections = ref({ point: true, line: true, polygon: true })
 const formValues = {
   name: _.get(props.style, 'name', ''),
   tags: _.get(props.style, 'tags', [])
@@ -249,6 +253,13 @@ const canEditPolygon = computed(() => props.allowedTypes.includes('polygon'))
 watch(() => props.style, (value) => {
   if (!value) model.value = _.clone(_.pick(engine.value.style, ['point', 'line', 'polygon']))
   else model.value = value
+
+  _.forEach(['point', 'line', 'polygon'], value => {
+    if (!_.get(model.value, value)) {
+      enabledSections.value[value] = false
+      _.set(model.value, value, getDefaultValue(value))
+    }
+  })
 }, { immediate: true })
 
 // Functions
@@ -276,6 +287,15 @@ async function apply () {
   if (!isUnique) return false
   // create to patch the style
   let data = Object.assign({}, model.value, values)
+  // omit disabled feature types
+  const omitKeys = []
+  _.forIn(enabledSections.value, (value, key) => {
+    if (!value) {
+      omitKeys.push(key)
+      _.set(data, `$unset.${key}`, true)
+    }
+  })
+  data = _.omit(data, omitKeys)
   // keep only usefull data from tags
   data.tags = _.map(values.tags, tag => _.pick(tag, ['name', 'description', 'color']))
   if (mode === 'creation') {
