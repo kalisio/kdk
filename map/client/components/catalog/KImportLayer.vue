@@ -150,13 +150,14 @@ async function onImport () {
   if (CurrentActivity.value.hasLayer(propertiesResult.values.name)) {
     Events.emit('error', { message: i18n.t('KImportLayer.LAYER_ALREADY_EXISTS', { layer: propertiesResult.values.name }) })
   }
-  this.importing = true
+  importing.value = true
   await CurrentActivity.value.addGeoJsonLayer({
     name: propertiesResult.values.name,
     description: propertiesResult.values.description,
     schema: { name: file.name, content: file.schema },
     featureId: propertiesResult.values.featureId
   }, file.content)
+  if (typeof CurrentActivity.value.refreshOrphanLayers === 'function') await CurrentActivity.value.refreshOrphanLayers()
   importing.value = false
   emit('done')
 }
