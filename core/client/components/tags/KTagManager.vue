@@ -124,7 +124,7 @@ const schema = computed(() => {
         }
       },
       description: {
-        type: 'string',
+        type: ['string', 'null'],
         field: {
           component: 'form/KTextField',
           label: 'KTagManager.TAG_DESCRIPTION'
