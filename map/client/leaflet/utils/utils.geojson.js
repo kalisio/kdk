@@ -7,6 +7,15 @@ import 'leaflet.markercluster'
 import { lineOffset } from '@turf/turf'
 import { GradientPath, SVGGradientPath } from '../GradientPath.js'
 
+// FIXME: Not sure why but using lodash _.values() function in Leaflet Realtime layer object does not work,
+// possibly due to some internal complex objects ?
+function getObjectValues(object) {
+  const values = []
+  const keys = Object.keys(object)
+  keys.forEach(key => values.push(object[key]))
+  return values
+}
+
 const Realtime = L.Realtime.extend({
   // Override default remove handler for leaflet-realtime due to
   // https://github.com/perliedman/leaflet-realtime/issues/177
@@ -19,13 +28,13 @@ const Realtime = L.Realtime.extend({
   },
   // Add FeatureGroup interface so that layer edition works as well
   toGeoJSON() {
-    return { type: 'FeatureCollection', features: _.values(this._features) }
+    return { type: 'FeatureCollection', features: getObjectValues(this._features) }
   },
   clearLayers() {
     this._onNewData(true, { type: 'FeatureCollection', features: [] })
   },
   getLayers() {
-    _.values(this._featureLayers)
+    return getObjectValues(this._featureLayers)
   },
   addLayer(geoJsonLayer) {
     this._onNewData(false, geoJsonLayer.toGeoJSON())
