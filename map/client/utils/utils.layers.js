@@ -372,7 +372,7 @@ async function generateStyleFromFilters (layer, defaultStyle) {
   return result
 }
 
-export async function editLayerStyle (layer, style) {
+export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) {
   style = _.pick(style, ['point', 'line', 'polygon'])
   if (layer._id) {
     // Need to regenerate templates to update default style in them
@@ -380,15 +380,19 @@ export async function editLayerStyle (layer, style) {
     if (result) {
       // Update legend
       Object.assign(result, await getUpdatedLayerLegend(Object.assign({}, layer, result)))
+      if (ignoreFeatureStyle) result.ignoreFeatureStyle = true
       await api.getService('catalog').patch(layer._id, result)
     } else {
       const legend = await getUpdatedLayerLegend(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
-      await api.getService('catalog').patch(layer._id, Object.assign({}, { 'cesium.style': style, 'leaflet.style': style }, legend))
+      const patch = Object.assign({}, { 'cesium.style': style, 'leaflet.style': style }, legend)
+      if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
+      await api.getService('catalog').patch(layer._id, patch)
     }
   } else {
     _.set(layer, 'cesium.style', style)
     _.set(layer, 'leaflet.style', style)
     Object.assign(layer, await getUpdatedLayerLegend(layer))
+    if (ignoreFeatureStyle) layer.ignoreFeatureStyle = true
   }
   return layer
 }
@@ -402,7 +406,7 @@ export async function updateLayerWithFiltersStyle (layer) {
   await api.getService('catalog').patch(layer._id, style)
 }
 
-export async function editFilterStyle (layer, filter, engineStyle, style) {
+export async function editFilterStyle (layer, filter, engineStyle, style, ignoreFeatureStyle = false) {
   if (!layer._id) return
   const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
 
@@ -432,6 +436,7 @@ export async function editFilterStyle (layer, filter, engineStyle, style) {
     _.mapKeys(templates, (value, key) => `cesium.${key}`),
     { filters: layerFilters }
   )
+  if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
   // Update legend
   Object.assign(patch, await getUpdatedLayerLegend(Object.assign({}, layer, { filters: layerFilters })))
   await api.getService('catalog').patch(layer._id, patch)

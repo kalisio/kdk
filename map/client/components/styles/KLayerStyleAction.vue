@@ -26,7 +26,7 @@ const { CurrentActivity } = useCurrentActivity()
 
 const styles = ref([])
 
-defineProps({
+const props = defineProps({
   label: {
     type: String,
     required: true
@@ -35,9 +35,9 @@ defineProps({
     type: String,
     required: false
   },
-  tags: {
-    type: Array,
-    default: () => []
+  ignoreFeatureStyle: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -53,9 +53,9 @@ const menuContent = computed(() => {
 async function applyToLayer (layer, styleToApply) {
   if (_.get(layer, 'filter')) {
     const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
-    await editFilterStyle(layer.layer, layer.filter, engineStyle, styleToApply)
+    await editFilterStyle(layer.layer, layer.filter, engineStyle, styleToApply, props.ignoreFeatureStyle)
   } else {
-    await editLayerStyle(layer, styleToApply)
+    await editLayerStyle(layer, styleToApply, props.ignoreFeatureStyle)
     if (CurrentActivity.value.isInMemoryLayer(layer)) {
       await CurrentActivity.value.resetLayer(layer)
     }
