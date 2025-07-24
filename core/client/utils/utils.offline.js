@@ -6,6 +6,8 @@ import { LocalCache } from '../local-cache.js'
 export async function createOfflineServices (offlineDocument) {
   // Try to get it from cache if not provided
   if (!offlineDocument) offlineDocument = await getOfflineDocument()
+  // Nothing available offline yet
+  if (!offlineDocument) return
   const services = await LocalCache.getItem('services')
   if (services) {
     const { documentHandle } = offlineDocument
@@ -48,6 +50,8 @@ export async function createOfflineDocument(query) {
 
 export async function getOfflineDocument() {
   const offlineDocument = await LocalCache.getItem('offlineDocument')
+  // Nothing available offline yet
+  if (!offlineDocument) return
   const repo = api.get('repo')
   offlineDocument.documentHandle = await repo.find(offlineDocument.url)
   return offlineDocument
@@ -56,17 +60,20 @@ export async function getOfflineDocument() {
 export async function getOfflineDocumentContent(offlineDocument) {
   // Try to get it from cache if not provided
   if (!offlineDocument) offlineDocument = await getOfflineDocument()
-  const repo = api.get('repo')
-  offlineDocument.documentHandle = await repo.find(offlineDocument.url)
-  offlineDocument.content = await offlineDocument.documentHandle.doc()
-  // Store metadata separated from actual content
-  offlineDocument.metadata = offlineDocument.content.__meta || {}
-  // Take care that feathers strip slashes in meta, go from /api to api/
-  const apiPath = configuration.apiPath.substr(1) + '/'
-  offlineDocument.metadata = _.mapKeys(offlineDocument.metadata, (value, key) => {
-    return key.replace(apiPath, '')
-  })
-  offlineDocument.content = _.omit(offlineDocument.content, ['__meta'])
+  // Nothing available offline yet
+  if (offlineDocument) {
+    const repo = api.get('repo')
+    offlineDocument.documentHandle = await repo.find(offlineDocument.url)
+    offlineDocument.content = await offlineDocument.documentHandle.doc()
+    // Store metadata separated from actual content
+    offlineDocument.metadata = offlineDocument.content.__meta || {}
+    // Take care that feathers strip slashes in meta, go from /api to api/
+    const apiPath = configuration.apiPath.substr(1) + '/'
+    offlineDocument.metadata = _.mapKeys(offlineDocument.metadata, (value, key) => {
+      return key.replace(apiPath, '')
+    })
+    offlineDocument.content = _.omit(offlineDocument.content, ['__meta'])
+  }
   return offlineDocument
 }
 
