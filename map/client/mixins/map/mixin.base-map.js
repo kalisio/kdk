@@ -630,7 +630,6 @@ export const baseMap = {
     },
     clearLayers () {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
-      this.orphanLayers.forEach((layer) => this.removeLayer(layer))
     },
     toGeoJson (name) {
       if (!this.isLayerVisible(name)) {
@@ -915,6 +914,9 @@ export const baseMap = {
     },
     isUserLocationVisible () {
       return (this.locateControl && this.locateControl._active)
+    },
+    isOrphanLayer (layer) {
+      return this.orphanLayers.some(l => l.name === layer.name)
     },
     setCursor (className) {
       L.DomUtil.addClass(this.map._container, className)
