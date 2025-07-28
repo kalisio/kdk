@@ -292,7 +292,9 @@ async function apply () {
   _.forIn(enabledSections.value, (value, key) => {
     if (!value) {
       omitKeys.push(key)
-      _.set(data, `$unset.${key}`, true)
+      if (mode !== 'creation') {
+        _.set(data, `$unset.${key}`, true)
+      }
     }
   })
   data = _.omit(data, omitKeys)
