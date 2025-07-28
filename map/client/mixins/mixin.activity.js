@@ -362,35 +362,51 @@ export const activity = {
     finalize () {
       this.unlistenToCatalogServiceEvents()
     },
+    async refreshLayer (layer, event) {
+      // Updating a layer requires to remove/add it again to cover all use cases (eg style edition, etc.)
+      // Here we preferably find layer by ID as renaming could have occured from another client
+      let planetApi
+      if (layer && (typeof layer.getPlanetApi === 'function')) {
+        planetApi = layer.getPlanetApi()
+      }
+      if (layer) {
+        // Stop any running edition
+        if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
+        await this.removeCatalogLayer(layer)
+      }
+      if (event !== 'removed') {
+        // Do we need to inject a token or restore planet API ?
+        if (planetApi) Object.assign(layer, { getPlanetApi: () => planetApi })
+        await setEngineJwt([layer], planetApi)
+        await this.addCatalogLayer(layer)
+      }
+    },
+    requestRefreshLayer (layer, event) {
+      // As this is used by realtime events we need to avoid reentrance in any case
+      // multiple events regarding the same layer come in at almost the same time.
+      // This is for instance the case when saving a layer when a created then patched event come in.
+      // So we need something similar to _.debounce() but for each possible layer argument.
+      // Otherwise when two events are almost received at the same time but target different layers only the last one will be considered.
+      if (!this.pendingLayerRefresh) this.pendingLayerRefresh = {}
+      // If a refresh has already been requested the last one wins so cancel it
+      if (this.pendingLayerRefresh[layer]) clearTimeout(this.pendingLayerRefresh[layer])
+      this.pendingLayerRefresh[layer] = setTimeout(() => {
+        delete this.pendingLayerRefresh[layer]
+        this.refreshLayer(layer, event)
+      }, 500)
+    },
     async onCatalogUpdated (object, event) {
       switch (object.type) {
         case 'Category':
           // In any case we rebuild categories
-          await this.debouncedRefreshLayerCategories()
+          await this.requestRefreshLayerCategories()
           break
         case 'Context':
         case 'Service':
           // Nothing to do
           break
         default: {
-          // Updating a layer requires to remove/add it again to cover all use cases (eg style edition, etc.)
-          // Here we preferably find layer by ID as renaming could have occured from another client
-          const layer = this.getLayerById(object._id) || this.getLayerByName(object.name)
-          let planetApi
-          if (layer && (typeof layer.getPlanetApi === 'function')) {
-            planetApi = layer.getPlanetApi()
-          }
-          if (layer) {
-            // Stop any running edition
-            if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
-            await this.removeCatalogLayer(layer)
-          }
-          if (event !== 'removed') {
-            // Do we need to inject a token or restore planet API ?
-            if (planetApi) Object.assign(object, { getPlanetApi: () => planetApi })
-            await setEngineJwt([object], planetApi)
-            await this.addCatalogLayer(object)
-          }
+          await this.requestRefreshLayer(object, event)
           break
         }
       }
@@ -411,7 +427,7 @@ export const activity = {
     this.$engineEvents.on('layer-added', this.configureLayerActions)
   },
   mounted () {
-    this.debouncedRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
+    this.requestRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
     // Target online/offline service depending on status
     this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
