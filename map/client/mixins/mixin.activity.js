@@ -104,7 +104,7 @@ export const activity = {
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
-      if (typeof this.refreshOrphanLayers === 'function') await this.refreshOrphanLayers()
+      await this.refreshOrphanLayers()
     },
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
       this.reorganizeLayers()
@@ -133,7 +133,7 @@ export const activity = {
       }
     },
     async refreshOrphanLayers () {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,
