@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { api } from '@kalisio/kdk/core.client.js'
+import { api } from '../api.js'
 
 export function getCollectionService (name, context) {
   return api.getService(name, context)
