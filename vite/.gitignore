@@ -1,0 +1,6 @@
+# vite
+dist
+components.d.ts
+
+# Dependency directories
+node_modules/

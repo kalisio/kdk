@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>KDK test app</title>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <!--script type="module" src="./core/client/index.js"></script>
+    <script type="module" src="./map/client/map.js"></script-->
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import { createApp } from 'vue'
+      import { Quasar } from 'quasar'
+      import config from 'config'
+      import kdk, { kdkCore, kdkMap } from '../client.js'
+      import App from './App.vue'
+      
+      localStorage.setItem('kano-jwt', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJrYWxpc2lvIiwiaXNzIjoia2FsaXNpbyJ9.qwOZjkIcAqo6HPGESu0_5-f6g9VkN6y6pN1HJKJF6Sg')
+
+      const app = createApp(App)
+      app.use(Quasar, {
+        plugins: {}, // import Quasar plugins and add here
+      })
+
+      // Initializes i18n first to avoid any browser translation
+      await kdkCore.i18n.initialize(app, ['core', 'map'])
+      // Initiate the client
+      const api = await kdkCore.initializeApi(kdkMap.setupApi)
+      // Then all services
+      await api.configure(kdk.core)
+      await api.configure(kdk.map)
+      api.on('login', (data) => {
+        // Store API gateway token if any
+        if (data.gatewayToken) api.get('storage').setItem(config.gatewayJwt, data.gatewayToken)
+      })
+      api.on('logout', (data) => {
+        // Remove API gateway token if any
+        api.get('storage').removeItem(config.gatewayJwt)
+      })
+
+      // Register global properties to the the vue app
+      app.config.globalProperties.$store = kdkCore.Store
+      app.config.globalProperties.$layout = kdkCore.Layout
+      app.config.globalProperties.$time = kdkCore.Time
+      app.config.globalProperties.$events = kdkCore.Events
+      app.config.globalProperties.$api = api
+      app.config.globalProperties.$can = api.can
+      //app.config.globalProperties.$notify = Notify.create
+      app.config.globalProperties.$tie = kdkCore.i18n.tie.bind(kdkCore.i18n)
+      app.config.globalProperties.$geolocation = kdkCore.Geolocation
+      app.config.globalProperties.$config = function (path, defaultValue) {
+        return _.get(config, path, defaultValue)
+      }
+
+      app.mount('#app')
+    </script>
+  </body>
+</html>
