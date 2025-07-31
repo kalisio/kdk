@@ -1,11 +1,12 @@
 import _ from 'lodash'
+import config from 'config'
 import { Layout } from '../layout.js'
 
 export function baseActivity (name) {
   return {
     methods: {
       getAppName () {
-        return this.$config('appName')
+        return config.appName
       },
       configurePadding () {
         if (_.has(this.activityOptions, 'padding')) Layout.setPadding(_.get(this.activityOptions, 'padding'))
@@ -253,7 +254,7 @@ export function baseActivity (name) {
       // Identify this activity using its name or the route name
       this.activityName = name || _.camelCase(this.$options.name)
       // Setup the options
-      this.activityOptions = this.$config(this.activityName)
+      this.activityOptions = config[this.activityName]
     },
     mounted () {
       // Configure the activity

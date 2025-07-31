@@ -6,6 +6,7 @@
 
 <script>
 import _ from 'lodash'
+import config from 'config'
 import logger from 'loglevel'
 import { getCssVar, copyToClipboard, exportFile } from 'quasar'
 import along from '@turf/along'
@@ -357,7 +358,7 @@ export default {
       const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
       const headers = { 'Content-Type': 'application/json' }
       // Add the Authorization header if jwt is defined
-      const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+      const jwt = await this.$api.get('storage').getItem(config.gatewayJwt)
       if (jwt) headers.Authorization = 'Bearer ' + jwt
 
       const dismiss = this.$q.notify({
