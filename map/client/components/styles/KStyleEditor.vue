@@ -108,7 +108,9 @@ import _ from 'lodash'
 import config from 'config'
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
-import { api, i18n, utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
+import { i18n } from '../../../../core/client/i18n.js'
+import { api } from '../../../../core/client/api.js'
+import { containsText } from '../../../../core/client/utils/index.js'
 import { useCurrentActivity } from '../../composables'
 import KPanel from '../../../../core/client/components/KPanel.vue'
 import KStyleEditorSection from './KStyleEditorSection.vue'
@@ -273,7 +275,7 @@ const onNameChanged = _.debounce(async (field, value) => {
 async function checkName (name) {
   if (mode === 'edition' && name === props.style.name) return true
   const service = api.getService('styles')
-  const hasName = await kdkCoreUtils.containsText(service, 'name', name)
+  const hasName = await containsText(service, 'name', name)
   if (!hasName || !formRef.value) return true
   formRef.value.getField('name').reference.invalidate(i18n.t('KStyleEditor.STYLE_ALREADY_EXISTS', { style: name }))
   return false

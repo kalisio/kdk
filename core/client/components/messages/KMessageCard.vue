@@ -96,18 +96,16 @@
 </template>
 
 <script>
-import {
-  Document,
-  Storage,
-  composables as kdkCoreComposables,
-  mixins as kdkCoreMixins
-} from '@kalisio/kdk/core.client'
 import _ from 'lodash'
+import { Document } from '../../document.js'
+import { Storage } from '../../storage.js'
+import { useScreen } from '../../composables/index.js'
+import { baseItem } from '../../mixins/index.js'
 import KTextArea from '../KTextArea.vue'
 import KCard from '../collection/KCard.vue'
 
 export default {
-  mixins: [kdkCoreMixins.baseItem],
+  mixins: [baseItem],
   props: {
     header: {
       type: [Array, Object],
@@ -199,7 +197,7 @@ export default {
   },
   setup () {
     // data
-    const { dense } = kdkCoreComposables.useScreen()
+    const { dense } = useScreen()
     // expose
     return {
       dense

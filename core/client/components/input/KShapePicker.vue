@@ -22,7 +22,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, watch, computed } from 'vue'
-import { utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
+import { Shapes } from '../../utils/utils.shapes.js'
 import KShape from '../media/KShape.vue'
 
 // Props
@@ -31,7 +31,7 @@ const props = defineProps({
     type: String,
     default: 'circle',
     validator: (value) => {
-      return _.concat(['none'], _.keys(kdkCoreUtils.Shapes)).includes(value)
+      return _.concat(['none'], _.keys(Shapes)).includes(value)
     }
   },
   size: {
@@ -45,7 +45,7 @@ const emit = defineEmits(['update:modelValue'])
 
 // Data
 const popupProxyRef = ref(null)
-const shapeTypes = _.concat(['none'], _.keys(kdkCoreUtils.Shapes))
+const shapeTypes = _.concat(['none'], _.keys(Shapes))
 const shape = ref(shapeTypes.includes(props.modelValue) ? props.modelValue : 'circle')
 const shapeSizes = {
   xs: 14,

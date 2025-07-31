@@ -20,13 +20,11 @@
 </template>
 
 <script setup>
-import {
-  Store,
-  composables as kdkCoreComposables
-} from '@kalisio/kdk/core.client'
 import _ from 'lodash'
 import { computed, ref, watch } from 'vue'
-import { i18n } from '../../i18n'
+import { i18n } from '../../i18n.js'
+import { Store } from '../../store.js'
+import { useScreen, useCollectionFilter } from '../../composables/index.js'
 
 // Props
 const props = defineProps({
@@ -64,10 +62,10 @@ const props = defineProps({
 const emit = defineEmits(['messages-refreshed'])
 
 // Data
-const { dense, wide } = kdkCoreComposables.useScreen()
+const { dense, wide } = useScreen()
 const baseQuery = ref({})
 const { filterQuery, hasTimeSelection, hasTagsSelection } =
-  kdkCoreComposables.useCollectionFilter({
+  useCollectionFilter({
     service: ref('messages'),
     baseQuery,
     tagFields: props.tagFields

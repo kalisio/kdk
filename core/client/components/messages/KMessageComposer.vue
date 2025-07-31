@@ -87,16 +87,14 @@
 </template>
 
 <script setup>
-import {
-  i18n,
-  composables as kdkCoreComposables,
-  Store
-} from '@kalisio/kdk/core.client'
 import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
 import { Notify, useQuasar } from 'quasar'
 import { computed, ref } from 'vue'
+import { i18n } from '../../i18n.js'
+import { Store } from '../../store.js'
+import { useMessages } from '../../composables/index.js'
 import KUploader from '../document/KUploader.vue'
 
 // Props
@@ -123,7 +121,7 @@ const props = defineProps({
 const $q = useQuasar()
 const User = Store.get('user')
 const MessageTypes = props.messageTypes ?? config.messagesActivity.messages
-const { createMessage } = kdkCoreComposables.useMessages()
+const { createMessage } = useMessages()
 const editor = ref(false)
 const uploaderRef = ref(null)
 const attachments = ref(null)
