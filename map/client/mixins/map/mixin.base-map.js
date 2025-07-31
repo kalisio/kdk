@@ -2,9 +2,9 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import moment from 'moment'
-import L from 'leaflet'
 import Emitter from 'tiny-emitter'
 import { point, rhumbDistance, rhumbBearing, rhumbDestination } from '@turf/turf'
+import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
 import 'leaflet-fullscreen'
@@ -24,6 +24,7 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet-rotate/dist/leaflet-rotate-src.js'
+
 import { Time } from '../../../../core/client/time.js'
 import { getLocale } from '../../../../core/client/utils/index.js'
 import '../../leaflet/BoxSelection.js'
@@ -679,7 +680,7 @@ export const baseMap = {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     bringLayerToFront (name) {
-      const leafletLayer = this.getLeafletLayerByName(name)
+      let leafletLayer = this.getLeafletLayerByName(name)
       if (!leafletLayer) return
       // If panes are declared on this layer push it front to make it on top of others should be sufficient.
       const panes = _.get(leafletLayer, 'options.panes')
@@ -698,7 +699,7 @@ export const baseMap = {
       if (leafletLayer && (typeof leafletLayer.bringToFront === 'function')) leafletLayer.bringToFront()
     },
     bringLayerToBack (name) {
-      const leafletLayer = this.getLeafletLayerByName(name)
+      let leafletLayer = this.getLeafletLayerByName(name)
       if (!leafletLayer) return
       // If panes are declared on this layer push it back to make it under others should be sufficient.
       const panes = _.get(leafletLayer, 'options.panes')
