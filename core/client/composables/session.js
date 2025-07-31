@@ -64,7 +64,7 @@ export function useSession (options = {}) {
     // The first time initialize guards after the app has been correctly setup,
     // ie either with or without a restored user and a redirection
     if (!isInitialized.value) {
-      router.beforeEach(beforeGuard)
+      if (router) router.beforeEach(beforeGuard)
       isInitialized.value = true
     }
   }

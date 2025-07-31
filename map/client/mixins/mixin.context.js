@@ -103,7 +103,7 @@ export const context = {
       if (asQuery) Object.assign(route.query, parameters)
       else Object.assign(route.params, parameters)
       // We catch as replacing with similar params raises a duplicate navigation error
-      this.$router.replace(route).catch(_ => {})
+      if (this.$router) this.$router.replace(route).catch(_ => {})
     },
     async setContextParameters (context, targetParameters) {
       switch (context) {
