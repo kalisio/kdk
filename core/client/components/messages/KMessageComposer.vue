@@ -6,6 +6,7 @@
     <div class="row justify-between items-center no-wrap">
       <div :class="{ 'q-pa-xs': $q.screen.xs, 'q-pa-sm': $q.screen.gt.xs, 'col-auto': true }">
         <q-fab
+          id="composer-fab"
           :icon="getKindIcon(currentType)"
           :color="getKindColor(currentType)"
           direction="up"
