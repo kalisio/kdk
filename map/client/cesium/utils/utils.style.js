@@ -7,7 +7,7 @@ import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
          convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
-import { Cesium } from './utils.cesium.js'
+import * as Cesium from 'cesium'
 
 export const CesiumStyleMappings = {
   stroke: 'stroke',
