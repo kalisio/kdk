@@ -1,6 +1,6 @@
 import logger from 'loglevel'
 import _ from 'lodash'
-import geojsonhint from '@mapbox/geojsonhint'
+//import geojsonhint from '@mapbox/geojsonhint'
 import { i18n } from '../../../core/client/i18n.js'
 
 export const GEOJSONReader = {
@@ -38,6 +38,7 @@ export const GEOJSONReader = {
           }
         }
         // lint the geosjon file
+        /*
         const messages = geojsonhint.hint(content, options)
         // filter the message according the level to find the errors
         const errors = _.filter(messages, message => {
@@ -48,6 +49,7 @@ export const GEOJSONReader = {
           reject(new Error(i18n.t('errors.INVALID_GEOJSON_FILE', { file: file.name }), { errors }))
           return
         }
+        */
         // the geosjon file is correct
         resolve(content)
       }
