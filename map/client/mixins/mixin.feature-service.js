@@ -2,6 +2,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import { Events } from '../../../core/client/events.js'
+import { api } from '../../../core/client/api.js'
 import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import * as features from '../utils/utils.features.js'
 import * as layers from '../utils/utils.layers.js'
@@ -129,7 +130,7 @@ export const featureService = {
   },
   created () {
     // Extend timeout for large write operations
-    this.$api.getService('features').timeout = 60 * 60 * 1000 // 1h should be sufficient since we also have size limits
+    api.getService('features').timeout = 60 * 60 * 1000 // 1h should be sufficient since we also have size limits
   },
   mounted () {
     // Here we need to listen to service events for all realtime layers

@@ -3,6 +3,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import { Store } from '../../../core/client/store.js'
 import { Events } from '../../../core/client/events.js'
+import { api } from '../../../core/client/api.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
 import { getCategories, getLayers, getSublegends, setEngineJwt } from '../utils/utils.catalog.js'
@@ -243,9 +244,9 @@ export const activity = {
         createdLayer = await layers.saveLayer(layer)
       }
       // Add layer to current project ? Check if not coming from another planet first
-      if (this.project && (this.project.getPlanetApi() === this.$api)) {
+      if (this.project && (this.project.getPlanetApi() === api)) {
         this.project.layers.push({ _id: createdLayer._id })
-        await this.$api.getService('projects').patch(this.project._id, {
+        await api.getService('projects').patch(this.project._id, {
           layers: this.project.layers
         })
       }
@@ -305,8 +306,8 @@ export const activity = {
     },
     listenToCatalogServiceEvents () {
       // Listen about changes in global/contextual catalog services
-      const globalCatalogService = this.$api.getService('catalog', 'global')
-      const catalogService = this.$api.getService('catalog')
+      const globalCatalogService = api.getService('catalog', 'global')
+      const catalogService = api.getService('catalog')
       this.globalCatalogListeners = listenToServiceEvents('catalog', {
         context: 'global', all: this.onCatalogUpdated, removed: (object) => this.onCatalogUpdated(object, 'removed')
       }, this.globalCatalogListeners)

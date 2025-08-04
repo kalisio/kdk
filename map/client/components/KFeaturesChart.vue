@@ -75,7 +75,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import Papa from 'papaparse'
 import { Loading } from 'quasar'
-import { mixins as kCoreMixins, utils as kCoreUtils, composables as kCoreComposables } from '../../../core/client'
+import { api, mixins as kCoreMixins, utils as kCoreUtils, composables as kCoreComposables } from '../../../core/client'
 import { KModal, KStatisticsChart } from '../../../core/client/components'
 
 export default {
@@ -171,7 +171,7 @@ export default {
       let values = _.get(this.layer.schema, `content.properties.${this.selectedProperty.value}.field.options`)
       if (!values) {
         // Otherwise we need to make a DB query
-        values = await this.$api.getService(this.layer.service)
+        values = await api.getService(this.layer.service)
           .find({ query: Object.assign({ $distinct: `properties.${this.selectedProperty.value}` }, this.layer.baseQuery) })
         // We don't have label in that case
         values = _.map(values, value => ({ value, label: (value || this.$t('KFeaturesChart.NULL_VALUE_LABEL')) }))
@@ -183,7 +183,7 @@ export default {
       this.values = await this.getPropertyValues()
       // Then count features for each value
       let data = await Promise.all(_.map(this.values, async value => {
-        const response = await this.$api.getService(this.layer.service)
+        const response = await api.getService(this.layer.service)
           .find({ query: Object.assign({ $limit: 0, [`properties.${this.selectedProperty.value}`]: value.value }, this.layer.baseQuery) })
         return { value, count: response.total }
       }))
@@ -268,7 +268,7 @@ export default {
       kCoreMixins.baseModal.methods.openModal.call(this, true)
       // If not injected load it
       if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
-      else this.layer = await this.$api.getService('catalog').get(this.layerId)
+      else this.layer = await api.getService('catalog').get(this.layerId)
       this.openSettings()
     }
   },

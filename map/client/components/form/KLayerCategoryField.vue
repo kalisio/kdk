@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { mixins as kCoreMixins } from '../../../../core/client'
+import { api, mixins as kCoreMixins } from '../../../../core/client'
 
 export default {
   name: 'k-category-field',
@@ -49,7 +49,7 @@ export default {
   },
   async created () {
     // Build the list of available categories
-    const response = await this.$api.getService('catalog').find({ query: { type: 'Category' } })
+    const response = await api.getService('catalog').find({ query: { type: 'Category' } })
     this.availableCategories = response.data
   }
 }

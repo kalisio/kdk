@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { Dialog, Notify, exportFile } from 'quasar'
 import { Events } from '../events.js'
+import { api } from '../api.js'
 import { bindContent, filterContent } from '../utils/index.js'
 
 export const baseItem = {
@@ -145,10 +146,10 @@ export const baseItem = {
             flat: true
           }
         }).onOk(() => {
-          this.$api.getService(this.service).remove(this.item._id)
+          api.getService(this.service).remove(this.item._id)
         })
       } else {
-        this.$api.getService(this.service).remove(this.item._id)
+        api.getService(this.service).remove(this.item._id)
       }
     },
     exportItem () {

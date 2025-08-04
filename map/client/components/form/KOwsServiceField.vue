@@ -81,7 +81,7 @@
 <script>
 import _ from 'lodash'
 import xml2js from 'xml2js'
-import { mixins as kCoreMixins } from '../../../../core/client'
+import { api, mixins as kCoreMixins } from '../../../../core/client'
 import { KAction } from '../../../../core/client/components'
 import * as wms from '../../../common/wms-utils'
 import * as wfs from '../../../common/wfs-utils'
@@ -151,12 +151,12 @@ export default {
       const service = _.cloneDeep(this.model)
       delete service.availableLayers
       // Save the service
-      await this.$api.getService('catalog').create(service)
+      await api.getService('catalog').create(service)
       // Refresh the list of available services
       this.refreshAvailableServices()
     },
     async onDeleteService (service) {
-      await this.$api.getService('catalog').remove(service._id)
+      await api.getService('catalog').remove(service._id)
       // Refresh the list of available services
       this.refreshAvailableServices()
       // Clear
@@ -276,7 +276,7 @@ export default {
     },
     async refreshAvailableServices () {
       // Retrieve the list of the available services
-      const response = await this.$api.getService('catalog').find({ query: { type: 'Service' } })
+      const response = await api.getService('catalog').find({ query: { type: 'Service' } })
       this.availableServices = response.data
     }
   },

@@ -40,7 +40,7 @@
 
 <script>
 import _ from 'lodash'
-import { Store, mixins as kCoreMixins } from '../../../../core/client'
+import { api, Store, mixins as kCoreMixins } from '../../../../core/client'
 import { KModal, KGrid, KAction, KPanel, KForm } from '../../../../core/client/components'
 
 export default {
@@ -226,7 +226,7 @@ export default {
         category.type = 'Category'
         this.savingCategory = true
         try {
-          await this.$api.getService('catalog').create(category)
+          await api.getService('catalog').create(category)
           this.savingCategory = false
         } catch (error) {
           this.savingCategory = false
@@ -241,7 +241,7 @@ export default {
       if (result.isValid) {
         this.savingCategory = true
         try {
-          await this.$api.getService('catalog').patch(this.editedCategory._id, result.values)
+          await api.getService('catalog').patch(this.editedCategory._id, result.values)
           this.savingCategory = false
         } catch (error) {
           this.savingCategory = false
@@ -281,7 +281,7 @@ export default {
       this.editedCategory = category
     },
     removeCategory (category) {
-      this.$api.getService('catalog').remove(category._id)
+      api.getService('catalog').remove(category._id)
     }
   }
 }

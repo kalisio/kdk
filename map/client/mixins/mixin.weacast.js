@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { Events } from '../../../core/client/events.js'
+import { api } from '../../../core/client/api.js'
 import { getForecastForLocation, getForecastProbe, getForecastForFeature } from '../utils/utils.weacast.js'
 
 export const weacast = {
@@ -17,7 +18,7 @@ export const weacast = {
   methods: {
     getWeacastApi () {
       // As we usually proxy weacast service we use our API unless another client has been specified by override
-      return this.$api
+      return api
     },
     async setupWeacast () {
       try {

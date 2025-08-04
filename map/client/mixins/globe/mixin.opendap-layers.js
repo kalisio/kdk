@@ -1,4 +1,5 @@
 // import logger from 'loglevel'
+import { api } from '../../../../core/client/api.js'
 import { Resource, Cesium3DTileset } from 'cesium'
 
 export const opendapLayers = {
@@ -9,7 +10,7 @@ export const opendapLayers = {
       if (cesiumOptions.type !== 'opendap') return
 
       const urlPromise = async () => {
-        const accessToken = await this.$api.passport.getJWT()
+        const accessToken = await api.passport.getJWT()
         const url = new Resource({
           url: 'http://localhost:8081/api/daptiles/tileset.json',
           headers: {

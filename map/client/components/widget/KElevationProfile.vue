@@ -15,6 +15,7 @@ import flatten from '@turf/flatten'
 import { Units } from '../../../../core/client/units'
 import { Store } from '../../../../core/client/store'
 import { Events } from '../../../../core/client/events'
+import { api } from '../../../../core/client/api.js'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
 import { fetchProfileDataset, fetchElevation, extractElevation } from '../../elevation-utils.js'
@@ -359,7 +360,7 @@ export default {
       const endpoint = Store.get('capabilities.api.gateway') + '/elevation'
       const headers = { 'Content-Type': 'application/json' }
       // Add the Authorization header if jwt is defined
-      const jwt = await this.$api.get('storage').getItem(config.gatewayJwt)
+      const jwt = await api.get('storage').getItem(config.gatewayJwt)
       if (jwt) headers.Authorization = 'Bearer ' + jwt
 
       const dismiss = this.$q.notify({
