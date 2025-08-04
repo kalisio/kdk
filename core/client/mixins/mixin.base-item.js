@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { Dialog, Notify, exportFile } from 'quasar'
+import { Events } from '../events.js'
 import { bindContent, filterContent } from '../utils/index.js'
 
 export const baseItem = {
@@ -164,9 +165,9 @@ export const baseItem = {
     // Register the actions
     this.configureActions()
     // Whenever the user abilities are updated, update actions as well
-    this.$events.on('user-abilities-changed', this.configureActions)
+    Events.on('user-abilities-changed', this.configureActions)
   },
   beforeUnmount () {
-    this.$events.off('user-abilities-changed', this.configureActions)
+    Events.off('user-abilities-changed', this.configureActions)
   }
 }

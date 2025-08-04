@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import sift from 'sift'
-import { utils as kCoreUtils, Time, Store, LocalStorage } from '../../../core/client/index.js'
+import { utils as kCoreUtils, Time, Store, Events, LocalStorage } from '../../../core/client/index.js'
 import { isTerrainLayer } from '../utils/utils.layers.js'
 
 export const context = {
@@ -260,11 +260,11 @@ export const context = {
   },
   mounted () {
     // Whenever restore settings are updated, update view as well
-    this.$events.on('restore-view-changed', this.updateViewSettings)
-    this.$events.on('restore-layers-changed', this.updateLayersSettings)
+    Events.on('restore-view-changed', this.updateViewSettings)
+    Events.on('restore-layers-changed', this.updateLayersSettings)
   },
   beforeUnmount () {
-    this.$events.off('restore-view-changed', this.updateViewSettings)
-    this.$events.off('restore-layers-changed', this.updateLayersSettings)
+    Events.off('restore-view-changed', this.updateViewSettings)
+    Events.off('restore-layers-changed', this.updateLayersSettings)
   }
 }

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import config from 'config'
 import { Layout } from '../layout.js'
 import { Store } from '../store.js'
+import { Events } from '../events.js'
 
 export function baseActivity (name) {
   return {
@@ -261,10 +262,10 @@ export function baseActivity (name) {
       // Configure the activity
       this.configureActivity()
       // Whenever the user abilities are updated, update activity as well
-      this.$events.on('user-abilities-changed', this.configureActivity)
+      Events.on('user-abilities-changed', this.configureActivity)
     },
     beforeUnmount () {
-      this.$events.off('user-abilities-changed', this.configureActivity)
+      Events.off('user-abilities-changed', this.configureActivity)
       // Clear the activity
       this.clearActivity()
     }

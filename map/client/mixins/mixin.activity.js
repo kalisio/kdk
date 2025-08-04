@@ -1,7 +1,8 @@
 import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Store } from '../../../core/client/index.js'
+import { Store } from '../../../core/client/store.js'
+import { Events } from '../../../core/client/events.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
 import { getCategories, getLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
@@ -433,19 +434,19 @@ export const activity = {
   mounted () {
     this.requestRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
     // Target online/offline service depending on status
-    this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('websocket-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('websocket-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('websocket-reconnected', this.resetCatalogServiceEventsListeners)
   },
   beforeUnmount () {
     this.$engineEvents.off('map-ready', this.onEngineReady)
     this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.configureLayerActions)
-    this.$events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('websocket-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('websocket-reconnected', this.resetCatalogServiceEventsListeners)
     this.finalize()
   }
 }
