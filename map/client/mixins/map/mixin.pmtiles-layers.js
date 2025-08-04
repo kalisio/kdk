@@ -5,7 +5,7 @@ import sift from 'sift'
 import L from 'leaflet'
 import * as protomaps from 'protomaps-leaflet'
 import { mapbox_style } from '@kalisio/leaflet-pmtiles'
-import { api, Time, Units, TemplateContext } from '../../../../core/client/index.js'
+import { api, Time, Units, Events, TemplateContext } from '../../../../core/client/index.js'
 
 export const pmtilesLayers = {
   methods: {
@@ -104,11 +104,11 @@ export const pmtilesLayers = {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletPMTilesLayer)
-    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
+    Events.on('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
+    Events.off('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
   }
 }

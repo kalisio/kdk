@@ -26,6 +26,7 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet-rotate/dist/leaflet-rotate-src.js'
 
 import { Time } from '../../../../core/client/time.js'
+import { Events } from '../../../../core/client/events.js'
 import { getLocale } from '../../../../core/client/utils/index.js'
 import '../../leaflet/BoxSelection.js'
 import '../../leaflet/WindBarb.js'
@@ -953,13 +954,13 @@ export const baseMap = {
     // Internal event bus
     this.$engineEvents = new Emitter()
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
-    this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
+    Events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   beforeUnmount () {
     this.clearLayers()
     L.DomEvent.off(this.map._container, TouchEvents.join(' '), this.onTouchEvent, this)
     this.$engineEvents.off('zoomend', this.onMapZoomChanged)
-    this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
+    Events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   unmounted () {
     if (this.map) {

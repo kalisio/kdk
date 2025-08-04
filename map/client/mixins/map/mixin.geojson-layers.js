@@ -3,7 +3,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import { point, rhumbDistance, rhumbBearing, rhumbDestination, getType } from '@turf/turf'
-import { Time, Units, utils as kdkCoreUtils } from '../../../../core.client.js'
+import { Time, Units, Events, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { getUpdateFeatureFunction, hasUnitInLeafletLayerTemplate, GeoJsonLeafletLayerFilters } from '../../leaflet/utils/utils.geojson.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
@@ -642,9 +642,9 @@ export const geojsonLayers = {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
-    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    Events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
-    this.$events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    Events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
@@ -655,9 +655,9 @@ export const geojsonLayers = {
     this.geojsonCache = {}
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    Events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
-    this.$events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    Events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)

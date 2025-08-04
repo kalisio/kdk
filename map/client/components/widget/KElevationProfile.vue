@@ -14,6 +14,7 @@ import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { Units } from '../../../../core/client/units'
 import { Store } from '../../../../core/client/store'
+import { Events } from '../../../../core/client/events'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
 import { fetchProfileDataset, fetchElevation, extractElevation } from '../../elevation-utils.js'
@@ -430,17 +431,17 @@ export default {
     this.debouncedRefresh = _.debounce(this.refresh, 100)
 
     // Setup listeners
-    this.$events.on('units-default-length-changed', this.debouncedRefresh)
-    this.$events.on('units-default-altitude-changed', this.debouncedRefresh)
-    if (this.layerStorePath) { this.$events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
-    if (this.featureStorePath) { this.$events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
+    Events.on('units-default-length-changed', this.debouncedRefresh)
+    Events.on('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath) { Events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
+    if (this.featureStorePath) { Events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
   },
   beforeUnmount () {
     // Release listeners
-    this.$events.off('units-default-length-changed', this.debouncedRefresh)
-    this.$events.off('units-default-altitude-changed', this.debouncedRefresh)
-    if (this.layerStorePath) { this.$events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
-    if (this.featureStorePath) { this.$events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
+    Events.off('units-default-length-changed', this.debouncedRefresh)
+    Events.off('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath) { Events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
+    if (this.featureStorePath) { Events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
   },
   setup (props) {
     return {

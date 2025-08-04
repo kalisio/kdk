@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { Time } from '../../../../core/client/time.js'
+import { Events } from '../../../../core/client/events.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer.js'
 
@@ -106,7 +107,7 @@ export const tiledMeshLayers = {
     this.$engineEvents.on('layer-hidden', this.onHideTiledMeshLayer)
     this.$engineEvents.on('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
     this.$engineEvents.on('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
-    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
+    Events.on('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
   },
 
   beforeUnmount () {
@@ -115,6 +116,6 @@ export const tiledMeshLayers = {
     this.$engineEvents.off('layer-hidden', this.onHideTiledMeshLayer)
     this.$engineEvents.off('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
     this.$engineEvents.off('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
+    Events.off('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
   }
 }

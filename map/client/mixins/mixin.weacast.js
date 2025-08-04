@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import { Events } from '../../../core/client/events.js'
 import { getForecastForLocation, getForecastProbe, getForecastForFeature } from '../utils/utils.weacast.js'
 
 export const weacast = {
@@ -119,11 +120,11 @@ export const weacast = {
     }
   },
   created () {
-    this.$events.on('time-current-time-changed', this.onCurrentForecastTimeChanged)
+    Events.on('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$engineEvents.on('selected-level-changed', this.onWeacastSelectedLevelChanged)
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentForecastTimeChanged)
+    Events.off('time-current-time-changed', this.onCurrentForecastTimeChanged)
     this.$engineEvents.off('selected-level-changed', this.onWeacastSelectedLevelChanged)
   }
 }
