@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import { Store } from '../../../core/client/index.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
-import { getCategories, getLayers, getSublegends, setEngineJwt } from '../utils/utils.catalog.js'
+import { getCategories, getLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
@@ -381,6 +381,7 @@ export const activity = {
         // Do we need to inject a token or restore planet API ?
         if (planetApi) Object.assign(layer, { getPlanetApi: () => planetApi })
         await setEngineJwt([layer], planetApi)
+        processTranslations(layer)
         await this.addCatalogLayer(layer)
       }
     },
