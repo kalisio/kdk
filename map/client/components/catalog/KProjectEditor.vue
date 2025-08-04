@@ -66,15 +66,6 @@ export default {
   },
   methods: {
     async apply () {
-      // We at least needs a background layer
-      // FIXME: how to do this as we only have IDs here
-      /*
-      const layers = this.form.values().layers
-      if (!_.find(layers, { type: 'BaseLayer'})) {
-        this.$notify({ type: 'negative', message: this.$t('KProjectEditor.BACKGROUND_LAYER_REQUIRED') })
-        return
-      }
-      */
       this.processing = true
       if (await baseEditor.methods.apply.call(this)) {
         this.processing = false

@@ -8,7 +8,7 @@
 import _ from 'lodash'
 import config from 'config'
 import logger from 'loglevel'
-import { getCssVar, copyToClipboard, exportFile } from 'quasar'
+import { getCssVar, copyToClipboard, exportFile, Notify } from 'quasar'
 import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
@@ -343,7 +343,7 @@ export default {
       const geometry = _.get(this.feature, 'geometry.type')
       if (geometry !== 'LineString' && geometry !== 'MultiLineString') {
         logger.warn('[KDK] the selected feature has an invald geometry')
-        this.$notify({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
+        Notify.create({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
       this.highlight(this.feature, false)
@@ -393,7 +393,7 @@ export default {
         terrainDataset = dataset
         this.profile = geojson
       } catch (error) {
-        this.$notify({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
+        Notify.create({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
       }
 
       dismiss()
@@ -407,9 +407,9 @@ export default {
       if (this.profile) {
         try {
           await copyToClipboard(JSON.stringify(this.profile))
-          this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_COPIED') })
+          Notify.create({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_COPIED') })
         } catch (error) {
-          this.$notify({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
+          Notify.create({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
           logger.error(error)
         }
       }
@@ -418,8 +418,8 @@ export default {
       if (this.profile) {
         const file = this.title + '.geojson'
         const status = exportFile(file, JSON.stringify(this.profile))
-        if (status) this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
-        else this.$notify({ rtpe: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
+        if (status) Notify.create({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
+        else Notify.create({ rtpe: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
   },

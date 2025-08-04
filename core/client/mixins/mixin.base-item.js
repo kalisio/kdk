@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { Dialog, exportFile } from 'quasar'
+import { Dialog, Notify, exportFile } from 'quasar'
 import { bindContent, filterContent } from '../utils/index.js'
 
 export const baseItem = {
@@ -154,9 +154,9 @@ export const baseItem = {
       const name = this.name
       const file = name + '.json'
       if (exportFile(file, JSON.stringify(this.item))) {
-        this.$notify({ type: 'positive', message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
+        Notify.create({ type: 'positive', message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
       } else {
-        this.$notify({ type: 'negative', message: this.$t('mixins.baseItme.CANNOT_EXPORT_ITEM') })
+        Notify.create({ type: 'negative', message: this.$t('mixins.baseItme.CANNOT_EXPORT_ITEM') })
       }
     }
   },
