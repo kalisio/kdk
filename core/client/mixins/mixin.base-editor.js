@@ -1,5 +1,6 @@
 import logger from 'loglevel'
 import _ from 'lodash'
+import { i18n } from '../i18n.js'
 
 export const baseEditor = {
   emits: ['applied'],
@@ -43,7 +44,7 @@ export const baseEditor = {
       if (this.getSchema()) {
         const schemaTitle = this.getSchema().title
         const objectName = _.get(this.getObject(), 'name')
-        return this.$tie(schemaTitle, { name: objectName, interpolation: { escapeValue: false } })
+        return i18n.tie(schemaTitle, { name: objectName, interpolation: { escapeValue: false } })
       }
       return ''
     },

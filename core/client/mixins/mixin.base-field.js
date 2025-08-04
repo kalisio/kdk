@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { openURL } from 'quasar'
+import { i18n } from '../i18n.js'
 
 export const baseField = {
   props: {
@@ -29,7 +30,7 @@ export const baseField = {
       // Make use of 'description' metadata if nothing else is provided
       // cf. https://ajv.js.org/json-schema.html#metadata-keywords
       const description = _.get(this.properties, 'description', '')
-      return this.$tie(_.get(this.properties.field, 'label', description))
+      return i18n.tie(_.get(this.properties.field, 'label', description))
     },
     hasHelper () {
       return !_.isEmpty(_.get(this.properties.field, 'helper', {}))
@@ -61,7 +62,7 @@ export const baseField = {
       // If not use default validator error messages
       if (!error) error = this.error
       // Else check if we have a translation key or directly the error content
-      return this.$tie(error)
+      return i18n.tie(error)
     },
     disabled () {
       return _.get(this.properties.field, 'disabled', false)
