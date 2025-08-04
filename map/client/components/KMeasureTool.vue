@@ -24,6 +24,7 @@ import area from '@turf/area'
 import { polygon, lineString, featureCollection } from '@turf/helpers'
 import { getCoords, getType } from '@turf/invariant'
 import { Units } from '../../../core/client/units'
+import { Store } from '../../../core/client/store'
 import { KPanel } from '../../../core/client/components'
 import { formatUserCoordinates } from '../utils'
 
@@ -531,7 +532,7 @@ export default {
       return Units.format(value, unit, this.angleUnit)
     },
     formatCoordinates (lat, lng) {
-      return formatUserCoordinates(lat, lng, this.$store.get('locationFormat', 'FFf'))
+      return formatUserCoordinates(lat, lng, Store.get('locationFormat', 'FFf'))
     }
   },
   mounted () {

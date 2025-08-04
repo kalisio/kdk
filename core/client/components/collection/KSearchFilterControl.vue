@@ -66,6 +66,7 @@ import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { useCurrentActivity } from '../../composables/index.js'
 import { Search } from '../../search.js'
+import { Store } from '../../store.js'
 
 // Props
 const props = defineProps({
@@ -115,7 +116,7 @@ function getItemIcon (item) {
 function onItemSelected (item) {
   this.items.push(item)
   this.pattern = ''
-  this.$store.patch('filter', { items: this.items, pattern: this.pattern })
+  Store.patch('filter', { items: this.items, pattern: this.pattern })
 }
 function onItemRemoved (itemId) {
   _.set(state.searchFilter, 'items', _.without(items.value, itemId))
@@ -125,7 +126,7 @@ async function onSearch (pattern) {
   if (_.isNull(pattern)) pattern = ''
   // update the pattern
   this.pattern = pattern
-  this.$store.patch('filter', { pattern: this.pattern })
+  Store.patch('filter', { pattern: this.pattern })
   // run the search if the pattern is not empty
   if (!_.isEmpty(pattern)) {
     const results = await Search.query(props.services, pattern)

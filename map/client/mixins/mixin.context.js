@@ -15,7 +15,7 @@ export const context = {
       if (_.has(this, `activityOptions.restore.${context}`)) {
         if (!_.get(this, `activityOptions.restore.${context}`)) return false
       }
-      return this.$store.get(`restore.${context}`)
+      return Store.get(`restore.${context}`)
     },
     getRouteContext (context) {
       switch (context) {

@@ -40,7 +40,7 @@
 
 <script>
 import _ from 'lodash'
-import { mixins as kCoreMixins } from '../../../../core/client'
+import { Store, mixins as kCoreMixins } from '../../../../core/client'
 import { KModal, KGrid, KAction, KPanel, KForm } from '../../../../core/client/components'
 
 export default {
@@ -195,8 +195,8 @@ export default {
   },
   data () {
     return {
-      filter: this.$store.get('filter'),
-      sorter: this.$store.get('sorter'),
+      filter: Store.get('filter'),
+      sorter: Store.get('sorter'),
       mode: 'list',
       count: undefined,
       savingCategory: false,

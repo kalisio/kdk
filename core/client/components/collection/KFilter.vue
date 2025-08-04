@@ -65,6 +65,7 @@
 import _ from 'lodash'
 import { Filter } from '../../filter'
 import { Search } from '../../search'
+import { Store } from '../../store'
 
 export default {
   props: {
@@ -125,18 +126,18 @@ export default {
     onItemSelected (item) {
       this.items.push(item)
       this.pattern = ''
-      this.$store.patch('filter', { items: this.items, pattern: this.pattern })
+      Store.patch('filter', { items: this.items, pattern: this.pattern })
     },
     onItemRemoved (itemId) {
       this.items = _.filter(this.items, item => { return item._id !== itemId })
-      this.$store.patch('filter', { items: this.items, pattern: this.pattern })
+      Store.patch('filter', { items: this.items, pattern: this.pattern })
     },
     async onSearch (pattern) {
       // take about a null pattern received when clearing the input
       if (_.isNull(pattern)) pattern = ''
       // update the pattern
       this.pattern = pattern
-      this.$store.patch('filter', { pattern: this.pattern })
+      Store.patch('filter', { pattern: this.pattern })
       // run the search if the pattern is not empty
       if (!_.isEmpty(pattern)) {
         const results = await Search.query(this.services, pattern)
@@ -150,7 +151,7 @@ export default {
   },
   created () {
     // Initialize the filter, we keep track of any existing items previously set by another activity
-    this.$store.patch('filter', { fields: this.fields || this.field, pattern: '' })
+    Store.patch('filter', { fields: this.fields || this.field, pattern: '' })
   },
   beforeUnmount () {
     this.items = []
