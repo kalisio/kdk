@@ -11,6 +11,7 @@ import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import Papa from 'papaparse'
 import { downloadAsBlob } from '../../../../core/client/utils'
+import { Store } from '../../../../core/client/store'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
 import { KChart } from '../../../../core/client/components'
@@ -471,7 +472,7 @@ export default {
   },
   async mounted () {
     // Initialize the time range
-    const span = this.$store.get('timeseries.span')
+    const span = Store.get('timeseries.span')
     const start = moment(Time.getCurrentTime()).subtract(span, 'm')
     const end = moment(Time.getCurrentTime()).add(span, 'm')
     Time.patchRange({ start, end })

@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import config from 'config'
 import { Layout } from '../layout.js'
+import { Store } from '../store.js'
 
 export function baseActivity (name) {
   return {
@@ -247,7 +248,7 @@ export function baseActivity (name) {
           }
           name = tourName
         }
-        this.$store.patch('tours.current', { name })
+        Store.patch('tours.current', { name })
       }
     },
     beforeCreate () {

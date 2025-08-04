@@ -20,6 +20,7 @@ import config from 'config'
 import centroid from '@turf/centroid'
 import { KPanel } from '../../../../core/client/components'
 import { api } from '../../../../core/client/api.js'
+import { Store } from '../../../../core/client/store.js'
 import * as mapMixins from '../../mixins/map'
 import { Geolocation } from '../../geolocation.js'
 import { useCatalog, useCurrentActivity } from '../../composables'
@@ -207,7 +208,7 @@ export default {
     },
     onLocationDragged () {
       const latLng = this.locationLayer.getLatLng()
-      const newLocation = coordinatesToGeoJSON(latLng.lat, latLng.lng, this.$store.get('locationFormat', 'FFf'))
+      const newLocation = coordinatesToGeoJSON(latLng.lat, latLng.lng, Store.get('locationFormat', 'FFf'))
       this.$emit('update:modelValue', newLocation)
     },
     startDraw (shape) {
@@ -235,11 +236,11 @@ export default {
       const geometry = feature.geometry.type
       if (geometry === 'Point') {
         const coords = feature.geometry.coordinates
-        feature.properties.name = formatUserCoordinates(coords[1], coords[0], this.$store.get('locationFormat', 'FFf'))
+        feature.properties.name = formatUserCoordinates(coords[1], coords[0], Store.get('locationFormat', 'FFf'))
       } else {
         const prefix = this.$t(geometry === 'Polygon' ? 'KLocationMap.ZONE' : 'KLocationMap.PATH')
         const coords = _.get(centroid(feature), 'geometry.coordinates')
-        feature.properties.name = `${prefix} (${formatUserCoordinates(coords[1], coords[0], this.$store.get('locationFormat', 'FFf'))})`
+        feature.properties.name = `${prefix} (${formatUserCoordinates(coords[1], coords[0], Store.get('locationFormat', 'FFf'))})`
       }
       this.$emit('update:modelValue', feature)
       // clear draw layer

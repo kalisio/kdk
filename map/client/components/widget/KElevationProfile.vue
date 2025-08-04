@@ -355,7 +355,7 @@ export default {
       const chartWidth = window.size[0]
 
       // Setup the request url options
-      const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
+      const endpoint = Store.get('capabilities.api.gateway') + '/elevation'
       const headers = { 'Content-Type': 'application/json' }
       // Add the Authorization header if jwt is defined
       const jwt = await this.$api.get('storage').getItem(config.gatewayJwt)
