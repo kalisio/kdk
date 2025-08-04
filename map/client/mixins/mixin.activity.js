@@ -158,13 +158,13 @@ export const activity = {
     isLayerStyleEditable: layers.isLayerStyleEditable,
     isLayerDataEditable: layers.isLayerDataEditable,
     canCreateLayer () {
-      return this.$can('create', 'catalog')
+      return api.can('create', 'catalog')
     },
     canUpdateLayer (layer) {
-      return layers.isInMemoryLayer(layer) || this.$can('update', 'catalog')
+      return layers.isInMemoryLayer(layer) || api.can('update', 'catalog')
     },
     canRemoveLayer (layer) {
-      return layers.isInMemoryLayer(layer) || this.$can('remove', 'catalog')
+      return layers.isInMemoryLayer(layer) || api.can('remove', 'catalog')
     },
     async resetLayer (layer) {
       // This requires to recreate the layer in the underlying engine with the new setup.
