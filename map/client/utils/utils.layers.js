@@ -11,7 +11,7 @@ import * as kMapHooks from '../hooks/index.js'
 import { generatePropertiesSchema, getGeoJsonFeatures } from '../utils.map.js'
 import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle } from './utils.style.js'
 
-export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
+const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
 export function isInMemoryLayer (layer) {
   return layer._id === undefined
