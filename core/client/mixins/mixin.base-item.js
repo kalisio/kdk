@@ -96,14 +96,14 @@ export const baseItem = {
       this.$emit('item-expanded', this.item, expanded)
     },
     canViewItem () {
-      return this.$can('read', this.service, this.item)
+      return api.can('read', this.service, this.item)
     },
     viewItem () {
       const path = this.$route.fullPath + `/view/${this.item._id}`
       this.$router.push(path)
     },
     canEditItem () {
-      return this.$can('update', this.service, this.item)
+      return api.can('update', this.service, this.item)
     },
     editItem (scope = undefined, properties = undefined) {
       const route = this.$route
@@ -121,7 +121,7 @@ export const baseItem = {
       })
     },
     canRemoveItem () {
-      return this.$can('remove', this.service, this.item)
+      return api.can('remove', this.service, this.item)
     },
     removeItem (prompt, nameField = 'name') {
       if (prompt === 'confirm' || prompt === 'input') {
