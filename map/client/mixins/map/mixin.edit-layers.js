@@ -5,6 +5,7 @@ import { getType, getCoords, getGeom } from '@turf/invariant'
 import { uid } from 'quasar'
 import { Store } from '../../../../core/client/store.js'
 import { Units } from '../../../../core/client/units.js'
+import { api } from '../../../../core/client/api.js'
 import { 
   getGeoJsonFeatures, bindLeafletEvents, unbindLeafletEvents, 
   getDefaultPointStyle, getDefaultLineStyle, getDefaultPolygonStyle, createMarkerFromPointStyle,
@@ -46,7 +47,7 @@ export const editLayers = {
         if (this.editedPopup) this.editedFeature.bindPopup(this.editedPopup)
         // Update feature after edition from DB or memory
         const service = (this.editedLayer._id ? _.get(this.editedLayer, 'service', 'features') : 'features-edition')
-        const feature = await this.$api.getService(service).get(this.editedFeature.feature._id)
+        const feature = await api.getService(service).get(this.editedFeature.feature._id)
         this.editableLayer.removeLayer(this.editedFeature)
         this.editableLayer.addData(feature)
         this.editedPopup = null
@@ -218,7 +219,7 @@ export const editLayers = {
           // Generate in memory service _id as string to match what's done with mongo
           feature._id = uid().toString()
           // Service will use the provided _id as object key
-          await this.$api.getService('features-edition').create(feature)
+          await api.getService('features-edition').create(feature)
         }
       } else {
         // Listen to layer changes
@@ -291,7 +292,7 @@ export const editLayers = {
       if (this.editedLayer._id === undefined) {
         const geoJson = this.editableLayer.toGeoJSON()
         const features = getGeoJsonFeatures(geoJson)
-        const service = this.$api.getService('features-edition')
+        const service = api.getService('features-edition')
         await Promise.all(features.map((f) => service.remove(f._id)))
       } else {
         // Clear listeners to layer changes
@@ -424,7 +425,7 @@ export const editLayers = {
         // Generate in memory service _id as string to match what's done with mongo
         geoJson._id = idValue
         // Service will use the provided _id as object key
-        await this.$api.getService('features-edition').create(geoJson)
+        await api.getService('features-edition').create(geoJson)
       }
       this.editableLayer.removeLayer(leafletLayer)
       this.editableLayer.addData(geoJson)
@@ -444,7 +445,7 @@ export const editLayers = {
         await this.editFeaturesGeometry(geoJson, this.editedLayer)
       } else {
         const features = getGeoJsonFeatures(geoJson)
-        const service = this.$api.getService('features-edition')
+        const service = api.getService('features-edition')
         // Remember those operations because we need to make sure we wait for completion
         // before clearing the in memory edition service in stopEditLayer
         const operations = Promise.all(features.map((f) => service.patch(f._id, { geometry: f.geometry })))
@@ -472,7 +473,7 @@ export const editLayers = {
         await this.removeFeatures(geoJson, this.editedLayer)
       } else {
         const features = getGeoJsonFeatures(geoJson)
-        const service = this.$api.getService('features-edition')
+        const service = api.getService('features-edition')
         await Promise.all(features.map((f) => service.remove(f._id)))
       }
     },

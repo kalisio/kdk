@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import sift from 'sift'
-import { utils as kCoreUtils, Time, Store, Events, LocalStorage } from '../../../core/client/index.js'
+import { api, utils as kCoreUtils, Time, Store, Events, LocalStorage } from '../../../core/client/index.js'
 import { isTerrainLayer } from '../utils/utils.layers.js'
 
 export const context = {
@@ -185,7 +185,7 @@ export const context = {
             // Check for a home context if not already retrieved
             // Use undefined here to check for a first try as if we find none we set it to null
             if (_.isUndefined(this.homeContext)) {
-              const response = await this.$api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
+              const response = await api.getService('catalog').find({ query: { type: 'Context', isDefault: true } })
               this.homeContext = (response.data.length > 0 ? response.data[0] : null)
             }
             if (this.homeContext) targetParameters = this.homeContext
@@ -233,16 +233,16 @@ export const context = {
       if (hasLayers) {
         Object.assign(context, this.getContextParameters('layers'))
       }
-      context = await this.$api.getService('catalog').create(context)
+      context = await api.getService('catalog').create(context)
       return context
     },
     async loadContext (context) {
       // If not context object retrieve it from catalog first
       if (typeof context === 'string') {
         if (kCoreUtils.isObjectID(context)) {
-          context = await this.$api.getService('catalog').get(context)
+          context = await api.getService('catalog').get(context)
         } else {
-          const response = await this.$api.getService('catalog').find({ query: { type: 'Context', name: context } })
+          const response = await api.getService('catalog').find({ query: { type: 'Context', name: context } })
           context = (response.data.length > 0 ? response.data[0] : null)
         }
       }
