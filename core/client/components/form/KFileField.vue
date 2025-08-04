@@ -63,6 +63,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { markRaw } from 'vue'
+import { Notify } from 'quasar'
 import { baseField } from '../../mixins'
 import { i18n } from '../../i18n.js'
 import { Reader } from '../../reader.js'
@@ -186,7 +187,7 @@ export default {
         this.upload(object, field)
           .then(() => {
             const files = this.multiple ? this.model : [this.model]
-            this.$notify({
+            Notify.create({
               type: 'positive',
               message: i18n.t('KFileField.UPLOAD_FILE_SUCCEEDED', {
                 file: files.map(f => f.name).join(', ')
@@ -194,7 +195,7 @@ export default {
             })
           })
           .catch(error => {
-            this.$notify({
+            Notify.create({
               type: 'negative',
               message: i18n.t('KFileField.UPLOAD_FILE_ERRORED')
             })
