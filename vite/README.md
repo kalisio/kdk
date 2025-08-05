@@ -134,6 +134,10 @@ alias: {
 > Moving components to a single directory is hard as they are part of the source code split into core/map directories.
 > This would probably require to rewrite the `loadComponent` utility function to `@component` alias.
 
-### Quasar langage packs
+### How to integrate Quasar langage packs ?
 
 Not yet found a solution to integrate it with Vite, an alias does not seem to work.
+
+### How to integrate Vue components ?
+
+Not yet tested how to integrate single-file components into the library with Vite, only JS files are considered so far.
