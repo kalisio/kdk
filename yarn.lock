@@ -1723,15 +1723,6 @@
     "@feathersjs/errors" "^4.5.15"
     "@feathersjs/feathers" "^4.5.15"
 
-"@feathersjs/adapter-commons@^5.0.0-pre.22":
-  version "5.0.34"
-  resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-5.0.34.tgz#dccdc835e995956afdf1e2646747bf4acf5e416a"
-  integrity sha512-wc0HAZ0uov68p1ytBR5npyAePdNbFrRqr1fINSpLvIkrUkKDEcC6I/lOpk1TBpoI8so5IO/seZhkl25pqKM43A==
-  dependencies:
-    "@feathersjs/commons" "^5.0.34"
-    "@feathersjs/errors" "^5.0.34"
-    "@feathersjs/feathers" "^5.0.34"
-
 "@feathersjs/adapter-commons@^5.0.0-pre.28":
   version "5.0.0-pre.28"
   resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-5.0.0-pre.28.tgz#a75ecaac11e99ebe26365b4d8db80bb36c203905"
@@ -1758,6 +1749,15 @@
     "@feathersjs/commons" "^5.0.5"
     "@feathersjs/errors" "^5.0.5"
     "@feathersjs/feathers" "^5.0.5"
+
+"@feathersjs/adapter-commons@^5.0.6":
+  version "5.0.34"
+  resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-5.0.34.tgz#dccdc835e995956afdf1e2646747bf4acf5e416a"
+  integrity sha512-wc0HAZ0uov68p1ytBR5npyAePdNbFrRqr1fINSpLvIkrUkKDEcC6I/lOpk1TBpoI8so5IO/seZhkl25pqKM43A==
+  dependencies:
+    "@feathersjs/commons" "^5.0.34"
+    "@feathersjs/errors" "^5.0.34"
+    "@feathersjs/feathers" "^5.0.34"
 
 "@feathersjs/adapter-commons@^5.0.8":
   version "5.0.8"
@@ -1979,11 +1979,6 @@
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-4.5.15.tgz#2f9c2599fd93607206ee40ab0e5639b79c7781b8"
   integrity sha512-eVEcLJL3GcPQBQcD77jI3fZ4MMx+iD02Px2Z1lDw+cn/iGCeQkWWAPQs4Tp+HGR1rTL5JO+unyhzN8V9X7OYmw==
 
-"@feathersjs/commons@^5.0.0-pre.22", "@feathersjs/commons@^5.0.34":
-  version "5.0.34"
-  resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-5.0.34.tgz#9cbc8f326ad24036e1fdb4cfc9b0cd9b28699b08"
-  integrity sha512-UfHzq7taVJx++TXxX5pmDSR72xRp+h5nler4xcUlcJWLLykCOYo8YCeW03S7T1p1NuFdy0qBmU+B+G89bjyGmg==
-
 "@feathersjs/commons@^5.0.0-pre.28", "@feathersjs/commons@^5.0.5":
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-5.0.5.tgz#a912449cf9b2ea150caa4d0ffdd13bac0ff1bcaa"
@@ -1993,6 +1988,11 @@
   version "5.0.31"
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-5.0.31.tgz#01d193379c2e6d19dbcbf48c169a49adca1eac9b"
   integrity sha512-Kp8euV0ARSxQMCSH+em0opQBK2QkuWf+gPs+pnWK16H8kDciQ0tOz1st11X/5CYMbhy5Ccp2LSclpMQ7xNcrdA==
+
+"@feathersjs/commons@^5.0.34", "@feathersjs/commons@^5.0.6":
+  version "5.0.34"
+  resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-5.0.34.tgz#9cbc8f326ad24036e1fdb4cfc9b0cd9b28699b08"
+  integrity sha512-UfHzq7taVJx++TXxX5pmDSR72xRp+h5nler4xcUlcJWLLykCOYo8YCeW03S7T1p1NuFdy0qBmU+B+G89bjyGmg==
 
 "@feathersjs/commons@^5.0.8":
   version "5.0.8"
@@ -2099,15 +2099,6 @@
     events "^3.3.0"
     uberproto "^2.0.6"
 
-"@feathersjs/feathers@^5.0.0-pre.22", "@feathersjs/feathers@^5.0.34":
-  version "5.0.34"
-  resolved "https://registry.yarnpkg.com/@feathersjs/feathers/-/feathers-5.0.34.tgz#591625d9b6b158419acfefe121931fcb4ae1dab6"
-  integrity sha512-jgeqKq/Uhsfeld42F8uimqzPv/uhtohkenpaWeD+NudJp2YZNYfA6gDZAL5UTpAvrTJFmK3QR1q1CnuL1mJdHg==
-  dependencies:
-    "@feathersjs/commons" "^5.0.34"
-    "@feathersjs/hooks" "^0.9.0"
-    events "^3.3.0"
-
 "@feathersjs/feathers@^5.0.0-pre.28", "@feathersjs/feathers@^5.0.5":
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/@feathersjs/feathers/-/feathers-5.0.5.tgz#4b8145e1caed9c7483ebe78c5e0d4252213bce1f"
@@ -2123,6 +2114,15 @@
   integrity sha512-QCGyemcRGnKMLMJ0XssAwaaGwydhE4KG8QwUVgMQdrJ1yOjx4NvXbOgsWeJ0kJ971KkxzNt1AKN1WJc398qyhw==
   dependencies:
     "@feathersjs/commons" "^5.0.31"
+    "@feathersjs/hooks" "^0.9.0"
+    events "^3.3.0"
+
+"@feathersjs/feathers@^5.0.34", "@feathersjs/feathers@^5.0.6":
+  version "5.0.34"
+  resolved "https://registry.yarnpkg.com/@feathersjs/feathers/-/feathers-5.0.34.tgz#591625d9b6b158419acfefe121931fcb4ae1dab6"
+  integrity sha512-jgeqKq/Uhsfeld42F8uimqzPv/uhtohkenpaWeD+NudJp2YZNYfA6gDZAL5UTpAvrTJFmK3QR1q1CnuL1mJdHg==
+  dependencies:
+    "@feathersjs/commons" "^5.0.34"
     "@feathersjs/hooks" "^0.9.0"
     events "^3.3.0"
 
@@ -9802,18 +9802,18 @@ feathers-mongodb@^6.0.0:
     "@feathersjs/commons" "^4.5.11"
     "@feathersjs/errors" "^4.5.11"
 
-feathers-reactive@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/feathers-reactive/-/feathers-reactive-0.10.0.tgz#e75da650013f4e405bc46889b9413e4d643eaae7"
-  integrity sha512-6HoBRV1lHx13f024MCDKh+Kp4Y5MVmEl4PQM07nLLEaQ7tJpO9tv1CMIOhaDYxIw5JZGbblmCtVXDSKiPKdqVw==
+feathers-reactive@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/feathers-reactive/-/feathers-reactive-0.11.0.tgz#e3a417fabb1fcb9cd6dc11ff4e0ab802cb6fa71d"
+  integrity sha512-aC5hqPNicFyDfyjc2TP3FnDXoDYomfJLEn3/F/LehrJTKJEDzHofVJT1dKiiS5XeQh+qjYqnlQCBKboeXnXVeg==
   dependencies:
-    "@feathersjs/adapter-commons" "^5.0.0-pre.22"
-    "@feathersjs/commons" "^5.0.0-pre.22"
-    "@feathersjs/feathers" "^5.0.0-pre.22"
+    "@feathersjs/adapter-commons" "^5.0.6"
+    "@feathersjs/commons" "^5.0.6"
+    "@feathersjs/feathers" "^5.0.6"
     debug "^4.3.4"
-    json-stable-stringify "^1.0.1"
-    rxjs "^7.5.5"
-    sift "^16.0.0"
+    json-stable-stringify "^1.0.2"
+    rxjs "^7.8.1"
+    sift "^17.0.1"
 
 feature-policy@0.3.0:
   version "0.3.0"
@@ -11537,7 +11537,7 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
-json-stable-stringify@^1.0.1:
+json-stable-stringify@^1.0.2:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.3.0.tgz#8903cfac42ea1a0f97f35d63a4ce0518f0cc6a70"
   integrity sha512-qtYiSSFlwot9XHtF9bD9c7rwKjr+RecWT//ZnPvSmEjpV5mmPOCN4j8UjY5hbjNkOwZ/jQv3J6R1/pL7RwgMsg==
@@ -14711,7 +14711,7 @@ rxjs@^6.6.3:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@^7.3.0, rxjs@^7.4.0, rxjs@^7.5.5:
+rxjs@^7.3.0, rxjs@^7.4.0, rxjs@^7.8.1:
   version "7.8.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.2.tgz#955bc473ed8af11a002a2be52071bf475638607b"
   integrity sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==
