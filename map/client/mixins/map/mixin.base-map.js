@@ -2,7 +2,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import moment from 'moment'
-import Emitter from 'tiny-emitter'
+import { EventBus } from 'quasar'
 import { point, rhumbDistance, rhumbBearing, rhumbDestination } from '@turf/turf'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -952,7 +952,7 @@ export const baseMap = {
     // Register support for WMS-T
     this.registerLeafletConstructor(this.createLeafletTimedWmsLayer)
     // Internal event bus
-    this.$engineEvents = new Emitter()
+    this.$engineEvents = new EventBus()
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
     Events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },

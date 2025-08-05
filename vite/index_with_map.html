@@ -12,6 +12,8 @@
     <script type="module">
       import { createApp } from 'vue'
       import { Quasar } from 'quasar'
+      import '@quasar/extras/material-icons/material-icons.css'
+      import 'quasar/src/css/index.sass'
       import config from 'config'
       import kdk, { kdkCore, kdkMap } from '../client.js'
       import App from './App.vue'
@@ -38,21 +40,7 @@
         // Remove API gateway token if any
         api.get('storage').removeItem(config.gatewayJwt)
       })
-
-      // Register global properties to the the vue app
-      app.config.globalProperties.$store = kdkCore.Store
-      app.config.globalProperties.$layout = kdkCore.Layout
-      app.config.globalProperties.$time = kdkCore.Time
-      app.config.globalProperties.$events = kdkCore.Events
-      app.config.globalProperties.$api = api
-      app.config.globalProperties.$can = api.can
-      //app.config.globalProperties.$notify = Notify.create
-      app.config.globalProperties.$tie = kdkCore.i18n.tie.bind(kdkCore.i18n)
-      app.config.globalProperties.$geolocation = kdkCore.Geolocation
-      app.config.globalProperties.$config = function (path, defaultValue) {
-        return _.get(config, path, defaultValue)
-      }
-
+      
       app.mount('#app')
     </script>
   </body>

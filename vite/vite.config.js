@@ -29,7 +29,9 @@ const plugins = [
     template: { transformAssetUrls }
   })
 ]
+const alias = {}
 
+// Use the right index and embed Cesium resources if required
 if (process.env.GLOBE) {
   plugins.push(viteStaticCopy({
     targets: [
@@ -46,15 +48,6 @@ if (process.env.GLOBE) {
   fs.writeFileSync('./index.html', html, { encoding: 'utf8' })
 }
 
-// @quasar/plugin-vite options list:
-// https://github.com/quasarframework/quasar/blob/dev/vite-plugin/index.d.ts
-// FIXME: generate errors on quasar import in dev mode
-if (process.env.BUILD_MODE) {
-  plugins.push(quasar({
-    sassVariables: fileURLToPath(new URL('./quasar.variables.scss', import.meta.url))
-  }))
-}
-
 const build = {
   outDir: './dist',
   minify: !process.env.DEBUG,
@@ -62,15 +55,17 @@ const build = {
   rollupOptions: {
     // Make sure to externalize deps that shouldn't be bundled into your library
     external: [],
-    output: {
-      // Provide global variables to use in the UMD build for externalized deps
-      /*
-      globals: {
-        process: false
-      }
-      */
-    }
+    output: {}
   }
+}
+
+if (process.env.BUILD_MODE) {
+  // @quasar/plugin-vite options list:
+  // https://github.com/quasarframework/quasar/blob/dev/vite-plugin/index.d.ts
+  // FIXME: generate errors on quasar import
+  plugins.push(quasar({
+    sassVariables: fileURLToPath(new URL('./quasar.variables.scss', import.meta.url))
+  }))
 }
 
 if (process.env.BUILD_MODE === 'lib') {
@@ -80,9 +75,47 @@ if (process.env.BUILD_MODE === 'lib') {
     // the proper extensions will be added
     fileName: 'kdk.client',
   }
+  // Generate kdk cliet distribution files
+  build.outDir = '../client'
   // Do not package all dependencies, should be done by embedding app
   const packageInfo = fs.readJsonSync(path.join(__dirname, '../package.json'))
-  build.rollupOptions.external = Object.keys(packageInfo.dependencies)
+  let dependencies = Object.keys(packageInfo.dependencies)
+  // We need to manually add some dependencies that are included in a "non-standard" way
+  dependencies = dependencies.concat([
+    'config',
+    '@kalisio/feathers-s3/client.js',
+    'moment-timezone/builds/moment-timezone-with-data-10-year-range.js',
+    'jsdap/src/parser.js',
+    'jsdap/src/xdr.js',
+    'cesium/Source/Widgets/widgets.css',
+    'leaflet/dist/leaflet.css',
+    'leaflet-fullscreen/dist/leaflet.fullscreen.css',
+    'leaflet.markercluster/dist/MarkerCluster.css',
+    'leaflet.markercluster/dist/MarkerCluster.Default.css',
+    '@kalisio/leaflet.donutcluster/src/Leaflet.DonutCluster.css',
+    '@kalisio/leaflet-graphicscale/dist/Leaflet.GraphicScale.min.css',
+    'leaflet.locatecontrol/dist/L.Control.Locate.css',
+    'leaflet-timedimension/dist/leaflet.timedimension.control.css',
+    '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
+  ])
+  build.rollupOptions.external = dependencies
+  // Single file
+  build.lib.formats = ['es']
+  build.rollupOptions.output.manualChunks = (id) => 'kdk'
+} else {
+  Object.assign(alias, {
+    // FIXME: How to include Quasar language packs
+    //'quasar/lang': fileURLToPath(new URL('../node_modules/quasar/lang', import.meta.url)),
+    // Here are specific required KDK aliases
+    'config': fileURLToPath(new URL('./config.js', import.meta.url)), // Alias for client config
+    // FIXME: It does not seem that alias can target multiple directories unlike with Webpack.
+    // However we should also provide alias for files located in the map part
+    // This requires to rewrite some code in loadComponent utility function
+    '@components': fileURLToPath(new URL('../core/client/components', import.meta.url)),
+    '@schemas': fileURLToPath(new URL('../extras/schemas', import.meta.url)),
+    '@i18n': fileURLToPath(new URL('../extras/i18n', import.meta.url)),
+    'kdk/core.variables': fileURLToPath(new URL('../extras/css/core.variables.scss', import.meta.url))
+  })
 }
 
 export default defineConfig({
@@ -92,17 +125,7 @@ export default defineConfig({
     CESIUM_BASE_URL: JSON.stringify(`/${cesiumBaseUrl}`)
   },
   resolve: {
-    alias: {
-      // Here are specific required KDK aliases
-      'config': fileURLToPath(new URL('./config.js', import.meta.url)), // Alias for client config
-      // FIXME: It does not seem that alias can target multiple directories unlink with Webpack.
-      // However we should also provide alias for files located in the map part
-      '@components': fileURLToPath(new URL('../core/client/components', import.meta.url)),
-      '@schemas': fileURLToPath(new URL('../core/client/schemas', import.meta.url)),
-      '@i18n': fileURLToPath(new URL('../core/client/i18n', import.meta.url)),
-      'kdk/core.variables': fileURLToPath(new URL('../extras/css/core.variables.scss', import.meta.url)),
-      'kdk/map.variables': fileURLToPath(new URL('../extras/css/map.variables.scss', import.meta.url))
-    }
+    alias
   },
   optimizeDeps: {
     include: [],

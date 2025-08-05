@@ -34,8 +34,8 @@ export default {
       if (!container || this.globeContainer) return
       this.globeContainer = container
       // Not yet ready wait for capabilities to be there
-      if (!this.$store.get('capabilities.api')) return
-      const token = this.$store.get('capabilities.api.cesium.token')
+      if (!kdkCore.Store.get('capabilities.api')) return
+      const token = kdkCore.Store.get('capabilities.api.cesium.token')
       // Wait until viewer is ready
       await this.initializeGlobe(container, token)
     }

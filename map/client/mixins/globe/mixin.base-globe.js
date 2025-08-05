@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
-import Emitter from 'tiny-emitter'
-import { getCssVar } from 'quasar'
+import { EventBus, getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
          exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
@@ -850,7 +849,7 @@ export const baseGlobe = {
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus
-    this.$engineEvents = new Emitter()
+    this.$engineEvents = new EventBus()
   },
   beforeUnmount () {
     this.clearLayers()

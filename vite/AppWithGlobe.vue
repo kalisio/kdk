@@ -1,13 +1,16 @@
 <template>
-  <!--KWelcome /-->
-  <Suspense>
-    <div>
-      <!-- App content (2D) -->
-      <MapActivity :ref="onMapCreated" @map-ready="onMapReady" style="width: 50%; height: 100%; position: fixed; left: 0;"/>
-      <!-- App content (3D) -->
-      <GlobeActivity :ref="onGlobeCreated" @globe-ready="onGlobeReady" style="width: 50%; height: 100%; position: fixed; right: 0;"/>
-    </div>
-  </Suspense>
+  <div>
+    <!--KWelcome /-->
+    <q-btn color="primary" class="fixed-top-left" style="z-index: 1" :label="synchronize ? 'UNSYNC VIEWS' : 'SYNC VIEWS'" @click="onSynchronize"/>
+    <Suspense>
+      <div>
+        <!-- App content (2D) -->
+        <MapActivity :ref="onMapCreated" @map-ready="onMapReady" style="width: 50%; height: 100%; position: fixed; left: 0;"/>
+        <!-- App content (3D) -->
+        <GlobeActivity :ref="onGlobeCreated" @globe-ready="onGlobeReady" style="width: 50%; height: 100%; position: fixed; right: 0;"/>
+      </div>
+    </Suspense>
+  </div>
 </template>
 
 <script setup>
@@ -18,9 +21,13 @@ import MapActivity from './MapActivity.vue'
 import GlobeActivity from './GlobeActivity.vue'
 
 let map, globe, updatingMap, updatingGlobe
+const synchronize = ref(false)
 
 kdkCore.composables.useSession()
 
+function onSynchronize () {
+  synchronize.value = !synchronize.value
+}
 function onMapCreated (ref) {
   if (ref && !map) {
     map = ref
@@ -42,14 +49,14 @@ function onGlobeReady () {
   })
 }
 function updateGlobe() {
-  if (updatingMap) return
+  if (!synchronize.value || updatingMap) return
   updatingMap = true
   const center = map.getCenter()
   globe.center(center.longitude, center.latitude, zoomLevelToAltitude(center.zoomLevel))
   updatingMap = false
 }
 function updateMap() {
-  if (updatingGlobe) return
+  if (!synchronize.value || updatingGlobe) return
   updatingGlobe = true
   const center = globe.getCenter()
   map.center(center.longitude, center.latitude, altitudeToZoomLevel(center.altitude))

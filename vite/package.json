@@ -4,6 +4,16 @@
   "version": "2.3.2",
   "homepage": "https://github.com/kalisio/kdk",
   "type": "module",
+  "files": ["client"],
+  "main": "./client/kdk.client.umd.cjs",
+  "module": "./client/kdk.client.js",
+  "exports": {
+    ".": {
+      "import": "./client/kdk.client.js",
+      "require": "./client/kdk.client.umd.cjs"
+    },
+    "./style.css": "./client/kdk.client.css"
+  },
   "keywords": [
     "Kalisio",
     "KDK"
