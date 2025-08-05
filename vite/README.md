@@ -75,7 +75,7 @@ if (router) router.XXX
 
 ### Get rid of global properties in the Vue app
 
-We were used to inject some objects to be available globally on any Vue component of the app (eg `$store, $api, $config, ...`, we should now 
+We were used to inject some objects to be available globally on any Vue component of the app (eg `$store, $api, $config, ...`), we should now directly import the target object:
 ```js
 // Don't do
 app.config.globalProperties.$store = Store
@@ -117,10 +117,12 @@ import * as Cesium from 'cesium'
 
 We used to define aliases to dynamic load resources like schemas, components, etc. like this:
 ```js
-'@schemas': [
-	path.resolve(__dirname, 'node_modules/@kalisio/kdk/core/common/schemas'),
-	path.resolve(__dirname, 'node_modules/@kalisio/kdk/map/common/schemas')
-]
+alias: {
+	'@schemas': [
+		path.resolve(__dirname, 'node_modules/@kalisio/kdk/core/common/schemas'),
+		path.resolve(__dirname, 'node_modules/@kalisio/kdk/map/common/schemas')
+	]
+}
 ```
 
 However it does not seem that alias can target multiple directories with Vite, resources should be placed in a single directory whenever possible:
@@ -131,8 +133,8 @@ alias: {
 ```
 
 > [!NOTE]
-> Moving components to a single directory is hard as they are part of the source code split into core/map directories.
-> This would probably require to rewrite the `loadComponent` utility function to `@component` alias.
+> Moving components to a single directory is hard as they are part of the source code split into `core`/`map` directories.
+> This would probably require to rewrite the `loadComponent` utility function using the `@component` alias.
 
 ### How to integrate Quasar langage packs ?
 

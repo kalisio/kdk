@@ -104,7 +104,7 @@ if (process.env.BUILD_MODE === 'lib') {
   build.rollupOptions.output.manualChunks = (id) => 'kdk'
 } else {
   Object.assign(alias, {
-    // FIXME: How to include Quasar language packs
+    // FIXME: How to include Quasar language packs ?
     //'quasar/lang': fileURLToPath(new URL('../node_modules/quasar/lang', import.meta.url)),
     // Here are specific required KDK aliases
     'config': fileURLToPath(new URL('./config.js', import.meta.url)), // Alias for client config
