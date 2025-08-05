@@ -53,16 +53,17 @@ You should then retrieve the library in the KDK :open_file_folder: [client](../c
 
 ## Changes and remaining issues
 
-In order to switch from Webpack to Vite and to build a stand alone library the folloing issues have been tackled or remain to be.
+In order to switch from Webpack to Vite and to build a stand alone library the following issues have been tackled or remain to be.
+
+> [!NOTE]
+> It was required to add all frontend dependencies required to build with Vite to the main KDK `package.json` file at the root level.
+> Indeed, it appears that if a `node_modules` directory is available at the root level Vite will use it instead of the one located in the directory of the Vite configuration.
+
 Some useful links and plugins:
 * https://cesium.com/blog/2024/02/13/configuring-vite-or-webpack-for-cesiumjs/
 * https://quasar.dev/start/vite-plugin/
 * https://github.com/davidmyersdev/vite-plugin-node-polyfills
 * https://github.com/unplugin/unplugin-vue-components
-
-> [!NOTE]
-> It was required to add all frontend dependencies required to build with Vite to the main KDK `package.json` file at the root level.
-> Indeed, it appears that if a `node_modules` directory is available at the root level Vite will use it instead of the one located in the directory of the Vite configuration.
 
 ## Avoid depending on application specific elements
 
@@ -76,9 +77,8 @@ if (router) router.XXX
 
 We were used to inject some objects to be available globally on any Vue component of the app (eg `$store, $api, $config, ...`, we should now 
 ```js
-// Not required anymore in app initialization
-app.config.globalProperties.$store = Store
 // Don't do
+app.config.globalProperties.$store = Store
 this.$store.patch(...)
 // Do
 import { Store } from ''
@@ -133,3 +133,7 @@ alias: {
 > [!NOTE]
 > Moving components to a single directory is hard as they are part of the source code split into core/map directories.
 > This would probably require to rewrite the `loadComponent` utility function to `@component` alias.
+
+### Quasar langage packs
+
+Not yet found a solution to integrate it with Vite, an alias does not seem to work.
