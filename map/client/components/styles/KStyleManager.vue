@@ -70,8 +70,8 @@ import { editFeaturesStyle } from '../../utils/utils.features.js'
 import { getTagsFilterOptions } from '../../../../core/client/utils/utils.tags.js'
 import KGrid from '../../../../core/client/components/collection/KGrid.vue'
 import KFollower from '../../../../core/client/components/KFollower.vue'
-import KStyleEditor from './KStyleEditor.vue'
 import KTagSelection from '../../../../core/client/components/tags/KTagSelection.vue'
+import KStyleEditor from './KStyleEditor.vue'
 
 // Props
 defineProps({
@@ -218,7 +218,6 @@ function editStyle (styleToEdit) {
 }
 function onApplied (style) {
   viewMode.value = 'list'
-
   // Update layers with filters that use this style
   const layers = _.filter(CurrentActivity.value?.getLayers ? CurrentActivity.value.getLayers() : [], layer =>
     _.get(layer, 'scope') === 'user' &&
@@ -229,6 +228,7 @@ function onCanceled () {
   viewMode.value = 'list'
 }
 
+// Hooks
 onMounted(async () => {
   tagsOptions.value = await getTagsFilterOptions('styles')
 })

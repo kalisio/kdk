@@ -32,7 +32,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
-import { getContrastColor } from '../../../../core/client/utils/utils.colors.js'
+import { getContrastColor } from '../../utils/utils.colors.js'
 import { useScreen } from '../../composables'
 
 // Props
