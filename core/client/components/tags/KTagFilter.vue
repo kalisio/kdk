@@ -15,7 +15,7 @@
       <template v-for="tag in options" :key="tag.name">
         <q-fab-action
           :label="$tie(getLabel(tag))"
-          :style="'background-color: ' + tag.color"
+          :color="tag.color"
           :text-color="getTextColor(tag)"
           padding="1px"
           square
