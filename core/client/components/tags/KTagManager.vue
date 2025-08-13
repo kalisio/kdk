@@ -46,7 +46,7 @@
             cancelAction: 'CANCEL',
             okAction: {
               id: 'ok-button',
-              label: 'APPLY',
+              label: 'CREATE',
               handler: 'apply'
             }
           }
@@ -132,13 +132,15 @@ const schema = computed(() => {
       },
       color: {
         type: 'string',
+        default: 'grey-3',
         field: {
           component: 'form/KColorField',
-          label: 'KTagManager.TAG_COLOR'
+          label: 'KTagManager.TAG_COLOR',
+          clearable: false
         }
       }
     },
-    required: ['name']
+    required: ['name', 'color']
   }
 
   if (!hasOneService()) {
