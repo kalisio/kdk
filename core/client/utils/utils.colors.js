@@ -193,7 +193,7 @@ export const Colors = {
 }
 
 export function getHtmlColor (color, defaultColor) {
-  if (!color) return defaultColor
+  if (_.isEmpty(color)) return defaultColor
   if (color.startsWith('#')) return color
   if (color.startsWith('hsl')) return color
   if (color.startsWith('rgb')) return color
@@ -202,20 +202,28 @@ export function getHtmlColor (color, defaultColor) {
   return colors.getPaletteColor(color) // theme color, e.g. primary, secondary...
 }
 
-export function getPaletteFromColor (color, nearestIfNotFound = false) {
+export function getPaletteFromColor (color, nearestIfNotFound = false, defaultColor = 'white') {
+  if (_.isEmpty(color)) {
+    logger.warn(`[KDK] getPaletteFromColor: 'color' must be defined`)
+    return defaultColor
+  }
   // Check if color is already in the palette
-  if (Colors[color]) return color
+  if (QuasarPalette[color]) return color
   const colorName = _.findKey(Colors, item => item === color)
   if (colorName) return colorName
-  if (nearestIfNotFound) return findClosestColor(color) || 'white'
-  return 'white'
+  if (nearestIfNotFound) return findClosestPaletteColor(color) || defaultColor
+  return defaultColor
 }
 
-export function findClosestColor (color) {
+export function findClosestPaletteColor (color) {
+  if (_.isEmpty(color)) {
+    logger.warn(`[KDK] findClosestPaletteColor: 'color' must be defined`)
+    return
+  }
   let minDistance = Number.MAX_VALUE
   let closestColor = null
-  for (const key in Colors) {
-    const d = chroma.deltaE(color, Colors[key])
+  for (const key in QuasarPalette) {
+    const d = chroma.deltaE(color, QuasarPalette[key])
     if (d < minDistance) {
       minDistance = d
       closestColor = key
@@ -225,13 +233,20 @@ export function findClosestColor (color) {
 }
 
 export function getContrastColor (color, light = 'white', dark = 'black') {
+  if (_.isEmpty(color)) {
+    logger.warn(`[KDK] getContrastColor: 'color' must be defined`)
+    return dark
+  }
   const htmlColor = getHtmlColor(color)
-  if (!htmlColor) return dark
+  if (_.isEmpty(htmlColor)) {
+    logger.warn(`[KDK] getContrastColor: no HTML color found for '${color}'`)
+    return dark
+  }
   return colors.luminosity(htmlColor) < 0.5 ? light : dark
 }
 
 export function buildColorScale (options) {
-  if (!options) {
+  if (_.isEmpty(options)) {
     logger.warn(`[KDK] buildColorScale: 'options' argument must be defined`)
     return
   }

@@ -4,14 +4,7 @@
 
 The `utils.colors.js` module provides utilities for managing and manipulating colors.
 
-
-It leverages external libraries such as `lodash`, `loglevel`, `quasar`, and `chroma-js` for efficient color handling.
-
 ## Constants
-
-### `HtmlColors`
-
-A collection of standard HTML color names mapped to their corresponding hex values.
 
 ### `Colors`
 
@@ -21,7 +14,7 @@ A predefined palette of commonly used colors, including primary and secondary sh
 
 ### **`getHtmlColor(color, defaultColor)`**
 
-Retrieves the HTML color code for a given color name. If the color is not found, it falls back to a default color or tries to get it from Quasar's color palette.
+Retrieves the HTML color code for a given color name. If the color is not found, it falls back to a default color or tries to get it from [Quasar's color palette](https://quasar.dev/style/color-palette#color-list).
 
 - **Parameters:**
   - `color` *(string)*: The color name or hex code to retrieve.
@@ -32,7 +25,7 @@ Retrieves the HTML color code for a given color name. If the color is not found,
 
 ### **`getPaletteFromColor(color, nearestIfNotFound = false)`**
 
-Finds a matching color name from the predefined palette. If not found, it can return the closest available color (if `nearestIfNotFound` is `true`) or default to white.
+Finds a matching color name from the predefined [Quasar's palette](https://quasar.dev/style/color-palette#color-list). If not found, it can return the closest available color (if `nearestIfNotFound` is `true`) or default to white.
 
 - **Parameters:**
   - `color` *(string)*: The color name or hex code to look up.
@@ -53,9 +46,9 @@ Determines the best contrasting color (defaulting to white or black) based on th
 - **Returns:**
   - *(string)*: The most contrasting color (`light` or `dark`).
 
-### **`findClosestColor(color)`** *(Private function)*
+### **`findClosestPaletteColor(color)`** 
 
-Finds the closest matching color in the predefined palette using `chroma-js`'s color difference (`deltaE`) algorithm.
+Finds the closest matching color in the predefined [Quasar's palette](https://quasar.dev/style/color-palette#color-list) using `chroma-js`'s color difference (`deltaE`) algorithm.
 
 - **Parameters:**
   - `color` *(string)*: The color name or hex code to match.
