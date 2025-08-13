@@ -185,7 +185,7 @@ const viewRenderer = computed(() => {
             cancelAction: 'CANCEL',
             okAction: {
               id: 'ok-button',
-              label: 'APPLY',
+              label: 'UPDATE',
               handler: 'apply'
             }
           }

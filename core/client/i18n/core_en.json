@@ -763,9 +763,9 @@
     "DELETE_TAG": "Delete tag",
     "SORT_TAGS": "Sort tags",
     "CREATE_TAG_ON_THE_FLY": "Create tag",
-    "TAG_NAME": "Tag name",
+    "TAG_NAME": "Enter the name",
     "TAG_SERVICE": "Tag type",
-    "TAG_DESCRIPTION": "Tag description",
-    "TAG_COLOR": "Tag color"
+    "TAG_DESCRIPTION": "Enter a description",
+    "TAG_COLOR": "Select a color"
   }
 }

@@ -762,10 +762,10 @@
     "EDIT_TAG": "Modifier l'étiquette",
     "DELETE_TAG": "Supprimer l'étiquette",
     "SORT_TAGS": "Trier les étiquettes",
-    "CREATE_TAG_ON_THE_FLY": "Créer le tag",
-    "TAG_NAME": "Nom du tag",
+    "CREATE_TAG_ON_THE_FLY": "Créer l'étiquette",
+    "TAG_NAME": "Saisissez le nom",
     "TAG_SERVICE": "Type de tag",
-    "TAG_DESCRIPTION": "Description du tag",
-    "TAG_COLOR": "Couleur du tag"
+    "TAG_DESCRIPTION": "Saisissez une description",
+    "TAG_COLOR": "Sélectionnez la couleur"
   }
 }

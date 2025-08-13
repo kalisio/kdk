@@ -6,9 +6,9 @@
   >
     <template v-slot:item-content>
       <q-item-label>
-        <KChip 
+        <KChip
           :label="name"
-          :color="color" 
+          :color="color"
           :text-color="textColor"
           :dense="dense"
         />
@@ -23,7 +23,7 @@
 
 <script>
 import { mixins as kdkCoreMixins } from '../../'
-import { getHtmlColor, getContrastColor } from '../../utils/utils.colors.js'
+import { getContrastColor } from '../../utils/utils.colors.js'
 import KItem from '../collection/KItem.vue'
 import KChip from '../KChip.vue'
 
@@ -48,7 +48,7 @@ export default {
       return this.item.color || 'primary'
     },
     textColor () {
-      return getContrastColor(getHtmlColor(this.color))
+      return getContrastColor(this.color)
     },
     userScopeActions () {
       return this.item.scope === 'user' ? this.itemActions : []
