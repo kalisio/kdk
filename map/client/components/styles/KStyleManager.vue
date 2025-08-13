@@ -29,17 +29,7 @@
             :renderer="renderer"
           />
           <KFollower
-            :follower="{
-              component: 'layout/KFab',
-              direction: 'up',
-              alignment: 'right',
-              content: [{
-                id: 'create-style',
-                icon: 'las la-plus',
-                tooltip: 'KStyleManager.CREATE_STYLE',
-                handler: editStyle
-              }]
-            }"
+            :follower="follower"
             targetId="left-window-magnet"
             anchor="bottom-right"
           />
@@ -90,6 +80,17 @@ const baseQuery = ref({})
 const searchString = ref('')
 const tagsOptions = ref([])
 const tagsSelection = ref([])
+const follower = {
+  component: 'layout/KFab',
+  direction: 'up',
+  alignment: 'right',
+  content: [{
+    id: 'create-style',
+    icon: 'las la-plus',
+    tooltip: 'KStyleManager.CREATE_STYLE',
+    handler: editStyle
+  }]
+}
 
 // Computed
 const filterQuery = computed(() => {
