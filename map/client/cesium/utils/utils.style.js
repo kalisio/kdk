@@ -93,7 +93,7 @@ export function convertToCesiumFromStyle (feature, options) {
 
   _.forOwn(style, (value, key) => {
     if ((typeof value === 'string') && ['color'].includes(key)) {
-      let cesiumColor = Color.fromCssColorString(kdkCoreUtils.getColorFromPalette(value))
+      let cesiumColor = Color.fromCssColorString(kdkCoreUtils.getHtmlColor(value))
 
       if (_.has(style, 'opacity')) {
         cesiumColor = Color.fromAlpha(cesiumColor, _.get(style, 'opacity'))

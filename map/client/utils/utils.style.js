@@ -319,7 +319,7 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
       if (!_.has(style.values, property)) return
       // Conversion from palette to RGB color is required
       const value = (property.includes('color')
-        ? kdkCoreUtils.getColorFromPalette(_.get(style.values, property))
+        ? kdkCoreUtils.getHtmlColor(_.get(style.values, property))
         : _.get(style.values, property))
       // Generate style value for given property value
       templates[index] += `if (${predicate}) { %>${value}<% } else `
@@ -332,7 +332,7 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
     if (!_.has(defaultStyle, property)) return
     // Conversion from palette to RGB color is required
     const value = (property.includes('color')
-      ? kdkCoreUtils.getColorFromPalette(_.get(defaultStyle, property))
+      ? kdkCoreUtils.getHtmlColor(_.get(defaultStyle, property))
       : _.get(defaultStyle, property))
     // Avoid converting numbers to string on default values
     if (hasStyles) templates[index] += `{ %>${value}<% }`
