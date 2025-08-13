@@ -60,7 +60,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { KGrid } from '..'
 import KFollower from '../KFollower.vue'
 
@@ -75,6 +75,7 @@ const props = defineProps({
 // Data
 const baseQuery = ref({ $sort: { name: 1 } })
 const filterQuery = ref({})
+const baseSchema = ref(null)
 
 // Computed
 const toolbar = computed(() => {
@@ -107,41 +108,7 @@ const toolbar = computed(() => {
   ]
 })
 const schema = computed(() => {
-  const tagSchema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'http://kalisio.xyz/schemas/tags.create.json#',
-    title: 'schemas.OBJECT_NAME',
-    description: 'Tags create schema',
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        maxLength: 128,
-        minLength: 3,
-        field: {
-          component: 'form/KTextField',
-          label: 'KTagManager.TAG_NAME'
-        }
-      },
-      description: {
-        type: ['string', 'null'],
-        field: {
-          component: 'form/KTextField',
-          label: 'KTagManager.TAG_DESCRIPTION'
-        }
-      },
-      color: {
-        type: 'string',
-        default: 'grey-3',
-        field: {
-          component: 'form/KColorField',
-          label: 'KTagManager.TAG_COLOR',
-          clearable: false
-        }
-      }
-    },
-    required: ['name', 'color']
-  }
+  const tagSchema = _.cloneDeep(baseSchema.value)
 
   if (!hasOneService()) {
     tagSchema.properties.service = {
@@ -216,5 +183,10 @@ function getBaseObject () {
   }
   return object
 }
+
+onMounted(async () => {
+  const schema = await import(`@schemas/tags.update.json`)
+  baseSchema.value = schema.default
+})
 
 </script>
