@@ -759,6 +759,7 @@
     "POINT_SECTION": "Point",
     "LINE_SECTION": "Line",
     "POLYGON_SECTION": "Polygon",
+    "ALL_SECTIONS_DISABLED": "Unable to apply this style because all types of features are disabled.",
     "STROKE_GROUP": "Stroke",
     "ICON_GROUP": "Icon",
     "COLOR": "Color",

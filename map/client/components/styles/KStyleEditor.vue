@@ -108,6 +108,7 @@ import _ from 'lodash'
 import config from 'config'
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
+import { Notify } from 'quasar'
 import { i18n } from '../../../../core/client/i18n.js'
 import { api } from '../../../../core/client/api.js'
 import { containsText } from '../../../../core/client/utils/index.js'
@@ -290,14 +291,24 @@ async function apply () {
   let data = Object.assign({}, model.value, values)
   // omit disabled feature types
   const omitKeys = []
+  let atLeastOneSectionEnabled = false
   _.forIn(enabledSections.value, (value, key) => {
     if (!value) {
       omitKeys.push(key)
       if (mode !== 'creation') {
         _.set(data, `$unset.${key}`, true)
       }
+    } else {
+      atLeastOneSectionEnabled = true
     }
   })
+  if (!atLeastOneSectionEnabled) {
+    Notify.create({
+      type: 'negative',
+      message: i18n.t('KStyleEditor.ALL_SECTIONS_DISABLED')
+    })
+    return false
+  }
   data = _.omit(data, omitKeys)
   // keep only usefull data from tags
   data.tags = _.map(values.tags, tag => _.pick(tag, ['name', 'description', 'color']))

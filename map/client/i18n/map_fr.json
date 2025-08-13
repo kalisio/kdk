@@ -759,6 +759,7 @@
     "POINT_SECTION": "Point",
     "LINE_SECTION": "Ligne",
     "POLYGON_SECTION": "Polygone",
+    "ALL_SECTIONS_DISABLED": "Impossible d'appliquer ce style car tous les types de géométries sont désactivées.",
     "STROKE_GROUP": "Contour",
     "ICON_GROUP": "Icône",
     "COLOR": "Couleur",
