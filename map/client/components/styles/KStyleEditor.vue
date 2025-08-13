@@ -241,7 +241,7 @@ const buttons = computed(() => {
     },
     {
       id: 'apply-style',
-      label: 'APPLY',
+      label: mode === 'creation' ? 'CREATE' : 'UPDATE',
       renderer: 'form-button',
       handler: apply
     }
@@ -255,7 +255,6 @@ const canEditPolygon = computed(() => props.allowedTypes.includes('polygon'))
 watch(() => props.style, (value) => {
   if (!value) model.value = _.clone(_.pick(engine.value.style, ['point', 'line', 'polygon']))
   else model.value = value
-
   _.forEach(['point', 'line', 'polygon'], value => {
     if (!_.get(model.value, value)) {
       enabledSections.value[value] = false

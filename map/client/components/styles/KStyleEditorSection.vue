@@ -1,42 +1,39 @@
 <template>
-  <div>
-    <q-expansion-item
-      v-model="isOpened"
-      group="editor"
-      header-class="bg-grey-2"
-      :dense="dense"
-      :disable="!isEnabled"
-    >
-      <template v-slot:header>
-        <q-item-section v-if="canBeDisabled" class="col-auto">
-          <q-checkbox
-            v-model="isEnabled"
-            size="xs"
-          />
-        </q-item-section>
-        <q-item-section v-if="label">
-          {{ $t(label) }}
-        </q-item-section>
-        <q-item-section v-if="!isOpened && isEnabled" side>
-          <KStylePreview :style="style[type]" :type="type" />
-        </q-item-section>
-      </template>
-      <q-list v-hover="{ enter: onEnter }">
-        <slot />
-      </q-list>
-      <KStyleTip
-        v-model="showTip"
-        :style="style[type]"
-        :type="type"
-        target="#style-editor"
-        anchor="top right"
-        self="center middle"
-        no-parent-event
-        @update:model-value="onUpdated"
-      />
-    </q-expansion-item>
-
-  </div>
+  <q-expansion-item
+    v-model="isOpened"
+    group="editor"
+    header-class="bg-grey-2"
+    :dense="dense"
+    :disable="!isEnabled"
+  >
+    <template v-slot:header>
+      <q-item-section v-if="canBeDisabled" class="col-auto">
+        <q-checkbox
+          v-model="isEnabled"
+          size="xs"
+        />
+      </q-item-section>
+      <q-item-section v-if="label">
+        {{ $t(label) }}
+      </q-item-section>
+      <q-item-section v-if="!isOpened && isEnabled" side>
+        <KStylePreview :style="style[type]" :type="type" />
+      </q-item-section>
+    </template>
+    <q-list v-hover="{ enter: onEnter }">
+      <slot />
+    </q-list>
+    <KStyleTip
+      v-model="showTip"
+      :style="style[type]"
+      :type="type"
+      target="#style-editor"
+      anchor="top right"
+      self="center middle"
+      no-parent-event
+      @update:model-value="onUpdated"
+    />
+  </q-expansion-item>
 </template>
 
 <script setup>
