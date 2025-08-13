@@ -64,7 +64,7 @@
       :error-message="errorLabel"
       :error="hasError"
       :disable="disabled"
-      :clearable="clearable"
+      :clearable="isClearable()"
       bottom-slots
       borderless
       @clear="onCleared">
@@ -111,14 +111,11 @@ export default {
     },
     labelMode () {
       return _.get(this.properties.field, 'labelMode', 'from')
-    },
-    clearable () {
-      return _.get(this.properties.field, 'clearable', false)
     }
   },
   methods: {
-    emptyModel () {
-      return null
+    isClearable () {
+      return _.get(this.properties.field, 'clearable', false)
     },
     onCleared () {
       this.model = null

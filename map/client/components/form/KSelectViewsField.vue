@@ -7,7 +7,7 @@
     :error-message="errorLabel"
     :error="hasError"
     :disable="disabled"
-    :clearable="clearable"
+    :clearable="isClearable()"
     hide-bottom-space
     bottom-slots
     borderless
@@ -63,9 +63,6 @@ export default {
   },
   inheritAttrs: false,
   computed: {
-    clearable () {
-      return _.get(this.properties.field, 'clearable', false)
-    },
     viewTree () {
       const tree = []
       if (this.views.length > 0) {
@@ -85,6 +82,9 @@ export default {
   methods: {
     emptyModel () {
       return []
+    },
+    isClearable () {
+      return _.get(this.properties.field, 'clearable', false)
     },
     fill (value) {
       kCoreMixins.baseField.methods.fill.call(this, value)

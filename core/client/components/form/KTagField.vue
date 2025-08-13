@@ -14,7 +14,7 @@
     autocomplete="off"
     hide-dropdown-icon
     use-input
-    clearable
+    :clearable="isClearable()"
     :error-message="errorLabel"
     :error="hasError"
     :disable="disabled"
@@ -140,6 +140,9 @@ export default {
         ]
       }]
       return actions
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
     },
     emptyModel () {
       if (this.properties.multiselect) return []

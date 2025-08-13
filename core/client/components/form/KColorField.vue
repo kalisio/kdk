@@ -13,7 +13,7 @@
       :error-message="errorLabel"
       :error="hasError"
       :disable="disabled"
-      clearable
+      :clearable="isClearable()"
       bottom-slots
       @clear="model=''">
       <!-- control -->
@@ -57,14 +57,14 @@ export default {
     }
   },
   methods: {
-    emptyModel () {
-      return ''
-    },
     onReferenceCreated (ref) {
       // https://github.com/quasarframework/quasar/issues/8956
       if (ref) {
         ref.$el.onclick = () => { this.picker = true }
       }
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
     }
   }
 }

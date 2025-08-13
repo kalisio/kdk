@@ -16,7 +16,7 @@
     map-options
     use-input
     :dense="dense"
-    :clearable="clearable"
+    :clearable="isClearable()"
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
@@ -82,9 +82,6 @@ export default {
   computed: {
     multiple () {
       return this.isMultiselect()
-    },
-    clearable () {
-      return this.isClearable()
     },
     chips () {
       return this.hasChips()
