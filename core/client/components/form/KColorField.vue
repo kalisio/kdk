@@ -30,7 +30,7 @@
       </template>
       <!-- Helper -->
       <template v-if="hasHelper" v-slot:append>
-        <k-action
+        <KAction
           :id="properties.name + '-helper'"
           :label="helperLabel"
           :icon="helperIcon"
@@ -48,6 +48,7 @@
 
 <script>
 import _ from 'lodash'
+import { getHtmlColor } from '../../utils/utils.colors.js'
 import { baseField } from '../../mixins'
 
 export default {
@@ -55,6 +56,11 @@ export default {
   data () {
     return {
       picker: false
+    }
+  },
+  computed: {
+    color () {
+      return getHtmlColor(this.model)
     }
   },
   methods: {
@@ -73,7 +79,7 @@ export default {
 
 <style lang="scss" scoped>
 .k-color-field {
-  background-color: v-bind(model);
+  background-color: v-bind(color);
   height: 16px;
   border-radius: 5px;
 }
