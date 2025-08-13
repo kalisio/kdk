@@ -85,20 +85,22 @@ const ExporterQueue = {
         document.body.appendChild(iframe)
       }
       iframe.src = params.SignedUrl
-      Notify.create({ 
-        type: 'positive', 
+      Notify.create({
+        type: 'positive',
         message: i18n.t('exporter.SUCCEEDED', { filename: params.filename }),
         html: true
       })
     } else if (params.chunks === 0) {
-      Notify.create({ 
-        type: 'warning', 
+      Notify.create({
+        type: 'warning',
         message: i18n.t('exporter.NO_DATA')
       })
-    } else Notify.create({ 
-        type: 'negative', 
+    } else {
+      Notify.create({
+        type: 'negative',
         message: i18n.t('exporter.ERRORED')
       })
+    }
     // trigger a new request
     this.triggerRequest()
   }
