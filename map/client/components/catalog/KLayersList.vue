@@ -110,7 +110,7 @@ async function onDrop (event, targetIndex) {
       // we are cloning currentCategoryLayers to avoid triggering unneeded reactivity
       // (reactivity isn't needed here because updateLayersOrder will trigger a refresh anyway)
       const currentCategoryLayers = _.clone(props.category.layers)
-      if (sourceCategoryId === "undefined") { // source is orphan layer
+      if (sourceCategoryId === 'undefined') { // source is orphan layer
         currentCategoryLayers.splice(targetIndex, 0, layerName)
         await updateLayersOrder(props.category._id, { layers: currentCategoryLayers })
       } else { // source isn't orphan layer
