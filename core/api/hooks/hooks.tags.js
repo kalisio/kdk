@@ -2,15 +2,6 @@ import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:core:tags:hooks')
 
-export async function cacheTagBeforeUpdate (hook) {
-  const { app, id, params } = hook
-
-  const tag = await app.getService('tags').get(id)
-  params.beforeUpdateTag = tag
-
-  return hook
-}
-
 export async function reflectTagUpdate (hook) {
   const { app, result, params, method } = hook
 
@@ -24,14 +15,14 @@ export async function reflectTagUpdate (hook) {
     return hook
   }
 
-  const beforeUpdateTag = params.beforeUpdateTag || {}
+  const previousItem = params.previousItem || {}
 
   const records = await service.find({
     query: {
       [property]: {
         $elemMatch: {
-          name: beforeUpdateTag.name,
-          color: beforeUpdateTag.color
+          name: previousItem.name,
+          color: previousItem.color
         }
       },
 
@@ -42,7 +33,7 @@ export async function reflectTagUpdate (hook) {
 
   for (const record of records) {
     const updatedTags = record[property].map(tag => {
-      if (tag.name === beforeUpdateTag.name && tag.color === beforeUpdateTag.color) {
+      if (tag.name === previousItem.name && tag.color === previousItem.color) {
         if (method === 'remove') {
           // If the tag is being removed, we return null to filter it out
           return null
