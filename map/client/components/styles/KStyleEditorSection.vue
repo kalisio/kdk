@@ -86,6 +86,7 @@ watch(isOpened, (value) => {
 })
 watch(() => props.modelValue, (value) => {
   isEnabled.value = value
+  if (!value) isOpened.value = false
 })
 watch(isEnabled, (value) => {
   emit('update:model-value', value)
