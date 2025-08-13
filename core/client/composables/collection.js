@@ -43,15 +43,15 @@ export function useCollection (options) {
     return service
   }
   function getCollectionBaseQuery () {
-    // This method should be overriden in collections
+    // This method should be overridden in collections
     return options.baseQuery ? options.baseQuery.value : {}
   }
   function getCollectionFilterQuery () {
-    // This method should be overriden in collections
+    // This method should be overridden in collections
     return options.filterQuery ? options.filterQuery.value : {}
   }
   function getCollectionPaginationQuery () {
-    // This method should be overriden in collections
+    // This method should be overridden in collections
     return (options.nbItemsPerPage.value > 0
       ? {
           $limit: options.nbItemsPerPage.value,
