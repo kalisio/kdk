@@ -41,16 +41,6 @@ Finds a matching color name from the predefined palette. If not found, it can re
 - **Returns:**
   - *(string)*: The corresponding color name from the palette or the closest match.
 
-### **`getColorFromPalette(color)`**
-
-Returns the RGB color code for a given palette color. If the input is already an RGB color (in `#` format), it returns the same value; otherwise, it fetches the corresponding color from the palette or defaults to white.
-
-- **Parameters:**
-  - `color` *(string)*: The color name or hex code to retrieve.
-
-- **Returns:**
-  - *(string)*: The corresponding RGB hex code of the color.
-
 ### **`getContrastColor(color, light = 'white', dark = 'black')`**
 
 Determines the best contrasting color (defaulting to white or black) based on the luminance of the given color. If the color is dark (low luminance), it returns the light color; if the color is light (high luminance), it returns the dark color.

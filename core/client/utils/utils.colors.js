@@ -3,7 +3,21 @@ import logger from 'loglevel'
 import { colors } from 'quasar'
 import chroma from 'chroma-js'
 
-const HtmlColors = {
+const QuasarFamilies = [
+  'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 
+  'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber',
+  'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'
+]
+const QuasarPalette = {}
+QuasarFamilies.forEach(family => {
+  QuasarPalette[family] = colors.getPaletteColor(family)
+  for (let i = 1; i <= 14; i++) {
+    const color = `${family}-${i}`
+    QuasarPalette[color] = colors.getPaletteColor(color)
+  }
+})
+
+const HtmlPalette = {
   black: "#000000",
   silver: "#C0C0C0",
   gray: "#808080",
@@ -183,14 +197,9 @@ export function getHtmlColor (color, defaultColor) {
   if (color.startsWith('#')) return color
   if (color.startsWith('hsl')) return color
   if (color.startsWith('rgb')) return color
-  if (_.has(HtmlColors, color)) return HtmlColors[color]
-  return colors.getPaletteColor(color)
-}
-
-export function getColorFromPalette (color) {
-  // Check if color is already an RGB color
-  if (color.startsWith('#')) return color
-  else return Colors[color] || '#ffffff'
+  if (_.has(QuasarPalette, color)) return QuasarPalette[color]  
+  if (_.has(HtmlPalette, color)) return HtmlPalette[color]
+  return colors.getPaletteColor(color) // theme color, e.g. primary, secondary...
 }
 
 export function getPaletteFromColor (color, nearestIfNotFound = false) {
@@ -217,6 +226,7 @@ export function findClosestColor (color) {
 
 export function getContrastColor (color, light = 'white', dark = 'black') {
   const htmlColor = getHtmlColor(color)
+  if (!htmlColor) return dark
   return colors.luminosity(htmlColor) < 0.5 ? light : dark
 }
 
