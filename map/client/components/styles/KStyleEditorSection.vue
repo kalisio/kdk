@@ -1,10 +1,12 @@
 <template>
   <q-expansion-item
+    ref="expansionItemRef"
     v-model="isOpened"
     group="editor"
     header-class="bg-grey-2"
     :dense="dense"
     :disable="!isEnabled"
+    :class="{ 'k-disabled': !isEnabled }"
   >
     <template v-slot:header>
       <q-item-section v-if="canBeDisabled" class="col-auto">
@@ -37,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import KStylePreview from './KStylePreview.vue'
 import KStyleTip from './KStyleTip.vue'
 
@@ -76,6 +78,7 @@ const props = defineProps({
 const emit = defineEmits(['update:model-value'])
 
 // Data
+const expansionItemRef = ref(null)
 const isEnabled = ref(props.modelValue)
 const isOpened = ref(false)
 const showTip = ref(false)
@@ -90,6 +93,7 @@ watch(() => props.modelValue, (value) => {
 })
 watch(isEnabled, (value) => {
   emit('update:model-value', value)
+  removeQuasarDisabledClass()
 })
 
 // Functions
@@ -99,4 +103,26 @@ function onEnter () {
 function onUpdated (value) {
   if (showTip.value !== value) showTip.value = value
 }
+// Quasar "disabled" css class apply a "not-allowed" cursor, but we don't want that on the checkbox
+// So we need to remove this class and apply a custom class that mimic the style, but without the cursor property
+function removeQuasarDisabledClass () {
+  if (isEnabled.value) return
+  if (expansionItemRef.value) {
+    setTimeout(() => {
+      const target = expansionItemRef.value.$el.querySelector('.disabled')
+      if (target) target.classList.remove('disabled')
+    }, 100)
+  }
+}
+
+onMounted(() => {
+  removeQuasarDisabledClass()
+})
 </script>
+
+<style lang="scss">
+.k-disabled {
+  opacity: 0.6 !important;
+  outline: 0 !important;
+}
+</style>

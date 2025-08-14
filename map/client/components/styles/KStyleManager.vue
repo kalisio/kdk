@@ -12,14 +12,13 @@
         :content="toolbar"
         class="q-pr-sm no-wrap"
       />
-      <QSeparator inset />
       <div class="row justify-center q-mt-xs">
         <KTagSelection :selection="tagsSelection" @selection-changed="onTagSelectionChanged" />
       </div>
     </div>
     <div id="style-manager-content">
       <q-tab-panels v-model="viewMode" animated>
-        <q-tab-panel name="list">
+        <q-tab-panel name="list" class="q-px-sm q-py-none">
           <KGrid
             service="styles"
             :append-items="true"
@@ -107,20 +106,9 @@ const toolbar = computed(() => {
   if (viewMode.value === 'editor') return []
   return [
     {
-      component: 'collection/KItemsSorter',
-      id: 'style-manager-sorter-options',
-      tooltip: 'KStyleManager.SORT',
-      options: [
-        { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
-        { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
-      ],
-      onOptionChanged: (option) => {
-        baseQuery.value = { $sort: { [option.field]: option.order } }
-      }
-    },
-    {
       component: 'tags/KTagFilter',
       id: 'style-manager-tags-filter',
+      class: 'q-ml-sm',
       selection: tagsSelection.value,
       options: tagsOptions.value,
       onSelectionChanged: onTagSelectionChanged
@@ -131,6 +119,18 @@ const toolbar = computed(() => {
       value: searchString.value,
       onSearch: (value) => {
         searchString.value = value
+      }
+    },
+    {
+      component: 'collection/KItemsSorter',
+      id: 'style-manager-sorter-options',
+      tooltip: 'KStyleManager.SORT',
+      options: [
+        { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
+        { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
+      ],
+      onOptionChanged: (option) => {
+        baseQuery.value = { $sort: { [option.field]: option.order } }
       }
     }
   ]
@@ -156,6 +156,7 @@ const renderer = computed(() => {
         icon: 'las la-layer-group',
         tooltip: 'KStyleManager.APPLY_TO_LAYER',
         actionRenderer: 'item',
+        dense: true,
         content: layerMenuContent
       },
       {
@@ -165,16 +166,26 @@ const renderer = computed(() => {
         handler: applyToSelection
       },
       {
-        id: 'edit-style',
-        icon: 'las la-edit',
-        tooltip: 'KStyleManager.EDIT',
-        handler: editStyle
-      },
-      {
-        id: 'delete-style',
-        icon: 'las la-trash',
-        tooltip: 'KStyleManager.DELETE',
-        handler: { name: 'removeItem', params: ['confirm'] }
+        id: 'style-menu',
+        component: 'menu/KMenu',
+        dropdownIcon: 'las la-ellipsis-v',
+        actionRenderer: 'item',
+        propagate: false,
+        dense: true,
+        content: [
+          {
+            id: 'edit-style',
+            icon: 'las la-edit',
+            label: 'KStyleManager.EDIT',
+            handler: editStyle
+          },
+          {
+            id: 'delete-style',
+            icon: 'las la-trash',
+            label: 'KStyleManager.DELETE',
+            handler: { name: 'removeItem', params: ['confirm'] }
+          }
+        ]
       }
     ],
     dense: true,
