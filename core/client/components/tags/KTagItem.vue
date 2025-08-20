@@ -3,6 +3,7 @@
     v-bind="$props"
     :actions="userScopeActions"
     :dense="dense"
+    class="k-tag-item items-center"
   >
     <template v-slot:item-content>
       <q-item-label>
@@ -56,3 +57,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .k-tag-item:hover {
+    background: $grey-3 !important;
+  }
+</style>
