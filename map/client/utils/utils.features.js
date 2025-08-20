@@ -57,9 +57,9 @@ export function transformFeatures (geoJson, transform) {
   })
 }
 
-export function computeConvexHull (geojson) {
-  if (!geojson) return
-  const points = explode(geojson)
+export function computeConvexHull (geoJson) {
+  if (!geoJson) return
+  const points = explode(geoJson)
   const count = _.size(points.features)
   if (count === 0) return null
   if (count === 1) return points.features[0]
@@ -70,18 +70,16 @@ export function computeConvexHull (geojson) {
   return hull
 }
 
-export async function buildGradientPath(geoJson, options) {
+export async function buildGradientPath (geoJson, options) {
   const variable = options.build.variable
-
   // Check if the GeoJSON is a FeatureCollection
   if (!geoJson || geoJson.type !== 'FeatureCollection') {
-    console.error('Invalid GeoJSON, a FeatureCollection is required to build a gradient path')
+    logger.warn('[KDK] Invalid GeoJSON, a FeatureCollection is required to build a gradient path')
     return
   }
-
   // Check chromajs has required infos
   if (!variable.chromajs.colors) {
-    console.error(`Invalid chromajs on variable ${variable.name}, missing colors.`)
+    logger.warn(`[KDK] Invalid chromajs on variable ${variable.name}, missing colors.`)
     return
   }
   let scale
@@ -91,16 +89,13 @@ export async function buildGradientPath(geoJson, options) {
     scale = chroma.scale(variable.chromajs.colors).classes(variable.chromajs.classes)
   }
   if (!scale) {
-    console.error(`Invalid chromajs on variable ${variable.name}, missing domain or classes.`)
+    logger.warn(`[KDK] Invalid chromajs on variable ${variable.name}, missing domain or classes.`)
     return
   }
-
   geoJson.features = geoJson.features.map((feature) => {
     const geometries = feature.geometry.geometries.map(g => g.coordinates)
     const values = feature.properties[variable.name]
-
     const gradient = values.map(value => scale(value).hex())
-
     // Check if the feature has at least two geometries and they are different
     if (geometries.length < 2) {
       // Make it a line
@@ -113,7 +108,6 @@ export async function buildGradientPath(geoJson, options) {
         properties: Object.assign({ gradient: [ gradient[0], gradient[0] ] }, _.omit(feature.properties, variable.name), variable.gradientPath.properties)
       }
     }
-
     return {
       type: 'Feature',
       geometry: {
@@ -123,11 +117,10 @@ export async function buildGradientPath(geoJson, options) {
       properties: Object.assign({ gradient }, _.omit(feature.properties, variable.name), variable.gradientPath.properties)
     }
   })
-
   geoJson.total = geoJson.features.length
 }
 
-async function checkBuildInstructions(options) {
+async function checkBuildInstructions (options) {
   const knownInstructions = ['gradientPath']
   if (!options.variables) return
 
@@ -140,7 +133,7 @@ async function checkBuildInstructions(options) {
   }
 }
 
-export async function getBaseQueryForFeatures(options) {
+export async function getBaseQueryForFeatures (options) {
   // Any base query to process ?
   const baseQuery = {}
   if (options.baseQuery) {
@@ -156,7 +149,7 @@ export async function getBaseQueryForFeatures(options) {
   return baseQuery
 }
 
-export async function getFilterQueryForFeatures(options) {
+export async function getFilterQueryForFeatures (options) {
   // Any filter query to process ?
   const filterQuery = {}
   if (options.filterQuery) {
@@ -188,7 +181,7 @@ export async function getFilterQueryForFeatures(options) {
   return filterQuery
 }
 
-export async function getSortQueryForFeatures(options) {
+export async function getSortQueryForFeatures (options) {
   // Any sort query to process ?
   const sortQuery = {}
   if (options.sortQuery) {
@@ -202,12 +195,12 @@ export async function getSortQueryForFeatures(options) {
   return { $sort: sortQuery }
 }
 
-export function getFeaturesUpdateInterval(options) {
+export function getFeaturesUpdateInterval (options) {
   const interval = _.get(options, 'every')
   return (interval ? moment.duration(interval) : null)
 }
 
-export function getFeaturesQueryInterval(options) {
+export function getFeaturesQueryInterval (options) {
   const interval = getFeaturesUpdateInterval(options)
   let queryInterval = _.get(options, 'queryFrom')
   // If query interval not given use 2 x refresh interval as default value
@@ -229,7 +222,7 @@ export function shouldSkipFeaturesUpdate(lastUpdateTime, options, interval) {
   return (Math.abs(elapsed.asMilliseconds()) < interval.asMilliseconds())
 }
 
-export async function getProbeFeatures(options) {
+export async function getProbeFeatures (options) {
   // Any base/filter/sort query to process ?
   const query = await getBaseQueryForFeatures(options)
   const filterQuery = await getFilterQueryForFeatures(options)
@@ -243,7 +236,7 @@ export async function getProbeFeatures(options) {
   return response
 }
 
-export async function getFeaturesQuery(options, queryInterval, queryLevel) {
+export async function getFeaturesQuery (options, queryInterval, queryLevel) {
   // If not given try to compute query interval from options
   if (!queryInterval) {
     queryInterval = getFeaturesQueryInterval(options)
@@ -321,7 +314,7 @@ export async function getFeaturesQuery(options, queryInterval, queryLevel) {
   return query
 }
 
-export function isFeatureInQueryInterval(feature, options) {
+export function isFeatureInQueryInterval (feature, options) {
   // We assume this is not a time-varying layer
   if (!feature.time) return true
   const queryInterval = getFeaturesQueryInterval(options)
@@ -339,7 +332,7 @@ export function isFeatureInQueryInterval(feature, options) {
   return time.isSameOrAfter(gte) && time.isSameOrBefore(lte)
 }
 
-export async function getFeaturesFromQuery(options, query) {
+export async function getFeaturesFromQuery (options, query) {
   // Check API to be used in case the layer is coming from a remote "planet"
   const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
   const response = await planetApi.getService(options.service).find(Object.assign({ query }, options.baseParams))
@@ -357,7 +350,7 @@ export async function getFeaturesFromQuery(options, query) {
   return response
 }
 
-export function getMeasureForFeatureBaseQuery(layer, feature) {
+export function getMeasureForFeatureBaseQuery (layer, feature) {
   // We might have a different ID to identify measures related to a timeseries (what is called a chronicle)
   // than measures displayed on a map. For instance mobile measures might appear at different locations,
   // but when selecting one we would like to display the timeseries related to all locations.
@@ -371,7 +364,7 @@ export function getMeasureForFeatureBaseQuery(layer, feature) {
   return query
 }
 
-export async function getMeasureForFeatureQuery(layer, feature, startTime, endTime, level) {
+export async function getMeasureForFeatureQuery (layer, feature, startTime, endTime, level) {
   const query = await getFeaturesQuery(_.merge({
     baseQuery: getMeasureForFeatureBaseQuery(layer, feature)
   }, layer), {
@@ -381,12 +374,12 @@ export async function getMeasureForFeatureQuery(layer, feature, startTime, endTi
   return query
 }
 
-export async function getMeasureForFeatureFromQuery(layer, feature, query) {
+export async function getMeasureForFeatureFromQuery (layer, feature, query) {
   const result = await getFeaturesFromQuery(layer, query)
   return _.get(result, 'features[0]')
 }
 
-export async function getMeasureForFeature(layer, feature, startTime, endTime, level) {
+export async function getMeasureForFeature (layer, feature, startTime, endTime, level) {
   let probedLocation
   try {
     const query = await getMeasureForFeatureQuery(layer, feature, startTime, endTime, level)
@@ -397,7 +390,7 @@ export async function getMeasureForFeature(layer, feature, startTime, endTime, l
   return probedLocation
 }
 
-export function checkFeatures(geoJson, options = {
+export function checkFeatures (geoJson, options = {
   kinks: true,
   redundantCoordinates: true
 }) {
@@ -422,7 +415,7 @@ export function checkFeatures(geoJson, options = {
   return { kinks: kinksFeatures }
 }
 
-export async function createFeatures(geoJson, layer, chunkSize = 5000, processCallback) {
+export async function createFeatures (geoJson, layer, chunkSize = 5000, processCallback) {
   if (!layer) return
   const features = getGeoJsonFeatures(geoJson)
   features.forEach(feature => {
@@ -472,7 +465,7 @@ export async function createFeatures(geoJson, layer, chunkSize = 5000, processCa
   }
 }
 
-export async function editFeaturesGeometry(geoJson, layer) {
+export async function editFeaturesGeometry (geoJson, layer) {
   const features = getGeoJsonFeatures(geoJson)
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
@@ -485,7 +478,7 @@ export async function editFeaturesGeometry(geoJson, layer) {
   return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: updatedFeatures }) : updatedFeatures)
 }
 
-export async function editFeaturesProperties(geoJson, layer) {
+export async function editFeaturesProperties (geoJson, layer) {
   const features = getGeoJsonFeatures(geoJson)
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
@@ -498,7 +491,7 @@ export async function editFeaturesProperties(geoJson, layer) {
   return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: updatedFeatures }) : updatedFeatures)
 }
 
-export async function editFeaturesStyle(geoJson, layer) {
+export async function editFeaturesStyle (geoJson, layer) {
   const features = getGeoJsonFeatures(geoJson)
   const updatedFeatures = []
   for (let i = 0; i < features.length; i++) {
@@ -511,7 +504,7 @@ export async function editFeaturesStyle(geoJson, layer) {
   return (geoJson.type === 'FeatureCollection' ? Object.assign(geoJson, { features: updatedFeatures }) : updatedFeatures)
 }
 
-export async function removeFeatures(geoJson, layer) {
+export async function removeFeatures (geoJson, layer) {
   // Remove all features of a given layer
   if (!geoJson) {
     await api.getService(layer.service).remove(null, { query: { layer: layer._id } })
@@ -524,7 +517,7 @@ export async function removeFeatures(geoJson, layer) {
   }
 }
 
-export async function fetchGeoJson(dataSource, options = {}) {
+export async function fetchGeoJson (dataSource, options = {}) {
   const response = await fetch(dataSource)
   if (response.status !== 200) {
     throw new Error(`Impossible to fetch ${dataSource}: ` + response.status)
