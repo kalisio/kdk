@@ -2,6 +2,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
 import { getType, getGeom } from '@turf/invariant'
+import { lineString } from '@turf/helpers'
 import explode from '@turf/explode'
 import kinks from '@turf/kinks'
 import clean from '@turf/clean-coords'
@@ -10,13 +11,14 @@ import rhumbDistance from '@turf/rhumb-distance'
 import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
+import convex from '@turf/convex'
 import { api, Time } from '../../../core/client/index.js'
 import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { isInMemoryLayer, isFeatureLayer } from './utils.layers.js'
 import { getGeoJsonFeatures } from '../utils.map.js'
 import chroma from 'chroma-js'
 
-export function processFeatures(geoJson, processor) {
+export function processFeatures (geoJson, processor) {
   const features = getGeoJsonFeatures(geoJson)
   if (typeof processor === 'function') {
     features.forEach(feature => processor(feature))
@@ -26,7 +28,7 @@ export function processFeatures(geoJson, processor) {
   }
 }
 
-export function transformFeatures(geoJson, transform) {
+export function transformFeatures (geoJson, transform) {
   const features = getGeoJsonFeatures(geoJson)
   features.forEach(feature => {
     const scaling = _.get(transform, 'scale')
@@ -53,6 +55,19 @@ export function transformFeatures(geoJson, transform) {
         Object.assign(_.omit(translation, ['direction', 'distance']), { mutate: true }))
     }
   })
+}
+
+export function computeConvexHull (geojson) {
+  if (!geojson) return
+  const points = explode(geojson)
+  const count = _.size(points.features)
+  if (count === 0) return null
+  if (count === 1) return points.features[0]
+  if (count === 2) return lineString(points.features.map(point => point.geometry.coordinates))
+  const hull = convex(points)
+  // specific case if points are colinear
+  if (!hull) return lineString(points.features.map(point => point.geometry.coordinates))
+  return hull
 }
 
 export async function buildGradientPath(geoJson, options) {
