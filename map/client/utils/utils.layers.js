@@ -460,51 +460,23 @@ async function getLayerFiltersWithStyle (layer) {
 // Return updated legend or filters for a layer without mutating it
 // Create generic legend if not existing
 export async function getUpdatedLayerLegend (layer) {
-  const updateOrGenerate = (root, style) => {
-    if (!_.has(root, 'legend')) {
-      // Generate generic legend if not existing
-      const styles = [{ shape: 'circle', type: 'point' }, { shape: 'polyline', type: 'line' }, { shape: 'rect', type: 'polygon' }]
-      root.legend = {
-        type: 'symbols',
-        label: _.get(layer, 'label', _.get(layer, 'name')),
-        content: {
-          symbols: _.map(styles, s => {
-            return {
-              symbol: { 'media/KShape': { options: _.merge({ shape: s.shape }, _.omit(_.get(style, s.type), ['size'])) } },
-              label: _.get(root, 'label', _.get(root, 'name'))
-            }
-          })
-        }
-      }
-    } else {
-      // if legend already exists update it
-      if (_.isArray(_.get(root, 'legend'))) {
-        _.forEach(root.legend, legend => {
-          updateExisting(legend, style)
+  const update = (root, style) => {
+    const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
+    const symbols = []
+    _.forIn(shapes, (shape, type) => {
+      if (style[type]) {
+        symbols.push({
+          symbol: { 'media/KShape': { options: _.merge({ shape }, _.omit(style[type], ['size'])) } },
+          label: _.get(root, 'label', _.get(root, 'name'))
         })
-      } else {
-        updateExisting(root.legend, style)
       }
-    }
-  }
-
-  const updateExisting = (legend, style) => {
-    if (legend.type === 'symbols' && legend.content && legend.content.symbols) {
-      _.forEach(legend.content.symbols, symbol => {
-        if (symbol.symbol && symbol.symbol['media/KShape'] && symbol.symbol['media/KShape'].options) {
-          switch (symbol.symbol['media/KShape'].options.shape) {
-            case 'rect':
-              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'rect' }, _.get(style, 'polygon')), ['size'])
-              break
-            case 'polyline':
-              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'polyline' }, _.get(style, 'line')), ['size'])
-              break
-            default:
-              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'circle' }, _.get(style, 'point')), ['size'])
-              break
-          }
-        }
-      })
+    })
+    root.legend = {
+      type: 'symbols',
+      label: _.get(layer, 'label', _.get(layer, 'name')),
+      content: {
+        symbols
+      }
     }
   }
 
@@ -515,7 +487,7 @@ export async function getUpdatedLayerLegend (layer) {
       if (!_.has(filter, 'linkedStyle')) return
       hasFilterWithStyle = true
 
-      updateOrGenerate(filter, filter.linkedStyle)
+      update(filter, filter.linkedStyle)
     })
     const legend = { filters: _.map(filtersWithStyle, filter => _.omit(filter, 'linkedStyle')) }
     // Check if we have at least one filter with a style before removing the layer legend
@@ -525,7 +497,7 @@ export async function getUpdatedLayerLegend (layer) {
     return legend
   } else {
     const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
-    updateOrGenerate(layer, layerStyle)
+    update(layer, layerStyle)
     return { legend: layer.legend }
   }
 }
