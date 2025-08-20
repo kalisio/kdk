@@ -18,7 +18,7 @@
     </div>
     <div id="style-manager-content">
       <q-tab-panels v-model="viewMode" animated>
-        <q-tab-panel name="list" class="q-px-sm q-py-none">
+        <q-tab-panel name="list" class="q-pa-none">
           <KGrid
             service="styles"
             :append-items="true"
@@ -110,6 +110,7 @@ const toolbar = computed(() => {
       id: 'style-manager-tags-filter',
       class: 'q-ml-sm',
       selection: tagsSelection.value,
+      alignment: 'left',
       options: tagsOptions.value,
       onSelectionChanged: onTagSelectionChanged
     },
