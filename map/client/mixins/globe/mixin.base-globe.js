@@ -28,7 +28,8 @@ export const baseGlobe = {
   ],
   data () {
     return {
-      layers: {}
+      layers: {},
+      orphanLayers: []
     }
   },
   methods: {
