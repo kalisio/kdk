@@ -43,7 +43,7 @@
     <!--
       Editor
      -->
-    <div class="q-pa-sm col">
+    <div class="q-pa-sm full-width col">
       <q-editor
         v-if="editor"
         :placeholder="$t('KMessageComposer.WRITE_YOUR_MESSAGE')"
@@ -58,6 +58,7 @@
         v-else
         :placeholder="$t('KMessageComposer.WRITE_YOUR_MESSAGE')"
         v-model="body"
+        autogrow
         borderless
         dense
         @keydown.enter.prevent="sendMessage"
