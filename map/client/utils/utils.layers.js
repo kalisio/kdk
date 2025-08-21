@@ -379,11 +379,11 @@ export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) 
     const result = await generateStyleFromFilters(layer, style)
     if (result) {
       // Update legend
-      Object.assign(result, await getUpdatedLayerLegend(Object.assign({}, layer, result)))
+      Object.assign(result, await getLegendForLayer(Object.assign({}, layer, result)))
       if (ignoreFeatureStyle) result.ignoreFeatureStyle = true
       await api.getService('catalog').patch(layer._id, result)
     } else {
-      const legend = await getUpdatedLayerLegend(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
+      const legend = await getLegendForLayer(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
       const patch = Object.assign({}, { 'cesium.style': style, 'leaflet.style': style }, legend)
       if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
       await api.getService('catalog').patch(layer._id, patch)
@@ -391,7 +391,7 @@ export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) 
   } else {
     _.set(layer, 'cesium.style', style)
     _.set(layer, 'leaflet.style', style)
-    Object.assign(layer, await getUpdatedLayerLegend(layer))
+    Object.assign(layer, await getLegendForLayer(layer))
     if (ignoreFeatureStyle) layer.ignoreFeatureStyle = true
   }
   return layer
@@ -438,7 +438,7 @@ export async function editFilterStyle (layer, filter, engineStyle, style, ignore
   )
   if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
   // Update legend
-  Object.assign(patch, await getUpdatedLayerLegend(Object.assign({}, layer, { filters: layerFilters })))
+  Object.assign(patch, await getLegendForLayer(Object.assign({}, layer, { filters: layerFilters })))
   await api.getService('catalog').patch(layer._id, patch)
 }
 
@@ -457,10 +457,9 @@ async function getLayerFiltersWithStyle (layer) {
   return filtersWithStyle
 }
 
-// Return updated legend or filters for a layer without mutating it
-// Create generic legend if not existing
-export async function getUpdatedLayerLegend (layer) {
-  const update = (root, style) => {
+// Return generic legend or filters for a layer without mutating it
+export async function getLegendForLayer (layer) {
+  const generateLegendFromStyle = (root, style) => {
     const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
     const symbols = []
     _.forIn(shapes, (shape, type) => {
@@ -471,7 +470,7 @@ export async function getUpdatedLayerLegend (layer) {
         })
       }
     })
-    root.legend = {
+    return {
       type: 'symbols',
       label: _.get(layer, 'label', _.get(layer, 'name')),
       content: {
@@ -487,7 +486,8 @@ export async function getUpdatedLayerLegend (layer) {
       if (!_.has(filter, 'linkedStyle')) return
       hasFilterWithStyle = true
 
-      update(filter, filter.linkedStyle)
+      const filterLegend = generateLegendFromStyle(filter, filter.linkedStyle)
+      filter.legend = filterLegend
     })
     const legend = { filters: _.map(filtersWithStyle, filter => _.omit(filter, 'linkedStyle')) }
     // Check if we have at least one filter with a style before removing the layer legend
@@ -497,8 +497,8 @@ export async function getUpdatedLayerLegend (layer) {
     return legend
   } else {
     const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
-    update(layer, layerStyle)
-    return { legend: layer.legend }
+    const legend = generateLegendFromStyle(layer, layerStyle)
+    return { legend }
   }
 }
 
