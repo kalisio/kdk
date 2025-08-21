@@ -105,7 +105,7 @@ function headerFooterComponent (text, position) {
   return { content: [{ component: _.get(config, `capture.${position}.component`, 'KCaptureTextArea'), text, position }], visible: true }
 }
 function northComponent (position) {
-  const northSticky = Layout.findSticky('north-sticky')
+  const northSticky = Layout.findSticky('north-arrow-sticky')
   return { content: [{ ...northSticky, position, offset: [0, 5], visible: true }] }
 }
 function legendComponent () {
