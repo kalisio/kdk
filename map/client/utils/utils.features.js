@@ -11,6 +11,7 @@ import rhumbDistance from '@turf/rhumb-distance'
 import rotate from '@turf/transform-rotate'
 import scale from '@turf/transform-scale'
 import translate from '@turf/transform-translate'
+import bbox from "@turf/bbox"
 import convex from '@turf/convex'
 import { api, Time } from '../../../core/client/index.js'
 import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
@@ -55,6 +56,12 @@ export function transformFeatures (geoJson, transform) {
         Object.assign(_.omit(translation, ['direction', 'distance']), { mutate: true }))
     }
   })
+}
+
+export function computeBoundingBox (geoJson) {
+  if (!geoJson) return
+  const box = bbox(geoJson)
+  return _.every(box, _.isFinite) ? box : null
 }
 
 export function computeConvexHull (geoJson) {
