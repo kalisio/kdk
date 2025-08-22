@@ -197,7 +197,7 @@ export function convertSimpleStyleColors (style) {
   // Convert from quasar color palette to actual color
   _.forOwn(style, (value, key) => {
     if (['stroke', 'fill', 'marker-color'].includes(key)) {
-      const color = getCssVar(value)
+      const color = kdkCoreUtils.getHtmlColor(value)
       if (color) _.set(style, key, color)
     }
   })
@@ -217,7 +217,6 @@ export function convertLineStyleToSimpleStyle (style) {
 }
 
 export function convertSimpleStyleToLineStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')  
   return style ? convertStyle(style, SimpleStyleToLineStyle) : {}
 }
 
@@ -226,7 +225,6 @@ export function convertPolygonStyleToSimpleStyle (style) {
 }
 
 export function convertSimpleStyleToPolygonStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
   return style ? convertStyle(style, SimpleStyleToPolygonStyle) : {}
 }
 
