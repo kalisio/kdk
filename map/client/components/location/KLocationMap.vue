@@ -275,7 +275,7 @@ export default {
       return this.modelValue
     }
   },
-  async mounted () {
+  mounted () {
     this.$engineEvents.on('pm:create', this.stopDraw)
   },
   beforeUnmount () {
