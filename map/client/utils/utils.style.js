@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { getCssVar } from 'quasar'
 import { utils as kdkCoreUtils } from '../../../core/client/index.js'
 
 export const IconStyleToSimpleStyle = {
@@ -226,6 +225,21 @@ export function convertPolygonStyleToSimpleStyle (style) {
 
 export function convertSimpleStyleToPolygonStyle (style) {
   return style ? convertStyle(style, SimpleStyleToPolygonStyle) : {}
+}
+
+export function getStyleType (geometryType) {
+  if (!geometryType) return
+  switch (geometryType) {
+    case 'Point':
+    case 'MultiPoint':
+      return 'point'
+    case 'LineString':
+    case 'MultiLineString':
+      return 'line'
+    case 'Polygon':
+    case 'MultiPolygon':
+      return 'polygon' 
+  }
 }
 
 export function getShapeFromPointStyle (style, size = [20, 20]) {

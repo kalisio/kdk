@@ -15,6 +15,7 @@ import bbox from "@turf/bbox"
 import convex from '@turf/convex'
 import { api, Time } from '../../../core/client/index.js'
 import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
+import { getStyleType } from './utils.style.js'
 import { isInMemoryLayer, isFeatureLayer } from './utils.layers.js'
 import { getGeoJsonFeatures } from '../utils.map.js'
 import chroma from 'chroma-js'
@@ -541,11 +542,7 @@ export function getFeatureStyleType (feature) {
     logger.warn('[KDK] feature has undefined geometry')
     return
   }
-  if (['Point', 'MultiPoint'].includes(geometryType)) return 'point'
-  if (['LineString', 'MultiLineString'].includes(geometryType)) return 'line'
-  if (['Polygon', 'MultiPolygon'].includes(geometryType)) return 'polygon'
-  logger.warn(`[KDK] unsupported geometry of type of ${geometryType}`)
-  return
+  return getStyleType(geometryType)
 }
 
 // Bind listeners to layer service events and store it in the returned object
