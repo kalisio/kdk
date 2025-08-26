@@ -26,7 +26,7 @@ export async function isElementVisible (page, selector) {
     const element = document.querySelector(selector)
     if (!element) return false
     const style = window.getComputedStyle(element)
-    const visible = (style && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0')
+    const visible = (style && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0' && !(style.height === '0px' && style.width === '0px'))
     return visible
   }, selector)
 }
