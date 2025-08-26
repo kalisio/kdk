@@ -156,7 +156,7 @@ export default async function () {
 
   const messagesConfig = app.get('messages')
   if (messagesConfig) {
-    await createMessagesService.call(app)
+    await createMessagesService.call(app, messagesConfig)
     debug('\'messages\' service created')
   }
 
@@ -174,7 +174,7 @@ export default async function () {
 
   const tagsConfig = app.get('tags')
   if (tagsConfig) {
-    await createTagsService.call(app)
+    await createTagsService.call(app, tagsConfig)
     debug('\'tags\' service created')
   }
 }
