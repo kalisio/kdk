@@ -79,12 +79,14 @@
     "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {provider}, in order to switch to a local account reset your password first",
     "EMAIL_ALREADY_TAKEN": "A user with this email address seems to be already registered",
     "OBJECT_ID_ALREADY_TAKEN": "An item with this identifier seems to already exist. Please try again with another value.",
-    "DUPLICATED_FILE": "The file {file} is already added",
-    "UNSUPPORTED_FILE_FORMAT": "The {file} file format is not supported",
-    "CANNOT_READ_FILE": "Unable to read the file {file}",
-    "INVALID_JSON_FILE": "{file} is not a valid JSON file",
-    "INVALID_CSV_FILE": "{file} is not a valid CSV file",
-    "NETWORK_ERROR": "Network or service error occurred"
+    "MAX_FILES_REACHED": "Oops ! You can only drop only one file | Oops! You can only drop up to {n} files at once",
+    "MAX_FILE_SIZE_REACHED": "Oops ! The file exceeds the maximum allowed size of {maxSize} MB",
+    "MAX_TOTAL_SIZE_REACHED": "Oops ! The total size files exceeds the maximum allowed total limit of {maxSize} MB",
+    "UNSUPPORTED_FILE_FORMAT": "Oops ! The {file} file format is not supported",
+    "CANNOT_READ_FILE": "Oops ! Unable to read the file {file}",
+    "INVALID_JSON_FILE": "Oops ! {file} is not a valid JSON file",
+    "INVALID_CSV_FILE": "Oops ! {file} is not a valid CSV file",
+    "NETWORK_ERROR": "Oops ! Network or service error occurred"
   },
   "units": {
     "METER_SYMBOL": "m",
@@ -159,7 +161,6 @@
     "NANOSIEVERT_PER_HOUR_LABEL": "Nanosieverts per hour"
   },
   "directives": {
-    "MAX_FILES_REACHED": "Oops ! You can only drop only one file | Oops! You can only drop up to {n} files at once",
     "ALL_FILES_ARE_UNSUPPORTED": "Oops ! File is not supported | Oops ! None of the files are supported",
     "SOME_FILES_ARE_UNSUPPORTED": "Some files will be ignored due to unsupported types",
     "DROP_FILES": "Drop file here | Drop files here"

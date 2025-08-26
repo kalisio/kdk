@@ -61,7 +61,7 @@ export const vDropFile = {
       let color, message
       if (el.__state.maxFiles && _.size(items) > el.__state.maxFiles) {
         color = colors.getPaletteColor('negative')
-        message = i18n.tc('directives.MAX_FILES_REACHED', el.__state.maxFiles)
+        message = i18n.tc('errors.MAX_FILES_REACHED', el.__state.maxFiles)
       } else {
         for (const item of items) {
           if (item.kind === 'file' && _.includes(el.__state.acceptedTypes, item.type)) acceptedItems.push(item)
