@@ -38,6 +38,10 @@ const props = defineProps({
   ignoreFeatureStyle: {
     type: Boolean,
     default: false
+  },
+  maxItems: {
+    type: Number,
+    default: 250
   }
 })
 
@@ -63,7 +67,7 @@ async function applyToLayer (layer, styleToApply) {
 }
 
 onMounted(async () => {
-  const res = await api.getService('styles').find()
+  const res = await api.getService('styles').find({ query: { $limit: props.maxItems, $sort: { name: 1 } } })
   styles.value = res.data
 })
 </script>
