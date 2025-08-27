@@ -64,6 +64,7 @@ export function computeBoundingBox (geoJson, padding = 0) {
   const box = bbox(geoJson)
   if (!_.every(box, _.isFinite)) return null
   if (!padding) return box
+  // compute padding
   const padX = (box[2] - box[0]) * padding
   const padY = (box[3] - box[1]) * padding
   return [box[0] - padX, box[1] - padY, box[2] + padX, box[3] + padY]
