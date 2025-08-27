@@ -345,7 +345,7 @@ export async function moveRange (page, action, target, direction, times, wait = 
 
 /**
  * Simulate drag & drop of files onto the target container
- * /!\ Target container needs 'dragenter' and 'drop' events
+ * @param {string} target Query selector for container that has 'dragenter' and 'drop' events
  */
 export async function simulateFileDrop(page, target, dataPath, filePaths) {
   const fileData = []
