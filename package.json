@@ -55,7 +55,6 @@
     "globals": [
       "DEV",
       "PROD",
-      "fetch",
       "addEventListener",
       "cordova",
       "location",
