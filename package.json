@@ -71,7 +71,9 @@
       "localStorage",
       "DOMParser",
       "caches",
-      "MutationObserver"
+      "MutationObserver",
+      "DataTransfer",
+      "DragEvent"
     ]
   },
   "directories": {
