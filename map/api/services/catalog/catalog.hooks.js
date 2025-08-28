@@ -12,7 +12,7 @@ export default {
   before: {
     all: [coreHooks.marshallHttpQuery],
     find: [
-      fuzzySearch({ fields: ['name'] }), coreHooks.diacriticSearch(), filterLayers, coreHooks.distinct
+      fuzzySearch({ fields: ['name', 'label'] }), coreHooks.diacriticSearch(), filterLayers, coreHooks.distinct
     ],
     get: [],
     create: [
