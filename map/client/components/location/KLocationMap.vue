@@ -259,7 +259,7 @@ export default {
           this.mapReady = true
           // setup base layer
           const baseLayers = await this.getLayers({ type: 'BaseLayer' })
-          // [!] remember Vue won’t wait for async: use mapReady as a guard to 
+          // [!] remember Vue won’t wait for async: use mapReady as a guard to
           // prevent executing the process after the component is destroyed
           // https://github.com/kalisio/kdk/issues/1291
           if (this.mapReady && baseLayers.length > 0) await this.addLayer(baseLayers[0])

@@ -23,7 +23,7 @@
     :disable="disabled"
     :multiple="multiple"
     :append="multiple"
-    :use-chips="true"    
+    :use-chips="true"
     :clearable="isClearable()"
     :max-files="getMaxFiles()"
     :max-file-size="getMaxFileSize()"
@@ -89,7 +89,7 @@ export default {
     },
     isClearable () {
       return _.get(this.properties, 'field.clearable', true)
-    },    
+    },
     filterSelectedFiles (files) {
       const filter = _.get(this.properties, 'field.filter')
       if (!filter) return files

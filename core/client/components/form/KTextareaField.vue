@@ -23,7 +23,7 @@
           content-class="text-grey-8"
           min-height="5rem"
           max-height="10rem"
-          dense 
+          dense
         />
       </div>
     </template>

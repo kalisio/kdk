@@ -59,10 +59,15 @@ export function transformFeatures (geoJson, transform) {
   })
 }
 
-export function computeBoundingBox (geoJson) {
+export function computeBoundingBox (geoJson, padding = 0) {
   if (!geoJson) return
   const box = bbox(geoJson)
-  return _.every(box, _.isFinite) ? box : null
+  if (!_.every(box, _.isFinite)) return null
+  if (!padding) return box
+  // compute padding
+  const padX = (box[2] - box[0]) * padding
+  const padY = (box[3] - box[1]) * padding
+  return [box[0] - padX, box[1] - padY, box[2] + padX, box[3] + padY]
 }
 
 export function computeConvexHull (geoJson) {
