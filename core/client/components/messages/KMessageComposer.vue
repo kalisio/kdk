@@ -174,7 +174,6 @@ async function sendMessage () {
     (_.some(attachments.value, (file) => !file.type) ||
       _.some(attachments.value, (file) => !file.name))
   ) {
-    console.error('Invalid file type')
     Notify.create({
       type: 'negative',
       message: i18n.t('KUploader.INVALID_TYPE')
