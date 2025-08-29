@@ -347,9 +347,9 @@ export async function moveRange (page, action, target, direction, times, wait = 
  * Simulate drag & drop of files onto the target container
  * @param {string} target Query selector for container that has 'dragenter' and 'drop' events
  */
-export async function simulateFileDrop(page, target, dataPath, filePaths) {
+export async function simulateFileDrop (page, target, dataPath, filePaths) {
   const fileData = []
-  
+
   for (const filePath of filePaths) {
     const fullPath = path.join(dataPath, filePath)
     const content = fs.readFileSync(fullPath, 'utf8')
@@ -361,26 +361,26 @@ export async function simulateFileDrop(page, target, dataPath, filePaths) {
   await page.evaluate(async (fileData, target) => {
     const DragOverlay = document.querySelector(target)
     if (!DragOverlay) throw new Error('DragOverlay component not found')
-    
+
     const files = fileData.map(({ content, fileName, mimeType }) => {
       return new File([content], fileName, { type: mimeType })
     })
 
     const dataTransfer = new DataTransfer()
     files.forEach(file => dataTransfer.items.add(file))
-    
+
     const dragEnterEvent = new DragEvent('dragenter', {
       bubbles: true,
-      dataTransfer: dataTransfer
+      dataTransfer
     })
 
     const dropEvent = new DragEvent('drop', {
       bubbles: true,
-      dataTransfer: dataTransfer
+      dataTransfer
     })
 
     DragOverlay.dispatchEvent(dragEnterEvent)
-    await setTimeout(() => {}, 500);
+    await setTimeout(() => {}, 500)
     DragOverlay.dispatchEvent(dropEvent)
   }, fileData, target)
 }

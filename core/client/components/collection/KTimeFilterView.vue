@@ -26,6 +26,7 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
 import { useScreen, useCollectionFilter } from '../../composables'
 
@@ -52,7 +53,7 @@ const endTimeRange = computed(() => {
   return _.get(timeFilter.value, 'end')
 })
 const minTimeRange = computed(() => {
-return _.get(timeFilter.value, 'min')
+  return _.get(timeFilter.value, 'min')
 })
 const maxTimeRange = computed(() => {
   return _.get(timeFilter.value, 'max')
