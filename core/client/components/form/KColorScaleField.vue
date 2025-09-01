@@ -7,7 +7,7 @@
     :id="properties.name + '-field'"
     v-model="model"
     :label="label"
-    :options="getOptions"
+    :options="getOptions()"
     options-selected-class="hidden"
     emit-value
     map-options
