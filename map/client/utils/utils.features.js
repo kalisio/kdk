@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import moment from 'moment'
+import jsts from 'jsts'
 import { getType, getGeom } from '@turf/invariant'
 import { lineString } from '@turf/helpers'
 import explode from '@turf/explode'
@@ -401,6 +402,34 @@ export async function getMeasureForFeature (layer, feature, startTime, endTime, 
     logger.error(error)
   }
   return probedLocation
+}
+
+export function cleanFeatures (geoJson, precision = 1e-9) {
+  let errors = []
+  if (geoJson.type === 'Feature') {
+    const geometryType = _.get(geoJson, 'geometry.type')
+    if (!geometryType) {
+      logger.warn('[KDK] feature has undefined geometry')
+      return
+    }
+    if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
+      const reader = new jsts.io.GeoJSONReader()
+      const writer = new jsts.io.GeoJSONWriter() 
+      const geometry = reader.read(geoJson.geometry)
+      const validator = new jsts.operation.valid.IsValidOp(geometry)
+      if (!validator.isValid()) {
+        errors.push(validator.getValidationError())
+        const correctedGeometry = geometry.buffer(precision).buffer(-precision)
+        geoJson.geometry = writer.write(correctedGeometry)
+      }
+    }
+  } else {
+    _.forEach(geoJson.features, feature => {
+      let errs = cleanFeatures(feature)
+      if (errs) errors = _.concat(errors, errs)
+    })
+  }
+  return errors
 }
 
 export function checkFeatures (geoJson, options = {
