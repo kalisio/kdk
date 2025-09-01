@@ -5,13 +5,14 @@ import { useQuasar, Loading } from 'quasar'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
 import { Events } from '../events.js'
-import { Store } from '../store.js'
 import { beforeGuard } from '../guards.js'
 import { LocalStorage } from '../local-storage.js'
 import { restoreSession } from '../utils/utils.session.js'
+import { useUser } from './user.js'
 
 export function useSession (options = {}) {
   // Data
+  const { User } = useUser()
   const disconnectKey = 'disconnect-dialog'
   const reconnectKey = 'reconnect-dialog'
   const router = useRouter()
@@ -22,8 +23,6 @@ export function useSession (options = {}) {
   let pendingReconnection = null
   let pendingReload = null
   let ignoreReconnectionError = false
-
-  const User = Store.getRef('user')
 
   // Functions
   function getRedirectKey () {
@@ -198,7 +197,6 @@ export function useSession (options = {}) {
 
   // Expose
   return {
-    User,
     redirect,
     isInitialized,
     onReconnectError,

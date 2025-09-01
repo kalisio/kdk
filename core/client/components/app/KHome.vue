@@ -6,7 +6,8 @@
 
 <script setup>
 import KLayout from '../layout/KLayout.vue'
-import { Store } from '../../store.js'
+import { useUser } from '../../composables'
 
-const User = Store.getRef('user')
+// Data
+const { User } = useUser()
 </script>
