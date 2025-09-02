@@ -38,6 +38,7 @@
     "build:app": "cross-env BUILD_MODE=app vite build",
     "build:app:globe": "cross-env BUILD_MODE=app GLOBE=1 vite build",
     "build:lib": "cross-env BUILD_MODE=lib vite build",
+    "build:lib:globe": "cross-env BUILD_MODE=lib GLOBE=1 vite build",
     "dev": "vite dev",
     "dev:globe": "cross-env GLOBE=1 vite dev"
   },

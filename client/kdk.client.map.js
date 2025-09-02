@@ -30,8 +30,6 @@ import { sourcesToViews } from "protomaps-leaflet";
 import chroma from "chroma-js";
 import L$1 from "leaflet";
 import require$$1 from "iso8601-js-period";
-import { kml, gpx } from "@tmcw/togeojson";
-import { Color, exportKml, buildModuleUrl, Math as Math$1, Cartographic, Entity, EntityCollection, BoundingSphere, Ellipsoid, PinBuilder, VerticalOrigin, Cartesian3, DebugModelMatrixPrimitive, HeadingPitchRoll, HeadingPitchRange, Transforms, Matrix4, Matrix3, DebugCameraPrimitive, Rectangle, Cesium3DTileset, ImageryLayer, ScreenSpaceEventType, ScreenSpaceEventHandler, Ion, Viewer, viewerCesiumInspectorMixin, GeoJsonDataSource, ConstantProperty, ColorMaterialProperty, viewerDragDropMixin, Fullscreen as Fullscreen$1, Resource } from "cesium";
 import jwtdecode from "jwt-decode";
 import feathers from "@feathersjs/client";
 import { io } from "socket.io-client";
@@ -52,6 +50,7 @@ import xdr from "jsdap/src/xdr.js";
 import * as GeoTIFF from "geotiff";
 import xml2js from "xml2js";
 import { memory } from "@feathersjs/memory";
+import { kml, gpx } from "@tmcw/togeojson";
 import shp from "shpjs";
 import "leaflet/dist/leaflet.css";
 import "leaflet-fullscreen";
@@ -70,7 +69,6 @@ import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import "leaflet-velocity";
 import HeatmapOverlay from "leaflet-heatmap";
 import { mapbox_style } from "@kalisio/leaflet-pmtiles";
-import "cesium/Source/Widgets/widgets.css";
 const Store$1 = {};
 function useStore(name, initialStore) {
   if (!_$1.has(Store$1, name)) {
@@ -871,7 +869,7 @@ async function checkUnique(hook) {
   }
   return hook;
 }
-const index$8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index$7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   checkUnique,
   emit,
@@ -4199,7 +4197,7 @@ const Time = {
     return Math.floor(hours / interval) * interval;
   }
 };
-const length$1 = {
+const length = {
   m: {
     symbol: "units.METER_SYMBOL",
     label: "units.METER_LABEL"
@@ -4388,7 +4386,7 @@ const equivalentDoseRate = {
   }
 };
 const quantities = {
-  length: length$1,
+  length,
   altitude,
   area,
   velocity,
@@ -10177,7 +10175,7 @@ function loadComponent(componentName) {
     logger$1.error(error);
   }
 }
-const index$7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index$6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   CardSectionProps,
   Colors,
@@ -10423,7 +10421,7 @@ const vHover = {
     delete el.__vHoverLeave__;
   }
 };
-const index$6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index$5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   vDropFile,
   vHover
@@ -11460,7 +11458,7 @@ function useVersion() {
     apiVersionName
   };
 }
-const index$5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index$4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   useActivity: useActivity$1,
   useCollection,
@@ -12455,7 +12453,7 @@ const service = {
     }
   }
 };
-const index$4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index$3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   baseActivity,
   baseEditor,
@@ -12631,7 +12629,7 @@ async function initialize() {
   Store.set("kdk.core.initialized", true);
   logger$1.debug("[KDK] Core module initialized");
 }
-const index$3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index$2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   Broadcaster,
   Capabilities,
@@ -12662,22 +12660,22 @@ const index$3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePrope
   beforeGuard,
   buildEncodedUrl,
   buildUrl,
-  composables: index$5,
+  composables: index$4,
   createClient,
   default: initialize,
-  directives: index$6,
+  directives: index$5,
   errors: errors$1,
-  hooks: index$8,
+  hooks: index$7,
   i18n,
   initializeApi,
   makeDiacriticPattern,
   makeServiceSnapshot,
-  mixins: index$4,
+  mixins: index$3,
   permissions: permissions$1,
   permissionsGuard,
   publicRouteGuard,
   services: init$1,
-  utils: index$7
+  utils: index$6
 }, Symbol.toStringTag, { value: "Module" }));
 var earthRadius = 63710088e-1;
 var factors = {
@@ -12802,7 +12800,7 @@ function radiansToLength(radians, units) {
   }
   return radians * factor;
 }
-function lengthToRadians(distance2, units) {
+function lengthToRadians(distance, units) {
   if (units === void 0) {
     units = "kilometers";
   }
@@ -12810,7 +12808,7 @@ function lengthToRadians(distance2, units) {
   if (!factor) {
     throw new Error(units + " units is invalid");
   }
-  return distance2 / factor;
+  return distance / factor;
 }
 function radiansToDegrees(radians) {
   var degrees = radians % (2 * Math.PI);
@@ -13041,68 +13039,6 @@ function flattenEach(geojson, callback) {
     }
   });
 }
-function segmentEach(geojson, callback) {
-  flattenEach(geojson, function(feature2, featureIndex, multiFeatureIndex) {
-    var segmentIndex = 0;
-    if (!feature2.geometry) return;
-    var type = feature2.geometry.type;
-    if (type === "Point" || type === "MultiPoint") return;
-    var previousCoords;
-    var previousFeatureIndex = 0;
-    var previousMultiIndex = 0;
-    var prevGeomIndex = 0;
-    if (coordEach(
-      feature2,
-      function(currentCoord, coordIndex, featureIndexCoord, multiPartIndexCoord, geometryIndex) {
-        if (previousCoords === void 0 || featureIndex > previousFeatureIndex || multiPartIndexCoord > previousMultiIndex || geometryIndex > prevGeomIndex) {
-          previousCoords = currentCoord;
-          previousFeatureIndex = featureIndex;
-          previousMultiIndex = multiPartIndexCoord;
-          prevGeomIndex = geometryIndex;
-          segmentIndex = 0;
-          return;
-        }
-        var currentSegment = lineString(
-          [previousCoords, currentCoord],
-          feature2.properties
-        );
-        if (callback(
-          currentSegment,
-          featureIndex,
-          multiFeatureIndex,
-          geometryIndex,
-          segmentIndex
-        ) === false)
-          return false;
-        segmentIndex++;
-        previousCoords = currentCoord;
-      }
-    ) === false)
-      return false;
-  });
-}
-function segmentReduce(geojson, callback, initialValue) {
-  var previousValue = initialValue;
-  var started = false;
-  segmentEach(
-    geojson,
-    function(currentSegment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex) {
-      if (started === false && initialValue === void 0)
-        previousValue = currentSegment;
-      else
-        previousValue = callback(
-          previousValue,
-          currentSegment,
-          featureIndex,
-          multiFeatureIndex,
-          geometryIndex,
-          segmentIndex
-        );
-      started = true;
-    }
-  );
-  return previousValue;
-}
 function centroid(geojson, options) {
   if (options === void 0) {
     options = {};
@@ -13167,7 +13103,7 @@ function getType(geojson, _name) {
   }
   return geojson.type;
 }
-function destination(origin, distance2, bearing2, options) {
+function destination(origin, distance, bearing2, options) {
   if (options === void 0) {
     options = {};
   }
@@ -13175,7 +13111,7 @@ function destination(origin, distance2, bearing2, options) {
   var longitude1 = degreesToRadians(coordinates1[0]);
   var latitude1 = degreesToRadians(coordinates1[1]);
   var bearingRad = degreesToRadians(bearing2);
-  var radians = lengthToRadians(distance2, options.units);
+  var radians = lengthToRadians(distance, options.units);
   var latitude2 = Math.asin(Math.sin(latitude1) * Math.cos(radians) + Math.cos(latitude1) * Math.sin(radians) * Math.cos(bearingRad));
   var longitude2 = longitude1 + Math.atan2(Math.sin(bearingRad) * Math.sin(radians) * Math.cos(latitude1), Math.cos(radians) - Math.sin(latitude1) * Math.sin(latitude2));
   var lng = radiansToDegrees(longitude2);
@@ -13838,7 +13774,7 @@ function requireJs$1() {
       return radians * factor;
     }
     exports.radiansToLength = radiansToLength2;
-    function lengthToRadians2(distance2, units) {
+    function lengthToRadians2(distance, units) {
       if (units === void 0) {
         units = "kilometers";
       }
@@ -13846,11 +13782,11 @@ function requireJs$1() {
       if (!factor) {
         throw new Error(units + " units is invalid");
       }
-      return distance2 / factor;
+      return distance / factor;
     }
     exports.lengthToRadians = lengthToRadians2;
-    function lengthToDegrees(distance2, units) {
-      return radiansToDegrees2(lengthToRadians2(distance2, units));
+    function lengthToDegrees(distance, units) {
+      return radiansToDegrees2(lengthToRadians2(distance, units));
     }
     exports.lengthToDegrees = lengthToDegrees;
     function bearingToAzimuth(bearing2) {
@@ -14250,7 +14186,7 @@ function requireJs() {
     );
     return previousValue;
   }
-  function segmentEach2(geojson, callback) {
+  function segmentEach(geojson, callback) {
     flattenEach2(geojson, function(feature2, featureIndex, multiFeatureIndex) {
       var segmentIndex = 0;
       if (!feature2.geometry) return;
@@ -14290,10 +14226,10 @@ function requireJs() {
         return false;
     });
   }
-  function segmentReduce2(geojson, callback, initialValue) {
+  function segmentReduce(geojson, callback, initialValue) {
     var previousValue = initialValue;
     var started = false;
-    segmentEach2(
+    segmentEach(
       geojson,
       function(currentSegment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex) {
         if (started === false && initialValue === void 0)
@@ -14529,8 +14465,8 @@ function requireJs() {
   js.lineReduce = lineReduce;
   js.propEach = propEach;
   js.propReduce = propReduce;
-  js.segmentEach = segmentEach2;
-  js.segmentReduce = segmentReduce2;
+  js.segmentEach = segmentEach;
+  js.segmentReduce = segmentReduce;
   return js;
 }
 var hasRequiredGeojsonRbush;
@@ -15464,8 +15400,8 @@ function rhumbDistance(from, to, options) {
   var destination2 = getCoord(to);
   destination2[0] += destination2[0] - origin[0] > 180 ? -360 : origin[0] - destination2[0] > 180 ? 360 : 0;
   var distanceInMeters = calculateRhumbDistance(origin, destination2);
-  var distance2 = convertLength(distanceInMeters, "meters", options.units);
-  return distance2;
+  var distance = convertLength(distanceInMeters, "meters", options.units);
+  return distance;
 }
 function calculateRhumbDistance(origin, destination2, radius) {
   radius = radius === void 0 ? earthRadius : Number(radius);
@@ -15483,12 +15419,12 @@ function calculateRhumbDistance(origin, destination2, radius) {
   var dist = delta * R;
   return dist;
 }
-function rhumbDestination(origin, distance2, bearing2, options) {
+function rhumbDestination(origin, distance, bearing2, options) {
   if (options === void 0) {
     options = {};
   }
-  var wasNegativeDistance = distance2 < 0;
-  var distanceInMeters = convertLength(Math.abs(distance2), options.units, "meters");
+  var wasNegativeDistance = distance < 0;
+  var distanceInMeters = convertLength(Math.abs(distance), options.units, "meters");
   if (wasNegativeDistance)
     distanceInMeters = -Math.abs(distanceInMeters);
   var coords = getCoord(origin);
@@ -15496,9 +15432,9 @@ function rhumbDestination(origin, distance2, bearing2, options) {
   destination2[0] += destination2[0] - coords[0] > 180 ? -360 : coords[0] - destination2[0] > 180 ? 360 : 0;
   return point(destination2, options.properties);
 }
-function calculateRhumbDestination(origin, distance2, bearing2, radius) {
+function calculateRhumbDestination(origin, distance, bearing2, radius) {
   radius = radius === void 0 ? earthRadius : Number(radius);
-  var delta = distance2 / radius;
+  var delta = distance / radius;
   var lambda1 = origin[0] * Math.PI / 180;
   var phi1 = degreesToRadians(origin[1]);
   var theta = degreesToRadians(bearing2);
@@ -15629,8 +15565,8 @@ function transformRotate(geojson, angle2, options) {
   coordEach(geojson, function(pointCoords) {
     var initialAngle = rhumbBearing(pivot, pointCoords);
     var finalAngle = initialAngle + angle2;
-    var distance2 = rhumbDistance(pivot, pointCoords);
-    var newCoords = getCoords(rhumbDestination(pivot, distance2, finalAngle));
+    var distance = rhumbDistance(pivot, pointCoords);
+    var newCoords = getCoords(rhumbDestination(pivot, distance, finalAngle));
     pointCoords[0] = newCoords[0];
     pointCoords[1] = newCoords[1];
   });
@@ -15718,29 +15654,29 @@ function defineOrigin(geojson, origin) {
       throw new Error("invalid origin");
   }
 }
-function transformTranslate(geojson, distance2, direction, options) {
+function transformTranslate(geojson, distance, direction, options) {
   options = options || {};
   if (!isObject$1(options)) throw new Error("options is invalid");
   var units = options.units;
   var zTranslation = options.zTranslation;
   var mutate = options.mutate;
   if (!geojson) throw new Error("geojson is required");
-  if (distance2 === void 0 || distance2 === null || isNaN(distance2))
+  if (distance === void 0 || distance === null || isNaN(distance))
     throw new Error("distance is required");
   if (zTranslation && typeof zTranslation !== "number" && isNaN(zTranslation))
     throw new Error("zTranslation is not a number");
   zTranslation = zTranslation !== void 0 ? zTranslation : 0;
-  if (distance2 === 0 && zTranslation === 0) return geojson;
+  if (distance === 0 && zTranslation === 0) return geojson;
   if (direction === void 0 || direction === null || isNaN(direction))
     throw new Error("direction is required");
-  if (distance2 < 0) {
-    distance2 = -distance2;
+  if (distance < 0) {
+    distance = -distance;
     direction = direction + 180;
   }
   if (mutate === false || mutate === void 0) geojson = clone(geojson);
   coordEach(geojson, function(pointCoords) {
     var newCoords = getCoords(
-      rhumbDestination(pointCoords, distance2, direction, { units })
+      rhumbDestination(pointCoords, distance, direction, { units })
     );
     pointCoords[0] = newCoords[0];
     pointCoords[1] = newCoords[1];
@@ -15831,7 +15767,7 @@ async function intersectBBoxHook(context2) {
   }
   _$1.set(context2, "result.data", result);
 }
-const index$2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   geoJsonPaginationHook,
   intersectBBoxHook,
@@ -16025,16 +15961,16 @@ const GradientPath = L$1.PixiOverlay.extend({
     this.currentZoom = -1;
     this.redraw();
   },
-  onAdd(map) {
+  onAdd(map2) {
     this.clickEventHandler = this.handleClickEvent.bind(this);
-    map.on("click", this.clickEventHandler);
+    map2.on("click", this.clickEventHandler);
     this.moveEventHandler = this.handleMoveEvent.bind(this);
-    map.on("mousemove", this.moveEventHandler);
-    L$1.PixiOverlay.prototype.onAdd.call(this, map);
+    map2.on("mousemove", this.moveEventHandler);
+    L$1.PixiOverlay.prototype.onAdd.call(this, map2);
   },
-  onRemove(map) {
-    map.off("click", this.clickEventHandler);
-    map.off("mousemove", this.moveEventHandler);
+  onRemove(map2) {
+    map2.off("click", this.clickEventHandler);
+    map2.off("mousemove", this.moveEventHandler);
     if (this.rope) {
       this.container.removeChild(this.rope);
       this.rope.texture.destroy(true);
@@ -16042,7 +15978,7 @@ const GradientPath = L$1.PixiOverlay.extend({
       this.rope = null;
     }
     this.container.destroy(true);
-    L$1.PixiOverlay.prototype.onRemove.call(this, map);
+    L$1.PixiOverlay.prototype.onRemove.call(this, map2);
   },
   getBounds() {
     return this.path.bounds;
@@ -16870,7 +16806,7 @@ function convertPolygonStyleToLeafletPath(style2) {
   leafletStyle.fillColor = getHtmlColor(leafletStyle.fillColor, "black");
   return leafletStyle;
 }
-function processStyle$1(style2, feature2, options, mappings, zoom) {
+function processStyle(style2, feature2, options, mappings, zoom) {
   if (!options) return;
   const leafletOptions = options.leaflet || options;
   const context2 = Object.assign({ properties: feature2.properties, feature: feature2, zoom, chroma, moment, Units, Time }, TemplateContext.get());
@@ -16895,21 +16831,21 @@ function processStyle$1(style2, feature2, options, mappings, zoom) {
 }
 function getDefaultPointStyle(feature2, options, engineStyle = {}, zoom) {
   const layerStyle = options ? _$1.get(options.leaflet || options, "layerPointStyle") : {};
-  const templateStyle = processStyle$1({ style: { point: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, PointStyleTemplateMappings, zoom);
+  const templateStyle = processStyle({ style: { point: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, PointStyleTemplateMappings, zoom);
   const featureStyle = _$1.get(options, "ignoreFeatureStyle") ? {} : feature2.style ? _$1.get(feature2, "style", {}) : convertSimpleStyleToPointStyle(feature2.properties);
   const style2 = _$1.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.point : {}, featureStyle);
   return style2;
 }
 function getDefaultLineStyle(feature2, options, engineStyle = {}, zoom) {
   const layerStyle = options ? _$1.get(options.leaflet || options, "layerLineStyle") : {};
-  const templateStyle = processStyle$1({ style: { line: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, LineStyleTemplateMappings, zoom);
+  const templateStyle = processStyle({ style: { line: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, LineStyleTemplateMappings, zoom);
   const featureStyle = _$1.get(options, "ignoreFeatureStyle") ? {} : feature2.style ? _$1.get(feature2, "style", {}) : convertSimpleStyleToLineStyle(feature2.properties);
   const style2 = _$1.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.line : {}, featureStyle);
   return convertLineStyleToLeafletPath(style2);
 }
 function getDefaultPolygonStyle(feature2, options, engineStyle = {}, zoom) {
   const layerStyle = options ? _$1.get(options.leaflet || options, "layerPolygonStyle") : {};
-  const templateStyle = processStyle$1({ style: { polygon: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, PolygonStyleTemplateMappings, zoom);
+  const templateStyle = processStyle({ style: { polygon: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, PolygonStyleTemplateMappings, zoom);
   const featureStyle = _$1.get(options, "ignoreFeatureStyle") ? {} : feature2.style ? _$1.get(feature2, "style", {}) : convertSimpleStyleToPolygonStyle(feature2.properties);
   const style2 = _$1.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.polygon : {}, featureStyle);
   return convertPolygonStyleToLeafletPath(style2);
@@ -16974,6 +16910,140 @@ function computeIdealMaxNativeZoom(gridLayer, dataSetBounds, dataSetTileSize) {
   }
   return Math.max(1, z - 1);
 }
+const utils_map = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  DefaultStyle,
+  GeoJsonLeafletLayerFilters,
+  IconStyleToSimpleStyle,
+  LeafletEvents,
+  LeafletStyleMappings,
+  LineStyleTemplateMappings,
+  LineStyleToSimpleStyle,
+  PointStyleTemplateMappings,
+  PointStyleToSimpleStyle,
+  PolygonStyleTemplateMappings,
+  PolygonStyleToSimpleStyle,
+  SimpleStyleNumbers,
+  SimpleStyleToLineStyle,
+  SimpleStyleToPointStyle,
+  SimpleStyleToPolygonStyle,
+  TouchEvents,
+  bindLeafletEvents,
+  buildGradientPath,
+  cacheView,
+  capture,
+  checkFeatures,
+  computeIdealMaxNativeZoom,
+  convertLineStyleToLeafletPath,
+  convertLineStyleToSimpleStyle,
+  convertPointStyleToSimpleStyle,
+  convertPolygonStyleToLeafletPath,
+  convertPolygonStyleToSimpleStyle,
+  convertSimpleStyleColors,
+  convertSimpleStyleToLineStyle,
+  convertSimpleStyleToPointStyle,
+  convertSimpleStyleToPolygonStyle,
+  convertStyle,
+  convertToLeafletFromSimpleStyleSpec,
+  coordinatesToGeoJSON,
+  createFeatures,
+  createMarkerFromPointStyle,
+  createOfflineServices,
+  editFeaturesGeometry,
+  editFeaturesProperties,
+  editFeaturesStyle,
+  editFilterStyle,
+  editLayerStyle,
+  fetchGeoJson,
+  filterGeocoders,
+  filterQueryToConditions,
+  formatForwardGeocodingResult,
+  formatUserCoordinates,
+  generateLayerDefinition,
+  generatePropertiesSchema,
+  generateStyleTemplates,
+  getBaseQueryForFeatures,
+  getCatalogProjectQuery,
+  getCategories,
+  getDefaultLineStyle,
+  getDefaultPointStyle,
+  getDefaultPolygonStyle,
+  getDefaultStyleFromTemplates,
+  getFeatureId,
+  getFeatureLabel,
+  getFeatureStyleType,
+  getFeaturesFromQuery,
+  getFeaturesQuery,
+  getFeaturesQueryInterval,
+  getFeaturesUpdateInterval,
+  getFilterQueryForFeatures,
+  getForecastTimeSeries,
+  getGeoJsonFeatures,
+  getHtmlTable,
+  getLayers,
+  getLayersByCategory,
+  getLayersBySublegend,
+  getMeasureForFeature,
+  getMeasureForFeatureBaseQuery,
+  getMeasureForFeatureFromQuery,
+  getMeasureForFeatureQuery,
+  getMeasureTimeSeries,
+  getNearestTime,
+  getOrphanLayers,
+  getParentTileInTileSet,
+  getProbeFeatures,
+  getShapeFromLineStyle,
+  getShapeFromPointStyle,
+  getShapeFromPolygonStyle,
+  getSortQueryForFeatures,
+  getSublegends,
+  getTimeInterval,
+  getUpdateFeatureFunction,
+  getUpdatedLayerLegend,
+  getViews,
+  hasFeatureSchema,
+  hasUnitInLeafletLayerTemplate,
+  isFeatureInQueryInterval,
+  isFeatureLayer,
+  isInMemoryLayer,
+  isLayerCachable,
+  isLayerCached,
+  isLayerDataEditable,
+  isLayerEditable,
+  isLayerFilterEditable,
+  isLayerHighlightable,
+  isLayerProbable,
+  isLayerRemovable,
+  isLayerSelectable,
+  isLayerStorable,
+  isLayerStyleEditable,
+  isMeasureLayer,
+  isTerrainLayer,
+  isUserLayer,
+  key2tile: key2tile$1,
+  listenToFeaturesServiceEventsForLayer,
+  parseCoordinates,
+  processFeatures,
+  removeFeatures,
+  removeLayer,
+  saveGeoJsonLayer,
+  saveLayer,
+  setBaseLayerCached,
+  setEngineJwt,
+  setGeojsonLayerCached,
+  setLayerCached,
+  setLayerUncached,
+  setPMTilesLayerCached,
+  setUrlJwt,
+  shouldSkipFeaturesUpdate,
+  tile2key: tile2key$1,
+  tileSetContainsParent,
+  transformFeatures,
+  unbindLeafletEvents,
+  uncacheView,
+  unlistenToFeaturesServiceEventsForLayer,
+  updateLayerWithFiltersStyle
+}, Symbol.toStringTag, { value: "Module" }));
 const InternalLayerProperties = ["actions", "label", "isVisible", "isDisabled"];
 function isInMemoryLayer(layer2) {
   return layer2._id === void 0;
@@ -18742,7 +18812,7 @@ function useSelection(name, options = {}) {
     if (options.handler) options.handler(items, clearSelection);
     else handleSelection(items, clearSelection);
   }
-  function onBoxSelection(map, event) {
+  function onBoxSelection(map2, event) {
     if (!selection.isSelectionEnabled()) return;
     lastBoxSelectionPosition = _$1.get(event, "containerPoint");
     const { bounds } = event;
@@ -22004,7 +22074,7 @@ function useProject(options = {}) {
     catalogProjectQuery
   };
 }
-const index$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const index = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   HighlightMargin,
   HighlightsLayerName,
@@ -22020,7 +22090,7 @@ const index$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePrope
   useSelection,
   useWeather
 }, Symbol.toStringTag, { value: "Module" }));
-const activity$2 = {
+const activity$1 = {
   emits: [
     "layer-filter-toggled"
   ],
@@ -22865,7 +22935,7 @@ const levels = {
     this.$engineEvents.off("layer-hidden", this.onHideSelectableLevelsLayer);
   }
 };
-const style$2 = {
+const style$1 = {
   methods: {
     registerStyle(type, generator) {
       if (!this[type + "Factory"]) this[type + "Factory"] = [];
@@ -23002,13 +23072,13 @@ const weacast = {
 };
 const commonMixins = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  activity: activity$2,
+  activity: activity$1,
   context,
   featureSelection,
   featureService,
   infobox,
   levels,
-  style: style$2,
+  style: style$1,
   weacast
 }, Symbol.toStringTag, { value: "Module" }));
 (function() {
@@ -24552,8 +24622,8 @@ const commonMixins = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.define
       return this._container;
     },
     onAdd: L.Util.falseFn,
-    addTo: function(map) {
-      this._map = map;
+    addTo: function(map2) {
+      this._map = map2;
       if (this.options.interactive) {
         for (var i in this._layers) {
           var layer2 = this._layers[i];
@@ -24562,7 +24632,7 @@ const commonMixins = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.define
         }
       }
     },
-    removeFrom: function(map) {
+    removeFrom: function(map2) {
       if (this.options.interactive) {
         for (var i in this._layers) {
           var layer2 = this._layers[i];
@@ -26204,10 +26274,10 @@ onmessage = function (e) {
       return this._tileCoord.scaleBy(this._size).subtract(this._map.getPixelOrigin());
     },
     onAdd: L.Util.falseFn,
-    addTo: function(map) {
-      this._map = map;
+    addTo: function(map2) {
+      this._map = map2;
     },
-    removeFrom: function(map) {
+    removeFrom: function(map2) {
       delete this._map;
     },
     _onClick: function(e) {
@@ -26792,25 +26862,25 @@ function requireLeaflet_timedimension_src() {
           this._currentLayer = null;
           this._timeDimension = this.options.timeDimension || null;
         },
-        addTo: function(map) {
-          map.addLayer(this);
+        addTo: function(map2) {
+          map2.addLayer(this);
           return this;
         },
-        onAdd: function(map) {
-          this._map = map;
-          if (!this._timeDimension && map.timeDimension) {
-            this._timeDimension = map.timeDimension;
+        onAdd: function(map2) {
+          this._map = map2;
+          if (!this._timeDimension && map2.timeDimension) {
+            this._timeDimension = map2.timeDimension;
           }
           this._timeDimension.on("timeloading", this._onNewTimeLoading, this);
           this._timeDimension.on("timeload", this._update, this);
           this._timeDimension.registerSyncedLayer(this);
           this._update();
         },
-        onRemove: function(map) {
+        onRemove: function(map2) {
           this._timeDimension.unregisterSyncedLayer(this);
           this._timeDimension.off("timeloading", this._onNewTimeLoading, this);
           this._timeDimension.off("timeload", this._update, this);
-          this.eachLayer(map.removeLayer, map);
+          this.eachLayer(map2.removeLayer, map2);
           this._map = null;
         },
         eachLayer: function(method, context2) {
@@ -26934,8 +27004,8 @@ function requireLeaflet_timedimension_src() {
           }
           return layer2.isLoaded();
         },
-        onAdd: function(map) {
-          L2.TimeDimension.Layer.prototype.onAdd.call(this, map);
+        onAdd: function(map2) {
+          L2.TimeDimension.Layer.prototype.onAdd.call(this, map2);
           if (this._availableTimes.length == 0) {
             this._requestTimeDimensionFromCapabilities();
           } else {
@@ -27052,8 +27122,8 @@ function requireLeaflet_timedimension_src() {
               time: time2
             });
           }).bind(this, newLayer, time));
-          newLayer.onAdd = (function(map) {
-            Object.getPrototypeOf(this).onAdd.call(this, map);
+          newLayer.onAdd = (function(map2) {
+            Object.getPrototypeOf(this).onAdd.call(this, map2);
             this.hide();
           }).bind(newLayer);
           return newLayer;
@@ -27231,9 +27301,9 @@ function requireLeaflet_timedimension_src() {
           }
           this._originalUpdate();
         },
-        onRemove: function(map) {
+        onRemove: function(map2) {
           this._loaded = false;
-          this._originalOnRemove(map);
+          this._originalOnRemove(map2);
         },
         setLoaded: function(loaded) {
           this._loaded = loaded;
@@ -27315,8 +27385,8 @@ function requireLeaflet_timedimension_src() {
             }
           }).bind(this));
         },
-        onAdd: function(map) {
-          L2.TimeDimension.Layer.prototype.onAdd.call(this, map);
+        onAdd: function(map2) {
+          L2.TimeDimension.Layer.prototype.onAdd.call(this, map2);
           if (this._loaded) {
             this._setAvailableTimes();
           }
@@ -27722,11 +27792,11 @@ function requireLeaflet_timedimension_src() {
           this._timeZoneIndex = 0;
           this._timeDimension = this.options.timeDimension || null;
         },
-        onAdd: function(map) {
+        onAdd: function(map2) {
           var container;
-          this._map = map;
-          if (!this._timeDimension && map.timeDimension) {
-            this._timeDimension = map.timeDimension;
+          this._map = map2;
+          if (!this._timeDimension && map2.timeDimension) {
+            this._timeDimension = map2.timeDimension;
           }
           this._initPlayer();
           container = L2.DomUtil.create("div", "leaflet-bar leaflet-bar-horizontal leaflet-bar-timecontrol");
@@ -28288,9 +28358,9 @@ requireLeaflet_timedimension_src();
         this._autopanning = false;
         return;
       }
-      var map = this._map, marginBottom = parseInt(L.DomUtil.getStyle(this._container, "marginBottom"), 10) || 0, containerHeight = this._container.offsetHeight + marginBottom, containerWidth = this._containerWidth, layerPos = new L.Point(this._containerLeft, -containerHeight - this._containerBottom);
+      var map2 = this._map, marginBottom = parseInt(L.DomUtil.getStyle(this._container, "marginBottom"), 10) || 0, containerHeight = this._container.offsetHeight + marginBottom, containerWidth = this._containerWidth, layerPos = new L.Point(this._containerLeft, -containerHeight - this._containerBottom);
       layerPos._add(L.DomUtil.getPosition(this._container));
-      var containerPos = layerPos._add(this._map._getMapPanePos()), padding = L.point(this.options.autoPanPadding), paddingTL = L.point(this.options.autoPanPaddingTopLeft || padding), paddingBR = L.point(this.options.autoPanPaddingBottomRight || padding), size = map.getSize(), dx = 0, dy = 0;
+      var containerPos = layerPos._add(this._map._getMapPanePos()), padding = L.point(this.options.autoPanPadding), paddingTL = L.point(this.options.autoPanPaddingTopLeft || padding), paddingBR = L.point(this.options.autoPanPaddingBottomRight || padding), size = map2.getSize(), dx = 0, dy = 0;
       if (containerPos.x + containerWidth + paddingBR.x > size.x) {
         dx = containerPos.x + containerWidth - size.x + paddingBR.x;
       }
@@ -28307,7 +28377,7 @@ requireLeaflet_timedimension_src();
         if (this.options.keepInView) {
           this._autopanning = true;
         }
-        map.fire("autopanstart").panBy([dx, dy]);
+        map2.fire("autopanstart").panBy([dx, dy]);
       }
     }
   });
@@ -29075,8 +29145,8 @@ requireLeaflet_timedimension_src();
     // },
   });
   L.Map.CompassBearing = L.Handler.extend({
-    initialize: function(map) {
-      this._map = map;
+    initialize: function(map2) {
+      this._map = map2;
       if ("ondeviceorientationabsolute" in window) {
         this.__deviceOrientationEvent = "deviceorientationabsolute";
       } else if ("ondeviceorientation" in window) {
@@ -29177,8 +29247,8 @@ requireLeaflet_timedimension_src();
     touchRotateIntertia: 0
   });
   L.Map.TouchGestures = L.Handler.extend({
-    initialize: function(map) {
-      this._map = map;
+    initialize: function(map2) {
+      this._map = map2;
       this.rotate = !!this._map.options.touchRotate;
       this.zoom = !!this._map.options.touchZoom;
     },
@@ -29189,27 +29259,27 @@ requireLeaflet_timedimension_src();
       L.DomEvent.off(this._map._container, "touchstart", this._onTouchStart, this);
     },
     _onTouchStart: function(e) {
-      var map = this._map;
-      if (!e.touches || e.touches.length !== 2 || map._animatingZoom || this._zooming || this._rotating) {
+      var map2 = this._map;
+      if (!e.touches || e.touches.length !== 2 || map2._animatingZoom || this._zooming || this._rotating) {
         return;
       }
-      var p1 = map.mouseEventToContainerPoint(e.touches[0]), p2 = map.mouseEventToContainerPoint(e.touches[1]), vector = p1.subtract(p2);
-      this._centerPoint = map.getSize()._divideBy(2);
-      this._startLatLng = map.containerPointToLatLng(this._centerPoint);
+      var p1 = map2.mouseEventToContainerPoint(e.touches[0]), p2 = map2.mouseEventToContainerPoint(e.touches[1]), vector = p1.subtract(p2);
+      this._centerPoint = map2.getSize()._divideBy(2);
+      this._startLatLng = map2.containerPointToLatLng(this._centerPoint);
       this._center = this._startLatLng;
       if (this.zoom) {
-        if (map.options.touchZoom !== "center") {
-          this._pinchStartLatLng = map.containerPointToLatLng(p1.add(p2)._divideBy(2));
+        if (map2.options.touchZoom !== "center") {
+          this._pinchStartLatLng = map2.containerPointToLatLng(p1.add(p2)._divideBy(2));
         }
         this._startDist = p1.distanceTo(p2);
-        this._startZoom = map.getZoom();
+        this._startZoom = map2.getZoom();
         this._zooming = true;
       } else {
         this._zooming = false;
       }
       if (this.rotate) {
         this._startTheta = Math.atan(vector.x / vector.y);
-        this._startBearing = map.getBearing();
+        this._startBearing = map2.getBearing();
         if (vector.y < 0) {
           this._startBearing += 180;
         }
@@ -29218,7 +29288,7 @@ requireLeaflet_timedimension_src();
         this._rotating = false;
       }
       this._moved = false;
-      map._stop();
+      map2._stop();
       L.DomEvent.on(document, "touchmove", this._onTouchMove, this).on(document, "touchend touchcancel", this._onTouchEnd, this);
       L.DomEvent.preventDefault(e);
     },
@@ -29226,7 +29296,7 @@ requireLeaflet_timedimension_src();
       if (!e.touches || e.touches.length !== 2 || !(this._zooming || this._rotating)) {
         return;
       }
-      var map = this._map, p1 = map.mouseEventToContainerPoint(e.touches[0]), p2 = map.mouseEventToContainerPoint(e.touches[1]), vector = p1.subtract(p2), scale2 = p1.distanceTo(p2) / this._startDist, delta;
+      var map2 = this._map, p1 = map2.mouseEventToContainerPoint(e.touches[0]), p2 = map2.mouseEventToContainerPoint(e.touches[1]), vector = p1.subtract(p2), scale2 = p1.distanceTo(p2) / this._startDist, delta;
       var hasZoomed;
       if (this._rotating) {
         var theta = Math.atan(vector.x / vector.y);
@@ -29235,15 +29305,15 @@ requireLeaflet_timedimension_src();
           bearingDelta += 180;
         }
         if (Math.abs(bearingDelta) > this._map.options.touchRotateInertia) {
-          map.setBearing(this._startBearing - bearingDelta);
+          map2.setBearing(this._startBearing - bearingDelta);
         }
       }
       if (this._zooming) {
-        this._zoom = map.getScaleZoom(scale2, this._startZoom);
-        if (!map.options.bounceAtZoomLimits && (this._zoom < map.getMinZoom() && scale2 < 1 || this._zoom > map.getMaxZoom() && scale2 > 1)) {
-          this._zoom = map._limitZoom(this._zoom);
+        this._zoom = map2.getScaleZoom(scale2, this._startZoom);
+        if (!map2.options.bounceAtZoomLimits && (this._zoom < map2.getMinZoom() && scale2 < 1 || this._zoom > map2.getMaxZoom() && scale2 > 1)) {
+          this._zoom = map2._limitZoom(this._zoom);
         }
-        if (map.options.touchZoom === "center") {
+        if (map2.options.touchZoom === "center") {
           this._center = this._startLatLng;
           if (scale2 === 1) {
             return;
@@ -29253,21 +29323,21 @@ requireLeaflet_timedimension_src();
           if (scale2 === 1 && delta.x === 0 && delta.y === 0) {
             return;
           }
-          var alpha = -map.getBearing() * L.DomUtil.DEG_TO_RAD;
-          this._center = map.unproject(map.project(this._pinchStartLatLng).subtract(delta.rotate(alpha)));
+          var alpha = -map2.getBearing() * L.DomUtil.DEG_TO_RAD;
+          this._center = map2.unproject(map2.project(this._pinchStartLatLng).subtract(delta.rotate(alpha)));
         }
         hasZoomed = true;
       }
       if (!this._moved) {
-        map._moveStart(true, false);
+        map2._moveStart(true, false);
         this._moved = true;
       }
       L.Util.cancelAnimFrame(this._animRequest);
       if (this._animZoomRequest) L.Util.cancelAnimFrame(this._animZoomRequest);
-      var moveFn = map._move.bind(map, this._center, this._zoom, { pinch: true, round: false });
+      var moveFn = map2._move.bind(map2, this._center, this._zoom, { pinch: true, round: false });
       this._animRequest = L.Util.requestAnimFrame(moveFn, this, true);
       if (hasZoomed) {
-        var zoomFn = map._animateZoomNoDelay.bind(map, this._center, this._map._limitZoom(this._zoom), true);
+        var zoomFn = map2._animateZoomNoDelay.bind(map2, this._center, this._map._limitZoom(this._zoom), true);
         this._animZoomRequest = L.Util.requestAnimFrame(zoomFn, this, true);
       } else {
         this._animZoomRequest = null;
@@ -29387,7 +29457,7 @@ requireLeaflet_timedimension_src();
       position: "topleft",
       closeOnZeroBearing: true
     },
-    onAdd: function(map) {
+    onAdd: function(map2) {
       var container = this._container = L.DomUtil.create("div", "leaflet-control-rotate leaflet-bar");
       var arrow = this._arrow = L.DomUtil.create("span", "leaflet-control-rotate-arrow");
       arrow.style.backgroundImage = `url("data:image/svg+xml;charset=utf-8,%3Csvg width='29' height='29' viewBox='0 0 29 29' xmlns='http://www.w3.org/2000/svg' fill='%23333'%3E%3Cpath d='M10.5 14l4-8 4 8h-8z'/%3E%3Cpath d='M10.5 16l4 8 4-8h-8z' fill='%23ccc'/%3E%3C/svg%3E")`;
@@ -29406,16 +29476,16 @@ requireLeaflet_timedimension_src();
         L.DomUtil.addClass(link, "leaflet-disabled");
       }
       this._restyle();
-      map.on("rotate", this._restyle, this);
+      map2.on("rotate", this._restyle, this);
       this._follow = false;
       this._canFollow = false;
-      if (this.options.closeOnZeroBearing && map.getBearing() === 0) {
+      if (this.options.closeOnZeroBearing && map2.getBearing() === 0) {
         container.style.display = "none";
       }
       return container;
     },
-    onRemove: function(map) {
-      map.off("rotate", this._restyle, this);
+    onRemove: function(map2) {
+      map2.off("rotate", this._restyle, this);
     },
     _handleMouseDown: function(e) {
       L.DomEvent.stop(e);
@@ -29440,17 +29510,17 @@ requireLeaflet_timedimension_src();
       if (!this._map) {
         return;
       }
-      var map = this._map;
-      if (!map.touchRotate.enabled() && !map.compassBearing.enabled()) {
-        map.touchRotate.enable();
-      } else if (!map.compassBearing.enabled()) {
-        map.touchRotate.disable();
-        (DeviceOrientationEvent && DeviceOrientationEvent.requestPermission ? DeviceOrientationEvent.requestPermission() : Promise.resolve("granted")).then((state) => "granted" === state && map.compassBearing.enable());
+      var map2 = this._map;
+      if (!map2.touchRotate.enabled() && !map2.compassBearing.enabled()) {
+        map2.touchRotate.enable();
+      } else if (!map2.compassBearing.enabled()) {
+        map2.touchRotate.disable();
+        (DeviceOrientationEvent && DeviceOrientationEvent.requestPermission ? DeviceOrientationEvent.requestPermission() : Promise.resolve("granted")).then((state) => "granted" === state && map2.compassBearing.enable());
       } else {
-        map.compassBearing.disable();
-        map.setBearing(0);
+        map2.compassBearing.disable();
+        map2.setBearing(0);
         if (this.options.closeOnZeroBearing) {
-          map.touchRotate.enable();
+          map2.touchRotate.enable();
         }
       }
       this._restyle();
@@ -29459,15 +29529,15 @@ requireLeaflet_timedimension_src();
       if (!this._map.options.rotate) {
         L.DomUtil.addClass(this._link, "leaflet-disabled");
       } else {
-        var map = this._map;
-        var bearing2 = map.getBearing();
+        var map2 = this._map;
+        var bearing2 = map2.getBearing();
         this._arrow.style.transform = "rotate(" + bearing2 + "deg)";
         if (bearing2 && this.options.closeOnZeroBearing) {
           this._container.style.display = "block";
         }
-        if (map.compassBearing.enabled()) {
+        if (map2.compassBearing.enabled()) {
           this._link.style.backgroundColor = "orange";
-        } else if (map.touchRotate.enabled()) {
+        } else if (map2.touchRotate.enabled()) {
           this._link.style.backgroundColor = null;
         } else {
           this._link.style.backgroundColor = "grey";
@@ -29500,13 +29570,13 @@ L$1.Map.mergeOptions({
   boxSelectionKey: "shiftKey"
 });
 const BoxSelection = L$1.Handler.extend({
-  initialize: function(map) {
-    this._map = map;
-    this._boxSelectionKey = map.options.boxSelectionKey;
-    this._container = map._container;
-    this._pane = map._panes.overlayPane;
+  initialize: function(map2) {
+    this._map = map2;
+    this._boxSelectionKey = map2.options.boxSelectionKey;
+    this._container = map2._container;
+    this._pane = map2._panes.overlayPane;
     this._resetStateTimeout = 0;
-    map.on("unload", this._destroy, this);
+    map2.on("unload", this._destroy, this);
   },
   addHooks: function() {
     L$1.DomEvent.on(this._container, "mousedown", this._onMouseDown, this);
@@ -30745,7 +30815,7 @@ const TiledFeatureLayer = L$1.GridLayer.extend({
     this.activity = activity2;
     this.layer = layer2;
   },
-  onAdd(map) {
+  onAdd(map2) {
     this.userIsDragging = false;
     this.userIsZooming = false;
     this.pendingStationUpdates = [];
@@ -30753,13 +30823,13 @@ const TiledFeatureLayer = L$1.GridLayer.extend({
     this.flyingTiles.clear();
     this.modifiedTiles.clear();
     this.allFeatures.clear();
-    L$1.GridLayer.prototype.onAdd.call(this, map);
+    L$1.GridLayer.prototype.onAdd.call(this, map2);
   },
-  onRemove(map) {
+  onRemove(map2) {
     this.flyingTiles.clear();
     this.modifiedTiles.clear();
     this.allFeatures.clear();
-    L$1.GridLayer.prototype.onRemove.call(this, map);
+    L$1.GridLayer.prototype.onRemove.call(this, map2);
   },
   getEvents() {
     const events = L$1.GridLayer.prototype.getEvents.call(this);
@@ -31181,7 +31251,7 @@ function GetFeature(url, version, typeNames, searchParams = {}, headers = {}, { 
   }, searchParams));
   return xml2json ? fetchAsJson(query, headers) : fetch(query, { redirect: "follow", headers }).then((response) => response.json());
 }
-const geojsonLayers$1 = {
+const geojsonLayers = {
   emits: [
     "layer-updated"
   ],
@@ -31713,7 +31783,7 @@ const geojsonLayers$1 = {
     this.geojsonCache = {};
   }
 };
-const fileLayers$1 = {
+const fileLayers = {
   methods: {
     async importFiles(filelist) {
       const acceptedFiles = await Reader.filter(filelist);
@@ -32235,14 +32305,14 @@ const editLayers = {
     this.pendingOperations = [];
   }
 };
-const style$1 = {
+const style = {
   created() {
     this.registerStyle("point", getDefaultPointStyle);
     this.registerStyle("line", getDefaultLineStyle);
     this.registerStyle("polygon", getDefaultPolygonStyle);
   }
 };
-const tooltip$1 = {
+const tooltip = {
   methods: {
     getDefaultTooltip(feature2, layer2, options, zoom) {
       const properties = feature2.properties;
@@ -32282,7 +32352,7 @@ const tooltip$1 = {
     this.registerStyle("tooltip", this.getDefaultTooltip);
   }
 };
-const popup$1 = {
+const popup = {
   methods: {
     getDefaultPopup(feature2, layer2, options) {
       let properties = feature2.properties;
@@ -32328,7 +32398,7 @@ const popup$1 = {
     this.registerStyle("popup", this.getDefaultPopup);
   }
 };
-const activity$1 = {
+const activity = {
   methods: {
     async initializeMap(container) {
       if (this.map) return;
@@ -33266,22 +33336,22 @@ const TiledMeshLayer = L$1.GridLayer.extend({
     this.onDataChangedCallback = this.onDataChanged.bind(this);
     this.gridSource.on("data-changed", this.onDataChangedCallback);
   },
-  onAdd(map) {
-    map.addLayer(this.pixiLayer);
+  onAdd(map2) {
+    map2.addLayer(this.pixiLayer);
     this.layerUniforms.uniforms.in_zoomLevel = this.pixiLayer._initialZoom;
     this.zoomStartCallback = this.onZoomStart.bind(this);
     this.zoomEndCallback = this.onZoomEnd.bind(this);
-    map.on("zoomstart", this.zoomStartCallback);
-    map.on("zoomend", this.zoomEndCallback);
-    L$1.GridLayer.prototype.onAdd.call(this, map);
+    map2.on("zoomstart", this.zoomStartCallback);
+    map2.on("zoomend", this.zoomEndCallback);
+    L$1.GridLayer.prototype.onAdd.call(this, map2);
   },
-  onRemove(map) {
-    map.off("zoomstart", this.zoomStartCallback);
-    map.off("zoomend", this.zoomEndCallback);
+  onRemove(map2) {
+    map2.off("zoomstart", this.zoomStartCallback);
+    map2.off("zoomend", this.zoomEndCallback);
     this.zoomStartCallback = null;
     this.zoomEndCallback = null;
-    map.removeLayer(this.pixiLayer);
-    L$1.GridLayer.prototype.onRemove.call(this, map);
+    map2.removeLayer(this.pixiLayer);
+    L$1.GridLayer.prototype.onRemove.call(this, map2);
   },
   createTile(coords, done) {
     const tile = document.createElement("div");
@@ -33823,26 +33893,26 @@ const TiledWindLayer = L$1.GridLayer.extend({
     this.fire("data");
     this.hasData = true;
   },
-  onAdd(map) {
-    this.pendingAdd = map;
+  onAdd(map2) {
+    this.pendingAdd = map2;
   },
   onPendingAdd() {
-    const map = this.pendingAdd;
+    const map2 = this.pendingAdd;
     this.loadedTiles.clear();
-    L$1.GridLayer.prototype.onAdd.call(this, map);
-    map.addLayer(this.velocityLayer);
+    L$1.GridLayer.prototype.onAdd.call(this, map2);
+    map2.addLayer(this.velocityLayer);
     this.velocityLayer.setData([this.uFlow, this.vFlow]);
     this.velocityLayer._initWindy(this.velocityLayer);
     this._map.off("dragstart", this.velocityLayer._windy.stop);
     this._map.off("dragend", this.velocityLayer._clearAndRestart);
     this.pendingAdd = null;
   },
-  onRemove(map) {
+  onRemove(map2) {
     if (this.pendingAdd) {
       this.pendingAdd = null;
     } else {
-      map.removeLayer(this.velocityLayer);
-      L$1.GridLayer.prototype.onRemove.call(this, map);
+      map2.removeLayer(this.velocityLayer);
+      L$1.GridLayer.prototype.onRemove.call(this, map2);
     }
     this.uSource.invalidate();
     this.vSource.invalidate();
@@ -34446,39 +34516,39 @@ L$1.KanvasLayer = (L$1.Layer ? L$1.Layer : L$1.Class).extend({
     return events;
   },
   // -------------------------------------------------------------
-  onAdd: function(map) {
-    this._map = map;
+  onAdd: function(map2) {
+    this._map = map2;
     this._canvas = L$1.DomUtil.create("canvas", "leaflet-layer");
     if (!this.options.pointerEventsEnabled) this._canvas.style.pointerEvents = "none";
     const size = this._map.getSize();
     this._canvas.width = size.x;
     this._canvas.height = size.y;
-    this._mapPaneOffset = map._getMapPanePos();
+    this._mapPaneOffset = map2._getMapPanePos();
     L$1.DomUtil.setPosition(this._canvas, L$1.point(0, 0).subtract(this._mapPaneOffset));
     L$1.DomUtil.addClass(this._canvas, "leaflet-zoom-hide");
-    const pane = this.options.pane ? map._panes[this.options.pane] : map._panes.overlayPane;
+    const pane = this.options.pane ? map2._panes[this.options.pane] : map2._panes.overlayPane;
     pane.appendChild(this._canvas);
-    map.on(this.getEvents(), this);
+    map2.on(this.getEvents(), this);
     const del = this._delegate || this;
     del.onLayerDidMount && del.onLayerDidMount();
     this.needRedraw();
   },
   // -------------------------------------------------------------
-  onRemove: function(map) {
+  onRemove: function(map2) {
     const del = this._delegate || this;
     del.onLayerWillUnmount && del.onLayerWillUnmount();
     if (this._frame !== null) {
       L$1.Util.cancelAnimFrame(this._frame);
     }
-    const pane = this.options.pane ? map._panes[this.options.pane] : map._panes.overlayPane;
+    const pane = this.options.pane ? map2._panes[this.options.pane] : map2._panes.overlayPane;
     pane.removeChild(this._canvas);
-    map.off(this.getEvents(), this);
+    map2.off(this.getEvents(), this);
     this._canvas = null;
     this._frame = null;
   },
   // ---------- --------------------------------------------------
-  addTo: function(map) {
-    map.addLayer(this);
+  addTo: function(map2) {
+    map2.addLayer(this);
     return this;
   },
   // --------------------------------------------------------------------------------
@@ -34774,2684 +34844,42 @@ L$1.pmtiles = function(options) {
 };
 const mapMixins = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  activity: activity$1,
+  activity,
   baseMap,
   canvasLayers,
   editLayers,
-  fileLayers: fileLayers$1,
-  geojsonLayers: geojsonLayers$1,
+  fileLayers,
+  geojsonLayers,
   gsmapLayers,
   heatmapLayers,
   mapillaryLayers,
   pmtilesLayers,
-  popup: popup$1,
-  style: style$1,
-  tiledMeshLayers,
-  tiledWindLayers,
-  tooltip: tooltip$1
-}, Symbol.toStringTag, { value: "Module" }));
-let Cesium;
-async function loadCesium() {
-  Cesium = await import("cesium");
-}
-loadCesium();
-function createWallGeometry(positions, minimumHeights = [], maximumHeights = []) {
-  if (!positions || positions.length < 2) return;
-  minimumHeights = minimumHeights || Array(positions.length).fill(0);
-  minimumHeights = Array.isArray(minimumHeights) ? minimumHeights : Array(positions.length).fill(minimumHeights);
-  if (!maximumHeights) {
-    maximumHeights = [];
-    for (let i = 0, j = positions.length; i < j; ++i) {
-      const cartographic = Cesium.Cartographic.fromCartesian(positions[i]);
-      maximumHeights.push(cartographic.height);
-    }
-  }
-  maximumHeights = Array.isArray(maximumHeights) ? maximumHeights : Array(positions.length).fill(maximumHeights);
-  const setHeight = (cartesian, height) => {
-    const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-    cartographic.height = height;
-    return Cesium.Cartographic.toCartesian(cartographic);
-  };
-  const indices = [];
-  const distances = [0];
-  const times = (positions.length - 1) * 2;
-  let lineLength = 0;
-  let minHeight = -1;
-  for (let i = 0; i < times; i++) {
-    if (i % 2) {
-      indices.push(i + 2, i - 1, i + 1);
-    } else {
-      indices.push(i + 1, i, i + 3);
-    }
-    if (positions[i + 1]) {
-      const distance2 = Cesium.Cartesian3.distance(positions[i], positions[i + 1]);
-      distances.push(distance2);
-      lineLength += distance2;
-    }
-  }
-  let percent = 0;
-  const st = [];
-  const wallPositions = [];
-  for (let i = 0; i < positions.length; i++) {
-    percent += distances[i] / lineLength;
-    if (i === positions.length - 1) percent = 1;
-    st.push(1 - percent, 0, 1 - percent, 1);
-    const position2 = positions[i];
-    const bottomPoint = setHeight(position2, minimumHeights[i]);
-    const topPoint = setHeight(position2, maximumHeights[i]);
-    wallPositions.push(
-      bottomPoint.x,
-      bottomPoint.y,
-      bottomPoint.z,
-      topPoint.x,
-      topPoint.y,
-      topPoint.z
-    );
-    const currentHeight = Math.abs(maximumHeights[i] - minimumHeights[i]);
-    if (minHeight === -1 || currentHeight < minHeight) minHeight = currentHeight;
-  }
-  return {
-    geometry: new Cesium.Geometry({
-      attributes: {
-        position: new Cesium.GeometryAttribute({
-          componentDatatype: Cesium.ComponentDatatype.DOUBLE,
-          componentsPerAttribute: 3,
-          values: wallPositions
-        }),
-        st: new Cesium.GeometryAttribute({
-          componentDatatype: Cesium.ComponentDatatype.FLOAT,
-          componentsPerAttribute: 2,
-          values: new Float64Array(st)
-        })
-      },
-      indices: new Uint16Array(indices),
-      primitiveType: Cesium.PrimitiveType.TRIANGLES,
-      boundingSphere: Cesium.BoundingSphere.fromVertices(wallPositions)
-    }),
-    dimensions: {
-      minHeight,
-      lineLength
-    }
-  };
-}
-function createCorridorGeometry(positions, width, height) {
-  if (!positions || positions.length < 2) return;
-  const setHeight = (cartesian, height2) => {
-    const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-    cartographic.height = height2;
-    return Cesium.Cartographic.toCartesian(cartographic);
-  };
-  const angleBetweenThreePoints = (A, B, C) => {
-    const AB = Cesium.Cartesian3.subtract(B, A, new Cesium.Cartesian3());
-    const AC = Cesium.Cartesian3.subtract(C, A, new Cesium.Cartesian3());
-    const dot = Cesium.Cartesian3.dot(AB, AC);
-    const lengthAB = Cesium.Cartesian3.magnitude(AB);
-    const lengthAC = Cesium.Cartesian3.magnitude(AC);
-    return Math.acos(dot / (lengthAB * lengthAC));
-  };
-  const computeOffset = (current, previous, next, offset, normal2) => {
-    let direction;
-    if (!previous) {
-      direction = Cesium.Cartesian3.subtract(next, current, new Cesium.Cartesian3());
-    } else if (!next) {
-      direction = Cesium.Cartesian3.subtract(current, previous, new Cesium.Cartesian3());
-    } else {
-      const forward = Cesium.Cartesian3.subtract(next, current, new Cesium.Cartesian3());
-      const backward = Cesium.Cartesian3.subtract(current, previous, new Cesium.Cartesian3());
-      direction = Cesium.Cartesian3.add(forward, backward, new Cesium.Cartesian3());
-    }
-    Cesium.Cartesian3.normalize(direction, direction);
-    const up = normal2 || Cesium.Cartesian3.UNIT_Z;
-    const perpendicular = Cesium.Cartesian3.cross(direction, up, new Cesium.Cartesian3());
-    Cesium.Cartesian3.normalize(perpendicular, perpendicular);
-    const offsetVector = Cesium.Cartesian3.multiplyByScalar(perpendicular, offset, new Cesium.Cartesian3());
-    return { direction, position: Cesium.Cartesian3.add(current, offsetVector, new Cesium.Cartesian3()) };
-  };
-  for (let i = 0; i < positions.length; i++) {
-    positions[i] = setHeight(positions[i], height);
-  }
-  const normal = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(positions[0]);
-  const distances = [0];
-  let lineLength = 0;
-  const corridorPositions = [];
-  let lastLeftPoint = null;
-  let lastRightPoint = null;
-  let lastDirection = null;
-  for (let i = 0; i < positions.length; i++) {
-    const left = computeOffset(positions[i], positions[i - 1], positions[i + 1], -width / 2, normal);
-    const right = computeOffset(positions[i], positions[i - 1], positions[i + 1], width / 2, normal);
-    if (i > 0) {
-      const turnLeft = Cesium.Cartesian3.cross(left.direction, lastDirection, new Cesium.Cartesian3()).z < 0;
-      const previousAngle = angleBetweenThreePoints(positions[i - 1], positions[i], turnLeft ? lastLeftPoint : lastRightPoint);
-      const currentAngle = angleBetweenThreePoints(positions[i - 1], positions[i], turnLeft ? left.position : right.position);
-      if (currentAngle > previousAngle) {
-        if (turnLeft) left.position = lastLeftPoint;
-        else right.position = lastRightPoint;
-      }
-      const distance2 = Cesium.Cartesian3.distance(positions[i - 1], positions[i]);
-      distances.push(distance2);
-      lineLength += distance2;
-    }
-    corridorPositions.push(
-      left.position.x,
-      left.position.y,
-      left.position.z,
-      right.position.x,
-      right.position.y,
-      right.position.z
-    );
-    lastLeftPoint = left.position;
-    lastRightPoint = right.position;
-    lastDirection = left.direction;
-  }
-  let percent = 0;
-  const st = [];
-  const indices = [];
-  for (let i = 0; i < positions.length; i++) {
-    percent += distances[i] / lineLength;
-    if (i === positions.length - 1) percent = 1;
-    st.push(1 - percent, 0, 1 - percent, 1);
-    if (i < positions.length - 1) {
-      const baseIndex = i * 2;
-      indices.push(
-        baseIndex,
-        baseIndex + 1,
-        baseIndex + 2,
-        baseIndex + 1,
-        baseIndex + 3,
-        baseIndex + 2
-      );
-    }
-  }
-  return {
-    geometry: new Cesium.Geometry({
-      attributes: {
-        position: new Cesium.GeometryAttribute({
-          componentDatatype: Cesium.ComponentDatatype.DOUBLE,
-          componentsPerAttribute: 3,
-          values: corridorPositions
-        }),
-        st: new Cesium.GeometryAttribute({
-          componentDatatype: Cesium.ComponentDatatype.FLOAT,
-          componentsPerAttribute: 2,
-          values: new Float64Array(st)
-        })
-      },
-      indices: new Uint16Array(indices),
-      primitiveType: Cesium.PrimitiveType.TRIANGLES,
-      boundingSphere: Cesium.BoundingSphere.fromVertices(corridorPositions)
-    }),
-    dimensions: {
-      lineLength,
-      width
-    }
-  };
-}
-function createMaterialWithMovingTexture(options) {
-  if (!options.image) return;
-  let material = null;
-  try {
-    material = Cesium.Material.fromType("MovingMaterial");
-    material.uniforms.image = options.image;
-    material.uniforms.repeat = new Cesium.Cartesian2(1, 1);
-    material.uniforms.offset = new Cesium.Cartesian2(0, 0);
-    material.translucent = options.translucent;
-    throw new Error("Load material from type is not working");
-  } catch (e) {
-    const shaderSource = `
-      czm_material czm_getMaterial(czm_materialInput materialInput) {
-          czm_material material = czm_getDefaultMaterial(materialInput);
-
-          vec2 st = materialInput.st * repeat + offset;
-
-          // Loop texture with fract
-          st = fract(st);
-
-          vec4 color = texture(image, st);
-          material.${options.useAsDiffuse ? "diffuse" : "emission"} = color.rgb;
-          material.alpha = color.a * opacity;
-          return material;
-      }`;
-    material = new Cesium.Material({
-      fabric: {
-        type: "MovingMaterial",
-        source: shaderSource,
-        uniforms: {
-          image: options.image,
-          repeat: new Cesium.Cartesian2(1, 1),
-          offset: new Cesium.Cartesian2(0, 0),
-          opacity: 0
-        }
-      },
-      translucent: _$1.get(options, "translucent", false)
-    });
-  }
-  return material;
-}
-function createPrimitiveWithMovingTexture(type, options) {
-  if (!options.positions || !_$1.get(options, "material.image", false)) return;
-  const geometryOptions = {
-    positions: options.material.reverseAnimation === true ? options.positions.reverse() : options.positions
-  };
-  let geometry = null;
-  switch (type) {
-    case "wall":
-      geometryOptions.minimumHeights = _$1.get(options, "minimumHeights", 0);
-      geometryOptions.maximumHeights = _$1.get(options, "maximumHeights", null);
-      geometry = createWallGeometry(geometryOptions.positions, geometryOptions.minimumHeights, geometryOptions.maximumHeights);
-      break;
-    case "corridor":
-      geometryOptions.width = _$1.get(options, "width", 10);
-      geometryOptions.height = _$1.get(options, "height", 0);
-      geometry = createCorridorGeometry(geometryOptions.positions, geometryOptions.width, geometryOptions.height);
-      break;
-  }
-  if (!geometry) return;
-  const dimensions = geometry.dimensions;
-  geometry = geometry.geometry;
-  const material = createMaterialWithMovingTexture(_$1.get(options, "material"));
-  if (!material) return;
-  material.uniforms.repeat.x = dimensions.lineLength / (dimensions.minHeight || dimensions.width);
-  const scale2 = _$1.get(options, "material.scale");
-  let animationSpeedScale = 1;
-  if (scale2) {
-    if (Array.isArray(scale2)) {
-      material.uniforms.repeat.x *= scale2[0];
-      material.uniforms.repeat.y *= scale2[1];
-      animationSpeedScale = scale2[0];
-    } else {
-      material.uniforms.repeat.x *= scale2;
-      material.uniforms.repeat.y *= scale2;
-      animationSpeedScale = scale2;
-    }
-  }
-  return {
-    primitive: new Cesium.Primitive({
-      geometryInstances: new Cesium.GeometryInstance({
-        geometry
-      }),
-      appearance: new Cesium.MaterialAppearance({
-        material,
-        translucent: material.translucent
-      }),
-      asynchronous: false
-    }),
-    material: {
-      material,
-      animationSpeed: _$1.get(options, "material.animationSpeed") * animationSpeedScale,
-      length: dimensions.lineLength
-    }
-  };
-}
-function getPrimitivesForEntity(entityId, viewer) {
-  const pickObjects = viewer.scene.context._pickObjects;
-  const primitives = [];
-  for (const k in pickObjects) {
-    const object = pickObjects[k];
-    const id = _$1.get(object, "id._id");
-    if (!id) continue;
-    if (entityId.toString() === id) {
-      const primitive = _$1.get(object, "primitive");
-      if (primitive && !primitives.includes(primitive)) primitives.push(primitive);
-    }
-  }
-  return primitives;
-}
-function convertCesiumHandlerEvent(type) {
-  const buttonMapping = {
-    left: 0,
-    middle: 1,
-    right: 2
-  };
-  const buttonMovement = type.split("_");
-  const movement = buttonMovement[1].toLowerCase();
-  let button = buttonMovement[0].toLowerCase();
-  let name;
-  if (type.startsWith("PINCH")) name = "pinch";
-  else if (type.endsWith("CLICK")) name = "click";
-  else if (type.endsWith("DOUBLE_CLICK")) name = "dblclick";
-  else if (type.startsWith("WHEEL")) name = "wheel";
-  else name = "mouse";
-  if (name === "mouse") {
-    name += movement;
-    button = buttonMapping[button];
-  } else if (name.endsWith("click")) {
-    button = buttonMapping[button];
-  } else if (name === "pinch") {
-    name += movement;
-    button = void 0;
-  } else {
-    button = 1;
-  }
-  return { name, button };
-}
-const GeoJsonCesiumLayerFilters = {
-  // Filter to identify layers that require an update at a given frequency
-  TimeUpdate: {
-    // Possible for realtime layers only
-    "cesium.type": "geoJson",
-    "cesium.realtime": true,
-    $or: [
-      // Supported by template URL or time-based features service
-      { "cesium.sourceTemplate": { $exists: true } },
-      { service: { $exists: true } }
-    ],
-    // Skip layers powered by realtime service events
-    serviceEvents: { $ne: true },
-    // Skip invisible layers
-    isVisible: true
-  },
-  // Filter to identify layers with variables affected by a unit change
-  UnitUpdate: {
-    "cesium.type": "geoJson",
-    "cesium.realtime": true,
-    // Not sure why but this does not seem to work with sift
-    //'variables': { $elemMatch: { unit: { $in: units } } },
-    "variables": { $exists: true },
-    isVisible: true,
-    $or: [{
-      "cesium.style": { $exists: true },
-      "cesium.template": { $exists: true }
-    }, {
-      "cesium.tooltip.template": { $exists: true }
-    }]
-  }
-};
-function updateCesiumGeoJsonEntity(source, destination2) {
-  destination2.position = source.position;
-  destination2.orientation = source.orientation;
-  destination2.properties = source.properties;
-  destination2.description = source.description;
-  if (source.billboard) destination2.billboard = source.billboard;
-  if (source.polyline) destination2.polyline = source.polyline;
-  if (source.polygon) destination2.polygon = source.polygon;
-}
-function hasUnitInCesiumLayerTemplate(units, layer2) {
-  const unit = _$1.intersection(units, _$1.map(layer2.variables, "unit"));
-  if (_$1.isEmpty(unit)) return false;
-  if (_$1.get(layer2, "cesium.tooltip.template", "").includes("Units")) return true;
-  for (const template of layer2.cesium.template) {
-    if (template.startsWith("style.")) {
-      const style2 = _$1.get(layer2.cesium, template);
-      if (typeof style2 === "string" && style2.includes("Units")) return true;
-    }
-  }
-  return false;
-}
-function getTextTable(properties) {
-  properties = dotify(properties);
-  properties = _$1.pickBy(properties, (value) => !_$1.isNil(value));
-  const keys = _$1.keys(properties);
-  let text;
-  if (keys.length === 0) return null;
-  else if (keys.length === 1) text = _$1.get(properties, keys[0]);
-  else {
-    text = keys.map((key) => key + ": " + _$1.get(properties, key)).join("\n");
-  }
-  return text;
-}
-const CesiumStyleMappings = {
-  stroke: "stroke",
-  "stroke-color": "stroke",
-  "stroke-opacity": "stroke.alpha",
-  "stroke-width": "strokeWidth",
-  fill: "fill",
-  "fill-color": "fill",
-  "fill-opacity": "fill.alpha",
-  "marker-size": "markerSize",
-  "marker-symbol": "markerSymbol",
-  "marker-color": "markerColor"
-};
-const CesiumStyleOptions = _$1.values(CesiumStyleMappings);
-const CesiumEntityTypes = [
-  "billboard",
-  "box",
-  "corridor",
-  "cylinder",
-  "ellipse",
-  "ellipsoid",
-  "label",
-  "model",
-  "path",
-  "plane",
-  "point",
-  "polygon",
-  "polyline",
-  "rectangle",
-  "wall"
-];
-const GeoJsonGeometryTypesToCesiumEntityMappings = {
-  Point: "point",
-  LineString: "polyline",
-  Polygon: "polygon"
-};
-const StyleToCesiumEntityStyleMappings = {
-  altitudeMode: "heightReference",
-  width: "width",
-  color: "material"
-};
-const AltitudeModesMappings = {
-  clampToGround: "Cesium.HeightReference.CLAMP_TO_GROUND",
-  relativeToGround: "Cesium.HeightReference.RELATIVE_TO_GROUND",
-  absolute: "Cesium.HeightReference.NONE"
-};
-function convertToCesiumFromSimpleStyle(style2, inPlace) {
-  if (!style2) return {};
-  const convertedStyle = inPlace ? style2 : {};
-  _$1.forOwn(style2, (value, key) => {
-    if (_$1.has(CesiumStyleMappings, key)) {
-      const mapping = _$1.get(CesiumStyleMappings, key);
-      if (typeof value === "string" && ["markerColor", "fill", "stroke"].includes(mapping)) {
-        value = getHtmlColor(value);
-        _$1.set(convertedStyle, mapping, Color.fromCssColorString(chroma(value).alpha(_$1.get(convertedStyle, [mapping, "alpha"], 1)).css()));
-      } else {
-        _$1.set(convertedStyle, mapping, value);
-      }
-      if (inPlace) _$1.unset(style2, key);
-    }
-  });
-  return convertedStyle;
-}
-function convertToCesiumFromStyle(feature2, options) {
-  let style2 = _$1.get(feature2, "style", false);
-  if (!style2 || !_$1.get(feature2, "geometry")) return {};
-  let geometryType = _$1.get(GeoJsonGeometryTypesToCesiumEntityMappings, _$1.get(feature2, "geometry.type"));
-  if (!geometryType) return {};
-  const kdkStyle = geometryType === "point" ? convertSimpleStyleToPointStyle(feature2.properties) : geometryType === "polyline" ? convertSimpleStyleToLineStyle(feature2.properties) : convertSimpleStyleToPolygonStyle(feature2.properties);
-  style2 = Object.assign({}, style2, kdkStyle);
-  const convertedStyle = {};
-  const entityStyle = {};
-  if (_$1.get(options, "cesium.minZoom") || _$1.get(options, "cesium.maxZoom")) {
-    entityStyle.distanceDisplayCondition = {
-      type: "Cesium.DistanceDisplayCondition",
-      options: [
-        _$1.get(options, "cesium.minZoom", 0) || 0,
-        _$1.get(options, "cesium.maxZoom", Number.MAX_VALUE) || Number.MAX_VALUE
-      ]
-    };
-  }
-  _$1.forOwn(style2, (value, key) => {
-    if (typeof value === "string" && ["color"].includes(key)) {
-      let cesiumColor = Color.fromCssColorString(getColorFromPalette(value));
-      if (_$1.has(style2, "opacity")) {
-        cesiumColor = Color.fromAlpha(cesiumColor, _$1.get(style2, "opacity"));
-      }
-      _$1.set(entityStyle, _$1.get(StyleToCesiumEntityStyleMappings, key), cesiumColor);
-    } else if (key === "altitudeMode") {
-      _$1.set(entityStyle, _$1.get(StyleToCesiumEntityStyleMappings, key), _$1.get(AltitudeModesMappings, value));
-      _$1.set(entityStyle, "clampToGround", value === "clampToGround");
-    } else if (key === "extrude") {
-      switch (geometryType) {
-        case "polygon":
-          _$1.set(entityStyle, "extrudedHeight", 0);
-          _$1.set(entityStyle, "perPositionHeight", true);
-          break;
-        case "polyline":
-          geometryType = "wall";
-          break;
-      }
-    } else if (key === "icon") {
-      geometryType = "billboard";
-      _$1.set(entityStyle, "image", _$1.get(value, "url"));
-    } else {
-      const target2 = _$1.get(StyleToCesiumEntityStyleMappings, key);
-      if (target2) _$1.set(entityStyle, target2, value);
-    }
-  });
-  if (geometryType === "polygon" && !_$1.has(style2, "extrude") && (!_$1.has(style2, "altitudeMode") || style2.altitudeMode === "clampToGround")) {
-    _$1.set(entityStyle, "perPositionHeight", false);
-    if (_$1.get(feature2, "geometry.coordinates[0][0]", []).length < 3) {
-      _$1.forEach(_$1.get(feature2, "geometry.coordinates", []), (coordinates, index2) => {
-        feature2.geometry.coordinates[index2] = _$1.map(coordinates, (coord) => {
-          return [coord[0], coord[1], 0];
-        });
-      });
-    }
-    if (_$1.get(style2, "opacity") === 0) {
-      geometryType = "polyline";
-      _$1.set(convertedStyle, "geometry.type", "LineString");
-      _$1.set(convertedStyle, "geometry.coordinates", _$1.get(feature2, "geometry.coordinates[0]"));
-      _$1.set(convertedStyle, "style.opacity", _$1.get(style2, "stroke.opacity", 1));
-      _$1.set(entityStyle, "clampToGround", true);
-    }
-  }
-  _$1.set(convertedStyle, ["properties", "entityStyle", geometryType], entityStyle);
-  _$1.defaultsDeep(convertedStyle.properties.entityStyle, _$1.get(feature2, "properties.entityStyle", {}));
-  return convertedStyle;
-}
-function processStyle(style2, feature2, options, mappings) {
-  if (!options) return;
-  const cesiumOptions = options.cesium || options;
-  const context2 = Object.assign({ properties: feature2.properties, feature: feature2, chroma, moment, Units, Time }, TemplateContext.get());
-  if (cesiumOptions.template) {
-    if (options.variables) context2.variables = _$1.reduce(
-      options.variables,
-      (result, variable) => Object.assign(result, { [variable.name]: variable }),
-      {}
-    );
-    cesiumOptions.template.forEach((entry) => {
-      _$1.set(style2, _$1.get(mappings, _$1.kebabCase(entry.property), entry.property), entry.compiler(context2));
-    });
-  }
-  const type = getFeatureStyleType(feature2);
-  _$1.get(style2, `style.${type}.visibility`, _$1.get(style2, "style.visibility", true));
-  return style2;
-}
-function getPointSimpleStyle(feature2, options, engine, engineStylePath = "style.point") {
-  const engineStyle = _$1.get(engine, engineStylePath, {});
-  const layerStyle = options ? _$1.get(options.cesium || options, "layerPointStyle") : {};
-  const templateStyle = processStyle({ style: { point: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, PointStyleTemplateMappings);
-  const featureStyle = _$1.get(options, "ignoreFeatureStyle") ? {} : _$1.get(feature2, "style", {});
-  const style2 = _$1.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.point : {}, featureStyle);
-  return convertSimpleStyleColors(convertPointStyleToSimpleStyle(style2));
-}
-function getLineSimpleStyle(feature2, options, engine, engineStylePath = "style.line") {
-  const engineStyle = _$1.get(engine, engineStylePath, {});
-  const layerStyle = options ? _$1.get(options.cesium || options, "layerLineStyle") : {};
-  const templateStyle = processStyle({ style: { line: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, LineStyleTemplateMappings);
-  const featureStyle = _$1.get(options, "ignoreFeatureStyle") ? {} : _$1.get(feature2, "style", {});
-  const style2 = _$1.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.line : {}, featureStyle);
-  return convertSimpleStyleColors(convertLineStyleToSimpleStyle(style2));
-}
-function getPolygonSimpleStyle(feature2, options, engine, engineStylePath = "style.polygon") {
-  const engineStyle = _$1.get(engine, engineStylePath, {});
-  const layerStyle = options ? _$1.get(options.cesium || options, "layerPolygonStyle") : {};
-  const templateStyle = processStyle({ style: { polygon: _$1.merge({}, engineStyle, layerStyle) } }, feature2, options, PolygonStyleTemplateMappings);
-  const featureStyle = _$1.get(options, "ignoreFeatureStyle") ? {} : _$1.get(feature2, "style", {});
-  const style2 = _$1.merge({}, engineStyle, layerStyle, templateStyle ? templateStyle.style.polygon : {}, featureStyle);
-  return convertSimpleStyleColors(convertPolygonStyleToSimpleStyle(style2));
-}
-function createCesiumObject() {
-  const args = Array.from(arguments);
-  const constructor = args[0];
-  args.shift();
-  const Class = _$1.get(Cesium, constructor);
-  let object;
-  if (typeof Class === "function") {
-    try {
-      object = Class(...args);
-    } catch (error) {
-    }
-    try {
-      object = new Class(...args);
-    } catch (error) {
-    }
-  } else object = Class;
-  return object;
-}
-function convertToCesiumObjects(style2) {
-  const mapValue = (value) => {
-    if (typeof value === "object") {
-      const type = value.type;
-      const options = value.options;
-      if (type && options) {
-        const constructor = type.replace("Cesium.", "");
-        let args;
-        if (options.type) {
-          args = convertToCesiumObjects({ object: options });
-          args = args.object;
-        } else {
-          args = convertToCesiumObjects(options);
-        }
-        if (Array.isArray(options)) return createCesiumObject(constructor, ...args);
-        else return createCesiumObject(constructor, args);
-      } else return convertToCesiumObjects(value);
-    } else if (typeof value === "string") {
-      if (value.startsWith("Cesium.")) {
-        const constructor = value.replace("Cesium.", "");
-        return createCesiumObject(constructor);
-      }
-      const n = _$1.toNumber(value);
-      if (_$1.isFinite(n)) value = n;
-    }
-    return value;
-  };
-  if (typeof style2 === "object") {
-    if (Array.isArray(style2)) return style2.map(mapValue);
-    else return _$1.mapValues(style2, mapValue);
-  } else {
-    return _$1.mapValues({ value: style2 }, mapValue).value;
-  }
-}
-async function convertEntitiesToGeoJson(entities) {
-  const features = [];
-  if (entities.values.length === 0) return { type: "FeatureCollection", features };
-  _$1.forEach(entities.values, (entity) => {
-    if (entity.feature) features.push(entity.feature);
-  });
-  if (features.length > 0) return { type: "FeatureCollection", features };
-  const kmlEntities = await exportKml({ entities, modelCallback: () => "" });
-  const parser2 = new DOMParser();
-  return kml(parser2.parseFromString(kmlEntities.kml, "application/xml"));
-}
-window.CESIUM_BASE_URL = "/Cesium/";
-buildModuleUrl.setBaseUrl("/Cesium/");
-const baseGlobe = {
-  emits: [
-    "globe-ready",
-    "layer-added",
-    "layer-removed",
-    "layer-shown",
-    "layer-hidden"
-  ],
-  data() {
-    return {
-      layers: {}
-    };
-  },
-  methods: {
-    refreshGlobe() {
-    },
-    setupGlobe(domEl, token, options = {}) {
-      this.viewerOptions = _$1.defaults(options, _$1.get(this, "activityOptions.engine.viewer", {}), {
-        sceneMode: 3,
-        // SceneMode.COLUMBUS_VIEW = 1, SceneMode.SCENE3D = 3,
-        sceneModePicker: false,
-        infoBox: false,
-        scene3DOnly: true,
-        homeButton: false,
-        geocoder: false,
-        navigationHelpButton: false,
-        baseLayer: false,
-        baseLayerPicker: false,
-        vrButton: false,
-        fullscreenButton: false,
-        animation: false,
-        timeline: false,
-        depthTestAgainstTerrain: false,
-        cameraMoveEventPercentage: 0.2,
-        entityLoadTextureDelay: 24
-      });
-      if (token) Ion.defaultAccessToken = token;
-      else Ion.defaultAccessToken = "";
-      Object.assign(this.viewerOptions, {
-        imageryProviderViewModels: [],
-        terrainProviderViewModels: []
-      });
-      this.viewer = new Viewer(domEl, this.viewerOptions);
-      this.viewer.scene.globe.depthTestAgainstTerrain = _$1.get(this.viewerOptions, "depthTestAgainstTerrain", false);
-      const backgroundColor = _$1.get(this.viewerOptions, "backgroundColor");
-      this.viewer.scene.backgroundColor = backgroundColor ? createCesiumObject("Color", ...backgroundColor) : Color.BLACK;
-      if (this.viewer.scene.globe) {
-        const baseColor = _$1.get(this.viewerOptions, "baseColor");
-        this.viewer.scene.globe.baseColor = baseColor ? createCesiumObject("Color", ...baseColor) : Color.BLACK;
-        const undergroundColor = _$1.get(this.viewerOptions, "undergroundColor");
-        this.viewer.scene.globe.undergroundColor = undergroundColor ? createCesiumObject("Color", ...undergroundColor) : Color.BLACK;
-      }
-      if (!_$1.has(Cesium.Primitive.prototype, "pickIds")) {
-        Object.defineProperties(Cesium.Primitive.prototype, {
-          pickIds: {
-            get: function() {
-              return this._pickIds;
-            },
-            set: function(value) {
-              this._pickIds = value;
-            }
-          }
-        });
-      }
-      this.viewer.scene.preRender.addEventListener(() => {
-        if (!this.cesiumMaterials) return;
-        _$1.forEach(this.cesiumMaterials, (m) => {
-          if (!m.material.uniforms.offset) return;
-          if (!m.startTime) m.startTime = Date.now();
-          const elapsed = (Date.now() - m.startTime) * 1e-3;
-          if (m.animationSpeed) {
-            const loopDuration = m.length / m.material.uniforms.repeat.x / m.animationSpeed;
-            m.material.uniforms.offset.x = elapsed % loopDuration / loopDuration;
-          }
-        });
-      });
-      if (this.viewerOptions.debug) this.viewer.extend(viewerCesiumInspectorMixin);
-      if (this.viewer.scene.imageryLayers) this.viewer.scene.imageryLayers.removeAll();
-      this.registerCesiumHandler(this.getDefaultPickHandler, "MOUSE_MOVE");
-      this.registerCesiumHandler(this.getDefaultPickHandler, "LEFT_CLICK");
-      this.registerCesiumHandler(this.getDefaultPickHandler, "RIGHT_CLICK");
-      this.viewer.camera.moveStart.addEventListener(this.onCameraMoveStart);
-      this.viewer.camera.moveEnd.addEventListener(this.onCameraMoveEnd);
-      this.viewer.camera.percentageChanged = this.viewerOptions.cameraMoveEventPercentage;
-      this.viewer.camera.changed.addEventListener(this.onCameraChanged);
-      this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
-      this.viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-      this.viewBounds = new Rectangle();
-      this.onGlobeReady();
-    },
-    onGlobeReady() {
-      this.$emit("globe-ready", "cesium");
-      this.$engineEvents.emit("globe-ready", "cesium");
-    },
-    processCesiumLayerOptions(options) {
-      const processedOptions = _$1.cloneDeep(options);
-      processedOptions.cesium.iconUrl = buildModuleUrl(processedOptions.iconUrl);
-      processedOptions.cesium.name = processedOptions.name;
-      processedOptions.cesium.attribution = processedOptions.attribution;
-      return processedOptions;
-    },
-    async createCesiumLayer(options) {
-      let cesiumOptions = options.cesium || options;
-      cesiumOptions = this.convertToCesiumObjects(cesiumOptions);
-      let args = [cesiumOptions];
-      let provider, createFunction, isImageryProvider;
-      if (cesiumOptions.type === "3DTileset") {
-        provider = createFunction = "Cesium3DTileset.fromUrl";
-        args = [cesiumOptions.url].concat([_$1.omit(cesiumOptions, ["url", "style"])]);
-      } else if (isTerrainLayer(cesiumOptions)) {
-        if (cesiumOptions.type === "Ellipsoid") {
-          provider = "EllipsoidTerrainProvider";
-        } else if (cesiumOptions.url || cesiumOptions.assetId) {
-          provider = createFunction = cesiumOptions.url ? "CesiumTerrainProvider.fromUrl" : "CesiumTerrainProvider.fromIonAssetId";
-          args = [cesiumOptions.url || cesiumOptions.assetId].concat([_$1.omit(cesiumOptions, ["url", "assetId"])]);
-        } else {
-          provider = createFunction = "createWorldTerrainAsync";
-        }
-      } else {
-        provider = cesiumOptions.type;
-        createFunction = `create${provider}Async`;
-        if (_$1.get(Cesium, createFunction)) {
-          provider = createFunction;
-        } else {
-          isImageryProvider = true;
-          provider += "ImageryProvider";
-          createFunction = `${provider}.fromUrl`;
-          if (_$1.get(Cesium, createFunction)) {
-            provider = createFunction;
-            args = [cesiumOptions.url].concat([_$1.omit(cesiumOptions, ["url"])]);
-          }
-        }
-      }
-      const Constructor = _$1.get(Cesium, provider);
-      if (!Constructor) return;
-      if (provider === createFunction) provider = await Constructor(...args);
-      else provider = new Constructor(...args);
-      if (cesiumOptions.type === "3DTileset" && _$1.has(cesiumOptions, "style")) provider.style = _$1.get(cesiumOptions, "style");
-      return isImageryProvider ? new ImageryLayer(provider) : provider;
-    },
-    registerCesiumConstructor(constructor) {
-      this.cesiumFactory.push(constructor);
-    },
-    registerCesiumHandler(handler, eventType) {
-      if (!this.cesiumHandler) this.cesiumHandler = new ScreenSpaceEventHandler(this.viewer.scene.canvas);
-      const originalEvent = convertCesiumHandlerEvent(eventType);
-      this.cesiumHandler.setInputAction(
-        (event) => handler(Object.assign(event, { originalEvent })),
-        ScreenSpaceEventType[eventType]
-      );
-    },
-    unregisterCesiumHandler(eventType) {
-      this.cesiumHandler.removeInputAction(ScreenSpaceEventType[eventType]);
-    },
-    async createLayer(options) {
-      const processedOptions = this.processCesiumLayerOptions(options);
-      let layer2;
-      for (let i = 0; i < this.cesiumFactory.length; i++) {
-        const constructor = this.cesiumFactory[i];
-        layer2 = await constructor(processedOptions);
-        if (layer2) break;
-      }
-      layer2 = layer2 || await this.createCesiumLayer(processedOptions);
-      layer2.processedOptions = processedOptions;
-      return layer2;
-    },
-    hasLayer(name) {
-      return _$1.has(this.layers, name);
-    },
-    isLayerVisible(name) {
-      const layer2 = this.getLayerByName(name);
-      if (!layer2) return false;
-      const cesiumLayer = this.getCesiumLayerByName(name);
-      if (isTerrainLayer(layer2)) {
-        return this.viewer.terrainProvider === cesiumLayer;
-      } else if (cesiumLayer instanceof ImageryLayer) {
-        return this.viewer.scene.imageryLayers.contains(cesiumLayer);
-      } else if (cesiumLayer instanceof Cesium3DTileset) {
-        return this.viewer.scene.primitives.contains(cesiumLayer) && cesiumLayer.show;
-      } else {
-        return this.viewer.dataSources.contains(cesiumLayer);
-      }
-    },
-    isLayerDisabled(layer2) {
-      return false;
-    },
-    getLayerByName(name) {
-      return this.layers[name];
-    },
-    getCesiumLayerByName(name) {
-      return this.cesiumLayers[name];
-    },
-    getLayerById(id) {
-      const layers = this.getLayers({ _id: id });
-      return _$1.get(layers, "[0]");
-    },
-    getLayers(filter = {}) {
-      return _$1.values(this.layers).filter(sift(filter));
-    },
-    hasLayers(filter = {}) {
-      return _$1.values(this.layers).filter(sift(filter)).length > 0;
-    },
-    async showLayer(name) {
-      const layer2 = this.getLayerByName(name);
-      if (!layer2) return;
-      if (this.isLayerVisible(name)) return;
-      let cesiumLayer = this.getCesiumLayerByName(name);
-      if (!cesiumLayer) {
-        try {
-          cesiumLayer = await this.createLayer(layer2);
-        } catch (error) {
-          logger$1.error(error);
-          return;
-        }
-      }
-      this.cesiumLayers[name] = cesiumLayer;
-      if (isTerrainLayer(layer2)) {
-        this.viewer.terrainProvider = cesiumLayer;
-      } else if (cesiumLayer instanceof ImageryLayer) {
-        this.viewer.scene.imageryLayers.add(cesiumLayer);
-      } else if (cesiumLayer instanceof Cesium3DTileset) {
-        cesiumLayer.show = true;
-        if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer);
-      } else {
-        for (const [id, custom] of cesiumLayer.primitives)
-          custom.primitive.show = true;
-        this.viewer.dataSources.add(cesiumLayer);
-      }
-      layer2.isVisible = true;
-      this.onLayerShown(layer2, cesiumLayer);
-    },
-    onLayerShown(layer2, cesiumLayer) {
-      this.$emit("layer-shown", layer2, cesiumLayer);
-      this.$engineEvents.emit("layer-shown", layer2, cesiumLayer);
-    },
-    hideLayer(name) {
-      const layer2 = this.getLayerByName(name);
-      if (!layer2) return;
-      if (!this.isLayerVisible(name)) return;
-      layer2.isVisible = false;
-      const cesiumLayer = this.cesiumLayers[name];
-      delete this.cesiumLayers[name];
-      if (isTerrainLayer(layer2)) {
-        this.viewer.terrainProvider = null;
-      } else if (cesiumLayer instanceof ImageryLayer) {
-        this.viewer.scene.imageryLayers.remove(cesiumLayer, false);
-      } else if (cesiumLayer instanceof Cesium3DTileset) {
-        cesiumLayer.show = false;
-      } else {
-        for (const [id, custom] of cesiumLayer.primitives)
-          custom.primitive.show = false;
-        this.viewer.dataSources.remove(cesiumLayer, true);
-      }
-      this.onLayerHidden(layer2, cesiumLayer);
-    },
-    onLayerHidden(layer2, cesiumLayer) {
-      this.$emit("layer-hidden", layer2, cesiumLayer);
-      this.$engineEvents.emit("layer-hidden", layer2, cesiumLayer);
-    },
-    async addLayer(layer2) {
-      if (layer2 && !this.hasLayer(layer2.name)) {
-        layer2.isVisible = false;
-        layer2.isDisabled = this.isLayerDisabled(layer2);
-        this.layers[layer2.name] = layer2;
-        this.onLayerAdded(layer2);
-        if (_$1.get(layer2, "cesium.isVisible", false)) await this.showLayer(layer2.name);
-      }
-      return layer2;
-    },
-    onLayerAdded(layer2) {
-      this.$emit("layer-added", layer2);
-      this.$engineEvents.emit("layer-added", layer2);
-    },
-    async addGeoJsonLayer(layerSpec, geoJson, zoom) {
-      if (!generateLayerDefinition(layerSpec, geoJson)) return;
-      await this.addLayer(layerSpec);
-      await this.updateLayer(layerSpec.name, geoJson);
-      if (zoom) {
-        if (geoJson.bbox) this.zoomToBBox(geoJson.bbox);
-        else this.zoomToLayer(layerSpec.name);
-      }
-    },
-    renameLayer(previousName, newName) {
-      const layer2 = this.getLayerByName(previousName);
-      const cesiumLayer = this.getCesiumLayerByName(previousName);
-      if (!layer2) return;
-      if (cesiumLayer) {
-        this.cesiumLayers[newName] = cesiumLayer;
-        delete this.cesiumLayers[previousName];
-      }
-      this.layers[newName] = layer2;
-      delete this.layers[previousName];
-    },
-    removeLayer(name) {
-      const layer2 = this.getLayerByName(name);
-      if (!layer2) return;
-      this.hideLayer(name);
-      const cesiumLayer = this.cesiumLayers[name];
-      if (cesiumLayer instanceof Cesium3DTileset) {
-        this.viewer.scene.primitives.remove(cesiumLayer);
-      }
-      delete this.layers[layer2.name];
-      delete this.cesiumLayers[name];
-      this.onLayerRemoved(layer2);
-    },
-    onLayerRemoved(layer2) {
-      this.$emit("layer-removed", layer2);
-      this.$engineEvents.emit("layer-removed", layer2);
-    },
-    clearLayers() {
-      Object.keys(this.layers).forEach((layer2) => this.removeLayer(layer2));
-    },
-    async toGeoJson(name) {
-      if (!this.isLayerVisible(name)) {
-        const cachedGeojson = this.geojsonCache[name];
-        if (cachedGeojson) return cachedGeojson;
-      }
-      const layer2 = this.getCesiumLayerByName(name);
-      if (!layer2.entities) return;
-      const geoJson = await convertEntitiesToGeoJson(layer2.entities);
-      return geoJson;
-    },
-    zoomToBounds(bounds, heading = 0, pitch = -90, roll = 0, duration = 0) {
-      this.viewer.camera.flyTo({
-        destination: Array.isArray(bounds) ? Rectangle.fromDegrees(bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]) : bounds,
-        orientation: {
-          heading: Math$1.toRadians(heading),
-          pitch: Math$1.toRadians(pitch),
-          roll: Math$1.toRadians(roll)
-        },
-        duration
-      });
-    },
-    zoomToBBox(bbox2, heading = 0, pitch = -90, roll = 0, duration = 0) {
-      this.zoomToBounds([[bbox2[1], bbox2[0]], [bbox2[3], bbox2[2]]], heading, pitch, roll, duration);
-    },
-    zoomToLayer(name) {
-      const layer2 = this.getCesiumLayerByName(name);
-      if (!layer2) return;
-      if (layer2.entities) {
-        this.viewer.flyTo(layer2.entities, { duration: 0 });
-      } else {
-        const bbox2 = _$1.get(layer2, "bbox");
-        if (bbox2) {
-          this.zoomToBBox(bbox2);
-        } else {
-          const bounds = _$1.get(layer2, "cesium.rectangle", [[-90, -180], [90, 180]]);
-          this.zoomToBounds(bounds);
-        }
-      }
-    },
-    center(longitude, latitude, altitude2, heading = 0, pitch = -90, roll = 0, options = {}) {
-      const center2 = this.viewer.camera.positionCartographic;
-      const duration = _$1.get(options, "duration", 0);
-      const destination2 = Cartesian3.fromDegrees(longitude, latitude, altitude2 || center2.height);
-      const orientation = new HeadingPitchRoll(
-        Math$1.toRadians(heading),
-        Math$1.toRadians(pitch),
-        Math$1.toRadians(roll)
-      );
-      const destinationOffset = new Cartesian3(
-        _$1.get(options, "offset.x", 0),
-        _$1.get(options, "offset.y", 0),
-        _$1.get(options, "offset.z", 0)
-      );
-      const orientationOffset = new HeadingPitchRoll(
-        Math$1.toRadians(_$1.get(options, "offset.heading", 0)),
-        Math$1.toRadians(_$1.get(options, "offset.pitch", 0)),
-        Math$1.toRadians(_$1.get(options, "offset.roll", 0))
-      );
-      const target2 = {
-        destination: destination2,
-        orientation: {
-          heading: orientation.heading,
-          pitch: orientation.pitch,
-          roll: orientation.roll
-        },
-        duration
-      };
-      if (duration) this.viewer.camera.flyTo(target2);
-      else this.viewer.camera.setView(target2);
-      this.viewer.camera.move(this.viewer.camera.right, destinationOffset.x);
-      this.viewer.camera.move(this.viewer.camera.direction, destinationOffset.y);
-      this.viewer.camera.move(this.viewer.camera.up, destinationOffset.z);
-      this.viewer.camera.look(this.viewer.camera.up, orientationOffset.heading);
-      this.viewer.camera.look(this.viewer.camera.direction, orientationOffset.pitch);
-      this.viewer.camera.look(this.viewer.camera.right, orientationOffset.roll);
-      if (this.viewerOptions.debug) {
-        const baseQuaternion = Transforms.headingPitchRollQuaternion(destination2, orientation, Ellipsoid.WGS84, Transforms.eastNorthUpToFixedFrame);
-        const cameraQuaternion = Transforms.headingPitchRollQuaternion(
-          this.viewer.camera.positionWC,
-          new HeadingPitchRoll(this.viewer.camera.heading, this.viewer.camera.pitch, this.viewer.camera.roll),
-          Ellipsoid.WGS84,
-          Transforms.eastNorthUpToFixedFrame
-        );
-        if (this.baseFrameDebug) {
-          this.baseFrameDebug.modelMatrix = Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(baseQuaternion), destination2);
-          this.finalFrameDebug.modelMatrix = Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(cameraQuaternion), this.viewer.camera.positionWC);
-        } else {
-          this.baseFrameDebug = new DebugModelMatrixPrimitive({
-            modelMatrix: Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(baseQuaternion), destination2),
-            length: 25,
-            width: 5
-          });
-          this.viewer.scene.primitives.add(this.baseFrameDebug);
-          this.finalFrameDebug = new DebugModelMatrixPrimitive({
-            modelMatrix: Matrix4.fromRotationTranslation(Matrix3.fromQuaternion(cameraQuaternion), this.viewer.camera.positionWC),
-            length: 25,
-            width: 5
-          });
-          this.viewer.scene.primitives.add(this.finalFrameDebug);
-        }
-        if (this.cameraDebug) this.viewer.scene.primitives.remove(this.cameraDebug);
-        this.cameraDebug = new DebugCameraPrimitive({
-          camera: this.viewer.camera,
-          color: Cesium.Color.YELLOW,
-          updateOnChange: false
-        });
-        this.viewer.scene.primitives.add(this.cameraDebug);
-      }
-    },
-    getCenter() {
-      const center2 = this.viewer.camera.positionCartographic;
-      return {
-        longitude: Math$1.toDegrees(center2.longitude),
-        latitude: Math$1.toDegrees(center2.latitude),
-        altitude: center2.height
-      };
-    },
-    getBounds() {
-      const bounds = this.viewer.camera.computeViewRectangle(this.viewer.scene.globe.ellipsoid, this.viewBounds);
-      const south = Math$1.toDegrees(bounds.south);
-      const west = Math$1.toDegrees(bounds.west);
-      const north = Math$1.toDegrees(bounds.north);
-      const east = Math$1.toDegrees(bounds.east);
-      return [[south, west], [north, east]];
-    },
-    getCamera() {
-      const position2 = this.viewer.camera.positionCartographic;
-      return {
-        longitude: Math$1.toDegrees(position2.longitude),
-        latitude: Math$1.toDegrees(position2.latitude),
-        altitude: position2.height,
-        heading: Math$1.toDegrees(this.viewer.camera.heading),
-        pitch: Math$1.toDegrees(this.viewer.camera.pitch),
-        roll: Math$1.toDegrees(this.viewer.camera.roll),
-        fovy: this.viewer.camera.frustum.fovy,
-        viewMatrix: this.viewer.camera.viewMatrix,
-        inverseViewMatrix: this.viewer.camera.inverseViewMatrix
-      };
-    },
-    getAnimatedHeading(timestamp) {
-      if (!this.headingAnimation.startTime) this.headingAnimation.startTime = timestamp;
-      const { duration, startTime, easing, startHeading, endHeading } = this.headingAnimation;
-      const elapsed = timestamp - startTime;
-      const percent = Math.abs(elapsed / (1e3 * duration));
-      if (percent > 1) {
-        return endHeading;
-      }
-      const easingFunction = _$1.get(easing, "function", "cubicBezier");
-      const easingParameters = _$1.get(easing, "parameters", []);
-      const percentHeading = maths[easingFunction](percent, ...easingParameters);
-      return Math$1.lerp(
-        startHeading,
-        endHeading,
-        percentHeading
-      );
-    },
-    onEntityTracked(time) {
-      const getSmallestAngle = (start, end) => {
-        let diff = (end - start + Math.PI) % (2 * Math.PI);
-        if (diff < 0) diff += 2 * Math.PI;
-        return diff - Math.PI;
-      };
-      if (this.viewerOptions.debug) {
-        if (this.trackedFrameDebug) {
-          this.trackedFrameDebug.modelMatrix = this.viewer.trackedEntity.computeModelMatrix(time);
-        } else {
-          this.trackedFrameDebug = new DebugModelMatrixPrimitive({
-            modelMatrix: this.viewer.trackedEntity.computeModelMatrix(time),
-            length: 25,
-            width: 5
-          });
-          this.viewer.scene.primitives.add(this.trackedFrameDebug);
-        }
-      }
-      if (!this.viewer.trackedEntity || !_$1.get(this.entityTrackingOptions, "mode")) return;
-      const mode = this.entityTrackingOptions.mode;
-      const currentTime = Date.now();
-      if (mode === "freeLook" && !_$1.get(this.entityTrackingOptions, "resetHeading")) return;
-      const targetPosition = this.viewer.trackedEntity.position.getValue(time);
-      const orientation = this.viewer.trackedEntity.orientation.getValue(time);
-      if (!orientation) return;
-      const distance2 = _$1.get(this.entityTrackingOptions, "distance", 10);
-      const headingOffset = Math$1.toRadians(_$1.get(this.entityTrackingOptions, "offset.heading", 0));
-      const pitchOffset = Math$1.toRadians(_$1.get(this.entityTrackingOptions, "offset.pitch", 0));
-      const headingPitchRoll = HeadingPitchRoll.fromQuaternion(orientation);
-      if (_$1.get(this.entityTrackingOptions, "animate")) {
-        if (!this.headingAnimation) {
-          this.headingAnimation = {
-            ...this.entityTrackingOptions,
-            startTime: currentTime,
-            startHeading: this.viewer.camera.heading - headingOffset,
-            endHeading: mode === "freeLook" ? 0 - headingOffset : headingPitchRoll.heading
-          };
-          this.headingAnimation.endHeading = this.headingAnimation.startHeading + getSmallestAngle(this.headingAnimation.startHeading, this.headingAnimation.endHeading);
-        } else if (mode === "followOrientation") {
-          this.headingAnimation.endHeading = this.headingAnimation.startHeading + getSmallestAngle(this.headingAnimation.startHeading, headingPitchRoll.heading);
-        }
-      }
-      let heading = 0;
-      if (_$1.get(this.entityTrackingOptions, "animate")) {
-        heading = this.getAnimatedHeading(currentTime);
-        if (heading === this.headingAnimation.endHeading) {
-          _$1.set(this.entityTrackingOptions, "animate", false);
-          _$1.set(this.entityTrackingOptions, "resetHeading", false);
-          this.headingAnimation = null;
-        }
-      } else if (mode === "followOrientation") {
-        heading = headingPitchRoll.heading;
-      }
-      const position2 = new Cartesian3(
-        targetPosition.x + _$1.get(this.entityTrackingOptions, "offset.x", 0),
-        targetPosition.y + _$1.get(this.entityTrackingOptions, "offset.y", 0),
-        targetPosition.z + _$1.get(this.entityTrackingOptions, "offset.z", 0)
-      );
-      const cameraOffset = new HeadingPitchRange(
-        heading + headingOffset,
-        pitchOffset,
-        distance2
-      );
-      this.viewer.camera.lookAt(new Cartesian3(position2.x, position2.y, position2.z), cameraOffset);
-    },
-    trackEntity(entityId, options = {}) {
-      let newEntity = null;
-      this.viewer.entities.values.forEach((entity) => {
-        if (entityId === entity.id) {
-          newEntity = entity;
-        }
-      });
-      for (let i = 0; i < this.viewer.dataSources.length; i++) {
-        const source = this.viewer.dataSources.get(i);
-        source.entities.values.forEach((entity) => {
-          if (entityId === entity.id) {
-            newEntity = entity;
-          }
-        });
-      }
-      if (!newEntity) return;
-      this.entityTrackingOptions = options;
-      _$1.set(this.entityTrackingOptions, "animate", true);
-      if (newEntity === this.viewer.trackedEntity) return;
-      this.untrackEntity();
-      this.viewer.trackedEntity = newEntity;
-      this.viewer.clock.onTick.addEventListener(this.onEntityTracked);
-    },
-    untrackEntity() {
-      if (this.viewer.trackedEntity) {
-        if (this.trackedFrameDebug) this.viewer.scene.primitives.remove(this.trackedFrameDebug);
-        this.viewer.clock.onTick.removeEventListener(this.onEntityTracked);
-      }
-      this.viewer.trackedEntity = null;
-    },
-    async showUserLocation() {
-      if (Geolocation.hasLocation()) {
-        const longitude = Geolocation.getLongitude();
-        const latitude = Geolocation.getLatitude();
-        this.center(longitude, latitude);
-        const pinBuilder = new PinBuilder();
-        const canvas = await pinBuilder.fromMakiIconId("marker", Color.fromCssColorString(getCssVar("primary")), 48);
-        this.userLocationEntity = this.viewer.entities.add({
-          name: "user-location",
-          position: Cartesian3.fromDegrees(longitude, latitude),
-          billboard: {
-            image: canvas.toDataURL(),
-            verticalOrigin: VerticalOrigin.BOTTOM
-          }
-        });
-        this.viewer.selectedEntity = this.userLocationEntity;
-        this.userLocation = true;
-      }
-    },
-    hideUserLocation() {
-      if (this.userLocationEntity) {
-        this.viewer.entities.remove(this.userLocationEntity);
-        this.userLocationEntity = null;
-      }
-      this.userLocation = false;
-    },
-    isUserLocationVisible() {
-      return this.userLocation;
-    },
-    setCursor(className) {
-      this.viewer.container.classList.add(className);
-    },
-    isCursor(className) {
-      return this.viewer.container.classList.contains(className);
-    },
-    unsetCursor(className) {
-      this.viewer.container.classList.remove(className);
-    },
-    getLayerNameForEntity(entity) {
-      let layerName;
-      _$1.forOwn(this.cesiumLayers, (value, key) => {
-        if (!layerName && value.entities) {
-          if (value.entities.contains(entity)) layerName = key;
-        }
-      });
-      return layerName;
-    },
-    getNbChildrenForEntity(entity) {
-      if (entity._children) return entity._children.length;
-      else return 0;
-    },
-    getChildForEntity(entity, index2) {
-      if (this.getNbChildrenForEntity(entity) > 0) return entity._children[index2 || 0];
-    },
-    getPositionForEntity(entity) {
-      let position2 = entity.position;
-      if (!position2) {
-        if (entity.polygon) {
-          position2 = BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
-        } else if (entity.polyline) {
-          position2 = BoundingSphere.fromPoints(entity.polyline.positions.getValue()).center;
-        } else if (entity.wall) {
-          position2 = BoundingSphere.fromPoints(entity.wall.positions.getValue()).center;
-        }
-        if (position2) Ellipsoid.WGS84.scaleToGeodeticSurface(position2, position2);
-      }
-      return position2;
-    },
-    async getDefaultPickHandler(event) {
-      const emittedEvent = {};
-      let options;
-      let pickedPosition = this.viewer.camera.pickEllipsoid(event.endPosition || event.position, this.viewer.scene.globe.ellipsoid);
-      if (pickedPosition) {
-        emittedEvent.pickedPosition = pickedPosition;
-        pickedPosition = Cartographic.fromCartesian(pickedPosition);
-        const longitude = Math$1.toDegrees(pickedPosition.longitude);
-        const latitude = Math$1.toDegrees(pickedPosition.latitude);
-        emittedEvent.latlng = [latitude, longitude];
-        emittedEvent.latlng.lng = longitude;
-        emittedEvent.latlng.lat = latitude;
-      }
-      const pickedObject = this.viewer.scene.pick(event.endPosition || event.position);
-      if (pickedObject) {
-        emittedEvent.target = pickedObject.id || pickedObject.primitive.id;
-        if (emittedEvent.target instanceof Entity) {
-          if (!emittedEvent.target.feature) {
-            let feature2 = {
-              _id: emittedEvent.target.id,
-              type: "Feature"
-            };
-            if (typeof exportKml === "function") {
-              const selection = new EntityCollection();
-              selection.add(emittedEvent.target);
-              const geoJson = await convertEntitiesToGeoJson(selection);
-              if (geoJson.features.length > 0) {
-                Object.assign(feature2, geoJson.features[0]);
-              }
-            }
-            if (!feature2.geometry) {
-              const position2 = Cartographic.fromCartesian(emittedEvent.target.position ? emittedEvent.target.position.getValue(0) : emittedEvent.pickedPosition);
-              feature2.geometry = {
-                type: "Point",
-                coordinates: [Math$1.toDegrees(position2.longitude), Math$1.toDegrees(position2.latitude)]
-              };
-            }
-            feature2.properties = emittedEvent.target.properties ? emittedEvent.target.properties.getValue(0) : {};
-            emittedEvent.target.feature = feature2;
-          }
-          let layer2 = this.getLayerNameForEntity(emittedEvent.target);
-          if (layer2) layer2 = this.getCesiumLayerByName(layer2);
-          if (layer2) options = layer2.processedOptions;
-        }
-      }
-      this.$engineEvents.emit(event.originalEvent.name, options, emittedEvent);
-    },
-    getCameraEllipsoidTarget() {
-      const windowPosition = new Cesium.Cartesian2(this.viewer.container.clientWidth / 2, this.viewer.container.clientHeight / 2);
-      const pickedPosition = this.viewer.camera.pickEllipsoid(windowPosition);
-      if (!pickedPosition) return null;
-      const pickedPositionCartographic = this.viewer.scene.globe.ellipsoid.cartesianToCartographic(pickedPosition);
-      return {
-        longitude: Math$1.toDegrees(pickedPositionCartographic.longitude),
-        latitude: Math$1.toDegrees(pickedPositionCartographic.latitude),
-        altitude: pickedPositionCartographic.height
-      };
-    },
-    onCameraMoveStart() {
-      let target2 = this.getCameraEllipsoidTarget();
-      if (target2) {
-        target2 = { latlng: { lng: target2.longitude, lat: target2.latitude }, altitude: target2.altitude };
-      }
-      this.$engineEvents.emit("movestart", this.viewerOptions, target2);
-    },
-    onCameraMoveEnd() {
-      let target2 = this.getCameraEllipsoidTarget();
-      if (target2) {
-        target2 = { latlng: { lng: target2.longitude, lat: target2.latitude }, altitude: target2.altitude };
-      }
-      this.$engineEvents.emit("moveend", this.viewerOptions, target2);
-    },
-    onCameraChanged() {
-      let target2 = this.getCameraEllipsoidTarget();
-      if (target2) {
-        target2 = { latlng: { lng: target2.longitude, lat: target2.latitude }, altitude: target2.altitude };
-      }
-      this.$engineEvents.emit("move", this.viewerOptions, target2);
-    },
-    getPostProcessStage(effect) {
-      return this.cesiumPostProcessStages[effect];
-    },
-    setupPostProcess(effect, options = { enabled: true }) {
-      let stage = this.cesiumPostProcessStages[effect];
-      if (options.enabled) {
-        if (!stage) {
-          if (effect === "desaturation") {
-            const fs = `
-    uniform sampler2D colorTexture;
-    in vec2 v_textureCoordinates;
-    void main() {
-        vec4 color = texture(colorTexture, v_textureCoordinates);
-        if (czm_selected()) {
-            out_FragColor = color;
-        } else {
-            out_FragColor = vec4(czm_saturation(color.rgb, 0.0), color.a);
-        }
-    }
-    `;
-            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({ fragmentShader: fs }));
-            stage.selected = [];
-            this.cesiumPostProcessStages[effect] = stage;
-          }
-        }
-      } else {
-        if (stage) {
-          this.viewer.scene.postProcessStages.remove(stage);
-          delete this.cesiumPostProcessStages[effect];
-        }
-      }
-    }
-  },
-  created() {
-    this.cesiumLayers = {};
-    this.cesiumFactory = [];
-    this.cesiumMaterials = [];
-    this.cesiumPostProcessStages = {};
-    this.userLocation = false;
-    this.$engineEvents = new EventBus();
-  },
-  beforeUnmount() {
-    this.clearLayers();
-    this.viewer.camera.moveStart.removeEventListener(this.onCameraMoveStart);
-    this.viewer.camera.moveEnd.removeEventListener(this.onCameraMoveEnd);
-    this.unregisterCesiumHandler("MOUSE_MOVE");
-    this.unregisterCesiumHandler("LEFT_CLICK");
-    this.unregisterCesiumHandler("RIGHT_CLICK");
-  },
-  unmounted() {
-    this.viewer.destroy();
-  }
-};
-const CustomTypes = ["wall", "corridor", "stroke"];
-function getCustomEntityId(id, type) {
-  return `${id}-${type}`;
-}
-function getOriginalEntityId(customId, type) {
-  const suffix = `-${type}`;
-  return customId.endsWith(suffix) ? customId.slice(0, -suffix.length) : "";
-}
-function addCustomPrimitive(activity2, dataSource, id, primitive, material) {
-  const oldCustom = dataSource.primitives.get(id);
-  if (oldCustom) {
-    setTimeout(() => {
-      activity2.viewer.scene.primitives.remove(oldCustom.primitive);
-      const index2 = activity2.cesiumMaterials.indexOf(oldCustom.material);
-      activity2.cesiumMaterials.splice(index2, 1);
-    }, activity2.viewerOptions.entityLoadTextureDelay);
-  }
-  dataSource.primitives.set(id, { primitive, material });
-  activity2.viewer.scene.primitives.add(primitive);
-  activity2.cesiumMaterials.push(material);
-  setTimeout(() => {
-    material.material.uniforms.opacity = 1;
-  }, activity2.viewerOptions.entityLoadTextureDelay);
-}
-function removeCustomPrimitiveById(activity2, dataSource, id) {
-  const custom = dataSource.primitives.get(id);
-  if (custom) {
-    activity2.viewer.scene.primitives.remove(custom.primitive);
-    const index2 = activity2.cesiumMaterials.indexOf(custom.material);
-    activity2.cesiumMaterials.splice(index2, 1);
-    dataSource.primitives.delete(id);
-  }
-}
-const geojsonLayers = {
-  emits: [
-    "layer-updated"
-  ],
-  methods: {
-    convertFromSimpleStyleOrDefaults(properties) {
-      let { stroke, strokeWidth, fill } = convertToCesiumFromSimpleStyle(properties);
-      if (!stroke) stroke = GeoJsonDataSource.stroke;
-      if (!strokeWidth) strokeWidth = GeoJsonDataSource.strokeWidth;
-      if (!fill) fill = GeoJsonDataSource.fill;
-      return { stroke, strokeWidth, fill };
-    },
-    async loadGeoJson(dataSource, geoJson, options, updateOptions = {}) {
-      const cesiumOptions = options.cesium;
-      const features = getGeoJsonFeatures(geoJson);
-      if (_$1.get(updateOptions, "remove", false)) {
-        features.forEach((feature2) => {
-          const id = getFeatureId(feature2, options);
-          CustomTypes.forEach((type) => {
-            const customId = getCustomEntityId(id, type);
-            if (dataSource.entities.getById(id)) dataSource.entities.removeById(id);
-            if (dataSource.entities.getById(customId)) dataSource.entities.removeById(customId);
-            removeCustomPrimitiveById(this, dataSource, customId);
-          });
-        });
-        return;
-      }
-      const loadingDataSource = new GeoJsonDataSource();
-      loadingDataSource.notFromDrop = true;
-      await loadingDataSource.load(geoJson, cesiumOptions);
-      let entities = loadingDataSource.entities.values;
-      entities.forEach((entity) => {
-        entity.feature = features.find((feature2) => getFeatureId(feature2, options) === entity.id);
-        const previousEntity = dataSource.entities.getById(entity.id);
-        if (previousEntity) updateCesiumGeoJsonEntity(entity, previousEntity);
-        else dataSource.entities.add(entity);
-      });
-      if (_$1.get(updateOptions, "removeMissing", cesiumOptions.removeMissing)) {
-        const entitiesToRemove2 = [];
-        dataSource.entities.values.forEach((entity) => {
-          const id = entity.id;
-          if (!loadingDataSource.entities.getById(id)) entitiesToRemove2.push(id);
-          CustomTypes.forEach((type) => {
-            const customId = getCustomEntityId(id, type);
-            if (dataSource.entities.getById(customId)) entitiesToRemove2.push(customId);
-          });
-        });
-        entitiesToRemove2.forEach((id) => dataSource.entities.removeById(id));
-        for (const id of dataSource.primitives.keys()) {
-          CustomTypes.forEach((type) => {
-            const entityId = getOriginalEntityId(id, type);
-            if (entityId && !loadingDataSource.entities.contains(entityId))
-              removeCustomPrimitiveById(this, dataSource, id);
-          });
-        }
-      }
-      entities = dataSource.entities.values;
-      const entitiesToAdd = [];
-      const entitiesToRemove = [];
-      for (let i = 0; i < entities.length; i++) {
-        const entity = entities[i];
-        const properties = entity.properties.getValue(0);
-        const radius = _$1.get(properties, "radius");
-        const geodesic = _$1.get(properties, "geodesic");
-        if (radius && geodesic) {
-          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties);
-          entitiesToAdd.push({
-            id: entity.id,
-            position: entity.position.getValue(0),
-            name: entity.name ? entity.name : entity.id,
-            description: entity.description.getValue(0),
-            properties: entity.properties.getValue(0),
-            ellipse: {
-              semiMinorAxis: radius,
-              semiMajorAxis: radius,
-              material: new ColorMaterialProperty(fill),
-              outlineColor: new ConstantProperty(stroke),
-              outlineWidth: strokeWidth,
-              outline: new ConstantProperty(true)
-            },
-            feature: entity.feature
-          });
-          entitiesToRemove.push(entity);
-        }
-        const wall = _$1.get(properties, "wall") || _$1.get(properties, "entityStyle.wall");
-        if (wall && entity.polyline) {
-          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties);
-          const wallId = getCustomEntityId(entity.id, "wall");
-          const texture = _$1.get(properties, "entityStyle.wall.material.image");
-          if (texture && _$1.get(properties, "entityStyle.wall.animateMaterialAlongPath", false)) {
-            const options2 = _$1.get(properties, "entityStyle.wall");
-            options2.positions = entity.polyline.positions.getValue(0);
-            const { primitive, material } = createPrimitiveWithMovingTexture("wall", options2);
-            if (primitive) {
-              addCustomPrimitive(this, dataSource, wallId, primitive, material);
-            }
-            entitiesToRemove.push(entity);
-          } else {
-            entitiesToAdd.push({
-              id: wallId,
-              parent: entity,
-              name: entity.name ? entity.name : wallId,
-              description: entity.description.getValue(0),
-              properties: entity.properties.getValue(0),
-              wall: {
-                positions: entity.polyline.positions.getValue(0),
-                material: new ColorMaterialProperty(fill),
-                outlineColor: new ConstantProperty(stroke),
-                outlineWidth: strokeWidth,
-                outline: new ConstantProperty(true)
-              },
-              feature: entity.feature
-            });
-            entitiesToRemove.push(entity);
-          }
-        }
-        const corridor = _$1.get(properties, "corridor") || _$1.get(properties, "entityStyle.corridor");
-        if (corridor && entity.polyline) {
-          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties);
-          const corridorId = getCustomEntityId(entity.id, "corridor");
-          const texture = _$1.get(properties, "entityStyle.corridor.material.image");
-          if (texture && _$1.get(properties, "entityStyle.corridor.animateMaterialAlongPath", false)) {
-            const options2 = _$1.get(properties, "entityStyle.corridor");
-            options2.positions = entity.polyline.positions.getValue(0);
-            const { primitive, material } = createPrimitiveWithMovingTexture("corridor", options2);
-            if (primitive) {
-              addCustomPrimitive(this, dataSource, corridorId, primitive, material);
-            }
-            entitiesToRemove.push(entity);
-          } else {
-            entitiesToAdd.push({
-              id: corridorId,
-              parent: entity,
-              name: entity.name ? entity.name : corridorId,
-              description: entity.description.getValue(0),
-              properties: entity.properties.getValue(0),
-              corridor: {
-                positions: entity.polyline.positions.getValue(0),
-                material: new ColorMaterialProperty(fill),
-                outlineColor: new ConstantProperty(stroke),
-                outlineWidth: strokeWidth,
-                outline: new ConstantProperty(true)
-              },
-              feature: entity.feature
-            });
-            entitiesToRemove.push(entity);
-          }
-        }
-        if (entity.billboard && _$1.get(properties, "marker-symbol") === "none") {
-          entitiesToRemove.push(entity);
-        }
-        const text = _$1.get(properties, "icon-text") || _$1.get(properties, "entityStyle.label.text");
-        const billboardImage = _$1.get(properties, "entityStyle.billboard.image");
-        if (text) {
-          const { stroke, strokeWidth, fill } = this.convertFromSimpleStyleOrDefaults(properties);
-          entitiesToAdd.push({
-            id: entity.id,
-            position: entity.position.getValue(0),
-            name: entity.name ? entity.name : entity.id,
-            description: entity.description.getValue(0),
-            properties: entity.properties.getValue(0),
-            label: {
-              text,
-              fillColor: new ConstantProperty(fill),
-              outlineColor: new ConstantProperty(stroke),
-              outlineWidth: strokeWidth
-            },
-            billboard: billboardImage ? { image: billboardImage } : void 0,
-            feature: entity.feature
-          });
-          entitiesToRemove.push(entity);
-        }
-        if (_$1.get(entity, "polygon") && _$1.get(properties, "entityStyle.polygon.perPositionHeight") === false) {
-          const strokeId = getCustomEntityId(entity.id, "stroke");
-          const { stroke, strokeWidth } = this.convertFromSimpleStyleOrDefaults(properties);
-          const nullAltitude = _$1.every(_$1.get(entity, "feature.geometry.coordinates[0]", []), (coord) => {
-            return coord.length > 2 && coord[2] === 0;
-          });
-          if (nullAltitude) {
-            const strokeEntity = {
-              id: strokeId,
-              name: entity.name ? entity.name : strokeId,
-              description: entity.description.getValue(0),
-              properties: entity.properties.getValue(0),
-              polyline: {
-                positions: entity.polygon.hierarchy.getValue().positions,
-                width: strokeWidth,
-                material: stroke,
-                clampToGround: true
-              },
-              feature: entity.feature
-            };
-            entitiesToAdd.push(strokeEntity);
-            if (dataSource.entities.getById(strokeEntity.id)) {
-              entitiesToRemove.push(strokeEntity);
-            }
-          }
-        }
-      }
-      entitiesToRemove.forEach((entity) => dataSource.entities.remove(entity));
-      entitiesToAdd.forEach((entity) => dataSource.entities.add(entity));
-    },
-    async updateGeoJsonData(dataSource, options, geoJson, updateOptions = {}) {
-      const cesiumOptions = options.cesium;
-      const source = _$1.get(cesiumOptions, "source");
-      const sourceTemplate = _$1.get(cesiumOptions, "sourceTemplate");
-      try {
-        if (geoJson) {
-          if (options.processor) processFeatures(geoJson, options.processor);
-          await this.loadGeoJson(dataSource, geoJson, options, updateOptions);
-        } else if (options.probeService) {
-          await this.loadGeoJson(dataSource, this.getProbeFeatures(options), options, updateOptions);
-          await this.loadGeoJson(dataSource, this.getFeatures(options), options, updateOptions);
-        } else if (options.service) {
-          await this.loadGeoJson(dataSource, this.getFeatures(Object.assign({}, options, this.getLayerByName(options.name))), options, updateOptions);
-        } else if (sourceTemplate) {
-          const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() });
-          if (!dataSource.lastFetchedSource || dataSource.lastFetchedSource !== sourceToFetch) {
-            dataSource.lastFetchedSource = sourceToFetch;
-            await this.loadGeoJson(dataSource, fetchGeoJson(sourceToFetch, options), options, updateOptions);
-          }
-        } else if (!_$1.isNil(source)) {
-          await this.loadGeoJson(dataSource, fetchGeoJson(source, options), options, updateOptions);
-        }
-        this.applyStyle(dataSource.entities, options);
-        if (typeof this.applyTooltips === "function") this.applyTooltips(dataSource.entities, options);
-      } catch (error) {
-        logger$1.error(error);
-      }
-    },
-    async createCesiumRealtimeGeoJsonLayer(dataSource, options) {
-      const cesiumOptions = options.cesium;
-      dataSource.updateGeoJson = async (geoJson, updateOptions) => {
-        await this.updateGeoJsonData(dataSource, options, geoJson, updateOptions);
-      };
-      if (_$1.has(cesiumOptions, "sourceTemplate")) {
-        dataSource.sourceCompiler = _$1.template(_$1.get(cesiumOptions, "sourceTemplate"));
-      }
-    },
-    async createCesiumGeoJsonLayer(options) {
-      const cesiumOptions = options.cesium;
-      if (cesiumOptions.type !== "geoJson") return;
-      const engine = _$1.get(this, "activityOptions.engine");
-      options.processor = (feature2) => {
-        if (!options.featureId && !feature2._id) feature2._id = uid$2().toString();
-        feature2.id = getFeatureId(feature2, options);
-        let type = getFeatureStyleType(feature2);
-        if (_$1.has(feature2, "properties.entityStyle")) {
-          if (_$1.has(feature2, "properties.entityStyle.wall")) type = "polygon";
-          else if (_$1.has(feature2, "properties.entityStyle.corridor")) type = "polygon";
-        }
-        if (_$1.get(feature2, "style.extrude")) type = "polygon";
-        if (!_$1.has(feature2, "style")) {
-          const style2 = type === "point" ? convertSimpleStyleToPointStyle(feature2.properties) : type === "line" ? convertSimpleStyleToLineStyle(feature2.properties) : convertSimpleStyleToPolygonStyle(feature2.properties);
-          _$1.set(feature2, "style", style2);
-        }
-        const stylePerType = {
-          point: getPointSimpleStyle(feature2, options, engine),
-          line: getLineSimpleStyle(feature2, options, engine),
-          polygon: getPolygonSimpleStyle(feature2, options, engine)
-        };
-        const simpleStyle = Object.assign(...Object.values(stylePerType), stylePerType[type]);
-        const text = _$1.get(feature2, "style.text.label");
-        if (text) simpleStyle["icon-text"] = text;
-        if (!feature2.properties) feature2.properties = simpleStyle;
-        else Object.assign(feature2.properties, simpleStyle);
-        const cesiumStyle = convertToCesiumFromStyle(feature2, options);
-        _$1.mergeWith(feature2, cesiumStyle, (objValue, srcValue) => {
-          if (_$1.isArray(objValue)) return srcValue;
-        });
-      };
-      if (_$1.has(this, "activityOptions.engine.cluster")) {
-        if (cesiumOptions.cluster) Object.assign(cesiumOptions.cluster, _$1.get(this, "activityOptions.engine.cluster"));
-        else cesiumOptions.cluster = Object.assign({}, _$1.get(this, "activityOptions.engine.cluster"));
-      }
-      const layerStyleTemplate = _$1.get(cesiumOptions, "template");
-      if (layerStyleTemplate) {
-        cesiumOptions.template = layerStyleTemplate.map((property) => ({
-          property,
-          compiler: _$1.template(_$1.get(cesiumOptions, property))
-        }));
-      }
-      const entityStyleTemplate = _$1.get(cesiumOptions, "entityStyle.template");
-      if (entityStyleTemplate) {
-        _$1.set(cesiumOptions, "entityStyleTemplate", entityStyleTemplate.map((property) => ({
-          property,
-          compiler: _$1.template(_$1.get(cesiumOptions, `entityStyle.${property}`))
-        })));
-      }
-      const popupTemplate = _$1.get(cesiumOptions, "popup.template");
-      if (popupTemplate) {
-        cesiumOptions.popup.compiler = _$1.template(popupTemplate);
-      }
-      const tooltipTemplate = _$1.get(cesiumOptions, "tooltip.template");
-      if (tooltipTemplate) {
-        cesiumOptions.tooltip.compiler = _$1.template(tooltipTemplate);
-      }
-      if (cesiumOptions.style) {
-        cesiumOptions.layerPointStyle = _$1.get(cesiumOptions.style, "point");
-        cesiumOptions.layerLineStyle = _$1.get(cesiumOptions.style, "line");
-        cesiumOptions.layerPolygonStyle = _$1.get(cesiumOptions.style, "polygon");
-      } else {
-        cesiumOptions.layerPointStyle = convertSimpleStyleToPointStyle(cesiumOptions);
-        cesiumOptions.layerLineStyle = convertSimpleStyleToLineStyle(cesiumOptions);
-        cesiumOptions.layerPolygonStyle = convertSimpleStyleToPolygonStyle(cesiumOptions);
-      }
-      if (cesiumOptions.entityStyle && !entityStyleTemplate) cesiumOptions.entityStyle = this.convertToCesiumObjects(cesiumOptions.entityStyle);
-      if (cesiumOptions.clusterStyle) cesiumOptions.clusterStyle = this.convertToCesiumObjects(cesiumOptions.clusterStyle);
-      if (cesiumOptions.tooltip) cesiumOptions.tooltip = this.convertToCesiumObjects(cesiumOptions.tooltip);
-      if (cesiumOptions.popup) cesiumOptions.popup = this.convertToCesiumObjects(cesiumOptions.popup);
-      const source = _$1.get(cesiumOptions, "source");
-      let dataSource = source;
-      if (dataSource) {
-        for (let i = 0; i < this.viewer.dataSources.length; i++) {
-          const currentSource = this.viewer.dataSources.get(i);
-          if (currentSource.name === dataSource) {
-            dataSource = currentSource;
-            this.viewer.dataSources.remove(currentSource, false);
-            break;
-          }
-        }
-      }
-      if (!dataSource || !dataSource.name) {
-        dataSource = new GeoJsonDataSource();
-        dataSource.notFromDrop = true;
-        dataSource.primitives = /* @__PURE__ */ new Map();
-        if (cesiumOptions.realtime) {
-          await this.createCesiumRealtimeGeoJsonLayer(dataSource, options);
-        }
-        this.updateGeoJsonData(dataSource, options);
-      } else {
-        this.applyStyle(dataSource.entities, options);
-        if (typeof this.applyTooltips === "function") this.applyTooltips(dataSource.entities, options);
-      }
-      if (cesiumOptions.cluster) {
-        _$1.assign(dataSource.clustering, {
-          enabled: true,
-          pixelRange: 100,
-          minimumClusterSize: 3,
-          clusterBillboards: true,
-          clusterLabels: true,
-          clusterPoints: true
-        }, cesiumOptions.cluster);
-        dataSource.clustering.clusterEvent.addEventListener(
-          (entities, cluster) => this.applyClusterStyle(entities, cluster, options)
-        );
-      }
-      return dataSource;
-    },
-    getGeoJsonOptions(options) {
-      return _$1.get(this, "activityOptions.engine.featureStyle", {});
-    },
-    async updateLayer(name, geoJson, updateOptions = {}) {
-      const layer2 = this.getCesiumLayerByName(name);
-      if (!layer2) return;
-      if (typeof layer2.updateGeoJson === "function") await layer2.updateGeoJson(geoJson, updateOptions);
-      const baseLayer = this.getLayerByName(name);
-      if (isInMemoryLayer(baseLayer)) {
-        this.geojsonCache[name] = await this.toGeoJson(name);
-      }
-      this.onLayerUpdated(baseLayer, layer2, { features: geoJson ? geoJson.features || [geoJson] : [] });
-    },
-    onLayerUpdated(layer2, cesiumLayer, data) {
-      this.$emit("layer-updated", layer2, cesiumLayer, data);
-      this.$engineEvents.emit("layer-updated", layer2, cesiumLayer, data);
-    },
-    onCurrentTimeChangedGeoJsonLayers(time) {
-      const geoJsonlayers = _$1.values(this.layers).filter(sift(GeoJsonCesiumLayerFilters.TimeUpdate));
-      geoJsonlayers.forEach(async (geoJsonlayer) => {
-        const dataSource = this.getCesiumLayerByName(geoJsonlayer.name);
-        if (!dataSource.lastUpdateTime || !this.shouldSkipFeaturesUpdate(dataSource.lastUpdateTime, geoJsonlayer)) {
-          dataSource.lastUpdateTime = Time.getCurrentTime().clone();
-          dataSource.updateGeoJson();
-        }
-      });
-    },
-    onDefaultUnitChangedGeoJsonLayers(units) {
-      _$1.forOwn(units.default, (unit, quantity) => {
-        const units2 = _$1.map(Units.getUnits(quantity), "name");
-        let geoJsonlayers = _$1.values(this.layers).filter(sift(GeoJsonCesiumLayerFilters.UnitUpdate));
-        geoJsonlayers = geoJsonlayers.filter((layer2) => {
-          return hasUnitInCesiumLayerTemplate(units2, layer2);
-        });
-        geoJsonlayers.forEach((layer2) => {
-          const dataSource = this.getCesiumLayerByName(layer2.name);
-          dataSource.updateGeoJson();
-        });
-      });
-    },
-    onLayerShownGeoJsonLayers(layer2, engineLayer) {
-      const cachedGeojson = this.geojsonCache[layer2.name];
-      if (cachedGeojson) {
-        if (isInMemoryLayer(layer2)) {
-          this.updateLayer(layer2.name, cachedGeojson);
-        } else {
-          delete this.geojsonCache[layer2.name];
-        }
-      }
-    },
-    onLayerRemovedGeoJsonLayers(layer2) {
-      if (_$1.has(this.geojsonCache, layer2.name)) {
-        delete this.geojsonCache[layer2.name];
-      }
-    },
-    selectFeaturesForPostProcess(effect, layerNames, featureIds) {
-      const stage = this.getPostProcessStage(effect);
-      if (!stage) return;
-      let primitives = [];
-      const multipleLayers = Array.isArray(layerNames);
-      if (!multipleLayers) {
-        layerNames = [layerNames];
-        featureIds = [featureIds];
-      }
-      for (let i = 0; i < layerNames.length; i++) {
-        const layerName = layerNames[i];
-        const layerIds = featureIds[i];
-        const layer2 = this.getCesiumLayerByName(layerName);
-        if (!layer2) return;
-        if (!layer2.entities && !layer2.primitives.size) return;
-        const ids = Array.isArray(layerIds) ? layerIds : [layerIds];
-        ids.forEach((id) => {
-          let entity = layer2.entities.getById(id);
-          let primitive = layer2.primitives.get(id);
-          CustomTypes.forEach((type) => {
-            if (entity || primitive) return;
-            const customId = getCustomEntityId(id, type);
-            entity = layer2.entities.getById(customId);
-            primitive = layer2.primitives.get(customId);
-          });
-          if (entity) {
-            primitive = getPrimitivesForEntity(id, this.viewer);
-          } else {
-            primitive = _$1.get(primitive, "primitive");
-          }
-          if (!primitive) return;
-          primitives = _$1.concat(primitives, _$1.isArray(primitive) ? primitive : [primitive]);
-        });
-      }
-      stage.selected = primitives;
-    }
-  },
-  created() {
-    this.registerCesiumConstructor(this.createCesiumGeoJsonLayer);
-    Events.on("time-current-time-changed", this.onCurrentTimeChangedGeoJsonLayers);
-    Events.on("units-changed", this.onDefaultUnitChangedGeoJsonLayers);
-    this.$engineEvents.on("layer-shown", this.onLayerShownGeoJsonLayers);
-    this.$engineEvents.on("layer-removed", this.onLayerRemovedGeoJsonLayers);
-    this.updatingGeoJsonData = {};
-    this.geojsonCache = {};
-  },
-  beforeUnmount() {
-    Events.off("time-current-time-changed", this.onCurrentTimeChangedGeoJsonLayers);
-    Events.off("units-changed", this.onDefaultUnitChangedGeoJsonLayers);
-    this.$engineEvents.off("layer-shown", this.onLayerShownGeoJsonLayers);
-    this.$engineEvents.off("layer-removed", this.onLayerRemovedGeoJsonLayers);
-    this.geojsonCache = {};
-  }
-};
-const fileLayers = {
-  mounted() {
-    this.$engineEvents.on("globe-ready", () => {
-      const fileLayersOptions = _$1.defaults(_$1.get(this, "activityOptions.engine.fileLayers", {}), {
-        clearOnDrop: false,
-        flyToOnDrop: true,
-        clampToGround: true
-      });
-      this.viewer.extend(viewerDragDropMixin, fileLayersOptions);
-      this.viewer.dropError.addEventListener((viewerArg, source, error) => {
-        logger$1.error(error);
-      });
-      this.viewer.dataSources.dataSourceAdded.addEventListener((collection, source) => {
-        if (source.notFromDrop) return;
-        if (!source.name) source.name = this.$t("mixins.fileLayers.IMPORTED_DATA_NAME");
-        logger$1.debug("[KDK] processing dropped file: ", source.name);
-        this.addLayer({
-          name: source.name,
-          label: source.name,
-          type: "OverlayLayer",
-          icon: "insert_drive_file",
-          cesium: {
-            type: "geoJson",
-            isVisible: true,
-            cluster: _$1.get(fileLayersOptions, "cluster", { pixelRange: 50 }),
-            entityStyle: _$1.get(fileLayersOptions, "entityStyle"),
-            source: source.name
-            // Set the data source name instead of URL in this case
-          }
-        });
-      });
-    });
-  }
-};
-const style = {
-  methods: {
-    applyStyle(entities, options) {
-      for (let i = 0; i < entities.values.length; i++) {
-        const entity = entities.values[i];
-        const style2 = this.generateStyle("entityStyle", entity, options);
-        CesiumEntityTypes.forEach((type) => {
-          if (entity[type] && style2[type]) {
-            _$1.merge(entity[type], style2[type]);
-          }
-        });
-        if (style2.model && entity.billboard) {
-          entity.billboard = void 0;
-          entity.model = style2.model;
-        }
-        if (style2.orientation) entity.orientation = style2.orientation;
-        if (_$1.has(style2, "visibility")) entity.show = style2.visibility;
-      }
-    },
-    applyClusterStyle(entities, cluster, options) {
-      const style2 = this.generateStyle("clusterStyle", entities, cluster, options);
-      const featureTypes = ["billboard", "label", "point"];
-      featureTypes.forEach((type) => {
-        if (_$1.has(cluster, type)) {
-          _$1.merge(cluster[type], style2[type]);
-        }
-      });
-    },
-    // Alias to ease development
-    convertFromSimpleStyle(style2, inPlace) {
-      return convertToCesiumFromSimpleStyle(style2, inPlace);
-    },
-    // Alias to ease development
-    convertToCesiumObjects(style2) {
-      return convertToCesiumObjects(style2);
-    },
-    getDefaultEntityStyle(entity, options) {
-      const properties = entity.properties ? entity.properties.getValue(0) : null;
-      const cesiumOptions = options.cesium || options;
-      let style2 = _$1.merge({}, _$1.get(this, "activityOptions.engine.entityStyle"));
-      const entityStyleTemplate = _$1.get(cesiumOptions, "entityStyleTemplate");
-      if (entityStyleTemplate) {
-        const entityStyle = _$1.cloneDeep(cesiumOptions.entityStyle);
-        entityStyleTemplate.forEach((entry) => {
-          let value = entry.compiler({ feature: entity.feature || { properties }, properties, chroma, moment, Units, Time });
-          const property = entry.property;
-          if (property === "orientation" && entity.position) {
-            const localFrameAxes = _$1.get(entityStyle, "localFrameAxes", ["east", "north"]);
-            const localFrame = Transforms.localFrameToFixedFrameGenerator(...localFrameAxes);
-            const position2 = entity.position.getValue(this.viewer.clock.currentTime);
-            value = value.split(",").map((angle2) => Math$1.toRadians(parseFloat(angle2)));
-            value = new HeadingPitchRoll(...value);
-            value = Transforms.headingPitchRollQuaternion(position2, value, Ellipsoid.WGS84, localFrame);
-          }
-          _$1.set(entityStyle, property, value);
-        });
-        style2 = _$1.merge(style2, this.convertToCesiumObjects(entityStyle));
-      } else {
-        style2 = _$1.merge(style2, cesiumOptions.entityStyle || {});
-      }
-      if (properties && properties.entityStyle) _$1.merge(style2, this.convertToCesiumObjects(properties.entityStyle));
-      return style2;
-    },
-    getDefaultClusterStyle(entities, cluster, options) {
-      const cesiumOptions = options.cesium || options;
-      const style2 = _$1.merge(
-        {},
-        _$1.get(this, "activityOptions.engine.clusterStyle"),
-        cesiumOptions.clusterStyle || {}
-      );
-      if (_$1.has(style2, "label.text")) {
-        const compiler = _$1.template(_$1.get(style2, "label.text"));
-        const labelStyle = _$1.cloneDeep(_$1.get(style2, "label"));
-        _$1.set(labelStyle, "text", compiler({ entities, cluster, $t: this.$t }));
-        _$1.set(style2, "label", labelStyle);
-      }
-      return style2;
-    }
-  },
-  created() {
-    this.registerStyle("entityStyle", this.getDefaultEntityStyle);
-    this.registerStyle("clusterStyle", this.getDefaultClusterStyle);
-  },
-  // Need to be done after created as the activity mixin initializes options in it
-  beforeMount() {
-    if (_$1.has(this, "activityOptions.engine.entityStyle")) {
-      _$1.set(this, "activityOptions.engine.entityStyle", this.convertToCesiumObjects(_$1.get(this, "activityOptions.engine.entityStyle")));
-    }
-    if (_$1.has(this, "activityOptions.engine.clusterStyle")) {
-      _$1.set(this, "activityOptions.engine.clusterStyle", this.convertToCesiumObjects(_$1.get(this, "activityOptions.engine.clusterStyle")));
-    }
-  }
-};
-const tooltip = {
-  methods: {
-    applyTooltips(entities, options) {
-      for (let i = 0; i < entities.values.length; i++) {
-        const entity = entities.values[i];
-        const tooltip2 = this.generateStyle("tooltip", entity, options);
-        if (tooltip2) {
-          const position2 = this.getPositionForEntity(entity);
-          if (position2) {
-            const tooltipEntity = this.viewer.entities.add({ parent: entity, position: position2, label: tooltip2 });
-            if (tooltip2.sticky) tooltipEntity.sticky = true;
-          }
-        }
-      }
-    },
-    getDefaultTooltip(entity, options) {
-      let tooltip2;
-      if (entity.properties) {
-        const properties = entity.properties.getValue(0);
-        const cesiumOptions = options.cesium || options;
-        if (_$1.has(cesiumOptions, "tooltip") && !_$1.get(cesiumOptions, "tooltip")) return;
-        if (_$1.has(properties, "tooltip") && !_$1.get(properties, "tooltip")) return;
-        const tooltipStyle = _$1.merge(
-          {},
-          _$1.get(this, "activityOptions.engine.tooltip", {}),
-          cesiumOptions.tooltip,
-          properties.tooltip
-        );
-        let text = tooltipStyle.text;
-        if (!text) {
-          if (tooltipStyle.property) {
-            text = _$1.get(properties, tooltipStyle.property);
-            if (text && typeof text.toString === "function") text = text.toString();
-          } else if (tooltipStyle.template) {
-            const compiler = tooltipStyle.compiler;
-            text = compiler({ feature: entity.feature || { properties }, properties, $t: this.$t, Units, Time, moment });
-          }
-        }
-        if (text) {
-          tooltip2 = Object.assign({
-            text,
-            show: !!_$1.get(tooltipStyle, "options.permanent")
-          }, tooltipStyle.options);
-        }
-      }
-      return tooltip2;
-    },
-    isTooltipOpen(entity) {
-      if (this.getNbChildrenForEntity(entity) > 0) {
-        return _$1.get(entity, "label.show", false);
-      } else return false;
-    },
-    openTooltip(entity, position2) {
-      if (this.getNbChildrenForEntity(entity) > 0) {
-        const tooltip2 = this.getChildForEntity(entity);
-        if (tooltip2.label) tooltip2.label.show = true;
-        if (tooltip2.sticky) tooltip2.position = position2;
-      }
-    },
-    closeTooltip(entity) {
-      if (this.getNbChildrenForEntity(entity) > 0) {
-        const tooltip2 = this.getChildForEntity(entity);
-        if (tooltip2.label) tooltip2.label.show = false;
-      }
-    },
-    onTooltip(options, event) {
-      if (options) {
-        const cesiumOptions = options.cesium || options;
-        const tooltipStyle = cesiumOptions.tooltip;
-        if (_$1.get(tooltipStyle, "options.permanent")) return;
-      }
-      const entity = event.target;
-      if (this.overEntity) {
-        this.closeTooltip(this.overEntity);
-        this.overEntity = null;
-      }
-      if (options && entity) {
-        this.overEntity = entity;
-        this.openTooltip(this.overEntity, event.pickedPosition);
-      }
-    }
-  },
-  created() {
-    this.registerStyle("tooltip", this.getDefaultTooltip);
-  },
-  // Need to be done after created as the activity mixin initializes options in it
-  beforeMount() {
-    if (_$1.has(this, "activityOptions.engine.tooltip")) {
-      _$1.set(this, "activityOptions.engine.tooltip", this.convertToCesiumObjects(_$1.get(this, "activityOptions.engine.tooltip")));
-    }
-  },
-  mounted() {
-    this.$engineEvents.on("mousemove", this.onTooltip);
-  },
-  beforeUnmount() {
-    this.$engineEvents.off("mousemove", this.onTooltip);
-  }
-};
-const popup = {
-  methods: {
-    getDefaultPopup(entity, options) {
-      let popup2;
-      if (entity.properties) {
-        let properties = entity.properties.getValue(0);
-        const cesiumOptions = options.cesium || options;
-        if (_$1.has(cesiumOptions, "popup") && !_$1.get(cesiumOptions, "popup")) return;
-        if (_$1.has(properties, "popup") && !_$1.get(properties, "popup")) return;
-        const popupStyle = _$1.merge(
-          {},
-          _$1.get(this, "activityOptions.engine.popup"),
-          cesiumOptions.popup,
-          properties.popup
-        );
-        let text = popupStyle.text;
-        if (!text) {
-          if (popupStyle.template) {
-            const compiler = popupStyle.compiler;
-            text = compiler({ feature: entity.feature || { properties }, properties, $t: this.$t, Units, Time, moment });
-          } else if (popupStyle.pick) {
-            properties = _$1.pick(properties, popupStyle.pick);
-          } else if (popupStyle.omit) {
-            properties = _$1.omit(properties, popupStyle.omit);
-          }
-        }
-        if (!text) text = getTextTable(properties);
-        if (!text) return null;
-        popup2 = Object.assign({
-          text,
-          show: true
-        }, popupStyle.options);
-      }
-      return popup2;
-    },
-    onPopup(options, event) {
-      const entity = event.target;
-      if (this.popupEntity) {
-        this.viewer.entities.remove(this.popupEntity);
-        this.popupEntity = null;
-      }
-      if (this.clickedEntity === entity) {
-        this.clickedEntity = null;
-      } else {
-        this.clickedEntity = entity;
-      }
-      if (!this.clickedEntity || !options) return;
-      const popup2 = this.generateStyle("popup", this.clickedEntity, options);
-      if (popup2) {
-        const position2 = event.pickedPosition ? event.pickedPosition : this.getPositionForEntity(this.clickedEntity);
-        this.popupEntity = this.viewer.entities.add({ position: position2, label: popup2 });
-      }
-    }
-  },
-  created() {
-    this.registerStyle("popup", this.getDefaultPopup);
-  },
-  // Need to be done after created as the activity mixin initializes options in it
-  beforeMount() {
-    if (_$1.has(this, "activityOptions.engine.popup")) {
-      _$1.set(this, "activityOptions.engine.popup", this.convertToCesiumObjects(_$1.get(this, "activityOptions.engine.popup")));
-    }
-  },
-  mounted() {
-    this.$engineEvents.on("click", this.onPopup);
-  },
-  beforeUnmount() {
-    this.$engineEvents.off("click", this.onPopup);
-  }
-};
-const activity = {
-  methods: {
-    async initializeGlobe(container, token) {
-      if (this.viewer) return;
-      this.setupGlobe(container, token);
-      await this.initialize();
-      this.viewer.camera.moveEnd.addEventListener(this.storeView);
-    },
-    finalizeGlobe() {
-      this.viewer.camera.moveEnd.removeEventListener(this.storeView);
-    },
-    storeView() {
-      if (typeof this.storeContext === "function") this.storeContext("view");
-    },
-    onGlobeResized(size) {
-      if (this.observe) {
-        this.refreshGlobe();
-        if (this.globeContainer) {
-          this.engineContainerWidth = this.globeContainer.getBoundingClientRect().width;
-          this.engineContainerHeight = this.globeContainer.getBoundingClientRect().height;
-        }
-      }
-    },
-    onToggleVr() {
-      if (this.viewer.scene.useWebVR) {
-        if (Fullscreen$1.fullscreen) Fullscreen$1.exitFullscreen();
-        this.viewer.scene.useWebVR = false;
-      } else {
-        if (!Fullscreen$1.fullscreen) Fullscreen$1.requestFullscreen(document.body);
-        this.viewer.scene.useWebVR = true;
-      }
-    }
-  },
-  created() {
-    this.engine = "cesium";
-    this.observe = true;
-  },
-  mounted() {
-  },
-  beforeUnmount() {
-    this.observe = false;
-    this.finalizeGlobe();
-  }
-};
-const opendapLayers = {
-  methods: {
-    createCesiumOpendapLayer(options) {
-      const cesiumOptions = options.cesium;
-      if (cesiumOptions.type !== "opendap") return;
-      const urlPromise = async () => {
-        const accessToken = await api.passport.getJWT();
-        const url = new Resource({
-          url: "http://localhost:8081/api/daptiles/tileset.json",
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          },
-          queryParameters: {
-            file: "mf-arpege-01/2019/06/15/11360000000.20190615180000.grib",
-            query: "Temperature_height_above_ground",
-            dimensions: JSON.stringify({ time2: 0, height_above_ground1: 0 }),
-            latitude: "lat",
-            longitude: "lon"
-          }
-        });
-        return url;
-      };
-      const tileset = new Cesium3DTileset({
-        url: urlPromise
-        // url: 'http://127.0.0.1:3000/tileset.json?file=mf-arpege-05/2019/06/16/18/T6086_G_T_Sol_20190616180000.grib&variable=Temperature_surface&time=0',
-        // shadows: Cesium.ShadowMode.DISABLED,
-        // classificationType: Cesium.ClassificationType.CESIUM_3D_TILE,
-        // url: Cesium.IonResource.f ffromAssetId(5741)
-        // debugShowBoundingVolume: true,
-        // debugShowUrl: true
-      });
-      return tileset;
-    }
-  },
-  created() {
-    this.registerCesiumConstructor(this.createCesiumOpendapLayer);
-  }
-};
-const globeMixins = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  activity,
-  baseGlobe,
-  fileLayers,
-  geojsonLayers,
-  opendapLayers,
   popup,
   style,
+  tiledMeshLayers,
+  tiledWindLayers,
   tooltip
 }, Symbol.toStringTag, { value: "Module" }));
-const utils_all = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const mixins = Object.assign({}, commonMixins, { map: mapMixins });
+const map = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  get Cesium() {
-    return Cesium;
-  },
-  CesiumEntityTypes,
-  CesiumStyleMappings,
-  CesiumStyleOptions,
-  DefaultStyle,
-  GeoJsonCesiumLayerFilters,
-  GeoJsonLeafletLayerFilters,
-  IconStyleToSimpleStyle,
-  LeafletEvents,
-  LeafletStyleMappings,
-  LineStyleTemplateMappings,
-  LineStyleToSimpleStyle,
-  PointStyleTemplateMappings,
-  PointStyleToSimpleStyle,
-  PolygonStyleTemplateMappings,
-  PolygonStyleToSimpleStyle,
-  SimpleStyleNumbers,
-  SimpleStyleToLineStyle,
-  SimpleStyleToPointStyle,
-  SimpleStyleToPolygonStyle,
-  TouchEvents,
-  bindLeafletEvents,
-  buildGradientPath,
-  cacheView,
-  capture,
-  checkFeatures,
-  computeIdealMaxNativeZoom,
-  convertCesiumHandlerEvent,
-  convertEntitiesToGeoJson,
-  convertLineStyleToLeafletPath,
-  convertLineStyleToSimpleStyle,
-  convertPointStyleToSimpleStyle,
-  convertPolygonStyleToLeafletPath,
-  convertPolygonStyleToSimpleStyle,
-  convertSimpleStyleColors,
-  convertSimpleStyleToLineStyle,
-  convertSimpleStyleToPointStyle,
-  convertSimpleStyleToPolygonStyle,
-  convertStyle,
-  convertToCesiumFromSimpleStyle,
-  convertToCesiumFromStyle,
-  convertToCesiumObjects,
-  convertToLeafletFromSimpleStyleSpec,
-  coordinatesToGeoJSON,
-  createCesiumObject,
-  createFeatures,
-  createMarkerFromPointStyle,
-  createOfflineServices,
-  createPrimitiveWithMovingTexture,
-  editFeaturesGeometry,
-  editFeaturesProperties,
-  editFeaturesStyle,
-  editFilterStyle,
-  editLayerStyle,
-  fetchGeoJson,
-  filterGeocoders,
-  filterQueryToConditions,
-  formatForwardGeocodingResult,
-  formatUserCoordinates,
-  generateLayerDefinition,
-  generatePropertiesSchema,
-  generateStyleTemplates,
-  getBaseQueryForFeatures,
-  getCatalogProjectQuery,
-  getCategories,
-  getDefaultLineStyle,
-  getDefaultPointStyle,
-  getDefaultPolygonStyle,
-  getDefaultStyleFromTemplates,
-  getFeatureId,
-  getFeatureLabel,
-  getFeatureStyleType,
-  getFeaturesFromQuery,
-  getFeaturesQuery,
-  getFeaturesQueryInterval,
-  getFeaturesUpdateInterval,
-  getFilterQueryForFeatures,
-  getForecastTimeSeries,
-  getGeoJsonFeatures,
-  getHtmlTable,
-  getLayers,
-  getLayersByCategory,
-  getLayersBySublegend,
-  getLineSimpleStyle,
-  getMeasureForFeature,
-  getMeasureForFeatureBaseQuery,
-  getMeasureForFeatureFromQuery,
-  getMeasureForFeatureQuery,
-  getMeasureTimeSeries,
-  getNearestTime,
-  getOrphanLayers,
-  getParentTileInTileSet,
-  getPointSimpleStyle,
-  getPolygonSimpleStyle,
-  getPrimitivesForEntity,
-  getProbeFeatures,
-  getShapeFromLineStyle,
-  getShapeFromPointStyle,
-  getShapeFromPolygonStyle,
-  getSortQueryForFeatures,
-  getSublegends,
-  getTextTable,
-  getTimeInterval,
-  getUpdateFeatureFunction,
-  getUpdatedLayerLegend,
-  getViews,
-  hasFeatureSchema,
-  hasUnitInCesiumLayerTemplate,
-  hasUnitInLeafletLayerTemplate,
-  isFeatureInQueryInterval,
-  isFeatureLayer,
-  isInMemoryLayer,
-  isLayerCachable,
-  isLayerCached,
-  isLayerDataEditable,
-  isLayerEditable,
-  isLayerFilterEditable,
-  isLayerHighlightable,
-  isLayerProbable,
-  isLayerRemovable,
-  isLayerSelectable,
-  isLayerStorable,
-  isLayerStyleEditable,
-  isMeasureLayer,
-  isTerrainLayer,
-  isUserLayer,
-  key2tile: key2tile$1,
-  listenToFeaturesServiceEventsForLayer,
-  parseCoordinates,
-  processFeatures,
-  removeFeatures,
-  removeLayer,
-  saveGeoJsonLayer,
-  saveLayer,
-  setBaseLayerCached,
-  setEngineJwt,
-  setGeojsonLayerCached,
-  setLayerCached,
-  setLayerUncached,
-  setPMTilesLayerCached,
-  setUrlJwt,
-  shouldSkipFeaturesUpdate,
-  tile2key: tile2key$1,
-  tileSetContainsParent,
-  transformFeatures,
-  unbindLeafletEvents,
-  uncacheView,
-  unlistenToFeaturesServiceEventsForLayer,
-  updateCesiumGeoJsonEntity,
-  updateLayerWithFiltersStyle
-}, Symbol.toStringTag, { value: "Module" }));
-function distance(from, to, options) {
-  if (options === void 0) {
-    options = {};
-  }
-  var coordinates1 = getCoord(from);
-  var coordinates2 = getCoord(to);
-  var dLat = degreesToRadians(coordinates2[1] - coordinates1[1]);
-  var dLon = degreesToRadians(coordinates2[0] - coordinates1[0]);
-  var lat1 = degreesToRadians(coordinates1[1]);
-  var lat2 = degreesToRadians(coordinates2[1]);
-  var a = Math.pow(Math.sin(dLat / 2), 2) + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
-  return radiansToLength(2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)), options.units);
-}
-function length(geojson, options) {
-  if (options === void 0) {
-    options = {};
-  }
-  return segmentReduce(geojson, function(previousValue, segment) {
-    var coords = segment.geometry.coordinates;
-    return previousValue + distance(coords[0], coords[1], options);
-  }, 0);
-}
-function flatten(geojson) {
-  if (!geojson) throw new Error("geojson is required");
-  var results = [];
-  flattenEach(geojson, function(feature2) {
-    results.push(feature2);
-  });
-  return featureCollection(results);
-}
-function fetchProfileDataset(feature2, distanceUnit, altitudeUnit) {
-  const geometry = _$1.get(feature2, "geometry.type");
-  if (geometry !== "LineString" && geometry !== "MultiLineString") {
-    return [];
-  }
-  const linestrings = geometry === "MultiLineString" ? flatten(feature2).features : [feature2];
-  const dataset = [];
-  const segments = [];
-  let allCoordsHaveAltitude = true;
-  let curvilinearOffset = 0;
-  let curvilinearIndex = 0;
-  for (let i = 0; i < linestrings.length && allCoordsHaveAltitude; ++i) {
-    const currentLine = linestrings[i];
-    const dataUnit = _$1.get(currentLine, "properties.altitudeUnit", "m");
-    segments.push({ numPoints: currentLine.geometry.coordinates.length });
-    coordEach(currentLine, (coord, coordIdx) => {
-      if (dataset.length && coordIdx === 0) return;
-      if (coord.length > 2) dataset.push({ x: 0, y: Units.convert(coord[2], dataUnit, altitudeUnit) });
-      else allCoordsHaveAltitude = false;
-    });
-    if (allCoordsHaveAltitude) {
-      segmentEach(currentLine, (segment) => {
-        if (curvilinearIndex === 0) dataset[0].x = 0;
-        curvilinearOffset += length(segment, { units: "kilometers" }) * 1e3;
-        curvilinearIndex += 1;
-        dataset[curvilinearIndex].x = Units.convert(curvilinearOffset, "m", distanceUnit);
-      });
-    }
-  }
-  return { dataset: allCoordsHaveAltitude ? dataset : [], segments };
-}
-function asArray(val) {
-  return Array.isArray(val) || val === void 0 ? val : [val];
-}
-async function queryElevation(endpoint, feature2, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor } = {}) {
-  const geometry = _$1.get(feature2, "geometry.type");
-  if (geometry !== "LineString" && geometry !== "MultiLineString") {
-    return [];
-  }
-  const queries = [];
-  const resolution = asArray(_$1.get(feature2, "properties.elevationProfile.resolution", defaultResolution));
-  const resolutionUnit = _$1.get(feature2, "properties.elevationProfile.resolutionUnit", defaultResolutionUnit);
-  const corridor = noCorridor ? void 0 : asArray(_$1.get(feature2, "properties.elevationProfile.corridorWidth"));
-  const corridorUnit = noCorridor ? void 0 : _$1.get(feature2, "properties.elevationProfile.corridorWidthUnit", "m");
-  if (geometry === "MultiLineString") {
-    flatten(feature2).features.forEach((feat, index2) => {
-      queries.push({
-        profile: feat,
-        resolution: Units.convert(resolution[index2], resolutionUnit, "m"),
-        corridorWidth: corridor ? Units.convert(corridor[index2], corridorUnit, "m") : void 0
-      });
-    });
-  } else {
-    queries.push({
-      profile: feature2,
-      resolution: Units.convert(resolution[0], resolutionUnit, "m"),
-      corridorWidth: corridor ? Units.convert(corridor[0], corridorUnit, "m") : void 0
-    });
-  }
-  const fetchs = [];
-  for (const query of queries) {
-    fetchs.push(fetch(endpoint + `?resolution=${query.resolution}` + (query.corridorWidth !== void 0 ? `&corridorWidth=${query.corridorWidth}` : ""), {
-      method: "POST",
-      mode: "cors",
-      body: JSON.stringify(query.profile),
-      headers: Object.assign({ "Content-Type": "application/json" }, additionalHeaders)
-    }));
-  }
-  let responses;
-  try {
-    responses = await Promise.all(fetchs);
-    for (const res of responses) {
-      if (!res.ok) throw new Error("Fetch failed");
-    }
-  } catch (error) {
-    return [];
-  }
-  for (let i = 0; i < queries.length; ++i) {
-    const q = queries[i];
-    q.elevation = await responses[i].json();
-    q.length = length(q.profile, { units: "kilometers" }) * 1e3;
-    q.resolution = Units.convert(resolution[i], resolutionUnit, distanceUnit);
-    q.corridorWidth = corridor ? Units.convert(corridor[i], corridorUnit, distanceUnit) : void 0;
-    q.length = Units.convert(q.length, "m", distanceUnit);
-    for (const point2 of q.elevation.features) {
-      point2.properties.z = Units.convert(point2.properties.z, "m", altitudeUnit);
-      point2.properties.t = Units.convert(point2.properties.t, "m", distanceUnit);
-    }
-  }
-  return queries;
-}
-function addSecurityMargin(feature2, queries, altitudeUnit) {
-  if (queries.length === 0) return;
-  const securityMargin = _$1.get(feature2, "properties.elevationProfile.securityMargin");
-  if (securityMargin === void 0) return;
-  const securityMarginUnit = _$1.get(feature2, "properties.elevationProfile.securityMarginUnit", "m");
-  const geometry = _$1.get(feature2, "geometry.type");
-  if (geometry === "MultiLineString") {
-    flatten(feature2).features.forEach((feat, index2) => {
-      queries[index2].securityMargin = Units.convert(securityMargin[index2], securityMarginUnit, altitudeUnit);
-    });
-  } else {
-    queries[0].securityMargin = Units.convert(securityMargin, securityMarginUnit, altitudeUnit);
-  }
-}
-async function fetchElevation(endpoint, feature2, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor, noSecurityMargin, minElevationValue } = {}) {
-  const queries = await queryElevation(endpoint, feature2, distanceUnit, altitudeUnit, { additionalHeaders, defaultResolution, defaultResolutionUnit, noCorridor });
-  if (!noSecurityMargin) {
-    addSecurityMargin(feature2, queries, altitudeUnit);
-  }
-  if (minElevationValue !== void 0) {
-    for (let i = 0; i < queries.length; ++i) {
-      const q = queries[i];
-      for (const point2 of q.elevation.features) {
-        if (point2.properties.z < minElevationValue) {
-          point2.properties.z = 0;
-        }
-      }
-    }
-  }
-  return queries;
-}
-function extractElevation(queries, { noDataset, noGeojson, queryParametersInDataset, queryParametersInGeojson } = {}) {
-  const dataset = [];
-  const allPoints = [];
-  let curvilinearOffset = 0;
-  for (let i = 0; i < queries.length; ++i) {
-    const zOffset = queries[i].securityMargin ? queries[i].securityMargin : 0;
-    const r = queries[i].resolution;
-    const w = queries[i].corridorWidth;
-    const s = queries[i].securityMargin;
-    queries[i].elevation.features.forEach((p, index2) => {
-      if (i !== 0 && index2 === 0) return;
-      const t = curvilinearOffset + p.properties.t;
-      const e = zOffset + p.properties.z;
-      if (!noDataset) {
-        const datasetPoint = { x: t, y: e };
-        if (queryParametersInDataset) {
-          datasetPoint.elevation = { resolution: r };
-          if (w !== void 0) datasetPoint.elevation.corridorWidth = w;
-          if (s !== void 0) datasetPoint.elevation.securityMargin = s;
-        }
-        dataset.push(datasetPoint);
-      }
-      if (!noGeojson) {
-        const props2 = { z: e, t };
-        if (queryParametersInDataset) {
-          props2.resolution = r;
-          if (w !== void 0) props2.corridorWidth = w;
-          if (s !== void 0) props2.securityMargin = s;
-        }
-        allPoints.push(point(p.geometry.coordinates, props2));
-      }
-    });
-    curvilinearOffset += queries[i].length;
-  }
-  const geojson = noGeojson ? {} : featureCollection(allPoints);
-  return { dataset, geojson };
-}
-const elevationUtils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  extractElevation,
-  fetchElevation,
-  fetchProfileDataset
-}, Symbol.toStringTag, { value: "Module" }));
-const Capture = {
-  processing: false,
-  async process(values) {
-    if (this.processing) Notify.create({ type: "negative", message: i18n.t("KCapture.ERROR_MESSAGE") });
-    else {
-      this.processing = true;
-      await capture(values);
-      this.processing = false;
-    }
-  }
-};
-const mixins = Object.assign({}, commonMixins, { map: mapMixins, globe: globeMixins });
-const index = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  CanvasDrawContext,
-  Capture,
   Geolocation,
   Navigator,
   Planets,
-  composables: index$1,
+  composables: index,
   dap: opendapUtils,
   default: init,
-  elevationUtils,
   errors,
   grid,
-  hooks: index$2,
+  hooks: index$1,
   mixins,
   permissions,
   setupApi,
-  utils: utils_all
+  utils: utils_map
 }, Symbol.toStringTag, { value: "Module" }));
 const kdk = { core: initialize, map: init };
 export {
   kdk as default,
-  index$3 as kdkCore,
-  index as kdkMap
+  index$2 as kdkCore,
+  map as kdkMap
 };

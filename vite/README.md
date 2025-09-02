@@ -47,9 +47,18 @@ http-server --cors --port 3000
 
 ## Library build
 
-To build the KDK client-side library run `yarn build:lib`.
+You can build the KDK client-side libraries like this:
+```bash
+// 2D capabilities only, ../client/kdk.client.map.js file
+yarn build:lib
+// 2D/3D capabilities
+yarn build:lib:globe, ../client/kdk.client.js file
+```
 
 You should then retrieve the library in the KDK :open_file_folder: [client](../client) folder and put it into an external application.
+
+> [!NOTE]
+> You can build unminified versions for debug purpose by defining the `DEBUG` environment variable.
 
 ## Changes and remaining issues
 

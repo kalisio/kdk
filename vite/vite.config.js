@@ -32,7 +32,7 @@ const plugins = [
 const alias = {}
 
 // Use the right index and embed Cesium resources if required
-if (process.env.GLOBE) {
+if (process.env.GLOBE && (process.env.BUILD_MODE === 'app')) {
   plugins.push(viteStaticCopy({
     targets: [
       { src: `${cesiumSource}/ThirdParty`, dest: cesiumBaseUrl },
@@ -51,7 +51,7 @@ if (process.env.GLOBE) {
 const build = {
   outDir: './dist',
   minify: !process.env.DEBUG,
-  emptyOutDir: true,
+  emptyOutDir: (process.env.BUILD_MODE === 'app'),
   rollupOptions: {
     // Make sure to externalize deps that shouldn't be bundled into your library
     external: [],
@@ -70,10 +70,10 @@ if (process.env.BUILD_MODE) {
 
 if (process.env.BUILD_MODE === 'lib') {
   build.lib = {
-    entry: resolve(__dirname, '../client.js'),
+    entry: (process.env.GLOBE ? resolve(__dirname, '../client.js') : resolve(__dirname, '../client.map.js')),
     name: 'KDK',
     // the proper extensions will be added
-    fileName: 'kdk.client',
+    fileName: (process.env.GLOBE ? 'kdk.client' : 'kdk.client.map'),
   }
   // Generate kdk cliet distribution files
   build.outDir = '../client'
