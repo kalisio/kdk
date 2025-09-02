@@ -32,15 +32,17 @@ const plugins = [
 const alias = {}
 
 // Use the right index and embed Cesium resources if required
-if (process.env.GLOBE && (process.env.BUILD_MODE === 'app')) {
-  plugins.push(viteStaticCopy({
-    targets: [
-      { src: `${cesiumSource}/ThirdParty`, dest: cesiumBaseUrl },
-      { src: `${cesiumSource}/Workers`, dest: cesiumBaseUrl },
-      { src: `${cesiumSource}/Assets`, dest: cesiumBaseUrl },
-      { src: `${cesiumSource}/Widgets`, dest: cesiumBaseUrl },
-    ],
-  }))
+if (process.env.GLOBE) {
+  if (process.env.BUILD_MODE === 'app') {
+    plugins.push(viteStaticCopy({
+      targets: [
+        { src: `${cesiumSource}/ThirdParty`, dest: cesiumBaseUrl },
+        { src: `${cesiumSource}/Workers`, dest: cesiumBaseUrl },
+        { src: `${cesiumSource}/Assets`, dest: cesiumBaseUrl },
+        { src: `${cesiumSource}/Widgets`, dest: cesiumBaseUrl },
+      ],
+    }))
+  }
   const html = fs.readFileSync('./index_with_globe.html', 'utf8')
   fs.writeFileSync('./index.html', html, { encoding: 'utf8' })
 } else {

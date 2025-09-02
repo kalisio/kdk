@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { kdkCore, kdkMap } from '../client.js'
+import { kdkCore, kdkMap } from '../client.map.js'
 
 const name = 'mapActivity'
 const baseActivityMixin = kdkCore.mixins.baseActivity(name)

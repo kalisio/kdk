@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { kdkCore } from '../client.js'
+import { kdkCore } from '../client.map.js'
 import MapActivity from './MapActivity.vue'
 
 let map, globe, updatingMap, updatingGlobe

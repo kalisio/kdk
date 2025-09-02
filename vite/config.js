@@ -1,5 +1,5 @@
 const KANO_API_PREFIX = '/api'
-const KANO_DOMAIN = 'http://192.168.1.25:8086'
+const KANO_DOMAIN = 'http://localhost:8086' // 'https://kano.dev.kalisio.xyz' 
 
 // Map engine configuration
 const mapEngine = {
