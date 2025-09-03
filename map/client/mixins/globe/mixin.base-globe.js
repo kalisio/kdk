@@ -6,9 +6,11 @@ import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceE
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
          exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
          DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
+// We need to import cesium as an object to dynamically get constructors
+import * as Cesium from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
-import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
+import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
 
