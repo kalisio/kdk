@@ -121,11 +121,26 @@ if (process.env.BUILD_MODE === 'lib') {
   })
 }
 
+// List of warnings to hide because we use newer Vite preprocessor with an old Quasar version
+const silenceDeprecations = ['import', 'slash-div', 'global-builtin', 'mixed-decls', 'color-functions']
+
 export default defineConfig({
   plugins,
   build,
   define: {
     CESIUM_BASE_URL: JSON.stringify(`/${cesiumBaseUrl}`)
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations,
+        quietDeps: true
+      },
+      sass: {
+        silenceDeprecations,
+        quietDeps: true
+      }
+    },
   },
   resolve: {
     alias
