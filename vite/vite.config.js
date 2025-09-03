@@ -33,7 +33,7 @@ const alias = {}
 
 // Use the right index and embed Cesium resources if required
 if (process.env.GLOBE) {
-  if (process.env.BUILD_MODE === 'app') {
+  if (process.env.BUILD_MODE !== 'lib') {
     plugins.push(viteStaticCopy({
       targets: [
         { src: `${cesiumSource}/ThirdParty`, dest: cesiumBaseUrl },
