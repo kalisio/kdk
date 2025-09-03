@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--KWelcome /-->
+    <div v-show="false" id="globe-credit"/>
     <q-btn color="primary" class="fixed-top-left" style="z-index: 1" :label="synchronize ? 'UNSYNC VIEWS' : 'SYNC VIEWS'" @click="onSynchronize"/>
     <Suspense>
       <div>

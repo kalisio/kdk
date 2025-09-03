@@ -95,7 +95,7 @@ const globeEngine = {
     fullscreenButton: false,
     animation: false,
     timeline: false,
-    //creditContainer: 'globe-credit',
+    creditContainer: 'globe-credit',
     depthTestAgainstTerrain: true,
     cameraChangedEventPercentage: 0.2
   },
