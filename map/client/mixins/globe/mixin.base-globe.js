@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import { EventBus, getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
+         exportKml, VerticalOrigin, Transforms, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
          DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
 // We need to import cesium as an object to dynamically get constructors
 import * as Cesium from 'cesium'

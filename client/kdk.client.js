@@ -31,6 +31,7 @@ import chroma from "chroma-js";
 import L$1 from "leaflet";
 import require$$1 from "iso8601-js-period";
 import { kml, gpx } from "@tmcw/togeojson";
+import * as Cesium$1 from "cesium";
 import { Color, exportKml, buildModuleUrl, Math as Math$1, Cartographic, Entity, EntityCollection, BoundingSphere, Ellipsoid, PinBuilder, VerticalOrigin, Cartesian3, DebugModelMatrixPrimitive, HeadingPitchRoll, HeadingPitchRange, Transforms, Matrix4, Matrix3, DebugCameraPrimitive, Rectangle, Cesium3DTileset, ImageryLayer, ScreenSpaceEventType, ScreenSpaceEventHandler, Ion, Viewer, viewerCesiumInspectorMixin, GeoJsonDataSource, ConstantProperty, ColorMaterialProperty, viewerDragDropMixin, Fullscreen as Fullscreen$1, Resource } from "cesium";
 import jwtdecode from "jwt-decode";
 import feathers from "@feathersjs/client";
@@ -34790,11 +34791,6 @@ const mapMixins = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePro
   tiledWindLayers,
   tooltip: tooltip$1
 }, Symbol.toStringTag, { value: "Module" }));
-let Cesium;
-async function loadCesium() {
-  Cesium = await import("cesium");
-}
-loadCesium();
 function createWallGeometry(positions, minimumHeights = [], maximumHeights = []) {
   if (!positions || positions.length < 2) return;
   minimumHeights = minimumHeights || Array(positions.length).fill(0);
@@ -35365,7 +35361,7 @@ function createCesiumObject() {
   const args = Array.from(arguments);
   const constructor = args[0];
   args.shift();
-  const Class = _$1.get(Cesium, constructor);
+  const Class = _$1.get(Cesium$1, constructor);
   let object;
   if (typeof Class === "function") {
     try {
@@ -35478,8 +35474,8 @@ const baseGlobe = {
         const undergroundColor = _$1.get(this.viewerOptions, "undergroundColor");
         this.viewer.scene.globe.undergroundColor = undergroundColor ? createCesiumObject("Color", ...undergroundColor) : Color.BLACK;
       }
-      if (!_$1.has(Cesium.Primitive.prototype, "pickIds")) {
-        Object.defineProperties(Cesium.Primitive.prototype, {
+      if (!_$1.has(Cesium$1.Primitive.prototype, "pickIds")) {
+        Object.defineProperties(Cesium$1.Primitive.prototype, {
           pickIds: {
             get: function() {
               return this._pickIds;
@@ -35547,19 +35543,19 @@ const baseGlobe = {
       } else {
         provider = cesiumOptions.type;
         createFunction = `create${provider}Async`;
-        if (_$1.get(Cesium, createFunction)) {
+        if (_$1.get(Cesium$1, createFunction)) {
           provider = createFunction;
         } else {
           isImageryProvider = true;
           provider += "ImageryProvider";
           createFunction = `${provider}.fromUrl`;
-          if (_$1.get(Cesium, createFunction)) {
+          if (_$1.get(Cesium$1, createFunction)) {
             provider = createFunction;
             args = [cesiumOptions.url].concat([_$1.omit(cesiumOptions, ["url"])]);
           }
         }
       }
-      const Constructor = _$1.get(Cesium, provider);
+      const Constructor = _$1.get(Cesium$1, provider);
       if (!Constructor) return;
       if (provider === createFunction) provider = await Constructor(...args);
       else provider = new Constructor(...args);
@@ -35841,7 +35837,7 @@ const baseGlobe = {
         if (this.cameraDebug) this.viewer.scene.primitives.remove(this.cameraDebug);
         this.cameraDebug = new DebugCameraPrimitive({
           camera: this.viewer.camera,
-          color: Cesium.Color.YELLOW,
+          color: Cesium$1.Color.YELLOW,
           updateOnChange: false
         });
         this.viewer.scene.primitives.add(this.cameraDebug);
@@ -36105,7 +36101,7 @@ const baseGlobe = {
       this.$engineEvents.emit(event.originalEvent.name, options, emittedEvent);
     },
     getCameraEllipsoidTarget() {
-      const windowPosition = new Cesium.Cartesian2(this.viewer.container.clientWidth / 2, this.viewer.container.clientHeight / 2);
+      const windowPosition = new Cesium$1.Cartesian2(this.viewer.container.clientWidth / 2, this.viewer.container.clientHeight / 2);
       const pickedPosition = this.viewer.camera.pickEllipsoid(windowPosition);
       if (!pickedPosition) return null;
       const pickedPositionCartographic = this.viewer.scene.globe.ellipsoid.cartesianToCartographic(pickedPosition);
@@ -36156,7 +36152,7 @@ const baseGlobe = {
         }
     }
     `;
-            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({ fragmentShader: fs }));
+            stage = this.viewer.scene.postProcessStages.add(new Cesium$1.PostProcessStage({ fragmentShader: fs }));
             stage.selected = [];
             this.cesiumPostProcessStages[effect] = stage;
           }
@@ -37070,9 +37066,6 @@ const globeMixins = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineP
 }, Symbol.toStringTag, { value: "Module" }));
 const utils_all = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  get Cesium() {
-    return Cesium;
-  },
   CesiumEntityTypes,
   CesiumStyleMappings,
   CesiumStyleOptions,

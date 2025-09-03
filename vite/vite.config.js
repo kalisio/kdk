@@ -71,11 +71,12 @@ if (process.env.BUILD_MODE) {
 }
 
 if (process.env.BUILD_MODE === 'lib') {
+  const suffix = (process.env.DEBUG ? '' : '.min')
   build.lib = {
     entry: (process.env.GLOBE ? resolve(__dirname, '../client.js') : resolve(__dirname, '../client.map.js')),
     name: 'KDK',
     // the proper extensions will be added
-    fileName: (process.env.GLOBE ? 'kdk.client' : 'kdk.client.map'),
+    fileName: (process.env.GLOBE ? 'kdk.client' : 'kdk.client.map') + suffix,
   }
   // Generate kdk cliet distribution files
   build.outDir = '../client'

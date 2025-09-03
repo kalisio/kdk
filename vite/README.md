@@ -47,18 +47,28 @@ http-server --cors --port 3000
 
 ## Library build
 
+You can retrieve the library files in the KDK :open_file_folder: [client](../client) folder and put it into an external application, to avoid the burden of importing [Cesium](https://cesium.com/) in applications not requiring 3D capabilities the following files are available:
+* 2D capabilities only - minified: `kdk.client.map.min.js`
+* 2D/3D capabilities - minified: `kdk.client.min.js`
+* 2D capabilities only - unminified, `kdk.client.map.js`
+* 2D/3D capabilities - unminified: `kdk.client.js`
+
 You can build the KDK client-side libraries like this:
 ```bash
-// 2D capabilities only, ../client/kdk.client.map.js file
+// 2D/3D capabilities - minified/unminified
+yarn build
+// 2D capabilities only - minified
 yarn build:lib
-// 2D/3D capabilities
-yarn build:lib:globe, ../client/kdk.client.js file
+// 2D/3D capabilities - minified
+yarn build:lib:globe
+// 2D capabilities only - unminified
+yarn build:lib:debug
+// 2D/3D capabilities - unminified
+yarn build:lib:globe:debug
 ```
 
-You should then retrieve the library in the KDK :open_file_folder: [client](../client) folder and put it into an external application.
-
 > [!NOTE]
-> You can build unminified versions for debug purpose by defining the `DEBUG` environment variable.
+> Unminified versions for debug purpose are build by defining the `DEBUG` environment variable.
 
 ## Changes and remaining issues
 

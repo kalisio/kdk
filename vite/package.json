@@ -37,8 +37,11 @@
   "scripts": {
     "build:app": "cross-env BUILD_MODE=app vite build",
     "build:app:globe": "cross-env BUILD_MODE=app GLOBE=1 vite build",
+    "build:lib:debug": "cross-env BUILD_MODE=lib DEBUG=1 vite build",
+    "build:lib:globe:debug": "cross-env BUILD_MODE=lib GLOBE=1 DEBUG=1 vite build",
     "build:lib": "cross-env BUILD_MODE=lib vite build",
     "build:lib:globe": "cross-env BUILD_MODE=lib GLOBE=1 vite build",
+    "build:libs": "npm run build:lib:debug && npm run build:lib:globe:debug && npm run build:lib && npm run build:lib:globe",
     "dev": "vite dev",
     "dev:globe": "cross-env GLOBE=1 vite dev"
   },
