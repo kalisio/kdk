@@ -35,7 +35,7 @@ const props = defineProps({
       return value > 0 && value < 500
     }
   },
-  selectable: {
+  interactive: {
     type: Boolean,
     default: false
   },
@@ -63,12 +63,12 @@ async function createLocationLayer () {
     name: LocationLayerName,
     type: 'OverlayLayer',
     scope: 'system',
-    isSelectable: props.selectable,
+    isSelectable: false,
     leaflet: {
       type: 'geoJson',
       isVisible: true,
       realtime: true,
-      interactive: props.selectable,
+      interactive: props.interactive,
       style,
       popup: { template: '<%= properties.name %>' }
     },
