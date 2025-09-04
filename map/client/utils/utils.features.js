@@ -404,32 +404,52 @@ export async function getMeasureForFeature (layer, feature, startTime, endTime, 
   return probedLocation
 }
 
+const JstsErrorI18nKeys = [
+  'GEOMETRY_ERROR',
+  'GEOMETRY_REPEATED_POINT',
+  'GEOMETRY_HOLE_OUTSIDE_SHELL',
+  'GEOMETRY_NESTED_HOLES',
+  'GEOMETRY_DISCONNECTED_INTERIOR',
+  'GEOMETRY_SELF_INTERSECTION',
+  'GEOMETRY_RING_SELF_INTERSECTION',
+  'GEOMETRY_NESTED_SHELLS',
+  'GEOMETRY_DUPLICATE_RINGS',
+  'GEOMETRY_TOO_FEW_POINTS',
+  'GEOMETRY_INVALID_COORDINATES',
+  'GEOMETRY_RING_NOT_CLOSED'
+]
+
 export function cleanFeatures (geoJson, precision = 1e-9) {
   let errors = []
+  const geometryTypes = new Set()
   if (geoJson.type === 'Feature') {
     const geometryType = _.get(geoJson, 'geometry.type')
     if (!geometryType) {
       logger.warn('[KDK] feature has undefined geometry')
       return
     }
+    geometryTypes.add(geometryType)
     if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
       const reader = new jsts.io.GeoJSONReader()
-      const writer = new jsts.io.GeoJSONWriter() 
+      const writer = new jsts.io.GeoJSONWriter()
       const geometry = reader.read(geoJson.geometry)
       const validator = new jsts.operation.valid.IsValidOp(geometry)
       if (!validator.isValid()) {
-        errors.push(validator.getValidationError())
+        errors.push({ error: 'errors.' + JstsErrorI18nKeys[validator.getValidationError()._errorType], identifier: _.get(geoJson, 'properties.id', _.get(geoJson, 'properties.name', _.get(geoJson, 'properties.label'))) })
         const correctedGeometry = geometry.buffer(precision).buffer(-precision)
         geoJson.geometry = writer.write(correctedGeometry)
       }
     }
   } else {
     _.forEach(geoJson.features, feature => {
-      let errs = cleanFeatures(feature)
+      const { errors: errs, geometryTypes: types } = cleanFeatures(feature)
       if (errs) errors = _.concat(errors, errs)
+      if (types) {
+        _.forEach(types, type => geometryTypes.add(type))
+      }
     })
   }
-  return errors
+  return { errors, geometryTypes: Array.from(geometryTypes) }
 }
 
 export function checkFeatures (geoJson, options = {

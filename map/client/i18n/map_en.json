@@ -34,7 +34,19 @@
     "INVALID_GEOJSON_FILE": "{file} is not a valid GeoJSON file",
     "INVALID_GEOJSON_CRS": "{file} has an unsupported Coordinates Reference System (CRS)",
     "INVALID_GPX_FILE": "{file} is not a valid GPX file",
-    "INVALID_KML_FILE": "{file} is not a valid KML file"
+    "INVALID_KML_FILE": "{file} is not a valid KML file",
+    "GEOMETRY_ERROR": "<b>{total}</b> topology validation errors",
+    "GEOMETRY_REPEATED_POINT": "<b>{total}</b> errors of <b>repeated points</b>",
+    "GEOMETRY_HOLE_OUTSIDE_SHELL": "<b>{total}</b> errors of <b>holes outside shell</b>",
+    "GEOMETRY_NESTED_HOLES": "<b>{total}</b> errors of <b>nested holes</b>",
+    "GEOMETRY_DISCONNECTED_INTERIOR": "<b>{total}</b> errors of <b>disconnected interiors</b>",
+    "GEOMETRY_SELF_INTERSECTION": "<b>{total}</b> errors of <b>self-intersection</b>",
+    "GEOMETRY_RING_SELF_INTERSECTION": "<b>{total}</b> errors of <b>ring self-intersection</b>",
+    "GEOMETRY_NESTED_SHELLS": "<b>{total}</b> errors of <b>nested shells</b>",
+    "GEOMETRY_DUPLICATE_RINGS": "<b>{total}</b> errors of <b>duplicate rings</b>",
+    "GEOMETRY_TOO_FEW_POINTS": "<b>{total}</b> errors of <b>too few distinct points in geometry component</b>",
+    "GEOMETRY_INVALID_COORDINATES": "<b>{total}</b> errors of <b>invalid coordinates</b>",
+    "GEOMETRY_RING_NOT_CLOSED": "<b>{total}</b> errors of <b>ring not closed</b>"
   },
   "utils": {
     "layers": {

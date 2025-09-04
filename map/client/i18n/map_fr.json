@@ -34,7 +34,19 @@
     "INVALID_GEOJSON_FILE": "{file} n'est pas un fichier GeoJSON valide",
     "INVALID_GEOJSON_CRS": "{file} a un système de coordonnées (CRS) non supporté",
     "INVALID_GPX_FILE": "{file} n'est pas un fichier GPX valide",
-    "INVALID_KML_FILE": "{file} n'est pas un fichier KML valide"
+    "INVALID_KML_FILE": "{file} n'est pas un fichier KML valide",
+    "GEOMETRY_ERROR": "<b>{total}</b> erreurs de validation de la topologie",
+    "GEOMETRY_REPEATED_POINT": "<b>{total}</b> erreurs de <b>points répétés</b>",
+    "GEOMETRY_HOLE_OUTSIDE_SHELL": "<b>{total}</b> erreurs de <b>trous à l'extérieur de la coquille</b>",
+    "GEOMETRY_NESTED_HOLES": "<b>{total}</b> erreurs de <b>trous imbriqués</b>",
+    "GEOMETRY_DISCONNECTED_INTERIOR": "<b>{total}</b> erreurs d'<b>intérieurs déconnectés</b>",
+    "GEOMETRY_SELF_INTERSECTION": "<b>{total}</b> erreurs d'<b>auto-intersection</b>",
+    "GEOMETRY_RING_SELF_INTERSECTION": "<b>{total}</b> erreurs d'<b>auto-intersection de l'anneau</b>",
+    "GEOMETRY_NESTED_SHELLS": "<b>{total}</b> erreurs de <b>coquilles imbriquées</b>",
+    "GEOMETRY_DUPLICATE_RINGS": "<b>{total}</b> erreurs d'<b>anneaux dupliqués</b>",
+    "GEOMETRY_TOO_FEW_POINTS": "<b>{total}</b> erreurs de <b>manque de points distincts</b>",
+    "GEOMETRY_INVALID_COORDINATES": "<b>{total}</b> erreurs de <b>coordonnées invalides</b>",
+    "GEOMETRY_RING_NOT_CLOSED": "<b>{total}</b> erreurs d'<b>anneaux non fermés</b>"
   },
   "utils": {
     "layers": {
