@@ -23,7 +23,7 @@ const location = ref(null)
 const LocationLayerName = uid()
 
 // Props
-defineProps({
+const props = defineProps({
   geocoders: {
     type: Array,
     default: () => []
@@ -34,6 +34,10 @@ defineProps({
     validator: (value) => {
       return value > 0 && value < 500
     }
+  },
+  selectable: {
+    type: Boolean,
+    default: false
   },
   autofocus: {
     type: Boolean,
@@ -59,12 +63,12 @@ async function createLocationLayer () {
     name: LocationLayerName,
     type: 'OverlayLayer',
     scope: 'system',
-    isSelectable: false,
+    isSelectable: props.selectable,
     leaflet: {
       type: 'geoJson',
       isVisible: true,
       realtime: true,
-      interactive: false,
+      interactive: props.selectable,
       style,
       popup: { template: '<%= properties.name %>' }
     },
