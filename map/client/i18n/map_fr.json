@@ -51,9 +51,9 @@
   "utils": {
     "layers": {
       "INVALID_FEATURES_DIALOG_TITLE": "Elements invalides",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {total} éléments dont la géométrie est invalide (e.g. auto-intersection). En conséquence ces éléments seront supprimés avant la sauvegarde.",
-      "DOWNLOAD_INVALID_FEATURES_LABEL": "En sélectionnant cette option vos éléments invalides seront exportés dans un fichier avant l'enregistrement",
-      "INVALID_FEATURES_FILE": "ElementsInvalides.geojson",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Votre couche comporte {total} éléments dont la géométrie est invalide. En conséquence ces éléments seront supprimés avant la sauvegarde.",
+      "INVALID_FEATURES_LIST_ERRORS": "<div class='text-subtitle2 q-mt-xs'>Liste des erreurs : </div><ul class='q-ma-none q-pl-lg'>{errors}</ul>",
+      "INVALID_FEATURES_LIST_FEATURES": " sur les éléments: ",
       "SAVING_LABEL": "Veuillez patienter pendant l'enregistrement des données,</br>{processed} éléments traités sur {total}",
       "SAVE_DIALOG_TITLE": "Tuilage de la couche {layer}",
       "SAVE_DIALOG_MESSAGE": "Votre couche comportant de trop nombreux éléments a été optimisée pour un affichage fluide.</br>En conséquence elle ne sera visible qu'à une échelle locale à partir d'un certain niveau de zoom.",

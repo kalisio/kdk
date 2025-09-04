@@ -4,7 +4,7 @@ import { Notify, Loading, uid } from 'quasar'
 import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
-import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
+import { cleanFeatures, createFeatures, removeFeatures } from './utils.features.js'
 import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
@@ -554,18 +554,35 @@ export function generateLayerDefinition (layerSpec, geoJson) {
 
 export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   // Check for invalid features first
-  const check = checkFeatures(geoJson)
-  if (check.kinks.length > 0) {
+  const { errors } = cleanFeatures(geoJson)
+
+  if (errors.length > 0) {
+    const errorsByKeys = {}
+    _.forEach(errors, error => {
+      if (!_.has(errorsByKeys, error.error)) errorsByKeys[error.error] = { count: 0, features: [] }
+      errorsByKeys[error.error].count++
+      if (error.identifier) errorsByKeys[error.error].features.push(error.identifier)
+    })
+    const errorsList = _.map(errors, error => {
+      const hasIdentifiedFeatures = errorsByKeys[error.error].features.length
+      const errorString = [
+        '<li>',
+        i18n.t(error.error, { total: errorsByKeys[error.error].count }),
+        hasIdentifiedFeatures ? i18n.t('utils.layers.INVALID_FEATURES_LIST_FEATURES') : '',
+        '</li>'
+      ].join('')
+      const sublist = _.map(errorsByKeys[error.error].features, featureIdentifier => {
+        return '<li class="q-ml-lg">' + featureIdentifier + '</li>'
+      }).join('')
+      return errorString + sublist
+    }).join('')
+
     const result = await kCoreUtils.dialog({
-      title: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_TITLE', { total: check.kinks.length }),
-      message: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_MESSAGE', { total: check.kinks.length }),
-      options: {
-        type: 'toggle',
-        model: [],
-        items: [
-          { label: i18n.t('utils.layers.DOWNLOAD_INVALID_FEATURES_LABEL'), value: 'download' }
-        ]
-      },
+      title: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_TITLE', { total: errors.length }),
+      message: [
+        i18n.t('utils.layers.INVALID_FEATURES_DIALOG_MESSAGE', { total: errors.length }),
+        i18n.t('utils.layers.INVALID_FEATURES_LIST_ERRORS', { errors: errorsList })
+      ].join(''),
       html: true,
       ok: {
         label: i18n.t('OK'),
@@ -577,11 +594,6 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
       }
     })
     if (!result.ok) return
-    // Export invalid features if required
-    if (_.get(result, 'data', []).includes('download')) {
-      kCoreUtils.downloadAsBlob(JSON.stringify({ type: 'FeatureCollection', features: check.kinks }),
-        i18n.t('utils.layers.INVALID_FEATURES_FILE'), 'application/json;charset=utf-8;')
-    }
   }
   // Change data source from in-memory to features service
   _.set(layer, 'service', 'features')

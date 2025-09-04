@@ -51,9 +51,9 @@
   "utils": {
     "layers": {
       "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
-      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {total} elements with invalid geometry (e.g. self-intersection). As a consequence they will be removed prior to saving.",
-      "DOWNLOAD_INVALID_FEATURES_LABEL": "By checking this option the invalid features will be exported to a file before saving",
-      "INVALID_FEATURES_FILE": "InvalidFeatures.geojson",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {total} elements with invalid geometry. As a consequence they will be removed prior to saving.",
+      "INVALID_FEATURES_LIST_ERRORS": "<div class='text-subtitle2 q-mt-xs'>Liste des erreurs : </div><ul class='q-ma-none q-pl-lg'>{errors}</ul>",
+      "INVALID_FEATURES_LIST_FEATURES": " sur les éléments: ",
       "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",
       "SAVE_DIALOG_TITLE": "Tiling layer {layer}",
       "SAVE_DIALOG_MESSAGE": "Your layer contains too much elements and has been optimized to be smoothly displayed.</br>As a consequence, it will only be visible at a local scale from a given zoom level.",
