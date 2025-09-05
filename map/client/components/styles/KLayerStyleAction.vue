@@ -64,12 +64,13 @@ const menuContent = computed(() => {
   return styles.value.map((style, i) => ({
     id: 'apply-style-to-layer-' + i,
     label: style.name,
-    handler: (layer) => applyToLayer(layer, style)
+    handler: () => applyToLayer(style)
   }))
 })
 
 // Functions
-async function applyToLayer (layer, styleToApply) {
+async function applyToLayer (styleToApply) {
+  const layer = props.context
   if (_.get(layer, 'filter')) {
     const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
     await editFilterStyle(layer.layer, layer.filter, engineStyle, styleToApply, props.ignoreFeatureStyle)
