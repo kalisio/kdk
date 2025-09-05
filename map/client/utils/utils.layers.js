@@ -9,7 +9,7 @@ import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
 import { generatePropertiesSchema, getGeoJsonFeatures } from '../utils.map.js'
-import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle } from './utils.style.js'
+import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle, getStyleType } from './utils.style.js'
 
 export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
@@ -459,11 +459,13 @@ async function getLayerFiltersWithStyle (layer) {
 
 // Return generic legend or filters for a layer without mutating it
 export async function getLegendForLayer (layer) {
-  const generateLegendFromStyle = (root, style) => {
+  const generateLegendFromStyle = (root, style, layerGeometryTypes) => {
+    const layerStyleTypes = _.uniq(_.map(layerGeometryTypes, type => getStyleType(type)))
     const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
     const symbols = []
     _.forIn(shapes, (shape, type) => {
-      if (style[type]) {
+      const isInLayerGeometryTypes = (layerStyleTypes.length === 0) || (layerStyleTypes.includes(type))
+      if (style[type] && isInLayerGeometryTypes) {
         symbols.push({
           symbol: { 'media/KShape': { options: _.merge({ shape }, _.omit(style[type], ['size'])) } },
           label: _.get(root, 'label', _.get(root, 'name'))
@@ -472,7 +474,6 @@ export async function getLegendForLayer (layer) {
     })
     return {
       type: 'symbols',
-      label: _.get(layer, 'label', _.get(layer, 'name')),
       content: {
         symbols
       }
@@ -486,18 +487,21 @@ export async function getLegendForLayer (layer) {
       if (!_.has(filter, 'linkedStyle')) return
       hasFilterWithStyle = true
 
-      const filterLegend = generateLegendFromStyle(filter, filter.linkedStyle)
+      const filterLegend = generateLegendFromStyle(filter, filter.linkedStyle, _.get(layer, 'geometryTypes', []))
       filter.legend = filterLegend
     })
-    const legend = { filters: _.map(filtersWithStyle, filter => _.omit(filter, 'linkedStyle')) }
-    // Check if we have at least one filter with a style before removing the layer legend
-    // as features in filter without style keep layer style
-    // Currently, if at least one filter has a style we remove the layer legend, even if some features are affected by a filter without style
-    if (hasFilterWithStyle) Object.assign(legend, { $unset: { legend: '' } })
+    const legend = {
+      legend: { type: 'symbols', label: _.get(layer, 'label', _.get(layer, 'name')), content: {} },
+      filters: _.map(filtersWithStyle, filter => _.omit(filter, 'linkedStyle'))
+    }
+    // For now, only filter with style are displayed in the legend
+    // If no filter has style, we want to remove the legend
+    if (!hasFilterWithStyle) return { $unset: { legend: '' } }
     return legend
   } else {
     const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
-    const legend = generateLegendFromStyle(layer, layerStyle)
+    const legend = generateLegendFromStyle(layer, layerStyle, _.get(layer, 'geometryTypes', []))
+    legend.label = _.get(layer, 'label', _.get(layer, 'name'))
     return { legend }
   }
 }
