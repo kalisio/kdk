@@ -82,10 +82,11 @@ async function applyToLayer (styleToApply) {
   }
 }
 async function getFilterQuery () {
+  const layer = _.has(props.context, 'layer') ? props.context.layer : props.context
   let filterQuery = {}
-  if (!['permissive', 'strict'].includes(props.filteringPolicy) || !_.has(props.context, 'geometryTypes')) return filterQuery
+  if (!['permissive', 'strict'].includes(props.filteringPolicy) || !_.has(layer, 'geometryTypes')) return filterQuery
 
-  const styleTypes = _.uniq(_.map(props.context.geometryTypes, type => getStyleType(type)))
+  const styleTypes = _.uniq(_.map(layer.geometryTypes, type => getStyleType(type)))
   if (props.filteringPolicy === 'strict') {
     filterQuery = { $and: ['point', 'line', 'polygon'].map(type => ({ [type]: { $exists: styleTypes.includes(type) } })) }
   } else {
