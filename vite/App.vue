@@ -6,7 +6,10 @@
 </template>
 
 <script setup>
-import { kdkCore } from '../client.map.js'
+// For debug purpose with src hot reload
+//import { kdkCore } from '../client.map.js'
+// To test library build
+import { kdkCore } from '../client/kdk.client.map.js'
 import MapActivity from './MapActivity.vue'
 
 let map, globe, updatingMap, updatingGlobe

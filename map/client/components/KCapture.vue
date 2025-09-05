@@ -12,7 +12,7 @@
 import { ref, computed } from 'vue'
 import { Capture } from '../capture.js'
 import moment from 'moment'
-import captureSchema from '../../../extras/schemas/capture.create.json'
+import captureSchema from '../../common/schemas/capture.create.json'
 import KForm from '../../../core/client/components/form/KForm.vue'
 
 // Data

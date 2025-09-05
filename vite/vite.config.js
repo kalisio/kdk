@@ -113,11 +113,12 @@ if (process.env.BUILD_MODE === 'lib') {
     'config': fileURLToPath(new URL('./config.js', import.meta.url)), // Alias for client config
     // FIXME: It does not seem that alias can target multiple directories unlike with Webpack.
     // However we should also provide alias for files located in the map part
-    // This requires to rewrite some code in loadComponent utility function
+    // This requires to rewrite some code in loadComponent utility function.
+    // FIXME: For library we should directly integrate the components in the JS build
     '@components': fileURLToPath(new URL('../core/client/components', import.meta.url)),
-    '@schemas': fileURLToPath(new URL('../extras/schemas', import.meta.url)),
-    '@i18n': fileURLToPath(new URL('../extras/i18n', import.meta.url)),
-    'kdk/core.variables': fileURLToPath(new URL('../extras/css/core.variables.scss', import.meta.url))
+    '@schemas': fileURLToPath(new URL('../client/schemas', import.meta.url)),
+    '@i18n': fileURLToPath(new URL('../client/i18n', import.meta.url)),
+    'kdk/core.variables': fileURLToPath(new URL('../client/css/core.variables.scss', import.meta.url))
   })
 }
 

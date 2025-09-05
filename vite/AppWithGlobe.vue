@@ -15,9 +15,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { kdkCore } from '../client.js'
-import KWelcome from '../core/client/components/app/KWelcome.vue'
-import MapActivity from './MapActivity.vue'
+// For debug purpose with src hot reload
+//import { kdkCore } from '../client.js'
+// To test library build
+import { kdkCore } from '../client/kdk.client.js'
+import MapActivity from './MapActivityWithGlobe.vue'
 import GlobeActivity from './GlobeActivity.vue'
 
 let map, globe, updatingMap, updatingGlobe

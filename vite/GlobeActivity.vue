@@ -5,7 +5,10 @@
 </template>
 
 <script>
-import { kdkCore, kdkMap } from '../client.globe.js'
+// For debug purpose with src hot reload
+//import { kdkCore, kdkMap } from '../client.globe.js'
+// To test library build
+import { kdkCore, kdkMap } from '../client/kdk.client.js'
 
 const name = 'globeActivity'
 const baseActivityMixin = kdkCore.mixins.baseActivity(name)

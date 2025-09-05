@@ -15,7 +15,37 @@ cd vite
 yarn install
 ```
 
+## Library build
+
+You can retrieve the library files in the KDK :open_file_folder: [client](../client) folder and put it into an external application, to avoid the burden of importing [Cesium](https://cesium.com/) in applications not requiring 3D capabilities the following files are available:
+* 2D capabilities only - minified: `kdk.client.map.min.js`
+* 2D/3D capabilities - minified: `kdk.client.min.js`
+* 2D capabilities only - unminified, `kdk.client.map.js`
+* 2D/3D capabilities - unminified: `kdk.client.js`
+
+You can build the KDK client-side libraries like this:
+```bash
+// 2D/3D capabilities - minified/unminified + extras
+yarn build:libs
+// Copy extra files required for external apps like css, i18n, schemas, etc.
+yarn build:libs:extras
+// 2D capabilities only - minified
+yarn build:lib
+// 2D/3D capabilities - minified
+yarn build:lib:globe
+// 2D capabilities only - unminified
+yarn build:lib:debug
+// 2D/3D capabilities - unminified
+yarn build:lib:globe:debug
+```
+
+> [!NOTE]
+> Unminified versions for debug purpose are build by defining the `DEBUG` environment variable.
+
 ## Application samples
+
+> [!NOTE]
+> Application samples require unminified library versions to be built first.
 
 There are two application samples available:
 * a 2D map view,
@@ -45,31 +75,6 @@ cd dist
 http-server --cors --port 3000
 ```
 
-## Library build
-
-You can retrieve the library files in the KDK :open_file_folder: [client](../client) folder and put it into an external application, to avoid the burden of importing [Cesium](https://cesium.com/) in applications not requiring 3D capabilities the following files are available:
-* 2D capabilities only - minified: `kdk.client.map.min.js`
-* 2D/3D capabilities - minified: `kdk.client.min.js`
-* 2D capabilities only - unminified, `kdk.client.map.js`
-* 2D/3D capabilities - unminified: `kdk.client.js`
-
-You can build the KDK client-side libraries like this:
-```bash
-// 2D/3D capabilities - minified/unminified
-yarn build
-// 2D capabilities only - minified
-yarn build:lib
-// 2D/3D capabilities - minified
-yarn build:lib:globe
-// 2D capabilities only - unminified
-yarn build:lib:debug
-// 2D/3D capabilities - unminified
-yarn build:lib:globe:debug
-```
-
-> [!NOTE]
-> Unminified versions for debug purpose are build by defining the `DEBUG` environment variable.
-
 ## Changes and remaining issues
 
 In order to switch from Webpack to Vite and to build a stand alone library the following issues have been tackled or remain to be.
@@ -84,7 +89,7 @@ Some useful links and plugins:
 * https://github.com/davidmyersdev/vite-plugin-node-polyfills
 * https://github.com/unplugin/unplugin-vue-components
 
-## Avoid depending on application specific elements
+### Avoid depending on application specific elements
 
 Typically using the router in a library does not make really sense as an app might not use it, if required add a check:
 ```js
@@ -107,7 +112,7 @@ Store.patch(...)
 > [!NOTE]
 > As the `$tie` utility function is used in a lot of components it has not yet been changed.
 
-## Avoid importing internal module pathes
+### Avoid importing internal module pathes
 
 When building a library Vite requires each external dependency to be listed individually in the build configuration.
 In order to make this smooth we read dependencies from the `package.json` file but this only works when importing the module directly not internal pathes:
