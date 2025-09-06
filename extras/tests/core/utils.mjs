@@ -50,7 +50,7 @@ export async function countChildren (page, selector) {
  */
 export async function click (page, selector, wait = 500) {
   try {
-    await page.locator(selector).setTimeout(2000).click()
+    await page.locator(selector).click({ timeout: 2000 })
     await waitForTimeout(wait)
     debug(`[KDK] Clicked target ${selector}`)
   } catch (error) {
@@ -62,7 +62,7 @@ export async function click (page, selector, wait = 500) {
  */
 export async function hover (page, selector, wait = 500) {
   try {
-    await page.locator(selector).setTimeout(2000).hover()
+    await page.locator(selector).hover({ timeout: 2000 })
     await waitForTimeout(wait)
     debug(`[KDK] Hovered target ${selector}`)
   } catch (error) {
