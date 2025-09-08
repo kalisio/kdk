@@ -116,6 +116,10 @@ const props = defineProps({
   canSendMessage: {
     type: Boolean,
     default: true
+  },
+  editorModeByDefault: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -124,7 +128,7 @@ const $q = useQuasar()
 const User = Store.get('user')
 const MessageTypes = props.messageTypes ?? config.messagesActivity.messages
 const { createMessage } = useMessages()
-const editor = ref(false)
+const editor = ref(props.editorModeByDefault)
 const uploaderRef = ref(null)
 const attachments = ref(null)
 const currentType = ref(_.head(_.keys(MessageTypes)))
