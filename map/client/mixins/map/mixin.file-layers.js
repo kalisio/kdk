@@ -14,6 +14,7 @@ export const fileLayers = {
           const name = path.basename(file.name, path.extname(file.name))
           const description = _.join(_.map(file.files, subfile => subfile.name), ',')
           await this.addGeoJsonLayer({ name, description }, content)
+          if (typeof this.refreshOrphanLayers === 'function') await this.refreshOrphanLayers()
         } catch (error) {
           // nothing to do
         }

@@ -26,7 +26,7 @@
         <q-infinite-scroll
           @load="onLoad"
           :initial-index="1"
-          :offset="200"
+          :offset="scrollOffset"
           v-scroll="onScroll"
         >
           <template v-for="item in items" :key="item._id">
@@ -231,6 +231,10 @@ const props = defineProps({
   scrollToTop: {
     type: Boolean,
     default: true
+  },
+  scrollOffset: {
+    type: Number,
+    default: 300
   },
   header: {
     type: [Array, Object],

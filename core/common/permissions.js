@@ -60,7 +60,7 @@ export function defineUserAbilities (subject, can, cannot) {
   can('create', 'push')
   // Allow tag management
   can('service', 'tags')
-  can('create', 'tags')
+  can('read', 'tags')
   if (subject && subject._id) {
     // Read user profiles for authorizing
     can('read', 'users')

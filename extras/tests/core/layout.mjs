@@ -17,6 +17,10 @@ export async function clickOpener (page, placement) {
   await waitForTimeout(500)
 }
 
+export async function isOpenerVisible (page, placement) {
+  return isElementVisible(page, `#${placement}-opener`)
+}
+
 export async function isPaneVisible (page, placement) {
   return isElementVisible(page, `#${placement}-panel`)
 }

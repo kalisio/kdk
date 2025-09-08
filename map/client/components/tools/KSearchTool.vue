@@ -23,7 +23,7 @@ const location = ref(null)
 const LocationLayerName = uid()
 
 // Props
-defineProps({
+const props = defineProps({
   geocoders: {
     type: Array,
     default: () => []
@@ -34,6 +34,10 @@ defineProps({
     validator: (value) => {
       return value > 0 && value < 500
     }
+  },
+  interactive: {
+    type: Boolean,
+    default: false
   },
   autofocus: {
     type: Boolean,
@@ -64,7 +68,7 @@ async function createLocationLayer () {
       type: 'geoJson',
       isVisible: true,
       realtime: true,
-      interactive: false,
+      interactive: props.interactive,
       style,
       popup: { template: '<%= properties.name %>' }
     },

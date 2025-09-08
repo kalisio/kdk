@@ -8,7 +8,7 @@
       :id="properties.name + '-field'"
       v-model="model"
       :label="label"
-      clearable
+      :clearable="isClearable()"
       :error-message="errorLabel"
       :error="hasError"
       :disable="disabled"
@@ -90,6 +90,9 @@ export default {
     emptyModel () {
       // We support icon without a color, in this case we have a string as model
       return (this.color ? { name: '', color: '' } : '')
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
     },
     onFocused () {
       if (this.isEmpty()) this.$refs.iconChooser.open(this.model)

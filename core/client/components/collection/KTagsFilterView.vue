@@ -8,20 +8,19 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
-import { useCurrentActivity } from '../../composables'
+import { useCollectionFilter } from '../../composables'
 import KTagSelection from '../tags/KTagSelection.vue'
 
 // Data
-const { CurrentActivityContext } = useCurrentActivity()
-const { state } = CurrentActivityContext
+const { tagsFilter, setTagsFilter } = useCollectionFilter()
 
 // Computed
 const selection = computed(() => {
-  return state.tagsFilter.selection
+  return _.get(tagsFilter.value, 'selection')
 })
 
 // Functions
 function onSelectionChanged (selection) {
-  _.set(state.tagsFilter, 'selection', selection)
+  setTagsFilter(selection, 'selection')
 }
 </script>

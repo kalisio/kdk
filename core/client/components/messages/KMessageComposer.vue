@@ -6,6 +6,7 @@
     <div class="row justify-between items-center no-wrap">
       <div :class="{ 'q-pa-xs': $q.screen.xs, 'q-pa-sm': $q.screen.gt.xs, 'col-auto': true }">
         <q-fab
+          id="composer-fab"
           :icon="getKindIcon(currentType)"
           :color="getKindColor(currentType)"
           direction="up"
@@ -42,7 +43,7 @@
     <!--
       Editor
      -->
-    <div class="q-pa-sm col">
+    <div class="q-pa-sm full-width col">
       <q-editor
         v-if="editor"
         :placeholder="$t('KMessageComposer.WRITE_YOUR_MESSAGE')"
@@ -57,6 +58,7 @@
         v-else
         :placeholder="$t('KMessageComposer.WRITE_YOUR_MESSAGE')"
         v-model="body"
+        autogrow
         borderless
         dense
         @keydown.enter.prevent="sendMessage"
@@ -172,7 +174,6 @@ async function sendMessage () {
     (_.some(attachments.value, (file) => !file.type) ||
       _.some(attachments.value, (file) => !file.name))
   ) {
-    console.error('Invalid file type')
     Notify.create({
       type: 'negative',
       message: i18n.t('KUploader.INVALID_TYPE')

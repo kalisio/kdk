@@ -7,11 +7,11 @@
     :id="properties.name + '-field'"
     v-model="model"
     :label="label"
-    :options="options"
+    :options="getOptions()"
     options-selected-class="hidden"
     emit-value
     map-options
-    :clearable="clearable"
+    :clearable="isClearable()"
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
@@ -76,20 +76,15 @@ export default {
     KColorScale
   },
   mixins: [baseField],
-  computed: {
-    clearable () {
-      return _.get(this.properties, 'field.clearable', true)
-    },
-    options () {
-      return _.get(this.properties, 'field.options', [])
-    }
-  },
   methods: {
     getId (option) {
       return _.kebabCase(option.name)
     },
-    emptyModel () {
-      return null
+    getOptions () {
+      return _.get(this.properties, 'field.options', [])
+    },
+    isClearable () {
+      return _.get(this.properties, 'field.clearable', true)
     }
   }
 }

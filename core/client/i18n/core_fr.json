@@ -1,0 +1,772 @@
+{
+  "OOPS": "Oups !",
+  "OK": "Ok",
+  "YES": "Oui",
+  "NO": "Non",
+  "ALERT": "Alerte",
+  "WARNING": "Avertissement",
+  "INFORMATION": "Information",
+  "CANCEL": "Annuler",
+  "UPDATE": "Mettre à jour",
+  "CREATE": "Créer",
+  "DELETE": "Supprimer",
+  "RESET": "Réinitialiser",
+  "CLOSE": "Fermer",
+  "SEARCH": "Rechercher...",
+  "DONE": "Ok",
+  "APPLY": "Appliquer",
+  "RETRY": "Réessayer",
+  "NO_ITEM": "Aucun élément",
+  "NIL": "Non défini(e)",
+  "MEMBERS": "Membres",
+  "TAGS": "Etiquettes",
+  "GROUPS": "Groupes",
+  "EDIT": "Éditer",
+  "REMOVE": "Supprimer",
+  "OWNER": "Propriétaire",
+  "MANAGER": "Gestionnaire",
+  "MEMBER": "Membre",
+  "UNAMED": "Sans nom",
+  "HELP": "Aide",
+  "NEED_HELP": "Besoin d'aide ?",
+  "READ_MORE": "En savoir plus",
+  "BACK": "Retour",
+  "LEGAL_NOTICE": "Mentions légales",
+  "PRIVACY_POLICY": "Politique de confidentialité",
+  "layout": {
+    "MY_SETTINGS": "Mes paramètres",
+    "ABOUT": "A propos",
+    "ONLINE_HELP": "Aide en ligne",
+    "CONTEXTUAL_HELP": "Aide contextuelle",
+    "LOGOUT": "Se déconnecter",
+    "ENTER_FULLSCREEN": "Basculer en mode plein écran",
+    "EXIT_FULLSCREEN": "Quitter le mode plein écran"
+  },
+  "errors": {
+    "400": "Cette opération ne peut être réalisée: paramètres incorrects",
+    "401": "Cette opération ne peut être réalisée: vous devez être authentifié",
+    "402": "Cette opération ne peut être réalisée: erreur de paiement",
+    "403": "Cette opération ne peut être réalisée: non autorisée",
+    "404": "Cette opération ne peut être réalisée: introuvable",
+    "405": "Cette opération ne peut être réalisée: non autorisée",
+    "406": "Cette opération ne peut être réalisée: non autorisée",
+    "408": "Cette opération ne peut être réalisée: temps alloué écoulé",
+    "409": "Cette opération ne peut être réalisée: conflit",
+    "411": "Cette opération ne peut être réalisée: taille requise",
+    "422": "Cette opération ne peut être réalisée: impossible à traiter",
+    "429": "Cette opération ne peut être réalisée: trop de requêtes",
+    "498": "Ce système ou navigateur ne prend pas en charge les notifications push web",
+    "499": "Veuillez modifier les paramètres de votre application ou du navigateur pour autoriser les notifications",
+    "500": "Cette opération ne peut être réalisée: une erreur a été rencontrée",
+    "501": "Cette opération ne peut être réalisée: non gérée",
+    "502": "Cette opération ne peut être réalisée: service introuvable",
+    "503": "Cette opération ne peut être réalisée: service indisponible",
+    "RETRY": "Veuillez réessayer plus tard ou modifier votre paramétrage",
+    "RATE_LIMITING": "Trop de requête vers l'API en un laps de temps donné (limitation de débit)",
+    "RATE_LIMITING_AUTHENTICATION": "Trop de requête d'authentification en un laps de temps donné (limitation de débit)",
+    "RATE_LIMITING_CONCURRENCY": "Trop de connexions simultanées (limitation de débit)",
+    "COUNT_LIMITING": "Trop de ressources utilisées (quota dépassé)",
+    "WEAK_PASSWORD": "Le mot de passe ne respecte pas nos règles de sécurité",
+    "WEAK_PASSWORD_MIN": "Taille minimale de {minLength} caractères",
+    "WEAK_PASSWORD_MAX": "Taille maximale de {maxLength} caractères",
+    "WEAK_PASSWORD_LOWERCASE": "Au moins une lettre minuscule",
+    "WEAK_PASSWORD_UPPERCASE": "Au moins une lettre majuscule",
+    "WEAK_PASSWORD_DIGITS": "Au moins un nombre",
+    "WEAK_PASSWORD_SYMBOLS": "Au moins un caractère spécial comme :;?!+-.,^@",
+    "WEAK_PASSWORD_ONEOF": "Non reconnu comme l'un des mots de passe les plus courants",
+    "WEAK_PASSWORD_PREVIOUS": "Différents de vos {history} derniers mots de passe",
+    "CANNOT_PROCESS_DOWNLOAD_DATA": "Fichier invalide ou incomplet",
+    "OAUTH2_PROVIDER": "Vous ne pouvez modifier votre compte car il est géré par {provider}, pour utiliser un compte local réinitialisez tout d'abord votre mot de passe",
+    "EMAIL_ALREADY_TAKEN": "Un utilisateur semble déjà enregistré avec cette adresse mail",
+    "OBJECT_ID_ALREADY_TAKEN": "Un élément semble déjà enregistré avec cet identifiant. Merci de réessayer avec une autre valeur.",
+    "MAX_FILES_REACHED": "Oups ! Vous ne pouvez déposer qu'un seul fichier | Oups ! Vous ne pouvez déposer que jusqu’à {n} fichiers à la fois",
+    "MAX_FILE_SIZE_REACHED": "Oups ! Le fichier dépasse la taille maximale autorisée de {maxSize} Mo",
+    "MAX_TOTAL_SIZE_REACHED": "Oups ! La taille totale de tous les fichiers dépasse la limite maximale autorisée de {maxSize} Mo",    
+    "UNSUPPORTED_FILE_FORMAT": "Oups ! Le format du fichier {file} n'est pas supporté",
+    "CANNOT_READ_FILE": "Oups ! Impossible de lire le fichier {file}",
+    "INVALID_JSON_FILE": "Oups ! {file} n'est pas un fichier JSON valide",
+    "INVALID_CSV_FILE": "Oups ! {file} n'est pas un fichier CSV valide",
+    "NETWORK_ERROR": "Oups ! Une erreur réseau s'est produite ou le service est indisponible"
+  },
+  "units": {
+    "METER_SYMBOL": "m",
+    "FEET_SYMBOL": "ft",
+    "MILE_SYMBOL": "mi",
+    "NAUTICAL_MILE_SYMBOL": "NM",
+    "SQUARED_METER_SYMBOL": "m²",
+    "SQUARED_KILOMETER_SYMBOL": "km²",
+    "ACRE_SYMBOL": "a",
+    "HECTARE_SYMBOL": "ha",
+    "METER_PER_SECOND_SYMBOL": "m/s",
+    "KILOMETER_PER_HOUR_SYMBOL": "km/h",
+    "MILES_PER_HOUR_SYMBOL": "mph",
+    "KNOT_SYMBOL": "kt",
+    "CELSIUS_SYMBOL": "°C",
+    "FAHRENHEIT_SYMBOL": "°F",
+    "KELVIN_SYMBOL": "K",
+    "DEGREE_SYMBOL": "°",
+    "RADIAN_SYMBOL": "rad",
+    "PPM_SYMBOL": "ppm",
+    "MICROGRAM_PER_M3_SYMBOL": "µg/m³",
+    "CUBIC_METER_PER_SECOND_SYMBOL": "m³/s",
+    "BEQUEREL_SYMBOL": "Bq",
+    "BEQUEREL_PER_M2_SYMBOL": "Bq/m²",
+    "BEQUEREL_PER_M3_SYMBOL": "Bq/m³",
+    "SIEVERT_SYMBOL": "Sv",
+    "MILLISIEVERT_SYMBOL": "mSv",
+    "MICROSIEVERT_SYMBOL": "µSv",
+    "NANOSIEVERT_SYMBOL": "nSv",
+    "SIEVERT_PER_SECOND_SYMBOL": "Sv/s",
+    "MILLISIEVERT_PER_SECOND_SYMBOL": "mSv/s",
+    "MICROSIEVERT_PER_SECOND_SYMBOL": "µSv/s",
+    "NANOSIEVERT_PER_SECOND_SYMBOL": "nSv/s",
+    "SIEVERT_PER_HOUR_SYMBOL": "Sv/h",
+    "MILLISIEVERT_PER_HOUR_SYMBOL": "mSv/h",
+    "MICROSIEVERT_PER_HOUR_SYMBOL": "µSv/h",
+    "NANOSIEVERT_PER_HOUR_SYMBOL": "nSv/h",
+    "METER_LABEL": "Mètres",
+    "FEET_LABEL": "Pieds",
+    "MILE_LABEL": "Milles",
+    "NAUTICAL_MILE_LABEL": "Milles nautique",
+    "SQUARED_METER_LABEL": "Mètres carrés",
+    "SQUARED_KILOMETER_LABEL": "Kilomètres carrés",
+    "ACRE_LABEL": "Acres",
+    "HECTARE_LABEL": "Hectares",
+    "METER_PER_SECOND_LABEL": "Mètres par seconde",
+    "KILOMETER_PER_HOUR_LABEL": "Kilomètres par heure",
+    "MILES_PER_HOUR_LABEL": "Milles par heure",
+    "KNOT_LABEL": "Noeuds",
+    "CELSIUS_LABEL": "Degrés celcius",
+    "FAHRENHEIT_LABEL": "Degrés Fahrenheit",
+    "KELVIN_LABEL": "Kelvins",
+    "DEGREE_LABEL": "Degrés",
+    "RADIAN_LABEL": "Radians",
+    "PPM_LABEL": "Partie par million",
+    "MICROGRAM_PER_M3_LABEL": "Microgramme par mètre cube",
+    "CUBIC_METER_PER_SECOND_LABEL": "Mètre cube par seconde",
+    "BEQUEREL_LABEL": "Bequerels",
+    "BEQUEREL_PER_M2_LABEL": "Bequerels par mètre carré",
+    "BEQUEREL_PER_M3_LABEL": "Bequerels par mètre cube",
+    "SIEVERT_LABEL": "Sieverts",
+    "MILLISIEVERT_LABEL": "Millisieverts",
+    "MICROSIEVERT_LABEL": "Microsieverts",
+    "NANOSIEVERT_LABEL": "Nanosieverts",
+    "SIEVERT_PER_SECOND_LABEL": "Sieverts par seconde",
+    "MILLISIEVERT_PER_SECOND_LABEL": "Millisieverts par seconde",
+    "MICROSIEVERT_PER_SECOND_LABEL": "Microsieverts par seconde",
+    "NANOSIEVERT_PER_SECOND_LABEL": "Nanosieverts par seconde",
+    "SIEVERT_PER_HOUR_LABEL": "Sieverts par heure",
+    "MILLISIEVERT_PER_HOUR_LABEL": "Millisieverts par heure",
+    "MICROSIEVERT_PER_HOUR_LABEL": "Microsieverts par heure",
+    "NANOSIEVERT_PER_HOUR_LABEL": "Nanosieverts par heure"
+  },
+  "directives": {
+    "ALL_FILES_ARE_UNSUPPORTED": "Oups ! Fichier non pris en charge | Oups ! Aucun des fichiers n'est pris en charge",
+    "SOME_FILES_ARE_UNSUPPORTED": "Certains fichiers seront ignorés en raison de types non pris en charge",
+    "DROP_FILES": "Déposez le fichier ici | Déposez les fichiers ici"
+  },
+  "mixins": {
+    "baseItem": {
+      "REMOVE_ITEM_TITLE": "Êtes vous sûr de vouloir supprimer <b>{name}</b> ?",
+      "REMOVE_ITEM_MESSAGE": "Merci de saisir le nom pour confirmer la suppression",
+      "ITEM_EXPORTED": "Export du contenu de {name} dans {file}",
+      "CANNOT_EXPORT_ITEM": "Impossible d'exporter {name}. Votre navigateur supporte t'il la fonctionnalité ?"
+    }
+  },
+  "composables": {
+    "ANONYMOUS": "Anonyme",
+    "VERSION_MISMATCH": "Discordance de version, merci d'installer la dernière version disponible ou de vérifier votre point d'accès",
+    "session": {
+      "DISCONNECT": "La connexion au serveur a été interrompue, merci de patienter jusqu'à la reconnexion...",
+      "RECONNECT": "La connexion au serveur a été rétablie, vous pouvez rafraîchir l'application si des données ont été mises à jour.",
+      "RELOAD": "Rafraîchir",
+      "REFUSED": "Votre connexion a été refusée par le serveur, vous avez été déconnecté...",
+      "IGNORE": "Ignorer",
+      "RETRY": "Réessayer",
+      "ALERT": "Alerte",
+      "INFORMATION": "Information"
+    },
+    "pwa": {
+      "UPDATE_MESSAGE": "<b>Une nouvelle version est disponible</b>, l'application sera mise à jour d'ici quelques secondes."
+    },
+    "context": {
+      "REMOVED_MESSAGE": "L'objet contexte a été supprimé. Vous allez être redirigé vers la page d'accueil."
+    }
+  },
+  "utils": {
+    "pwa": {
+      "INSTALL_TITLE": "Installer l'application ?",
+      "INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités",
+      "IOS_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités.<br>Depuis <b>Safari</b> cliquez sur <i class=\"material-icons\">ios_share</i> puis sur <b>Ajouter à l'écran d'accueil</b>",
+      "FIREFOX_DESKTOP_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités. Pour l'installer utiliser l'extension <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a>.",
+      "INSTALL": "Installer",
+      "IGNORE": "Ignorer"
+    }
+  },
+  "schemas": {
+    "OBJECT_NAME": "{name}",
+    "AVATAR_FIELD_LABEL": "Choisissez un avatar",
+    "NAME_FIELD_LABEL": "Saisissez votre nom",
+    "COLOR_FIELD_LABEL": "Choisissez une couleur",
+    "UPDATE_SETTINGS_TITLE": "Vos paramètres",
+    "TIME_FORMAT_SETTINGS": "Format de date et d'heure",
+    "TIME_FORMAT_SHORT_TIME_FIELD_LABEL": "Format d'heure abrégé",
+    "TIME_FORMAT_LONG_TIME_FIELD_LABEL": "Format d'heure complet",
+    "TIME_FORMAT_SHORT_DATE_FIELD_LABEL": "Format de jour abrégé",
+    "TIME_FORMAT_LONG_DATE_FIELD_LABEL": "Format de jour complet",
+    "TIME_FORMAT_SHORT_YEAR_FIELD_LABEL": "Format d'année abrégé",
+    "TIME_FORMAT_LONG_YEAR_FIELD_LABEL": "Format d'année complet",
+    "TIME_FORMAT_TIMEZONE_FIELD_LABEL": "Fuseau horaire cible",
+    "UNITS_SETTINGS": "Paramétrage des unités",
+    "LENGTH_FIELD_LABEL": "Unité de longueur par défaut",
+    "ALTITUDE_FIELD_LABEL": "Unité d'altitude par défaut",
+    "AREA_FIELD_LABEL": "Unité d'aire par défaut",
+    "VELOCITY_FIELD_LABEL": "Unité de vitesse par défaut",
+    "TEMPERATURE_FIELD_LABEL": "Unité de température par défaut",
+    "ANGLE_FIELD_LABEL": "Unité d'angle par défaut",
+    "EQUIVALENT_DOSE_RATE_FIELD_LABEL": "Unité de taux de dose équivalente par défaut",
+    "NOTATION_SETTINGS": "Paramétrage de la notation numérique",
+    "NOTATION_FIELD_LABEL": "Notation numérique par défaut",
+    "AUTO_NOTATION_FIELD_LABEL": "Sélectionne la notation numérique la plus adaptée",
+    "FIXED_NOTATION_FIELD_LABEL": "Notation numérique à précision fixe",
+    "EXPONENTIAL_NOTATION_FIELD_LABEL": "Notation numérique scientifique",
+    "PRECISION_FIELD_LABEL": "Nombre de chiffres décimaux ou significatifs par défaut",
+    "NAVIGATOR_APP_LABEL": "Application de navigation par défaut"
+  },
+  "tours": {
+    "APP_BAR_OVERFLOW_MENU_LABEL": "Lorsqu'il n'est pas visible, vous pourrez le retrouver dans ce menu déroulant.",
+    "APP_BAR_ACTIONS_LABEL": "Lorsqu'il n'est pas visible, vous pourrez le retrouver dans la barre d'actions.",
+    "CARD_OVERFLOW_MENU_LABEL": "Ouvrez le menu déroulant pour découvrir plus d'actions.",
+    "REMOVE_CONFIRMATION_LABEL": "Une confirmation vous sera demandé avant la suppression définitive.",
+    "login": {
+      "LOCAL_LABEL": "Vous pouvez vous connecter au système avec <b>vos identifiants</b>.",
+      "EMAIL_LABEL": "Saisissez tout d'abord votre adresse mail.",
+      "PASSWORD_LABEL": "Saisissez ensuite votre mot de passe.",
+      "PASSWORD_VISIBILITY_LABEL": "Affichez votre mot de passe en clair en cas de doute.",
+      "LOGIN_LABEL": "Enfin, terminez en vous connectant.",
+      "LOST_PASSWORD_LINK_LABEL": "Si vous avez oublié votre mot de passe initiez la <b>procédure de récupération</b>",
+      "REGISTER_LINK_LABEL": "Si vous n'avez pas encore de compte initiez la <b>procédure d'enregistrement</b>"
+    },
+    "reset-password": {
+      "RESET_PROCEDURE_LABEL": "Si vous avez oublié votre mot de passe nous vous enverrons un email contenant un code permettant <b>d'en définir un nouveau</b>.",
+      "EMAIL_LABEL": "Saisissez tout d'abord l'adresse que vous avez utilisé pour vous enregistrer ou par laquelle vous avez été invité.",
+      "RESET_LABEL": "Enfin, terminez en envoyant l'email contenant le lien (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>)."
+    },
+    "register": {
+      "LOCAL_LABEL": "Vous pouvez vous enregistrer sur le système en définissant <b>vos identifiants</b>.",
+      "NAME_LABEL": "Saisissez tout d'abord votre nom tel qu'il sera visible par les autres utilisateurs.",
+      "EMAIL_LABEL": "Saisissez ensuite l'adresse mail que vous utiliserez pour vous connecter et sur laquelle vous recevrez les messages liés à la sécurité.",
+      "PASSWORD_LABEL": "Choisissez ensuite votre mot de passe, s'il ne respecte pas nos dispositions de sécurité une alerte vous indiquera les règles à respecter.",
+      "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "CONFIRM_PASSWORD_LABEL": "Confirmez votre mot de passe pour éviter les erreurs.",
+      "CONFIRM_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "TERMS_LABEL": "Lisez et acceptez nos <b><a style='color:white' href='/#/terms'>conditions d'utilisation</a></b> pour pouvoir utiliser le système.",
+      "REGISTER_LABEL": "Enfin, terminez en créant votre compte.",
+      "EMAIL_VERIFICATION_LABEL": "Nous vous enverrons un email contenant un lien permettant <b>de vérifier votre adresse</b>.",
+      "LOGIN_LINK_LABEL": "Vous pouvez maintenant vous reconnecter au système grâce à <b>vos identifiants</b>."
+    },
+    "account": {
+      "PROFILE_LABEL": "Cette activité vous permet de modifier les informations liées à votre profil utilisateur",
+      "AVATAR_LABEL": "Votre avatar personnalisé qui sera visible dans le menu latéral une fois un fichier image sélectionné.",
+      "NAME_LABEL": "Votre nom tel qu'il sera visible par les autres utilisateurs.",
+      "UPDATE_LABEL": "Confirmez la mise à jour pour appliquer les modifications apportées à votre profil.",
+      "ACCOUNT_LABEL": "Gérez ici <b>vos identifiants</b> et leur sécurité",
+      "VERIFY_EMAIL_LABEL": "Cette section vous permet de vérifier votre email.",
+      "TOKEN_FIELD_LABEL": "Saisissez le code reçu par email.",
+      "RESEND_VERIFY_SIGNUP_LABEL": "Si vous ne l'aviez pas reçu ou perdu, vous avez la possibilité d'en recevoir un nouveau.",
+      "CONFIRM_VERIFY_EMAIL_LABEL": "Enfin, terminez en confirmant.",
+      "PASSWORD_PROCEDURE_LABEL": "Cette section vous permet d'initier la procédure de changement de mot de passe.",
+      "OLD_PASSWORD_LABEL": "Saisissez tout d'abord votre ancien mot de passe.",
+      "NEW_PASSWORD_LABEL": "Choisissez ensuite votre nouveau mot de passe, s'il ne respecte pas nos dispositions de sécurité une alerte vous indiquera les règles à respecter.",
+      "NEW_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "CONFIRM_NEW_PASSWORD_LABEL": "Confirmez votre nouveau mot de passe pour éviter les erreurs.",
+      "CHANGE_PASSWORD_LABEL": "Enfin, terminez en confirmant la modification.",
+      "CHANGE_IDENTITY_PROCEDURE_LABEL": "Cette section vous permet d'initier la procédure de changement d'adresse mail.",
+      "PASSWORD_LABEL": "Entrez tout d'abord votre mot de passe.",
+      "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "EMAIL_LABEL": "Entrez votre <b>nouvelle adresse mail</b>.",
+      "CHANGE_EMAIL_LABEL": "En confirmant la demande de modification, un email contenant un code permettant de confirmer la modification vous serez envoyé sur votre nouvelle adresse (<b>vérifiez que l'email ne soit pas tombé dans vos courriers indésirables</b>).",
+      "SUBSCRIPTIONS_LABEL": "Cette section liste les différents abonnements dont vous disposez.",
+      "UNSUBSCRIBE_LABEL": "Vérifiez ici toute activité suspecte et supprimez les abonnements obsolètes de votre compte.",
+      "DANGER_ZONE_LABEL": "Cette section vous permet de supprimer votre compte du système",
+      "DELETE_LABEL": "Une confirmation manuelle vous sera demandé avant la suppression définitive de votre compte."
+    }
+  },
+  "exporter": {
+    "TITLE": "Exporter les données",
+    "MESSAGE": "Sélectionnez le format de fichier à exporter",
+    "EXPORT": "Exporter",
+    "EXPORTING": "Merci de patienter pendant l'export des données",
+    "EXPORTS_LIMIT_REACHED": "Vous avez atteint le nombre maximum d'exports autorisés",
+    "SUCCEEDED": "Exportation terminée : les données ont été exportées dans le fichier <b>{filename}</b>",
+    "NO_DATA": "Exportation annulée : aucune donnée trouvée à exporter",
+    "ERROR": "Oops ! Échec de l’exportation : une erreur est survenue durant l'export des données"
+  },
+  "reader": {
+    "READING_FILE": "Lecture de {file} en cours"
+  },
+  "storage": {
+    "UPLOADING_FILE": "Transfert du fichier {file} en cours",
+    "DOWNLOADING_FILE": "Téléchargement du fichier {file} en cours"
+  },
+  "KVersion": {
+    "CLIENT_VERSION": "Client v{version}",
+    "API_VERSION": "API v{version}"
+  },
+  "KSponsor": {
+    "KDK_POWERED": "Réalisé avec le Kalisio's Development Kit",
+    "MORE_ABOUT_KDK": "En savoir plus sur le KDK",
+    "MORE_ABOUT_KALISIO": "En savoir plus sur Kalisio"
+  },
+  "KPlatform": {
+    "USER_AGENT": "Agent utilisateur",
+    "APPLICATION": "Application",
+    "PERMISSIONS": "Permissions",
+    "PERMISSION_GRANTED": "Autorisé",
+    "PERMISSION_PROMPT": "Sur demande",
+    "BROWSER": "Navigateur",
+    "LOCALE": "Locale",
+    "WEBGL": "Support WebGL",
+    "SYSTEM": "Système",
+    "COPY_INFO": "Copier les informations en mémoire",
+    "INFO_COPIED": "Informations système copiées",
+    "CANNOT_COPY_INFO": "Impossible de copier les informations systèmes"
+  },
+  "KAbout": {
+    "DOMAIN": "Hébergé sur",
+    "FLAVOR": "Saveur",
+    "VIEW_CHANGELOG": "Historique des versions",
+    "BUG_REPORT": "Signaler un bug",
+    "BUG_REPORT_SUBJECT": "[{appName}] Rapport de bug - Client v{clientVersion} - API v{apiVersion}",
+    "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
+    "PLATFORM_INFO": "Informations système"
+  },
+  "KWelcome": {
+    "WELCOME_TITLE": "Bienvenue !",
+    "WELCOME_MESSAGE": "Cette prise en main rapide va vous permettre de balayer les principales fonctionnalités de l'application.",
+    "ONLINE_HELP": "Parcourez tout d'abord notre aide en ligne pour vous familiariser avec les notions de base",
+    "CONTEXTUAL_HELP": "Pour obtenir de l'aide contextuelle lorsque vous êtes perdu cliquez à tout moment sur l'icône",
+    "TOUR_MESSAGE": "Lancez maintenant un didacticiel détaillant le menu principal en cliquant sur l'icône",
+    "TOUR_LINK_MESSAGE": "A chaque fois qu'une étape d'un didacticiel contient cette icône elle permet d'en lancer un autre détaillant la fonctionnalité visée.",
+    "GOODBYE_MESSAGE": "Merci d'avoir parcouru ce didacticiel, vous êtes maintenant prêt à utiliser l'application !",
+    "HIDE_WELCOME": "Ne plus afficher ce message"
+  },
+  "KTour": {
+    "SKIP_LABEL": "Fermer",
+    "NEXT_LABEL": "Suivant",
+    "PREVIOUS_LABEL": "Précédent",
+    "FINISH_LABEL": "Terminer",
+    "MISS_ERROR": "Avant d'aller plus loin merci de réaliser les actions demandées"
+  },
+  "KScreen": {
+    "CLIENT_VERSION": "Client v",
+    "API_VERSION": "API v",
+    "EMAIL_FIELD_LABEL": "Saisissez votre adresse mail",
+    "CHANGE_ENDPOINT_LINK": "Modifier l'adresse du serveur",
+    "DEVELOPMENT_VERSION": "VERSION DE DÉVELOPPEMENT",
+    "TEST_VERSION": "VERSION DE TEST"
+  },
+  "KErrorScreen": {
+    "MESSAGE": "Oups... page non trouvée",
+    "GO_HOME_LABEL": "Retourner à la page d'accueil"
+  },
+  "KUnauthorizedScreen": {
+    "MESSAGE": "Vous n'êtes pas autorisé à accéder à cette page"
+  },
+  "KLoginScreen": {
+    "EMAIL_FIELD_LABEL": "@:KScreen.EMAIL_FIELD_LABEL",
+    "PASSWORD_FIELD_LABEL": "Saisissez votre mot de passe",
+    "LOGIN_LABEL": "Se connecter",
+    "FORGOT_YOUR_PASSWORD_LABEL": "Mot de passe oublié ?",
+    "DONT_HAVE_AN_ACCOUNT_LABEL": "Vous n'avez pas de compte ?",
+    "INVALID_EMAIL": "Impossible de trouver le compte associé à l'email saisie",
+    "LOGIN_ERROR": "Mauvais identifiants ou service indisponible, veuillez réessayer",
+    "CONTEXTUAL_HELP": "@:NEED_HELP"
+  },
+  "KRegisterScreen": {
+    "TITLE": "Enregistrez vous",
+    "NAME_FIELD_LABEL": "@:schemas.NAME_FIELD_LABEL",
+    "EMAIL_FIELD_LABEL": "@:KScreen.EMAIL_FIELD_LABEL",
+    "PASSWORD_FIELD_LABEL": "Saisissez un mot de passe",
+    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirmez votre mot de passe",
+    "ACCEPT_TERMS_LABEL": "J'accepte les conditions générales",
+    "ACCEPT_TERMS_ERROR_LABEL": "Vous devez accepter nos conditions générales pour vous enregistrer",
+    "REGISTER_LABEL": "S'enregistrer",
+    "EMAIL_ALREADY_TAKEN": "Mail déjà utilisé !",
+    "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer",
+    "CONTEXTUAL_HELP": "@:NEED_HELP"
+  },
+  "KLogoutScreen": {
+    "TITLE": "Vous avez été déconnecté",
+    "LOG_IN_AGAIN_LABEL": "Se reconnecter ?"
+  },
+  "KProfile": {
+    "EDIT_PROFILE": "Éditer mon profil",
+    "MANAGE_ACCOUNT": "Gérer mon compte"
+  },
+  "KDeleteAccountManager": {
+    "TITLE": "Supprimer mon compte",
+    "QUESTION": "Etes vous sûr de vouloir supprimer votre compte ?",
+    "CONFIRMATION_TITLE": "Attention: la suppression de votre compte est irrévocable et toutes les données qui y sont attachées seront perdues",
+    "CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la surpression"
+  },
+  "KPasswordManager": {
+    "TITLE": "Modifier mon mot de passe",
+    "PASSWORD_CHANGED": "Votre mot de passe a été modifié avec succès",
+    "OLD_PASSWORD_FIELD_LABEL": "Saisissez votre ancien mot de passe",
+    "PASSWORD_FIELD_LABEL": "Saisissez votre nouveau mot de passe",
+    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirmez votre nouveau mot de passe"
+  },
+  "KEmailManager": {
+    "TITLE": "Modifier mon adresse mail",
+    "PASSWORD_FIELD_LABEL": "Saisissez votre mot de passe",
+    "EMAIL_FIELD_LABEL": "Saisissez votre nouvelle adresse mail",
+    "TOKEN_LABEL": "Pour valider votre nouvelle adresse mail, saisissez le code reçu par email",
+    "EMAIL_CHANGED": "Votre nouvelle adresse a été prise en compte. Un mail vous a été envoyé pour confirmer le changement.",
+    "ERROR_MESSAGE": "Code invalide"
+  },
+  "KVerifyEmailManager": {
+    "TITLE": "Vérifier mon adresse mail",
+    "HELP_LABEL": "Pourquoi dois-je vérifier mon adresse mail ?",
+    "HELP_TEXT": "Vérifier votre adresse mail améliore la sécurité de votre compte. Une fois que votre adresse mail est validée, vous serez en mesure d'apporter des changements à votre compte tels que votre mot de passe. Cela permet de nous aider pour protéger votre compte contre d'éventuels actes de piraterie.",
+    "HELP_EMAIL_LABEL": "Je n'ai jamais reçu de mail de vérification. Que dois-je faire ?",
+    "HELP_EMAIL_TEXT": "Si vous n'avez pas reçu de mail de vérification, assurez-vous que le mail n'a pas été filtré et déplacé dans les spams de votre messagerie. Merci d'ajouter dans vos contacts l'adresse {email} dans votre client de messagerie. Vous pouvez également cliquer sur le bouton ci-dessous pour recevoir un nouveau mail de vérification.",
+    "TOKEN_LABEL": "Saisissez le code reçu par email pour valider votre adresse mail",
+    "EMAIL_VERIFIED": "Votre adresse a été vérifiée. Un mail vous a été envoyé pour confirmer le changement.",
+    "ACTION": "Me renvoyer un code de vérification",
+    "ERROR_MESSAGE": "Code invalide, demandez-en un nouveau"
+  },
+  "KSubscriptionsManager": {
+    "TITLE": "Gérer mes souscriptions",
+    "EMPTY": "Aucunes subscriptions"
+  },
+  "KSubscription": {
+    "UNSUBSCRIBE_LABEL": "Se désabonner",
+    "LAST_ACTIVITY": "Dernière activité le {date} à {time}",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Se désabonner de {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir désabonner votre compte de {description} ?<br><br>Vous ne pourrez plus recevoir de notifications jusqu'à une prochaine reconnexion via ce service."
+  },
+  "KGrid": {
+    "EMPTY_LABEL": "@:NO_ITEM"
+  },
+  "KTable": {
+    "EMPTY_TABLE": "@:NO_ITEM",
+    "TABLE_COLUMNS": "Propriétés"
+  },
+  "KDataTable": {
+    "EMPTY_TABLE": "@:NO_ITEM",
+    "TABLE_COLUMNS": "Propriétés",
+    "NO_DATA_AVAILABLE": "Aucune donnée disponible",
+    "EXPORT_DATA": "Exporter les données",
+    "DATA_EXPORT_FILE": "Données.csv"
+  },
+  "KTimeLine": {
+    "EMPTY_LABEL": "@:NO_ITEM"
+  },
+  "KScrollToTop": {
+    "TOOLTIP": "Haut de page"
+  },
+  "KHistory": {
+    "EMPTY_HISTORY": "@:NO_ITEM"
+  },
+  "KColumn": {
+    "EMPTY_COLUMN": "@:NO_ITEM"
+  },
+  "KCard": {
+    "MORE_DETAILS": "Plus de détails",
+    "LESS_DETAILS": "Moins de détails"
+  },
+  "KDescriptionCardSection": {
+    "TITLE": "Description",
+    "NO_DESCRIPTION": "Aucune description"
+  },
+  "KColorChooser": {
+    "CANCEL_BUTTON": "@:CANCEL",
+    "DONE_BUTTON": "@:DONE"
+  },
+  "KIconChooser": {
+    "CLOSE_ACTION": "@:CANCEL",
+    "DONE_BUTTON": "@:DONE",
+    "SEARCH_FIELD_LABEL": "Tapez ici pour rechercher",
+    "SEARCH_CATEGORY_LABEL": "Toutes les catégories",
+    "categories": {
+      "accessibility": "accessibilité",
+      "alert": "alerte",
+      "animals": "animaux",
+      "arrows": "flèches",
+      "audio-video": "média",
+      "automotive": "voiture",
+      "autumn": "automne",
+      "beverage": "boisson",
+      "buildings": "bâtiments",
+      "business": "business",
+      "camping": "camping",
+      "charity": "solidarité",
+      "chat": "discussions",
+      "chess": "échecs",
+      "childhood": "enfance",
+      "clothing": "vêtements",
+      "code": "code",
+      "communication": "communication",
+      "computers": "ordinateurs",
+      "construction": "construction",
+      "currency": "monnaie",
+      "date-time": "temps et heure",
+      "design": "design",
+      "editors": "éditeurs",
+      "education": "éducation",
+      "emoji": "emoji",
+      "energy": "énergie",
+      "files": "dossiers",
+      "finance": "finance",
+      "fitness": "activités physiques",
+      "food": "alimentation",
+      "fruit-vegetable": "fruit-légumes",
+      "games": "jeux",
+      "gaming-tabletop": "jeux de société",
+      "gender": "genre",
+      "halloween": "halloween",
+      "hands": "mains",
+      "health": "santé",
+      "holiday": "vacances",
+      "hotel": "hôtel",
+      "household": "mobilier",
+      "images": "images",
+      "interfaces": "interfaces",
+      "logistics": "logistiques",
+      "maps": "cartes",
+      "maritime": "maritime",
+      "marketing": "marketing",
+      "mathematics": "mathématiques",
+      "medical": "médecine",
+      "moving": "déplacement",
+      "music": "musique",
+      "objects": "objects",
+      "payments-shopping": "paiements-achats",
+      "pharmacy": "pharmacie",
+      "political": "politique",
+      "religion": "religion",
+      "science": "science",
+      "science-fiction": "science-fiction",
+      "security": "sécurité",
+      "shapes": "forme",
+      "shopping": "achats",
+      "social": "social",
+      "spinners": "Icon",
+      "sports": "sport",
+      "spring": "printemps",
+      "status": "status",
+      "summer": "été",
+      "toggle": "bouton",
+      "travel": "voyage",
+      "users-people": "personnages",
+      "vehicles": "véhicules",
+      "weather": "météo",
+      "winter": "hiver",
+      "writing": "écriture"
+    }
+  },
+  "KTextAreaField": {
+    "CLEAR_TOOLTIP": "Effacer le contenu"
+  },
+  "KResolutionField": {
+    "SD_LABEL": "Définition Standard",
+    "SD_DESCRIPTION": "4:3, 640 x 480",
+    "HD_LABEL": "Haute Définition",
+    "HD_DESCRIPTION": "16:9, 1280 x 720",
+    "FHD_LABEL": "Full HD",
+    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
+    "QHD_LABEL": "Quad HD",
+    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
+    "2K_LABEL": "2K",
+    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
+    "4K_LABEL": "4K ou Ultra HD",
+    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
+    "8K_LABEL": "8K ou Full Ultra HD",
+    "8K_DESCRIPTION": "16:9, 7680 x 4320",
+    "PERSONALIZED_LABEL": "Personnalisée"
+  },
+  "KFileField": {
+    "INVALID_FILE_TYPE": "Type de fichier invalide, veuillez sélectionner un fichier du bon type",
+    "INVALID_FILE_SIZE": "Taille du fichier invalide, le fichier est trop volumineux",
+    "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succès",
+    "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
+  },
+  "KCronField": {
+    "INVALID_CRON": "Expression CRON invalide"
+  },
+  "KMediaBrowser": {
+    "CLOSE_ACTION": "@:CLOSE",
+    "DOWNLOAD_MEDIA_ACTION": "Télécharger le média",
+    "RESTORE_IMAGE_ACTION": "Restaurer l'image",
+    "REMOVE_MEDIA_ACTION": "Supprimer le média",
+    "REMOVE_DIALOG_TITLE": "Supprimer le média {media} ?",
+    "REMOVE_DIALOG_MESSAGE": "Êtes vous sûr de vouloir supprimer le média <b>{media}</b> ?",
+    "ADD_MEDIA_LABEL": "Ajouter un média",
+    "ADD_PHOTO_LABEL": "Ajouter une photo",
+    "UPLOAD_TITLE": "Ajouter un média",
+    "UPLOAD_FILE_FIELD_LABEL": "Sélectionnez un fichier",
+    "UPLOAD": "Ajouter",
+    "NO_MEDIA": "Il n'y a aucun média à voir, ajoutez un média à l'aide d'une des actions disponibles."
+  },
+  "KMessageCard": {
+    "VIEW_ATTACHMENT": "Voir la pièce jointe",
+    "DOWNLOAD_ATTACHMENT": "Télécharger la pièce jointe",
+    "EDIT_MESSAGE": "Modifier le message"
+  },
+  "KMessageComposer": {
+    "FORMAT_MESSAGE": "Formater le message",
+    "ATTACH_FILE": "Attacher un fichier",
+    "WRITE_YOUR_MESSAGE": "Rédigez votre message...",
+    "SEND_MESSAGE": "Envoyer le message",
+    "OPEN_EDITOR": "Ouvrir l'éditeur",
+    "CLOSE_EDITOR": "Fermer l'éditeur",
+    "message-type": {
+      "INFORMATION": "Information",
+      "WARNING": "Attention",
+      "ALERT": "Alerte"
+    }
+  },
+  "KFab": {
+    "CLOSE_ACTION": "@:CLOSE"
+  },
+  "KModal": {
+    "CLOSE_ACTION": "@:CLOSE"
+  },
+  "KWindow": {
+    "CLOSE_ACTION": "@:CLOSE",
+    "PIN_ACTION": "Épingler",
+    "RESTORE_ACTION": "Restaurer",
+    "MAXIMIZE_ACTION": "Maximiser"
+  },
+  "KResetPassword": {
+    "TITLE": "Réinitialiser votre mot de passe ?",
+    "MESSAGE": "Saisissez votre nouveau mot de passe",
+    "ACTION": "Appliquer",
+    "RESEND_LINK": "Renvoyer un code de réinitialisation",
+    "EMAIL_FIELD_LABEL": "Saisissez votre adresse email",
+    "PASSWORD_FIELD_LABEL": "Saisissez votre nouveau mot de passe",
+    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirmez votre nouveau mot de passe",
+    "TOKEN_FIELD_LABEL": "Saisissez le code reçu par email",
+    "SUCCESS_MESSAGE": "Mot de passe réinitialisé, vous allez recevoir un mail de confirmation",
+    "ERROR_MESSAGE_BAD_PARAMS": "Votre mot de passe a déjà été réinitialisé ou votre compte a été supprimé",
+    "ERROR_MESSAGE_VERIFY_EXPIRED": "Le délai pour réinitialiser votre mot de passe a expiré. Pour refaire la procédure, merci de cliquer sur le lien ci-dessous",
+    "ERROR_MESSAGE_DEFAULT": "Impossible de réinitialiser votre mot de passe. Merci d'essayer plus tard"
+  },
+  "KSendResetPassword": {
+    "TITLE": "Réinitialiser mon mot de passe ?",
+    "MESSAGE": "Saisissez votre adresse email et nous vous enverrons un code pour réinitialiser votre mot de passe",
+    "ACTION": "Envoyer",
+    "EMAIL_FIELD_LABEL": "Saisissez votre adresse email",
+    "ERROR_INVALID_EMAIL": "Impossible de trouver le compte associé à l'email saisie",
+    "ERROR_MESSAGE_IS_VERIFIED": "Veuillez consulter votre messagerie et vérifier tout d'abord votre adresse email",
+    "ERROR_MESSAGE_DEFAULT": "Impossible d'envoyer l'email, merci de vérifier votre adresse et essayez à nouveau"
+  },
+  "KSorter": {
+    "SORT": "Trier"
+  },
+  "KAbsoluteTimeRange": {
+    "PICK_START_DATE_LABEL": "Modifier la date de début",
+    "PICK_START_TIME_LABEL": "Modifier l'heure de début",
+    "PICK_END_DATE_LABEL": "Modifier la date de fin",
+    "PICK_END_TIME_LABEL": "Modifier l'heure de fin"
+  },
+  "KRelativeTimeRanges": {
+    "LAST_HOUR_LABEL": "Dernière heure",
+    "LAST_2_HOURS_LABEL": "2 dernières heures",
+    "LAST_3_HOURS_LABEL": "3 dernières heures",
+    "LAST_6_HOURS_LABEL": "6 dernières heures",
+    "LAST_12_HOURS_LABEL": "12 dernières heures",
+    "LAST_DAY_LABEL": "Dernier jour",
+    "LAST_2_DAYS_LABEL": "2 derniers jours",
+    "LAST_3_DAYS_LABEL": "3 derniers jours",
+    "LAST_WEEK_LABEL": "Dernière semaine",
+    "LAST_2_WEEKS_LABEL": "2 dernières semaines",
+    "LAST_MONTH_LABEL": "Dernier mois",
+    "LAST_3_MONTHS_LABEL": "3 derniers mois",
+    "LAST_6_MONTHS_LABEL": "6 derniers mois",
+    "LAST_YEAR_LABEL": "Dernière année",
+    "LAST_2_YEARS_LABEL": "2 dernières années",
+    "LAST_3_YEARS_LABEL": "3 dernières années",
+    "LAST_5_YEARS_LABEL": "5 dernières années",
+    "NEXT_HOUR_LABEL": "Prochaine heure",
+    "NEXT_2_HOURS_LABEL": "Prochaines 2 heures",
+    "NEXT_3_HOURS_LABEL": "Prochaines 3 heures",
+    "NEXT_6_HOURS_LABEL": "Prochaines 6 heures",
+    "NEXT_12_HOURS_LABEL": "Prochaines 12 heures",
+    "NEXT_DAY_LABEL": "Prochain jour",
+    "NEXT_2_DAYS_LABEL": "2 prochains jours",
+    "NEXT_3_DAYS_LABEL": "3 prochains jours",
+    "NEXT_WEEK_LABEL": "Dernière semaine",
+    "NEXT_2_WEEKS_LABEL": "2 dernières semaines",
+    "NEXT_MONTH_LABEL": "Prochain mois",
+    "NEXT_3_MONTHS_LABEL": "3 prochains mois",
+    "NEXT_6_MONTHS_LABEL": "6 prochains mois",
+    "NEXT_YEAR_LABEL": "Prochaine année"
+  },
+  "KChart": {
+    "NO_DATA_AVAILABLE": "Aucune donnée disponible"
+  },
+  "KTimeSeriesChart": {
+    "TIME_LABEL": "Temps",
+    "NO_DATA_AVAILABLE": "Aucune donnée disponible",
+    "EXPORT_SERIES": "Exporter les données",
+    "SERIES_EXPORT_FILE": "Series.csv"
+  },
+  "KFilter": {
+    "SEARCH_LABEL": "@:SEARCH"
+  },
+  "KTagsFilterControl": {
+    "FILTER": "Filtrer selon les propriétés"
+  },
+  "KTimeFilterControl": {
+    "FILTER": "Filtrer selon le temps"
+  },
+  "KTextArea": {
+    "COLLAPSE": "Réduire"
+  },
+  "KTimeControl": {
+    "PREVIOUS_STEP": "Pas précédent",
+    "PREVIOUS_HOUR": "Heure précédente",
+    "PREVIOUS_DAY": "Jour précédent",
+    "START_REALTIME": "Activer le temps réel",
+    "STOP_REALTIME": "Stopper le temps réel",
+    "SET_DATETIME": "Régler la date et l'heure",
+    "SET_STEP": "Régler le pas",
+    "NEXT_DAY": "Jour suivant",
+    "NEXT_HOUR": "Heure suivante",
+    "NEXT_STEP": "Pas suivant"
+  },
+  "KImage": {
+    "RESET": "Réinitialiser"
+  },
+  "KBrowser": {
+    "DOWNLOAD_FILE": "Télécharger le fichier",
+    "UPLOAD_FILES": "Transférer des fichiers",
+    "UPLOAD": "Transférer",
+    "DELETE_FILE": "Supprimer le fichier",
+    "DELETE_FILE_MESSAGE": "Êtes vous sûr de vouloir supprimer {name} ?",
+    "CANNOT_BE_VIEWED": "Ce fichier ne peut pas être visualisé",
+    "NO_FILES": "Aucun fichier"
+  },
+  "KUploader": {
+    "ADD_FILES": "Ajouter des fichiers...",
+    "EMPTY_FILE": "Le fichier {file} est vide ou corrompu !",
+    "INVALID_TYPE": "Le type du fichier {file} est invalide !",
+    "FILE_TOO_LARGE": "Le fichier {file} est trop volumineux. La taille doit être inférieure à {size}Mo",
+    "UPLOAD_FILE_SUCCEEDED": "Le fichier {file} a été transféré avec succès",
+    "UPLOAD_FILE_ERRORED": "Impossible de transférer le fichier {file} !"
+  },
+  "KTagManager": {
+    "TITLE": "Étiquettes",
+    "CREATE_TAG": "Créer une étiquette",
+    "EDIT_TAG": "Modifier l'étiquette",
+    "DELETE_TAG": "Supprimer l'étiquette",
+    "SORT_TAGS": "Trier les étiquettes",
+    "CREATE_TAG_ON_THE_FLY": "Créer l'étiquette",
+    "TAG_NAME": "Saisissez le nom",
+    "TAG_SERVICE": "Type de tag",
+    "TAG_DESCRIPTION": "Saisissez une description",
+    "TAG_COLOR": "Sélectionnez la couleur"
+  }
+}

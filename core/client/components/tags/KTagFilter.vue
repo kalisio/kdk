@@ -15,11 +15,11 @@
       <template v-for="tag in options" :key="tag.name">
         <q-fab-action
           :label="$tie(getLabel(tag))"
-          :style="'background-color: ' + tag.color"
           :text-color="getTextColor(tag)"
           padding="1px"
           square
           @click="onTagAdded(tag)"
+          :style="`background-color: ${getColor(tag)};`"
         />
       </template>
     </q-fab>
@@ -32,7 +32,7 @@
 <script setup>
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
-import { getContrastColor } from '../../../../core/client/utils/utils.colors.js'
+import { getHtmlColor, getContrastColor } from '../../utils/utils.colors.js'
 import { useScreen } from '../../composables'
 
 // Props
@@ -83,6 +83,9 @@ watch(() => props.selection, (newSelection) => {
 // Functions
 function getLabel (tag) {
   return _.get(tag, 'label', tag.name)
+}
+function getColor (tag) {
+  return getHtmlColor(tag.color)
 }
 function getTextColor (tag) {
   return tag.textColor || getContrastColor(tag.color)

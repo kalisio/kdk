@@ -55,7 +55,6 @@
     "globals": [
       "DEV",
       "PROD",
-      "fetch",
       "addEventListener",
       "cordova",
       "location",
@@ -71,7 +70,9 @@
       "localStorage",
       "DOMParser",
       "caches",
-      "MutationObserver"
+      "MutationObserver",
+      "DataTransfer",
+      "DragEvent"
     ]
   },
   "directories": {

@@ -46,7 +46,8 @@ export const Document = {
       },
       htmlSanitizer: {
         allowedTags: sanitize.defaults.allowedTags.concat(['img', 'strike']),
-        allowedAttributes: _.assign(sanitize.defaults.allowedAttributes, { div: ['style'] })
+        allowedAttributes: _.assign(sanitize.defaults.allowedAttributes, { div: ['style'] }),
+        allowedSchemesByTag: { img: ['http', 'https', 'ftp', 'data'] }
       },
       mdConverter: {}
     })

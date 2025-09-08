@@ -25,4 +25,5 @@ export default function (app, options) {
       else createIndex()
     }
   })
+  options.Model.createIndex({ name: 'text', label: 'text' })
 }

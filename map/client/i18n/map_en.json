@@ -1,0 +1,791 @@
+{
+  "LAYERS_LABEL": "My data",
+  "VIEWS_LABEL": "My views",
+  "PROJECTS_LABEL": "My projects",
+  "CATALOG_LABEL": "Catalog",
+  "PROJECT_LAYERS_LABEL": "Data",
+  "PROJECT_VIEWS_LABEL": "Views",
+  "layout": {
+    "SHOW_USER_LOCATION": "Show my location",
+    "HIDE_USER_LOCATION": "Hide my location",
+    "SEARCH_LOCATION": "Search a location",
+    "LEGEND": "Legend",
+    "SELECTION_MANAGER": "Selection manager",
+    "STYLES_MANAGER": "Styles manager",
+    "TAGS_MANAGER": "Tags manager",
+    "TIME_SERIES": "Time series",
+    "POSITION": "Geographical coordinates",
+    "NORTH_ARROW": "North arrow",
+    "MEASURE_TOOL": "Measure tool",
+    "PRINT_TOOL": "Print tool",
+    "PRINT": "Print"
+  },
+  "errors": {
+    "GEOLOCATION_NOT_SUPPORTED": "Geolocation does not seem to be supported on your device or browser.",
+    "GEOLOCATION_ERROR": "We are not able to locate your position, this might affect some features of the application.",
+    "GEOLOCATION_PERMISSION_DENIED": "@:errors.GEOLOCATION_ERROR It seems you did not give permission to locate you.",
+    "GEOLOCATION_POSITION_UNAVAILABLE": "@:errors.GEOLOCATION_ERROR It seems the internal source of position returned an internal error.",
+    "GEOLOCATION_POSITION_TIMEOUT": "@:errors.GEOLOCATION_ERROR It seems the time allowed to acquire it was reached before the information was obtained.",
+    "CANNOT_PROCESS_SCHEMA_DATA": "Invalid or incomplete data scheme",
+    "ALERTS_LIMIT": "Too much alerts to display all of them",
+    "FILE_IMPORT_ERROR": "File import has failed",
+    "CANNOT_CHECK_ALERT_MISSING_SERVICE": "Last check failed due to unavailable service",
+    "CANNOT_CHECK_ALERT_MISSING_DATA": "Last check failed due to unavailable data",
+    "INVALID_GEOJSON_FILE": "{file} is not a valid GeoJSON file",
+    "INVALID_GEOJSON_CRS": "{file} has an unsupported Coordinates Reference System (CRS)",
+    "INVALID_GPX_FILE": "{file} is not a valid GPX file",
+    "INVALID_KML_FILE": "{file} is not a valid KML file",
+    "GEOMETRY_ERROR": "<b>{total}</b> topology validation errors",
+    "GEOMETRY_REPEATED_POINT": "<b>{total}</b> errors of <b>repeated points</b>",
+    "GEOMETRY_HOLE_OUTSIDE_SHELL": "<b>{total}</b> errors of <b>holes outside shell</b>",
+    "GEOMETRY_NESTED_HOLES": "<b>{total}</b> errors of <b>nested holes</b>",
+    "GEOMETRY_DISCONNECTED_INTERIOR": "<b>{total}</b> errors of <b>disconnected interiors</b>",
+    "GEOMETRY_SELF_INTERSECTION": "<b>{total}</b> errors of <b>self-intersection</b>",
+    "GEOMETRY_RING_SELF_INTERSECTION": "<b>{total}</b> errors of <b>ring self-intersection</b>",
+    "GEOMETRY_NESTED_SHELLS": "<b>{total}</b> errors of <b>nested shells</b>",
+    "GEOMETRY_DUPLICATE_RINGS": "<b>{total}</b> errors of <b>duplicate rings</b>",
+    "GEOMETRY_TOO_FEW_POINTS": "<b>{total}</b> errors of <b>too few distinct points in geometry component</b>",
+    "GEOMETRY_INVALID_COORDINATES": "<b>{total}</b> errors of <b>invalid coordinates</b>",
+    "GEOMETRY_RING_NOT_CLOSED": "<b>{total}</b> errors of <b>ring not closed</b>"
+  },
+  "utils": {
+    "layers": {
+      "INVALID_FEATURES_DIALOG_TITLE": "Invalid elements",
+      "INVALID_FEATURES_DIALOG_MESSAGE": "Your layer contains {total} elements with invalid geometry. As a consequence they will be removed prior to saving.",
+      "INVALID_FEATURES_LIST_ERRORS": "<div class='text-subtitle2 q-mt-xs'>Liste des erreurs : </div><ul class='q-ma-none q-pl-lg'>{errors}</ul>",
+      "INVALID_FEATURES_LIST_FEATURES": " sur les éléments: ",
+      "SAVING_LABEL": "Please wait while saving layer data,</br>processed {processed} over {total} features",
+      "SAVE_DIALOG_TITLE": "Tiling layer {layer}",
+      "SAVE_DIALOG_MESSAGE": "Your layer contains too much elements and has been optimized to be smoothly displayed.</br>As a consequence, it will only be visible at a local scale from a given zoom level.",
+      "REMOVING_LABEL": "Please wait while removing layer data",
+      "REMOVE_DIALOG_TITLE": "Remove {layer} ?",
+      "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{layer}</b> from your workspace ?"
+    },
+    "capture": {
+      "CAPTURE_PDF_FILE": "capture_{time}.pdf",
+      "CAPTURE_IMAGE_FILE": "capture_{time}.png"
+    }
+  },
+  "mixins": {
+    "fileLayers": {
+      "IMPORTED_DATA_NAME": "My data"
+    },
+    "legend": {
+      "CONVERT_UNITS": "Click to change unit"
+    },
+    "activity": {
+      "ADD_LAYER": "Add a layer",
+      "EDIT_LABEL": "Edit properties",
+      "EDIT_LAYER_STYLE_LABEL": "Edit style",
+      "RESET_LAYER_STYLE_LABEL": "Reset style",
+      "FILTER_DATA_LABEL": "Filter data",
+      "VIEW_DATA_LABEL": "View data",
+      "CHART_DATA_LABEL": "Chart data",
+      "START_EDIT_DATA_LABEL": "Start data edit",
+      "STOP_EDIT_DATA_LABEL": "Stop data edit",
+      "EDIT_POINTS_DATA_LABEL": "Edit points",
+      "EDIT_LINES_DATA_LABEL": "Edit lines",
+      "EDIT_POLYGONS_DATA_LABEL": "Edit polygons",
+      "EDIT_PROPERTIES_LABEL": "Edit properties",
+      "EDIT_GEOMETRIES_LABEL": "Edit geometries",
+      "EDITING_DATA_MESSAGE": "Editing",
+      "ZOOM_TO_LABEL": "Zoom to",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+      "BRING_TO_FRONT_LABEL": "Display on top",
+      "BRING_TO_BACK_LABEL": "Display at bottom",
+      "TOGGLE_CATALOG": "Catalog",
+      "TOGGLE_MAP": "View in 2D",
+      "TOGGLE_GLOBE": "View in 3D",
+      "ENTER_VR": "Enter VR mode",
+      "EXIT_VR": "Exit VR mod",
+      "PROBE": "Probe",
+      "SEARCH_LOCATION": "Search a location",
+      "ADD_VIEW": "Add view",
+      "CREATE_VIEW": "Create view",
+      "CREATE_PROJECT": "Create project",
+      "MANAGE_PROJECT": "Manage project",
+      "SYNCHRONIZE_TIMELINE_LABEL": "Synchronize with timeline",
+      "TOOLS": "Tools",
+      "SAVE_LAYER_EDITION_CHANGES": "Save edition changes",
+      "DISCARD_LAYER_EDITION_CHANGES": "Discard edition changes",
+      "SAVE_LABEL": "Save layer",
+      "PRINT_VIEW": "Print view",
+      "REMOVE_LABEL": "Remove"
+    },
+    "timeseries": {
+      "FORECAST_PROBE": "Forecast"
+    },
+    "editLayers": {
+      "draw": {
+        "toolbar": {
+          "actions": {
+            "title": "Cancel drawing",
+            "text": "Cancel"
+          },
+          "finish": {
+            "title": "Finish drawing",
+            "text": "Finish"
+          },
+          "undo": {
+            "title": "Delete last point drawn",
+            "text": "Delete last point"
+          },
+          "buttons": {
+            "polyline": "Draw a polyline",
+            "polygon": "Draw a polygon",
+            "rectangle": "Draw a rectangle",
+            "circle": "Draw a circle",
+            "marker": "Draw a marker",
+            "circlemarker": "Draw a circlemarker"
+          }
+        },
+        "handlers": {
+          "circle": {
+            "tooltip": {
+              "start": "Click and drag to draw circle."
+            },
+            "radius": "Radius"
+          },
+          "circlemarker": {
+            "tooltip": {
+              "start": "Click map to place circle marker."
+            }
+          },
+          "marker": {
+            "tooltip": {
+              "start": "Click map to place marker."
+            }
+          },
+          "polygon": {
+            "tooltip": {
+              "start": "Click to start drawing shape.",
+              "cont": "Click to continue drawing shape.",
+              "end": "Click first point to close this shape."
+            }
+          },
+          "polyline": {
+            "error": "<strong>Error:</strong> shape edges cannot cross!",
+            "tooltip": {
+              "start": "Click to start drawing line.",
+              "cont": "Click to continue drawing line.",
+              "end": "Click last point to finish line."
+            }
+          },
+          "rectangle": {
+            "tooltip": {
+              "start": "Click and drag to draw rectangle."
+            }
+          },
+          "simpleshape": {
+            "tooltip": {
+              "end": "Release mouse to finish drawing."
+            }
+          }
+        }
+      },
+      "edit": {
+        "toolbar": {
+          "actions": {
+            "save": {
+              "title": "Save changes",
+              "text": "Save"
+            },
+            "cancel": {
+              "title": "Cancel editing, discards all changes",
+              "text": "Cancel"
+            },
+            "clearAll": {
+              "title": "Clear all layers",
+              "text": "Clear All"
+            }
+          },
+          "buttons": {
+            "edit": "Edit layers",
+            "editDisabled": "No layers to edit",
+            "remove": "Delete layers",
+            "removeDisabled": "No layers to delete"
+          }
+        },
+        "handlers": {
+          "edit": {
+            "tooltip": {
+              "text": "Drag handles or markers to edit features.",
+              "subtext": "Click cancel to undo changes."
+            }
+          },
+          "remove": {
+            "tooltip": {
+              "text": "Click on a feature to remove."
+            }
+          }
+        }
+      }
+    }
+  },
+  "geolocation": {
+    "TITLE": "My position",
+    "METERS": "meters",
+    "FEET": "feet",
+    "POPUP": "You are within {'{distance}'} {'{unit}'} from this point",
+    "OUTSIDE_MAP_BOUNDS": "You seem located outside the boundaries of the map"
+  },
+  "schemas": {
+    "CATALOG_CREATE_TITLE": "Create a new data layer",
+    "CATALOG_NAME_FIELD_LABEL": "Enter the name of the new layer",
+    "CATALOG_DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
+    "CATALOG_FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID property name",
+    "CATALOG_FEATURE_LABEL_FIELD_LABEL": "Enter the feature label property name",
+    "CATALOG_SCHEMA_FIELD_LABEL": "Select a data scheme",
+    "LAYER_CATEGORY_CREATE_TITLE": "Create a new category?",
+    "LAYER_CATEGORY_NAME_FIELD_LABEL": "Enter the name of this category",
+    "LAYER_CATEGORY_ICON_FIELD_LABEL": "Select an icon for this category",
+    "LAYER_CATEGORY_LAYERS_FIELD_LABEL": "Select the layers in this category",
+    "LAYER_CATEGORY_EXCLUSIVE_FIELD_LABEL": "Make selection exclusive within this category",
+    "PROJECT_CREATE_TITLE": "Create a new project?",
+    "PROJECT_NAME_FIELD_LABEL": "Enter the name of this project",
+    "PROJECT_DESCRIPTION_FIELD_LABEL": "Enter the description of this project",
+    "PROJECT_LAYERS_FIELD_LABEL": "Select the layers in this project",
+    "PROJECT_VIEWS_FIELD_LABEL": "Select the views in this project",
+    "PROJECT_INDENTIFIER_FIELD_LABEL": "Enter the identifier of this project for third-party applications",
+    "MAP_SETTINGS": "Map parameters",
+    "RESTORE_VIEW_FIELD_LABEL": "Save current extent",
+    "RESTORE_LAYERS_FIELD_LABEL": "Save active layers",
+    "LOCATION_FORMAT_LABEL": "Location format",
+    "TIMELINE_SETTINGS": "Timeline parameters",
+    "TIMELINE_STEP": "Timeline step (in minutes)",
+    "TIMELINE_INTERVAL": "Real-time data refresh update interval",
+    "TIMESERIES_SETTINGS": "Timeseries parameters",
+    "TIMESERIES_SPAN": "Timeseries span (in hours)",
+    "TIMESERIES_GROUP_BY": "Timeseries grouping",
+    "TIMESERIES_GROUP_BY_VARIABLE": "Broup by variable",
+    "TIMESERIES_GROUP_BY_FEATURE": "Group by geographical feature",
+    "CAPTURE_RESOLUTION_FIELD_LABEL": "Resolution setting",
+    "CAPTURE_HEADER_FIELD_LABEL": "Title setting",
+    "CAPTURE_FOOTER_FIELD_LABEL": "Footer setting",
+    "CAPTURE_NOT_DISPLAYED_FIELD_LABEL": "Do not display",
+    "CAPTURE_LEGEND_POSITION_FIELD_LABEL": "Set legend position",
+    "CAPTURE_LEFT_POSITION_FIELD_LABEL": " Display left",
+    "CAPTURE_RIGHT_POSITION_FIELD_LABEL": " Display right",
+    "CAPTURE_COMPASS_POSITION_FIELD_LABEL": "Set compass position",
+    "CAPTURE_TOP_LEFT_POSITION_FIELD_LABEL": "Display top left",
+    "CAPTURE_TOP_RIGHT_POSITION_FIELD_LABEL": "Display top right",
+    "CAPTURE_BOTTOM_RIGHT_POSITION_FIELD_LABEL": "Display bottom right",
+    "CAPTURE_BOTTOM_LEFT_POSITION_FIELD_LABEL": "Display bottom left",
+    "CAPTURE_ADVANCED_SETTINGS": "Advanced setting",
+    "CAPTURE_DATETIME_RANGE_FIELD_LABEL": "Set time interval",
+    "CAPTURE_FORMAT_FIELD_LABEL": "Select file format",
+    "CAPTURE_PDF_FORMAT_FIELD_LABEL": "PDF",
+    "CAPTURE_PNG_FORMAT_FIELD_LABEL": "PNG"
+  },
+  "tours": {
+    "navigation-bar": {
+      "NAVIGATION_BAR_LABEL": "This bar allows to quickly execute recurring actions on the map.",
+      "ZOOM_LABEL": "Zoom in/out using these buttons.",
+      "TOGGLE_MAP_LABEL": "Switch to 2D map view using this button.",
+      "TOGGLE_GLOBE_LABEL": "Switch to 3D map view using this button.",
+      "GEOLOCATE_LABEL": "Recenter the map on your location and display it using this button.",
+      "SEARCH_LOCATION_LABEL": "Seek for an address using this button.",
+      "LOCATION_SEARCHING_LABEL": "Type part of your address and select among the proposed locations to center the map on.",
+      "LOCATION_BACK_LABEL": "Close the coordinates widget by clicking this button.",
+      "SEARCH_BACK_LABEL": "Then stop searching by going back to the actions.",
+      "TOOLS_LABEL": "Select among available tools using this button.",
+      "TRACK_LOCATION_LABEL": "Display the coordinates of a location using this button.",
+      "COPY_LOCATION_LABEL": "Copy the coordinates in your clipboard using this button.",
+      "LOCATION_TRACKING_LABEL": "Drag the screen to display the coordinates of its center and release to keep track of it.",
+      "TRACK_BACK_LABEL": "Then stop tracking by going back to the actions.",
+      "MEASURE_LABEL": "Activate measure tools using this button.",
+      "MEASURE_DISTANCE_LABEL": "Measure a distance using this button.",
+      "MEASURE_DISTANCE_DETAILS_LABEL": "Draw the line segment(s) you'd like to measure on the map and hover any elements to get measure information.",
+      "MEASURE_AREA_LABEL": "Measure an area using this button.",
+      "MEASURE_AREA_DETAILS_LABEL": "Draw the polygons(s) you'd like to measure on the map and hover any elements to get measure information.",
+      "MEASURE_CIRCLE_LABEL": "Measure an isodistance using this button.",
+      "MEASURE_CIRCLE_DETAILS_LABEL": "Draw the circle(s) you'd like to measure on the map and hover any elements to get measure information.",
+      "MEASURE_FEATURE_LABEL": "Measure a geographical feature using this button.",
+      "MEASURE_FEATURE_DETAILS_LABEL": "Select the feature you'd like to measure on the map to get measure information.",
+      "PRINT_MAP_LABEL": "Print the view using this button.",
+      "CAPTURE_BUTTON_LABEL": "Capture and download the view using this button.",
+      "CAPTURE_BACK_LABEL": "Then stop capturing by going back to the actions.",
+      "CLEAR_MEASURE_LABEL": "Clear your current measurements using this button.",
+      "MEASURE_BACK_LABEL": "Then stop measuring by going back to the actions.",
+      "TOGGLE_VR_LABEL": "Switch to Virtual Reality (VR) mode with this button.",
+      "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
+      "TOGGLE_CATALOG_LABEL": "Open the catalog with this button.",
+      "NORTH_ARROW_LABEL": "Display or hide the north arrow using this button."
+    },
+    "catalog-panel": {
+      "CATALOG_LABEL": "The <b>catalog</b> allows to manage data displayed on your map.<br/>The catalogd is divided into 3 different tabs.",
+      "USER_LAYERS_LABEL": "Your data space. You can import data files, connect to a map server or create a new dataset.",
+      "CATEGORIES_LABEL": "The data are organised into different categories.",
+      "USER_VIEWS_LABEL": "Your favorite views.</br>The views allow you to position yourself at defined places while activating some data layers.",
+      "USER_VIEWS_CREATE_LABEL": "How to create a view.",
+      "USER_VIEWS_FILTER_LABEL": "Filter the views",
+      "USER_VIEWS_SORTER_LABEL": "Sort the views",
+      "USER_VIEWS_VIEW_LABEL": "Click on the view to update the map.",
+      "USER_VIEWS_SET_HOME_LABEL": "Set this view as the default view",
+      "USER_VIEWS_REMOVE_LABEL": "Remove the view",
+      "CATEGORY_LABEL": "Select a category to list all available data layers.",
+      "SHOW_LAYER_LABEL": "Select a layer to show it on the map, it will then be highlighted in the list.",
+      "MIN_LEVEL_LABEL": "When a layer is not visible according to your scale it will be disabled, you must zoom in to make it show on the map.",
+      "HIDE_LAYER_LABEL": "A new selection will hide it.",
+      "METEO_MODEL_LABEL": "Regarding meteorological data you can also switch the prediction model if multiple are available.",
+      "METEO_LAYERS_LABEL": "Each layer will then target data of a specific meteorological element from this model.",
+      "MANAGE_LAYER_CATEGORIES_LABEL": "You can manage the categories of your own data layers.",
+      "MANAGE_LAYER_CATEGORIES_LINK_LABEL": "How to manage the categories",
+      "CATEGORIES_LIST_LABEL": "When you have defined some categories they are listed here, otherwise you can directly create your first one.",
+      "CATEGORIES_LIST_ACTIONS_LABEL": "Sort your categories by name or update time and seek for a target one.",
+      "CATEGORY_ACTIONS_LABEL": "Update or remove a category by using these buttons.",
+      "ADD_CATEGORY_LABEL": "Add a new category using this button.",
+      "LAYER_CATEGORY_NAME_LABEL": "Enter the name of your new category.",
+      "LAYER_CATEGORY_ICON_LABEL": "Enter the icon of your new category.",
+      "LAYER_CATEGORY_LAYERS_LABEL": "Select the layers to be part of this category.",
+      "LAYER_CATEGORY_EXCLUSIVE_LABEL": "Set if only one layer should be visible at a time in this category.",
+      "CREATE_NEW_LAYER_CATEGORY_LABEL": "Confirm the creation of your new category in the catalog."
+    },
+    "timeline": {
+      "TIMELINE_LABEL": "The timeline allows to quickly execute actions related to the time of displayed data.",
+      "DATE_LABEL": "Jump to any given date by using this button.",
+      "PICK_DAY_LABEL": "Pick a given day.",
+      "PICK_TIMES_LABEL": "Or pick time.",
+      "NOW_LABEL": "Activate to real-time using this button.",
+      "STEP_LABEL": "Update step using this button.",
+      "NEXT_STEP_LABEL": "Go forward in time to the next step as configured.",
+      "PREVIOUS_STEP_LABEL": "Go backward in time to the previous step as configured.",
+      "NEXT_HOUR_LABEL": "Go forward in time to the next hour.",
+      "PREVIOUS_HOUR_LABEL": "Go backward in time to the previous hour.",
+      "NEXT_DAY_LABEL": "Go forward in time to the next day.",
+      "PREVIOUS_DAY_LABEL": "Go backward in time to the previous day."
+    },
+    "fab": {
+      "PROBE_LABEL": "Probe weather forecast data at a specific location.",
+      "PROBE_CURSOR_LABEL": "After selecting this option click on a target location on the map to display related forecast data.",
+      "ADD_LAYER_LABEL": "Add a new data layer.",
+      "ADD_LAYER_LINK_LABEL": "How to add a new data layer",
+      "CREATE_VIEW_LABEL": "Add a new views using this button.",
+      "CREATE_VIEW_LINK_LABEL": "How to create a new view"
+    },
+    "add-layer": {
+      "ADD_LAYER_LINK_LABEL": "How to add others types of data layers",
+      "FILE_LABEL": "Select your data file in GeoJSON format.",
+      "SERVICE_LABEL": "Enter the URL of the GetCapabilities request for the target OGC service.",
+      "SERVICE_LAYER_LABEL": "Select the target OGC service layer to connect to.",
+      "LAYER_NAME_LABEL": "Enter the name of your new data layer.",
+      "LAYER_DESCRIPTION_LABEL": "Then provide a description for your new data layer.",
+      "LAYER_FEATURE_ID_LABEL": "Last, choose an identifier to uniquely identify the features of your layer.",
+      "LAYER_STYLE_LABEL": "Select the style to be used for your layer.",
+      "LAYER_SCHEMA_LABEL": "Select the data schema of your features (JSON schema file).",
+      "IMPORT_LAYER_LABEL": "Import existing data as a new data layer.",
+      "IMPORT_LAYER_LINK_LABEL": "How to import map data",
+      "IMPORT_NEW_LAYER_LABEL": "Confirm the creation of your new layer and the map will be centered on your new layer.",
+      "CONNECT_LAYER_LABEL": "Connect your layer to a remote OGC service (WMS, WFS, WMTS, TMS).",
+      "CONNECT_LAYER_LINK_LABEL": "How to connect a layer",
+      "CONNECT_NEW_LAYER_LABEL": "Confirm the creation of your new layer.",
+      "CREATE_LAYER_LABEL": "Create a new blank data layer based on a data schema.",
+      "CREATE_LAYER_LINK_LABEL": "How to create a new data layer",
+      "CREATE_NEW_LAYER_LABEL": "Confirm the creation of your new layer and start editing the data on the map."
+    },
+    "create-view": {
+      "NAME_FIELD_LABEL": "Saisissez un nom pour votre nouvelle vue",
+      "DESCRIPTION_FIELD_LABEL": "Enter the name of your new view.",
+      "LAYERS_FIELD_LABEL": "Select whether the currently active layers will be restaured with this view or not.",
+      "APPLY_BUTTON_LABEL": "Confirm the creation of your new favorite view."
+    },
+    "side-nav": {
+      "HELP_LABEL": "Access our online help anytime",
+      "CONTEXT_HELP_LABEL": "To get contextual help whenever your are lost simply click on the following icon",
+      "ABOUT_LABEL": "Display detailed system information and send us bug reports.",
+      "BUG_LABEL": "Send us a bug report with a preformatted email containing required information.",
+      "SETTINGS_LABEL": "Update general settings of the system on your device.",
+      "LOGOUT_LABEL": "Logout in order to close your work session.",
+      "SESSION_LABEL": "Otherwise the session will remain active on your device for <b>24H</b>, you will not have to login again in this time frame."
+    }
+  },
+  "KOwsServiceField": {
+    "INVALID_URL": "Invalid URL",
+    "CANNOT_FETCH_URL": "Failed fetching resource.",
+    "WFS_MISSING_GEOJSON_SUPPORT": "The WFS service has no support for GeoJSON, which is required.",
+    "HEADER_KEY": "Token header key",
+    "HEADER_VALUE": "Token value",
+    "UNAUTHORIZED_MESSAGE": "You do not seem to be authorized to access this service, you might need to add an API key in the request header."
+  },
+  "KOwsLayerField": {
+    "UNABLE_TO_DESCRIBE_FEATURE_TYPE": "Failed fetching layer's description.",
+    "UNSUPPORTED_LAYER_CRS": "The projection used by this layer is not supported.",
+    "UNSUPPORTED_LAYER_FORMAT": "The data format used by this layer is not supported."
+  },
+  "KSelectViewsField": {
+    "EMPTY": "None available"
+  },
+  "KLocationSearch": {
+    "SEARCH": "@:SEARCH",
+    "NO_RESULT": "No result found",
+    "ENABLE_VIEWBOX": "Activate search limitation to the current view",
+    "DISABLE_VIEWBOX": "Deactivate search limitation to the current view",
+    "FILTER_GEOCODERS": "Filter search sources"
+  },
+  "KLocationField": {
+    "SEARCH": "@:SEARCH",
+    "NO_RESULT": "No result found",
+    "FILTER": "Filter search services",
+    "GEOLOCATE": "Locate me",
+    "DRAW": "Draw on a map",
+    "VIEWBOX": "Restrict search to defined area"
+  },
+  "KLocationMap": {
+    "RECENTER_MAP": "Recenter map",
+    "LOCATE_ME": "Locate me",
+    "DRAW_POINT": "Designate a point",
+    "DRAW_LINE": "Draw a path",
+    "DRAW_RECTANGLE": "Draw a rectangle",
+    "DRAW_POLYGON": "Draw a polygon",
+    "ZONE": "Zone",
+    "PATH": "Path"
+  },
+  "KLocationCardSection": {
+    "TITLE": "Location",
+    "NO_LOCATION": "Undefined location"
+  },
+  "KTimezoneField": {
+    "TIMEZONE_MAP_TOOLTIP": "Select timezone on a map",
+    "TIMEZONE_MAP_TITLE": "Select the target timezone"
+  },
+  "KPositionIndicator": {
+    "PLACEHOLDER": "Navigate the see the coordinates",
+    "COPY": "Copy the coordinates",
+    "CLEAR": "Clear",
+    "POSITION_COPIED": "Position copied to clipboard",
+    "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
+    "OUTSIDE_MAP": "Indeterminated position"
+  },
+  "KTimeSeries": {
+    "LABEL": "Time Series",
+    "RESTORE_TIME_RANGE": "Restore previous view",
+    "NO_DATA_AVAILABLE": "No data available",
+    "CENTER_ON": "Center the view on the probed location",
+    "SPAN": "Timeseries span",
+    "RUN": "Forecast run",
+    "TIME_LABEL": "Time",
+    "EXPORT_SERIES": "Export data",
+    "SERIES_EXPORT_FILE": "Series"
+  },
+  "KStackableTimeSeries": {
+    "NO_DATA_AVAILABLE": "No data available"
+  },
+  "KViewsPanel": {
+    "SORT_VIEWS": "Sort views",
+    "REMOVE_VIEW": "@:REMOVE",
+    "CACHE_VIEW": "Add to offline cache",
+    "UNCACHE_VIEW": "Remove from offline cache",
+    "CACHING_VIEW": "Downloading view in progress",
+    "UNCACHING_VIEW": "Data removal for view in progress",
+    "CACHE_VIEW_DIALOG_TITLE": "Add to offline cache",
+    "CACHE_VIEW_DIALOG_MESSAGE": "Configure data download",
+    "SET_HOME_VIEW": "Set as default view",
+    "REMOVE_DIALOG_TITLE": "Remove {view} ?",
+    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{view}</b> from your workspace ?"
+  },
+  "KCreateOfflineView": {
+    "MIN_ZOOM_FIELD_LABEL": "Zoom level from which data will be downloaded, increase will reduce data size",
+    "MAX_ZOOM_FIELD_LABEL": "Zoom level until which data will be downloaded, increase will increase data size",
+    "NB_CONCURRENT_REQUESTS_FIELD_LABEL": "Number of concurrent requests issued to download, increase will speed up download but load the device and the server",
+    "NUMBER_OF_TILES": "Estimated number of tiles to download per layer: "
+  },
+  "KProjectsPanel": {
+    "SORT_PROJECTS": "Sort projects",
+    "REMOVE_DIALOG_TITLE": "Remove {project} ?",
+    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove <b>{project}</b> from your workspace ?"
+  },
+  "KProjectSelector": {
+    "EDIT_PROJECT": "@:EDIT",
+    "REMOVE_PROJECT": "@:REMOVE"
+  },
+  "KProjectEditor": {
+    "BACKGROUND_LAYER_REQUIRED": "A project at least requires a background layer."
+  },
+  "KFeaturesFilterManager": {
+    "TITLE": "Data filter for layer",
+    "CREATE": "Add a new filter",
+    "BACK": "Back to filters list",
+    "EDIT": "Edit a filter",
+    "REMOVE": "Delete a filter",
+    "NO_FILTERS": "No filter",
+    "NAME_LABEL": "Enter the name of the filter",
+    "STYLE_LABEL": "Select a style for this filter",
+    "NONE": "None",
+    "NEW": "New style",
+    "ADD_CONDITION": "Add a condition"
+  },
+  "KFilterCondition": {
+    "FILTER_WHEN": "Filter data when",
+    "BOOLEAN_OPERATOR": "Operator",
+    "AND": "and",
+    "OR": "or",
+    "PROPERTY": "the property",
+    "PROPERTY_NAME": "Property",
+    "IS": "is",
+    "COMPARISON_OPERATOR": "Operator",
+    "IN": "in the list",
+    "NOT_IN": "out of the list",
+    "EQUAL": "=",
+    "NOT_EQUAL": "≠",
+    "GREATER": ">",
+    "GREATER_OR_EQUAL": "≥",
+    "LESS": "<",
+    "LESS_OR_EQUAL": "≤",
+    "VALUE": "Value",
+    "REMOVE": "Delete this condition",
+    "CANNOT_BE_EMPTY": "Must be filled in"
+  },
+  "KFeaturesTable": {
+    "TITLE": "Data for layer"
+  },
+  "KFeaturesChart": {
+    "SELECT_PROPERTY_LABEL": "Select a target property to start",
+    "TITLE": "Graphs for layer",
+    "PROPERTY_LABEL": "Target property",
+    "CHART_LABEL": "Chart type",
+    "PAGINATION_LABEL": "Number of values",
+    "CHART_LABEL_PIE": "Pie",
+    "CHART_LABEL_POLARAREA": "Polar",
+    "CHART_LABEL_RADAR": "Radar",
+    "CHART_LABEL_BAR": "Bar",
+    "NULL_VALUE_LABEL": "None",
+    "ALL_VALUES": "All",
+    "RENDER_LABEL": "Display type",
+    "VALUE_LABEL": "Count",
+    "PERCENTAGE_LABEL": "Percentage",
+    "CHARTING_LABEL": "Please wait while computing chart",
+    "CHART_VALUE_LABEL": "Value",
+    "CHART_COUNT_LABEL": "Count",
+    "CHART_SETTINGS_LABEL": "Graph settings",
+    "CHART_EXPORT_LABEL": "Export data",
+    "CHART_EXPORT_FILE": "Chart-{layer}.csv"
+  },
+  "KFeaturesSelection": {
+    "LABEL": "Selection",
+    "NONE_SELECTED": "Nothing selected"
+  },
+  "KSelectedLayerFeatures": {
+    "FEATURE_PROPERTIES_LABEL": "Feature properties",
+    "ZOOM_TO_FEATURES_LABEL": "Zoom to features",
+    "EDIT_FEATURES_LABEL": "Edit features",
+    "RESET_FEATURES_STYLE_LABEL": "Reset features style",
+    "REMOVE_FEATURES_LABEL": "Remove features",
+    "ZOOM_TO_FEATURE_LABEL": "Zoom to feature",
+    "EDIT_FEATURE_LABEL": "Edit feature",
+    "EDIT_FEATURE_PROPERTIES_LABEL": "Edit feature properties",
+    "EDIT_FEATURE_STYLE_LABEL": "Edit feature style",
+    "RESET_FEATURE_STYLE_LABEL": "Reset feature style",
+    "REMOVE_FEATURE_LABEL": "Remove feature",
+    "REMOVE_FEATURE_DIALOG_TITLE": "Remove this feature ?",
+    "REMOVE_FEATURE_DIALOG_MESSAGE": "Are you sure you want to remove this feature from your workspace ?",
+    "REMOVE_FEATURES_DIALOG_TITLE": "Remove these features ?",
+    "REMOVE_FEATURES_DIALOG_MESSAGE": "Are you sure you want to remove these features from your workspace ?"
+  },
+  "KLayerEditor": {
+    "BASE": "Base properties",
+    "DISPLAY": "Propriétés d'affichage",
+    "DEFAULT_VISIBILITY": "Visible by default",
+    "ZOOM": "Visible entre les niveaux de zoom",
+    "POINT_CLUSTERING": "Cluster until level",
+    "CLUSTERING_PIXEL_RANGE": "Clustering range",
+    "SELECTABLE": "Selectable",
+    "OPACITY": "Opacity",
+    "POPUP": "Popup",
+    "ADD_POPUP": "Select target properties to use as popup",
+    "TOOLTIP": "Tooltip",
+    "ADD_TOOLTIP": "Select a target property to use as tooltip",
+    "INFOBOX": "Information box",
+    "ADD_INFOBOX": "Select target properties to use as information box"
+  },
+  "KLayersList": {
+    "NO_LAYER_AVAILABLE": "No layer available",
+    "LAYER_DISABLED": "Zoom in to visualise this layer"
+  },
+  "KLayersSelector": {
+    "SELECT_LAYERS": "Select layers"
+  },
+  "KWeatherLayersSelector": {
+    "FORECASTS_LABEL": "Forecasts",
+    "ARCHIVES_LABEL": "Archives",
+    "NO_MODEL_AVAILABLE": "No model available"
+  },
+  "KInformationBox": {
+    "LABEL": "Information box",
+    "NO_FEATURE_PROPERTIES": "No information available",
+    "CENTER_ON": "Center the view on the object",
+    "COPY_PROPERTIES": "Copy the values to the clipboard",
+    "PROPERTIES_COPIED": "Values copied to clipboard",
+    "CANNOT_COPY_PROPERTIES": "Unable to copy the values to clipboard. Your browser does not support this functionality",
+    "EXPORT_FEATURE": "Export the object",
+    "FEATURE_EXPORTED": "Object exported to file {file}",
+    "CANNOT_EXPORT_FEATURE": "Unable to export the object. Your browser does not support this functionality"
+  },
+  "KMapillaryViewer": {
+    "LABEL": "Mapillary Viewer",
+    "CENTER_ON": "Center the view on the Mapillary marker",
+    "MOVE_CLOSE_TO": "Move to the closest image",
+    "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
+  },
+  "KLayerCategories": {
+    "LAYER_CATEGORIES_LABEL": "Manage my categories",
+    "ADD_TITLE": "Add a new layer category",
+    "UPDATE_TITLE": "Update a layer category",
+    "TITLE": "Manage layer categories",
+    "SORT": "Sort categories",
+    "CREATE_CATEGORY": "Create a new category",
+    "BACK_BUTTON": "Back",
+    "ADD_BUTTON": "Add",
+    "EDIT_BUTTON": "Update",
+    "CATEGORY_LIST": "Back to list",
+    "EDIT_CATEGORY": "@:EDIT",
+    "REMOVE_CATEGORY": "@:REMOVE"
+  },
+  "KAddLayer": {
+    "NAME_FIELD_LABEL": "Enter the name of the new layer",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of the new layer",
+    "CATEGORY_FIELD_LABEL": "Select or enter a category",
+    "FEATURE_ID_FIELD_LABEL": "Enter a unique feature ID"
+  },
+  "KSelectLayers": {
+    "LAYERS_FIELD_LABEL": "Select projet layers",
+    "SELECT_BUTTON": "Select"
+  },
+  "KImportLayer": {
+    "FILE_FIELD_LABEL": "Select the file to import",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
+    "IMPORT_BUTTON": "Import",
+    "LAYER_ALREADY_EXISTS": "Layer {layer} already exists !"
+  },
+  "KConnectLayer": {
+    "SERVICE_FIELD_LABEL": "Select or enter a query to get the capabilities of the remote service",
+    "LAYER_FIELD_LABEL": "Select the layer to access to",
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "STYLE_FIELD_LABEL": "Select the style of the new layer",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
+    "CONNECT_BUTTON": "Connect"
+  },
+  "KCreateLayer": {
+    "NAME_FIELD_LABEL": "@:KAddLayer.NAME_FIELD_LABEL",
+    "DESCRIPTION_FIELD_LABEL": "@:KAddLayer.DESCRIPTION_FIELD_LABEL",
+    "CATALOG_SCHEMA_FIELD_LABEL": "@:schemas.CATALOG_SCHEMA_FIELD_LABEL",
+    "FEATURE_ID_FIELD_LABEL": "@:KAddLayer.FEATURE_ID_FIELD_LABEL",
+    "CATEGORY_FIELD_LABEL": "@:KAddLayer.CATEGORY_FIELD_LABEL",
+    "CREATE_BUTTON": "Create"
+  },
+  "KSelectViews": {
+    "VIEWS_FIELD_LABEL": "Select projet views",
+    "SELECT_BUTTON": "Select"
+  },
+  "KCreateView": {
+    "MODAL_TITLE": "Create a new view ?",
+    "NAME_FIELD_LABEL": "Enter the name of this view",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of this view",
+    "LAYERS_FIELD_LABEL": "Save the active layers"
+  },
+  "KCreateProject": {
+    "MODAL_TITLE": "Create a new project ?",
+    "NAME_FIELD_LABEL": "Enter the name of this project",
+    "DESCRIPTION_FIELD_LABEL": "Enter the description of this project"
+  },
+  "KLayerEditionToolbar": {
+    "ADD_POLYGON_FEATURES": "Add polygon features",
+    "ADD_RECTANGLE_FEATURES": "Add rectangle features",
+    "ADD_LINE_FEATURES": "Add linear features",
+    "ADD_POINT_FEATURES": "Add point features",
+    "EDIT_GEOMETRY": "Edit feature geometry",
+    "EDIT_PROPERTIES": "Edit feature properties",
+    "DRAG_FEATURES": "Move features",
+    "ROTATE_FEATURES": "Rotate features",
+    "REMOVE_FEATURES": "Remove features"
+  },
+  "KCapture": {
+    "PRINT_ACTION": "Capture view",
+    "PRINTING_VIEW": "Waiting for capturing view",
+    "ERROR_MESSAGE": "One capture is already in progress"
+  },
+  "KMeasureTool": {
+    "CLEAR": "Clear all measurements",
+    "MEASURE_DISTANCE": "Measure a distance",
+    "MEASURE_AREA": "Measure an area",
+    "MEASURE_FEATURE": "Measure a feature",
+    "MEASURE_CIRCLE": "Measure an isodistance",
+    "DISPLAY_MEASURE_VALUE": "Display measure values",
+    "CLICK_TO_CHANGE_UNIT": "Click to change unit"
+  },
+  "KElevationProfile": {
+    "LABEL": "Elevation profile",
+    "NO_DATA_AVAILABLE": "No profile available",
+    "INVALID_GEOMETRY": "Selected object geometry is invalid",
+    "COMPUTING_PROFILE": "Profile computation in progress",
+    "CENTER_ON": "Center the view on the object",
+    "COPY_PROFILE": "Copy the profile to the clipboard",
+    "PROFILE_COPIED": "Profile copied to clipboard",
+    "CANNOT_COPY_PROFILE": "Unable to copy the profile to clipboard. Your browser does not support this functionality",
+    "EXPORT_PROFILE": "Export the profile",
+    "PROFILE_EXPORTED": "Profile exported to file {file}",
+    "CANNOT_EXPORT_PROFILE": "Unable to export the profile. Your browser does not support this functionality",
+    "CURVILINEAR_AXIS_LEGEND": "Curvilinear abscissa ({unit})",
+    "HEIGHT_AXIS_LEGEND": "Height ({unit})",
+    "TERRAIN_CHART_LEGEND": "Terrain elevation",
+    "PROFILE_CHART_LEGEND": "Profile elevation"
+  },
+  "KLegend": {
+    "LABEL": "Legend"
+  },
+  "KCompass": {
+    "FROM_TO": "From {direction}° to {source}°",
+    "FROM": "From",
+    "NORTH": "N",
+    "EAST": "E",
+    "SOUTH": "S",
+    "WEST": "W"
+  },
+  "KPosition": {
+    "COPY": "Copy the coordinates",
+    "CLOSE": "Close",
+    "POSITION_COPIED": "Position copied to clipboard",
+    "CANNOT_COPY_POSITION": "Unable to copy the position to clipboard. Your browser does not support this functionality",
+    "OUTSIDE_MAP": "Undefined position"
+  },
+  "KDirectionField": {
+    "COMPASS": "Compass"
+  },
+  "KStyleManager": {
+    "TITLE": "Styles",
+    "APPLY_TO_LAYER": "Apply style to layer",
+    "APPLY_TO_SELECTION": "Apply style to selection",
+    "EDIT": "Edit style",
+    "DELETE": "Delete style",
+    "SORT": "Sort styles",
+    "CREATE_STYLE": "Create style"
+  },
+  "KStyleEditor": {
+    "NAME_LABEL": "Enter the name of the style",
+    "STYLE_ALREADY_EXISTS": "Style {style} already exists !",
+    "POINT_SECTION": "Point",
+    "LINE_SECTION": "Line",
+    "POLYGON_SECTION": "Polygon",
+    "ALL_SECTIONS_DISABLED": "Unable to apply this style because all types of features are disabled.",
+    "STROKE_GROUP": "Stroke",
+    "ICON_GROUP": "Icon",
+    "COLOR": "Color",
+    "FILL_COLOR": "Fill color",
+    "OPACITY": "Opacity",
+    "FILL_OPACITY": "Fill opacity",
+    "SIZE": "Size",
+    "SHAPE": "Shape",
+    "ICON": "Icon",
+    "ICON_SIZE": "Icon size",
+    "ICON_COLOR": "Icon color",
+    "ICON_OPACITY": "Icon opacity",
+    "STROKE_COLOR": "Stroke color",
+    "STROKE_OPACITY": "Stroke opacity",
+    "STROKE_WIDTH": "Stroke width"
+  }
+}

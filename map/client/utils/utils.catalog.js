@@ -92,7 +92,7 @@ export function getOrphanLayers (layers, layersByCategory) {
   return _.orderBy(orphanLayers, [(layer) => _.get(layer, '_id')], ['asc'])
 }
 
-function processTranslations (item) {
+export function processTranslations (item) {
   if (item.i18n) i18n.registerTranslation(item.i18n)
   if (!_.has(item, 'label')) item.label = i18n.tie(item.name)
   if (_.has(item, 'description')) item.description = i18n.tie(item.description)

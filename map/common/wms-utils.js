@@ -53,8 +53,7 @@ export async function discover (url, searchParams = {}, headers = {}, caps = nul
   const requestRoot = _.get(root, 'Capability[0].Request[0]')
   if (requestRoot) {
     const getMap = _.get(requestRoot, 'GetMap[0].DCPType[0].HTTP[0].Get[0].OnlineResource[0].$.xlink:href')
-    if (getMap)
-      out.getMapUrl = getMap
+    if (getMap) { out.getMapUrl = getMap }
   }
 
   const layerRoot = _.get(root, 'Capability[0].Layer')

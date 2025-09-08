@@ -71,7 +71,7 @@ import { uid } from 'quasar'
 import { ref, computed, onMounted } from 'vue'
 import { api } from '../../../core/client'
 import { useCurrentActivity } from '../composables'
-import { getDefaultStyleFromTemplates, generateStyleTemplates, filterQueryToConditions, DefaultStyle, getUpdatedLayerLegend } from '../utils'
+import { getDefaultStyleFromTemplates, generateStyleTemplates, filterQueryToConditions, DefaultStyle, getLegendForLayer } from '../utils'
 import KFeaturesFilterEditor from './KFeaturesFilterEditor.vue'
 
 // Props
@@ -181,7 +181,7 @@ async function apply () {
     )
     const legendLayer = Object.assign({}, layer, result)
     if (_.isEmpty(validFilters)) delete legendLayer.filters
-    const legend = await getUpdatedLayerLegend(legendLayer)
+    const legend = await getLegendForLayer(legendLayer)
     api.getService('catalog').patch(layer._id, Object.assign(result, legend))
     return true
   }

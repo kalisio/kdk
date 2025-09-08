@@ -1,0 +1,772 @@
+{
+  "OOPS": "Oops !",
+  "OK": "Ok",
+  "YES": "Yes",
+  "NO": "No",
+  "ALERT": "Alert",
+  "WARNING": "Warning",
+  "INFORMATION": "Information",
+  "CANCEL": "Cancel",
+  "UPDATE": "Update",
+  "CREATE": "Create",
+  "DELETE": "Delete",
+  "RESET": "Reset",
+  "CLOSE": "Close",
+  "SEARCH": "Search...",
+  "DONE": "Done",
+  "APPLY": "Apply",
+  "RETRY": "Retry",
+  "NO_ITEM": "No elements found",
+  "NIL": "Undefined",
+  "MEMBERS": "Members",
+  "TAGS": "Tags",
+  "GROUPS": "Groups",
+  "EDIT": "Edit",
+  "REMOVE": "Remove",
+  "OWNER": "Owner",
+  "MANAGER": "Manager",
+  "MEMBER": "Member",
+  "UNAMED": "Unamed",
+  "HELP": "Help",
+  "NEED_HELP": "Help needed ?",
+  "READ_MORE": "Read more",
+  "BACK": "Return",
+  "LEGAL_NOTICE": "Legal notice",
+  "PRIVACY_POLICY": "Privacy policy",
+  "layout": {
+    "MY_SETTINGS": "My settings",
+    "ABOUT": "About",
+    "ONLINE_HELP": "Online help",
+    "CONTEXTUAL_HELP": "Contextual help",
+    "LOGOUT": "Logout",
+    "ENTER_FULLSCREEN": "Enter full screen mode",
+    "EXIT_FULLSCREEN": "Exit full screen mode"
+  },
+  "errors": {
+    "400": "Operation cannot be performed: bad parameters",
+    "401": "Operation cannot be performed: authentication required",
+    "402": "Operation cannot be performed: payment error",
+    "403": "Operation cannot be performed: not allowed",
+    "404": "Operation cannot be performed: not found",
+    "405": "Operation cannot be performed: not allowed",
+    "406": "Operation cannot be performed: not acceptable",
+    "408": "Operation cannot be performed: timeout",
+    "409": "Operation cannot be performed: conflict",
+    "411": "Operation cannot be performed: length required",
+    "422": "Operation cannot be performed: unprocessable",
+    "429": "Operation cannot be performed: too many requests",
+    "498": "This system or browser does not support web push notifications",
+    "499": "Please change your application or browser settings to allow notifications",
+    "500": "Operation cannot be performed: an error occurred",
+    "501": "Operation cannot be performed: not implemented",
+    "502": "Operation cannot be performed: service unavailable",
+    "503": "Operation cannot be performed: service unavailable",
+    "RETRY": "Please try again later or modify your parameters",
+    "RATE_LIMITING": "Too many API requests in a given amount of time (rate limiting)",
+    "RATE_LIMITING_AUTHENTICATION": "Too many authentication requests in a given amount of time (rate limiting)",
+    "RATE_LIMITING_CONCURRENCY": "Too many concurrent connections (rate limiting)",
+    "COUNT_LIMITING": "Too many resources used (count limiting)",
+    "WEAK_PASSWORD": "The provided password does not comply our password policy",
+    "WEAK_PASSWORD_MIN": "Minimum length of {minLength} characters",
+    "WEAK_PASSWORD_MAX": "Maximum length of {maxLength} characters",
+    "WEAK_PASSWORD_LOWERCASE": "A least one lower case letter",
+    "WEAK_PASSWORD_UPPERCASE": "A least one upper case letter",
+    "WEAK_PASSWORD_DIGITS": "A least one digit",
+    "WEAK_PASSWORD_SYMBOLS": "A least one special symbol like :;?!+-.,^@",
+    "WEAK_PASSWORD_ONEOF": "Not known as one of the most common passwords",
+    "WEAK_PASSWORD_PREVIOUS": "Not one of your {history} last passwords",
+    "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file",
+    "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {provider}, in order to switch to a local account reset your password first",
+    "EMAIL_ALREADY_TAKEN": "A user with this email address seems to be already registered",
+    "OBJECT_ID_ALREADY_TAKEN": "An item with this identifier seems to already exist. Please try again with another value.",
+    "MAX_FILES_REACHED": "Oops ! You can only drop only one file | Oops! You can only drop up to {n} files at once",
+    "MAX_FILE_SIZE_REACHED": "Oops ! The file exceeds the maximum allowed size of {maxSize} MB",
+    "MAX_TOTAL_SIZE_REACHED": "Oops ! The total size files exceeds the maximum allowed total limit of {maxSize} MB",
+    "UNSUPPORTED_FILE_FORMAT": "Oops ! The {file} file format is not supported",
+    "CANNOT_READ_FILE": "Oops ! Unable to read the file {file}",
+    "INVALID_JSON_FILE": "Oops ! {file} is not a valid JSON file",
+    "INVALID_CSV_FILE": "Oops ! {file} is not a valid CSV file",
+    "NETWORK_ERROR": "Oops ! Network or service error occurred"
+  },
+  "units": {
+    "METER_SYMBOL": "m",
+    "FEET_SYMBOL": "ft",
+    "MILE_SYMBOL": "mi",
+    "NAUTICAL_MILE_SYMBOL": "NM",
+    "SQUARED_METER_SYMBOL": "m²",
+    "SQUARED_KILOMETER_SYMBOL": "km²",
+    "ACRE_SYMBOL": "a",
+    "HECTARE_SYMBOL": "ha",
+    "METER_PER_SECOND_SYMBOL": "m/s",
+    "KILOMETER_PER_HOUR_SYMBOL": "km/h",
+    "MILES_PER_HOUR_SYMBOL": "mph",
+    "KNOT_SYMBOL": "kt",
+    "CELSIUS_SYMBOL": "°C",
+    "FAHRENHEIT_SYMBOL": "°F",
+    "KELVIN_SYMBOL": "K",
+    "DEGREE_SYMBOL": "°",
+    "RADIAN_SYMBOL": "rad",
+    "PPM_SYMBOL": "ppm",
+    "MICROGRAM_PER_M3_SYMBOL": "µg/m³",
+    "CUBIC_METER_PER_SECOND_SYMBOL": "m³/s",
+    "BEQUEREL_SYMBOL": "Bq",
+    "BEQUEREL_PER_M2_SYMBOL": "Bq/m²",
+    "BEQUEREL_PER_M3_SYMBOL": "Bq/m³",
+    "SIEVERT_SYMBOL": "Sv",
+    "MILLISIEVERT_SYMBOL": "mSv",
+    "MICROSIEVERT_SYMBOL": "µSv",
+    "NANOSIEVERT_SYMBOL": "nSv",
+    "SIEVERT_PER_SECOND_SYMBOL": "Sv/s",
+    "MILLISIEVERT_PER_SECOND_SYMBOL": "mSv/s",
+    "MICROSIEVERT_PER_SECOND_SYMBOL": "µSv/s",
+    "NANOSIEVERT_PER_SECOND_SYMBOL": "nSv/s",
+    "SIEVERT_PER_HOUR_SYMBOL": "Sv/h",
+    "MILLISIEVERT_PER_HOUR_SYMBOL": "mSv/h",
+    "MICROSIEVERT_PER_HOUR_SYMBOL": "µSv/h",
+    "NANOSIEVERT_PER_HOUR_SYMBOL": "nSv/h",
+    "METER_LABEL": "Meters",
+    "FEET_LABEL": "Feet",
+    "MILE_LABEL": "Miles",
+    "NAUTICAL_MILE_LABEL": "Nautical miles",
+    "SQUARED_METER_LABEL": "Squared meters",
+    "SQUARED_KILOMETER_LABEL": "Squared kilometers",
+    "ACRE_LABEL": "Acres",
+    "HECTARE_LABEL": "Hectares",
+    "METER_PER_SECOND_LABEL": "Meters per second",
+    "KILOMETER_PER_HOUR_LABEL": "Kilometers per hour",
+    "MILES_PER_HOUR_LABEL": "Miles per hour",
+    "KNOT_LABEL": "Knots",
+    "CELSIUS_LABEL": "Celsius degrees",
+    "FAHRENHEIT_LABEL": "Fahrenheit degrees",
+    "KELVIN_LABEL": "Kelvins",
+    "DEGREE_LABEL": "Degrees",
+    "RADIAN_LABEL": "Radians",
+    "PPM_LABEL": "Parts-per-million",
+    "MICROGRAM_PER_M3_LABEL": "Microgram per cubic meter",
+    "CUBIC_METER_PER_SECOND_LABEL": "Cubic meter per second",
+    "BEQUEREL_LABEL": "Bequerels",
+    "BEQUEREL_PER_M2_LABEL": "Bequerels per square meter",
+    "BEQUEREL_PER_M3_LABEL": "Bequerels per cubic meter",
+    "SIEVERT_LABEL": "Sieverts",
+    "MILLISIEVERT_LABEL": "Millisieverts",
+    "MICROSIEVERT_LABEL": "Microsieverts",
+    "NANOSIEVERT_LABEL": "Nanosieverts",
+    "SIEVERT_PER_SECOND_LABEL": "Sieverts per second",
+    "MILLISIEVERT_PER_SECOND_LABEL": "Millisieverts per second",
+    "MICROSIEVERT_PER_SECOND_LABEL": "Microsieverts per second",
+    "NANOSIEVERT_PER_SECOND_LABEL": "Nanosieverts per second",
+    "SIEVERT_PER_HOUR_LABEL": "Sieverts per hour",
+    "MILLISIEVERT_PER_HOUR_LABEL": "Millisieverts per hour",
+    "MICROSIEVERT_PER_HOUR_LABEL": "Microsieverts per hour",
+    "NANOSIEVERT_PER_HOUR_LABEL": "Nanosieverts per hour"
+  },
+  "directives": {
+    "ALL_FILES_ARE_UNSUPPORTED": "Oops ! File is not supported | Oops ! None of the files are supported",
+    "SOME_FILES_ARE_UNSUPPORTED": "Some files will be ignored due to unsupported types",
+    "DROP_FILES": "Drop file here | Drop files here"
+  },
+  "mixins": {
+    "baseItem": {
+      "REMOVE_ITEM_TITLE": "Are you sure you want to delete <b>{name}</b> ?",
+      "REMOVE_ITEM_MESSAGE": "Please enter the name to confirm the deletion",
+      "ITEM_EXPORTED": "Exporting the content of {name} within {file}",
+      "CANNOT_EXPORT_ITEM": "Cannot export {name}. Is your browser support such a feature ?"
+    }
+  },
+  "composables": {
+    "ANONYMOUS": "Anonymous",
+    "VERSION_MISMATCH": "Application version mismatch, please install the latest available version or check your end point",
+    "session": {
+      "DISCONNECT": "The server connection has been lost, please wait until reconnection...",
+      "RECONNECT": "The server connection has been restored, you can refresh the application in case data has been updated during the disconnection.",
+      "RELOAD": "Refresh",
+      "REFUSED": "Your connection have been refused by the server, you have been disconnected...",
+      "IGNORE": "Ignore",
+      "RETRY": "Retry",
+      "ALERT": "Alert",
+      "INFORMATION": "Information"
+    },
+    "pwa": {
+      "UPDATE_MESSAGE": "<b>A new version is available</b>, the application will be updated in a couple of seconds."
+    },
+    "context": {
+      "REMOVED_MESSAGE": "The context object has been removed. You will be redirected to the home page."
+    }
+  },
+  "utils": {
+    "pwa": {
+      "INSTALL_TITLE": "Install the application ?",
+      "INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features",
+      "IOS_INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features.<br>For <b>Safari</b> click on <i class=\"material-icons\">ios_share</i> then on <b>Add to home screen</b>",
+      "FIREFOX_DESKTOP_INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features. For this use the <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a> extension.",
+      "INSTALL": "Installer",
+      "IGNORE": "Ignorer"
+    }
+  },
+  "schemas": {
+    "OBJECT_NAME": "{name}",
+    "AVATAR_FIELD_LABEL": "Select an avatar",
+    "NAME_FIELD_LABEL": "Enter your name",
+    "COLOR_FIELD_LABEL": "Pick a color",
+    "UPDATE_SETTINGS_TITLE": "Your settings",
+    "TIME_FORMAT_SETTINGS": "Time/Date format",
+    "TIME_FORMAT_SHORT_TIME_FIELD_LABEL": "Short time format",
+    "TIME_FORMAT_LONG_TIME_FIELD_LABEL": "Long time format",
+    "TIME_FORMAT_SHORT_DATE_FIELD_LABEL": "Short date format",
+    "TIME_FORMAT_LONG_DATE_FIELD_LABEL": "Long date format",
+    "TIME_FORMAT_SHORT_YEAR_FIELD_LABEL": "Short year format",
+    "TIME_FORMAT_LONG_YEAR_FIELD_LABEL": "Long year format",
+    "TIME_FORMAT_TIMEZONE_FIELD_LABEL": "Target timezone to use",
+    "UNITS_SETTINGS": "Units settings",
+    "LENGTH_FIELD_LABEL": "Default length unit",
+    "ALTITUDE_FIELD_LABEL": "Default altitude unit",
+    "AREA_FIELD_LABEL": "Default area unit",
+    "VELOCITY_FIELD_LABEL": "Default velocity unit",
+    "TEMPERATURE_FIELD_LABEL": "Default temperature unit",
+    "ANGLE_FIELD_LABEL": "Default angle unit",
+    "EQUIVALENT_DOSE_RATE_FIELD_LABEL": "Default equivalent dose rate unit",
+    "NOTATION_SETTINGS": "Number notation settings",
+    "NOTATION_FIELD_LABEL": "Default number notation",
+    "AUTO_NOTATION_FIELD_LABEL": "Select the best-suited number notation",
+    "FIXED_NOTATION_FIELD_LABEL": "Fixed precision number notation",
+    "EXPONENTIAL_NOTATION_FIELD_LABEL": "Exponential number notation",
+    "PRECISION_FIELD_LABEL": "Default number of decimal or significant digits",
+    "NAVIGATOR_APP_LABEL": "Default navigation application"
+  },
+  "tours": {
+    "APP_BAR_OVERFLOW_MENU_LABEL": "When not visible, you can find it using the popup menu.",
+    "APP_BAR_ACTIONS_LABEL": "When not visible, you can find it in the actions bar.",
+    "CARD_OVERFLOW_MENU_LABEL": "Open the popup menu to see more actions.",
+    "REMOVE_CONFIRMATION_LABEL": "A confirmation will be required before final removal.",
+    "login": {
+      "LOCAL_LABEL": "You can login using your <b>personal identifiers</b>.",
+      "EMAIL_LABEL": "Enter your email address first.",
+      "PASSWORD_LABEL": "Then enter your password.",
+      "PASSWORD_VISIBILITY_LABEL": "Display you password clearly if there is any doubt about.",
+      "LOGIN_LABEL": "Now, finish by login.",
+      "LOST_PASSWORD_LINK_LABEL": "If you have lost your password launch the <b>recovery procedure</b>",
+      "REGISTER_LINK_LABEL": "If you don't yet have an account launch the <b>registration procedure</b>"
+    },
+    "reset-password": {
+      "RESET_PROCEDURE_LABEL": "If you have lost your password we will send you an email back containing a code to <b>define a new one</b>.",
+      "EMAIL_LABEL": "First, enter the email address you have used to register or to get invited.",
+      "RESET_LABEL": "Now finish by sending the email containing the link (<b>please check the email is not in your spam folder</b>)."
+    },
+    "register": {
+      "LOCAL_LABEL": "You can register to the system by defining your <b>personal identifiers</b>.",
+      "NAME_LABEL": "Enter your name as viewed by others users first.",
+      "EMAIL_LABEL": "Enter the email address you will use to connect and receive security related messages.",
+      "PASSWORD_LABEL": "Choose a password, if it does not comply our security policy an alert will inform you about the rules to follow.",
+      "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "CONFIRM_PASSWORD_LABEL": "Confirm your password to avoid any error.",
+      "CONFIRM_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "TERMS_LABEL": "Read and accept our <b><a style='color:white' href='/#/terms'>terms of service</a></b> in order to use the system.",
+      "REGISTER_LABEL": "Last, create your account.",
+      "EMAIL_VERIFICATION_LABEL": "We will send you an email back containing a link to <b>verify your address</b>.",
+      "LOGIN_LINK_LABEL": "You can now login whenever you want using your <b>personal identifiers</b>"
+    },
+    "account": {
+      "PROFILE_LABEL": "This activity allows to update your profile information",
+      "AVATAR_LABEL": "Your avatar visible in the side menu when an image file has been selected.",
+      "NAME_LABEL": "Your name as viewed by others users.",
+      "UPDATE_LABEL": "Confirm the update in order to apply the modifications to your profile information.",
+      "ACCOUNT_LABEL": "Manage <b>your identifiers</b> and their security",
+      "VERIFY_EMAIL_LABEL": "This section allows you to check your email.",
+      "TOKEN_FIELD_LABEL": "Enter the code received by email.",
+      "RESEND_VERIFY_SIGNUP_LABEL": "If you haven't received it or have lost it, you can have a new one sent to you.",
+      "CONFIRM_VERIFY_EMAIL_LABEL": "Finally, confirm that.",
+      "PASSWORD_PROCEDURE_LABEL": "This section allows you to initiate the password change procedure.",
+      "OLD_PASSWORD_LABEL": "First, enter your previous password.",
+      "NEW_PASSWORD_LABEL": "Choose a new password, if it does not comply our security policy an alert will inform you about the rules to follow.",
+      "NEW_PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "CONFIRM_NEW_PASSWORD_LABEL": "Confirm your password to avoid any error.",
+      "CHANGE_PASSWORD_LABEL": "Last, confirm the modification request.",
+      "CHANGE_IDENTITY_PROCEDURE_LABEL": "This section allows you to initiate the e-mail address change procedure.",
+      "PASSWORD_LABEL": "First, enter your password.",
+      "PASSWORD_VISIBILITY_LABEL": "@:tours.login.PASSWORD_VISIBILITY_LABEL",
+      "EMAIL_LABEL": "Enter your <b>new email address</b>.",
+      "CHANGE_EMAIL_LABEL": "An email containing a code to confirm the modification will be sent to your new address (<b>please check the email is not in your spam folder</b>).",
+      "SUBSCRIPTIONS_LABEL": "This section list all the subscriptions you have.",
+      "UNSUBSCRIBE_LABEL": "Check for any suspect activity and remove outdated subscriptions.",
+      "DANGER_ZONE_LABEL": "This activity allows to remove your account",
+      "DELETE_LABEL": "A manual confirmation will be required before final removal."
+    }
+  },
+  "exporter": {
+    "TITLE": "Export data",
+    "MESSAGE": "Select the file format to export",
+    "EXPORT": "Export",
+    "EXPORTING": "Please wait while exporting data",
+    "EXPORTS_LIMIT_REACHED": "You have reached the maximum number of exports allowed",
+    "SUCCEEDED": "Export successful: your data has been saved to the file <b>{filename}</b>",
+    "NO_DATA": "Export skipped: no data found to export",
+    "ERRORED": "Oops! Export failed: an error occurred while exporting data"
+  },
+  "reader": {
+    "READING_FILE": "Reading file {file}"
+  },
+  "storage": {
+    "UPLOADING_FILE": "Uploading file {file}",
+    "DOWNLOADING_FILE": "Downloading file {file}"
+  },
+  "KVersion": {
+    "CLIENT_VERSION": "Client v{version}",
+    "API_VERSION": "API v{version}"
+  },
+  "KSponsor": {
+    "KDK_POWERED": "Powered by Kalisio's Development Kit",
+    "MORE_ABOUT_KDK": "More about KDK",
+    "MORE_ABOUT_KALISIO": "More about Kalisio"
+  },
+  "KPlatform": {
+    "USER_AGENT": "User agent",
+    "APPLICATION": "Application",
+    "PERMISSIONS": "Permissions",
+    "PERMISSION_GRANTED": "Granted",
+    "PERMISSION_PROMPT": "Prompt",
+    "BROWSER": "Browser",
+    "LOCALE": "Locale",
+    "WEBGL": "WebGL support",
+    "SYSTEM": "System",
+    "COPY_INFO": "Copy info to clipboard",
+    "INFO_COPIED": "Platform info copied",
+    "CANNOT_COPY_INFO": "Cannot copy platform info"
+  },
+  "KAbout": {
+    "DOMAIN": "Hosted on",
+    "FLAVOR": "Flavor",
+    "VIEW_CHANGELOG": "Changelog",
+    "BUG_REPORT": "Report a bug",
+    "BUG_REPORT_SUBJECT": "[{appName}] Bug report - Client v{clientVersion} - API v{apiVersion}",
+    "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
+    "PLATFORM_INFO": "Platform information"
+  },
+  "KWelcome": {
+    "WELCOME_TITLE": "Welcome !",
+    "WELCOME_MESSAGE": "This quick start guide covers the main application features.",
+    "ONLINE_HELP": "Read first our online help to get an overview of the basic concepts",
+    "CONTEXTUAL_HELP": "To get contextual help whenever your are lost simply click on the following icon",
+    "TOUR_MESSAGE": "Launch now a quick overview tutorial detailing the main menu by clicking on the following icon",
+    "TOUR_LINK_MESSAGE": "Each time a tutorial step exhibits this icon it allows to launch a new one detailing the target feature.",
+    "GOODBYE_MESSAGE": "Thanks for reading this tutorial, you are now ready to use the application !",
+    "HIDE_WELCOME": "Don't display this message again"
+  },
+  "KTour": {
+    "SKIP_LABEL": "Skip",
+    "NEXT_LABEL": "Next",
+    "PREVIOUS_LABEL": "Previous",
+    "FINISH_LABEL": "Finish",
+    "MISS_ERROR": "Before going further please perform the required actions"
+  },
+  "KScreen": {
+    "CLIENT_VERSION": "Client v",
+    "API_VERSION": "API v",
+    "EMAIL_FIELD_LABEL": "Enter your email address",
+    "CHANGE_ENDPOINT_LINK": "Change endpoint",
+    "DEVELOPMENT_VERSION": "DEVELOPMENT VERSION",
+    "TEST_VERSION": "TEST VERSION"
+  },
+  "KErrorScreen": {
+    "MESSAGE": "Oups... page not found",
+    "GO_HOME_LABEL": "Go home page"
+  },
+  "KUnauthorizedScreen": {
+    "MESSAGE": "You are not authorized to access this page"
+  },
+  "KLoginScreen": {
+    "EMAIL_FIELD_LABEL": "@:KScreen.EMAIL_FIELD_LABEL",
+    "PASSWORD_FIELD_LABEL": "Enter your password",
+    "LOGIN_LABEL": "Log in",
+    "FORGOT_YOUR_PASSWORD_LABEL": "Forgot your password ?",
+    "DONT_HAVE_AN_ACCOUNT_LABEL": "Don't have an account ?",
+    "INVALID_EMAIL": "Unable to find the account associated with the email entered",
+    "LOGIN_ERROR": "Wrong credentials or service unavailable, please try again",
+    "CONTEXTUAL_HELP": "@:NEED_HELP"
+  },
+  "KRegisterScreen": {
+    "TITLE": "Register",
+    "NAME_FIELD_LABEL": "@:schemas.NAME_FIELD_LABEL",
+    "EMAIL_FIELD_LABEL": "@:KScreen.EMAIL_FIELD_LABEL",
+    "PASSWORD_FIELD_LABEL": "Enter a password",
+    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirm your password",
+    "ACCEPT_TERMS_LABEL": "I accept the terms and policies",
+    "ACCEPT_TERMS_ERROR_LABEL": "You must accept our terms and policies to register",
+    "REGISTER_LABEL": "Register",
+    "EMAIL_ALREADY_TAKEN": "Email already taken !",
+    "REGISTER_ERROR": "Wrong input or service unavailable, please try again",
+    "CONTEXTUAL_HELP": "@:NEED_HELP"
+  },
+  "KLogoutScreen": {
+    "TITLE": "You are now logged out",
+    "LOG_IN_AGAIN_LABEL": "Log in again ?"
+  },
+  "KProfile": {
+    "EDIT_PROFILE": "Edit my profile",
+    "MANAGE_ACCOUNT": "Manage my account"
+  },
+  "KDeleteAccountManager": {
+    "TITLE": "Delete my account",
+    "QUESTION": "Are you sure you want to delete your account ?",
+    "CONFIRMATION_TITLE": "Warning: the deletion of your account is irrevocable and all data attached to it will be lost",
+    "CONFIRMATION": "Enter your account name to confirm the deletion"
+  },
+  "KPasswordManager": {
+    "TITLE": "Change my password",
+    "PASSWORD_CHANGED": "Your password has been successfully changed",
+    "OLD_PASSWORD_FIELD_LABEL": "Enter your old password",
+    "PASSWORD_FIELD_LABEL": "Enter your new password",
+    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirm your new password"
+  },
+  "KEmailManager": {
+    "TITLE": "Change my email address",
+    "PASSWORD_FIELD_LABEL": "Enter your password",
+    "EMAIL_FIELD_LABEL": "Enter your new email address",
+    "TOKEN_LABEL": "To validate your new email address, enter the code you received by email",
+    "EMAIL_CHANGED": "You new address has been taken into account. An email has been sent to you to confirm the change.",
+    "ERROR_MESSAGE": "Invalid code"
+  },
+  "KVerifyEmailManager": {
+    "TITLE": "Check my email address",
+    "HELP_LABEL": "Why should I verify my email address ?",
+    "HELP_TEXT": "Verifying your email address improves the security of your account. Once you have verified your email address, both your password and access to your email account are required in order to make any changes to your account credentials, such as your password and contact email address. This helps further protect your account from being stolen by a potential phisher.",
+    "HELP_EMAIL_LABEL": "I never received the verification email, what should I do ?",
+    "HELP_EMAIL_TEXT": "If you do not receive your signup verification email and you are running a Spam filter, check and make sure the message has not been filtered as spam. Please try adding {email} to your contacts or trusted senders list within your email client and attempt to re-verify your email address. You can also click the button below and we'll send you the email again.",
+    "TOKEN_LABEL": "Enter the code received by email to validate your email address",
+    "EMAIL_VERIFIED": "Your address has been verified. An email has been sent to you to confirm the change.",
+    "ACTION": "Resend verification code",
+    "ERROR_MESSAGE": "Invalid code, request a new one"
+  },
+  "KSubscriptionsManager": {
+    "TITLE": "Manage my subscriptions",
+    "EMPTY": "No subscriptions"
+  },
+  "KSubscription": {
+    "UNSUBSCRIBE_LABEL": "Unsubscribe",
+    "LAST_ACTIVITY": "Last activity on {date} at {time}",
+    "UNSUBSCRIBE_DIALOG_TITLE": "Unsubscribe from {description} ?",
+    "UNSUBSCRIBE_DIALOG_MESSAGE": "Are you sure you want to unsubscribe your account from <b>{description}</b> ?<br><br>You will not be able to receive notifications until you reconnect using this service."
+  },
+  "KGrid": {
+    "EMPTY_LABEL": "@:NO_ITEM"
+  },
+  "KTable": {
+    "EMPTY_TABLE": "@:NO_ITEM",
+    "TABLE_COLUMNS": "Properties"
+  },
+  "KDataTable": {
+    "EMPTY_TABLE": "@:NO_ITEM",
+    "TABLE_COLUMNS": "Properties",
+    "NO_DATA_AVAILABLE": "No data available",
+    "EXPORT_DATA": "Export data",
+    "DATA_EXPORT_FILE": "Data.csv"
+  },
+  "KTimeLine": {
+    "EMPTY_LABEL": "@:NO_ITEM"
+  },
+  "KScrollToTop": {
+    "TOOLTIP": "Scroll to top"
+  },
+  "KHistory": {
+    "EMPTY_HISTORY": "@:NO_ITEM"
+  },
+  "KColumn": {
+    "EMPTY_COLUMN": "@:NO_ITEM"
+  },
+  "KCard": {
+    "MORE_DETAILS": "More details",
+    "LESS_DETAILS": "Less details"
+  },
+  "KDescriptionCardSection": {
+    "TITLE": "Description",
+    "NO_DESCRIPTION": "No description"
+  },
+  "KColorChooser": {
+    "CANCEL_BUTTON": "@:CANCEL",
+    "DONE_BUTTON": "@:DONE"
+  },
+  "KIconChooser": {
+    "CLOSE_ACTION": "@:CANCEL",
+    "DONE_BUTTON": "@:DONE",
+    "SEARCH_FIELD_LABEL": "Type to search",
+    "SEARCH_CATEGORY_LABEL": "All categories",
+    "categories": {
+      "accessibility": "accessibility",
+      "alert": "alert",
+      "animals": "animals",
+      "arrows": "arrows",
+      "audio-video": "audio-video",
+      "automotive": "automotive",
+      "autumn": "autumn",
+      "beverage": "beverage",
+      "buildings": "buildings",
+      "business": "business",
+      "camping": "camping",
+      "charity": "charity",
+      "chat": "chat",
+      "chess": "chess",
+      "childhood": "childhood",
+      "clothing": "clothing",
+      "code": "code",
+      "communication": "communication",
+      "computers": "computers",
+      "construction": "construction",
+      "currency": "currency",
+      "date-time": "date-time",
+      "design": "design",
+      "editors": "editors",
+      "education": "education",
+      "emoji": "emoji",
+      "energy": "energy",
+      "files": "files",
+      "finance": "finance",
+      "fitness": "fitness",
+      "food": "food",
+      "fruit-vegetable": "fruit-vegetable",
+      "games": "games",
+      "gaming-tabletop": "gaming-tabletop",
+      "gender": "gender",
+      "halloween": "halloween",
+      "hands": "hands",
+      "health": "health",
+      "holiday": "holiday",
+      "hotel": "hotel",
+      "household": "household",
+      "images": "images",
+      "interfaces": "interfaces",
+      "logistics": "logistics",
+      "maps": "maps",
+      "maritime": "maritime",
+      "marketing": "marketing",
+      "mathematics": "mathematics",
+      "medical": "medical",
+      "moving": "moving",
+      "music": "music",
+      "objects": "objects",
+      "payments-shopping": "payments-shopping",
+      "pharmacy": "pharmacy",
+      "political": "political",
+      "religion": "religion",
+      "science": "science",
+      "science-fiction": "science-fiction",
+      "security": "security",
+      "shapes": "shapes",
+      "shopping": "shopping",
+      "social": "social",
+      "spinners": "spinners",
+      "sports": "sports",
+      "spring": "spring",
+      "status": "status",
+      "summer": "summer",
+      "toggle": "toggle",
+      "travel": "travel",
+      "users-people": "users-people",
+      "vehicles": "vehicles",
+      "weather": "weather",
+      "winter": "winter",
+      "writing": "writing"
+    }
+  },
+  "KTextAreaField": {
+    "CLEAR_TOOLTIP": "Clear content"
+  },
+  "KResolutionField": {
+    "SD_LABEL": "Standard Definition",
+    "SD_DESCRIPTION": "4:3, 640 x 480",
+    "HD_LABEL": "High Definition",
+    "HD_DESCRIPTION": "16:9, 1280 x 720",
+    "FHD_LABEL": "Full HD",
+    "FHD_DESCRIPTION": "16:9, 1920 x 1080",
+    "QHD_LABEL": "Quad HD",
+    "QHD_DESCRIPTION": "16:9, 2560 x 1440",
+    "2K_LABEL": "2K",
+    "2K_DESCRIPTION": "1:1.77, 2048 x 1080",
+    "4K_LABEL": "4K or Ultra HD",
+    "4K_DESCRIPTION": "1:1.9, 3840 x 2160",
+    "8K_LABEL": "8K or Full Ultra HD",
+    "8K_DESCRIPTION": "16∶9, 7680 x 4320",
+    "PERSONALIZED_LABEL": "Personalized"
+  },
+  "KFileField": {
+    "INVALID_FILE_TYPE": "Invalid file type, please select the right file type",
+    "INVALID_FILE_SIZE": "Invalid file size, the file is too large",
+    "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
+    "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
+  },
+  "KCronField": {
+    "INVALID_CRON": "Invalid CRON expression"
+  },
+  "KMediaBrowser": {
+    "CLOSE_ACTION": "@:CLOSE",
+    "DOWNLOAD_MEDIA_ACTION": "Download media",
+    "RESTORE_IMAGE_ACTION": "Restore image",
+    "REMOVE_MEDIA_ACTION": "Remove the media",
+    "REMOVE_DIALOG_TITLE": "Remove the media {media} ?",
+    "REMOVE_DIALOG_MESSAGE": "Are you sure you want to remove the media <b>{media}</b> ?",
+    "ADD_MEDIA_LABEL": "Add a media",
+    "ADD_PHOTO_LABEL": "Add a photo",
+    "UPLOAD_TITLE": "Add a media",
+    "UPLOAD_FILE_FIELD_LABEL": "Select a file",
+    "UPLOAD": "Add",
+    "NO_MEDIA": "There is no media to show, please add a media first with one of the action buttons."
+  },
+  "KMessageCard": {
+    "VIEW_ATTACHMENT": "View attachment",
+    "DOWNLOAD_ATTACHMENT": "Download attachment",
+    "EDIT_MESSAGE": "Edit message"
+  },
+  "KMessageComposer": {
+    "FORMAT_MESSAGE": "Format message",
+    "ATTACH_FILE": "Attach file",
+    "WRITE_YOUR_MESSAGE": "Write your message...",
+    "SEND_MESSAGE": "Send message",
+    "OPEN_EDITOR": "Open editor",
+    "CLOSE_EDITOR": "Close editor",
+    "message-type": {
+      "INFORMATION": "Information",
+      "WARNING": "Warning",
+      "ALERT": "Alert"
+    }
+  },
+  "KFab": {
+    "CLOSE_ACTION": "@:CLOSE"
+  },
+  "KModal": {
+    "CLOSE_ACTION": "@:CLOSE"
+  },
+  "KWindow": {
+    "CLOSE_ACTION": "@:CLOSE",
+    "PIN_ACTION": "Pin",
+    "RESTORE_ACTION": "Restore",
+    "MAXIMIZE_ACTION": "Maximize"
+  },
+  "KResetPassword": {
+    "TITLE": "Reset your password ?",
+    "MESSAGE": "Please enter your new password to proceed",
+    "ACTION": "Reset",
+    "RESEND_LINK": "Resend reset password code",
+    "EMAIL_FIELD_LABEL": "Enter your email address",
+    "PASSWORD_FIELD_LABEL": "Enter your new password",
+    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirm your new password",
+    "TOKEN_FIELD_LABEL": "Enter the code received by email",
+    "SUCCESS_MESSAGE": "Password reset, you will receive a confirmation email",
+    "ERROR_MESSAGE_BAD_PARAMS": "Your password has already been reset or your account has been removed",
+    "ERROR_MESSAGE_VERIFY_EXPIRED": "The delay to reset has expired, please resend the reset password email with the link below",
+    "ERROR_MESSAGE_DEFAULT": "Error while trying to reset password, please try again later"
+  },
+  "KSendResetPassword": {
+    "TITLE": "Reset my password ?",
+    "MESSAGE": "Enter your email address and we will send you a code to reset your password",
+    "ACTION": "Send",
+    "EMAIL_FIELD_LABEL": "Enter your email address",
+    "ERROR_INVALID_EMAIL": "Unable to find the account associated to the email entered",
+    "ERROR_MESSAGE_IS_VERIFIED": "Check your inbox and verify your email address first",
+    "ERROR_MESSAGE_DEFAULT": "Error while sending email, please check the address and send it again or try again later"
+  },
+  "KSorter": {
+    "SORT": "Sort"
+  },
+  "KAbsoluteTimeRange": {
+    "PICK_START_DATE_LABEL": "Update start date",
+    "PICK_START_TIME_LABEL": "Update start time",
+    "PICK_END_DATE_LABEL": "Update end date",
+    "PICK_END_TIME_LABEL": "Update end time"
+  },
+  "KRelativeTimeRanges": {
+    "LAST_HOUR_LABEL": "Last hour",
+    "LAST_2_HOURS_LABEL": "Last 2 hours",
+    "LAST_3_HOURS_LABEL": "Last 3 hours",
+    "LAST_6_HOURS_LABEL": "Last 6 hours",
+    "LAST_12_HOURS_LABEL": "Last 12 hours",
+    "LAST_DAY_LABEL": "Last day",
+    "LAST_2_DAYS_LABEL": "Last 2 days",
+    "LAST_3_DAYS_LABEL": "Last 3 days",
+    "LAST_WEEK_LABEL": "Last week",
+    "LAST_2_WEEKS_LABEL": "Last 2 weeks",
+    "LAST_MONTH_LABEL": "Last month",
+    "LAST_3_MONTHS_LABEL": "Last 3 months",
+    "LAST_6_MONTHS_LABEL": "Last 6 months",
+    "LAST_YEAR_LABEL": "Last year",
+    "LAST_2_YEARS_LABEL": "Last 2 years",
+    "LAST_3_YEARS_LABEL": "Last 3 years",
+    "LAST_5_YEARS_LABEL": "Last 5 years",
+    "NEXT_HOUR_LABEL": "Next hour",
+    "NEXT_2_HOURS_LABEL": "Next 2 hours",
+    "NEXT_3_HOURS_LABEL": "Next 3 hours",
+    "NEXT_6_HOURS_LABEL": "Next 6 hours",
+    "NEXT_12_HOURS_LABEL": "Next 12 hours",
+    "NEXT_DAY_LABEL": "Next day",
+    "NEXT_2_DAYS_LABEL": "Next 2 days",
+    "NEXT_3_DAYS_LABEL": "Next 3 days",
+    "NEXT_WEEK_LABEL": "Next week",
+    "NEXT_2_WEEKS_LABEL": "Next 2 weeks",
+    "NEXT_MONTH_LABEL": "Next month",
+    "NEXT_3_MONTHS_LABEL": "Next 3 months",
+    "NEXT_6_MONTHS_LABEL": "Next 6 months",
+    "NEXT_YEAR_LABEL": "Next year"
+  },
+  "KChart": {
+    "NO_DATA_AVAILABLE": "No data available"
+  },
+  "KTimeSeriesChart": {
+    "TIME_LABEL": "Time",
+    "NO_DATA_AVAILABLE": "No data available",
+    "EXPORT_SERIES": "Export series",
+    "SERIES_EXPORT_FILE": "Series.csv"
+  },
+  "KFilter": {
+    "SEARCH_LABEL": "@:SEARCH"
+  },
+  "KTagsFilterControl": {
+    "FILTER": "Filter by properties"
+  },
+  "KTimeFilterControl": {
+    "FILTER": "Filter by time"
+  },
+  "KTextArea": {
+    "COLLAPSE": "Collapse"
+  },
+  "KTimeControl": {
+    "PREVIOUS_STEP": "Previous step",
+    "PREVIOUS_HOUR": "Previous hour",
+    "PREVIOUS_DAY": "Previous day",
+    "START_REALTIME": "Start real-time",
+    "STOP_REALTIME": "Stop real-time",
+    "SET_DATETIME": "Set date and time",
+    "SET_STEP": "Set step",
+    "NEXT_DAY": "Next day",
+    "NEXT_HOUR": "Next hour",
+    "NEXT_STEP": "Next step"
+  },
+  "KImage": {
+    "RESET": "Reset"
+  },
+  "KBrowser": {
+    "DOWNLOAD_FILE": "Download file",
+    "UPLOAD_FILES": "Upload files",
+    "UPLOAD": "Upload",
+    "DELETE_FILE": "Delete file",
+    "DELETE_FILE_MESSAGE": "Are you sure you want to delete {name} ?",
+    "CANNOT_BE_VIEWED": "This file cannot be viewed",
+    "NO_FILES": "No files"
+  },
+  "KUploader": {
+    "ADD_FILES": "Add files...",
+    "EMPTY_FILE": "File {file} is empty or corrupted !",
+    "INVALID_TYPE": "Type of file {file} is invalid !",
+    "FILE_TOO_LARGE": "File {file} is too large. The size must be less than {size}Mb",
+    "UPLOAD_FILE_SUCCEEDED": "File {file} has been successfully uploaded",
+    "UPLOAD_FILE_ERRORED": "Cannot upload file {file} !"
+  },
+  "KTagManager": {
+    "TITLE": "Tags",
+    "CREATE_TAG": "Create a tag",
+    "EDIT_TAG": "Edit tag",
+    "DELETE_TAG": "Delete tag",
+    "SORT_TAGS": "Sort tags",
+    "CREATE_TAG_ON_THE_FLY": "Create tag",
+    "TAG_NAME": "Enter the name",
+    "TAG_SERVICE": "Tag type",
+    "TAG_DESCRIPTION": "Enter a description",
+    "TAG_COLOR": "Select a color"
+  }
+}

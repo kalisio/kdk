@@ -6,7 +6,7 @@ import { Events } from '../../../core/client/events.js'
 import { api } from '../../../core/client/api.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
-import { getCategories, getLayers, getSublegends, setEngineJwt } from '../utils/utils.catalog.js'
+import { getCategories, getLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
@@ -285,6 +285,9 @@ export const activity = {
         await this.resetLayer(layer)
       }
     },
+    async onRemoveCategory (category) {
+      // virtual method
+    },
     async onRemoveLayer (layer) {
       // Stop any running edition
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
@@ -380,6 +383,7 @@ export const activity = {
         // Do we need to inject a token or restore planet API ?
         if (planetApi) Object.assign(layer, { getPlanetApi: () => planetApi })
         await setEngineJwt([layer], planetApi)
+        processTranslations(layer)
         await this.addCatalogLayer(layer)
       }
     },

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="layers.length > 0">
+  <div v-if="props.layers.length > 0">
     <k-layers-list :layers="filteredLayers" :options="options">
       <template v-slot:header>
         <div class="q-ma-sm">
@@ -64,6 +64,7 @@ import _ from 'lodash'
 import { computed, ref } from 'vue'
 import { KStamp } from '../../../../core/client/components'
 import KLayersList from './KLayersList.vue'
+import { useCurrentActivity } from '../../composables'
 
 // Props
 const props = defineProps({
@@ -82,6 +83,8 @@ const model = ref([])
 const selectOptions = ref(
   props.layers.map((layer) => ({ label: layer.label, value: layer._id }))
 )
+const { CurrentActivity } = useCurrentActivity()
+const { layers } = CurrentActivity.value
 
 // Computed
 const filteredLayers = computed(() =>
@@ -114,8 +117,11 @@ function filter (val, update, abort) {
 // set default layers from layer.leaflet.isVisible property
 if (props.layers.length > 0) {
   for (const layer of props.layers) {
-    const isLayerVisible = _.get(layer, 'leaflet.isVisible')
-    if (isLayerVisible && !model.value.includes(layer._id)) model.value.push(layer._id)
+    const layerObject = layers[layer.name]
+    if (layerObject) {
+      const isLayerVisible = _.get(layerObject, 'isVisible')
+      if (isLayerVisible && !model.value.includes(layer._id)) model.value.push(layer._id)
+    }
   }
 }
 </script>

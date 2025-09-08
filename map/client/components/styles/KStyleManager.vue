@@ -12,14 +12,13 @@
         :content="toolbar"
         class="q-pr-sm no-wrap"
       />
-      <QSeparator inset />
       <div class="row justify-center q-mt-xs">
         <KTagSelection :selection="tagsSelection" @selection-changed="onTagSelectionChanged" />
       </div>
     </div>
     <div id="style-manager-content">
       <q-tab-panels v-model="viewMode" animated>
-        <q-tab-panel name="list">
+        <q-tab-panel name="list" class="q-pa-none">
           <KGrid
             service="styles"
             :append-items="true"
@@ -29,17 +28,7 @@
             :renderer="renderer"
           />
           <KFollower
-            :follower="{
-              component: 'layout/KFab',
-              direction: 'up',
-              alignment: 'right',
-              content: [{
-                id: 'create-style',
-                icon: 'las la-plus',
-                tooltip: 'KStyleManager.CREATE_STYLE',
-                handler: editStyle
-              }]
-            }"
+            :follower="follower"
             targetId="left-window-magnet"
             anchor="bottom-right"
           />
@@ -70,8 +59,8 @@ import { editFeaturesStyle } from '../../utils/utils.features.js'
 import { getTagsFilterOptions } from '../../../../core/client/utils/utils.tags.js'
 import KGrid from '../../../../core/client/components/collection/KGrid.vue'
 import KFollower from '../../../../core/client/components/KFollower.vue'
-import KStyleEditor from './KStyleEditor.vue'
 import KTagSelection from '../../../../core/client/components/tags/KTagSelection.vue'
+import KStyleEditor from './KStyleEditor.vue'
 
 // Props
 defineProps({
@@ -86,10 +75,21 @@ const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
 const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
-const baseQuery = ref({})
+const baseQuery = ref({ $sort: { name: 1 } })
 const searchString = ref('')
 const tagsOptions = ref([])
 const tagsSelection = ref([])
+const follower = {
+  component: 'layout/KFab',
+  direction: 'up',
+  alignment: 'right',
+  content: [{
+    id: 'create-style',
+    icon: 'las la-plus',
+    tooltip: 'KStyleManager.CREATE_STYLE',
+    handler: editStyle
+  }]
+}
 
 // Computed
 const filterQuery = computed(() => {
@@ -106,21 +106,11 @@ const toolbar = computed(() => {
   if (viewMode.value === 'editor') return []
   return [
     {
-      component: 'collection/KItemsSorter',
-      id: 'style-manager-sorter-options',
-      tooltip: 'KStyleManager.SORT',
-      options: [
-        { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
-        { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
-      ],
-      onOptionChanged: (option) => {
-        baseQuery.value = { $sort: { [option.field]: option.order } }
-      }
-    },
-    {
       component: 'tags/KTagFilter',
       id: 'style-manager-tags-filter',
+      class: 'q-ml-sm',
       selection: tagsSelection.value,
+      alignment: 'left',
       options: tagsOptions.value,
       onSelectionChanged: onTagSelectionChanged
     },
@@ -130,6 +120,18 @@ const toolbar = computed(() => {
       value: searchString.value,
       onSearch: (value) => {
         searchString.value = value
+      }
+    },
+    {
+      component: 'collection/KItemsSorter',
+      id: 'style-manager-sorter-options',
+      tooltip: 'KStyleManager.SORT',
+      options: [
+        { icon: 'las la-sort-alpha-down', value: { field: 'name', order: 1 }, default: true },
+        { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } }
+      ],
+      onOptionChanged: (option) => {
+        baseQuery.value = { $sort: { [option.field]: option.order } }
       }
     }
   ]
@@ -155,6 +157,7 @@ const renderer = computed(() => {
         icon: 'las la-layer-group',
         tooltip: 'KStyleManager.APPLY_TO_LAYER',
         actionRenderer: 'item',
+        dense: true,
         content: layerMenuContent
       },
       {
@@ -164,16 +167,26 @@ const renderer = computed(() => {
         handler: applyToSelection
       },
       {
-        id: 'edit-style',
-        icon: 'las la-edit',
-        tooltip: 'KStyleManager.EDIT',
-        handler: editStyle
-      },
-      {
-        id: 'delete-style',
-        icon: 'las la-trash',
-        tooltip: 'KStyleManager.DELETE',
-        handler: { name: 'removeItem', params: ['confirm'] }
+        id: 'style-menu',
+        component: 'menu/KMenu',
+        dropdownIcon: 'las la-ellipsis-v',
+        actionRenderer: 'item',
+        propagate: false,
+        dense: true,
+        content: [
+          {
+            id: 'edit-style',
+            icon: 'las la-edit',
+            label: 'KStyleManager.EDIT',
+            handler: editStyle
+          },
+          {
+            id: 'delete-style',
+            icon: 'las la-trash',
+            label: 'KStyleManager.DELETE',
+            handler: { name: 'removeItem', params: ['confirm'] }
+          }
+        ]
       }
     ],
     dense: true,
@@ -218,7 +231,6 @@ function editStyle (styleToEdit) {
 }
 function onApplied (style) {
   viewMode.value = 'list'
-
   // Update layers with filters that use this style
   const layers = _.filter(CurrentActivity.value?.getLayers ? CurrentActivity.value.getLayers() : [], layer =>
     _.get(layer, 'scope') === 'user' &&
@@ -229,6 +241,7 @@ function onCanceled () {
   viewMode.value = 'list'
 }
 
+// Hooks
 onMounted(async () => {
   tagsOptions.value = await getTagsFilterOptions('styles')
 })

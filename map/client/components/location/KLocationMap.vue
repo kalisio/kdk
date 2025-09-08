@@ -253,23 +253,29 @@ export default {
     async mapRefCreated (container) {
       if (container) {
         if (!this.mapReady) {
-          // setup map
+          // setup the map
           logger.debug('[KDK] Create location map with viewer options', this.engineOptions.viewer)
           this.setupMap(container, this.engineOptions.viewer)
           this.mapReady = true
           // setup base layer
           const baseLayers = await this.getLayers({ type: 'BaseLayer' })
-          if (baseLayers.length > 0) await this.addLayer(baseLayers[0])
+          // [!] remember Vue won’t wait for async: use mapReady as a guard to
+          // prevent executing the process after the component is destroyed
+          // https://github.com/kalisio/kdk/issues/1291
+          if (this.mapReady && baseLayers.length > 0) await this.addLayer(baseLayers[0])
           // setup location
-          this.refresh()
+          if (this.mapReady) this.refresh()
         }
+      } else {
+        // keep trace when the component is being unmounted
+        this.mapReady = false
       }
     },
     getLocation () {
       return this.modelValue
     }
   },
-  async mounted () {
+  mounted () {
     this.$engineEvents.on('pm:create', this.stopDraw)
   },
   beforeUnmount () {
