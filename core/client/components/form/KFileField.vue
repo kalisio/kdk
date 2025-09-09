@@ -85,7 +85,7 @@ export default {
       return _.get(this.properties, 'field.maxFileSize', 1048576)
     },
     getMaxTotalSize () {
-      return _.get(this.properties, 'field.maxTotalSize', 1048576)
+      return _.get(this.properties, 'field.maxTotalSize', this.getMaxFileSize())
     },
     isClearable () {
       return _.get(this.properties, 'field.clearable', true)
