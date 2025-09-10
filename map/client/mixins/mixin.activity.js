@@ -393,13 +393,21 @@ export const activity = {
       // This is for instance the case when saving a layer when a created then patched event come in.
       // So we need something similar to _.debounce() but for each possible layer argument.
       // Otherwise when two events are almost received at the same time but target different layers only the last one will be considered.
-      if (!this.pendingLayerRefresh) this.pendingLayerRefresh = {}
-      // If a refresh has already been requested the last one wins so cancel it
-      if (this.pendingLayerRefresh[layer]) clearTimeout(this.pendingLayerRefresh[layer])
-      this.pendingLayerRefresh[layer] = setTimeout(() => {
+      const refreshLayer = async () => {
+        const events = this.pendingLayerRefresh[layer]
         delete this.pendingLayerRefresh[layer]
-        this.refreshLayer(layer, event)
-      }, 500)
+        for (let i = 0; i< events.length; i++) {
+          await this.refreshLayer(layer, events[i])
+        }
+      }
+      if (!this.pendingLayerRefresh) this.pendingLayerRefresh = {}
+      // If a refresh has already been requested push new event to operation queue
+      if (this.pendingLayerRefresh[layer]) {
+        this.pendingLayerRefresh[layer].push(event)
+      } else {
+        this.pendingLayerRefresh[layer] = [event]
+        setTimeout(refreshLayer, 500)
+      }
     },
     async onCatalogUpdated (object, event) {
       switch (object.type) {
