@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { baseField } from '../../mixins'
 
 export default {
