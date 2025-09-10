@@ -173,12 +173,13 @@ export function useSession (options = {}) {
     }
     // Then redirection
     Events.on('user-abilities-changed', redirect)
-    api.on('logout', () => {
+    api.on('logout', async () => {
       // Used to automatically redirect when the user has requested a logout from another client
       // We don't use redirect() here as in this case the user is already logout and it would redirect to login instead
-      router.push({ name: 'logout' })
+      if (typeof options.logout === 'function') result = await options.logout()
+      else if (typeof options.logout === 'string') router.push({ name: options.logout })
+      else router.push({ name: 'logout' })
     })
-
     try {
       await restoreSession()
     } catch (error) {
