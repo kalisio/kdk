@@ -109,13 +109,13 @@ export const activity = {
       await this.refreshOrphanLayers()
     },
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async updateLayersOrder (sourceCategoryId, data) {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async updateOrphanLayersOrder (orphanLayers) {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async refreshLayers () {
       // Clear layers and variables
