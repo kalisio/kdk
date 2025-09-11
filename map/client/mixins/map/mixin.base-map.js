@@ -89,8 +89,7 @@ export const baseMap = {
   ],
   data () {
     return {
-      layers: {},
-      orphanLayers: []
+      layers: {}
     }
   },
   methods: {
@@ -497,9 +496,6 @@ export const baseMap = {
     getLayerByName (name) {
       return this.layers[name]
     },
-    getOrphanLayerByName (name) {
-      return this.orphanLayers.find(l => l?.name === name)
-    },
     getLeafletLayerByName (name) {
       return this.leafletLayers[name]
     },
@@ -602,20 +598,6 @@ export const baseMap = {
       // Update underlying layer
       this.layers[newName] = layer
       delete this.layers[previousName]
-    },
-    reorganizeLayers () {
-      for (let i = this.layerCategories.length - 1; i >= 0; i--) {
-        const category = this.layerCategories[i]
-        if (!category?.layers) continue
-        for (let j = category.layers.length - 1; j >= 0; j--) {
-          const layer = category.layers[j]
-          this.bringLayerToFront(layer)
-        }
-      }
-      for (let i = this.orphanLayers.length - 1; i >= 0; i--) {
-        const layer = this.orphanLayers[i]
-        this.bringLayerToFront(layer.name)
-      }
     },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
@@ -916,9 +898,6 @@ export const baseMap = {
     },
     isUserLocationVisible () {
       return (this.locateControl && this.locateControl._active)
-    },
-    isOrphanLayer (layer) {
-      return this.orphanLayers.some(l => l.name === layer.name)
     },
     setCursor (className) {
       L.DomUtil.addClass(this.map._container, className)

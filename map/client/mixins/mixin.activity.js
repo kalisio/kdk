@@ -1,12 +1,13 @@
 import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
+import sift from 'sift'
 import { Store } from '../../../core/client/store.js'
 import { Events } from '../../../core/client/events.js'
 import { api } from '../../../core/client/api.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
-import { getCategories, getLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
+import { getCategories, getLayers, getLayersByCategory, getOrphanLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
@@ -17,6 +18,7 @@ export const activity = {
   data () {
     return {
       layerCategories: [],
+      orphanLayers: [],
       variables: [],
       engine: 'leaflet',
       engineReady: false,
@@ -108,14 +110,35 @@ export const activity = {
       }
       await this.refreshOrphanLayers()
     },
+    getOrphanLayerByName (name) {
+      return this.orphanLayers.find(l => l?.name === name)
+    },
+    isOrphanLayer (layer) {
+      return this.orphanLayers.some(l => l?.name === layer.name)
+    },
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
-      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
+      this.reorderLayers()
     },
     async updateLayersOrder (sourceCategoryId, data) {
-      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
+      this.reorderLayers()
     },
     async updateOrphanLayersOrder (orphanLayers) {
-      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
+      this.reorderLayers()
+    },
+    reorderLayers () {
+      if (typeof this.bringLayerToFront !== 'function') return
+      for (let i = this.layerCategories.length - 1; i >= 0; i--) {
+        const category = this.layerCategories[i]
+        if (!category?.layers) continue
+        for (let j = category.layers.length - 1; j >= 0; j--) {
+          const layer = category.layers[j]
+          this.bringLayerToFront(layer)
+        }
+      }
+      for (let i = this.orphanLayers.length - 1; i >= 0; i--) {
+        const layer = this.orphanLayers[i]
+        this.bringLayerToFront(layer.name)
+      }
     },
     async refreshLayers () {
       // Clear layers and variables
@@ -127,6 +150,7 @@ export const activity = {
       for (let i = 0; i < catalogLayers.length; i++) {
         await this.addCatalogLayer(catalogLayers[i])
       }
+      await this.refreshOrphanLayers()
       // We need at least an active background
       const hasVisibleBaseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer') && layer.isVisible)
       if (!hasVisibleBaseLayer) {
@@ -135,7 +159,13 @@ export const activity = {
       }
     },
     async refreshOrphanLayers () {
-      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
+      // By default orphan layers are user/activity layers outside user categories
+      const layersFilter = sift({ scope: { $in: ['user', 'activity'] } })
+      const categoriesFilter = sift({ _id: { $exists: true } })
+      const filteredLayers = _.filter(this.layers, layersFilter)
+      const filteredCategories = _.filter(this.layerCategories, categoriesFilter)
+      const layersByCategory = getLayersByCategory(filteredLayers, filteredCategories)
+      this.orphanLayers = getOrphanLayers(filteredLayers, layersByCategory)
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,
@@ -296,8 +326,17 @@ export const activity = {
         // but as we might not always use sockets perform it anyway
         this.removeLayer(layer.name)
       }
-      await this.refreshOrphanLayers()
       // Removing the layer should automatically update all projects
+    },
+    async onAddOrphanLayer (layer) {
+      if (!this.isOrphanLayer(layer)) {
+        await this.refreshOrphanLayers()
+      }
+    },
+    onRemoveOrphanLayer (layer) {
+      if (this.isOrphanLayer(layer)) {
+        this.orphanLayers.splice(this.orphanLayers.findIndex(l => l._id === layer._id), 1)
+      }
     },
     onEngineReady (engine) {
       this.engine = engine
@@ -439,6 +478,8 @@ export const activity = {
     this.$engineEvents.on('map-ready', this.onEngineReady)
     this.$engineEvents.on('globe-ready', this.onEngineReady)
     this.$engineEvents.on('layer-added', this.configureLayerActions)
+    this.$engineEvents.on('layer-added', this.onAddOrphanLayer)
+    this.$engineEvents.on('layer-removed', this.onRemoveOrphanLayer)
   },
   mounted () {
     this.requestRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
@@ -452,6 +493,8 @@ export const activity = {
     this.$engineEvents.off('map-ready', this.onEngineReady)
     this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.configureLayerActions)
+    this.$engineEvents.off('layer-added', this.onAddOrphanLayer)
+    this.$engineEvents.off('layer-added', this.onRemoveOrphanLayer)
     Events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     Events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
     Events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)

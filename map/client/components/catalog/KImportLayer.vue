@@ -157,7 +157,6 @@ async function onImport () {
     schema: { name: file.name, content: file.schema },
     featureId: propertiesResult.values.featureId
   }, file.content)
-  if (typeof CurrentActivity.value.refreshOrphanLayers === 'function') await CurrentActivity.value.refreshOrphanLayers()
   importing.value = false
   emit('done')
 }
