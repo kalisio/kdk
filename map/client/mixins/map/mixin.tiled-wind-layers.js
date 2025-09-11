@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import 'leaflet-velocity'
 import { Time } from '../../../../core/client/time.js'
+import { Events } from '../../../../core/client/events.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
 
@@ -115,7 +116,7 @@ export const tiledWindLayers = {
     this.$engineEvents.on('layer-hidden', this.onHideTiledWindLayer)
     this.$engineEvents.on('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$engineEvents.on('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
-    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
+    Events.on('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   },
 
   beforeUnmount () {
@@ -124,6 +125,6 @@ export const tiledWindLayers = {
     this.$engineEvents.off('layer-hidden', this.onHideTiledWindLayer)
     this.$engineEvents.off('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$engineEvents.off('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
+    Events.off('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
   }
 }

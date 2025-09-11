@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { getCssVar } from 'quasar'
 import { utils as kdkCoreUtils } from '../../../core/client/index.js'
 
 export const IconStyleToSimpleStyle = {
@@ -197,7 +196,7 @@ export function convertSimpleStyleColors (style) {
   // Convert from quasar color palette to actual color
   _.forOwn(style, (value, key) => {
     if (['stroke', 'fill', 'marker-color'].includes(key)) {
-      const color = getCssVar(value)
+      const color = kdkCoreUtils.getHtmlColor(value)
       if (color) _.set(style, key, color)
     }
   })
@@ -217,7 +216,6 @@ export function convertLineStyleToSimpleStyle (style) {
 }
 
 export function convertSimpleStyleToLineStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')  
   return style ? convertStyle(style, SimpleStyleToLineStyle) : {}
 }
 
@@ -226,8 +224,22 @@ export function convertPolygonStyleToSimpleStyle (style) {
 }
 
 export function convertSimpleStyleToPolygonStyle (style) {
-  //logger.warn('KDK] SimpleSpec is limited and might be depracated. Consider using Kalisio Style spec instead')
   return style ? convertStyle(style, SimpleStyleToPolygonStyle) : {}
+}
+
+export function getStyleType (geometryType) {
+  if (!geometryType) return
+  switch (geometryType) {
+    case 'Point':
+    case 'MultiPoint':
+      return 'point'
+    case 'LineString':
+    case 'MultiLineString':
+      return 'line'
+    case 'Polygon':
+    case 'MultiPolygon':
+      return 'polygon' 
+  }
 }
 
 export function getShapeFromPointStyle (style, size = [20, 20]) {
@@ -319,7 +331,7 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
       if (!_.has(style.values, property)) return
       // Conversion from palette to RGB color is required
       const value = (property.includes('color')
-        ? kdkCoreUtils.getColorFromPalette(_.get(style.values, property))
+        ? kdkCoreUtils.getHtmlColor(_.get(style.values, property))
         : _.get(style.values, property))
       // Generate style value for given property value
       templates[index] += `if (${predicate}) { %>${value}<% } else `
@@ -332,7 +344,7 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
     if (!_.has(defaultStyle, property)) return
     // Conversion from palette to RGB color is required
     const value = (property.includes('color')
-      ? kdkCoreUtils.getColorFromPalette(_.get(defaultStyle, property))
+      ? kdkCoreUtils.getHtmlColor(_.get(defaultStyle, property))
       : _.get(defaultStyle, property))
     // Avoid converting numbers to string on default values
     if (hasStyles) templates[index] += `{ %>${value}<% }`

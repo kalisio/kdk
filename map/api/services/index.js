@@ -308,7 +308,7 @@ export default async function () {
   }
   const stylesConfig = app.get('styles')
   if (stylesConfig) {
-    await createStylesService.call(app)
+    await createStylesService.call(app, stylesConfig)
     debug('\'styles\' service created')
   }
 

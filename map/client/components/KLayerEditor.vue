@@ -169,11 +169,11 @@
 <script setup>
 import _ from 'lodash'
 import { ref } from 'vue'
-import { api } from '@kalisio/kdk/core.client'
+import { api } from '../../../core/client/api.js'
 import { useCurrentActivity } from '../composables/activity.js'
 import { DefaultStyle } from '../utils/utils.style.js'
 import { hasFeatureSchema, isInMemoryLayer } from '../utils/utils.layers.js'
-import { utils as kdkCoreUtils } from '../../../core/client/index.js'
+import { dotify } from '../../../core/client/utils/index.js'
 
 // Props
 const props = defineProps({
@@ -438,7 +438,7 @@ function apply () {
     CurrentActivity.value.resetLayer(layer)
   } else {
     // Dotify the layer to avoid patching the whole object
-    const dotifiedLayer = kdkCoreUtils.dotify(updatedLayer)
+    const dotifiedLayer = dotify(updatedLayer)
 
     const keys = ['leaflet.cluster', 'leaflet.popup', 'leaflet.tooltip', 'leaflet.infobox', 'cesium.cluster', 'cesium.popup', 'cesium.tooltip', 'cesium.infobox']
     // Remove keys of objects that don't need to be dotified

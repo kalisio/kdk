@@ -3,7 +3,7 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { uid } from 'quasar'
-import { Time, Units } from '../../../../core.client.js'
+import { Time, Units, Events } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer, getGeoJsonFeatures } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle, convertToCesiumFromStyle } from '../../cesium/utils/utils.style.js'
@@ -600,8 +600,8 @@ export const geojsonLayers = {
   },
   created () {
     this.registerCesiumConstructor(this.createCesiumGeoJsonLayer)
-    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
-    this.$events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    Events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    Events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
     // Map of currently updated layers to avoid reentrance with real-time events as
@@ -611,8 +611,8 @@ export const geojsonLayers = {
     this.geojsonCache = {}
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
-    this.$events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    Events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    Events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
 

@@ -20,7 +20,7 @@
     <div v-if="computedLabel"
       :id="id"
       class="ellipsis"
-      :class="{ 'q-pl-sm': !dense && icon, 'q-pl-xs': dense && icon }"
+      :class="{ 'q-pl-sm': !dense && (icon || isTruncated ) , 'q-pl-xs': dense && (icon || isTruncated) }"
     >
       {{ computedLabel }}
       <q-resize-observer @resize="onResize" />

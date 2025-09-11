@@ -14,7 +14,7 @@
 
 <script>
 import _ from 'lodash'
-import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
+import { api, mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
 import { KModalEditor } from '../../../core/client/components'
 
 export default {
@@ -57,7 +57,7 @@ export default {
       if (this.layer._id) {
         await this.kActivity.editFeaturesProperties(updatedFeature, this.layer)
       } else {
-        await this.$api.getService(this.service).patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
+        await api.getService(this.service).patch(updatedFeature._id, _.pick(updatedFeature, ['properties']))
       }
     },
     loadLayerSchema () {
@@ -74,7 +74,7 @@ export default {
   async created () {
     // If not injected load it
     if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
-    else this.layer = await this.$api.getService('catalog').get(this.layerId)
+    else this.layer = await api.getService('catalog').get(this.layerId)
     this.service = _.get(this.layer, '_id') ? _.get(this.layer, 'service') : 'features-edition'
   },
   setup (props) {

@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const activity = {
   methods: {
     async initializeMap (container) {

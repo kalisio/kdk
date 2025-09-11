@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { api } from '@kalisio/kdk/core.client.js'
+import { api } from '../api.js'
 
 export function getCollectionService (name, context) {
   return api.getService(name, context)
@@ -36,19 +36,19 @@ export async function getDistinctValues (service, field, filter = {}) {
   return [values]
 }
 
-export async function searchText (service, text, caseSensitive = false, diacriticSensitive = false) {
-  const query = { 
+export async function searchText (service, text, caseSensitive = false, diacriticSensitive = false, filter = {}) {
+  const query = _.merge({ 
     $text: { 
       $search: text, 
       $caseSensitive: caseSensitive,
       $diacriticSensitive: diacriticSensitive
     }
-  }
+  }, filter)
   return service.find({ query })
 }
 
-export async function containsText (service, field, text, caseSensitive = false, diacriticSensitive = false) {
-  const response = await searchText(service, text, caseSensitive, diacriticSensitive)
+export async function containsText (service, field, text, caseSensitive = false, diacriticSensitive = false, filter = {}) {
+  const response = await searchText(service, text, caseSensitive, diacriticSensitive, filter)
   for (const item of response.data) {
     const value = _.get(item, field)
     if (value) {

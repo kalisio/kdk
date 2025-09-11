@@ -3,7 +3,46 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { getCollectionService, getLatestTime, getOldestTime, listenToServiceEvents, unlistenToServiceEvents } from '../utils/index.js'
 import { useCurrentActivity } from './activity.js'
 
-export function useCollectionFilter (options = {}) {
+export function useCollectionFilter () {
+  // Data
+  const { CurrentActivityContext } = useCurrentActivity()
+
+  // Computed
+  const tagsFilter = computed(() => _.get(CurrentActivityContext.state, 'tagsFilter'))
+  const timeFilter = computed(() => _.get(CurrentActivityContext.state, 'timeFilter'))
+
+  // Functions
+  function setTagsFilter (value, scope) {
+    const tagsFilter = CurrentActivityContext.state.tagsFilter
+    if (!tagsFilter) return
+    if (scope) _.set(tagsFilter, scope, value)
+    else Object.assign(tagsFilter, value)
+  }
+  function setTimeFilter (value, scope) {
+    const timeFilter = CurrentActivityContext.state.timeFilter
+    if (!timeFilter) return
+    if (scope) _.set(timeFilter, scope, value)
+    else Object.assign(timeFilter, value)
+  }
+  function clearTagsFilter () {
+    setTagsFilter([], 'selection')
+  }
+  function cleatTimeFilter () {
+    setTimeFilter({ start: null, end: null })
+  }
+
+  // Expose
+  return {
+    tagsFilter,
+    timeFilter,
+    setTagsFilter,
+    setTimeFilter,
+    clearTagsFilter,
+    cleatTimeFilter
+  }
+}
+
+export function useCollectionFilterQuery (options = {}) {
   // Data
   const { CurrentActivityContext } = useCurrentActivity()
   const tagsFilter = CurrentActivityContext.state.tagsFilter

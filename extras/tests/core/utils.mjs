@@ -2,6 +2,8 @@ import makeDebug from 'debug'
 import fs from 'fs'
 import png from 'pngjs'
 import pixelmatch from 'pixelmatch'
+import path from 'path'
+import mime from 'mime'
 
 const debug = makeDebug('kdk:core:test:utils')
 
@@ -26,7 +28,7 @@ export async function isElementVisible (page, selector) {
     const element = document.querySelector(selector)
     if (!element) return false
     const style = window.getComputedStyle(element)
-    const visible = (style && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0')
+    const visible = (style && style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0' && !(style.height === '0px' && style.width === '0px'))
     return visible
   }, selector)
 }
@@ -48,7 +50,7 @@ export async function countChildren (page, selector) {
  */
 export async function click (page, selector, wait = 500) {
   try {
-    await page.locator(selector).setTimeout(2000).click()
+    await page.locator(selector).click({ timeout: 2000 })
     await waitForTimeout(wait)
     debug(`[KDK] Clicked target ${selector}`)
   } catch (error) {
@@ -60,7 +62,7 @@ export async function click (page, selector, wait = 500) {
  */
 export async function hover (page, selector, wait = 500) {
   try {
-    await page.locator(selector).setTimeout(2000).hover()
+    await page.locator(selector).hover({ timeout: 2000 })
     await waitForTimeout(wait)
     debug(`[KDK] Hovered target ${selector}`)
   } catch (error) {
@@ -339,4 +341,46 @@ export async function moveRange (page, action, target, direction, times, wait = 
 
   debug(`[KDK] Pressed ${key} ${times} times to move range ${action} (${target === 'rightThumb' ? 'right thumb' : 'left thumb'})`)
   await waitForTimeout(wait)
+}
+
+/**
+ * Simulate drag & drop of files onto the target container
+ * @param {string} target Query selector for container that has 'dragenter' and 'drop' events
+ */
+export async function simulateFileDrop (page, target, dataPath, filePaths) {
+  const fileData = []
+
+  for (const filePath of filePaths) {
+    const fullPath = path.join(dataPath, filePath)
+    const content = fs.readFileSync(fullPath, 'utf8')
+    const fileName = filePath.split('/').pop()
+    const mimeType = mime.getType(fileName)
+    fileData.push({ content, fileName, mimeType })
+  }
+
+  await page.evaluate(async (fileData, target) => {
+    const DragOverlay = document.querySelector(target)
+    if (!DragOverlay) throw new Error('DragOverlay component not found')
+
+    const files = fileData.map(({ content, fileName, mimeType }) => {
+      return new File([content], fileName, { type: mimeType })
+    })
+
+    const dataTransfer = new DataTransfer()
+    files.forEach(file => dataTransfer.items.add(file))
+
+    const dragEnterEvent = new DragEvent('dragenter', {
+      bubbles: true,
+      dataTransfer
+    })
+
+    const dropEvent = new DragEvent('drop', {
+      bubbles: true,
+      dataTransfer
+    })
+
+    DragOverlay.dispatchEvent(dragEnterEvent)
+    await setTimeout(() => {}, 500)
+    DragOverlay.dispatchEvent(dropEvent)
+  }, fileData, target)
 }

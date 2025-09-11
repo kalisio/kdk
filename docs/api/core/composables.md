@@ -15,13 +15,27 @@ The composable exposes the following:
 * **has(path)**: test if a store has a value by path
 * **forOwn(f)**: call function `f` on each `(value, key)` of the store
 
-## useSession
+## User & Session
+
+### useUser
+
+Used to access the current user information.
+
+The composable exposes the following:
+* **User**: current user (null if none currently authenticated).
+* **name**: the user name
+* **description**: the user description
+* **avatar**: the user avatar
+* **permissions**: the user permissions
+* **role**: the user role
+
+### useSession
 
 Used to manage user client session with the following options:
 * **redirect** function to override default redirection behaviour with the following arguments:
   * `route` current route,
   * `result` from before guard,
-  * `user` current user (null if none currently authentified).
+  * `user` current user (null if none currently authenticated).
 
 Rely on [global guards](./application.md#guards) to ensure redirection. It also manages the socket connection state and will display disconnection/reconnection dialogs accordingly.
 

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { kml } from '@tmcw/togeojson'
 import { exportKml } from 'cesium'
 

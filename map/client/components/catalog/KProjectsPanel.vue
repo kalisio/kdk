@@ -6,7 +6,7 @@
       :nb-items-per-page="20"
       :append-items="true"
       :base-query="baseQuery"
-      :filter-query="filter.query"
+      :filter-query="filterQuery"
       :dense="true"
       :scrollToTop="false"
       :header="toolbar"
@@ -17,11 +17,12 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useCurrentActivity } from '../../composables'
-import { Filter, Sorter, utils, i18n, api } from '../../../../core/client'
+import { utils, i18n, api } from '../../../../core/client'
 import { KGrid } from '../../../../core/client/components'
 import { uncacheView } from '../../utils'
 
@@ -29,23 +30,34 @@ import { uncacheView } from '../../utils'
 const router = useRouter()
 const route = useRoute()
 const { CurrentActivity } = useCurrentActivity()
-const filter = ref(Filter.get())
-const sorter = Sorter.get()
 const projectRenderer = ref({
   component: 'catalog/KProjectSelector',
   class: 'col-12'
 })
+const baseQuery = ref({})
+const searchString = ref('')
 
 // Computed
-const baseQuery = computed(() => Object.assign({}, sorter.query))
+const filterQuery = computed(() => {
+  const query = {}
+  if (!_.isEmpty(searchString.value)) {
+    query.name = { $regex: searchString.value }
+  }
+  return query
+})
 const toolbar = computed(() => {
   return [
     {
       id: 'projects-filter',
-      component: 'collection/KFilter'
+      component: 'collection/KItemsFilter',
+      class: 'col',
+      value: searchString.value,
+      onSearch: (value) => {
+        searchString.value = value
+      }
     },
     {
-      component: 'collection/KSorter',
+      component: 'collection/KItemsSorter',
       id: 'projects-sorter',
       tooltip: 'KProjectsPanel.SORT_PROJECTS',
       options: [
@@ -53,7 +65,10 @@ const toolbar = computed(() => {
         { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
         { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
         { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
-      ]
+      ],
+      onOptionChanged: (option) => {
+        baseQuery.value = { $sort: { [option.field]: option.order } }
+      }
     }
   ]
 })

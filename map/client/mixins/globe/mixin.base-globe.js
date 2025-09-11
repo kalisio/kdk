@@ -1,15 +1,16 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
-import Emitter from 'tiny-emitter'
-import { getCssVar } from 'quasar'
+import { EventBus, getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
+         exportKml, VerticalOrigin, Transforms, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
          DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
+// We need to import cesium as an object to dynamically get constructors
+import * as Cesium from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
-import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
+import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
 
@@ -850,7 +851,7 @@ export const baseGlobe = {
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus
-    this.$engineEvents = new Emitter()
+    this.$engineEvents = new EventBus()
   },
   beforeUnmount () {
     this.clearLayers()

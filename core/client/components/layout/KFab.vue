@@ -62,7 +62,7 @@ import KAction from '../action/KAction.vue'
 
 // Props
 const props = defineProps({
-  content:{
+  content: {
     type: Array,
     default: () => null
   },

@@ -8,6 +8,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { useActivity, useLayout } from '../composables'
+import { Events } from '../events.js'
 import KPage from './layout/KPage.vue'
 
 export default {
@@ -79,11 +80,11 @@ export default {
   async created () {
     await this.configure()
     // whenever the user abilities are updated, update activity as well
-    this.$events.on('user-abilities-changed', this.configure)
+    Events.on('user-abilities-changed', this.configure)
   },
   beforeUnmount () {
     logger.debug(`[KDK] Clearing '${this.name}' activity`)
-    this.$events.off('user-abilities-changed', this.configure)
+    Events.off('user-abilities-changed', this.configure)
     // Clear the layout
     this.clearLayout()
   }

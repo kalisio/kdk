@@ -1,5 +1,7 @@
 import _ from 'lodash'
-import { Dialog, exportFile } from 'quasar'
+import { Dialog, Notify, exportFile } from 'quasar'
+import { Events } from '../events.js'
+import { api } from '../api.js'
 import { bindContent, filterContent } from '../utils/index.js'
 
 export const baseItem = {
@@ -94,14 +96,14 @@ export const baseItem = {
       this.$emit('item-expanded', this.item, expanded)
     },
     canViewItem () {
-      return this.$can('read', this.service, this.item)
+      return api.can('read', this.service, this.item)
     },
     viewItem () {
       const path = this.$route.fullPath + `/view/${this.item._id}`
       this.$router.push(path)
     },
     canEditItem () {
-      return this.$can('update', this.service, this.item)
+      return api.can('update', this.service, this.item)
     },
     editItem (scope = undefined, properties = undefined) {
       const route = this.$route
@@ -119,7 +121,7 @@ export const baseItem = {
       })
     },
     canRemoveItem () {
-      return this.$can('remove', this.service, this.item)
+      return api.can('remove', this.service, this.item)
     },
     removeItem (prompt, nameField = 'name') {
       if (prompt === 'confirm' || prompt === 'input') {
@@ -144,19 +146,19 @@ export const baseItem = {
             flat: true
           }
         }).onOk(() => {
-          this.$api.getService(this.service).remove(this.item._id)
+          api.getService(this.service).remove(this.item._id)
         })
       } else {
-        this.$api.getService(this.service).remove(this.item._id)
+        api.getService(this.service).remove(this.item._id)
       }
     },
     exportItem () {
       const name = this.name
       const file = name + '.json'
       if (exportFile(file, JSON.stringify(this.item))) {
-        this.$notify({ type: 'positive', message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
+        Notify.create({ type: 'positive', message: this.$t('mixins.baseItem.ITEM_EXPORTED', { name, file }) })
       } else {
-        this.$notify({ type: 'negative', message: this.$t('mixins.baseItme.CANNOT_EXPORT_ITEM') })
+        Notify.create({ type: 'negative', message: this.$t('mixins.baseItme.CANNOT_EXPORT_ITEM') })
       }
     }
   },
@@ -164,9 +166,9 @@ export const baseItem = {
     // Register the actions
     this.configureActions()
     // Whenever the user abilities are updated, update actions as well
-    this.$events.on('user-abilities-changed', this.configureActions)
+    Events.on('user-abilities-changed', this.configureActions)
   },
   beforeUnmount () {
-    this.$events.off('user-abilities-changed', this.configureActions)
+    Events.off('user-abilities-changed', this.configureActions)
   }
 }

@@ -5,7 +5,7 @@ import moment from 'moment'
 import jwtdecode from 'jwt-decode'
 import feathers from '@feathersjs/client'
 import { io } from 'socket.io-client'
-import reactive from 'feathers-reactive/dist/feathers-reactive.js'
+import { rx as reactive } from 'feathers-reactive'
 import { createBrowserRepo, AutomergeService } from '@kalisio/feathers-automerge/lib/index.js'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
@@ -356,7 +356,7 @@ export async function createClient (config) {
   // We also add a random query parameter to prevent cached responses.
   if (!api.isDisconnected) {
     try {
-      const url = new URL(api.getConfig('domain'))
+      const url = new URL(api.getConfig('domain') + config.apiPath + '/capabilities')
       url.searchParams.set('random', Math.random().toFixed(18).substring(2, 18))
       await window.fetch(url.toString(), { method: 'HEAD' })
     } catch (error) {

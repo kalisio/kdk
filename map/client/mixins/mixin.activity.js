@@ -1,10 +1,12 @@
 import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Store } from '../../../core/client/index.js'
+import { Store } from '../../../core/client/store.js'
+import { Events } from '../../../core/client/events.js'
+import { api } from '../../../core/client/api.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
-import { getCategories, getLayers, getSublegends, setEngineJwt } from '../utils/utils.catalog.js'
+import { getCategories, getLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
 import * as offline from '../utils/utils.offline.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
@@ -105,16 +107,16 @@ export const activity = {
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
-      if (typeof this.refreshOrphanLayers === 'function') await this.refreshOrphanLayers()
+      await this.refreshOrphanLayers()
     },
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async updateLayersOrder (sourceCategoryId, data) {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async updateOrphanLayersOrder (orphanLayers) {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     async refreshLayers () {
       // Clear layers and variables
@@ -134,7 +136,7 @@ export const activity = {
       }
     },
     async refreshOrphanLayers () {
-      this.reorganizeLayers()
+      if (typeof this.reorganizeLayers === 'function') this.reorganizeLayers()
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,
@@ -157,13 +159,13 @@ export const activity = {
     isLayerStyleEditable: layers.isLayerStyleEditable,
     isLayerDataEditable: layers.isLayerDataEditable,
     canCreateLayer () {
-      return this.$can('create', 'catalog')
+      return api.can('create', 'catalog')
     },
     canUpdateLayer (layer) {
-      return layers.isInMemoryLayer(layer) || this.$can('update', 'catalog')
+      return layers.isInMemoryLayer(layer) || api.can('update', 'catalog')
     },
     canRemoveLayer (layer) {
-      return layers.isInMemoryLayer(layer) || this.$can('remove', 'catalog')
+      return layers.isInMemoryLayer(layer) || api.can('remove', 'catalog')
     },
     async resetLayer (layer) {
       // This requires to recreate the layer in the underlying engine with the new setup.
@@ -243,9 +245,9 @@ export const activity = {
         createdLayer = await layers.saveLayer(layer)
       }
       // Add layer to current project ? Check if not coming from another planet first
-      if (this.project && (this.project.getPlanetApi() === this.$api)) {
+      if (this.project && (this.project.getPlanetApi() === api)) {
         this.project.layers.push({ _id: createdLayer._id })
-        await this.$api.getService('projects').patch(this.project._id, {
+        await api.getService('projects').patch(this.project._id, {
           layers: this.project.layers
         })
       }
@@ -284,6 +286,9 @@ export const activity = {
         await this.resetLayer(layer)
       }
     },
+    async onRemoveCategory (category) {
+      // virtual method
+    },
     async onRemoveLayer (layer) {
       // Stop any running edition
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
@@ -307,8 +312,8 @@ export const activity = {
     },
     listenToCatalogServiceEvents () {
       // Listen about changes in global/contextual catalog services
-      const globalCatalogService = this.$api.getService('catalog', 'global')
-      const catalogService = this.$api.getService('catalog')
+      const globalCatalogService = api.getService('catalog', 'global')
+      const catalogService = api.getService('catalog')
       this.globalCatalogListeners = listenToServiceEvents('catalog', {
         context: 'global', all: this.onCatalogUpdated, removed: (object) => this.onCatalogUpdated(object, 'removed')
       }, this.globalCatalogListeners)
@@ -365,35 +370,60 @@ export const activity = {
     finalize () {
       this.unlistenToCatalogServiceEvents()
     },
+    async refreshLayer (layer, event) {
+      // Updating a layer requires to remove/add it again to cover all use cases (eg style edition, etc.)
+      // Here we preferably find layer by ID as renaming could have occured from another client
+      let planetApi
+      if (layer && (typeof layer.getPlanetApi === 'function')) {
+        planetApi = layer.getPlanetApi()
+      }
+      if (layer) {
+        // Stop any running edition
+        if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
+        await this.removeCatalogLayer(layer)
+      }
+      if (event !== 'removed') {
+        // Do we need to inject a token or restore planet API ?
+        if (planetApi) Object.assign(layer, { getPlanetApi: () => planetApi })
+        await setEngineJwt([layer], planetApi)
+        processTranslations(layer)
+        await this.addCatalogLayer(layer)
+      }
+    },
+    requestRefreshLayer (layer, event) {
+      // As this is used by realtime events we need to avoid reentrance in any case
+      // multiple events regarding the same layer come in at almost the same time.
+      // This is for instance the case when saving a layer when a created then patched event come in.
+      // So we need something similar to _.debounce() but for each possible layer argument.
+      // Otherwise when two events are almost received at the same time but target different layers only the last one will be considered.
+      const refreshLayer = async () => {
+        const events = this.pendingLayerRefresh[layer]
+        delete this.pendingLayerRefresh[layer]
+        for (let i = 0; i< events.length; i++) {
+          await this.refreshLayer(layer, events[i])
+        }
+      }
+      if (!this.pendingLayerRefresh) this.pendingLayerRefresh = {}
+      // If a refresh has already been requested push new event to operation queue
+      if (this.pendingLayerRefresh[layer]) {
+        this.pendingLayerRefresh[layer].push(event)
+      } else {
+        this.pendingLayerRefresh[layer] = [event]
+        setTimeout(refreshLayer, 500)
+      }
+    },
     async onCatalogUpdated (object, event) {
       switch (object.type) {
         case 'Category':
           // In any case we rebuild categories
-          await this.debouncedRefreshLayerCategories()
+          await this.requestRefreshLayerCategories()
           break
         case 'Context':
         case 'Service':
           // Nothing to do
           break
         default: {
-          // Updating a layer requires to remove/add it again to cover all use cases (eg style edition, etc.)
-          // Here we preferably find layer by ID as renaming could have occured from another client
-          const layer = this.getLayerById(object._id) || this.getLayerByName(object.name)
-          let planetApi
-          if (layer && (typeof layer.getPlanetApi === 'function')) {
-            planetApi = layer.getPlanetApi()
-          }
-          if (layer) {
-            // Stop any running edition
-            if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
-            await this.removeCatalogLayer(layer)
-          }
-          if (event !== 'removed') {
-            // Do we need to inject a token or restore planet API ?
-            if (planetApi) Object.assign(object, { getPlanetApi: () => planetApi })
-            await setEngineJwt([object], planetApi)
-            await this.addCatalogLayer(object)
-          }
+          await this.requestRefreshLayer(object, event)
           break
         }
       }
@@ -414,21 +444,21 @@ export const activity = {
     this.$engineEvents.on('layer-added', this.configureLayerActions)
   },
   mounted () {
-    this.debouncedRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
+    this.requestRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
     // Target online/offline service depending on status
-    this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('websocket-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('websocket-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('websocket-reconnected', this.resetCatalogServiceEventsListeners)
   },
   beforeUnmount () {
     this.$engineEvents.off('map-ready', this.onEngineReady)
     this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.configureLayerActions)
-    this.$events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('websocket-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('websocket-reconnected', this.resetCatalogServiceEventsListeners)
     this.finalize()
   }
 }

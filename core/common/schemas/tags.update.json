@@ -23,9 +23,11 @@
     },
     "color": {
       "type": "string",
+      "default": "grey-3",
       "field": {
         "component": "form/KColorField",
-        "label": "KTagManager.TAG_COLOR"
+        "label": "KTagManager.TAG_COLOR",
+        "clearable": false
       }
     }
   },

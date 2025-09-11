@@ -26,8 +26,9 @@
 </template>
 
 <script setup>
+import _ from 'lodash'
 import { computed } from 'vue'
-import { useCurrentActivity, useScreen } from '../../composables'
+import { useScreen, useCollectionFilter } from '../../composables'
 
 // Props
 defineProps({
@@ -39,24 +40,23 @@ defineProps({
 
 // Data
 const { dense } = useScreen()
-const { CurrentActivityContext } = useCurrentActivity()
-const { state } = CurrentActivityContext
+const { timeFilter, setTimeFilter, cleatTimeFilter } = useCollectionFilter()
 
 // Computed
 const hasSelection = computed(() => {
-  return state.timeFilter && startTimeRange.value && endTimeRange.value
+  return timeFilter.value && startTimeRange.value && endTimeRange.value
 })
 const startTimeRange = computed(() => {
-  return state.timeFilter.start
+  return _.get(timeFilter.value, 'start')
 })
 const endTimeRange = computed(() => {
-  return state.timeFilter.end
+  return _.get(timeFilter.value, 'end')
 })
 const minTimeRange = computed(() => {
-  return state.timeFilter.min
+  return _.get(timeFilter.value, 'min')
 })
 const maxTimeRange = computed(() => {
-  return state.timeFilter.max
+  return _.get(timeFilter.value, 'max')
 })
 const timeRangeModel = computed({
   get: function () {
@@ -66,10 +66,7 @@ const timeRangeModel = computed({
     }
   },
   set: function (value) {
-    Object.assign(state.timeFilter, {
-      start: value.start,
-      end: value.end
-    })
+    setTimeFilter({ start: value.start, end: value.end })
   }
 })
 const textClass = computed(() => {
@@ -85,10 +82,7 @@ const slider = computed(() => {
 
 // Functions
 function onClear () {
-  Object.assign(state.timeFilter, {
-    start: null,
-    end: null
-  })
+  cleatTimeFilter()
 }
 </script>
 

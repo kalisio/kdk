@@ -12,6 +12,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref } from 'vue'
+import { Notify } from 'quasar'
 import { Viewer } from 'mapillary-js'
 import 'mapillary-js/dist/mapillary.css'
 import distance from '@turf/distance'
@@ -113,7 +114,7 @@ export default {
         this.hasImage = true
         this.refreshView()
       } else {
-        this.$notify({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+        Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
       }
     },
     centerMap () {

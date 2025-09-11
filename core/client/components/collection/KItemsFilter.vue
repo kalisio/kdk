@@ -8,7 +8,13 @@
       dense
       debounce="500"
       @update:model-value="onSearch"
-    />
+    >
+      <template v-slot:before v-if="!hideIcon">
+        <div class="row">
+          <q-icon class="q-pl-xs" dense name="search" />
+        </div>
+      </template>
+    </q-input>
   </div>
 </template>
 
@@ -24,6 +30,10 @@ const props = defineProps({
   label: {
     type: String,
     default: 'KFilter.SEARCH_LABEL'
+  },
+  hideIcon: {
+    type: Boolean,
+    default: false
   },
   onSearch: {
     type: Function,

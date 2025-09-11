@@ -3,7 +3,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import { point, rhumbDistance, rhumbBearing, rhumbDestination, getType } from '@turf/turf'
-import { Time, Units, utils as kdkCoreUtils } from '../../../../core.client.js'
+import { Time, Units, Events, utils as kdkCoreUtils } from '../../../../core.client.js'
 import { getUpdateFeatureFunction, hasUnitInLeafletLayerTemplate, GeoJsonLeafletLayerFilters } from '../../leaflet/utils/utils.geojson.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
@@ -152,16 +152,18 @@ export const geojsonLayers = {
         // Min/Max zoom are automatically managed on tiled layers by inheriting GridLayer
         // but on non-tiled layers we need to use a pane to manage it.
         // However, as we'd like to be able to easily control layer display order we create a pane for each layer by default anyway.
+        const panes = _.get(leafletOptions, 'panes', [])
+        const defaultPane = _.find(panes, { name: _.get(leafletOptions, 'pane') })
         const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
         const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
         const hasZIndex = !!_.get(leafletOptions, 'zIndex')
+        const hasPaneZIndex = _.get(defaultPane, 'zIndex')
         const name = options.name
         // Default pane will be automatically used for Leaflet vector layers (ie polygons/lines)
-        const layerPane = { name }
+        const layerPane = defaultPane || { name }
         if (hasMinZoom) layerPane.minZoom = _.get(leafletOptions, 'minZoom')
         if (hasMaxZoom) layerPane.maxZoom = _.get(leafletOptions, 'maxZoom')
-        if (hasZIndex) layerPane.zIndex = _.get(leafletOptions, 'zIndex')
-        const panes = _.get(leafletOptions, 'panes', [])
+        if (hasZIndex && !hasPaneZIndex) layerPane.zIndex = _.get(leafletOptions, 'zIndex')
         if (!_.find(panes, { name: layerPane.name })) panes.push(layerPane)
         // Set layer to use its default pane as target
         // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
@@ -176,7 +178,7 @@ export const geojsonLayers = {
         // We prefer the markers and their shadows to be affected to different panes than others elements like Leaflet does by default.
         // This is notably required if we'd like to be able to control the rendering order of the elements with bringToFront/bringToBack functions.
         // Except if a z-index is specified as in this case the user wants to control the order by himself
-        if (!hasZIndex) {
+        if (!hasZIndex && !hasPaneZIndex) {
           // No z-index means that the pane will use the default for overlays in Leaflet which is 400
           // so that we use the default for markers and shadows in Leaflet as well.
           if (!_.find(panes, { name: `${name}-markers` })) panes.push(Object.assign({ name: `${name}-markers`, zIndex: 600 }, _.omit(layerPane, ['name'])))
@@ -642,9 +644,9 @@ export const geojsonLayers = {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletGeoJsonLayer)
-    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    Events.on('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
-    this.$events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    Events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
@@ -655,9 +657,9 @@ export const geojsonLayers = {
     this.geojsonCache = {}
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
+    Events.off('time-current-time-changed', this.onCurrentTimeChangedGeoJsonLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedGeoJsonLayers)
-    this.$events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
+    Events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)

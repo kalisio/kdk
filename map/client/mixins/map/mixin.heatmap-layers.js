@@ -4,6 +4,7 @@ import sift from 'sift'
 import centroid from '@turf/centroid'
 import HeatmapOverlay from 'leaflet-heatmap'
 import { Time } from '../../../../core/client/time.js'
+import { Events } from '../../../../core/client/events.js'
 import { fetchGeoJson } from '../../utils/utils.features.js'
 
 export const heatmapLayers = {
@@ -103,10 +104,10 @@ export const heatmapLayers = {
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletHeatmapLayer)
-    this.$events.on('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    Events.on('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   },
   beforeUnmount () {
-    this.$events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
+    Events.off('time-current-time-changed', this.onCurrentTimeChangedHeatmapLayers)
   }
 }
 

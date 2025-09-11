@@ -108,7 +108,10 @@ import _ from 'lodash'
 import config from 'config'
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
-import { api, i18n, utils as kdkCoreUtils } from '@kalisio/kdk/core.client'
+import { Notify } from 'quasar'
+import { i18n } from '../../../../core/client/i18n.js'
+import { api } from '../../../../core/client/api.js'
+import { containsText } from '../../../../core/client/utils/index.js'
 import { useCurrentActivity } from '../../composables'
 import KPanel from '../../../../core/client/components/KPanel.vue'
 import KStyleEditorSection from './KStyleEditorSection.vue'
@@ -239,7 +242,7 @@ const buttons = computed(() => {
     },
     {
       id: 'apply-style',
-      label: 'APPLY',
+      label: mode === 'creation' ? 'CREATE' : 'UPDATE',
       renderer: 'form-button',
       handler: apply
     }
@@ -253,7 +256,6 @@ const canEditPolygon = computed(() => props.allowedTypes.includes('polygon'))
 watch(() => props.style, (value) => {
   if (!value) model.value = _.clone(_.pick(engine.value.style, ['point', 'line', 'polygon']))
   else model.value = value
-
   _.forEach(['point', 'line', 'polygon'], value => {
     if (!_.get(model.value, value)) {
       enabledSections.value[value] = false
@@ -273,7 +275,7 @@ const onNameChanged = _.debounce(async (field, value) => {
 async function checkName (name) {
   if (mode === 'edition' && name === props.style.name) return true
   const service = api.getService('styles')
-  const hasName = await kdkCoreUtils.containsText(service, 'name', name)
+  const hasName = await containsText(service, 'name', name)
   if (!hasName || !formRef.value) return true
   formRef.value.getField('name').reference.invalidate(i18n.t('KStyleEditor.STYLE_ALREADY_EXISTS', { style: name }))
   return false
@@ -289,12 +291,24 @@ async function apply () {
   let data = Object.assign({}, model.value, values)
   // omit disabled feature types
   const omitKeys = []
+  let atLeastOneSectionEnabled = false
   _.forIn(enabledSections.value, (value, key) => {
     if (!value) {
       omitKeys.push(key)
-      _.set(data, `$unset.${key}`, true)
+      if (mode !== 'creation') {
+        _.set(data, `$unset.${key}`, true)
+      }
+    } else {
+      atLeastOneSectionEnabled = true
     }
   })
+  if (!atLeastOneSectionEnabled) {
+    Notify.create({
+      type: 'negative',
+      message: i18n.t('KStyleEditor.ALL_SECTIONS_DISABLED')
+    })
+    return false
+  }
   data = _.omit(data, omitKeys)
   // keep only usefull data from tags
   data.tags = _.map(values.tags, tag => _.pick(tag, ['name', 'description', 'color']))

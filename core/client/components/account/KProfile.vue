@@ -9,29 +9,29 @@
       @triggered="onTriggered"
     />
     <!-- Avatar -->
-    <div v-if="avatar && computedAvatar" class="q-py-sm column items-center">
+    <div v-if="avatar && userAvatar" class="q-py-sm column items-center">
       <KAvatar
-        :subject="computedAvatar"
+        :subject="userAvatar"
         size="5rem"
       />
     </div>
     <!-- Information -->
     <div class="q-py-sm column items-center">
       <div class="text-subtitle1 text-weight-medium">
-        {{ computedName }}
+        {{ userName }}
       </div>
-      <div v-if="description && computedDescription" class="text-caption">
-        {{ computedDescription }}
+      <div v-if="description && userDescription" class="text-caption">
+        {{ userDescription }}
       </div>
     </div>
     <!-- Role -->
-    <div v-if="role && computedRole" class="q-py-sm column items-center">
+    <div v-if="role && userRole" class="q-py-sm column items-center">
       <KChip
         color="primary"
         text-color="white"
         square
         size=".85rem"
-        :label="$t(`roles.${computedRole}`)"
+        :label="$t(`roles.${userRole}`)"
       />
     </div>
   </div>
@@ -40,7 +40,7 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
-import { Store } from '../../store.js'
+import { useUser } from '../../composables'
 import KAvatar from '../KAvatar.vue'
 import KPanel from '../KPanel.vue'
 import KChip from '../KChip.vue'
@@ -73,7 +73,7 @@ const props = defineProps({
 const emit = defineEmits(['triggered'])
 
 // Data
-const User = Store.getRef('user')
+const { User, name: userName, description: userDescription, avatar: userAvatar, role: userRole } = useUser()
 
 // Computed
 const header = computed(() => {
@@ -122,22 +122,6 @@ const header = computed(() => {
     actions.push(manageAccountAction)
   }
   return actions
-})
-const computedName = computed(() => {
-  return _.get(User.value, 'profile.name', _.get(User.value, 'profile.username', _.get(User.value, 'email', '')))
-})
-const computedDescription = computed(() => {
-  return _.get(User.value, 'profile.description', '')
-})
-const computedAvatar = computed(() => {
-  return _.get(User.value, 'profile', {})
-})
-const computedRole = computed(() => {
-  const permissions = _.get(User.value, 'permissions')
-  if (permissions) {
-    if (_.isString(permissions)) return permissions
-    return permissions[0]
-  }
 })
 
 // Functions

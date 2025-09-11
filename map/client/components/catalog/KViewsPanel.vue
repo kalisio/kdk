@@ -21,14 +21,14 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed } from 'vue'
-import { Filter, Sorter, utils, i18n, api, LocalCache, Store } from '../../../../core/client'
+import { utils, i18n, api, LocalCache, Store } from '../../../../core/client'
 import { KGrid } from '../../../../core/client/components'
 import { useCurrentActivity, useProject } from '../../composables'
 import { Dialog, Notify } from 'quasar'
 
 // Data
-const filter = Filter.get()
-const sorter = Sorter.get()
+const searchString = ref('')
+const sortQuery = ref({})
 const { CurrentActivity } = useCurrentActivity()
 const { project: loadedProject } = await getProject()
 const project = ref(loadedProject)
@@ -36,22 +36,29 @@ const viewRenderer = ref(getViewRenderer())
 
 // Computed
 const baseQuery = computed(() => {
-  return Object.assign({ type: 'Context' }, sorter.query)
+  return Object.assign({ type: 'Context' }, sortQuery.value)
 })
 const filterQuery = computed(() => {
   const query = {}
   if (project.value) Object.assign(query, { _id: { $in: _.map(project.value.views, '_id') } })
-  Object.assign(query, filter.query)
+  if (!_.isEmpty(searchString.value)) {
+    Object.assign(query, { name: { $regex: searchString.value } })
+  }
   return query
 })
 const toolbar = computed(() => {
   return [
     {
       id: 'views-filter',
-      component: 'collection/KFilter'
+      component: 'collection/KItemsFilter',
+      class: 'col',
+      value: searchString.value,
+      onSearch: (value) => {
+        searchString.value = value
+      }
     },
     {
-      component: 'collection/KSorter',
+      component: 'collection/KItemsSorter',
       id: 'views-sorter',
       tooltip: 'KViewsPanel.SORT_VIEWS',
       options: [
@@ -59,7 +66,10 @@ const toolbar = computed(() => {
         { icon: 'las la-sort-alpha-up', value: { field: 'name', order: -1 } },
         { icon: 'kdk:clockwise.png', value: { field: 'updatedAt', order: 1 } },
         { icon: 'kdk:anticlockwise.png', value: { field: 'updatedAt', order: -1 } }
-      ]
+      ],
+      onOptionChanged: (option) => {
+        sortQuery.value = { $sort: { [option.field]: option.order } }
+      }
     }
   ]
 })
