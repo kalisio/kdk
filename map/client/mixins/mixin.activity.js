@@ -5,6 +5,7 @@ import sift from 'sift'
 import { Store } from '../../../core/client/store.js'
 import { Events } from '../../../core/client/events.js'
 import { api } from '../../../core/client/api.js'
+import { isDataOperation } from '../../../core/client/utils/utils.services.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
 import { getCategories, getLayers, getLayersByCategory, getOrphanLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
@@ -441,22 +442,32 @@ export const activity = {
     requestRefreshLayer (layer, event) {
       // As this is used by realtime events we need to avoid reentrance in any case
       // multiple events regarding the same layer come in at almost the same time.
-      // This is for instance the case when saving a layer when a created then patched event come in.
+      // This is for instance the case when saving a layer as a created then patched event come in.
       // So we need something similar to _.debounce() but for each possible layer argument.
       // Otherwise when two events are almost received at the same time but target different layers only the last one will be considered.
+      // Realtime events only targets layer saved in DB so that they should always have a unique ID we can rely on
+      const layerId = layer._id
       const refreshLayer = async () => {
-        const events = this.pendingLayerRefresh[layer]
-        delete this.pendingLayerRefresh[layer]
+        const events = this.pendingLayerRefresh[layerId]
+        delete this.pendingLayerRefresh[layerId]
         for (let i = 0; i< events.length; i++) {
           await this.refreshLayer(layer, events[i])
         }
       }
       if (!this.pendingLayerRefresh) this.pendingLayerRefresh = {}
       // If a refresh has already been requested push new event to operation queue
-      if (this.pendingLayerRefresh[layer]) {
-        this.pendingLayerRefresh[layer].push(event)
+      if (this.pendingLayerRefresh[layerId]) {
+        // The way a layer is updated requires to remove/add it again to cover all use cases (eg style edition, etc.).
+        // As a consequence create/patch/update operations results in the same operations, we can avoid multiple update by "merging"
+        const lastEvent = _.last(this.pendingLayerRefresh[layerId])
+        if (isDataOperation(lastEvent) !== isDataOperation(event)) {
+          this.pendingLayerRefresh[layerId].push(event)
+        } else {
+          // The last operation "wins" otherwise
+          this.pendingLayerRefresh[layerId].splice(-1, 1, event)
+        }
       } else {
-        this.pendingLayerRefresh[layer] = [event]
+        this.pendingLayerRefresh[layerId] = [event]
         setTimeout(refreshLayer, 500)
       }
     },
