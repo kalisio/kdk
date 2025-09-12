@@ -166,6 +166,7 @@ export const activity = {
         const baseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer'))
         if (baseLayer) await this.showLayer(baseLayer.name)
       }
+      this.reorderLayers()
     },
     // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
     async refreshOrphanLayers () {
