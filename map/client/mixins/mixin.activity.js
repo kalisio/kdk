@@ -110,6 +110,7 @@ export const activity = {
         this.addCatalogCategory(layerCategories[i])
       }
       await this.refreshOrphanLayers()
+      this.reorderLayers()
     },
     getOrphanLayerByName (name) {
       return this.orphanLayers.find(l => l?.name === name)
