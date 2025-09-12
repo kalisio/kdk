@@ -102,6 +102,7 @@ export const activity = {
     async addCatalogCategory (category) {
       this.layerCategories.push(category)
     },
+    // Retrieve layer categories from catalog 
     async refreshLayerCategories () {
       this.layerCategories.splice(0, this.layerCategories.length)
       const layerCategories = await this.getCatalogCategories()
@@ -116,15 +117,22 @@ export const activity = {
     isOrphanLayer (layer) {
       return this.orphanLayers.some(l => l?.name === layer.name)
     },
+    // To be overriden by apps to perform any operation (eg serialization) when the category order has been changed by the user
+    // By default perform layer ordering in the underlying engine
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
       this.reorderLayers()
     },
+    // To be overriden by apps to perform any operation (eg serialization) when the layer order has been changed by the user in a category
+    // By default perform layer ordering in the underlying engine
     async updateLayersOrder (sourceCategoryId, data) {
       this.reorderLayers()
     },
+    // To be overriden by apps to perform any operations (eg serialization) when the layer order has been changed by the user in the orphan layer list
+    // By default perform layer ordering in the underlying engine
     async updateOrphanLayersOrder (orphanLayers) {
       this.reorderLayers()
     },
+    // Perform layer ordering in the underlying engine according to current order in categories and layer list
     reorderLayers () {
       if (typeof this.bringLayerToFront !== 'function') return
       for (let i = this.layerCategories.length - 1; i >= 0; i--) {
@@ -140,6 +148,7 @@ export const activity = {
         this.bringLayerToFront(layer.name)
       }
     },
+    // Retrieve layers from catalog 
     async refreshLayers () {
       // Clear layers and variables
       this.clearLayers()
@@ -158,6 +167,7 @@ export const activity = {
         if (baseLayer) await this.showLayer(baseLayer.name)
       }
     },
+    // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
     async refreshOrphanLayers () {
       // By default orphan layers are user/activity layers outside user categories
       const layersFilter = sift({ scope: { $in: ['user', 'activity'] } })
