@@ -78,7 +78,7 @@ export const style = {
         style = _.merge(style, this.convertToCesiumObjects(entityStyle))
       } else {
         // In this case the conversion to Cesium objects has already occured on layer creation
-        style = _.merge(style, cesiumOptions.entityStyle || {})
+        style = _.merge(style, _.cloneDeep(cesiumOptions.entityStyle) || {})
       }
 
       // Orientation special case, when not templated
