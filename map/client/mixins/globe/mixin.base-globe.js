@@ -86,20 +86,9 @@ export const baseGlobe = {
         })
       }
 
-      // Cesium pre-render callback used to update moving materials (animated walls/corridors)
-      this.viewer.scene.preRender.addEventListener(() => {
-        if (!this.cesiumMaterials) return
-        _.forEach(this.cesiumMaterials, m => {
-          if (!m.material.uniforms.offset) return
-          if (!m.startTime) m.startTime = Date.now()
-
-          const elapsed = (Date.now() - m.startTime) * 0.001
-          if (m.animationSpeed) {
-            const loopDuration = (m.length / m.material.uniforms.repeat.x) / m.animationSpeed
-            m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
-          }
-        })
-      })
+      // Scene events
+      this.viewer.scene.preUpdate.addEventListener(this.onCesiumPreUpdate)
+      this.viewer.scene.preRender.addEventListener(this.onCesiumPreRender)
 
       // Debug mode ?
       // this.viewerOptions.debug = true
@@ -786,6 +775,46 @@ export const baseGlobe = {
         altitude: pickedPositionCartographic.height
       }
     },
+    onCesiumPreUpdate () {
+      // Update animated entities
+      const endedAnimationsIndexes = []
+      const interpolatedFeaturesByLayer = {}
+      _.forOwn(this.cesiumAnimations, async (animation, key) => {
+        const now = Date.now()
+        if (animation.fps && animation.lastUpdate && (now - animation.lastUpdate < (1000 / animation.fps))) return
+        const delta = now - animation.lastUpdate
+        animation.remainingTime -= delta
+        if (animation.remainingTime <= 0) {
+          endedAnimationsIndexes.push(key)
+          return
+        }
+
+        interpolatedFeaturesByLayer[key] = this.getInterpolatedFeatures(1 - (animation.remainingTime / animation.duration), animation.features, animation.animate)
+
+        animation.lastUpdate = now
+      })
+      // Remove ended animations
+      _.forEach(endedAnimationsIndexes, key => delete this.cesiumAnimations[key])
+
+      // Update layers with interpolated features
+      _.forOwn(interpolatedFeaturesByLayer, async (features, layerName) => {
+        await this.updateLayer(layerName, { type: 'FeatureCollection', features })
+      })
+    },
+    onCesiumPreRender () {
+      // Update moving materials (animated walls/corridors)
+      if (!this.cesiumMaterials) return
+      _.forEach(this.cesiumMaterials, m => {
+        if (!m.material.uniforms.offset) return
+        if (!m.startTime) m.startTime = Date.now()
+
+        const elapsed = (Date.now() - m.startTime) * 0.001
+        if (m.animationSpeed) {
+          const loopDuration = (m.length / m.material.uniforms.repeat.x) / m.animationSpeed
+          m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
+        }
+      })
+    },
     onCameraMoveStart () {
       let target = this.getCameraEllipsoidTarget()
       if (target) {
@@ -848,6 +877,7 @@ export const baseGlobe = {
     this.cesiumFactory = []
     this.cesiumMaterials = []
     this.cesiumPostProcessStages = {}
+    this.cesiumAnimations = {}
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus

@@ -1,14 +1,16 @@
-import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty } from 'cesium'
+import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty, Math as CesiumMath, HeadingPitchRoll, Quaternion } from 'cesium'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { uid } from 'quasar'
+import { point, rhumbDistance, rhumbBearing, rhumbDestination } from '@turf/turf'
 import { Time, Units, Events } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer, getGeoJsonFeatures } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
 import { convertToCesiumFromSimpleStyle, getPointSimpleStyle, getLineSimpleStyle, getPolygonSimpleStyle, convertToCesiumFromStyle } from '../../cesium/utils/utils.style.js'
 import { createPrimitiveWithMovingTexture, getPrimitivesForEntity } from '../../cesium/utils/utils.cesium.js'
 import { hasUnitInCesiumLayerTemplate, updateCesiumGeoJsonEntity, GeoJsonCesiumLayerFilters } from '../../cesium/utils/utils.geojson.js'
+import * as maths from '../../../../core/client/utils/utils.math.js'
 
 // Custom entity types that can be created from a base entity like eg a polyline
 const CustomTypes = ['wall', 'corridor', 'stroke']
@@ -89,12 +91,23 @@ export const geojsonLayers = {
       await loadingDataSource.load(geoJson, cesiumOptions)
       // Now we process loaded entities to merge with existing ones if any or add new ones
       let entities = loadingDataSource.entities.values
+      const animatedFeatures = []
       entities.forEach(entity => {
         // Find matching feature if any and keep track of it as Cesium only keeps properties
         entity.feature = features.find(feature => getFeatureId(feature, options) === entity.id)
         const previousEntity = dataSource.entities.getById(entity.id)
-        if (previousEntity) updateCesiumGeoJsonEntity(entity, previousEntity)
-        else dataSource.entities.add(entity)
+        if (previousEntity) {
+          const isAnimatedLayer = _.get(updateOptions, 'duration') && _.get(entity, 'feature') && _.get(previousEntity, 'feature')
+          if (isAnimatedLayer) {
+            const previousFeature = _.cloneDeep(previousEntity.feature)
+            const feature = _.cloneDeep(entity.feature)
+            animatedFeatures.push({ feature, previousFeature })
+          } else {
+            // Update only if not in animation, as data is interpolated between previous and current position
+            // Otherwise, we would have jumps in end animation position for this update call
+            updateCesiumGeoJsonEntity(entity, previousEntity)
+          }
+        } else dataSource.entities.add(entity)
       })
       // Remove any entity not existing anymore
       if (_.get(updateOptions, 'removeMissing', cesiumOptions.removeMissing)) {
@@ -117,6 +130,21 @@ export const geojsonLayers = {
               removeCustomPrimitiveById(this, dataSource, id)
           })
         }
+      }
+
+      if (!_.isEmpty(animatedFeatures) && _.has(this, 'cesiumAnimations')) {
+        const animation = Object.assign({}, updateOptions, {
+          features: animatedFeatures,
+          remainingTime: updateOptions.duration * 1000,
+          duration: updateOptions.duration * 1000,
+          lastUpdate: Date.now()
+        })
+        if (animation.animate) {
+          _.forOwn(animation.animate, value => {
+            _.defaults(value, { easing: { function: 'linear' }, bearing: false })
+          })
+        }
+        this.cesiumAnimations[options.name] = animation
       }
 
       // Process specific entities
@@ -596,6 +624,97 @@ export const geojsonLayers = {
       }
 
       stage.selected = primitives
+    },
+    // Note: as this callback is called frequently by the animation system
+    // we don't use lodash utility functions like _.get/_.set to improve performances
+    getInterpolatedFeatures (t, features, animationOptions) {
+      const lerp = (start, end, t) => start + t * (end - start)
+      const animatedFeatures = []
+      features.forEach(({ feature: currFeature, previousFeature: prevFeature }) => {
+        const animatedFeature = _.cloneDeep(currFeature)
+        for (const property in animationOptions) {
+          const animateProperty = animationOptions[property]
+          const easingPropertyFunction = animateProperty.easing.function
+          const easingPropertyParameters = animateProperty.easing.parameters || []
+          const tEasing = maths[easingPropertyFunction](t, ...easingPropertyParameters)
+          if (property === 'geometry') {
+            // Store animation information in properties so that we don't need to recompute it for next steps
+            if (!currFeature.properties.animation || !currFeature.properties.animation.geometry) {
+              if (!currFeature.properties.animation) currFeature.properties.animation = {}
+              const startCoordinates = { lon: prevFeature.geometry.coordinates[0], lat: prevFeature.geometry.coordinates[1] }
+              const endCoordinates = { lon: currFeature.geometry.coordinates[0], lat: currFeature.geometry.coordinates[1] }
+              currFeature.properties.animation.geometry = {
+                startCoordinates,
+                endCoordinates
+              }
+              if (animateProperty.rhumb) {
+                const start = point([startCoordinates.lon, startCoordinates.lat])
+                const end = point([endCoordinates.lon, endCoordinates.lat])
+                currFeature.properties.animation.geometry.rhumb = {
+                  start,
+                  distance: rhumbDistance(start, end),
+                  bearing: rhumbBearing(start, end)
+                }
+              }
+            }
+            // Interpolate position
+            if (animateProperty.rhumb) {
+              const rhumbData = currFeature.properties.animation.geometry.rhumb
+              const destination = rhumbDestination(rhumbData.start, rhumbData.distance * tEasing, rhumbData.bearing)
+              animatedFeature.geometry.coordinates[0] = destination.geometry.coordinates[0]
+              animatedFeature.geometry.coordinates[1] = destination.geometry.coordinates[1]
+            } else {
+              const geometryData = currFeature.properties.animation.geometry
+              animatedFeature.geometry.coordinates[0] = lerp(geometryData.startCoordinates.lon, geometryData.endCoordinates.lon, tEasing)
+              animatedFeature.geometry.coordinates[1] = lerp(geometryData.startCoordinates.lat, geometryData.endCoordinates.lat, tEasing)
+            }
+          } else if (property === 'orientation') {
+            // Store animation information in properties so that we don't need to recompute it for next steps
+            if (!currFeature.properties.animation || !currFeature.properties.animation.orientation) {
+              if (!currFeature.properties.animation) currFeature.properties.animation = {}
+
+              let startOrientation = prevFeature.properties.orientation || [0, 0, 0]
+              let endOrientation = currFeature.properties.orientation || [0, 0, 0]
+              if (typeof startOrientation === 'string') startOrientation = startOrientation.split(',').map(v => parseFloat(v))
+              if (typeof endOrientation === 'string') endOrientation = endOrientation.split(',').map(v => parseFloat(v))
+
+              startOrientation = startOrientation.map(angle => CesiumMath.toRadians(angle))
+              startOrientation = new HeadingPitchRoll(...startOrientation)
+              startOrientation = Quaternion.fromHeadingPitchRoll(startOrientation)
+
+              endOrientation = endOrientation.map(angle => CesiumMath.toRadians(angle))
+              endOrientation = new HeadingPitchRoll(...endOrientation)
+              endOrientation = Quaternion.fromHeadingPitchRoll(endOrientation)
+
+              currFeature.properties.animation.orientation = { startOrientation, endOrientation }
+            }
+
+            // Interpolate orientation
+            const { startOrientation, endOrientation } = currFeature.properties.animation.orientation
+            let value = {}
+            value = Quaternion.slerp(startOrientation, endOrientation, tEasing, value)
+            value = HeadingPitchRoll.fromQuaternion(value)
+
+            animatedFeature.properties.orientation = [value.heading, value.pitch, value.roll].map(v => CesiumMath.toDegrees(v))
+          } else {
+            const startValue = prevFeature.properties[property]
+            const endValue = currFeature.properties[property]
+            if (isNaN(startValue) || isNaN(endValue)) return
+
+            let value = 0
+            if (animateProperty.bearing) {
+              const bearingDifference = (endValue - startValue + 540) % 360 - 180
+              value = (startValue + tEasing * bearingDifference + 360) % 360
+            } else {
+              value = lerp(startValue, endValue, tEasing)
+            }
+            animatedFeature.properties[property] = value
+          }
+        }
+        animatedFeatures.push(animatedFeature)
+      })
+
+      return animatedFeatures
     }
   },
   created () {

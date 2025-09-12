@@ -80,6 +80,28 @@ export const style = {
         // In this case the conversion to Cesium objects has already occured on layer creation
         style = _.merge(style, cesiumOptions.entityStyle || {})
       }
+
+      // Orientation special case, when not templated
+      // Orientation can be specified with an array of 3 angles in degrees [heading, pitch, roll]
+      // or with properties names (e.g ['track', 0, 0] to specify track from properties and 0 for pitch and roll)
+      const templatedProperties = _.get(cesiumOptions, 'entityStyleTemplate', []).map(t => t.property)
+      if (_.has(cesiumOptions, 'entityStyle.orientation') && !templatedProperties.includes('orientation')) {
+        const localFrameAxes = _.get(cesiumOptions, 'entityStyle.localFrameAxes', ['east', 'north'])
+        const localFrame = Transforms.localFrameToFixedFrameGenerator(...localFrameAxes)
+        const position = entity.position.getValue(this.viewer.clock.currentTime)
+        let orientation = _.get(properties, 'entityStyle.orientation', _.get(entity, 'feature.properties.orientation'))
+        if (!orientation) orientation = _.get(cesiumOptions, 'entityStyle.orientation', [])
+        orientation = orientation.map(angle => {
+          if (_.isString(angle)) return CesiumMath.toRadians(_.get(properties, angle, 0))
+          return CesiumMath.toRadians(angle)
+        })
+        if (orientation.length === 3) {
+          orientation = new HeadingPitchRoll(...orientation)
+          orientation = Transforms.headingPitchRollQuaternion(position, orientation, Ellipsoid.WGS84, localFrame)
+          _.set(style, 'orientation', orientation)
+        }
+      }
+
       if (properties && properties.entityStyle) _.merge(style, this.convertToCesiumObjects(properties.entityStyle))
       return style
     },

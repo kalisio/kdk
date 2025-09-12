@@ -37,6 +37,7 @@ export function updateCesiumGeoJsonEntity (source, destination) {
   destination.orientation = source.orientation
   destination.properties = source.properties
   destination.description = source.description
+  if (source.feature) destination.feature = source.feature
   // Points
   if (source.billboard) destination.billboard = source.billboard
   // Lines
