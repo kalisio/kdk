@@ -111,10 +111,12 @@ if (process.env.BUILD_MODE === 'lib') {
   build.lib.formats = ['es']
   build.rollupOptions.output.manualChunks = (id) => 'kdk'
   Object.assign(alias, {
+    // This library does not seem to have a valid configuration in package.json
     jsts: path.resolve(__dirname, './node_modules/jsts/dist/jsts.min.js')
   })
 } else {
   Object.assign(alias, {
+    // This library does not seem to have a valid configuration in package.json
     jsts: path.resolve(__dirname, './node_modules/jsts/dist/jsts.min.js'),
     // FIXME: How to include Quasar language packs ?
     //'quasar/lang': fileURLToPath(new URL('../node_modules/quasar/lang', import.meta.url)),

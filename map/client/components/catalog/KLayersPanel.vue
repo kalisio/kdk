@@ -213,6 +213,7 @@ function refresh () {
 
 async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
   const { orphanLayers } = CurrentActivity.value
+  // FIXME: if orphan layers are filtered we might have a mismatch between activity list index and panel index
   orphanLayers.splice(targetIndex, 0, orphanLayers.splice(draggedIndex, 1)[0])
   await updateOrphanLayersOrder(orphanLayers ? orphanLayers.map(l => l?._id) : [])
 }
