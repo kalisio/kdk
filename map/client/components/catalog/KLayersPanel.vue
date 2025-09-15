@@ -25,7 +25,7 @@
       </slot>
       <!-- Orphan layers -->
       <KLayersList
-        :layers="orphanLayersState"
+        :layers="filteredOrphanLayers"
         :layersDraggable="layersDraggable"
         :options="orphanLayersOptions"
         @orphanLayerUpdated="onOrphanLayerUpdated"
@@ -168,7 +168,7 @@ const { forecastModels, updateCategoriesOrder, updateLayersOrder, updateOrphanLa
 const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
-const orphanLayersState = ref([])
+const filteredOrphanLayers = ref([])
 const draggedIndex = ref(null)
 
 // Watch
@@ -207,9 +207,9 @@ function refresh () {
   })
   // compute layers by categories
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
-  // check if is not catalog layers mode
-  if (props.layerCategoriesFilter?._id?.$exists !== false) orphanLayersState.value = orphanLayers
-}//, 100)
+  // filter orphan layers
+  filteredOrphanLayers.value = _.filter(orphanLayers, layersFilter)
+}
 
 async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
   const { orphanLayers } = CurrentActivity.value
