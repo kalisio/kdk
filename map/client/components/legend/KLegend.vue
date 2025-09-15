@@ -104,7 +104,9 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
   } else {
     sublegends.value = []
   }
-  sublegends.value = _.uniqBy(_.concat(sublegends.value, props.sublegends), 'name')
+  sublegends.value = _.orderBy(_.uniqBy(_.concat(sublegends.value, props.sublegends), 'name'), sublegend => {
+    return _.get(sublegend, 'order', 50)
+  })
   // register legend translations
   _.forEach(sublegends.value, legend => {
     if (legend.i18n) i18n.registerTranslation(legend.i18n)
@@ -113,10 +115,11 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
 watch(CurrentActivity, (newActivity, oldActivity) => {
   if (oldActivity) {
     // remove listeners
-    oldActivity.value.$engineEvents.off('zoomend', onZoomChanged)
-    oldActivity.value.$engineEvents.off('layer-shown', onShowLayer)
-    oldActivity.value.$engineEvents.off('layer-hidden', onHideLayer)
-    oldActivity.value.$engineEvents.off('layer-filter-toggled', onToggleLayerFilter)
+    oldActivity.value.$engineEvents.off('zoomend', refresh)
+    oldActivity.value.$engineEvents.off('layer-shown', refresh)
+    oldActivity.value.$engineEvents.off('layer-hidden', refresh)
+    oldActivity.value.$engineEvents.off('layer-filter-toggled', refresh)
+    oldActivity.value.$engineEvents.off('layer-updated', refresh)
     // clear legend
     sublegends.value = []
     layers.value = []
@@ -127,49 +130,27 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     // setup legend
     engine.value = newActivity.engine
     zoom.value = newActivity.getCenter().zoomLevel
-    newActivity.getLayers().forEach((layer) => {
-      if (newActivity.isLayerVisible(layer.name)) {
-        onShowLayer(layer)
-      }
-    })
+    refresh()
     // install listeners
-    newActivity.$engineEvents.on('layer-filter-toggled', onToggleLayerFilter)
-    newActivity.$engineEvents.on('layer-shown', onShowLayer)
-    newActivity.$engineEvents.on('layer-hidden', onHideLayer)
-    newActivity.$engineEvents.on('zoomend', onZoomChanged)
+    newActivity.$engineEvents.on('layer-updated', refresh)    
+    newActivity.$engineEvents.on('layer-filter-toggled', refresh)
+    newActivity.$engineEvents.on('layer-shown', refresh)
+    newActivity.$engineEvents.on('layer-hidden', refresh)
+    newActivity.$engineEvents.on('zoomend', refresh)
   }
 }, { immediate: true })
 
 // Functions
-function onShowLayer (layer, engine) {
-  const hasLegend = layer.legend
-  const hasFilterLegend = Array.isArray(layer.filters) ? layer.filters.some((filter) => filter.legend) : false
-  // check whether the layer (or its filters) has a legend
-  if (!hasLegend && !hasFilterLegend) return
-  // check whether the legend is already registered for that layer
-  if (_.find(layers.value, { name: layer.name })) {
-    logger.warn(`[KDK] Legend for ${layer.name} already resgistered`)
-    return
-  }
-  logger.debug(`[KDK] Register '${layer.name}' legend`)
-  layers.value.push(layer)
-}
-function onHideLayer (layer) {
-  const hasLegend = layer.legend
-  const hasFilterLegend = Array.isArray(layer.filters) ? layer.filters.some((filter) => filter.legend) : false
-  if (!hasLegend && !hasFilterLegend) return
-  logger.debug(`[KDK] Unregister '${layer.name}' legend`)
-  _.remove(layers.value, { name: layer.name })
-}
-function onToggleLayerFilter (layer, filter) {
-  const index = layers.value.findIndex((l) => l.name === layer.name)
-  if (index === -1) { return }
-
-  layers.value.splice(index, 1)
-  layers.value.push(layer)
-}
-function onZoomChanged () {
+function refresh () {
+  if (!CurrentActivity.value) return
+  // set the current zoom
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
+  // set the layers for which it is required to display a legend
+  layers.value = _.orderBy(_.filter(CurrentActivity.value.getLayers(), layer => {
+    const isVisible = layer.isVisible
+    const hasLegend = layer.legend || _.some(layer.filters, filter => filter.legend)
+    return isVisible && hasLegend
+  }), layer => layer.label || layer.name)
 }
 function getHelperIcon (helper) {
   return _.get(helper, 'icon', undefined)
