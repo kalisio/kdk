@@ -4,19 +4,24 @@ import fs from 'fs-extra'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
 import Components from 'unplugin-vue-components/vite'
 import vue from '@vitejs/plugin-vue'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const cesiumSource = '../node_modules/cesium/Build/Cesium'
+const cesiumSource = './node_modules/cesium/Build/Cesium'
 // This is the base url for static files that CesiumJS needs to load.
 // Set to an empty string to place the files at the site's root path
 const cesiumBaseUrl = 'Cesium'
 
 const plugins = [
   nodePolyfills({}),
+  nodeResolve({
+    rootDir: path.join(process.cwd(), '.'),
+    modulePaths: [path.join(process.cwd(), 'node_modules')]
+  }),
   Components({
     // relative paths to the directory to search for components.
     dirs: ['../core/client/components', '../map/client/components'],
@@ -81,8 +86,8 @@ if (process.env.BUILD_MODE === 'lib') {
   // Generate kdk cliet distribution files
   build.outDir = '../client'
   // Do not package all dependencies, should be done by embedding app
-  const packageInfo = fs.readJsonSync(path.join(__dirname, '../package.json'))
-  let dependencies = Object.keys(packageInfo.dependencies)
+  const packageInfo = fs.readJsonSync(path.join(__dirname, 'package.json'))
+  let dependencies = Object.keys(packageInfo.devDependencies)
   // We need to manually add some dependencies that are included in a "non-standard" way
   dependencies = dependencies.concat([
     'config',
@@ -105,8 +110,12 @@ if (process.env.BUILD_MODE === 'lib') {
   // Single file
   build.lib.formats = ['es']
   build.rollupOptions.output.manualChunks = (id) => 'kdk'
+  Object.assign(alias, {
+    jsts: path.resolve(__dirname, './node_modules/jsts/dist/jsts.min.js')
+  })
 } else {
   Object.assign(alias, {
+    jsts: path.resolve(__dirname, './node_modules/jsts/dist/jsts.min.js'),
     // FIXME: How to include Quasar language packs ?
     //'quasar/lang': fileURLToPath(new URL('../node_modules/quasar/lang', import.meta.url)),
     // Here are specific required KDK aliases
