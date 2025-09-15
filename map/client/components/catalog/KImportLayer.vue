@@ -56,7 +56,7 @@ const fileFormSchema = computed(() => {
           component: 'form/KFileField',
           label: 'KImportLayer.FILE_FIELD_LABEL',
           mimeTypes: '.json,.geojson,.gpx,.kml',
-          maxSize: 1024 * 1024 * 1024
+          maxFileSize: 1024 * 1024 * 1024
         }
       }
     },

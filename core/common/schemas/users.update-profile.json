@@ -20,7 +20,7 @@
         "component": "form/KFileField",
         "label": "schemas.AVATAR_FIELD_LABEL",
         "mimeTypes": ".png,.jpg,.jpeg,.webp",
-        "maxSize": 524288,
+        "maxFileSize": 524288,
         "readContent": false,
         "storage": {
           "path": "avatars/<%= _id %>"
