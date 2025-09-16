@@ -5,7 +5,7 @@ import { createI18n } from 'vue-i18n'
 import { getLocale, getFallbackLocale } from './utils/utils.locale.js'
 
 // Helper function to load a translation file
-// @i18n alias shoud be added in the quasar.config build section
+// @i18n alias should be added in the quasar.config build section
 async function loadTranslationBundles (bundles, locale, fallbackLocale) {
   const translations = {}
   translations[locale] = {}
@@ -27,6 +27,26 @@ async function loadTranslationBundles (bundles, locale, fallbackLocale) {
   return translations
 }
 
+// Helper function to install a Quasar language pack
+// It first tries to install the language pack for the full locale (e.g. en-US) and, if unavailable, 
+// falls back to the 2-letter language code (e.g. en)
+async function installQuasarLanguage (fullLocale, locale) {
+  let languagePack
+  try {
+    languagePack = await import(`quasar/lang/${fullLocale}.js`)
+  } catch (error) {
+    try {
+      if (locale !== fullLocale) languagePack = await import(`quasar/lang/${locale}.js`)
+      else logger.error(`[KDK]  Could not load Quasar lang for locale: ${fullLocale}`)
+    } catch (error) {
+      logger.error(`[KDK] Could not load Quasar lang for locale: ${fullLocale}`)
+    }
+  }
+  if (!languagePack) return false
+  Quasar.lang.set(languagePack.default)
+  return true
+}
+
 export const i18n = {
   async initialize (app, bundles) {
     // Create i18n instance using the translation bundles
@@ -40,12 +60,8 @@ export const i18n = {
     })
     app.use(this.i18n)
     // Install Quasar langage pack
-    try {
-      const langagePack = await import(`quasar/lang/${getLocale(false)}.js`)
-      if (langagePack) Quasar.lang.set(langagePack.default)
-    } catch (error) {
-      logger.error(error)
-    }
+    const languagePackInstalled = await installQuasarLanguage(getLocale(false), locale)
+    if (!languagePackInstalled) await installQuasarLanguage(getFallbackLocale(false), fallbackLocale)
   },
   registerTranslation (translation) {
     if (!this.i18n) {
