@@ -57,6 +57,7 @@ import { baseField } from '../../mixins'
 import { i18n } from '../../i18n.js'
 import { Reader } from '../../reader.js'
 import { Storage } from '../../storage.js'
+import { formatSize } from '../../utils/utils.files.js'
 
 export default {
   mixins: [baseField],
@@ -128,11 +129,12 @@ export default {
       this.onChanged()
     },
     onFileRejected (errs) {
+      console.log(errs)
       const errors = [].concat(errs)
       for (const error of errors) {
         if (error?.failedPropValidation === 'max-files') this.error = i18n.tc('errors.MAX_FILES_REACHED', this.getMaxFiles())
-        else if (error?.failedPropValidation === 'max-file-size') this.error = i18n.t('errors.MAX_FILE_SIZE_REACHED', { maxSize: this.getMaxFileSize() / 1048576 })
-        else if (error?.failedPropValidation === 'max-total-size') this.error = i18n.t('errors.MAX_TOTAL_SIZE_REACHED', { maxSize: this.getMaxTotalSize() / 1048576 })
+        else if (error?.failedPropValidation === 'max-file-size') this.error = i18n.t('errors.MAX_FILE_SIZE_REACHED', { file: error.file.name, maxSize: formatSize(this.getMaxFileSize()) })
+        else if (error?.failedPropValidation === 'max-total-size') this.error = i18n.t('errors.MAX_TOTAL_SIZE_FILES_REACHED', { maxSize: formatSize(this.getMaxTotalSize()) })
         else if (error?.failedPropValidation !== 'duplicate') this.error = 'KFileField.INVALID_FILE_TYPE'
       }
     },
