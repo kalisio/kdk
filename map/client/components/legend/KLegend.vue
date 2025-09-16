@@ -92,6 +92,7 @@ const sublegends = ref([])
 const layers = ref([])
 const engine = ref()
 const zoom = ref()
+const requestRefresh = _.debounce(refresh, 300)
 
 // Computed
 const layersBySublegend = computed(() => getLayersBySublegend(layers.value, sublegends.value))
@@ -115,11 +116,10 @@ watch([() => props.sublegends, () => props.sublegendsFromCatalog], async () => {
 watch(CurrentActivity, (newActivity, oldActivity) => {
   if (oldActivity) {
     // remove listeners
-    oldActivity.value.$engineEvents.off('zoomend', refresh)
-    oldActivity.value.$engineEvents.off('layer-shown', refresh)
-    oldActivity.value.$engineEvents.off('layer-hidden', refresh)
-    oldActivity.value.$engineEvents.off('layer-filter-toggled', refresh)
-    oldActivity.value.$engineEvents.off('layer-updated', refresh)
+    oldActivity.value.$engineEvents.off('zoomend', requestRefresh)
+    oldActivity.value.$engineEvents.off('layer-shown', requestRefresh)
+    oldActivity.value.$engineEvents.off('layer-hidden', requestRefresh)
+    oldActivity.value.$engineEvents.off('layer-filter-toggled', requestRefresh)
     // clear legend
     sublegends.value = []
     layers.value = []
@@ -132,11 +132,10 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     zoom.value = newActivity.getCenter().zoomLevel
     refresh()
     // install listeners
-    newActivity.$engineEvents.on('layer-updated', refresh)
-    newActivity.$engineEvents.on('layer-filter-toggled', refresh)
-    newActivity.$engineEvents.on('layer-shown', refresh)
-    newActivity.$engineEvents.on('layer-hidden', refresh)
-    newActivity.$engineEvents.on('zoomend', refresh)
+    newActivity.$engineEvents.on('layer-filter-toggled', requestRefresh)
+    newActivity.$engineEvents.on('layer-shown', requestRefresh)
+    newActivity.$engineEvents.on('layer-hidden', requestRefresh)
+    newActivity.$engineEvents.on('zoomend', requestRefresh)
   }
 }, { immediate: true })
 
