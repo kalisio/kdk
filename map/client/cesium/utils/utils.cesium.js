@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import * as Cesium from 'cesium'
 
 function createWallGeometry (positions, minimumHeights = [], maximumHeights = []) {
   if (!positions || positions.length < 2) return
