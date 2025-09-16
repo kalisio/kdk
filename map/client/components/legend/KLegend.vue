@@ -132,7 +132,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     zoom.value = newActivity.getCenter().zoomLevel
     refresh()
     // install listeners
-    newActivity.$engineEvents.on('layer-updated', refresh)    
+    newActivity.$engineEvents.on('layer-updated', refresh)
     newActivity.$engineEvents.on('layer-filter-toggled', refresh)
     newActivity.$engineEvents.on('layer-shown', refresh)
     newActivity.$engineEvents.on('layer-hidden', refresh)
@@ -143,6 +143,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
 // Functions
 function refresh () {
   if (!CurrentActivity.value) return
+  logger.debug('[KDK] Refreshing legend')
   // set the current zoom
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
   // set the layers for which it is required to display a legend

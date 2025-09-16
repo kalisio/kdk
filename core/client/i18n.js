@@ -28,7 +28,7 @@ async function loadTranslationBundles (bundles, locale, fallbackLocale) {
 }
 
 // Helper function to install a Quasar language pack
-// It first tries to install the language pack for the full locale (e.g. en-US) and, if unavailable, 
+// It first tries to install the language pack for the full locale (e.g. en-US) and, if unavailable,
 // falls back to the 2-letter language code (e.g. en)
 async function installQuasarLanguage (fullLocale, locale) {
   let languagePack

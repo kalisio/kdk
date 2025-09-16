@@ -13,11 +13,11 @@
       size="0.75rem"
       :handler="onCopy"
     />
-    <q-separator 
+    <q-separator
       vertical
       color="grey-6"
       style="margin: 6px;"
-    />    
+    />
     <KAction
       id="close-position"
       icon="cancel"
