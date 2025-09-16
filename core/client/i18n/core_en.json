@@ -79,9 +79,9 @@
     "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {provider}, in order to switch to a local account reset your password first",
     "EMAIL_ALREADY_TAKEN": "A user with this email address seems to be already registered",
     "OBJECT_ID_ALREADY_TAKEN": "An item with this identifier seems to already exist. Please try again with another value.",
-    "MAX_FILES_REACHED": "Oops ! You can only drop only one file | Oops! You can only drop up to {n} files at once",
-    "MAX_FILE_SIZE_REACHED": "Oops ! The file exceeds the maximum allowed size of {maxSize} MB",
-    "MAX_TOTAL_SIZE_REACHED": "Oops ! The total size files exceeds the maximum allowed total limit of {maxSize} MB",
+    "MAX_FILES_REACHED": "Oops ! You can only drop one file | Oops! You can only drop up to {n} files at once",
+    "MAX_FILE_SIZE_REACHED": "Oops ! The file exceeds the maximum allowed size of {maxSize}",
+    "MAX_TOTAL_SIZE_FILES_REACHED": "Oops ! The total size files exceeds the maximum allowed total limit of {maxSize}",
     "UNSUPPORTED_FILE_FORMAT": "Oops ! The {file} file format is not supported",
     "CANNOT_READ_FILE": "Oops ! Unable to read the file {file}",
     "INVALID_JSON_FILE": "Oops ! {file} is not a valid JSON file",
@@ -194,6 +194,11 @@
     }
   },
   "utils": {
+    "files": {
+      "B": "B",
+      "KB": "KB",
+      "MB": "MB"
+    },
     "pwa": {
       "INSTALL_TITLE": "Install the application ?",
       "INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features",

@@ -80,8 +80,8 @@
     "EMAIL_ALREADY_TAKEN": "Un utilisateur semble déjà enregistré avec cette adresse mail",
     "OBJECT_ID_ALREADY_TAKEN": "Un élément semble déjà enregistré avec cet identifiant. Merci de réessayer avec une autre valeur.",
     "MAX_FILES_REACHED": "Oups ! Vous ne pouvez déposer qu'un seul fichier | Oups ! Vous ne pouvez déposer que jusqu’à {n} fichiers à la fois",
-    "MAX_FILE_SIZE_REACHED": "Oups ! Le fichier dépasse la taille maximale autorisée de {maxSize} Mo",
-    "MAX_TOTAL_SIZE_REACHED": "Oups ! La taille totale de tous les fichiers dépasse la limite maximale autorisée de {maxSize} Mo",    
+    "MAX_FILE_SIZE_REACHED": "Oups ! Le fichier {file} dépasse la taille maximale autorisée de {maxSize}",
+    "MAX_TOTAL_SIZE_FILES_REACHED": "Oups ! La taille totale de tous les fichiers dépasse la limite maximale autorisée de {maxSize}",    
     "UNSUPPORTED_FILE_FORMAT": "Oups ! Le format du fichier {file} n'est pas supporté",
     "CANNOT_READ_FILE": "Oups ! Impossible de lire le fichier {file}",
     "INVALID_JSON_FILE": "Oups ! {file} n'est pas un fichier JSON valide",
@@ -194,6 +194,11 @@
     }
   },
   "utils": {
+    "files": {
+      "B": "o",
+      "KB": "Ko",
+      "MB": "Mo"
+    },
     "pwa": {
       "INSTALL_TITLE": "Installer l'application ?",
       "INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités",
