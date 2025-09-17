@@ -24,8 +24,9 @@
             :append-items="true"
             :base-query="baseQuery"
             :filter-query="filterQuery"
-            class="fit"
+            :nbItemsPerPage="24"
             :renderer="renderer"
+            class="fit"            
           />
           <KFollower
             :follower="follower"
