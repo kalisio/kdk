@@ -31,10 +31,12 @@ export class Api {
     // Display the API options
     debug('API access created with the following options: ', this.options)
 
-    client.login = async (user) => {
-      const response = await client.authenticate({
-        strategy: 'local', email: user.email, password: user.password
-      })
+    client.login = async (payload) => {
+      // Authenticate with a token or a user ?
+      const strategy = (payload.accessToken ? 'jwt' : 'local')
+      const response = await client.authenticate(Object.assign({
+        strategy
+      }, payload))
       return response.accessToken
     }
 
