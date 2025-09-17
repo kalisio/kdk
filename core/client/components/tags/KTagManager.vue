@@ -4,7 +4,7 @@
       <KGrid
         service="tags"
         :renderer="viewRenderer"
-        :nb-items-per-page="20"
+        :nb-items-per-page="24"
         :append-items="true"
         :base-query="baseQuery"
         :filter-query="filterQuery"

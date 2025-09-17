@@ -24,7 +24,7 @@
             :append-items="true"
             :base-query="baseQuery"
             :filter-query="filterQuery"
-            :nbItemsPerPage="24"
+            :nb-items-per-page="24"
             :renderer="renderer"
             class="fit"            
           />
