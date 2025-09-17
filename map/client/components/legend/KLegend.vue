@@ -146,11 +146,28 @@ function refresh () {
   // set the current zoom
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
   // set the layers for which it is required to display a legend
-  layers.value = _.orderBy(_.filter(CurrentActivity.value.getLayers(), layer => {
+  let iterator = {
+    layers: [],
+    groups: []
+  }
+  _.reduce(CurrentActivity.value.getLayers(), (iterator, layer) => {
     const isVisible = layer.isVisible
-    const hasLegend = layer.legend || _.some(layer.filters, filter => filter.legend)
-    return isVisible && hasLegend
-  }), layer => layer.label || layer.name)
+    const hasLegend = layer.legend
+    const hasFilterLegend = _.some(layer.filters, filter => filter.legend)
+    if (isVisible && (hasLegend || hasFilterLegend)) {
+      if (!hasLegend) iterator.layers.push(layer)
+      else if (!layer.legend.group) iterator.layers.push(layer)
+      else {
+        const group = layer.legend.group
+        if (!_.includes(iterator.groups, group)) {
+          iterator.layers.push(layer)
+          iterator.groups.push(group)
+        }
+      }
+    }
+    return iterator
+  }, iterator)
+  layers.value = _.orderBy(iterator.layers, layer => layer.label || layer.name)
 }
 function getHelperIcon (helper) {
   return _.get(helper, 'icon', undefined)
