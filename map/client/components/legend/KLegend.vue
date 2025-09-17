@@ -167,6 +167,7 @@ function refresh () {
     }
     return iterator
   }, iterator)
+  // order the layers according the name
   layers.value = _.orderBy(iterator.layers, layer => layer.label || layer.name)
 }
 function getHelperIcon (helper) {
