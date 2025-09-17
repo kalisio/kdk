@@ -94,31 +94,35 @@ function onDragStart (event, index, layer) {
 
 async function onDrop (event, targetIndex) {
   const layerName = event.dataTransfer.getData('layerName')
+  const layer = props.layers.find(layer => layer.name === layerName)
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
   if (!props.category?._id) { // source and target are orphan layers
+    // WARNING: Need to use a string here as dataTransfer serialize to strings
     if (sourceCategoryId !== 'undefined') return
     emit('orphan-layer-updated', targetIndex, draggedIndex.value)
     return
   }
   if (layerName && layerName.length > 0) { // source is layer
     const isLayerFromCurrentCategory = props.category._id === sourceCategoryId
+    // Avoid mutating read-only prop
+    const categoryLayers = _.clone(props.category.layers)
     if (isLayerFromCurrentCategory) { // reorder layers in category
-      const categoryLayers = props.category.layers
-      categoryLayers.splice(targetIndex, 0, categoryLayers.splice(draggedIndex.value, 1)[0])
-      await updateLayersOrder(props.category._id, { layers: categoryLayers })
+      const removedLayers = categoryLayers.splice(draggedIndex.value, 1)
+      if (removedLayers.length > 0) categoryLayers.splice(targetIndex, 0, removedLayers[0])
+      await updateLayersOrder(props.category._id, { layers: categoryLayers }, layer)
     } else { // layer isn't from current category: move layer to current category
-      // we are cloning currentCategoryLayers to avoid triggering unneeded reactivity
-      // (reactivity isn't needed here because updateLayersOrder will trigger a refresh anyway)
-      const currentCategoryLayers = _.clone(props.category.layers)
+      // WARNING: Need to use a string here as dataTransfer serialize to strings
       if (sourceCategoryId === 'undefined') { // source is orphan layer
-        currentCategoryLayers.splice(targetIndex, 0, layerName)
-        await updateLayersOrder(props.category._id, { layers: currentCategoryLayers })
+        emit('orphan-layer-updated', -1, draggedIndex.value)
+        categoryLayers.splice(targetIndex, 0, layerName)
+        await updateLayersOrder(props.category._id, { layers: categoryLayers }, layer)
       } else { // source isn't orphan layer
         const sourceCategory = await getCategories({ query: { _id: sourceCategoryId } })
         const sourceCategoryLayers = sourceCategory[0].layers
-        currentCategoryLayers.splice(targetIndex, 0, sourceCategoryLayers.splice(draggedIndex.value, 1)[0])
-        await updateLayersOrder(props.category._id, { layers: currentCategoryLayers })
-        await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers })
+        const removedLayers = sourceCategoryLayers.splice(draggedIndex.value, 1)
+        if (removedLayers.length > 0) categoryLayers.splice(targetIndex, 0, removedLayers[0])
+        await updateLayersOrder(props.category._id, { layers: categoryLayers }, layer)
+        await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers }, layer)
       }
     }
   } else { // drag source is category: reorder categories with target layer's category

@@ -126,12 +126,13 @@ export const activity = {
     },
     // To be overriden by apps to perform any operation (eg serialization) when the layer order has been changed by the user in a category
     // By default perform layer ordering in the underlying engine
-    async updateLayersOrder (sourceCategoryId, data) {
+    // Data payload is like { layers } in order to ease direct update of the target category
+    async updateLayersOrder (sourceCategoryId, data, movedLayer) {
       this.reorderLayers()
     },
     // To be overriden by apps to perform any operations (eg serialization) when the layer order has been changed by the user in the orphan layer list
     // By default perform layer ordering in the underlying engine
-    async updateOrphanLayersOrder (orphanLayers) {
+    async updateOrphanLayersOrder (orphanLayers, movedLayer) {
       this.reorderLayers()
     },
     // Perform layer ordering in the underlying engine according to current order in categories and layer list

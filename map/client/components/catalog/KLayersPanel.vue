@@ -213,9 +213,15 @@ function refresh () {
 
 async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
   const { orphanLayers } = CurrentActivity.value
+  const layer = orphanLayers[draggedIndex]
   // FIXME: if orphan layers are filtered we might have a mismatch between activity list index and panel index
-  orphanLayers.splice(targetIndex, 0, orphanLayers.splice(draggedIndex, 1)[0])
-  await updateOrphanLayersOrder(orphanLayers ? orphanLayers.map(l => l?._id) : [])
+  const removedLayers = orphanLayers.splice(draggedIndex, 1)
+  // If not -1 it means the orphan layer has been moved within the orphan layers list.
+  // Otherwise it has been moved to another category so that we only need to remove it from the list
+  if ((removedLayers.length > 0) && (targetIndex >= 0)) {
+    orphanLayers.splice(targetIndex, 0, removedLayers[0])
+  }
+  await updateOrphanLayersOrder(orphanLayers.map(layer => layer?._id), layer)
 }
 
 function onDragStart (event, index, category) {
@@ -228,17 +234,22 @@ function onDragStart (event, index, category) {
 async function onDrop (event, targetIndex) {
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
   const layerName = event.dataTransfer.getData('layerName')
+  const layers = _.flatten(_.values(layersByCategory.value)).concat(filteredOrphanLayers.value)
+  const layer = layers.find(layer => layer.name === layerName)
   const draggedLayerIndex = event.dataTransfer.getData('draggedIndex')
   if (layerName && layerName.length > 0) { // drag source is layer: change layer category
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
-    if (sourceCategoryId === "undefined") { // source is orphan layer
+    // WARNING: Need to use a string here as dataTransfer serialize to strings
+    if (sourceCategoryId === 'undefined') { // source is orphan layer
+      onOrphanLayerUpdated(-1, draggedLayerIndex)
       currentCategoryLayers.unshift(layerName)
-      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers }, layer)
     } else {
       const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
-      currentCategoryLayers.unshift(sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
-      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
-      await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers })
+      const removedLayers = sourceCategoryLayers.splice(draggedLayerIndex, 1)
+      if (removedLayers.length > 0) currentCategoryLayers.unshift(removedLayers[0])
+      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers }, layer)
+      await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers }, layer)
     }
   } else { // drag source is category: reorder category
     await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)

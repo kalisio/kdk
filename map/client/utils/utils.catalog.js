@@ -86,8 +86,8 @@ export function getLayersByCategory (layers, categories) {
 }
 
 export function getOrphanLayers (layers, layersByCategory) {
-  const categories = _.flatten(_.values(layersByCategory))
-  const orphanLayers = _.difference(layers, categories)
+  const layersFromCategories = _.flatten(_.values(layersByCategory))
+  const orphanLayers = _.difference(layers, layersFromCategories)
   // Order by
   return _.orderBy(orphanLayers, [(layer) => _.get(layer, '_id')], ['asc'])
 }
