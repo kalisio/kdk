@@ -23,7 +23,7 @@
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
     <!-- label -->
-    <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight }">
+    <div v-if="computedLabel" :class="{ 'ellipsis q-pr-md': iconRight, 'ellipsis q-pl-md': !iconRight && computedIcon }">
       {{ computedLabel }}
     </div>
     <!-- tooltip -->
