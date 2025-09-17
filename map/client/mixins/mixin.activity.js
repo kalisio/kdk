@@ -505,6 +505,9 @@ export const activity = {
     this.$engineEvents.on('layer-added', this.configureLayerActions)
     this.$engineEvents.on('layer-added', this.onAddOrphanLayer)
     this.$engineEvents.on('layer-removed', this.onRemoveOrphanLayer)
+    // As we'd like to manage layer ordering we force to refresh it
+    // because by default Leaflet will put new elements at the end of the DOM child list.
+    this.$engineEvents.on('layer-shown', this.reorderLayers)
   },
   mounted () {
     this.requestRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
@@ -520,6 +523,7 @@ export const activity = {
     this.$engineEvents.off('layer-added', this.configureLayerActions)
     this.$engineEvents.off('layer-added', this.onAddOrphanLayer)
     this.$engineEvents.off('layer-added', this.onRemoveOrphanLayer)
+    this.$engineEvents.off('layer-shown', this.reorderLayers)
     Events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     Events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
     Events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
