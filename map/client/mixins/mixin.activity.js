@@ -448,10 +448,11 @@ export const activity = {
       // Realtime events only targets layer saved in DB so that they should always have a unique ID we can rely on
       const layerId = layer._id
       const refreshLayer = async () => {
-        const events = this.pendingLayerRefresh[layerId]
+        const requests = this.pendingLayerRefresh[layerId]
         delete this.pendingLayerRefresh[layerId]
-        for (let i = 0; i< events.length; i++) {
-          await this.refreshLayer(layer, events[i])
+        for (let i = 0; i< requests.length; i++) {
+          const request = requests[i]
+          await this.refreshLayer(request.layer, request.event)
         }
       }
       if (!this.pendingLayerRefresh) this.pendingLayerRefresh = {}
@@ -459,15 +460,15 @@ export const activity = {
       if (this.pendingLayerRefresh[layerId]) {
         // The way a layer is updated requires to remove/add it again to cover all use cases (eg style edition, etc.).
         // As a consequence create/patch/update operations results in the same operations, we can avoid multiple update by "merging"
-        const lastEvent = _.last(this.pendingLayerRefresh[layerId])
-        if (isDataOperation(lastEvent) !== isDataOperation(event)) {
-          this.pendingLayerRefresh[layerId].push(event)
+        const lastRequest = _.last(this.pendingLayerRefresh[layerId])
+        if (isDataOperation(lastRequest.event) !== isDataOperation(event)) {
+          this.pendingLayerRefresh[layerId].push({ event, layer })
         } else {
           // The last operation "wins" otherwise
-          this.pendingLayerRefresh[layerId].splice(-1, 1, event)
+          this.pendingLayerRefresh[layerId].splice(-1, 1, { event, layer })
         }
       } else {
-        this.pendingLayerRefresh[layerId] = [event]
+        this.pendingLayerRefresh[layerId] = [{ event, layer }]
         setTimeout(refreshLayer, 500)
       }
     },
