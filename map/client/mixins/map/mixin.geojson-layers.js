@@ -143,53 +143,92 @@ export const geojsonLayers = {
       leafletOptions.container = this.createLeafletLayer(clusterOptions)
       bindLeafletEvents(leafletOptions.container, LeafletEvents.Cluster, this, options)
     },
+    processGeoJsonPaneOptions (options) {
+      const leafletOptions = options.leaflet || options
+      // Min/Max zoom are automatically managed on tiled layers by inheriting GridLayer
+      // but on non-tiled layers we need to use a pane to manage it.
+      // However, as we'd like to be able to easily control layer display order we create a pane for each layer by default anyway.
+      const panes = _.get(leafletOptions, 'panes', [])
+      const defaultPane = _.find(panes, { name: _.get(leafletOptions, 'pane') })
+      const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
+      const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
+      const hasZIndex = !!_.get(leafletOptions, 'zIndex')
+      const hasPaneZIndex = _.get(defaultPane, 'zIndex')
+      const name = options.name
+      // Default pane will be automatically used for Leaflet vector layers (ie polygons/lines)
+      const layerPane = defaultPane || { name }
+      if (hasMinZoom) layerPane.minZoom = _.get(leafletOptions, 'minZoom')
+      if (hasMaxZoom) layerPane.maxZoom = _.get(leafletOptions, 'maxZoom')
+      if (hasZIndex && !hasPaneZIndex) layerPane.zIndex = _.get(leafletOptions, 'zIndex')
+      if (!_.find(panes, { name: layerPane.name })) panes.push(layerPane)
+      // Set layer to use its default pane as target
+      // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
+      if (!_.has(leafletOptions, 'pane')) leafletOptions.pane = layerPane.name
+      if (!_.has(leafletOptions, 'shadowPane')) leafletOptions.shadowPane = layerPane.name
+      // Make default pane available to styles as well as eg shape markers are created from here
+      for (const type of ['point', 'line', 'polygon']) {
+        _.set(leafletOptions, `style.${type}.pane`, layerPane.name)
+        _.set(leafletOptions, `style.${type}.shadowPane`, layerPane.name)
+      }
+      // If we only use this default pane all elements of a layer will be affected to this pane.
+      // We prefer the markers and their shadows to be affected to different panes than others elements like Leaflet does by default.
+      // This is notably required if we'd like to be able to control the rendering order of the elements with bringToFront/bringToBack functions.
+      // Except if a z-index is specified as in this case the user wants to control the order by himself
+      if (!hasZIndex && !hasPaneZIndex) {
+        // No z-index means that the pane will use the default for overlays in Leaflet which is 400
+        // so that we use the default for markers and shadows in Leaflet as well.
+        if (!_.find(panes, { name: `${name}-markers` })) panes.push(Object.assign({ name: `${name}-markers`, zIndex: 600 }, _.omit(layerPane, ['name'])))
+        if (!_.find(panes, { name: `${name}-shadows` })) panes.push(Object.assign({ name: `${name}-shadows`, zIndex: 500 }, _.omit(layerPane, ['name'])))
+        // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
+        if (!_.has(leafletOptions, 'shadowPane')) leafletOptions.shadowPane = `${name}-shadows`
+        // Make panes available to styles as eg shape markers are created from here
+        _.set(leafletOptions, 'style.point.pane', `${name}-markers`)
+        _.set(leafletOptions, 'style.point.shadowPane', `${name}-shadows`)
+      }
+      leafletOptions.panes = panes
+    },
+    processGeoJsonStyleOptions (options) {
+      const leafletOptions = options.leaflet || options
+      // Optimize templating by creating compilers up-front
+      const layerStyleTemplate = _.get(leafletOptions, 'template')
+      if (layerStyleTemplate) {
+        // We allow to template style properties according to feature, because it can be slow you have to specify a subset of properties
+        leafletOptions.template = layerStyleTemplate.map(property => ({
+          property, compiler: _.template(_.get(leafletOptions, property))
+        }))
+      }
+      const popupTemplate = _.get(leafletOptions, 'popup.template')
+      if (popupTemplate) {
+        leafletOptions.popup.compiler = _.template(popupTemplate)
+      }
+      const tooltipTemplate = _.get(leafletOptions, 'tooltip.template')
+      if (tooltipTemplate) {
+        leafletOptions.tooltip.compiler = _.template(tooltipTemplate)
+      }
+      // Optimize styling by creating color scales up-front
+      const variables = _.get(options, 'variables', [])
+      variables.forEach(variable => {
+        if (_.has(variable, 'chromajs')) {
+          variable.colorScale = kdkCoreUtils.buildColorScale(_.get(variable, 'chromajs'))
+        }
+      })
+      // Convert and store the style
+      if (leafletOptions.style) {
+        leafletOptions.layerPointStyle = _.get(leafletOptions.style, 'point')
+        leafletOptions.layerLineStyle = _.get(leafletOptions.style, 'line')
+        leafletOptions.layerPolygonStyle = _.get(leafletOptions.style, 'polygon')
+      } else {
+        leafletOptions.layerPointStyle = convertSimpleStyleToPointStyle(leafletOptions)
+        leafletOptions.layerLineStyle = convertSimpleStyleToLineStyle(leafletOptions)
+        leafletOptions.layerPolygonStyle = convertSimpleStyleToPolygonStyle(leafletOptions)
+      }
+    },
     async createLeafletGeoJsonLayer (options) {
       const leafletOptions = options.leaflet || options
       // Check for valid type
       if (leafletOptions.type !== 'geoJson') return
 
       try {
-        // Min/Max zoom are automatically managed on tiled layers by inheriting GridLayer
-        // but on non-tiled layers we need to use a pane to manage it.
-        // However, as we'd like to be able to easily control layer display order we create a pane for each layer by default anyway.
-        const panes = _.get(leafletOptions, 'panes', [])
-        const defaultPane = _.find(panes, { name: _.get(leafletOptions, 'pane') })
-        const hasMinZoom = !!_.get(leafletOptions, 'minZoom')
-        const hasMaxZoom = !!_.get(leafletOptions, 'maxZoom')
-        const hasZIndex = !!_.get(leafletOptions, 'zIndex')
-        const hasPaneZIndex = _.get(defaultPane, 'zIndex')
-        const name = options.name
-        // Default pane will be automatically used for Leaflet vector layers (ie polygons/lines)
-        const layerPane = defaultPane || { name }
-        if (hasMinZoom) layerPane.minZoom = _.get(leafletOptions, 'minZoom')
-        if (hasMaxZoom) layerPane.maxZoom = _.get(leafletOptions, 'maxZoom')
-        if (hasZIndex && !hasPaneZIndex) layerPane.zIndex = _.get(leafletOptions, 'zIndex')
-        if (!_.find(panes, { name: layerPane.name })) panes.push(layerPane)
-        // Set layer to use its default pane as target
-        // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
-        if (!_.has(leafletOptions, 'pane')) leafletOptions.pane = layerPane.name
-        if (!_.has(leafletOptions, 'shadowPane')) leafletOptions.shadowPane = layerPane.name
-        // Make default pane available to styles as well as eg shape markers are created from here
-        for (const type of ['point', 'line', 'polygon']) {
-          _.set(leafletOptions, `style.${type}.pane`, layerPane.name)
-          _.set(leafletOptions, `style.${type}.shadowPane`, layerPane.name)
-        }
-        // If we only use this default pane all elements of a layer will be affected to this pane.
-        // We prefer the markers and their shadows to be affected to different panes than others elements like Leaflet does by default.
-        // This is notably required if we'd like to be able to control the rendering order of the elements with bringToFront/bringToBack functions.
-        // Except if a z-index is specified as in this case the user wants to control the order by himself
-        if (!hasZIndex && !hasPaneZIndex) {
-          // No z-index means that the pane will use the default for overlays in Leaflet which is 400
-          // so that we use the default for markers and shadows in Leaflet as well.
-          if (!_.find(panes, { name: `${name}-markers` })) panes.push(Object.assign({ name: `${name}-markers`, zIndex: 600 }, _.omit(layerPane, ['name'])))
-          if (!_.find(panes, { name: `${name}-shadows` })) panes.push(Object.assign({ name: `${name}-shadows`, zIndex: 500 }, _.omit(layerPane, ['name'])))
-          // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
-          if (!_.has(leafletOptions, 'shadowPane')) leafletOptions.shadowPane = `${name}-shadows`
-          // Make panes available to styles as eg shape markers are created from here
-          _.set(leafletOptions, 'style.point.pane', `${name}-markers`)
-          _.set(leafletOptions, 'style.point.shadowPane', `${name}-shadows`)
-        }
-        leafletOptions.panes = panes
         // If not explicitely disable use defaults for clustering
         if (!_.has(leafletOptions, 'cluster') && _.get(this, 'activityOptions.engine.cluster')) {
           // Merge existing config or create a new one on layer
@@ -206,39 +245,9 @@ export const geojsonLayers = {
         } else {
           await this.processGeoJsonLayerOptions(options)
         }
-        // Optimize templating by creating compilers up-front
-        const layerStyleTemplate = _.get(leafletOptions, 'template')
-        if (layerStyleTemplate) {
-          // We allow to template style properties according to feature, because it can be slow you have to specify a subset of properties
-          leafletOptions.template = layerStyleTemplate.map(property => ({
-            property, compiler: _.template(_.get(leafletOptions, property))
-          }))
-        }
-        const popupTemplate = _.get(leafletOptions, 'popup.template')
-        if (popupTemplate) {
-          leafletOptions.popup.compiler = _.template(popupTemplate)
-        }
-        const tooltipTemplate = _.get(leafletOptions, 'tooltip.template')
-        if (tooltipTemplate) {
-          leafletOptions.tooltip.compiler = _.template(tooltipTemplate)
-        }
-        // Optimize styling by creating color scales up-front
-        const variables = _.get(options, 'variables', [])
-        variables.forEach(variable => {
-          if (_.has(variable, 'chromajs')) {
-            variable.colorScale = kdkCoreUtils.buildColorScale(_.get(variable, 'chromajs'))
-          }
-        })
-        // Convert and store the style
-        if (leafletOptions.style) {
-          leafletOptions.layerPointStyle = _.get(leafletOptions.style, 'point')
-          leafletOptions.layerLineStyle = _.get(leafletOptions.style, 'line')
-          leafletOptions.layerPolygonStyle = _.get(leafletOptions.style, 'polygon')
-        } else {
-          leafletOptions.layerPointStyle = convertSimpleStyleToPointStyle(leafletOptions)
-          leafletOptions.layerLineStyle = convertSimpleStyleToLineStyle(leafletOptions)
-          leafletOptions.layerPolygonStyle = convertSimpleStyleToPolygonStyle(leafletOptions)
-        }
+        this.processGeoJsonStyleOptions(options)
+        // Do this after style because it may alter it
+        this.processGeoJsonPaneOptions(options)
         // Merge generic GeoJson options and layer options
         const geoJsonOptions = this.getGeoJsonOptions(options)
         Object.keys(geoJsonOptions).forEach(key => {
