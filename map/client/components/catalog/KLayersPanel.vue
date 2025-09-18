@@ -182,16 +182,14 @@ function getCategoryIcon (category) {
   return _.get(category, 'icon.name', _.get(category, 'icon'), 'las la-bars')
 }
 function isCategoryVisible (category) {
-// Show a built-in category only if it has some layers.
-// Indeed, depending on the app configuration, none might be available for this category.
-// User-defined categories are visible by default, even if empty,
-// except if used inside a project as in this case having no layers means we don't want to use this category
+  const options = category.options || category
+  // Show a built-in category only if it has some layers.
+  // Indeed, depending on the app configuration, none might be available for this category.
+  // User-defined categories are visible by default, even if empty,
+  // except if used inside a project as in this case having no layers means we don't want to use this category.
+  // App might also force to hide it anyway with the hideIfEmpty option.
   const isEmpty = (layersByCategory.value[category.name].length === 0)
-  if (isEmpty) {
-    if (hasProject()) return false
-    else return !_.get(category, 'hideIfEmpty', !category._id)
-  }
-  return true
+  return (isEmpty ? !_.get(options, 'hideIfEmpty', !category._id || hasProject()) : true)
 }
 function refresh () {
   const { layers, layerCategories, orphanLayers } = CurrentActivity.value
