@@ -13,7 +13,6 @@ import PasswordValidator from 'password-validator'
 import { isValidObjectID } from './db.js'
 
 const debug = makeDebug('kdk:core:authentication')
-const { ObjectID } = mongodb
 const { oauth, OAuthStrategy } = OAuth
 const { NotAuthenticated } = errors
 
