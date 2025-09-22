@@ -254,12 +254,15 @@ const canEditPolygon = computed(() => props.allowedTypes.includes('polygon'))
 
 // Watch
 watch(() => props.style, (value) => {
+  const onFirstLoad = model.value === null
+
   if (!value) model.value = _.clone(_.pick(engine.value.style, ['point', 'line', 'polygon']))
   else model.value = value
-  _.forEach(['point', 'line', 'polygon'], value => {
-    if (!_.get(model.value, value)) {
-      enabledSections.value[value] = false
-      _.set(model.value, value, getDefaultValue(value))
+
+  _.forEach(['point', 'line', 'polygon'], section => {
+    if (!_.get(model.value, section)) {
+      if (onFirstLoad) enabledSections.value[section] = false
+      _.set(model.value, section, getDefaultValue(section))
     }
   })
 }, { immediate: true })
