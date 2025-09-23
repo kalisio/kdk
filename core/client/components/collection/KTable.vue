@@ -116,7 +116,11 @@ const props = defineProps({
   },
   service: {
     type: String,
-    required: true
+    required: false
+  },
+  getService: {
+    type: Function,
+    required: false
   },
   baseQuery: {
     type: Object,

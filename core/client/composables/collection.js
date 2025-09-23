@@ -36,7 +36,7 @@ export function useCollection (options) {
 
   // Functions
   function getService () {
-    const service = api.getService(options.service.value, options.contextId ? options.contextId.value : null)
+    const service = options.getService?.value ? options.getService.value() : api.getService(options.service.value, options.contextId ? options.contextId.value : null)
     if (!service) {
       throw new Error('Cannot retrieve target service ' + options.service.value)
     }
