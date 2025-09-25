@@ -1,9 +1,8 @@
-import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty, Math as CesiumMath, HeadingPitchRoll, Quaternion } from 'cesium'
+import { GeoJsonDataSource, ColorMaterialProperty, ConstantProperty, Math as CesiumMath, HeadingPitchRoll, Quaternion, Cartographic, EllipsoidRhumbLine } from 'cesium'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
 import { uid } from 'quasar'
-import { point, rhumbDistance, rhumbBearing, rhumbDestination } from '@turf/turf'
 import { Time, Units, Events } from '../../../../core.client.js'
 import { fetchGeoJson, getFeatureId, processFeatures, getFeatureStyleType, isInMemoryLayer, getGeoJsonFeatures } from '../../utils.js'
 import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../../utils/utils.style.js'
@@ -95,7 +94,10 @@ export const geojsonLayers = {
       entities.forEach(entity => {
         // Find matching feature if any and keep track of it as Cesium only keeps properties
         entity.feature = features.find(feature => getFeatureId(feature, options) === entity.id)
-        const previousEntity = dataSource.entities.getById(entity.id)
+        let previousEntity = dataSource.entities.getById(entity.id)
+        CustomTypes.forEach(type => {
+          previousEntity = previousEntity || dataSource.entities.getById(getCustomEntityId(entity.id, type))
+        })
         if (previousEntity) {
           const isAnimatedLayer = _.get(updateOptions, 'duration') && _.get(entity, 'feature') && _.get(previousEntity, 'feature')
           if (isAnimatedLayer) {
@@ -641,32 +643,39 @@ export const geojsonLayers = {
             // Store animation information in properties so that we don't need to recompute it for next steps
             if (!currFeature.properties.animation || !currFeature.properties.animation.geometry) {
               if (!currFeature.properties.animation) currFeature.properties.animation = {}
-              const startCoordinates = { lon: prevFeature.geometry.coordinates[0], lat: prevFeature.geometry.coordinates[1] }
-              const endCoordinates = { lon: currFeature.geometry.coordinates[0], lat: currFeature.geometry.coordinates[1] }
+              const startCoordinates = { lon: prevFeature.geometry.coordinates[0], lat: prevFeature.geometry.coordinates[1], alt: prevFeature.geometry.coordinates[2] || null }
+              const endCoordinates = { lon: currFeature.geometry.coordinates[0], lat: currFeature.geometry.coordinates[1], alt: currFeature.geometry.coordinates[2] || null }
               currFeature.properties.animation.geometry = {
                 startCoordinates,
                 endCoordinates
               }
               if (animateProperty.rhumb) {
-                const start = point([startCoordinates.lon, startCoordinates.lat])
-                const end = point([endCoordinates.lon, endCoordinates.lat])
-                currFeature.properties.animation.geometry.rhumb = {
-                  start,
-                  distance: rhumbDistance(start, end),
-                  bearing: rhumbBearing(start, end)
+                try {
+                  const start = new Cartographic(startCoordinates.lon, startCoordinates.lat, startCoordinates.alt || 0)
+                  const end = new Cartographic(endCoordinates.lon, endCoordinates.lat, endCoordinates.alt || 0)
+                  currFeature.properties.animation.geometry.rhumbLine = new EllipsoidRhumbLine(start, end)
+                } catch (e) {
+                  // Fallback to null if we cannot compute rhumb line (e.g. start = end)
+                  currFeature.properties.animation.geometry.rhumbLine = null
                 }
               }
             }
             // Interpolate position
-            if (animateProperty.rhumb) {
-              const rhumbData = currFeature.properties.animation.geometry.rhumb
-              const destination = rhumbDestination(rhumbData.start, rhumbData.distance * tEasing, rhumbData.bearing)
-              animatedFeature.geometry.coordinates[0] = destination.geometry.coordinates[0]
-              animatedFeature.geometry.coordinates[1] = destination.geometry.coordinates[1]
+            const geometryData = currFeature.properties.animation.geometry
+            if (animateProperty.rhumb && currFeature.properties.animation.geometry.rhumbLine) {
+              const rhumbLine = currFeature.properties.animation.geometry.rhumbLine
+              const destination = rhumbLine.interpolateUsingFraction(tEasing, new Cartographic())
+              animatedFeature.geometry.coordinates[0] = destination.longitude
+              animatedFeature.geometry.coordinates[1] = destination.latitude
+              if (geometryData.startCoordinates.alt !== null && geometryData.endCoordinates.alt !== null) {
+                animatedFeature.geometry.coordinates[2] = destination.height
+              }
             } else {
-              const geometryData = currFeature.properties.animation.geometry
               animatedFeature.geometry.coordinates[0] = lerp(geometryData.startCoordinates.lon, geometryData.endCoordinates.lon, tEasing)
               animatedFeature.geometry.coordinates[1] = lerp(geometryData.startCoordinates.lat, geometryData.endCoordinates.lat, tEasing)
+              if (geometryData.startCoordinates.alt !== null && geometryData.endCoordinates.alt !== null) {
+                animatedFeature.geometry.coordinates[2] = lerp(geometryData.startCoordinates.alt, geometryData.endCoordinates.alt, tEasing)
+              }
             }
           } else if (property === 'orientation') {
             // Store animation information in properties so that we don't need to recompute it for next steps
