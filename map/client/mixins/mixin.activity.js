@@ -349,7 +349,7 @@ export const activity = {
     },
     onRemoveOrphanLayer (layer) {
       if (this.isOrphanLayer(layer)) {
-        this.orphanLayers.splice(this.orphanLayers.findIndex(l => l._id === layer._id), 1)
+        _.remove(this.orphanLayers, orphanLayer => layer._id ? orphanLayer._id === layer._id : orphanLayer.name === layer.name)
       }
     },
     onEngineReady (engine) {
@@ -522,7 +522,7 @@ export const activity = {
     this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.configureLayerActions)
     this.$engineEvents.off('layer-added', this.onAddOrphanLayer)
-    this.$engineEvents.off('layer-added', this.onRemoveOrphanLayer)
+    this.$engineEvents.off('layer-removed', this.onRemoveOrphanLayer)
     this.$engineEvents.off('layer-shown', this.reorderLayers)
     Events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
     Events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
