@@ -173,13 +173,8 @@ export const activity = {
     },
     // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
     async refreshOrphanLayers () {
-      // By default orphan layers are user/activity layers outside user categories
-      const layersFilter = sift({ scope: { $in: ['user', 'activity'] } })
-      const categoriesFilter = sift({ _id: { $exists: true } })
-      const filteredLayers = _.filter(this.layers, layersFilter)
-      const filteredCategories = _.filter(this.layerCategories, categoriesFilter)
-      const layersByCategory = getLayersByCategory(filteredLayers, filteredCategories)
-      this.orphanLayers = getOrphanLayers(filteredLayers, layersByCategory)
+      const layersByCategory = getLayersByCategory(this.layers, this.layerCategories)
+      this.orphanLayers = getOrphanLayers(this.layers, layersByCategory)
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,

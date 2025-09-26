@@ -111,6 +111,11 @@ const props = defineProps({
     type: [Object, Function],
     default: () => {}
   },
+  orphanLayersFilter: {
+    type: [Object, Function],
+    // By default orphan layers are user/activity layers
+    default: () => ({ scope: { $in: ['user', 'activity'] } })
+  },
   layerCategoriesFilter: {
     type: [Object, Function],
     default: () => {}
@@ -206,20 +211,33 @@ function refresh () {
   // compute layers by categories
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
   // filter orphan layers
-  filteredOrphanLayers.value = _.filter(orphanLayers, layersFilter)
+  const orphanLayersFilter = (typeof props.orphanLayersFilter === 'object' ? sift(props.orphanLayersFilter) : props.orphanLayersFilter)
+  filteredOrphanLayers.value = _.filter(_.filter(orphanLayers, layersFilter), orphanLayersFilter)
 }
 
 async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
   const { orphanLayers } = CurrentActivity.value
-  const layer = orphanLayers[draggedIndex]
-  // FIXME: if orphan layers are filtered we might have a mismatch between activity list index and panel index
-  const removedLayers = orphanLayers.splice(draggedIndex, 1)
+  const layer = filteredOrphanLayers.value[draggedIndex]
+  const targetLayer = (targetIndex >= 0 ? filteredOrphanLayers.value[targetIndex] : null)
+  const removedLayers = filteredOrphanLayers.value.splice(draggedIndex, 1)
+  // As orphan layers are filtered we might have a mismatch between activity list index and panel index
+  // so that we find the layer by name in the activity list to perform the same reordering
+  let orphanLayer
+  draggedIndex = _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === layer.name)
+  if (draggedIndex >= 0) {
+    orphanLayer = orphanLayers[draggedIndex]
+    orphanLayers.splice(draggedIndex, 1)
+  }
   // If not -1 it means the orphan layer has been moved within the orphan layers list.
   // Otherwise it has been moved to another category so that we only need to remove it from the list
-  if ((removedLayers.length > 0) && (targetIndex >= 0)) {
-    orphanLayers.splice(targetIndex, 0, removedLayers[0])
+  if ((removedLayers.length > 0) && targetLayer) {
+    filteredOrphanLayers.value.splice(targetIndex, 0, removedLayers[0])
+    // As orphan layers are filtered we might have a mismatch between activity list index and panel index
+    // so that we find the layer by name in the activity list to perform the same reordering
+    targetIndex = _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === targetLayer.name)
+    if (orphanLayer && (targetIndex >= 0)) orphanLayers.splice(targetIndex, 0, orphanLayer)
   }
-  await updateOrphanLayersOrder(orphanLayers.map(layer => layer?._id), layer)
+  await updateOrphanLayersOrder(filteredOrphanLayers.value.map(layer => layer?._id || layer?.name), layer)
 }
 
 function onDragStart (event, index, category) {
