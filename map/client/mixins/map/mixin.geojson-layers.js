@@ -644,6 +644,12 @@ export const geojsonLayers = {
         }
       }
     },
+    onEditStopGeoJsonLayers ({ status, layer }) {
+      // Check if we have to cache/update geojson data for this layer
+      if (isInMemoryLayer(layer)) {
+        this.geojsonCache[layer.name] = this.toGeoJson(layer.name)
+      }
+    },
     onLayerRemovedGeoJsonLayers (layer) {
       // Remove cached geojson data if any
       if (_.has(this.geojsonCache, layer.name)) {
@@ -658,6 +664,7 @@ export const geojsonLayers = {
     Events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.on('edit-stop', this.onEditStopGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
 
     // Used to store animation options when animating a layer
@@ -671,6 +678,7 @@ export const geojsonLayers = {
     Events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.off('edit-stop', this.onEditStopGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
 
     this.geojsonCache = {}
