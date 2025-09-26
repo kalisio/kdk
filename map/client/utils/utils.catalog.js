@@ -61,7 +61,7 @@ export async function setEngineJwt (layers, planetApi) {
 }
 
 export function getLayersByCategory (layers, categories) {
-  const categorizedLayers = _.clone(layers)
+  const categorizedLayers = _.clone(Array.isArray(layers) ? layers : _.values(layers))
   const layersByCategory = {}
   _.forEach(categories, category => {
     // Built-in categories use filtering while user-defined ones use layers list
@@ -87,7 +87,7 @@ export function getLayersByCategory (layers, categories) {
 
 export function getOrphanLayers (layers, layersByCategory) {
   const layersFromCategories = _.flatten(_.values(layersByCategory))
-  const orphanLayers = _.difference(layers, layersFromCategories)
+  const orphanLayers = _.difference(Array.isArray(layers) ? layers : _.values(layers), layersFromCategories)
   // Order by
   return _.orderBy(orphanLayers, [(layer) => _.get(layer, '_id')], ['asc'])
 }
