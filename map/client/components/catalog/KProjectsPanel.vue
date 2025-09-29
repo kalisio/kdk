@@ -34,7 +34,7 @@ const projectRenderer = ref({
   component: 'catalog/KProjectSelector',
   class: 'col-12'
 })
-const baseQuery = ref({})
+const baseQuery = ref({ $sort: { name: 1 } })
 const searchString = ref('')
 
 // Computed
