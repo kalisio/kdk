@@ -28,12 +28,12 @@ import { cacheView, uncacheView } from '../../utils/utils.offline.js'
 import { Dialog, Notify } from 'quasar'
 
 // Data
-const searchString = ref('')
-const sortQuery = ref({})
 const { CurrentActivity } = useCurrentActivity()
 const { project: loadedProject } = await getProject()
 const project = ref(loadedProject)
 const viewRenderer = ref(getViewRenderer())
+const searchString = ref('')
+const sortQuery = ref({ $sort: { name: 1 } })
 
 // Computed
 const baseQuery = computed(() => {
