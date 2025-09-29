@@ -119,7 +119,7 @@ export async function clickFabAction (page, action) {
 }
 
 export async function countFabActions (page) {
-  return countElements(page, '//a[contains(@class, "k-action-fab-action")]')
+  return countElements(page, '//a[contains(@class, "k-fab-action")]')
 }
 
 export async function logout (page) {
