@@ -17,6 +17,9 @@ export default {
     get: [],
     create: [
       coreHooks.checkUnique({ field: 'name', query: (query, hook) => { query.type = _.get(hook, 'data.type') } }),
+      // Usually conversion of _id to ObjectID is performed by an app-evel hook, which is not yet setup when creating the service.
+      // As we can create features when initializing layer service/data we add it here as well to ensure it will work fine anyway.
+      coreHooks.convertObjectIDs(['_id']),
       coreHooks.convertToString(['baseQuery', 'schema.content']),
       convertFilterQueriesToString,
       setNow('createdAt', 'updatedAt'),

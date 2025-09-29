@@ -220,10 +220,6 @@ export async function createDefaultCatalogLayers (options = {}) {
             let geojson = fs.readJsonSync(extractedFileName)
             // We allow GeoJson collection or features array
             geojson = Array.isArray(geojson) ? geojson : geojson.features
-            // We also allow for data exported from MongoDB, in this case remove any Mongo specific ID
-            geojson.forEach(feature => {
-              delete feature._id
-            })
             try {
               await createFeaturesForLayer.call(app, geojson, defaultLayer, options)
             } catch (error) {
