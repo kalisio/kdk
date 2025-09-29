@@ -850,16 +850,26 @@ export const baseGlobe = {
             const fs = `
     uniform sampler2D colorTexture;
     in vec2 v_textureCoordinates;
+
+    uniform float desaturation;
+    uniform float brightness;
+
     void main() {
         vec4 color = texture(colorTexture, v_textureCoordinates);
         if (czm_selected()) {
             out_FragColor = color;
         } else {
-            out_FragColor = vec4(czm_saturation(color.rgb, 0.0), color.a);
+            out_FragColor = vec4(czm_saturation(color.rgb, desaturation) * brightness, color.a);
         }
     }
     `
-            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({ fragmentShader: fs }))
+            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({
+              fragmentShader: fs,
+              uniforms: {
+                desaturation: _.get(options, 'desaturation', 1.0),
+                brightness: _.get(options, 'brightness', 1.0)
+              }
+            }))
             stage.selected = [] // Initialize empty selected set for postprocess.
             this.cesiumPostProcessStages[effect] = stage
           }
