@@ -140,14 +140,14 @@ export async function createClient (config) {
         // api.getService('xxx').on('event', () => ...)
         // In this case we simply warn and return the wrapper to the online service.
         // However, it is up to the application to make sure of not using such components when offline
-        // throw new Error('Cannot retrieve offline service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
-        logger.warn('[KDK] Cannot retrieve offline service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
+        // throw new Error('Cannot retrieve offline service ' + name + ' for context ' + (context && (typeof context === 'object') ? context._id : context))
+        logger.warn('[KDK] Cannot retrieve offline service ' + name + ' for context ' + (context && (typeof context === 'object') ? context._id : context))
       }
     }
     if (!service) {
       service = api.getOnlineService(name, context, options)
       if (!service) {
-        throw new Error('Cannot retrieve service ' + name + ' for context ' + (typeof context === 'object' ? context._id : context))
+        throw new Error('Cannot retrieve service ' + name + ' for context ' + (context && (typeof context === 'object') ? context._id : context))
       }
     }
     return service
