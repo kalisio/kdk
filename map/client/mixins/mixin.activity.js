@@ -422,6 +422,8 @@ export const activity = {
       if (layer && (typeof layer.getPlanetApi === 'function')) {
         planetApi = layer.getPlanetApi()
       }
+      // Check if layer was visible before refreshing it
+      const isVisibleBeforeRefresh = this.isLayerVisible(layer.name)
       if (layer) {
         // Stop any running edition
         if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
@@ -433,6 +435,8 @@ export const activity = {
         await setEngineJwt([layer], planetApi)
         processTranslations(layer)
         await this.addCatalogLayer(layer)
+        // Check if not already visible, because addCatalogLayer might have shown it in some cases
+        if (isVisibleBeforeRefresh && !this.isLayerVisible(layer.name)) await this.showLayer(layer.name)
       }
     },
     requestRefreshLayer (layer, event) {
