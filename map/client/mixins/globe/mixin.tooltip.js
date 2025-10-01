@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
+import { Entity } from 'cesium'
 import { Time, Units } from '../../../../core/client/index.js'
 
 export const tooltip = {
@@ -7,15 +8,26 @@ export const tooltip = {
     applyTooltips (entities, options) {
       for (let i = 0; i < entities.values.length; i++) {
         const entity = entities.values[i]
+        // Get any previous tooltip entity
+        const previousTooltipEntity = this.getChildForEntity(entity)
         const tooltip = this.generateStyle('tooltip', entity, options)
         if (tooltip) {
           // Default tooltip position (can change in sticky mode)
           const position = this.getPositionForEntity(entity)
           if (position) {
-            const tooltipEntity = this.viewer.entities.add({ parent: entity, position, label: tooltip })
+            const tooltipEntity = new Entity({ parent: entity, position, label: tooltip })
             // This option is not cesium specific so we have to manage it manually
-            if (tooltip.sticky) tooltipEntity.sticky = true
+            tooltipEntity.sticky = true
+            if (!previousTooltipEntity) {
+              this.viewer.entities.add(tooltipEntity)
+            } else {
+              previousTooltipEntity.position = tooltipEntity.position
+              previousTooltipEntity.label = tooltipEntity.label
+              tooltipEntity.parent = null
+            }
           }
+        } else if (previousTooltipEntity) {
+          this.viewer.entities.remove(previousTooltipEntity)
         }
       }
     },
