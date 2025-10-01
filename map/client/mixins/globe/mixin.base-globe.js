@@ -314,7 +314,7 @@ export const baseGlobe = {
       this.$emit('layer-added', layer)
       this.$engineEvents.emit('layer-added', layer)
     },
-    async addGeoJsonLayer (layerSpec, geoJson, zoom) {
+    async addGeoJsonLayer (layerSpec, geoJson, zoom = true) {
       if (!generateLayerDefinition(layerSpec, geoJson)) return
       // Create an empty layer
       await this.addLayer(layerSpec)
