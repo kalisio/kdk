@@ -366,8 +366,8 @@ async function generateStyleFromFilters (layer, defaultStyle) {
   const templates = generateStyleTemplates(defaultStyle, filters)
   const result = Object.assign(
     {},
-    _.mapKeys(templates, (value, key) => `leaflet.${key}`),
-    _.mapKeys(templates, (value, key) => `cesium.${key}`)
+    _.has(layer, 'leaflet') ? _.mapKeys(templates, (value, key) => `leaflet.${key}`) : {},
+    _.has(layer, 'cesium') ? _.mapKeys(templates, (value, key) => `cesium.${key}`) : {}
   )
   return result
 }
@@ -384,13 +384,18 @@ export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) 
       await api.getService('catalog').patch(layer._id, result)
     } else {
       const legend = await getLegendForLayer(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
-      const patch = Object.assign({}, { 'cesium.style': style, 'leaflet.style': style }, legend)
+      const patch = Object.assign(
+        {},
+        _.has(layer, 'cesium') ? { 'cesium.style': style } : {},
+        _.has(layer, 'leaflet') ? { 'leaflet.style': style } : {},
+        legend
+      )
       if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
       await api.getService('catalog').patch(layer._id, patch)
     }
   } else {
-    _.set(layer, 'cesium.style', style)
-    _.set(layer, 'leaflet.style', style)
+    if (_.has(layer, 'cesium')) _.set(layer, 'cesium.style', style)
+    if (_.has(layer, 'leaflet')) _.set(layer, 'leaflet.style', style)
     Object.assign(layer, await getLegendForLayer(layer))
     if (ignoreFeatureStyle) layer.ignoreFeatureStyle = true
   }
@@ -399,7 +404,7 @@ export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) 
 
 export async function updateLayerWithFiltersStyle (layer) {
   if (!layer._id) return
-  const defaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+  const defaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
   const style = await generateStyleFromFilters(layer, defaultStyle)
   if (!style) return
 
@@ -408,7 +413,7 @@ export async function updateLayerWithFiltersStyle (layer) {
 
 export async function editFilterStyle (layer, filter, engineStyle, style, ignoreFeatureStyle = false) {
   if (!layer._id) return
-  const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+  const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
 
   const filters = await parseFiltersFromLayer(layer)
   const targetFilterCondition = filterQueryToConditions(filter.active)
@@ -499,7 +504,7 @@ export async function getLegendForLayer (layer) {
     if (!hasFilterWithStyle) return { $unset: { legend: '' } }
     return legend
   } else {
-    const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+    const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
     const legend = generateLegendFromStyle(layer, layerStyle, _.get(layer, 'geometryTypes', []))
     legend.label = _.get(layer, 'label', _.get(layer, 'name'))
     return { legend }

@@ -171,13 +171,13 @@ async function apply () {
     }
 
     const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
-    const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+    const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
     const templates = generateStyleTemplates(_.merge({}, DefaultStyle, engineStyle, layerDefaultStyle), styles)
     const result = Object.assign(
       {},
       (!_.isEmpty(validFilters) ? { filters: validFilters } : { $unset: { filters: true } }),
-      _.mapKeys(templates, (value, key) => `leaflet.${key}`),
-      _.mapKeys(templates, (value, key) => `cesium.${key}`)
+      _.has(layer, 'leaflet') ? _.mapKeys(templates, (value, key) => `leaflet.${key}`) : {},
+      _.has(layer, 'cesium') ? _.mapKeys(templates, (value, key) => `cesium.${key}`) : {}
     )
     const legendLayer = Object.assign({}, layer, result)
     if (_.isEmpty(validFilters)) delete legendLayer.filters

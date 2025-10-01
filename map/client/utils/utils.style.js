@@ -346,13 +346,14 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
     const value = (property.includes('color')
       ? kdkCoreUtils.getHtmlColor(_.get(defaultStyle, property))
       : _.get(defaultStyle, property))
+    if (_.isEmpty(value)) return
     // Avoid converting numbers to string on default values
     if (hasStyles) templates[index] += `{ %>${value}<% }`
     else templates[index] = value
   })
   // Set all templates
   properties.forEach((property, index) => {
-    if (!_.has(defaultStyle, property)) return
+    if (!_.has(defaultStyle, property) || _.isEmpty(templates[index])) return
     // We voluntary use dot notation here by default as this object should be used to update style values using a patch operation
     if (dotify) options[`style.${property}`] = (hasStyles ? `<% ${templates[index]} %>` : templates[index])
     else _.set(options, `style.${property}`, (hasStyles ? `<% ${templates[index]} %>` : templates[index]))
