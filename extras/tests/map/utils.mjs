@@ -24,6 +24,7 @@ export async function zoomToLevel (page, storePath, level, wait = 500) {
   const zoom = await core.getFromStore(page, `${storePath}.state.zoom`)
   const diff = level - zoom
   const action = (level > zoom) ? 'in' : 'out'
-  await moveMap(page, action, Math.abs(diff), wait)
+  // NOTE: diff*4 because right now kano's leaflet's zoomDelta is 0.25
+  await moveMap(page, action, Math.abs(diff * 4), wait)
   await core.waitForTimeout(wait)
 }
