@@ -14,6 +14,8 @@ export async function sendNewSubscriptionEmail (hook) {
   if (hook.type !== 'after') {
     throw new Error('The \'sendNewSubscriptionEmail\' hook should only be used as a \'after\' hook.')
   }
+  const mailerService = app.getService('mailer')
+  if (!mailerService) return
   // Check for a new subscription if any
   const currentUser = hook.result
   const previousUser = hook.params.user
@@ -33,7 +35,6 @@ export async function sendNewSubscriptionEmail (hook) {
   debug('Last subscription uses uses a new fingerprint')
   // Send an email to notify the user
   const app = hook.app
-  const mailerService = app.getService('mailer')
   const domainPath = app.get('domain') + '/#/'
   const email = {
     subject: 'Security alert - new browser detected',
