@@ -55,6 +55,13 @@
         {{ scope.opt.label }}
       </span>
     </template>
+    <!-- no options display -->
+    <template v-if="hasNoOption" v-slot:no-option>
+      <p v-if="typeof this.properties.field.noOption === 'string'" class="text-center q-mb-md q-px-md">{{ this.properties.field.noOption }}</p>
+      <Suspense v-else>
+        <component v-if="noOptionComponent" :is="noOptionComponent" v-bind="noOptionsAttributes" />
+      </Suspense> 
+    </template>
     <!-- Helper -->
     <template v-if="hasHelper" v-slot:append>
       <k-action
@@ -76,6 +83,7 @@
 import _ from 'lodash'
 import { makeDiacriticPattern } from '../../../common'
 import { baseField } from '../../mixins'
+import { loadComponent } from '../../utils';
 
 export default {
   mixins: [baseField],
@@ -98,6 +106,12 @@ export default {
         })
       }
       return opts
+    },
+    noOptionComponent () {
+      return loadComponent(this.properties.field.noOption.component)
+    },
+    noOptionsAttributes () {
+      return _.omit(this.properties.field.noOption, 'component')
     }
   },
   data () {
@@ -127,6 +141,9 @@ export default {
     },
     hasChips () {
       return _.get(this.properties, 'field.chips', false)
+    },
+    hasNoOption () {
+      return !_.isEmpty(_.get(this.properties.field, 'noOption', {}))
     },
     getId (option) {
       let id = option.value
