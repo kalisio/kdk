@@ -28,7 +28,7 @@ export async function goToPosition (page, latitude, longitude, accuracy = core.G
   await page.setGeolocation(location)
   await core.clickPaneAction(page, 'top', 'locate-user')
   await page.waitForNetworkIdle()
-  if (previousLocation) {
+  if (previousLocation && previousLocation.geometry) {
     location = {
       latitude: _.get(previousLocation, 'geometry.coordinates[1]'),
       longitude: _.get(previousLocation, 'geometry.coordinates[0]'),
