@@ -30,7 +30,7 @@ export async function sendNewSubscriptionEmail (hook) {
     debug('Last subscription uses an existing fingerprint')
     return
   }
-  debug('Last subscription uses uses a new fingerprint')
+  debug('Last subscription uses a new fingerprint')
   // Send an email to notify the user
   const app = hook.app
   const mailerService = app.getService('mailer')
