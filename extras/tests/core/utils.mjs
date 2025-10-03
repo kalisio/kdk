@@ -10,6 +10,9 @@ const debug = makeDebug('kdk:core:test:utils')
 // Default accuracy
 export const GeolocationAccuracy = 500
 
+// A timout multiplier that can be used to scale tests timeouts
+export const TestTimeoutMultiplier = process.env.TIMEOUT_MULTIPLIER ? parseInt(process.env.TIMEOUT_MULTIPLIER, 10) : 1
+
 /* Helper function to check wether an element exists
  * see: https://github.com/puppeteer/puppeteer/issues/545
  */
