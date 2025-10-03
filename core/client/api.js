@@ -26,7 +26,18 @@ export async function createClient (config) {
   // Initiate the client
   const api = feathers()
   if (configuration.automerge) {
-    api.set('repo', createBrowserRepo(window.location.origin + '/' + (configuration.automerge.syncServerWsPath || '')))
+    const { syncServerWsPath, authenticate } = configuration.automerge
+    const url = window.location.origin + '/' + (syncServerWsPath || '')
+    if (authenticate) {
+      // Need to wait for token in this case before initializing
+      api.on('login', (authentication) => {
+        const { accessToken } = authentication
+        const queryString = new URLSearchParams({ accessToken }).toString()
+        api.set('repo', createBrowserRepo(`${url}?${queryString}`))
+      })
+    } else {
+      api.set('repo', createBrowserRepo(url))
+    }
   }
   // Initialize connection state/listeners
   api.isDisconnected = !navigator.onLine
