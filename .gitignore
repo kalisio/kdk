@@ -23,6 +23,7 @@ node_modules/
 
 # Compiled library
 lib/
+./client/
 
 # Optional npm cache directory
 .npm

@@ -64,7 +64,7 @@ async function createLocationLayer () {
       type: 'geoJson',
       isVisible: true,
       realtime: true,
-      interactive: false,
+      interactive: true,
       style,
       popup: { template: '<%= properties.name %>' }
     },

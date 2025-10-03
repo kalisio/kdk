@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
+import { Events } from '../../../core/client/events.js'
+import { api } from '../../../core/client/api.js'
 import { listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import * as features from '../utils/utils.features.js'
 import * as layers from '../utils/utils.layers.js'
@@ -128,7 +130,7 @@ export const featureService = {
   },
   created () {
     // Extend timeout for large write operations
-    this.$api.getService('features').timeout = 60 * 60 * 1000 // 1h should be sufficient since we also have size limits
+    api.getService('features').timeout = 60 * 60 * 1000 // 1h should be sufficient since we also have size limits
   },
   mounted () {
     // Here we need to listen to service events for all realtime layers
@@ -137,19 +139,19 @@ export const featureService = {
     this.$engineEvents.on('layer-added', this.listenToFeaturesServiceEventsForLayer)
     this.$engineEvents.on('layer-removed', this.unlistenToFeaturesServiceEventsForLayer)
     // Target online/offline service depending on status
-    this.$events.on('navigator-disconnected', this.listenToFeaturesServiceEventsForLayers)
-    this.$events.on('navigator-reconnected', this.listenToFeaturesServiceEventsForLayers)
-    this.$events.on('websocket-disconnected', this.listenToFeaturesServiceEventsForLayers)
-    this.$events.on('websocket-reconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.on('navigator-disconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.on('navigator-reconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.on('websocket-disconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.on('websocket-reconnected', this.listenToFeaturesServiceEventsForLayers)
   },
   beforeUnmount () {
     // Remove all listeners
     this.unlistenToFeaturesServiceEventsForLayers()
     this.$engineEvents.off('layer-added', this.listenToFeaturesServiceEventsForLayer)
     this.$engineEvents.off('layer-removed', this.unlistenToFeaturesServiceEventsForLayer)
-    this.$events.off('navigator-disconnected', this.listenToFeaturesServiceEventsForLayers)
-    this.$events.off('navigator-reconnected', this.listenToFeaturesServiceEventsForLayers)
-    this.$events.off('websocket-disconnected', this.listenToFeaturesServiceEventsForLayers)
-    this.$events.off('websocket-reconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.off('navigator-disconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.off('navigator-reconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.off('websocket-disconnected', this.listenToFeaturesServiceEventsForLayers)
+    Events.off('websocket-reconnected', this.listenToFeaturesServiceEventsForLayers)
   }
 }

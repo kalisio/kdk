@@ -11,8 +11,10 @@ import logger from 'loglevel'
 import centroid from '@turf/centroid'
 import Papa from 'papaparse'
 import { downloadAsBlob } from '../../../../core/client/utils'
+import { Store } from '../../../../core/client/store'
 import { Units } from '../../../../core/client/units'
 import { Time } from '../../../../core/client/time'
+import { Events } from '../../../../core/client/events'
 import { KChart } from '../../../../core/client/components'
 import { useCurrentActivity, useWeather, useMeasure, useHighlight } from '../../composables'
 import 'chartjs-adapter-moment'
@@ -471,26 +473,26 @@ export default {
   },
   async mounted () {
     // Initialize the time range
-    const span = this.$store.get('timeseries.span')
+    const span = Store.get('timeseries.span')
     const start = moment(Time.getCurrentTime()).subtract(span, 'm')
     const end = moment(Time.getCurrentTime()).add(span, 'm')
     Time.patchRange({ start, end })
     // Force a first refresh
     await this.refresh()
     // Then setup listeners
-    this.$events.on('time-current-time-changed', this.refresh)
-    this.$events.on('time-range-changed', this.refresh)
-    this.$events.on('time-format-changed', this.refresh)
-    this.$events.on('timeseries-span-changed', this.refresh)
+    Events.on('time-current-time-changed', this.refresh)
+    Events.on('time-range-changed', this.refresh)
+    Events.on('time-format-changed', this.refresh)
+    Events.on('timeseries-span-changed', this.refresh)
     this.kActivity.$engineEvents.on('forecast-model-changed', this.refresh)
     this.kActivity.$engineEvents.on('selected-level-changed', this.refresh)
   },
   beforeUnmount () {
     // Release listeners
-    this.$events.off('time-current-time-changed', this.refresh)
-    this.$events.off('time-range-changed', this.refresh)
-    this.$events.off('time-format-changed', this.refresh)
-    this.$events.off('timeseries-span-changed', this.refresh)
+    Events.off('time-current-time-changed', this.refresh)
+    Events.off('time-range-changed', this.refresh)
+    Events.off('time-format-changed', this.refresh)
+    Events.off('timeseries-span-changed', this.refresh)
     this.kActivity.$engineEvents.off('forecast-model-changed', this.refresh)
     this.kActivity.$engineEvents.off('selected-level-changed', this.refresh)
   },

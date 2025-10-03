@@ -17,6 +17,10 @@ export async function clickOpener (page, placement) {
   await waitForTimeout(500)
 }
 
+export async function isOpenerVisible (page, placement) {
+  return isElementVisible(page, `#${placement}-opener`)
+}
+
 export async function isPaneVisible (page, placement) {
   return isElementVisible(page, `#${placement}-panel`)
 }
@@ -115,7 +119,7 @@ export async function clickFabAction (page, action) {
 }
 
 export async function countFabActions (page) {
-  return countElements(page, '//a[contains(@class, "k-action-fab-action")]')
+  return countElements(page, '//a[contains(@class, "k-fab-action")]')
 }
 
 export async function logout (page) {

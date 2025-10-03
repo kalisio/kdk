@@ -53,17 +53,18 @@
       <q-select for="filter-style-field" id="filter-style-field"
         v-model="style"
         :options="styleOptions"
+        virtual-scroll-item-size="48"
         :label="$t('KFeaturesFilterManager.STYLE_LABEL')"
       >
         <!-- Selected display -->
         <template v-slot:selected-item="scope">
           <q-item v-bind="scope.itemProps" class="q-ma-none q-pa-none">
             <q-item-section class="col-auto q-mr-md"><q-item-label>{{ scope.opt.label }}</q-item-label></q-item-section>
-            <q-item-section v-if="scope.opt.data">
+            <q-item-section v-if="getStyleData(scope.opt.value)">
               <div class="row items-center q-gutter-sm">
-                <KStylePreview :style="scope.opt.data.point" type="point" />
-                <KStylePreview :style="scope.opt.data.line" type="line" />
-                <KStylePreview :style="scope.opt.data.polygon" type="polygon" />
+                <KStylePreview :style="getStyleData(scope.opt.value, 'point')" type="point" />
+                <KStylePreview :style="getStyleData(scope.opt.value, 'line')" type="line" />
+                <KStylePreview :style="getStyleData(scope.opt.value, 'polygon')" type="polygon" />
               </div>
             </q-item-section>
           </q-item>
@@ -72,11 +73,11 @@
         <template v-slot:option="scope">
           <q-item v-bind="scope.itemProps">
             <q-item-section class="col-auto q-mr-md"><q-item-label>{{ scope.opt.label }}</q-item-label></q-item-section>
-            <q-item-section v-if="scope.opt.data">
+            <q-item-section v-if="getStyleData(scope.opt.value)">
               <div class="row items-center q-gutter-sm">
-                <KStylePreview :style="scope.opt.data.point" type="point" />
-                <KStylePreview :style="scope.opt.data.line" type="line" />
-                <KStylePreview :style="scope.opt.data.polygon" type="polygon" />
+                <KStylePreview :style="getStyleData(scope.opt.value, 'point')" type="point" />
+                <KStylePreview :style="getStyleData(scope.opt.value, 'line')" type="line" />
+                <KStylePreview :style="getStyleData(scope.opt.value, 'polygon')" type="polygon" />
               </div>
             </q-item-section>
           </q-item>
@@ -206,13 +207,13 @@ const hasUniqueCondition = computed(() => {
 
 // Functions
 async function getStyles () {
-  const styles = await api.getService('styles').find()
+  const styles = await api.getService('styles').find({ query: { $limit: 250, $sort: { name: 1 } } })
   return styles.data
 }
 function getStyleOptions () {
   const options = [{ label: i18n.t('KFeaturesFilterManager.NONE'), value: null }, { label: i18n.t('KFeaturesFilterManager.NEW'), value: '+' }]
   _.forEach(styles, style => {
-    options.push({ label: style.name, value: style._id, data: style })
+    options.push({ label: style.name, value: style._id })
   })
   return options
 }
@@ -220,11 +221,16 @@ function getConditions () {
   if (_.isEmpty(props.filter)) return [{ id: uid() }]
   return filterQueryToConditions(_.get(props.filter, 'active'))
 }
-function getStyle () {
+function getInitialSelectedStyle () {
   if (_.isEmpty(props.filter)) return styleOptions.value[0]
   const style = _.find(styles, { _id: _.get(props.filter, 'style') })
   if (!style) return styleOptions.value[0]
-  return { label: style.name, value: style._id, data: style }
+  return { label: style.name, value: style._id }
+}
+function getStyleData (id, featureType) {
+  const style = _.find(styles, { _id: id })
+  if (!style) return null
+  return !featureType ? style : _.get(style, featureType)
 }
 function addCondition () {
   conditions.value.push({ id: uid() })
@@ -289,7 +295,7 @@ async function apply () {
 onMounted(async () => {
   styles = await getStyles()
   styleOptions.value = getStyleOptions()
-  style.value = getStyle()
+  style.value = getInitialSelectedStyle()
 })
 
 // Expose

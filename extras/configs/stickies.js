@@ -11,7 +11,7 @@ module.exports = {
     return Object.assign({
       id: 'position-sticky',
       visible: false,
-      position: 'top',      
+      position: 'top',
       offset: [0, 42],
       component: 'stickies/KPosition'
     }, options)

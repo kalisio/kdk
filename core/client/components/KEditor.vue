@@ -11,7 +11,9 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref } from 'vue'
-import { api, Context, i18n } from '@kalisio/kdk/core.client'
+import { i18n } from '../i18n.js'
+import { api } from '../api.js'
+import { Context } from '../context.js'
 import { Notify } from 'quasar'
 
 // Props

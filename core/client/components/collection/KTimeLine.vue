@@ -26,7 +26,7 @@
         <q-infinite-scroll
           @load="onLoad"
           :initial-index="1"
-          :offset="200"
+          :offset="scrollOffset"
           v-scroll="onScroll"
         >
           <template v-for="item in items" :key="item._id">
@@ -60,7 +60,7 @@
                     <KPanel
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
-                      class="q-gutter-xs"
+                      class="q-gutter-xs k-decoration"
                     />
                   </div>
                   <div v-else class="column items-end">
@@ -73,8 +73,7 @@
                     <KPanel
                       v-if="getDecoration(item)"
                       :content="getDecoration(item)"
-                      direction="horizontal"
-                      class="justify-end q-gutter-xs"
+                      class="justify-end q-gutter-xs k-decoration"
                     />
                   </div>
                 </slot>
@@ -232,6 +231,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  scrollOffset: {
+    type: Number,
+    default: 300
+  },
   header: {
     type: [Array, Object],
     default: () => null
@@ -285,6 +288,10 @@ const comfortSize = computed(() => {
 })
 const comfortPadding = computed(() => {
   return props.dense ? '24px' : '32px'
+})
+const decorationSize = computed(() => {
+  if (layout.value === 'dense') return '80vw'
+  return `${props.sideWidth}vw`
 })
 
 // Watch
@@ -379,10 +386,6 @@ onBeforeUnmount(() => {
   padding-top: 8px;
   padding-bottom: 8px;
 }
-.k-timeline-heading {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
 .q-timeline__title {
   margin-bottom: 4px;
 }
@@ -409,5 +412,11 @@ onBeforeUnmount(() => {
 .q-timeline--dense--right .q-timeline__entry {
   padding-left: v-bind(comfortPadding);
 }
-
+.k-timeline-heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.k-decoration {
+  max-width: v-bind(decorationSize);
+}
 </style>

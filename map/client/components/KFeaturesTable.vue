@@ -24,7 +24,7 @@
 <script>
 import _ from 'lodash'
 import centroid from '@turf/centroid'
-import { mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
+import { api, mixins as kCoreMixins, composables as kCoreComposables } from '../../../core/client'
 import { KTable, KModal, KStamp } from '../../../core/client/components'
 
 export default {
@@ -80,7 +80,7 @@ export default {
     async openModal () {
       // If not injected load it
       if (this.layerName) this.layer = this.kActivity.getLayerByName(this.layerName)
-      else this.layer = await this.$api.getService('catalog').get(this.layerId)
+      else this.layer = await api.getService('catalog').get(this.layerId)
       this.service = _.get(this.layer, '_id') ? 'features' : 'features-edition'
       kCoreMixins.baseModal.methods.openModal.call(this, true)
     }

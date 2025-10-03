@@ -6,6 +6,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster'
 import { lineOffset } from '@turf/turf'
 import { GradientPath, SVGGradientPath } from '../GradientPath.js'
+import { MaskLayer } from '../MaskLayer.js'
 
 // FIXME: Not sure why but using lodash _.values() function in Leaflet Realtime layer object does not work,
 // possibly due to some internal complex objects ?

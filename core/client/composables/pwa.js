@@ -8,6 +8,15 @@ import { LocalStorage } from '../local-storage.js'
 import { Platform } from '../platform.js'
 import { InstallPwaPrompt, installFFDesktopPrompt, installSafariPrompt, installDefaultPrompt } from '../utils/utils.pwa.js'
 
+// We start listening as soon as possible because PWA events might be raised by service worker before the component is initialized
+let pwaUpdated = false
+let pwaRegistration
+function onPwaUpdated (registration) {
+  pwaUpdated = true
+  pwaRegistration = registration
+}
+Events.on('pwa-updated', onPwaUpdated)
+
 export function usePwa (options = { updateTimeout: 5000 }) {
   // Data
   const $q = useQuasar()
@@ -50,6 +59,10 @@ export function usePwa (options = { updateTimeout: 5000 }) {
 
   // Hooks
   onMounted(() => {
+    // Now the component is ready we can remove the previous listener
+    // and check if we have to launch an update or not
+    Events.off('pwa-updated', onPwaUpdated)
+    if (pwaUpdated) update(pwaRegistration)
     Events.on('pwa-updated', update)
   })
   onBeforeUnmount(() => {

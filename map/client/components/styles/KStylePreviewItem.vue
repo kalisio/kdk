@@ -3,7 +3,7 @@
     v-bind="$props"
     :actions="itemActions"
     :dense="dense"
-    class="items-center"
+    class="items-center k-style-preview-item"
   >
     <template v-slot:item-content>
       <div
@@ -81,3 +81,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .k-style-preview-item:hover {
+    background: $grey-3 !important;
+  }
+</style>

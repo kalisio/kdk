@@ -63,7 +63,7 @@ watch(() => [$q.screen.width, $q.screen.height], () => {
 const refresh = _.debounce(() => {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) {
-    logger.error('[KDK] Cannot find target element')
+    logger.warn('[KDK] Cannot find target element')
     return
   }
   const containerHeight = targetElement.offsetHeight
@@ -80,7 +80,7 @@ const refresh = _.debounce(() => {
 function scrollOnce () {
   const targetElement = document.getElementById(props.target)
   if (!targetElement) {
-    logger.error('[KDK] Cannot find target element')
+    logger.warn('[KDK] Cannot find target element')
     return
   }
   const position = qScrollUtils.getVerticalScrollPosition(targetElement)

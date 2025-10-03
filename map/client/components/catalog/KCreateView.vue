@@ -18,6 +18,7 @@
 <script>
 import { KModal, KForm } from '../../../../core/client/components'
 import { baseModal } from '../../../../core/client/mixins'
+import { api } from '../../../../core/client/api.js'
 import { useProject } from '../../composables'
 
 export default {
@@ -97,9 +98,9 @@ export default {
           this.creating = true
           const createdView = await this.kActivity.saveContext(view)
           // Add view to current project ? Check if not coming from another planet first
-          if (this.project && (this.project.getPlanetApi() === this.$api)) {
+          if (this.project && (this.project.getPlanetApi() === api)) {
             this.project.views.push({ _id: createdView._id })
-            await this.$api.getService('projects').patch(this.project._id, {
+            await api.getService('projects').patch(this.project._id, {
               views: this.project.views
             })
           }

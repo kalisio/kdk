@@ -4,14 +4,14 @@ import { Notify, Loading, uid } from 'quasar'
 import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
-import { checkFeatures, createFeatures, removeFeatures } from './utils.features.js'
+import { cleanFeatures, createFeatures, removeFeatures } from './utils.features.js'
 import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
 import { generatePropertiesSchema, getGeoJsonFeatures } from '../utils.map.js'
-import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle } from './utils.style.js'
+import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle, getStyleType } from './utils.style.js'
 
-export const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
+const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
 
 export function isInMemoryLayer (layer) {
   return layer._id === undefined
@@ -366,8 +366,8 @@ async function generateStyleFromFilters (layer, defaultStyle) {
   const templates = generateStyleTemplates(defaultStyle, filters)
   const result = Object.assign(
     {},
-    _.mapKeys(templates, (value, key) => `leaflet.${key}`),
-    _.mapKeys(templates, (value, key) => `cesium.${key}`)
+    _.has(layer, 'leaflet') ? _.mapKeys(templates, (value, key) => `leaflet.${key}`) : {},
+    _.has(layer, 'cesium') ? _.mapKeys(templates, (value, key) => `cesium.${key}`) : {}
   )
   return result
 }
@@ -379,19 +379,24 @@ export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) 
     const result = await generateStyleFromFilters(layer, style)
     if (result) {
       // Update legend
-      Object.assign(result, await getUpdatedLayerLegend(Object.assign({}, layer, result)))
+      Object.assign(result, await getLegendForLayer(Object.assign({}, layer, result)))
       if (ignoreFeatureStyle) result.ignoreFeatureStyle = true
       await api.getService('catalog').patch(layer._id, result)
     } else {
-      const legend = await getUpdatedLayerLegend(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
-      const patch = Object.assign({}, { 'cesium.style': style, 'leaflet.style': style }, legend)
+      const legend = await getLegendForLayer(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
+      const patch = Object.assign(
+        {},
+        _.has(layer, 'cesium') ? { 'cesium.style': style } : {},
+        _.has(layer, 'leaflet') ? { 'leaflet.style': style } : {},
+        legend
+      )
       if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
       await api.getService('catalog').patch(layer._id, patch)
     }
   } else {
-    _.set(layer, 'cesium.style', style)
-    _.set(layer, 'leaflet.style', style)
-    Object.assign(layer, await getUpdatedLayerLegend(layer))
+    if (_.has(layer, 'cesium')) _.set(layer, 'cesium.style', style)
+    if (_.has(layer, 'leaflet')) _.set(layer, 'leaflet.style', style)
+    Object.assign(layer, await getLegendForLayer(layer))
     if (ignoreFeatureStyle) layer.ignoreFeatureStyle = true
   }
   return layer
@@ -399,7 +404,7 @@ export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) 
 
 export async function updateLayerWithFiltersStyle (layer) {
   if (!layer._id) return
-  const defaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+  const defaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
   const style = await generateStyleFromFilters(layer, defaultStyle)
   if (!style) return
 
@@ -408,7 +413,7 @@ export async function updateLayerWithFiltersStyle (layer) {
 
 export async function editFilterStyle (layer, filter, engineStyle, style, ignoreFeatureStyle = false) {
   if (!layer._id) return
-  const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+  const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
 
   const filters = await parseFiltersFromLayer(layer)
   const targetFilterCondition = filterQueryToConditions(filter.active)
@@ -438,7 +443,7 @@ export async function editFilterStyle (layer, filter, engineStyle, style, ignore
   )
   if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
   // Update legend
-  Object.assign(patch, await getUpdatedLayerLegend(Object.assign({}, layer, { filters: layerFilters })))
+  Object.assign(patch, await getLegendForLayer(Object.assign({}, layer, { filters: layerFilters })))
   await api.getService('catalog').patch(layer._id, patch)
 }
 
@@ -457,54 +462,26 @@ async function getLayerFiltersWithStyle (layer) {
   return filtersWithStyle
 }
 
-// Return updated legend or filters for a layer without mutating it
-// Create generic legend if not existing
-export async function getUpdatedLayerLegend (layer) {
-  const updateOrGenerate = (root, style) => {
-    if (!_.has(root, 'legend')) {
-      // Generate generic legend if not existing
-      const styles = [{ shape: 'circle', type: 'point' }, { shape: 'polyline', type: 'line' }, { shape: 'rect', type: 'polygon' }]
-      root.legend = {
-        type: 'symbols',
-        label: _.get(layer, 'label', _.get(layer, 'name')),
-        content: {
-          symbols: _.map(styles, s => {
-            return {
-              symbol: { 'media/KShape': { options: _.merge({ shape: s.shape }, _.omit(_.get(style, s.type), ['size'])) } },
-              label: _.get(root, 'label', _.get(root, 'name'))
-            }
-          })
-        }
-      }
-    } else {
-      // if legend already exists update it
-      if (_.isArray(_.get(root, 'legend'))) {
-        _.forEach(root.legend, legend => {
-          updateExisting(legend, style)
+// Return generic legend or filters for a layer without mutating it
+export async function getLegendForLayer (layer) {
+  const generateLegendFromStyle = (root, style, layerGeometryTypes) => {
+    const layerStyleTypes = _.uniq(_.map(layerGeometryTypes, type => getStyleType(type)))
+    const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
+    const symbols = []
+    _.forIn(shapes, (shape, type) => {
+      const isInLayerGeometryTypes = (layerStyleTypes.length === 0) || (layerStyleTypes.includes(type))
+      if (style[type] && isInLayerGeometryTypes) {
+        symbols.push({
+          symbol: { 'media/KShape': { options: _.merge({ shape }, _.omit(style[type], ['size'])) } },
+          label: _.get(root, 'label', _.get(root, 'name'))
         })
-      } else {
-        updateExisting(root.legend, style)
       }
-    }
-  }
-
-  const updateExisting = (legend, style) => {
-    if (legend.type === 'symbols' && legend.content && legend.content.symbols) {
-      _.forEach(legend.content.symbols, symbol => {
-        if (symbol.symbol && symbol.symbol['media/KShape'] && symbol.symbol['media/KShape'].options) {
-          switch (symbol.symbol['media/KShape'].options.shape) {
-            case 'rect':
-              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'rect' }, _.get(style, 'polygon')), ['size'])
-              break
-            case 'polyline':
-              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'polyline' }, _.get(style, 'line')), ['size'])
-              break
-            default:
-              symbol.symbol['media/KShape'].options = _.omit(_.merge({ shape: 'circle' }, _.get(style, 'point')), ['size'])
-              break
-          }
-        }
-      })
+    })
+    return {
+      type: 'symbols',
+      content: {
+        symbols
+      }
     }
   }
 
@@ -515,18 +492,22 @@ export async function getUpdatedLayerLegend (layer) {
       if (!_.has(filter, 'linkedStyle')) return
       hasFilterWithStyle = true
 
-      updateOrGenerate(filter, filter.linkedStyle)
+      const filterLegend = generateLegendFromStyle(filter, filter.linkedStyle, _.get(layer, 'geometryTypes', []))
+      filter.legend = filterLegend
     })
-    const legend = { filters: _.map(filtersWithStyle, filter => _.omit(filter, 'linkedStyle')) }
-    // Check if we have at least one filter with a style before removing the layer legend
-    // as features in filter without style keep layer style
-    // Currently, if at least one filter has a style we remove the layer legend, even if some features are affected by a filter without style
-    if (hasFilterWithStyle) Object.assign(legend, { $unset: { legend: '' } })
+    const legend = {
+      legend: { type: 'symbols', label: _.get(layer, 'label', _.get(layer, 'name')), content: {} },
+      filters: _.map(filtersWithStyle, filter => _.omit(filter, 'linkedStyle'))
+    }
+    // For now, only filter with style are displayed in the legend
+    // If no filter has style, we want to remove the legend
+    if (!hasFilterWithStyle) return { $unset: { legend: '' } }
     return legend
   } else {
-    const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
-    updateOrGenerate(layer, layerStyle)
-    return { legend: layer.legend }
+    const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
+    const legend = generateLegendFromStyle(layer, layerStyle, _.get(layer, 'geometryTypes', []))
+    legend.label = _.get(layer, 'label', _.get(layer, 'name'))
+    return { legend }
   }
 }
 
@@ -582,18 +563,35 @@ export function generateLayerDefinition (layerSpec, geoJson) {
 
 export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
   // Check for invalid features first
-  const check = checkFeatures(geoJson)
-  if (check.kinks.length > 0) {
+  const { errors } = cleanFeatures(geoJson)
+
+  if (errors.length > 0) {
+    const errorsByKeys = {}
+    _.forEach(errors, error => {
+      if (!_.has(errorsByKeys, error.error)) errorsByKeys[error.error] = { count: 0, features: [] }
+      errorsByKeys[error.error].count++
+      if (error.identifier) errorsByKeys[error.error].features.push(error.identifier)
+    })
+    const errorsList = _.map(errors, error => {
+      const hasIdentifiedFeatures = errorsByKeys[error.error].features.length
+      const errorString = [
+        '<li>',
+        i18n.t(error.error, { total: errorsByKeys[error.error].count }),
+        hasIdentifiedFeatures ? i18n.t('utils.layers.INVALID_FEATURES_LIST_FEATURES') : '',
+        '</li>'
+      ].join('')
+      const sublist = _.map(errorsByKeys[error.error].features, featureIdentifier => {
+        return '<li class="q-ml-lg">' + featureIdentifier + '</li>'
+      }).join('')
+      return errorString + sublist
+    }).join('')
+
     const result = await kCoreUtils.dialog({
-      title: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_TITLE', { total: check.kinks.length }),
-      message: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_MESSAGE', { total: check.kinks.length }),
-      options: {
-        type: 'toggle',
-        model: [],
-        items: [
-          { label: i18n.t('utils.layers.DOWNLOAD_INVALID_FEATURES_LABEL'), value: 'download' }
-        ]
-      },
+      title: i18n.t('utils.layers.INVALID_FEATURES_DIALOG_TITLE', { total: errors.length }),
+      message: [
+        i18n.t('utils.layers.INVALID_FEATURES_DIALOG_MESSAGE', { total: errors.length }),
+        i18n.t('utils.layers.INVALID_FEATURES_LIST_ERRORS', { errors: errorsList })
+      ].join(''),
       html: true,
       ok: {
         label: i18n.t('OK'),
@@ -605,11 +603,6 @@ export async function saveGeoJsonLayer (layer, geoJson, chunkSize = 5000) {
       }
     })
     if (!result.ok) return
-    // Export invalid features if required
-    if (_.get(result, 'data', []).includes('download')) {
-      kCoreUtils.downloadAsBlob(JSON.stringify({ type: 'FeatureCollection', features: check.kinks }),
-        i18n.t('utils.layers.INVALID_FEATURES_FILE'), 'application/json;charset=utf-8;')
-    }
   }
   // Change data source from in-memory to features service
   _.set(layer, 'service', 'features')

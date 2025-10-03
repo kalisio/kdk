@@ -1,11 +1,14 @@
 import _ from 'lodash'
+import config from 'config'
 import { Layout } from '../layout.js'
+import { Store } from '../store.js'
+import { Events } from '../events.js'
 
 export function baseActivity (name) {
   return {
     methods: {
       getAppName () {
-        return this.$config('appName')
+        return config.appName
       },
       configurePadding () {
         if (_.has(this.activityOptions, 'padding')) Layout.setPadding(_.get(this.activityOptions, 'padding'))
@@ -246,23 +249,23 @@ export function baseActivity (name) {
           }
           name = tourName
         }
-        this.$store.patch('tours.current', { name })
+        Store.patch('tours.current', { name })
       }
     },
     beforeCreate () {
       // Identify this activity using its name or the route name
       this.activityName = name || _.camelCase(this.$options.name)
       // Setup the options
-      this.activityOptions = this.$config(this.activityName)
+      this.activityOptions = config[this.activityName]
     },
     mounted () {
       // Configure the activity
       this.configureActivity()
       // Whenever the user abilities are updated, update activity as well
-      this.$events.on('user-abilities-changed', this.configureActivity)
+      Events.on('user-abilities-changed', this.configureActivity)
     },
     beforeUnmount () {
-      this.$events.off('user-abilities-changed', this.configureActivity)
+      Events.off('user-abilities-changed', this.configureActivity)
       // Clear the activity
       this.clearActivity()
     }

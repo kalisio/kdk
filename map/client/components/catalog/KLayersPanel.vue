@@ -25,7 +25,7 @@
       </slot>
       <!-- Orphan layers -->
       <KLayersList
-        :layers="orphanLayersState"
+        :layers="filteredOrphanLayers"
         :layersDraggable="layersDraggable"
         :options="orphanLayersOptions"
         @orphanLayerUpdated="onOrphanLayerUpdated"
@@ -111,6 +111,11 @@ const props = defineProps({
     type: [Object, Function],
     default: () => {}
   },
+  orphanLayersFilter: {
+    type: [Object, Function],
+    // By default orphan layers are user/activity layers
+    default: () => ({ scope: { $in: ['user', 'activity'] } })
+  },
   layerCategoriesFilter: {
     type: [Object, Function],
     default: () => {}
@@ -168,7 +173,7 @@ const { forecastModels, updateCategoriesOrder, updateLayersOrder, updateOrphanLa
 const orphanLayersOptions = { hideIfEmpty: true }
 const filteredCategories = ref([])
 const layersByCategory = ref({})
-const orphanLayersState = ref([])
+const filteredOrphanLayers = ref([])
 const draggedIndex = ref(null)
 
 // Watch
@@ -182,16 +187,14 @@ function getCategoryIcon (category) {
   return _.get(category, 'icon.name', _.get(category, 'icon'), 'las la-bars')
 }
 function isCategoryVisible (category) {
-// Show a built-in category only if it has some layers.
-// Indeed, depending on the app configuration, none might be available for this category.
-// User-defined categories are visible by default, even if empty,
-// except if used inside a project as in this case having no layers means we don't want to use this category
+  const options = category.options || category
+  // Show a built-in category only if it has some layers.
+  // Indeed, depending on the app configuration, none might be available for this category.
+  // User-defined categories are visible by default, even if empty,
+  // except if used inside a project as in this case having no layers means we don't want to use this category.
+  // App might also force to hide it anyway with the hideIfEmpty option.
   const isEmpty = (layersByCategory.value[category.name].length === 0)
-  if (isEmpty) {
-    if (hasProject()) return false
-    else return !_.get(category, 'hideIfEmpty', !category._id)
-  }
-  return true
+  return (isEmpty ? !_.get(options, 'hideIfEmpty', !category._id || hasProject()) : true)
 }
 function refresh () {
   const { layers, layerCategories, orphanLayers } = CurrentActivity.value
@@ -207,14 +210,34 @@ function refresh () {
   })
   // compute layers by categories
   layersByCategory.value = getLayersByCategory(filteredLayers, filteredCategories.value)
-  // check if is not catalog layers mode
-  if (props.layerCategoriesFilter?._id?.$exists !== false) orphanLayersState.value = orphanLayers
-}//, 100)
+  // filter orphan layers
+  const orphanLayersFilter = (typeof props.orphanLayersFilter === 'object' ? sift(props.orphanLayersFilter) : props.orphanLayersFilter)
+  filteredOrphanLayers.value = _.filter(_.filter(orphanLayers, layersFilter), orphanLayersFilter)
+}
 
 async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
   const { orphanLayers } = CurrentActivity.value
-  orphanLayers.splice(targetIndex, 0, orphanLayers.splice(draggedIndex, 1)[0])
-  await updateOrphanLayersOrder(orphanLayers ? orphanLayers.map(l => l?._id) : [])
+  const layer = filteredOrphanLayers.value[draggedIndex]
+  const targetLayer = (targetIndex >= 0 ? filteredOrphanLayers.value[targetIndex] : null)
+  const removedLayers = filteredOrphanLayers.value.splice(draggedIndex, 1)
+  // As orphan layers are filtered we might have a mismatch between activity list index and panel index
+  // so that we find the layer by name in the activity list to perform the same reordering
+  let orphanLayer
+  draggedIndex = _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === layer.name)
+  if (draggedIndex >= 0) {
+    orphanLayer = orphanLayers[draggedIndex]
+    orphanLayers.splice(draggedIndex, 1)
+  }
+  // If not -1 it means the orphan layer has been moved within the orphan layers list.
+  // Otherwise it has been moved to another category so that we only need to remove it from the list
+  if ((removedLayers.length > 0) && targetLayer) {
+    filteredOrphanLayers.value.splice(targetIndex, 0, removedLayers[0])
+    // As orphan layers are filtered we might have a mismatch between activity list index and panel index
+    // so that we find the layer by name in the activity list to perform the same reordering
+    targetIndex = _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === targetLayer.name)
+    if (orphanLayer && (targetIndex >= 0)) orphanLayers.splice(targetIndex, 0, orphanLayer)
+  }
+  await updateOrphanLayersOrder(filteredOrphanLayers.value.map(layer => layer?._id || layer?.name), layer)
 }
 
 function onDragStart (event, index, category) {
@@ -227,17 +250,22 @@ function onDragStart (event, index, category) {
 async function onDrop (event, targetIndex) {
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
   const layerName = event.dataTransfer.getData('layerName')
+  const layers = _.flatten(_.values(layersByCategory.value)).concat(filteredOrphanLayers.value)
+  const layer = layers.find(layer => layer.name === layerName)
   const draggedLayerIndex = event.dataTransfer.getData('draggedIndex')
   if (layerName && layerName.length > 0) { // drag source is layer: change layer category
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
-    if (sourceCategoryId === "undefined") { // source is orphan layer
+    // WARNING: Need to use a string here as dataTransfer serialize to strings
+    if (sourceCategoryId === 'undefined') { // source is orphan layer
+      onOrphanLayerUpdated(-1, draggedLayerIndex)
       currentCategoryLayers.unshift(layerName)
-      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
+      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers }, layer)
     } else {
       const sourceCategoryLayers = filteredCategories.value.find(category => category?._id === sourceCategoryId)?.layers
-      currentCategoryLayers.unshift(sourceCategoryLayers.splice(draggedLayerIndex, 1)[0])
-      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers })
-      await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers })
+      const removedLayers = sourceCategoryLayers.splice(draggedLayerIndex, 1)
+      if (removedLayers.length > 0) currentCategoryLayers.unshift(removedLayers[0])
+      await updateLayersOrder(filteredCategories.value[targetIndex]._id, { layers: currentCategoryLayers }, layer)
+      await updateLayersOrder(sourceCategoryId, { layers: sourceCategoryLayers }, layer)
     }
   } else { // drag source is category: reorder category
     await updateCategoriesOrder(sourceCategoryId, filteredCategories.value[targetIndex]._id)

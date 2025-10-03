@@ -44,7 +44,9 @@ export default {
     find: [coreHooks.marshallComparisonQuery, coreHooks.marshallSortQuery, marshallSpatialQuery,
       coreHooks.distinct, aggregateFeaturesQuery, coreHooks.aggregationQuery, fuzzySearch, coreHooks.diacriticSearch()],
     get: [],
-    create: [coreHooks.processTimes(['time']), fullResult, emitEvents],
+    // Usually conversion of _id to ObjectID is performed by an app-evel hook, which is not yet setup when creating the service.
+    // As we can create features when initializing layer service/data we add it here as well to ensure it will work fine anyway.
+    create: [coreHooks.processTimes(['time']), coreHooks.convertObjectIDs(['_id']), fullResult, emitEvents],
     update: [upsert, coreHooks.processTimes(['time']), fullResult, emitEvents],
     patch: [upsert, coreHooks.processTimes(['time']), fullResult, emitEvents],
     remove: [coreHooks.marshallComparisonQuery, marshallSpatialQuery, fullResult, emitEvents],

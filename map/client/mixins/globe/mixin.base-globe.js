@@ -1,15 +1,16 @@
 import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
-import Emitter from 'tiny-emitter'
-import { getCssVar } from 'quasar'
+import { EventBus, getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Transforms, Quaternion, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
+         exportKml, VerticalOrigin, Transforms, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
          DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
+// We need to import cesium as an object to dynamically get constructors
+import * as Cesium from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
-import { Cesium, convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
+import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
 import { generateLayerDefinition } from '../../utils/utils.layers.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
 
@@ -85,20 +86,9 @@ export const baseGlobe = {
         })
       }
 
-      // Cesium pre-render callback used to update moving materials (animated walls/corridors)
-      this.viewer.scene.preRender.addEventListener(() => {
-        if (!this.cesiumMaterials) return
-        _.forEach(this.cesiumMaterials, m => {
-          if (!m.material.uniforms.offset) return
-          if (!m.startTime) m.startTime = Date.now()
-
-          const elapsed = (Date.now() - m.startTime) * 0.001
-          if (m.animationSpeed) {
-            const loopDuration = (m.length / m.material.uniforms.repeat.x) / m.animationSpeed
-            m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
-          }
-        })
-      })
+      // Scene events
+      this.viewer.scene.preUpdate.addEventListener(this.onCesiumPreUpdate)
+      this.viewer.scene.preRender.addEventListener(this.onCesiumPreRender)
 
       // Debug mode ?
       // this.viewerOptions.debug = true
@@ -324,7 +314,7 @@ export const baseGlobe = {
       this.$emit('layer-added', layer)
       this.$engineEvents.emit('layer-added', layer)
     },
-    async addGeoJsonLayer (layerSpec, geoJson, zoom) {
+    async addGeoJsonLayer (layerSpec, geoJson, zoom = true) {
       if (!generateLayerDefinition(layerSpec, geoJson)) return
       // Create an empty layer
       await this.addLayer(layerSpec)
@@ -785,6 +775,46 @@ export const baseGlobe = {
         altitude: pickedPositionCartographic.height
       }
     },
+    onCesiumPreUpdate () {
+      // Update animated entities
+      const endedAnimationsIndexes = []
+      const interpolatedFeaturesByLayer = {}
+      _.forOwn(this.cesiumAnimations, async (animation, key) => {
+        const now = Date.now()
+        if (animation.fps && animation.lastUpdate && (now - animation.lastUpdate < (1000 / animation.fps))) return
+        const delta = now - animation.lastUpdate
+        animation.remainingTime -= delta
+        if (animation.remainingTime <= 0) {
+          endedAnimationsIndexes.push(key)
+          return
+        }
+
+        interpolatedFeaturesByLayer[key] = this.getInterpolatedFeatures(1 - (animation.remainingTime / animation.duration), animation.features, animation.animate)
+
+        animation.lastUpdate = now
+      })
+      // Remove ended animations
+      _.forEach(endedAnimationsIndexes, key => delete this.cesiumAnimations[key])
+
+      // Update layers with interpolated features
+      _.forOwn(interpolatedFeaturesByLayer, async (features, layerName) => {
+        await this.updateLayer(layerName, { type: 'FeatureCollection', features })
+      })
+    },
+    onCesiumPreRender () {
+      // Update moving materials (animated walls/corridors)
+      if (!this.cesiumMaterials) return
+      _.forEach(this.cesiumMaterials, m => {
+        if (!m.material.uniforms.offset) return
+        if (!m.startTime) m.startTime = Date.now()
+
+        const elapsed = (Date.now() - m.startTime) * 0.001
+        if (m.animationSpeed) {
+          const loopDuration = (m.length / m.material.uniforms.repeat.x) / m.animationSpeed
+          m.material.uniforms.offset.x = (elapsed % loopDuration) / loopDuration
+        }
+      })
+    },
     onCameraMoveStart () {
       let target = this.getCameraEllipsoidTarget()
       if (target) {
@@ -820,16 +850,26 @@ export const baseGlobe = {
             const fs = `
     uniform sampler2D colorTexture;
     in vec2 v_textureCoordinates;
+
+    uniform float desaturation;
+    uniform float brightness;
+
     void main() {
         vec4 color = texture(colorTexture, v_textureCoordinates);
         if (czm_selected()) {
             out_FragColor = color;
         } else {
-            out_FragColor = vec4(czm_saturation(color.rgb, 0.0), color.a);
+            out_FragColor = vec4(czm_saturation(color.rgb, desaturation) * brightness, color.a);
         }
     }
     `
-            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({ fragmentShader: fs }))
+            stage = this.viewer.scene.postProcessStages.add(new Cesium.PostProcessStage({
+              fragmentShader: fs,
+              uniforms: {
+                desaturation: _.get(options, 'desaturation', 1.0),
+                brightness: _.get(options, 'brightness', 1.0)
+              }
+            }))
             stage.selected = [] // Initialize empty selected set for postprocess.
             this.cesiumPostProcessStages[effect] = stage
           }
@@ -847,10 +887,11 @@ export const baseGlobe = {
     this.cesiumFactory = []
     this.cesiumMaterials = []
     this.cesiumPostProcessStages = {}
+    this.cesiumAnimations = {}
     // TODO: no specific marker, just keep status
     this.userLocation = false
     // Internal event bus
-    this.$engineEvents = new Emitter()
+    this.$engineEvents = new EventBus()
   },
   beforeUnmount () {
     this.clearLayers()

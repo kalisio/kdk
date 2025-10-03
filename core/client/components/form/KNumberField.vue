@@ -14,7 +14,7 @@
     :error-message="errorLabel"
     bottom-slot
     @blur="onChanged"
-    @update:model-value="onChanged"
+    @update:model-value="onUpdated"
 
   >
     <!-- Helper -->
@@ -35,9 +35,16 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { baseField } from '../../mixins'
 
 export default {
-  mixins: [baseField]
+  mixins: [baseField],
+  methods: {
+    onUpdated (value) {
+      this.model = _.isNumber(value) ? value : null
+      this.onChanged()
+    }
+  }
 }
 </script>

@@ -1,8 +1,9 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import { colors } from 'quasar'
+import { colors, Notify } from 'quasar'
 import { Reader } from '../reader.js'
 import { i18n } from '../i18n.js'
+import { formatSize } from '../utils/utils.files.js'
 
 export const vDropFile = {
 
@@ -11,12 +12,19 @@ export const vDropFile = {
       dropCallback: _.get(binding.value, 'dropCallback'),
       acceptedTypes:  _.get(binding.value, 'mimeTypes'),
       maxFiles:  _.get(binding.value, 'maxFiles'),
+      maxFileSize:  _.get(binding.value, 'maxFileSize'),
+      maxTotalSize:  _.get(binding.value, 'maxTotalSize'),
       fontSize: _.get(binding.value, 'fontSize', '2rem'),
       enabled: _.get(binding.value, 'enabled', true)
     }
-    // Make element relative
+    // check whether the dropCallback has been set properly
+    if (!el.__state.dropCallback || typeof el.__state.dropCallback !== 'function') {
+      logger.error(`[KDK] Missing 'dropCallback' argument in 'v-drop-file' directive`)
+      return
+    }
+    // make element relative
     el.style.position = 'relative'
-    // Create overlay element
+    // create overlay element
     const overlay = document.createElement('div');
     overlay.className = 'drag-overlay'
     overlay.innerHTML = `<div class="drag-overlay-box" />`
@@ -61,7 +69,7 @@ export const vDropFile = {
       let color, message
       if (el.__state.maxFiles && _.size(items) > el.__state.maxFiles) {
         color = colors.getPaletteColor('negative')
-        message = i18n.tc('directives.MAX_FILES_REACHED', el.__state.maxFiles)
+        message = i18n.tc('errors.MAX_FILES_REACHED', el.__state.maxFiles)
       } else {
         for (const item of items) {
           if (item.kind === 'file' && _.includes(el.__state.acceptedTypes, item.type)) acceptedItems.push(item)
@@ -107,14 +115,28 @@ export const vDropFile = {
       hideOverlay()
       if (!canDrop) return
       const files = Array.from(e.dataTransfer.files)
-      // call the provided handler with the accepted files
-      if (el.__state.dropCallback && typeof el.__state.dropCallback === 'function') {
-        const acceptedFiles = Reader.filter(files)
-        for (const file of acceptedFiles) {
-          const content = await Reader.read(file)
-          await el.__state.dropCallback(content)
+      const acceptedFiles = Reader.filter(files)    
+      if (el.__state.maxTotalSize && _.size(acceptedFiles) > 1) {
+        let totalSize = _.reduce(acceptedFiles, (size, file) => {
+          size += file.files[0].size
+          return size
+        }, 0)
+        if (totalSize > el.__state.maxTotalSize) {
+          Notify.create({ type: 'negative', message: i18n.t('errors.MAX_TOTAL_SIZE_FILES_REACHED', { maxSize: formatSize(el.__state.maxTotalSize) }) })
+          return
         }
-      } else logger.warn(`[KDK] Missing 'dropCallback' argument in 'v-drop-file' directive`)
+      }
+      for (const file of acceptedFiles) {
+        if (el.__state.maxFileSize) {
+          let size = file.files[0].size
+          if (size > el.__state.maxFileSize) {
+            Notify.create({ type: 'negative', message: i18n.t('errors.MAX_FILE_SIZE_REACHED', { file: file.name, maxSize: formatSize(el.__state.maxFileSize) }) })
+            continue
+          }
+        }
+        const content = await Reader.read(file)
+        await el.__state.dropCallback(content)
+      }
     }
       
     el.__handlers = { onDragEnter, onDragOver, onDragLeave, onDrop }
@@ -131,6 +153,8 @@ export const vDropFile = {
         dropCallback: _.get(binding.value, 'dropCallback'),
         acceptedTypes:  _.get(binding.value, 'mimeTypes'),
         maxFiles:  _.get(binding.value, 'maxFiles'),
+        maxFileSize:  _.get(binding.value, 'maxFileSize'),
+        maxTotalSize:  _.get(binding.value, 'maxTotalSize'),        
         fontSize: _.get(binding.value, 'fontSize', '2rem'),
         enabled: _.get(binding.value, 'enabled', true)
       }

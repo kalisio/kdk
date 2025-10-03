@@ -17,13 +17,13 @@ export const JSONReader = {
           content = JSON.parse(content)
         } catch (error) {
           logger.debug(error)
-          reject(new Error(i18n.t('errors.INVALID_JSON_FILE', { file }), { errors: error }))
+          reject(new Error(i18n.t('errors.INVALID_JSON_FILE', { file: file.name }), { errors: error }))
         }
         resolve(content)
       }
       reader.onerror = (error) => {
         logger.debug(error)
-        reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file }), { errors: error }))
+        reject(new Error(i18n.t('errors.CANNOT_READ_FILE', { file: file.name }), { errors: error }))
       }
       reader.readAsText(file)
     })

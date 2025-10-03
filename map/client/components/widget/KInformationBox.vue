@@ -22,7 +22,7 @@
 <script>
 import _ from 'lodash'
 import logger from 'loglevel'
-import { copyToClipboard, exportFile } from 'quasar'
+import { copyToClipboard, exportFile, Notify } from 'quasar'
 import { KView, KPanel, KStamp } from '../../../../core/client/components'
 import { generatePropertiesSchema } from '../../utils'
 import { useCurrentActivity, useHighlight } from '../../composables'
@@ -108,9 +108,9 @@ export default {
       if (this.feature) {
         try {
           await copyToClipboard(JSON.stringify(this.feature.properties))
-          this.$notify({ type: 'positive', message: this.$t('KInformationBox.PROPERTIES_COPIED') })
+          Notify.create({ type: 'positive', message: this.$t('KInformationBox.PROPERTIES_COPIED') })
         } catch (error) {
-          this.$notify({ type: 'negative', message: this.$t('KInformationBox.CANNOT_COPY_PROPERTIES') })
+          Notify.create({ type: 'negative', message: this.$t('KInformationBox.CANNOT_COPY_PROPERTIES') })
           logger.error(error)
         }
       }
@@ -125,8 +125,8 @@ export default {
                       _.get(this.layer, 'properties.name')
         const file = name + '.geojson'
         const status = exportFile(file, JSON.stringify(this.feature))
-        if (status) this.$notify({ type: 'negative', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
-        else this.$notify({ type: 'negative', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
+        if (status) Notify.create({ type: 'negative', message: this.$t('KInformationBox.FEATURE_EXPORTED', { file }) })
+        else Notify.create({ type: 'negative', message: this.$t('KInformationBox.CANNOT_EXPORT_FEATURE') })
       }
     }
   },

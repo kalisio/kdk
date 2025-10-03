@@ -10,7 +10,7 @@
 <script setup>
 import _ from 'lodash'
 import { computed } from 'vue'
-import { useCurrentActivity, useScreen } from '../../composables'
+import { useScreen, useCollectionFilter } from '../../composables'
 import KTagFilter from '../tags/KTagFilter.vue'
 
 // Props
@@ -23,15 +23,14 @@ const props = defineProps({
 
 // Data
 const { Screen } = useScreen()
-const { CurrentActivityContext } = useCurrentActivity()
-const tagsFilter = CurrentActivityContext.state.tagsFilter
+const { tagsFilter, setTagsFilter } = useCollectionFilter()
 
 // Computed
 const selection = computed(() => {
-  return _.get(tagsFilter, 'selection', [])
+  return _.get(tagsFilter.value, 'selection', [])
 })
 const options = computed(() => {
-  return _.difference(_.get(tagsFilter, 'options'), selection.value)
+  return _.difference(_.get(tagsFilter.value, 'options'), selection.value)
 })
 const computedAlignment = computed(() => {
   if (_.isString(props.alignment)) return props.alignment
@@ -40,6 +39,6 @@ const computedAlignment = computed(() => {
 
 // Function
 function onSelectionChanged (selection) {
-  _.set(tagsFilter, 'selection', selection)
+  setTagsFilter(selection, 'selection')
 }
 </script>

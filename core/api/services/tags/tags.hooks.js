@@ -1,7 +1,7 @@
 import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { diacriticSearch } from '../../hooks/hooks.query.js'
 import { hooks as kdkCoreHooks } from '../../index.js'
-import { cacheTagBeforeUpdate, reflectTagUpdate } from '../../hooks/hooks.tags.js'
+import { reflectTagUpdate } from '../../hooks/hooks.tags.js'
 
 function addFieldToCheckUnique (property) {
   return (query, hook) => {
@@ -20,9 +20,9 @@ export default {
     ],
     get: [],
     create: [kdkCoreHooks.checkUnique({ field: 'name', query: addFieldToCheckUnique('service') })],
-    update: [kdkCoreHooks.checkUnique({ field: 'name', query: addFieldToCheckUnique('service') }), cacheTagBeforeUpdate],
-    patch: [kdkCoreHooks.checkUnique({ field: 'name', query: addFieldToCheckUnique('service') }), cacheTagBeforeUpdate],
-    remove: [cacheTagBeforeUpdate]
+    update: [kdkCoreHooks.checkUnique({ field: 'name', query: addFieldToCheckUnique('service') }), kdkCoreHooks.populatePreviousObject],
+    patch: [kdkCoreHooks.checkUnique({ field: 'name', query: addFieldToCheckUnique('service') }), kdkCoreHooks.populatePreviousObject],
+    remove: [kdkCoreHooks.populatePreviousObject]
   },
 
   after: {

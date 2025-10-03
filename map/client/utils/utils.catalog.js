@@ -61,7 +61,7 @@ export async function setEngineJwt (layers, planetApi) {
 }
 
 export function getLayersByCategory (layers, categories) {
-  const categorizedLayers = _.clone(layers)
+  const categorizedLayers = _.clone(Array.isArray(layers) ? layers : _.values(layers))
   const layersByCategory = {}
   _.forEach(categories, category => {
     // Built-in categories use filtering while user-defined ones use layers list
@@ -86,13 +86,13 @@ export function getLayersByCategory (layers, categories) {
 }
 
 export function getOrphanLayers (layers, layersByCategory) {
-  const categories = _.flatten(_.values(layersByCategory))
-  const orphanLayers = _.difference(layers, categories)
+  const layersFromCategories = _.flatten(_.values(layersByCategory))
+  const orphanLayers = _.difference(Array.isArray(layers) ? layers : _.values(layers), layersFromCategories)
   // Order by
   return _.orderBy(orphanLayers, [(layer) => _.get(layer, '_id')], ['asc'])
 }
 
-function processTranslations (item) {
+export function processTranslations (item) {
   if (item.i18n) i18n.registerTranslation(item.i18n)
   if (!_.has(item, 'label')) item.label = i18n.tie(item.name)
   if (_.has(item, 'description')) item.description = i18n.tie(item.description)

@@ -56,7 +56,7 @@ const fileFormSchema = computed(() => {
           component: 'form/KFileField',
           label: 'KImportLayer.FILE_FIELD_LABEL',
           mimeTypes: '.json,.geojson,.gpx,.kml',
-          maxSize: 1024 * 1024 * 1024
+          maxFileSize: 1024 * 1024 * 1024
         }
       }
     },
@@ -157,7 +157,6 @@ async function onImport () {
     schema: { name: file.name, content: file.schema },
     featureId: propertiesResult.values.featureId
   }, file.content)
-  if (typeof CurrentActivity.value.refreshOrphanLayers === 'function') await CurrentActivity.value.refreshOrphanLayers()
   importing.value = false
   emit('done')
 }

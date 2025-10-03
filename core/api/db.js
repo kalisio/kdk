@@ -12,8 +12,16 @@ Object.getPrototypeOf(moment()).toBSON = function () {
   return this.toDate()
 }
 
+// Check if a given object is an instance of MongoDB ObjectID
 export function isObjectID (id) {
   return id && (typeof id.toHexString === 'function') && (typeof id.getTimestamp === 'function')
+}
+// Check if a given string is a valid MongoDB ObjectID
+export function isValidObjectID (id) {
+  // We don't use ObjectID.isValid as it returns true for any string that contains 12 characters: https://jira.mongodb.org/browse/NODE-4912.
+  // Regular expression that checks for hex value
+  const checkForHexRegExp = /^[0-9a-fA-F]{24}$/
+  return (id && (id.length === 24) && checkForHexRegExp.test(id))
 }
 
 export function idToString (id) {

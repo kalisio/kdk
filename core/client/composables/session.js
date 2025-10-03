@@ -5,13 +5,14 @@ import { useQuasar, Loading } from 'quasar'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
 import { Events } from '../events.js'
-import { Store } from '../store.js'
 import { beforeGuard } from '../guards.js'
 import { LocalStorage } from '../local-storage.js'
 import { restoreSession } from '../utils/utils.session.js'
+import { useUser } from './user.js'
 
 export function useSession (options = {}) {
   // Data
+  const { User } = useUser()
   const disconnectKey = 'disconnect-dialog'
   const reconnectKey = 'reconnect-dialog'
   const router = useRouter()
@@ -22,8 +23,6 @@ export function useSession (options = {}) {
   let pendingReconnection = null
   let pendingReload = null
   let ignoreReconnectionError = false
-
-  const User = Store.getRef('user')
 
   // Functions
   function getRedirectKey () {
@@ -64,7 +63,7 @@ export function useSession (options = {}) {
     // The first time initialize guards after the app has been correctly setup,
     // ie either with or without a restored user and a redirection
     if (!isInitialized.value) {
-      router.beforeEach(beforeGuard)
+      if (router) router.beforeEach(beforeGuard)
       isInitialized.value = true
     }
   }
@@ -174,12 +173,13 @@ export function useSession (options = {}) {
     }
     // Then redirection
     Events.on('user-abilities-changed', redirect)
-    api.on('logout', () => {
+    api.on('logout', async () => {
       // Used to automatically redirect when the user has requested a logout from another client
       // We don't use redirect() here as in this case the user is already logout and it would redirect to login instead
-      router.push({ name: 'logout' })
+      if (typeof options.logout === 'function') result = await options.logout()
+      else if (typeof options.logout === 'string') router.push({ name: options.logout })
+      else router.push({ name: 'logout' })
     })
-
     try {
       await restoreSession()
     } catch (error) {
@@ -198,7 +198,6 @@ export function useSession (options = {}) {
 
   // Expose
   return {
-    User,
     redirect,
     isInitialized,
     onReconnectError,

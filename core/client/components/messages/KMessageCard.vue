@@ -96,18 +96,17 @@
 </template>
 
 <script>
-import {
-  Document,
-  Storage,
-  composables as kdkCoreComposables,
-  mixins as kdkCoreMixins
-} from '@kalisio/kdk/core.client'
 import _ from 'lodash'
+import { Document } from '../../document.js'
+import { Storage } from '../../storage.js'
+import { api } from '../../api.js'
+import { useScreen } from '../../composables/index.js'
+import { baseItem } from '../../mixins/index.js'
 import KTextArea from '../KTextArea.vue'
 import KCard from '../collection/KCard.vue'
 
 export default {
-  mixins: [kdkCoreMixins.baseItem],
+  mixins: [baseItem],
   props: {
     header: {
       type: [Array, Object],
@@ -188,18 +187,18 @@ export default {
     },
     canEditMessage () {
       const result = this.canEditMessageFn(this.item)
-      if (result === null) return this.$can('update', 'messages')
+      if (result === null) return api.can('update', 'messages')
       return result
     },
     canRemoveMessage () {
       const result = this.canRemoveMessageFn(this.item)
-      if (result === null) return this.$can('remove', 'messages')
+      if (result === null) return api.can('remove', 'messages')
       return result
     }
   },
   setup () {
     // data
-    const { dense } = kdkCoreComposables.useScreen()
+    const { dense } = useScreen()
     // expose
     return {
       dense

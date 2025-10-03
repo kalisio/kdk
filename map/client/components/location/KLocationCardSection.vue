@@ -28,13 +28,12 @@
         self="top left"
       />
     </div>
-    <div v-else style="height: 142px">
-      <div class="absolute-center">
-        <KStamp
-          icon="las la-map-marker"
-          text="KLocationCardSection.NO_LOCATION"
-        />
-      </div>
+    <div v-else style="height: 142px; position: relative;">
+      <KStamp
+        icon="las la-map-marker"
+        text="KLocationCardSection.NO_LOCATION"
+        class="absolute-center"
+      />
     </div>
   </KCardSection>
 </template>

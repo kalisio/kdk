@@ -71,7 +71,7 @@ import { uid } from 'quasar'
 import { ref, computed, onMounted } from 'vue'
 import { api } from '../../../core/client'
 import { useCurrentActivity } from '../composables'
-import { getDefaultStyleFromTemplates, generateStyleTemplates, filterQueryToConditions, DefaultStyle, getUpdatedLayerLegend } from '../utils'
+import { getDefaultStyleFromTemplates, generateStyleTemplates, filterQueryToConditions, DefaultStyle, getLegendForLayer } from '../utils'
 import KFeaturesFilterEditor from './KFeaturesFilterEditor.vue'
 
 // Props
@@ -171,17 +171,17 @@ async function apply () {
     }
 
     const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
-    const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', {}))
+    const layerDefaultStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
     const templates = generateStyleTemplates(_.merge({}, DefaultStyle, engineStyle, layerDefaultStyle), styles)
     const result = Object.assign(
       {},
       (!_.isEmpty(validFilters) ? { filters: validFilters } : { $unset: { filters: true } }),
-      _.mapKeys(templates, (value, key) => `leaflet.${key}`),
-      _.mapKeys(templates, (value, key) => `cesium.${key}`)
+      _.has(layer, 'leaflet') ? _.mapKeys(templates, (value, key) => `leaflet.${key}`) : {},
+      _.has(layer, 'cesium') ? _.mapKeys(templates, (value, key) => `cesium.${key}`) : {}
     )
     const legendLayer = Object.assign({}, layer, result)
     if (_.isEmpty(validFilters)) delete legendLayer.filters
-    const legend = await getUpdatedLayerLegend(legendLayer)
+    const legend = await getLegendForLayer(legendLayer)
     api.getService('catalog').patch(layer._id, Object.assign(result, legend))
     return true
   }

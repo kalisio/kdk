@@ -6,13 +6,16 @@
 
 <script>
 import _ from 'lodash'
+import config from 'config'
 import logger from 'loglevel'
-import { getCssVar, copyToClipboard, exportFile } from 'quasar'
+import { getCssVar, copyToClipboard, exportFile, Notify } from 'quasar'
 import along from '@turf/along'
 import length from '@turf/length'
 import flatten from '@turf/flatten'
 import { Units } from '../../../../core/client/units'
 import { Store } from '../../../../core/client/store'
+import { Events } from '../../../../core/client/events'
+import { api } from '../../../../core/client/api.js'
 import { KChart, KPanel, KStamp } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
 import { fetchProfileDataset, fetchElevation, extractElevation } from '../../elevation-utils.js'
@@ -342,7 +345,7 @@ export default {
       const geometry = _.get(this.feature, 'geometry.type')
       if (geometry !== 'LineString' && geometry !== 'MultiLineString') {
         logger.warn('[KDK] the selected feature has an invald geometry')
-        this.$notify({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
+        Notify.create({ type: 'negative', message: this.$t('KElevationProfile.INVALID_GEOMETRY') })
         return
       }
       this.highlight(this.feature, false)
@@ -354,10 +357,10 @@ export default {
       const chartWidth = window.size[0]
 
       // Setup the request url options
-      const endpoint = this.$store.get('capabilities.api.gateway') + '/elevation'
+      const endpoint = Store.get('capabilities.api.gateway') + '/elevation'
       const headers = { 'Content-Type': 'application/json' }
       // Add the Authorization header if jwt is defined
-      const jwt = await this.$api.get('storage').getItem(this.$config('gatewayJwt'))
+      const jwt = await api.get('storage').getItem(config.gatewayJwt)
       if (jwt) headers.Authorization = 'Bearer ' + jwt
 
       const dismiss = this.$q.notify({
@@ -392,7 +395,7 @@ export default {
         terrainDataset = dataset
         this.profile = geojson
       } catch (error) {
-        this.$notify({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
+        Notify.create({ type: 'negative', message: this.$t('errors.NETWORK_ERROR') })
       }
 
       dismiss()
@@ -406,9 +409,9 @@ export default {
       if (this.profile) {
         try {
           await copyToClipboard(JSON.stringify(this.profile))
-          this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_COPIED') })
+          Notify.create({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_COPIED') })
         } catch (error) {
-          this.$notify({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
+          Notify.create({ type: 'negative', message: this.$t('KElevationProfile.CANNOT_COPY_PROFILE') })
           logger.error(error)
         }
       }
@@ -417,8 +420,8 @@ export default {
       if (this.profile) {
         const file = this.title + '.geojson'
         const status = exportFile(file, JSON.stringify(this.profile))
-        if (status) this.$notify({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
-        else this.$notify({ rtpe: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
+        if (status) Notify.create({ type: 'positive', message: this.$t('KElevationProfile.PROFILE_EXPORTED', { file }) })
+        else Notify.create({ rtpe: 'negative', message: this.$t('KElevationProfile.CANNOT_EXPORT_PROFILE') })
       }
     }
   },
@@ -429,17 +432,17 @@ export default {
     this.debouncedRefresh = _.debounce(this.refresh, 100)
 
     // Setup listeners
-    this.$events.on('units-default-length-changed', this.debouncedRefresh)
-    this.$events.on('units-default-altitude-changed', this.debouncedRefresh)
-    if (this.layerStorePath) { this.$events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
-    if (this.featureStorePath) { this.$events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
+    Events.on('units-default-length-changed', this.debouncedRefresh)
+    Events.on('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath) { Events.on(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
+    if (this.featureStorePath) { Events.on(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
   },
   beforeUnmount () {
     // Release listeners
-    this.$events.off('units-default-length-changed', this.debouncedRefresh)
-    this.$events.off('units-default-altitude-changed', this.debouncedRefresh)
-    if (this.layerStorePath) { this.$events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
-    if (this.featureStorePath) { this.$events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
+    Events.off('units-default-length-changed', this.debouncedRefresh)
+    Events.off('units-default-altitude-changed', this.debouncedRefresh)
+    if (this.layerStorePath) { Events.off(`${_.kebabCase(this.layerStorePath)}-changed`, this.debouncedRefresh) }
+    if (this.featureStorePath) { Events.off(`${_.kebabCase(this.featureStorePath)}-changed`, this.debouncedRefresh) }
   },
   setup (props) {
     return {

@@ -3,7 +3,21 @@ import logger from 'loglevel'
 import { colors } from 'quasar'
 import chroma from 'chroma-js'
 
-const HtmlColors = {
+const QuasarFamilies = [
+  'red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 
+  'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber',
+  'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'
+]
+const QuasarPalette = {}
+QuasarFamilies.forEach(family => {
+  QuasarPalette[family] = colors.getPaletteColor(family)
+  for (let i = 1; i <= 14; i++) {
+    const color = `${family}-${i}`
+    QuasarPalette[color] = colors.getPaletteColor(color)
+  }
+})
+
+const HtmlPalette = {
   black: "#000000",
   silver: "#C0C0C0",
   gray: "#808080",
@@ -179,34 +193,37 @@ export const Colors = {
 }
 
 export function getHtmlColor (color, defaultColor) {
-  if (!color) return defaultColor
+  if (_.isEmpty(color)) return defaultColor
   if (color.startsWith('#')) return color
   if (color.startsWith('hsl')) return color
   if (color.startsWith('rgb')) return color
-  if (_.has(HtmlColors, color)) return HtmlColors[color]
-  return colors.getPaletteColor(color)
+  if (_.has(QuasarPalette, color)) return QuasarPalette[color]  
+  if (_.has(HtmlPalette, color)) return HtmlPalette[color]
+  return colors.getPaletteColor(color) // theme color, e.g. primary, secondary...
 }
 
-export function getColorFromPalette (color) {
-  // Check if color is already an RGB color
-  if (color.startsWith('#')) return color
-  else return Colors[color] || '#ffffff'
-}
-
-export function getPaletteFromColor (color, nearestIfNotFound = false) {
+export function getPaletteFromColor (color, nearestIfNotFound = false, defaultColor = 'white') {
+  if (_.isEmpty(color)) {
+    logger.warn(`[KDK] getPaletteFromColor: 'color' must be defined`)
+    return defaultColor
+  }
   // Check if color is already in the palette
-  if (Colors[color]) return color
+  if (QuasarPalette[color]) return color
   const colorName = _.findKey(Colors, item => item === color)
   if (colorName) return colorName
-  if (nearestIfNotFound) return findClosestColor(color) || 'white'
-  return 'white'
+  if (nearestIfNotFound) return findClosestPaletteColor(color) || defaultColor
+  return defaultColor
 }
 
-export function findClosestColor (color) {
+export function findClosestPaletteColor (color) {
+  if (_.isEmpty(color)) {
+    logger.warn(`[KDK] findClosestPaletteColor: 'color' must be defined`)
+    return
+  }
   let minDistance = Number.MAX_VALUE
   let closestColor = null
-  for (const key in Colors) {
-    const d = chroma.deltaE(color, Colors[key])
+  for (const key in QuasarPalette) {
+    const d = chroma.deltaE(color, QuasarPalette[key])
     if (d < minDistance) {
       minDistance = d
       closestColor = key
@@ -216,12 +233,20 @@ export function findClosestColor (color) {
 }
 
 export function getContrastColor (color, light = 'white', dark = 'black') {
+  if (_.isEmpty(color)) {
+    logger.warn(`[KDK] getContrastColor: 'color' must be defined`)
+    return dark
+  }
   const htmlColor = getHtmlColor(color)
+  if (_.isEmpty(htmlColor)) {
+    logger.warn(`[KDK] getContrastColor: no HTML color found for '${color}'`)
+    return dark
+  }
   return colors.luminosity(htmlColor) < 0.5 ? light : dark
 }
 
 export function buildColorScale (options) {
-  if (!options) {
+  if (_.isEmpty(options)) {
     logger.warn(`[KDK] buildColorScale: 'options' argument must be defined`)
     return
   }

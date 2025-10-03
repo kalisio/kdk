@@ -28,6 +28,7 @@
 <script>
 import { KPanel, KAction } from '../../../../core/client/components'
 import { baseItem } from '../../../../core/client/mixins'
+import { api } from '../../../../core/client/api.js'
 
 export default {
   name: 'k-project-selector',
@@ -39,14 +40,14 @@ export default {
   computed: {
     projectActions () {
       const projectActions = []
-      if (this.$can('update', 'projects', this.item)) {
+      if (api.can('update', 'projects', this.item)) {
         const content = [{
           id: 'edit-project',
           icon: 'las la-file-alt',
           label: 'KProjectSelector.EDIT_PROJECT',
           handler: (item) => this.$emit('item-selected', item, 'edit-project')
         }]
-        if (this.$can('remove', 'projects', this.item)) {
+        if (api.can('remove', 'projects', this.item)) {
           content.push({
             id: 'remove-project',
             icon: 'las la-trash',

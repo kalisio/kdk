@@ -1,10 +1,14 @@
 import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
-import { Store } from '../../../core/client/index.js'
+import sift from 'sift'
+import { Store } from '../../../core/client/store.js'
+import { Events } from '../../../core/client/events.js'
+import { api } from '../../../core/client/api.js'
+import { isDataOperation } from '../../../core/client/utils/utils.services.js'
 import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEvents } from '../../../core/client/utils/index.js'
 import { Geolocation } from '../geolocation.js'
-import { getCategories, getLayers, getSublegends, setEngineJwt } from '../utils/utils.catalog.js'
+import { getCategories, getLayers, getLayersByCategory, getOrphanLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
 import * as offline from '../utils/utils.offline.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
@@ -16,6 +20,7 @@ export const activity = {
   data () {
     return {
       layerCategories: [],
+      orphanLayers: [],
       variables: [],
       engine: 'leaflet',
       engineReady: false,
@@ -99,23 +104,55 @@ export const activity = {
     async addCatalogCategory (category) {
       this.layerCategories.push(category)
     },
+    // Retrieve layer categories from catalog 
     async refreshLayerCategories () {
       this.layerCategories.splice(0, this.layerCategories.length)
       const layerCategories = await this.getCatalogCategories()
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
-      if (typeof this.refreshOrphanLayers === 'function') await this.refreshOrphanLayers()
+      await this.refreshOrphanLayers()
+      this.reorderLayers()
     },
+    getOrphanLayerByName (name) {
+      return this.orphanLayers.find(l => l?.name === name)
+    },
+    isOrphanLayer (layer) {
+      return this.orphanLayers.some(l => l?.name === layer.name)
+    },
+    // To be overriden by apps to perform any operation (eg serialization) when the category order has been changed by the user
+    // By default perform layer ordering in the underlying engine
     async updateCategoriesOrder (sourceCategoryId, targetCategoryId) {
-      this.reorganizeLayers()
+      this.reorderLayers()
     },
-    async updateLayersOrder (sourceCategoryId, data) {
-      this.reorganizeLayers()
+    // To be overriden by apps to perform any operation (eg serialization) when the layer order has been changed by the user in a category
+    // By default perform layer ordering in the underlying engine
+    // Data payload is like { layers } in order to ease direct update of the target category
+    async updateLayersOrder (sourceCategoryId, data, movedLayer) {
+      this.reorderLayers()
     },
-    async updateOrphanLayersOrder (orphanLayers) {
-      this.reorganizeLayers()
+    // To be overriden by apps to perform any operations (eg serialization) when the layer order has been changed by the user in the orphan layer list
+    // By default perform layer ordering in the underlying engine
+    async updateOrphanLayersOrder (orphanLayers, movedLayer) {
+      this.reorderLayers()
     },
+    // Perform layer ordering in the underlying engine according to current order in categories and layer list
+    reorderLayers () {
+      if (typeof this.bringLayerToFront !== 'function') return
+      for (let i = this.layerCategories.length - 1; i >= 0; i--) {
+        const category = this.layerCategories[i]
+        if (!category?.layers) continue
+        for (let j = category.layers.length - 1; j >= 0; j--) {
+          const layer = category.layers[j]
+          this.bringLayerToFront(layer)
+        }
+      }
+      for (let i = this.orphanLayers.length - 1; i >= 0; i--) {
+        const layer = this.orphanLayers[i]
+        this.bringLayerToFront(layer.name)
+      }
+    },
+    // Retrieve layers from catalog 
     async refreshLayers () {
       // Clear layers and variables
       this.clearLayers()
@@ -126,15 +163,19 @@ export const activity = {
       for (let i = 0; i < catalogLayers.length; i++) {
         await this.addCatalogLayer(catalogLayers[i])
       }
+      await this.refreshOrphanLayers()
       // We need at least an active background
       const hasVisibleBaseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer') && layer.isVisible)
       if (!hasVisibleBaseLayer) {
         const baseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer'))
         if (baseLayer) await this.showLayer(baseLayer.name)
       }
+      this.reorderLayers()
     },
+    // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
     async refreshOrphanLayers () {
-      this.reorganizeLayers()
+      const layersByCategory = getLayersByCategory(this.layers, this.layerCategories)
+      this.orphanLayers = getOrphanLayers(this.layers, layersByCategory)
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,
@@ -157,13 +198,13 @@ export const activity = {
     isLayerStyleEditable: layers.isLayerStyleEditable,
     isLayerDataEditable: layers.isLayerDataEditable,
     canCreateLayer () {
-      return this.$can('create', 'catalog')
+      return api.can('create', 'catalog')
     },
     canUpdateLayer (layer) {
-      return layers.isInMemoryLayer(layer) || this.$can('update', 'catalog')
+      return layers.isInMemoryLayer(layer) || api.can('update', 'catalog')
     },
     canRemoveLayer (layer) {
-      return layers.isInMemoryLayer(layer) || this.$can('remove', 'catalog')
+      return layers.isInMemoryLayer(layer) || api.can('remove', 'catalog')
     },
     async resetLayer (layer) {
       // This requires to recreate the layer in the underlying engine with the new setup.
@@ -243,9 +284,9 @@ export const activity = {
         createdLayer = await layers.saveLayer(layer)
       }
       // Add layer to current project ? Check if not coming from another planet first
-      if (this.project && (this.project.getPlanetApi() === this.$api)) {
+      if (this.project && (this.project.getPlanetApi() === api)) {
         this.project.layers.push({ _id: createdLayer._id })
-        await this.$api.getService('projects').patch(this.project._id, {
+        await api.getService('projects').patch(this.project._id, {
           layers: this.project.layers
         })
       }
@@ -284,6 +325,9 @@ export const activity = {
         await this.resetLayer(layer)
       }
     },
+    async onRemoveCategory (category) {
+      // virtual method
+    },
     async onRemoveLayer (layer) {
       // Stop any running edition
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
@@ -292,8 +336,17 @@ export const activity = {
         // but as we might not always use sockets perform it anyway
         this.removeLayer(layer.name)
       }
-      await this.refreshOrphanLayers()
       // Removing the layer should automatically update all projects
+    },
+    async onAddOrphanLayer (layer) {
+      if (!this.isOrphanLayer(layer)) {
+        await this.refreshOrphanLayers()
+      }
+    },
+    onRemoveOrphanLayer (layer) {
+      if (this.isOrphanLayer(layer)) {
+        _.remove(this.orphanLayers, orphanLayer => layer._id ? orphanLayer._id === layer._id : orphanLayer.name === layer.name)
+      }
     },
     cacheView: offline.cacheView,
     uncacheView: offline.uncacheView,
@@ -307,8 +360,8 @@ export const activity = {
     },
     listenToCatalogServiceEvents () {
       // Listen about changes in global/contextual catalog services
-      const globalCatalogService = this.$api.getService('catalog', 'global')
-      const catalogService = this.$api.getService('catalog')
+      const globalCatalogService = api.getService('catalog', 'global')
+      const catalogService = api.getService('catalog')
       this.globalCatalogListeners = listenToServiceEvents('catalog', {
         context: 'global', all: this.onCatalogUpdated, removed: (object) => this.onCatalogUpdated(object, 'removed')
       }, this.globalCatalogListeners)
@@ -365,35 +418,75 @@ export const activity = {
     finalize () {
       this.unlistenToCatalogServiceEvents()
     },
+    async refreshLayer (layer, event) {
+      // Updating a layer requires to remove/add it again to cover all use cases (eg style edition, etc.)
+      // Here we preferably find layer by ID as renaming could have occured from another client
+      let planetApi
+      if (layer && (typeof layer.getPlanetApi === 'function')) {
+        planetApi = layer.getPlanetApi()
+      }
+      // Check if layer was visible before refreshing it
+      const isVisibleBeforeRefresh = this.isLayerVisible(layer.name)
+      if (layer) {
+        // Stop any running edition
+        if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
+        await this.removeCatalogLayer(layer)
+      }
+      if (event !== 'removed') {
+        // Do we need to inject a token or restore planet API ?
+        if (planetApi) Object.assign(layer, { getPlanetApi: () => planetApi })
+        await setEngineJwt([layer], planetApi)
+        processTranslations(layer)
+        await this.addCatalogLayer(layer)
+        // Check if not already visible, because addCatalogLayer might have shown it in some cases
+        if (isVisibleBeforeRefresh && !this.isLayerVisible(layer.name)) await this.showLayer(layer.name)
+      }
+    },
+    requestRefreshLayer (layer, event) {
+      // As this is used by realtime events we need to avoid reentrance in any case
+      // multiple events regarding the same layer come in at almost the same time.
+      // This is for instance the case when saving a layer as a created then patched event come in.
+      // So we need something similar to _.debounce() but for each possible layer argument.
+      // Otherwise when two events are almost received at the same time but target different layers only the last one will be considered.
+      // Realtime events only targets layer saved in DB so that they should always have a unique ID we can rely on
+      const layerId = layer._id
+      const refreshLayer = async () => {
+        const requests = this.pendingLayerRefresh[layerId]
+        delete this.pendingLayerRefresh[layerId]
+        for (let i = 0; i< requests.length; i++) {
+          const request = requests[i]
+          await this.refreshLayer(request.layer, request.event)
+        }
+      }
+      if (!this.pendingLayerRefresh) this.pendingLayerRefresh = {}
+      // If a refresh has already been requested push new event to operation queue
+      if (this.pendingLayerRefresh[layerId]) {
+        // The way a layer is updated requires to remove/add it again to cover all use cases (eg style edition, etc.).
+        // As a consequence create/patch/update operations results in the same operations, we can avoid multiple update by "merging"
+        const lastRequest = _.last(this.pendingLayerRefresh[layerId])
+        if (isDataOperation(lastRequest.event) !== isDataOperation(event)) {
+          this.pendingLayerRefresh[layerId].push({ event, layer })
+        } else {
+          // The last operation "wins" otherwise
+          this.pendingLayerRefresh[layerId].splice(-1, 1, { event, layer })
+        }
+      } else {
+        this.pendingLayerRefresh[layerId] = [{ event, layer }]
+        setTimeout(refreshLayer, 500)
+      }
+    },
     async onCatalogUpdated (object, event) {
       switch (object.type) {
         case 'Category':
           // In any case we rebuild categories
-          await this.debouncedRefreshLayerCategories()
+          await this.requestRefreshLayerCategories()
           break
         case 'Context':
         case 'Service':
           // Nothing to do
           break
         default: {
-          // Updating a layer requires to remove/add it again to cover all use cases (eg style edition, etc.)
-          // Here we preferably find layer by ID as renaming could have occured from another client
-          const layer = this.getLayerById(object._id) || this.getLayerByName(object.name)
-          let planetApi
-          if (layer && (typeof layer.getPlanetApi === 'function')) {
-            planetApi = layer.getPlanetApi()
-          }
-          if (layer) {
-            // Stop any running edition
-            if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
-            await this.removeCatalogLayer(layer)
-          }
-          if (event !== 'removed') {
-            // Do we need to inject a token or restore planet API ?
-            if (planetApi) Object.assign(object, { getPlanetApi: () => planetApi })
-            await setEngineJwt([object], planetApi)
-            await this.addCatalogLayer(object)
-          }
+          await this.requestRefreshLayer(object, event)
           break
         }
       }
@@ -412,23 +505,31 @@ export const activity = {
     this.$engineEvents.on('map-ready', this.onEngineReady)
     this.$engineEvents.on('globe-ready', this.onEngineReady)
     this.$engineEvents.on('layer-added', this.configureLayerActions)
+    this.$engineEvents.on('layer-added', this.onAddOrphanLayer)
+    this.$engineEvents.on('layer-removed', this.onRemoveOrphanLayer)
+    // As we'd like to manage layer ordering we force to refresh it
+    // because by default Leaflet will put new elements at the end of the DOM child list.
+    this.$engineEvents.on('layer-shown', this.reorderLayers)
   },
   mounted () {
-    this.debouncedRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
+    this.requestRefreshLayerCategories = _.debounce(this.refreshLayerCategories, 200)
     // Target online/offline service depending on status
-    this.$events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('websocket-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.on('websocket-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.on('websocket-reconnected', this.resetCatalogServiceEventsListeners)
   },
   beforeUnmount () {
     this.$engineEvents.off('map-ready', this.onEngineReady)
     this.$engineEvents.off('globe-ready', this.onEngineReady)
     this.$engineEvents.off('layer-added', this.configureLayerActions)
-    this.$events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
-    this.$events.off('websocket-reconnected', this.resetCatalogServiceEventsListeners)
+    this.$engineEvents.off('layer-added', this.onAddOrphanLayer)
+    this.$engineEvents.off('layer-removed', this.onRemoveOrphanLayer)
+    this.$engineEvents.off('layer-shown', this.reorderLayers)
+    Events.off('navigator-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('navigator-reconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('websocket-disconnected', this.resetCatalogServiceEventsListeners)
+    Events.off('websocket-reconnected', this.resetCatalogServiceEventsListeners)
     this.finalize()
   }
 }

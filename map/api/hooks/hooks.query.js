@@ -265,19 +265,24 @@ export async function aggregateFeaturesQuery (hook) {
     let featureId = (service.options ? service.options.featureId : [])
     // Support compound ID
     featureId = (Array.isArray(featureId) ? featureId : [featureId])
+    const hasFeatureId = !_.isEmpty(featureId)
     let featureIdType = (service.options ? service.options.featureIdType : [])
     featureIdType = (Array.isArray(featureIdType) ? featureIdType : [featureIdType])
-    const ids = typeof query.$groupBy === 'string' // Group by matching ID(s), ie single ID or array of field to create a compound ID
-      ? { [query.$groupBy]: '$properties.' + query.$groupBy }
-    // Aggregated in an accumulator to avoid conflict with feature properties
-      : query.$groupBy.reduce((object, id) => Object.assign(object, { [id]: '$properties.' + id }), {})
-    const groupBy = { _id: ids }
-    let keys = _.keys(ids)
+    // Default is not to group by UUID
+    const groupBy = { _id: '$_id' }
+    let keys = ['_id']
+    if (query.$groupBy) {
+      groupBy._id = typeof query.$groupBy === 'string' // Group by matching ID(s), ie single ID or array of field to create a compound ID
+        ? { [query.$groupBy]: '$properties.' + query.$groupBy }
+      // Aggregated in an accumulator to avoid conflict with feature properties
+        : query.$groupBy.reduce((object, id) => Object.assign(object, { [id]: '$properties.' + id }), {})
+      keys = _.keys(groupBy._id)
+    }
     // Do we only keep first or last available time ?
     const singleTime = (_.toNumber(query.$limit) === 1)
     if (singleTime) {
       // When single time no aggregation is performed at all so we only have raw features
-      keys = keys.map(key => 'properties.' + key)
+      if (hasFeatureId) keys = keys.map(key => 'properties.' + key)
       // In this case no need to aggregate on each element we simply keep the first feature
       // BUG: according to https://jira.mongodb.org/browse/SERVER-9507 MongoDB is not yet
       // able to optimize this kind of operations to avoid full index scan

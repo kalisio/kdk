@@ -2,9 +2,9 @@ import _ from 'lodash'
 import sift from 'sift'
 import logger from 'loglevel'
 import moment from 'moment'
-import L from 'leaflet'
-import Emitter from 'tiny-emitter'
+import { EventBus } from 'quasar'
 import { point, rhumbDistance, rhumbBearing, rhumbDestination } from '@turf/turf'
+import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 // This ensure we have all required plugins
 import 'leaflet-fullscreen'
@@ -24,7 +24,9 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet-rotate/dist/leaflet-rotate-src.js'
+
 import { Time } from '../../../../core/client/time.js'
+import { Events } from '../../../../core/client/events.js'
 import { getLocale } from '../../../../core/client/utils/index.js'
 import '../../leaflet/BoxSelection.js'
 import '../../leaflet/WindBarb.js'
@@ -87,8 +89,7 @@ export const baseMap = {
   ],
   data () {
     return {
-      layers: {},
-      orphanLayers: []
+      layers: {}
     }
   },
   methods: {
@@ -495,9 +496,6 @@ export const baseMap = {
     getLayerByName (name) {
       return this.layers[name]
     },
-    getOrphanLayerByName (name) {
-      return this.orphanLayers.find(l => l?.name === name)
-    },
     getLeafletLayerByName (name) {
       return this.leafletLayers[name]
     },
@@ -601,20 +599,6 @@ export const baseMap = {
       this.layers[newName] = layer
       delete this.layers[previousName]
     },
-    reorganizeLayers () {
-      for (let i = this.layerCategories.length - 1; i >= 0; i--) {
-        const category = this.layerCategories[i]
-        if (!category?.layers) continue
-        for (let j = category.layers.length - 1; j >= 0; j--) {
-          const layer = category.layers[j]
-          this.bringLayerToFront(layer)
-        }
-      }
-      for (let i = this.orphanLayers.length - 1; i >= 0; i--) {
-        const layer = this.orphanLayers[i]
-        this.bringLayerToFront(layer.name)
-      }
-    },
     removeLayer (name) {
       const layer = this.getLayerByName(name)
       if (!layer) return
@@ -630,7 +614,6 @@ export const baseMap = {
     },
     clearLayers () {
       Object.keys(this.layers).forEach((layer) => this.removeLayer(layer))
-      this.orphanLayers.forEach((layer) => this.removeLayer(layer))
     },
     toGeoJson (name) {
       if (!this.isLayerVisible(name)) {
@@ -680,7 +663,7 @@ export const baseMap = {
       this.zoomToBounds([[bbox[1], bbox[0]], [bbox[3], bbox[2]]])
     },
     bringLayerToFront (name) {
-      const leafletLayer = this.getLeafletLayerByName(name)
+      let leafletLayer = this.getLeafletLayerByName(name)
       if (!leafletLayer) return
       // If panes are declared on this layer push it front to make it on top of others should be sufficient.
       const panes = _.get(leafletLayer, 'options.panes')
@@ -699,7 +682,7 @@ export const baseMap = {
       if (leafletLayer && (typeof leafletLayer.bringToFront === 'function')) leafletLayer.bringToFront()
     },
     bringLayerToBack (name) {
-      const leafletLayer = this.getLeafletLayerByName(name)
+      let leafletLayer = this.getLeafletLayerByName(name)
       if (!leafletLayer) return
       // If panes are declared on this layer push it back to make it under others should be sufficient.
       const panes = _.get(leafletLayer, 'options.panes')
@@ -948,15 +931,15 @@ export const baseMap = {
     // Register support for WMS-T
     this.registerLeafletConstructor(this.createLeafletTimedWmsLayer)
     // Internal event bus
-    this.$engineEvents = new Emitter()
+    this.$engineEvents = new EventBus()
     this.$engineEvents.on('zoomend', this.onMapZoomChanged)
-    this.$events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
+    Events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   beforeUnmount () {
     this.clearLayers()
     L.DomEvent.off(this.map._container, TouchEvents.join(' '), this.onTouchEvent, this)
     this.$engineEvents.off('zoomend', this.onMapZoomChanged)
-    this.$events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
+    Events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   unmounted () {
     if (this.map) {

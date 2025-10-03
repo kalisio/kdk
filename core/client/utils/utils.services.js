@@ -1,5 +1,32 @@
 import { api } from '../api.js'
 
+export const StandardServiceMethods = ['find', 'get', 'create', 'update', 'patch', 'remove']
+export const StandardServiceEvents = ['created', 'updated', 'patched', 'removed']
+
+export function isReadOperation (methodOrEventName) {
+  return ['find', 'get'].includes(methodOrEventName)
+}
+
+export function isCreateOperation (methodOrEventName) {
+  return ['create', 'created'].includes(methodOrEventName)
+}
+
+export function isRemoveOperation (methodOrEventName) {
+  return ['remove', 'removed'].includes(methodOrEventName)
+}
+
+export function isUpdateOperation (methodOrEventName) {
+  return ['patch', 'update', 'patched', 'updated'].includes(methodOrEventName)
+}
+
+export function isDataOperation (methodOrEventName) {
+  return ['create', 'patch', 'update', 'created', 'patched', 'updated'].includes(methodOrEventName)
+}
+
+export function isCustomOperation (methodOrEventName) {
+  return !StandardServiceMethods.includes(methodOrEventName)
+}
+
 // Bind listeners to service events and store it in the returned object
 export function listenToServiceEvents (service, {
   context = null, created = null, updated = null, patched = null, removed = null, all = null,

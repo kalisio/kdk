@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>KDK test app (2D)</title>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import { createApp } from 'vue'
+      import { Quasar } from 'quasar'
+      import '@quasar/extras/material-icons/material-icons.css'
+      import 'quasar/src/css/index.sass'
+      import config from 'config'
+      // For debug purpose with src hot reload
+      //import kdk, { kdkCore, kdkMap } from '../client.map.js'
+      // To test library build
+      import kdk, { kdkCore, kdkMap } from '../client/kdk.client.map.js'
+      import App from './App.vue'
+      
+      localStorage.setItem('kano-jwt', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJrYWxpc2lvIiwiaXNzIjoia2FsaXNpbyJ9.qwOZjkIcAqo6HPGESu0_5-f6g9VkN6y6pN1HJKJF6Sg')
+
+      const app = createApp(App)
+      app.use(Quasar, {
+        plugins: {}, // import Quasar plugins and add here
+      })
+
+      // Initializes i18n first to avoid any browser translation
+      await kdkCore.i18n.initialize(app, ['core', 'map'])
+      // Initiate the client
+      const api = await kdkCore.initializeApi(kdkMap.setupApi)
+      // Then all services
+      await api.configure(kdk.core)
+      await api.configure(kdk.map)
+      api.on('login', (data) => {
+        // Store API gateway token if any
+        if (data.gatewayToken) api.get('storage').setItem(config.gatewayJwt, data.gatewayToken)
+      })
+      api.on('logout', (data) => {
+        // Remove API gateway token if any
+        api.get('storage').removeItem(config.gatewayJwt)
+      })
+      
+      app.mount('#app')
+    </script>
+  </body>
+</html>

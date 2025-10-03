@@ -2,12 +2,13 @@ import _ from 'lodash'
 import chroma from 'chroma-js'
 import moment from 'moment'
 import { Color } from 'cesium'
+// We need to import cesium as an object to dynamically get constructors
+import * as Cesium from 'cesium'
 import { Time, Units, TemplateContext, utils as kdkCoreUtils } from '../../../../core/client/index.js'
 import { getFeatureStyleType } from '../../utils/utils.features.js'
 import { convertPointStyleToSimpleStyle, convertLineStyleToSimpleStyle, convertPolygonStyleToSimpleStyle, convertSimpleStyleColors,
          convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle,
          PointStyleTemplateMappings, LineStyleTemplateMappings, PolygonStyleTemplateMappings } from '../../utils/utils.style.js'
-import { Cesium } from './utils.cesium.js'
 
 export const CesiumStyleMappings = {
   stroke: 'stroke',
@@ -93,7 +94,7 @@ export function convertToCesiumFromStyle (feature, options) {
 
   _.forOwn(style, (value, key) => {
     if ((typeof value === 'string') && ['color'].includes(key)) {
-      let cesiumColor = Color.fromCssColorString(kdkCoreUtils.getColorFromPalette(value))
+      let cesiumColor = Color.fromCssColorString(kdkCoreUtils.getHtmlColor(value))
 
       if (_.has(style, 'opacity')) {
         cesiumColor = Color.fromAlpha(cesiumColor, _.get(style, 'opacity'))

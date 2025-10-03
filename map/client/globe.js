@@ -1,3 +1,4 @@
+import * as composables from './composables/index.js'
 import * as commonMixins from './mixins/index.js'
 import * as globeMixins from './mixins/globe/index.js'
 import * as hooks from './hooks/index.js'
@@ -11,6 +12,7 @@ export * from './planets.js'
 export * from './navigator.js'
 export { hooks }
 export { utils }
+export { composables }
 export { mixins }
 export * from '../common/index.js'
 export * from './init.js'

@@ -191,7 +191,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     if (!mesh) return
 
     mesh.zoomLevel = event.coords.z
-    mesh.visible = (mesh.zoomLevel === this._map.getZoom())
+    mesh.visible = mesh.zoomLevel === Math.round(this._map.getZoom())
     this.pixiRoot.addChild(mesh)
 
     if (this.conf.render.showWireframe) {
@@ -237,7 +237,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     // zoom level 'n' tiles are still visible
     // and zoom level 'n+1' are being loaded on top of them
     // when alpha blending is used, this is annoying
-    const zoomLevel = this._map.getZoom()
+    const zoomLevel = Math.round(this._map.getZoom())
     for (const child of this.pixiRoot.children) {
       if (child.zoomLevel === zoomLevel) child.visible = false
     }
@@ -249,7 +249,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     // on zoomstart event
     // this is important when quickly zoomin in and out
     // because some meshes may not have been evicted yet
-    const zoomLevel = this._map.getZoom()
+    const zoomLevel = Math.round(this._map.getZoom())
     for (const child of this.pixiRoot.children) {
       if (child.zoomLevel === zoomLevel) child.visible = true
     }

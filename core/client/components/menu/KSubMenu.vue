@@ -9,18 +9,18 @@
         :persistent="persistent"
         :auto-close="autoClose">
         <div v-hover="{ enter: onShowMenu, leave: onHideMenuRequested }">
-        <q-list>
-          <KPanel
-            id="submenu-entries"
-            :content="content"
-            :mode="mode"
-            :context="context"
-            :filter="filter"
-            :action-renderer="actionRenderer"
-            :direction="direction"
-            class="no-wrap"
-          />
-        </q-list>
+          <div class="row">
+            <KPanel
+              id="submenu-entries"
+              :content="content"
+              :mode="mode"
+              :context="context"
+              :filter="filter"
+              :action-renderer="actionRenderer"
+              :direction="direction"
+              class="no-wrap"
+            />
+          </div>
         </div>
       </q-menu>
     </KAction>

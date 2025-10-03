@@ -16,7 +16,7 @@
     map-options
     use-input
     :dense="dense"
-    :clearable="clearable"
+    :clearable="isClearable()"
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
@@ -55,6 +55,13 @@
         {{ scope.opt.label }}
       </span>
     </template>
+    <!-- no options display -->
+    <template v-if="hasNoOption" v-slot:no-option>
+      <p v-if="typeof this.properties.field.noOption === 'string'" class="noOptionText">{{ this.properties.field.noOption }}</p>
+      <Suspense v-else>
+        <component v-if="noOptionComponent" :is="noOptionComponent" v-bind="noOptionsAttributes" />
+      </Suspense> 
+    </template>
     <!-- Helper -->
     <template v-if="hasHelper" v-slot:append>
       <k-action
@@ -76,15 +83,13 @@
 import _ from 'lodash'
 import { makeDiacriticPattern } from '../../../common'
 import { baseField } from '../../mixins'
+import { loadComponent } from '../../utils';
 
 export default {
   mixins: [baseField],
   computed: {
     multiple () {
       return this.isMultiselect()
-    },
-    clearable () {
-      return this.isClearable()
     },
     chips () {
       return this.hasChips()
@@ -101,6 +106,12 @@ export default {
         })
       }
       return opts
+    },
+    noOptionComponent () {
+      return loadComponent(this.properties.field.noOption.component)
+    },
+    noOptionsAttributes () {
+      return _.omit(this.properties.field.noOption, 'component')
     }
   },
   data () {
@@ -130,6 +141,9 @@ export default {
     },
     hasChips () {
       return _.get(this.properties, 'field.chips', false)
+    },
+    hasNoOption () {
+      return !_.isEmpty(_.get(this.properties.field, 'noOption', {}))
     },
     getId (option) {
       let id = option.value
@@ -166,3 +180,16 @@ export default {
   }
 }
 </script>
+
+<style lang=scss scoped>
+.noOptionText {
+  margin-bottom: $space-y-base;
+  padding-inline: $space-x-base;
+  text-align: center;
+}
+@media (min-width: $breakpoint-lg-min) {
+  .noOptionText {
+    margin-block: $space-y-base;
+  }
+}
+</style>

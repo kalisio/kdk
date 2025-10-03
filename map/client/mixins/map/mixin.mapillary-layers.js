@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import { Store } from '../../../../core/client/index.js'
 import { LeafletEvents, bindLeafletEvents } from '../../utils.map.js'
 
 export const mapillaryLayers = {
@@ -34,7 +35,7 @@ export const mapillaryLayers = {
   },
   created () {
     // Check whether the token is initialized
-    this.mapillaryToken = this.$store.get('capabilities.api.mapillary.token')
+    this.mapillaryToken = Store.get('capabilities.api.mapillary.token')
     if (!this.mapillaryToken) {
       logger.warn('You must provide a client token to use Mapillary')
       return

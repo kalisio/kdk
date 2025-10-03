@@ -4,15 +4,14 @@ import qs from 'qs'
 import 'winston-daily-rotate-file'
 // import { RateLimiter } from 'limiter'
 import HttpLimiter from 'express-rate-limit'
-import mongodb from 'mongodb'
 import errors from '@feathersjs/errors'
 import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import { LocalStrategy } from '@feathersjs/authentication-local'
 import OAuth from '@feathersjs/authentication-oauth'
 import PasswordValidator from 'password-validator'
+import { isValidObjectID } from './db.js'
 
 const debug = makeDebug('kdk:core:authentication')
-const { ObjectID } = mongodb
 const { oauth, OAuthStrategy } = OAuth
 const { NotAuthenticated } = errors
 
@@ -128,7 +127,7 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     // Return basic information for a stateless token otherwise
     if (payload.sub) {
       // Check for a valid MongoDB ID
-      if (ObjectID.isValid(payload.sub)) {
+      if (isValidObjectID(payload.sub)) {
         const entityId = await this.getEntityId(result, params)
         const value = await this.getEntity(entityId, params)
 

@@ -3,6 +3,7 @@ import path from 'path'
 import makeDebug from 'debug'
 import { fileURLToPath } from 'url'
 import mongodb from 'mongodb'
+import { isValidObjectID } from '../db.js'
 const { ObjectID } = mongodb
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -18,11 +19,8 @@ export function getServiceNameAndContext (servicePath) {
   // Then without context if any
   const lastSlash = name.lastIndexOf('/')
   const contextId = (lastSlash >= 0 ? name.substring(0, lastSlash) : '')
-  // Check if a string is a valid MongoDB Object ID.
-  // We don't use ObjectID.isValid as it returns true for any string that contains 12 characters: https://jira.mongodb.org/browse/NODE-4912.
-  // Regular expression that checks for hex value
-  const checkForHexRegExp = /^[0-9a-fA-F]{24}$/
-  if (contextId && (contextId.length === 24) && checkForHexRegExp.test(contextId)) {
+  // Check if it is a valid MongoDB Object ID otherwise it is not a context string
+  if (isValidObjectID(contextId)) {
     name = name.replace(contextId + '/', '')
     return { name, contextId }
   } else {
@@ -156,7 +154,7 @@ export default async function () {
 
   const messagesConfig = app.get('messages')
   if (messagesConfig) {
-    await createMessagesService.call(app)
+    await createMessagesService.call(app, messagesConfig)
     debug('\'messages\' service created')
   }
 
@@ -174,7 +172,7 @@ export default async function () {
 
   const tagsConfig = app.get('tags')
   if (tagsConfig) {
-    await createTagsService.call(app)
+    await createTagsService.call(app, tagsConfig)
     debug('\'tags\' service created')
   }
 }

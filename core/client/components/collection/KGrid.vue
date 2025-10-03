@@ -21,7 +21,7 @@
         <q-infinite-scroll
           @load="onLoad"
           :initial-index="1"
-          :offset="200"
+          :offset="scrollOffset"
           v-scroll="onScroll"
           class="col"
         >
@@ -191,6 +191,10 @@ const props = defineProps({
   scrollToTop: {
     type: Boolean,
     default: true
+  },
+  scrollOffset: {
+    type: Number,
+    default: 300
   },
   header: {
     type: [Array, Object],
