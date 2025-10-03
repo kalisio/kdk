@@ -391,44 +391,51 @@ function apply () {
     ? { pick: values.value.infobox.properties.map(property => property.value) }
     : false
 
-  _.merge(updatedLayer, {
-    isSelectable: display.isSelectable,
-    leaflet: {
-      isVisible: display.isVisible,
-      cluster: display.clustering.leaflet.enabled
-        ? { disableClusteringAtZoom: display.clustering.leaflet.value }
-        : false,
-      minZoom: display.zoom.leaflet.enabled
-        ? display.zoom.leaflet.value.min
-        : false,
-      maxZoom: display.zoom.leaflet.enabled
-        ? display.zoom.leaflet.value.max
-        : false,
-      opacity: display.opacity.enabled
-        ? display.opacity.value
-        : false,
-      popup,
-      tooltip,
-      infobox
-    },
-    cesium: {
-      isVisible: display.isVisible,
-      cluster: display.clustering.cesium.enabled
-        ? { pixelRange: display.clustering.cesium.value }
-        : false,
-      minZoom: display.zoom.cesium.enabled
-        ? leafletToCesiumZoom(display.zoom.cesium.value.max)
-        : false,
-      maxZoom: display.zoom.cesium.enabled
-        ? leafletToCesiumZoom(display.zoom.cesium.value.min)
-        : false,
-      popup,
-      tooltip,
-      infobox
-    }
-  })
-
   const layer = CurrentActivity.value.getLayerByName(props.layerName)
+  const is2DLayer = _.has(layer, 'leaflet')
+  const is3DLayer = _.has(layer, 'cesium')
+  const leaflet = {
+    isVisible: display.isVisible,
+    cluster: display.clustering.leaflet.enabled
+      ? { disableClusteringAtZoom: display.clustering.leaflet.value }
+      : false,
+    minZoom: display.zoom.leaflet.enabled
+      ? display.zoom.leaflet.value.min
+      : false,
+    maxZoom: display.zoom.leaflet.enabled
+      ? display.zoom.leaflet.value.max
+      : false,
+    opacity: display.opacity.enabled
+      ? display.opacity.value
+      : false,
+    popup,
+    tooltip,
+    infobox
+  }
+  const cesium = {
+    isVisible: display.isVisible,
+    cluster: display.clustering.cesium.enabled
+      ? { pixelRange: display.clustering.cesium.value }
+      : false,
+    minZoom: display.zoom.cesium.enabled
+      ? leafletToCesiumZoom(display.zoom.cesium.value.max)
+      : false,
+    maxZoom: display.zoom.cesium.enabled
+      ? leafletToCesiumZoom(display.zoom.cesium.value.min)
+      : false,
+    popup,
+    tooltip,
+    infobox
+  }
+  // Merge all updated values
+  // Ensure we don't create leaflet/cesium objects if the layer is not 2D/3D
+  _.merge(
+    updatedLayer,
+    { isSelectable: display.isSelectable },
+    is2DLayer ? { leaflet } : {},
+    is3DLayer ? { cesium } : {}
+  )
+
   if (isInMemoryLayer(layer)) {
     const previousName = _.get(layer, 'name', '')
     _.merge(layer, updatedLayer)
@@ -450,8 +457,11 @@ function apply () {
       })
     })
     // Add the objects that don't need to be dotified
-    _.forEach(keys, (key) => {
-      dotifiedLayer[key] = _.get(updatedLayer, key, false)
+    // Ensure not to add 2D properties to a 3D layer and vice versa
+    _.forEach(keys, (key, index) => {
+      if ((is2DLayer && index < 4) || (is3DLayer && index >= 4)) {
+        dotifiedLayer[key] = _.get(updatedLayer, key, false)
+      }
     })
 
     api.getService('catalog').patch(layer._id, dotifiedLayer)
