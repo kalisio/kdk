@@ -80,8 +80,7 @@ export async function getOfflineDocumentContent(offlineDocument) {
 export async function removeOfflineDocument() {
   const offlineDocument = await LocalCache.getItem('offlineDocument')
   if (offlineDocument) {
-    // TODO: delete existing document is not yet available
-    // await api.getService('offline').remove(offlineDocument.url)
+    await api.getService('offline').remove(offlineDocument.url)
   }
   return offlineDocument
 }
