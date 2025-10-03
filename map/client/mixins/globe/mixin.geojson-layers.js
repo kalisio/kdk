@@ -330,7 +330,7 @@ export const geojsonLayers = {
         } else if (options.service) { // Check for feature service layers only, in this case update in place
           // If no probe reference, nothing to be initialized
           // Get original layer options to ensure we have the latest ones while getting features (e.g. filters toggle)
-          await this.loadGeoJson(dataSource, this.getFeatures(Object.assign({}, options, this.getLayerByName(options.name))), options, updateOptions)
+          await this.loadGeoJson(dataSource, await this.getFeatures(Object.assign({}, options, this.getLayerByName(options.name))), options, updateOptions)
         } else if (sourceTemplate) {
           const sourceToFetch = dataSource.sourceCompiler({ time: Time.getCurrentTime() })
           if (!dataSource.lastFetchedSource || (dataSource.lastFetchedSource !== sourceToFetch)) {
