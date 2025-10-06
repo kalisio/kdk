@@ -151,7 +151,8 @@ async function onViewSelected (view, action) {
         component: 'KDialog',
         componentProps: {
           component: 'catalog/KCreateOfflineView',
-          zoomLevel: center.zoomLevel,
+          // Take care to possible fractional zoom
+          zoomLevel: Math.ceil(center.zoomLevel),
           view,
           okAction: {
             id: 'ok-button',
