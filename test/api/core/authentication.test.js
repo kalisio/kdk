@@ -42,11 +42,9 @@ describe('core:authentication', () => {
     try {
       await request.get(`${baseUrl}/users`)
     } catch (error) {
-      /* FIXME: Not sure why but in this case the raised error is in text format
-        expect(error).toExist()
-        expect(error.name).to.equal('NotAuthenticated')
-        */
+      // Not sure why but in this case the raised error is in text/html format
       expect(error.status).to.equal(500)
+      expect(error.response.text.includes('NotAuthenticated')).beTrue()
     }
   })
 
