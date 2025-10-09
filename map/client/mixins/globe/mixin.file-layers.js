@@ -26,9 +26,12 @@ export const fileLayers = {
           label: source.name,
           type: 'OverlayLayer',
           icon: 'insert_drive_file',
+          scope: 'user',
+          isDataEditable: true,
           cesium: {
             type: 'geoJson',
             isVisible: true,
+            realtime: true,
             cluster: _.get(fileLayersOptions, 'cluster', { pixelRange: 50 }),
             entityStyle: _.get(fileLayersOptions, 'entityStyle'),
             source: source.name // Set the data source name instead of URL in this case

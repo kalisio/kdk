@@ -259,8 +259,10 @@ export const baseGlobe = {
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
       } else { // Entity data source otherwise
         // Handle potential custom primitives
-        for (const [id, custom] of cesiumLayer.primitives)
-          custom.primitive.show = true
+        if (cesiumLayer.primitives) {
+          for (const [id, custom] of cesiumLayer.primitives)
+            custom.primitive.show = true
+        }
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
@@ -288,8 +290,10 @@ export const baseGlobe = {
         cesiumLayer.show = false
       } else { // Entity data source otherwise
         // Hide custom primitives before removing the data source
-        for (const [id, custom] of cesiumLayer.primitives)
-          custom.primitive.show = false
+        if (cesiumLayer.primitives) {
+          for (const [id, custom] of cesiumLayer.primitives)
+            custom.primitive.show = false
+        }
         this.viewer.dataSources.remove(cesiumLayer, true)
       }
       this.onLayerHidden(layer, cesiumLayer)
