@@ -425,7 +425,15 @@ export const activity = {
       if (layer) {
         // Stop any running edition
         if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
-        await this.removeCatalogLayer(layer)
+        // Check if available for current engine
+        if (layer[this.engine]) {
+          let name = layer.name
+          // We might have a patch event changing the name so that in this case we need to use the old one
+          // because layers are indexed by name in map activities
+          const previousLayer = this.getLayerById(layer._id)
+          if (previousLayer && (previousLayer.name !== name)) name = previousLayer.name
+          await this.removeLayer(name)
+        }
       }
       if (event !== 'removed') {
         // Do we need to inject a token or restore planet API ?

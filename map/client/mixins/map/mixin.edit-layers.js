@@ -57,7 +57,9 @@ export const editLayers = {
   },
   methods: {
     isLayerEdited (layer) {
-      return this.editedLayer && (this.editedLayer.name === layer.name)
+      if (!this.editedLayer) return false
+      if (this.editedLayer._id && layer._id) return (this.editedLayer._id === layer._id)
+      else return (this.editedLayer.name === layer.name)
     },
     getGeoJsonEditOptions (options, geometryTypes) {
       let filteredOptions = options
