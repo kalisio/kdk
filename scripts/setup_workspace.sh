@@ -14,7 +14,12 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 WORKSPACE_NODE=20
 WORKSPACE_KIND=klifull
+WORKSPACE_BRANCH=
+WORKSPACE_TAG=
 OPT_LIST="n:k:"
+if [ "$CI" != true ]; then
+    OPT_LIST="b:n:t:k:"
+fi
 
 while getopts "$OPT_LIST" OPT; do
     case $OPT in
@@ -22,6 +27,10 @@ while getopts "$OPT_LIST" OPT; do
             WORKSPACE_NODE=$OPTARG;;
         k) # workspace kind (nokli kli klifull)
             WORKSPACE_KIND=$OPTARG;;
+        b) # defines branch
+            WORKSPACE_BRANCH=$OPTARG;;
+        t) # defines tag
+            WORKSPACE_TAG=$OPTARG;;
         *)
         ;;
     esac
@@ -30,17 +39,6 @@ done
 begin_group "Setting up workspace ..."
 
 if [ "$CI" != true ]; then
-    while getopts "b:t" option; do
-        case $option in
-            b) # defines branch
-                WORKSPACE_BRANCH=$OPTARG;;
-            t) # defines tag
-                WORKSPACE_TAG=$OPTARG;;
-            *)
-            ;;
-        esac
-    done
-
     shift $((OPTIND-1))
     WORKSPACE_DIR="$1"
 
