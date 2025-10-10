@@ -1257,19 +1257,6 @@
     lodash "^4.17.21"
     moment "^2.29.4"
 
-"@kalisio/feathers-s3@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@kalisio/feathers-s3/-/feathers-s3-1.5.2.tgz#583ac6fecdbc024ee37ec88c78c6b59f7b3e9afe"
-  integrity sha512-XeHksxyxaXpBngiBz3UEaVGPExGOoHIOYQtpLnmI2cR/0/3y0YscWmL/kKVA7Ak4v5n8RukBFQtDzv1iYJw6+g==
-  dependencies:
-    "@aws-sdk/client-s3" "^3.693.0"
-    "@aws-sdk/s3-request-presigner" "^3.693.0"
-    "@feathersjs/commons" "^5.0.8"
-    "@feathersjs/errors" "^5.0.8"
-    debug "^4.1.0"
-    lodash "^4.17.21"
-    moment "^2.29.4"
-
 "@kalisio/feathers-webpush@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@kalisio/feathers-webpush/-/feathers-webpush-1.0.2.tgz#66f6a91096fe3ed458b5b81d0b8c517370ff0147"
