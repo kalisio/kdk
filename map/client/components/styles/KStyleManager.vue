@@ -26,7 +26,7 @@
             :filter-query="filterQuery"
             :nb-items-per-page="24"
             :renderer="renderer"
-            class="fit"            
+            class="fit"
           />
           <KFollower
             :follower="follower"
