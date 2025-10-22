@@ -4,6 +4,7 @@ import { LocalCache } from '../local-cache.js'
 import { Store } from '../store.js'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
+import { setOfflineServicesDocumentHandle } from '../utils/utils.offline.js'
 import { defineAbilities } from '../../common/permissions.js'
 
 async function authenticate(authentication) {
@@ -12,6 +13,10 @@ async function authenticate(authentication) {
   if (user) return
   // Store latest authentication data for offline mode
   await LocalCache.setItem('authentication', authentication)
+  // We must be sure to do this before setting the user as it usually triggers
+  // applications to display components requiring an authenticated user.
+  // Do it based on the 'login' event does not work fine due to interleaved async operations
+  await setOfflineServicesDocumentHandle()
   // Anonymous user or user account ?
   user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
   Store.set('user', user)

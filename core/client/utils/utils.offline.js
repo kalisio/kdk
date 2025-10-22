@@ -10,6 +10,8 @@ export async function createOfflineServices (offlineDocument) {
   if (!offlineDocument) return
   const services = await LocalCache.getItem('services')
   if (services) {
+    // Might be null on initialization when using authentication as we need to wait
+    // the user be logged in before getting the document handle
     const { documentHandle } = offlineDocument
     const serviceNames = Object.keys(services)
     for (let i = 0; i < serviceNames.length; i++) {
@@ -20,6 +22,22 @@ export async function createOfflineServices (offlineDocument) {
       } else {
         await api.createOfflineService(serviceName, { documentHandle, ...serviceOptions })
       }
+    }
+  }
+}
+
+export async function setOfflineServicesDocumentHandle (offlineDocument) {
+  // Try to get it from cache if not provided
+  if (!offlineDocument) offlineDocument = await getOfflineDocument()
+  // Nothing available offline yet
+  if (!offlineDocument) return
+  const services = await LocalCache.getItem('services')
+  if (services) {
+    const { documentHandle } = offlineDocument
+    const serviceNames = Object.keys(services)
+    for (let i = 0; i < serviceNames.length; i++) {
+      const serviceName = serviceNames[i]
+      api.getOfflineService(serviceName).setHandle(documentHandle)
     }
   }
 }
@@ -53,7 +71,7 @@ export async function getOfflineDocument() {
   // Nothing available offline yet
   if (!offlineDocument) return
   const repo = api.get('repo')
-  offlineDocument.documentHandle = await repo.find(offlineDocument.url)
+  if (repo) offlineDocument.documentHandle = await repo.find(offlineDocument.url)
   return offlineDocument
 }
 
