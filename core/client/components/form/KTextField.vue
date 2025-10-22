@@ -13,6 +13,7 @@
     :disable="disabled"
     :error="hasError"
     :error-message="errorLabel"
+    :autofocus="hasFocus"
     bottom-slots
     :debounce="debounce"
     @blur="onChanged"

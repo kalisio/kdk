@@ -20,6 +20,7 @@
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
+    :autofocus="hasFocus"
     bottom-slots
     @filter="onFilter"
     @blur="onChanged"

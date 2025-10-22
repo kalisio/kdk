@@ -46,7 +46,8 @@
             :for="properties.name + '-field'"
             :id="properties.name + '-field'"
             v-model="input"
-            autofocus type="text"
+            :autofocus="hasFocus"
+            type="text"
             :after="inputActions"
             @keyup.enter="onChipAdded()"
           />

@@ -53,6 +53,9 @@ export const baseField = {
     helperContext () {
       return _.get(this.properties.field.helper, 'context', null)
     },
+    hasFocus () {
+      return _.get(this.properties.field, 'focus', false)
+    },
     hasError () {
       return !_.isEmpty(this.error)
     },

@@ -31,6 +31,7 @@
           style="max-width: 54px"
           :readonly="readonly"
           :disable="disabled"
+          :autofocus="hasFocus"
           @update:model-value='updateModel()'
         />
         <span class="text-body1">x</span>

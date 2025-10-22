@@ -19,6 +19,7 @@
     :error-message="errorLabel"
     :error="hasError"
     :disable="disabled"
+    :autofocus="hasFocus"
     bottom-slots
     :options="options"
     @filter="onSearch"

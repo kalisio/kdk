@@ -1,6 +1,7 @@
 <template>
   <q-form
     v-if="schema"
+    autofocus
     @submit.prevent="onSubmit"
     class="column"
   >
