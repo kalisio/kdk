@@ -296,6 +296,7 @@ onMounted(async () => {
 
 // Expose
 defineExpose({
+  isReady,
   getField,
   fill,
   clear,
