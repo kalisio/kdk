@@ -6,7 +6,7 @@
     <div
       :id="`${placement}-window-header`"
       class="k-window-header full-width row items-center"
-
+      :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px;`"
     >
       <q-resize-observer @resize="onWindowHeaderResized" />
       <!-- window menu -->
