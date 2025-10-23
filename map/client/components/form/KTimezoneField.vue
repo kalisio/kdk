@@ -116,8 +116,6 @@ export default {
       this.$refs.timezoneMapModal.close()
       if (fill) {
         this.fill(this.mapTimezone)
-        // Seems to be required to correctly update the label in the q-select
-        await this.$nextTick()
       }
     },
     onAutocomplete (value, update) {
