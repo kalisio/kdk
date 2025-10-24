@@ -61,7 +61,7 @@
       <p v-if="typeof this.properties.field.noOption === 'string'" class="noOptionText">{{ this.properties.field.noOption }}</p>
       <Suspense v-else>
         <component v-if="noOptionComponent" :is="noOptionComponent" v-bind="noOptionsAttributes" />
-      </Suspense> 
+      </Suspense>
     </template>
     <!-- Helper -->
     <template v-if="hasHelper" v-slot:append>
@@ -84,7 +84,7 @@
 import _ from 'lodash'
 import { makeDiacriticPattern } from '../../../common'
 import { baseField } from '../../mixins'
-import { loadComponent } from '../../utils';
+import { loadComponent } from '../../utils'
 
 export default {
   mixins: [baseField],
