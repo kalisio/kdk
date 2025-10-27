@@ -1,9 +1,10 @@
 <template>
+  <KZoomControl v-if="levels && zoomButtons" :vertical="false" />
   <div
     v-if="levels"
-    class="q-pa-sm col row items-center k-level-slider"
+    class="q-pa-sm col row flex-center k-level-slider"
   >
-    <div v-if="switchLabelSide">
+    <div v-if="props.switchLabelSide">
       <div
         class="text-caption text-grey-9"
         style="writing-mode: vertical-rl; min-width: 1rem;"
@@ -11,6 +12,7 @@
         {{ $t(label) }} - {{ getFormattedLevel(CurrentActivity.selectedLevel) }}
       </div>
     </div>
+
     <q-slider
       v-model="level"
       vertical
@@ -18,16 +20,16 @@
       :min="sliderMin"
       :max="sliderMax"
       :step="sliderStep"
-      :markers="markers"
+      :markers="props.markers"
       snap
       label
       :label-value="getFormattedLevel(level)"
-      :switch-label-side="!switchLabelSide"
+      :switch-label-side="!props.switchLabelSide"
       @change="onLevelChanged"
       class="q-py-sm text-primary"
-      :style="`height: ${height - 18}px;`"
+      :style="`height: ${props.height - 18}px;`"
     />
-    <div v-if="!switchLabelSide">
+    <div v-if="!props.switchLabelSide">
       <div
         class="text-caption text-grey-9"
         style="writing-mode: vertical-lr; min-width: 1rem;"
@@ -42,9 +44,10 @@
 import _ from 'lodash'
 import { ref, computed, watch } from 'vue'
 import { useCurrentActivity } from '../../../../core/client/composables'
+import KZoomControl from './KZoomControl.vue'
 
 // Props
-defineProps({
+const props = defineProps({
   height: {
     type: Number,
     default: 300
@@ -56,6 +59,10 @@ defineProps({
   switchLabelSide: {
     type: Boolean,
     default: null
+  },
+  zoomButtons: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -87,6 +94,7 @@ const sliderStep = computed(() => {
   if (levels.value.values) return 1
   return _.get(levels.value, 'range.interval', 10)
 })
+const borderTop = computed(() => props.zoomButtons ? '0' : '1px')
 
 // Watch
 watch(() => CurrentActivity.value.selectedLevel, (selectedLevel) => {
@@ -111,6 +119,7 @@ function getFormattedLevel (level) {
 <style>
 .k-level-slider {
   border: 1px solid lightgrey;
+  border-top: v-bind(borderTop);
   background: white;
 }
 </style>
