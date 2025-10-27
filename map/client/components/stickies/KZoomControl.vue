@@ -8,7 +8,8 @@
       text-color="grey-9"
       :flat="props.square"
       round
-      @click="onZoomOut"
+      @click="onZoomOutFn"
+      size="12px"
     />
     <q-separator v-if="props.square" :vertical="!props.vertical" />
     <div v-else style="height: 8px;" />
@@ -20,7 +21,8 @@
       text-color="grey-9"
       :flat="props.square"
       round
-      @click="onZoomIn"
+      @click="onZoomInFn"
+      size="12px"
     />
   </div>
 </template>
@@ -30,6 +32,18 @@ import { composables as kCoreComposables } from '@kalisio/kdk/core.client'
 
 const { CurrentActivity } = kCoreComposables.useCurrentActivity()
 const { onZoomOut, onZoomIn } = CurrentActivity.value
+
+function onZoomOutFn () {
+  if (typeof onZoomOut === 'function') {
+    onZoomOut()
+  }
+}
+
+function onZoomInFn () {
+  if (typeof onZoomIn === 'function') {
+    onZoomIn()
+  }
+}
 
 const props = defineProps({
   vertical: {
