@@ -1,19 +1,26 @@
 <template>
-  <div :class="'k-zoom-control ' + (props.vertical ? 'column reverse' : 'row')">
-    <KAction
+  <div :class="(props.vertical ? 'column reverse' : 'row') + (props.square ? ' k-zoom-control' : '')">
+    <q-btn
       id="zoom-out"
       icon="remove"
       tooltip="mixins.activity.ZOOM_OUT"
-      renderer="button"
       :handler="onZoomOut"
+      color="white"
+      text-color="grey-9"
+      :flat="props.square"
+      round
     />
-    <q-separator :vertical="!props.vertical" />
-    <KAction
+    <q-separator v-if="props.square" :vertical="!props.vertical" />
+    <div v-else style="height: 8px;" />
+    <q-btn
       id="zoom-in"
       icon="add"
       tooltip="mixins.activity.ZOOM_IN"
-      renderer="button"
       :handler="onZoomIn"
+      color="white"
+      text-color="grey-9"
+      :flat="props.square"
+      round
     />
   </div>
 </template>
@@ -26,6 +33,10 @@ const { onZoomOut, onZoomIn } = CurrentActivity.value
 
 const props = defineProps({
   vertical: {
+    default: true,
+    type: Boolean
+  },
+  square: {
     default: false,
     type: Boolean
   }
