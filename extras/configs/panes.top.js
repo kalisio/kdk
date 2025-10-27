@@ -167,6 +167,17 @@ module.exports = {
       renderer
     })
   },
+  toggleZoomControl: (options) => {
+    // renderer: renderer to be used to display the action
+    const renderer = options?.renderer || 'item'
+    return helpers.toggleSticky({
+      stickyId: 'zoom-control-sticky',
+      icon: 'las la-search-plus',
+      message: 'layout.ZOOM_CONTROL',
+      toggleIcon: { name: 'las la-search-plus', color: 'grey-6', overlay: { name: 'las la-slash', color: 'primary', rotation: 90 } },
+      renderer
+    })
+  },
   toggleNorthArrow: (options) => {
     // renderer: renderer to be used to display the action
     const renderer = options?.renderer || 'item'
@@ -203,16 +214,16 @@ module.exports = {
       icon: 'las la-print',
       label: renderer === 'item' ? 'layout.PRINT_TOOL' : null,
       tooltip: renderer === 'button' ? 'layout.PRINT_TOOL' : null,
-      dialog: { 
-        component: 'KCapture', 
-        title: 'layout.PRINT_TOOL', 
-        cancelAction: 'CANCEL', 
-        okAction: { 
-          id: 'print-button', 
-          label: 'layout.PRINT', 
-          handler: 'apply' 
-        } 
-      } ,
+      dialog: {
+        component: 'KCapture',
+        title: 'layout.PRINT_TOOL',
+        cancelAction: 'CANCEL',
+        okAction: {
+          id: 'print-button',
+          label: 'layout.PRINT',
+          handler: 'apply'
+        }
+      },
       renderer
     }
   },
