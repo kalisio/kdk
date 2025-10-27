@@ -4,11 +4,11 @@
       id="zoom-out"
       icon="remove"
       tooltip="mixins.activity.ZOOM_OUT"
-      :handler="onZoomOut"
       color="white"
       text-color="grey-9"
       :flat="props.square"
       round
+      @click="onZoomOut"
     />
     <q-separator v-if="props.square" :vertical="!props.vertical" />
     <div v-else style="height: 8px;" />
@@ -16,11 +16,11 @@
       id="zoom-in"
       icon="add"
       tooltip="mixins.activity.ZOOM_IN"
-      :handler="onZoomIn"
       color="white"
       text-color="grey-9"
       :flat="props.square"
       round
+      @click="onZoomIn"
     />
   </div>
 </template>
