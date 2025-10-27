@@ -40,8 +40,8 @@ module.exports = {
       id: 'zoom-control-sticky',
       visible: true,
       vertical: true,
-      position: 'right',
-      offset: [40, 0],
+      position: 'bottom-left',
+      offset: [20, 60],
       component: 'stickies/KZoomControl'
     }, options)
   },
