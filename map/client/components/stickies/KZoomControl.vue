@@ -1,17 +1,17 @@
 <template>
-  <div :class="(props.vertical ? 'column reverse' : 'row') + (props.square ? ' k-zoom-control' : '')">
+  <div :class="(vertical ? 'column reverse' : 'row') + (square ? ' k-zoom-control' : '')">
     <q-btn
       id="zoom-out"
       icon="remove"
       tooltip="mixins.activity.ZOOM_OUT"
       color="white"
       text-color="grey-9"
-      :flat="props.square"
+      :flat="square"
       round
       @click="onZoomOutFn"
-      size="12px"
+      :size="size"
     />
-    <q-separator v-if="props.square" :vertical="!props.vertical" />
+    <q-separator v-if="square" :vertical="!vertical" />
     <div v-else style="height: 8px;" />
     <q-btn
       id="zoom-in"
@@ -19,10 +19,10 @@
       tooltip="mixins.activity.ZOOM_IN"
       color="white"
       text-color="grey-9"
-      :flat="props.square"
+      :flat="square"
       round
       @click="onZoomInFn"
-      size="12px"
+      :size="size"
     />
   </div>
 </template>
@@ -30,22 +30,8 @@
 <script setup>
 import { composables as kCoreComposables } from '@kalisio/kdk/core.client'
 
-const { CurrentActivity } = kCoreComposables.useCurrentActivity()
-const { onZoomOut, onZoomIn } = CurrentActivity.value
-
-function onZoomOutFn () {
-  if (typeof onZoomOut === 'function') {
-    onZoomOut()
-  }
-}
-
-function onZoomInFn () {
-  if (typeof onZoomIn === 'function') {
-    onZoomIn()
-  }
-}
-
-const props = defineProps({
+// Props
+defineProps({
   vertical: {
     default: true,
     type: Boolean
@@ -53,8 +39,27 @@ const props = defineProps({
   square: {
     default: false,
     type: Boolean
+  },
+  size: {
+    default: '11px',
+    type: String
   }
 })
+
+// Data
+const { CurrentActivity } = kCoreComposables.useCurrentActivity()
+
+// Functions
+function onZoomOutFn () {
+  if (CurrentActivity.value && typeof CurrentActivity.value?.onZoomOut === 'function') {
+    CurrentActivity.value.onZoomOut()
+  }
+}
+function onZoomInFn () {
+  if (CurrentActivity.value && typeof CurrentActivity.value?.onZoomIn === 'function') {
+    CurrentActivity.value.onZoomIn()
+  }
+}
 </script>
 
 <style>
