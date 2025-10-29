@@ -382,7 +382,6 @@ export const baseGlobe = {
       this.center(center.longitude, center.latitude, center.altitude * 0.5)
     },
     zoomOut () {
-      const inertiaZoom = this.viewer.scene.screenSpaceCameraController.inertiaZoom
       const center = this.getCenter()
       this.center(center.longitude, center.latitude, center.altitude / 2.0)
     },
