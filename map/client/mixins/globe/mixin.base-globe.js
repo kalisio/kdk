@@ -379,11 +379,11 @@ export const baseGlobe = {
     },
     zoomIn () {
       const center = this.getCenter()
-      this.center(center.longitude, center.latitude, center.altitude * 0.5)
+      this.center(center.longitude, center.latitude, center.altitude * 0.8)
     },
     zoomOut () {
       const center = this.getCenter()
-      this.center(center.longitude, center.latitude, center.altitude / 2.0)
+      this.center(center.longitude, center.latitude, center.altitude / 0.8)
     },
     zoomToBounds (bounds, heading = 0, pitch = -90, roll = 0, duration = 0) {
       this.viewer.camera.flyTo({
