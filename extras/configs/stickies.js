@@ -41,7 +41,7 @@ module.exports = {
       visible: true,
       vertical: true,
       position: 'bottom-left',
-      offset: [20, 60],
+      offset: [12, 60],
       component: 'stickies/KZoomControl'
     }, options)
   },
