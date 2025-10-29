@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import { EventBus, getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Transforms, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
+         exportKml, VerticalOrigin, Transforms, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive,
          DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
 // We need to import cesium as an object to dynamically get constructors
 import * as Cesium from 'cesium'
@@ -376,6 +376,15 @@ export const baseGlobe = {
       if (!layer.entities) return
       const geoJson = await convertEntitiesToGeoJson(layer.entities)
       return geoJson
+    },
+    zoomIn () {
+      const center = this.getCenter()
+      this.center(center.longitude, center.latitude, center.altitude * 0.5)
+    },
+    zoomOut () {
+      const inertiaZoom = this.viewer.scene.screenSpaceCameraController.inertiaZoom
+      const center = this.getCenter()
+      this.center(center.longitude, center.latitude, center.altitude / 2.0)
     },
     zoomToBounds (bounds, heading = 0, pitch = -90, roll = 0, duration = 0) {
       this.viewer.camera.flyTo({

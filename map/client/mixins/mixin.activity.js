@@ -103,7 +103,7 @@ export const activity = {
     async addCatalogCategory (category) {
       this.layerCategories.push(category)
     },
-    // Retrieve layer categories from catalog 
+    // Retrieve layer categories from catalog
     async refreshLayerCategories () {
       this.layerCategories.splice(0, this.layerCategories.length)
       const layerCategories = await this.getCatalogCategories()
@@ -151,7 +151,7 @@ export const activity = {
         this.bringLayerToFront(layer.name)
       }
     },
-    // Retrieve layers from catalog 
+    // Retrieve layers from catalog
     async refreshLayers () {
       // Clear layers and variables
       this.clearLayers()
@@ -254,12 +254,10 @@ export const activity = {
       this.$engineEvents.emit('layer-filter-toggled', layer, filter)
     },
     onZoomIn () {
-      const center = this.getCenter()
-      this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel + 1 : center.altitude * 0.5)
+      this.zoomIn()
     },
     onZoomOut () {
-      const center = this.getCenter()
-      this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel - 1 : center.altitude * 2)
+      this.zoomOut()
     },
     onZoomToLayer (layer) {
       this.zoomToLayer(layer.name)
