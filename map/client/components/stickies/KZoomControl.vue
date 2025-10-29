@@ -41,7 +41,7 @@ defineProps({
     type: Boolean
   },
   size: {
-    default: '11px',
+    default: '10px',
     type: String
   }
 })
