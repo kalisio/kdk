@@ -627,6 +627,16 @@ export const baseMap = {
       if (!layer || (typeof layer.toGeoJSON !== 'function')) return
       return layer.toGeoJSON()
     },
+    zoomIn () {
+      const zoomDelta = _.get(this.map, 'options.zoomDelta', 1)
+      const center = this.getCenter()
+      this.center(center.longitude, center.latitude, center.zoomLevel + zoomDelta)
+    },
+    zoomOut () {
+      const zoomDelta = _.get(this.map, 'options.zoomDelta', 1)
+      const center = this.getCenter()
+      this.center(center.longitude, center.latitude, center.zoomLevel - zoomDelta)
+    },
     zoomToLayer (name, options) {
       const layer = this.getLayerByName(name)
       if (!layer) return
@@ -703,7 +713,7 @@ export const baseMap = {
     animateCenter (timestamp) {
       // Note: as this callback is called frequently by the animation system
       // we don't use lodash utility functions like _.get/_.set to improve performances
-      
+
       // Initialize animation time origin
       if (!this.centerAnimation.startTime) this.centerAnimation.startTime = timestamp
       const { id, duration, startTime, fps,
