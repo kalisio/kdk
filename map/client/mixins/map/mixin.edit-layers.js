@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import logger from 'loglevel'
 import bearing from '@turf/bearing'
 import { getType, getCoords, getGeom } from '@turf/invariant'
 import { uid } from 'quasar'
