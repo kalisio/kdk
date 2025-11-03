@@ -99,6 +99,12 @@ export const editLayers = {
             if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Polygon') && !geometryTypes.includes('MultiPolygon')) return style(feature)
             else return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine.style.edition.polygon'))
           }
+          const isPoint = ((feature.geometry.type === 'Point') || (feature.geometry.type === 'MultiPoint'))
+          if (isPoint) {
+            // Skip point editing style if not editing points
+            if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Point') && !geometryTypes.includes('MultiPoint')) return style(feature)
+            else return getDefaultPointStyle(feature, layerStyle, _.get(this, 'activityOptions.engine.style.edition.point'))
+          }
           logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
         },
         pointToLayer: (feature, latlng) => {
