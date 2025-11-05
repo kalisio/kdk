@@ -409,23 +409,6 @@
     "EDIT_PROFILE": "Edit my profile",
     "MANAGE_ACCOUNT": "Manage my account"
   },
-  "KDeleteAccountManager": {
-    "TITLE": "Delete my account",
-    "QUESTION": "Are you sure you want to delete your account ?",
-    "CONFIRMATION_TITLE": "Warning: the deletion of your account is irrevocable and all data attached to it will be lost",
-    "CONFIRMATION": "Enter your account name to confirm the deletion"
-  },
-  "KVerifyEmailManager": {
-    "TITLE": "Check my email address",
-    "HELP_LABEL": "Why should I verify my email address ?",
-    "HELP_TEXT": "Verifying your email address improves the security of your account. Once you have verified your email address, both your password and access to your email account are required in order to make any changes to your account credentials, such as your password and contact email address. This helps further protect your account from being stolen by a potential phisher.",
-    "HELP_EMAIL_LABEL": "I never received the verification email, what should I do ?",
-    "HELP_EMAIL_TEXT": "If you do not receive your signup verification email and you are running a Spam filter, check and make sure the message has not been filtered as spam. Please try adding {email} to your contacts or trusted senders list within your email client and attempt to re-verify your email address. You can also click the button below and we'll send you the email again.",
-    "TOKEN_LABEL": "Enter the code received by email to validate your email address",
-    "EMAIL_VERIFIED": "Your address has been verified. An email has been sent to you to confirm the change.",
-    "ACTION": "Resend verification code",
-    "ERROR_MESSAGE": "Invalid code, request a new one"
-  },
   "KSubscriptionsManager": {
     "TITLE": "Manage my subscriptions",
     "EMPTY": "No subscriptions"

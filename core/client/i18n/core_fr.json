@@ -409,23 +409,6 @@
     "EDIT_PROFILE": "Éditer mon profil",
     "MANAGE_ACCOUNT": "Gérer mon compte"
   },
-  "KDeleteAccountManager": {
-    "TITLE": "Supprimer mon compte",
-    "QUESTION": "Etes vous sûr de vouloir supprimer votre compte ?",
-    "CONFIRMATION_TITLE": "Attention: la suppression de votre compte est irrévocable et toutes les données qui y sont attachées seront perdues",
-    "CONFIRMATION": "Saisissez le nom de votre compte pour confirmer la surpression"
-  },
-  "KVerifyEmailManager": {
-    "TITLE": "Vérifier mon adresse mail",
-    "HELP_LABEL": "Pourquoi dois-je vérifier mon adresse mail ?",
-    "HELP_TEXT": "Vérifier votre adresse mail améliore la sécurité de votre compte. Une fois que votre adresse mail est validée, vous serez en mesure d'apporter des changements à votre compte tels que votre mot de passe. Cela permet de nous aider pour protéger votre compte contre d'éventuels actes de piraterie.",
-    "HELP_EMAIL_LABEL": "Je n'ai jamais reçu de mail de vérification. Que dois-je faire ?",
-    "HELP_EMAIL_TEXT": "Si vous n'avez pas reçu de mail de vérification, assurez-vous que le mail n'a pas été filtré et déplacé dans les spams de votre messagerie. Merci d'ajouter dans vos contacts l'adresse {email} dans votre client de messagerie. Vous pouvez également cliquer sur le bouton ci-dessous pour recevoir un nouveau mail de vérification.",
-    "TOKEN_LABEL": "Saisissez le code reçu par email pour valider votre adresse mail",
-    "EMAIL_VERIFIED": "Votre adresse a été vérifiée. Un mail vous a été envoyé pour confirmer le changement.",
-    "ACTION": "Me renvoyer un code de vérification",
-    "ERROR_MESSAGE": "Code invalide, demandez-en un nouveau"
-  },
   "KSubscriptionsManager": {
     "TITLE": "Gérer mes souscriptions",
     "EMPTY": "Aucunes subscriptions"
