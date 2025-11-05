@@ -415,21 +415,6 @@
     "CONFIRMATION_TITLE": "Warning: the deletion of your account is irrevocable and all data attached to it will be lost",
     "CONFIRMATION": "Enter your account name to confirm the deletion"
   },
-  "KPasswordManager": {
-    "TITLE": "Change my password",
-    "PASSWORD_CHANGED": "Your password has been successfully changed",
-    "OLD_PASSWORD_FIELD_LABEL": "Enter your old password",
-    "PASSWORD_FIELD_LABEL": "Enter your new password",
-    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirm your new password"
-  },
-  "KEmailManager": {
-    "TITLE": "Change my email address",
-    "PASSWORD_FIELD_LABEL": "Enter your password",
-    "EMAIL_FIELD_LABEL": "Enter your new email address",
-    "TOKEN_LABEL": "To validate your new email address, enter the code you received by email",
-    "EMAIL_CHANGED": "You new address has been taken into account. An email has been sent to you to confirm the change.",
-    "ERROR_MESSAGE": "Invalid code"
-  },
   "KVerifyEmailManager": {
     "TITLE": "Check my email address",
     "HELP_LABEL": "Why should I verify my email address ?",
