@@ -378,6 +378,8 @@ onBeforeMount(() => {
 })
 onBeforeUnmount(() => {
   Events.off('user-abilities-changed', refreshCollection)
+  if (scrollDownRef.value) scrollDownRef.value.refresh.cancel()
+  if (scrollToTopRef.value) scrollToTopRef.value.refresh.cancel()
 })
 </script>
 
