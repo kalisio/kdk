@@ -16,7 +16,7 @@
     },
     "description": {
       "type": ["string", "null"],
-      "maxLength": 256,
+      "maxLength": 4096,
       "field": {
         "component": "form/KTextField",
         "label": "schemas.CATALOG_DESCRIPTION_FIELD_LABEL"
