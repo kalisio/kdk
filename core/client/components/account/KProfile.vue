@@ -38,11 +38,10 @@ import { useUser } from '../../composables'
 import { loadComponent } from '../../utils/index.js'
 import config from 'config'
 import KAvatar from '../KAvatar.vue'
-import KPanel from '../KPanel.vue'
 import KChip from '../KChip.vue'
 
 // Props
-const props = defineProps({
+defineProps({
   avatar: {
     type: Boolean,
     default: true
@@ -57,9 +56,6 @@ const props = defineProps({
   }
 })
 
-// Emit
-const emit = defineEmits(['triggered'])
-
 // Data
 const { User, name: userName, description: userDescription, avatar: userAvatar, role: userRole } = useUser()
 const headerComponent = _.get(config, 'profile.header')
@@ -68,9 +64,4 @@ const headerComponent = _.get(config, 'profile.header')
 const computedHeaderComponent = computed(() => {
   return loadComponent(headerComponent)
 })
-
-// Functions
-function onTriggered (args) {
-  emit('triggered', args)
-}
 </script>
