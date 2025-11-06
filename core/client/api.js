@@ -9,6 +9,7 @@ import { rx as reactive } from 'feathers-reactive'
 import createOfflineService from '@kalisio/feathers-localforage'
 import configuration from 'config'
 import { permissions } from '../common/index.js'
+import { Context } from './context.js'
 import { Store } from './store.js'
 import { LocalCache } from './local-cache.js'
 import { Events } from './events.js'
@@ -103,10 +104,14 @@ export async function createClient (config) {
     let service
     // If a context is given use it
     if (!_.isEmpty(context)) {
+      // The reserved 'global' context actually means no context.
+      // It can be used to force access to a global service even if a context is set in store
+      // as by default it will otherwise retrieve the contextual service if no context is provided
+      if (context === 'global') context = null
       const servicePath = api.getServicePath(name, context)
       service = (options.create ? api.service(servicePath) : api.services[servicePath])
     } else { // Otherwise check for a potential current context to be used
-      const currentContext = Store.get('context')
+      const currentContext = Context.get()
       const contextualPath = api.getServicePath(name, currentContext)
       const contextualService = api.services[contextualPath]
       const globalPath = api.getServicePath(name)

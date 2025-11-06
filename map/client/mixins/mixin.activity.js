@@ -2,7 +2,7 @@ import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
-import { Store } from '../../../core/client/store.js'
+import { Context } from '../../../core/client/context.js'
 import { Events } from '../../../core/client/events.js'
 import { api } from '../../../core/client/api.js'
 import { isDataOperation } from '../../../core/client/utils/utils.services.js'
@@ -58,10 +58,10 @@ export const activity = {
         this.project = null
       }
 
+      const context = Context.get()
       // We get layers coming from global catalog first if any
-      let layers = await getLayers({ query })
+      let layers = await getLayers({ query, context: 'global' })
       // Then we get layers coming from contextual catalog if any
-      const context = Store.get('context')
       if (context) layers = layers.concat(await getLayers({ query, context }))
       return layers
     },
@@ -86,17 +86,17 @@ export const activity = {
     },
     async getCatalogCategories () {
       // We get categories coming from global catalog first if any
-      let categories = await getCategories()
+      let categories = await getCategories({ context: 'global' })
       // Then we get categories coming from contextual catalog if any
-      const context = Store.get('context')
+      const context = Context.get()
       if (context) categories = categories.concat(await getCategories({ context }))
       return categories
     },
     async getCatalogSublegends () {
       // We get sublegends coming from global catalog first if any
-      let sublegends = await getSublegends()
+      let sublegends = await getSublegends({ context: 'global' })
       // Then we get categories coming from contextual catalog if any
-      const context = Store.get('context')
+      const context = Context.get()
       if (context) sublegends = sublegends.concat(await getSublegends({ context }))
       return sublegends
     },

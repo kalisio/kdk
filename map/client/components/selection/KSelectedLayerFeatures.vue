@@ -61,7 +61,7 @@ import { Dialog } from 'quasar'
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import bbox from '@turf/bbox'
-import { Store, i18n } from '../../../../core/client'
+import { Context, i18n } from '../../../../core/client'
 import { KView } from '../../../../core/client/components'
 import KLayerItem from '../catalog/KLayerItem.vue'
 import KStyleEditor from '../styles/KStyleEditor.vue'
@@ -282,7 +282,7 @@ function editSelectedFeatureProperties (feature) {
       layerId: props.item.layer._id,
       layerName: props.item.layer.name,
       featureId: feature._id,
-      contextId: Store.get('context')
+      contextId: Context.get()
     })
   })
 }

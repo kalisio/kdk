@@ -4,6 +4,7 @@ import logger from 'loglevel'
 import bearing from '@turf/bearing'
 import { getType, getCoords, getGeom } from '@turf/invariant'
 import { uid } from 'quasar'
+import { Context } from '../../../../core/client/context.js'
 import { Store } from '../../../../core/client/store.js'
 import { Units } from '../../../../core/client/units.js'
 import { api } from '../../../../core/client/api.js'
@@ -407,7 +408,7 @@ export const editLayers = {
           layerId: this.editedLayer._id,
           layerName: this.editedLayer.name,
           featureId: feature._id,
-          contextId: Store.get('context')
+          contextId: Context.get()
         })
       })
     },

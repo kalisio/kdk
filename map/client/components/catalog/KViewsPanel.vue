@@ -21,7 +21,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed } from 'vue'
-import { utils, i18n, api, LocalCache, Store } from '../../../../core/client'
+import { utils, i18n, api, LocalCache, Context } from '../../../../core/client'
 import { KGrid } from '../../../../core/client/components'
 import { useCurrentActivity, useProject } from '../../composables'
 import { cacheView, uncacheView } from '../../utils/utils.offline.js'
@@ -172,7 +172,7 @@ async function onViewSelected (view, action) {
           spinner: true
         })
         await cacheView(view, getProjectLayers(), {
-          contextId: Store.get('context'),
+          contextId: Context.get(),
           ...values
         })
         view.isCached = true
@@ -190,7 +190,7 @@ async function onViewSelected (view, action) {
         spinner: true
       })
       await uncacheView(view, getProjectLayers(), {
-        contextId: Store.get('context')
+        contextId: Context.get()
       })
       view.isCached = false
       dismiss()

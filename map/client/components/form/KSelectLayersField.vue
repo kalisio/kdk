@@ -40,7 +40,7 @@
 
 <script>
 import _ from 'lodash'
-import { Store, mixins as kCoreMixins } from '../../../../core/client'
+import { Context, mixins as kCoreMixins } from '../../../../core/client'
 import { useCatalog } from '../../composables'
 
 export default {
@@ -123,7 +123,7 @@ export default {
   mounted () {
     this.getLayers()
     this.getCategories()
-    if (Store.get('context')) {
+    if (Context.get()) {
       this.getContextLayers()
       this.getContextCategories()
     }
@@ -137,7 +137,7 @@ export default {
       layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories,
       layersByCategory: contextLayersByCategory, orphanLayers: orphanContextLayers
     } =
-      useCatalog({ context: Store.get('context') })
+      useCatalog({ context: Context.get() })
 
     // Expose
     return {
