@@ -8,6 +8,19 @@ import { mapbox_style, kdk_style } from '@kalisio/leaflet-pmtiles'
 import { api, Time, Units, Events, TemplateContext } from '../../../../core/client/index.js'
 import * as layers from '../../utils/utils.layers.js'
 
+function detectStyleType (style) {
+  // `style` field on pmtile layer definition can be one of:
+  // - string => in this case we assume this is a mapbox json style
+  // - kdk style object
+  // - protomaps style object
+
+  if (typeof style === 'string') return 'mapbox'
+  // Look for 'symbolizer' keys in the object, if we find one, this is a protomaps style
+  if (_.some(style, (rule) => rule.symbolizer !== undefined)) return 'protomaps'
+  // Otherwise we assume this is a kdk style object
+  return style ? 'kdk' : 'empty'
+}
+
 export const pmtilesLayers = {
   methods: {
     async createLeafletPMTilesLayer (options) {
@@ -35,13 +48,9 @@ export const pmtilesLayers = {
       }
 
       let rules = {}
-      // Check for style information given as object or URL
-      // style prop may be;
-      // - a string => url to a mapbox style definition json file
-      // - an array => list of protomaps rules
-      // - an object => a kdk style that'll get translated to protomaps rule list
       let style = _.get(leafletOptions, 'style')
-      if (typeof style === 'string') {
+      const styleType = detectStyleType(style)
+      if (styleType === 'mapbox') {
         const response = await fetch(style)
         if (response.status !== 200) {
           throw new Error(`Impossible to fetch style ${style}: ` + response.status)
@@ -67,20 +76,18 @@ export const pmtilesLayers = {
           }
           _.set(leafletOptions, entry.property, f)
         })
-        if (style) {
-          if (Array.isArray(style)) {
-            const styleRules = _.map(style, rule => Object.assign(_.omit(rule, ['symbolizer']), {
-              symbolizer: new protomaps[rule.symbolizer.type](rule.symbolizer)
-            })
-            )
-            const isLabelSymbolizer = (rule) => typeof rule.symbolizer.place === 'function'
-            const isNotLabelSymbolizer = (rule) => !isLabelSymbolizer(rule)
-            // Support v1.x as well as v2.x
-            rules.paint_rules = rules.paintRules = _.filter(styleRules, isNotLabelSymbolizer)
-            rules.label_rules = rules.labelRules = _.filter(styleRules, isLabelSymbolizer)
-          } else {
-            rules = kdk_style(style, leafletOptions.dataLayer)
-          }
+        if (styleType === 'protomaps') {
+          const styleRules = _.map(style, rule => Object.assign(_.omit(rule, ['symbolizer']), {
+            symbolizer: new protomaps[rule.symbolizer.type](rule.symbolizer)
+          })
+          )
+          const isLabelSymbolizer = (rule) => typeof rule.symbolizer.place === 'function'
+          const isNotLabelSymbolizer = (rule) => !isLabelSymbolizer(rule)
+          // Support v1.x as well as v2.x
+          rules.paint_rules = rules.paintRules = _.filter(styleRules, isNotLabelSymbolizer)
+          rules.label_rules = rules.labelRules = _.filter(styleRules, isLabelSymbolizer)
+        } else if (styleType === 'kdk') {
+          rules = kdk_style(style, leafletOptions.dataLayer)
         }
       }
       
