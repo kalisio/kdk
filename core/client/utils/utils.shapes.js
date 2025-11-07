@@ -37,22 +37,46 @@ export const Shapes = {
   triangle: {
     viewBox: [0, 0, 100, 100],
     content: '<polygon points="50 0, 100 100, 0 100" />',
-    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.125), height: Math.round(r * 2 * 1.025) } }
+    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.125), height: Math.round(r * 2 * 1.025) } },
+    icon: {
+      translation: ['-50%', '-15%']
+    },
+    text: {
+      translation: ['-50%', '-15%']
+    }
   },
   'triangle-down': {
     viewBox: [0, 0, 100, 100],
     content: '<polygon points="0 0, 100 0, 50 100" />',
-    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.125), height: Math.round(r * 2 * 1.025) } }
+    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.125), height: Math.round(r * 2 * 1.025) } },
+    icon: {
+      translation: ['-50%', '-85%']
+    },
+    text: {
+      translation: ['-50%', '-85%']
+    }
   },
   'triangle-left': {
     viewBox: [0, 0, 100, 100],
     content: '<polygon points="0 50, 100 0, 100 100" />',
-    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.025), height: Math.round(r * 2 * 1.125) } }
+    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.025), height: Math.round(r * 2 * 1.125) } },
+    icon: {
+      translation: ['-15%', '-50%']
+    },
+    text: {
+      translation: ['-15%', '-50%']
+    }
   },
   'triangle-right': {
     viewBox: [0, 0, 100, 100],
     content: '<polygon points="0 0, 100 50, 0 100" />',
-    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.025), height: Math.round(r * 2 * 1.125) } }
+    radiusToSize: (r) => { return { width: Math.round(r * 2 * 1.025), height: Math.round(r * 2 * 1.125) } },
+    icon: {
+      translation: ['-85%', '-50%']
+    },
+    text: {
+      translation: ['-85%', '-50%']
+    }
   },
   star: {
     viewBox: [0, 0, 48, 48],
@@ -217,7 +241,7 @@ export function createShape (options) {
       }
     }
   }
-  // Render icon 
+  // Render icon
   let iconTag = ''
   if (options.icon) {
     if (!_.isNil(options.icon.classes) || !_.isNil(options.icon.url)) {
@@ -247,7 +271,7 @@ export function createShape (options) {
       logger.warn(`[KDK] icon must contain either the 'classes' property or the 'url' property`)
     }
   }
-  // Render text 
+  // Render text
   let textTag = ''
   if (options.text) {
     if (!_.isNil(options.text.label)) {
