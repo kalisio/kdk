@@ -251,7 +251,7 @@ async function onDrop (event, targetIndex) {
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
   const layerName = event.dataTransfer.getData('layerName')
   const layers = _.flatten(_.values(layersByCategory.value)).concat(filteredOrphanLayers.value)
-  const layer = layers.find(layer => layer.name === layerName)
+  const layer = layers.find(layer => layer?.name === layerName)
   const draggedLayerIndex = event.dataTransfer.getData('draggedIndex')
   if (layerName && layerName.length > 0) { // drag source is layer: change layer category
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers
