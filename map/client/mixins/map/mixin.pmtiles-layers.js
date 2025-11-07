@@ -6,6 +6,7 @@ import L from 'leaflet'
 import * as protomaps from 'protomaps-leaflet'
 import { mapbox_style } from '@kalisio/leaflet-pmtiles'
 import { api, Time, Units, Events, TemplateContext } from '../../../../core/client/index.js'
+import * as layers from '../../utils/utils.layers.js'
 
 export const pmtilesLayers = {
   methods: {
@@ -48,11 +49,17 @@ export const pmtilesLayers = {
         rules = mapbox_style(style, {})
       } else {
         // Manage templating
-        _.get(leafletOptions, 'template', []).forEach(entry => {
-          // protomaps allows property functions with zomm/feature as input
+        const templates = _.get(leafletOptions, 'template', [])
+        templates.forEach(entry => {
+          // protomaps allows property functions with zoom/feature as input
           const f = (zoom, feature) => {
             const context = Object.assign({ properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }, TemplateContext.get())
-            return entry.property.endsWith('filter') ? (entry.compiler(context) === 'true'): entry.compiler(context)
+            if (entry.property.endsWith('filter')) {
+              const result = entry.compiler(context)
+              return (result === 'true')
+            } else {
+              return entry.compiler(context)
+            }
           }
           _.set(leafletOptions, entry.property, f)
         })
@@ -100,16 +107,34 @@ export const pmtilesLayers = {
           layer.redraw()
         }
       }
+    },
+    onLayerFilterToggledPMTilesLayers (layer, filter) {
+      // Filtering is managed by templating so that we need to update the template compiler
+      const template = layers.getFilterTemplateFromLayerFilters(layer)
+      const compiler = _.template(template)
+      // Retrieve the engine layer and update the filter function directly
+      layer = this.getLeafletLayerByName(layer.name)
+      if (!layer) return
+      layer.paintRules.forEach(rule => {
+        if (rule.filter) rule.filter = (zoom, feature) => {
+          const context = Object.assign({ properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }, TemplateContext.get())
+          const result = compiler(context)
+          return (result === 'true')
+        }
+      })
+      layer.redraw()
     }
   },
   created () {
     this.registerLeafletConstructor(this.createLeafletPMTilesLayer)
     Events.on('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
+    this.$engineEvents.on('layer-filter-toggled', this.onLayerFilterToggledPMTilesLayers)
   },
   beforeUnmount () {
     Events.off('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
+    this.$engineEvents.off('layer-filter-toggled', this.onLayerFilterToggledPMTilesLayers)
   }
 }
 
