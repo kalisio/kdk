@@ -187,11 +187,12 @@ export async function authorise (hook) {
     const authorisationService = hook.app.getService('authorisations')
     let subject = hook.params.user
     const payload = _.get(hook.params, 'authentication.payload')
+    const subjectId = payload && (payload.sub || payload.appId)
     if (payload) {
       // If no user we allow for a stateless token with permissions inside, e.g.
       // token targeting API gateway (sub = keyId) or app used through iframe (appId = keyId)
-      if (!subject && (payload.sub || payload.appId)) {
-        subject = Object.assign({ _id: (payload.sub || payload.appId) }, payload)
+      if (!subject && subjectId) {
+        subject = Object.assign({ _id: subjectId }, payload)
       } else if (subject) { // Otherwise we allow to "extend" user abilities by providing additional information in the token
         subject = Object.assign(subject, _.omit(payload, ['aud', 'iss', 'exp', 'sub', 'iat', 'jti', 'nbf']))
       }

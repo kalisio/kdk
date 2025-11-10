@@ -13,7 +13,13 @@ async function authenticate(authentication) {
   // Store latest authentication data for offline mode
   await LocalCache.setItem('authentication', authentication)
   // Anonymous user or user account ?
+  const payload = _.get(authentication, 'authentication.payload')
+  const subjectId = payload && (payload.sub || payload.appId)
   user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
+  // If no user we also allow for a stateless token with permissions inside
+  if (!authentication.user && subjectId) {
+    Object.assign(user, { _id: subjectId }, payload)
+  }
   Store.set('user', user)
   await updateAbilities()
 }

@@ -29,6 +29,15 @@ export class Authentication extends AuthenticationService {
       return {}
     }
   }
+  // Similarly the subject will not be set by Feathers for stateless tokens that do not target existing users.
+  async getTokenOptions(authResult, params) {
+    const jwtOptions = await super.getTokenOptions(authResult, params)
+    if (!jwtOptions.subject) {
+      const subject = _.get(authResult, 'authentication.payload.sub')
+      if (subject) jwtOptions.subject = subject
+    }
+    return jwtOptions
+  }
 }
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
