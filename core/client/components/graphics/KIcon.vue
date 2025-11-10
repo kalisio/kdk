@@ -40,14 +40,13 @@ const computedIconColor = computed(() => {
   return getHtmlColor(props.icon.color, defaultColor)
 })
 const computedOverlay = computed(() => {
-  if (!props.icon && !props.icon.overlay) return
-  return _.omit(props.icon.overlay, ['color', 'rotation'])
+  return _.omit(_.get(props.icon, 'overlay', {}), ['color', 'rotation'])
 })
 const computedOverlayColor = computed(() => {
-  return getHtmlColor(_.get(props.icon.overlay, 'color', defaultColor))
+  return getHtmlColor(_.get(props.icon, 'overlay.color', defaultColor))
 })
 const computedOverlayTransform = computed(() => {
-  return `rotate(${_.get(props.icon.overlay, 'rotation', 0)}deg)`
+  return `rotate(${_.get(props.icon, 'overlay.rotation', 0)}deg)`
 })
 </script>
 
