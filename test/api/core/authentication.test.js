@@ -152,6 +152,7 @@ describe('core:authentication', () => {
     expect(accessToken).not.to.equal(statelessAccessToken)
     expect(user).beUndefined()
     const payload = await authenticationService.verifyAccessToken(accessToken, app.get('authentication').jwtOptions)
+    expect(payload.sub).to.equal('mycustomapp')
     expect(payload.property).to.equal('mycustomproperty')
   })
 
