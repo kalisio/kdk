@@ -6,6 +6,7 @@ import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'
+import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import core, { kdk, hooks, permissions, createMessagesService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
@@ -46,6 +47,10 @@ describe('core:services', () => {
 
     userService = app.getService('users')
     expect(userService).toExist()
+    // Register search hooks
+    userService.hooks({
+      before: { find: [fuzzySearch({ fields: ['profile.name'] }), hooks.diacriticSearch()] }
+    })
     // Create a global messages service for tests
     await createMessagesService.call(app)
     messagesService = app.getService('messages')
@@ -112,7 +117,7 @@ describe('core:services', () => {
       email: 'test@test.org',
       password: 'weak;',
       previousPasswords: [previousPassword],
-      name: 'test-user'
+      name: 'maëlis'
     }), error => {
       expect(error).toExist()
       expect(error.name).to.equal('BadRequest')
@@ -123,7 +128,7 @@ describe('core:services', () => {
     await assert.rejects(() => userService.create({
       email: 'test@test.org',
       password: '12345678',
-      name: 'test-user'
+      name: 'maëlis'
     }), error => {
       expect(error).toExist()
       expect(error.name).to.equal('BadRequest')
@@ -140,14 +145,14 @@ describe('core:services', () => {
     userObject = await userService.create({
       email: 'test@test.org',
       password: hook.data.password,
-      name: 'test-user',
+      name: 'maëlis',
       profile: { phone: '0623256968' }
     }, { checkAuthorisation: true })
     expect(spyUpdateAbilities).to.have.been.called.once
     spyUpdateAbilities.reset()
     // Keep track of clear password
     userObject.clearPassword = hook.data.password
-    const users = await userService.find({ query: { 'profile.name': 'test-user' } })
+    const users = await userService.find({ query: { 'profile.name': 'maëlis' } })
     expect(users.data.length > 0).beTrue()
     expect(users.data[0].email).toExist()
     expect(users.data[0].clearPassword).beUndefined()
@@ -235,12 +240,32 @@ describe('core:services', () => {
   it('get user profile', () => {
     return userService.find({ query: { $select: ['profile'] } })
       .then(users => {
+        expect(users.data.length > 0).beTrue()
         expect(users.data[0].name).beUndefined()
         expect(users.data[0].profile.name).toExist()
         expect(users.data[0].profile.description).toExist()
         expect(users.data[0].profile.phone).toExist()
       })
   })
+
+  it('search user profile', async () => {
+    const hook = hooks.generatePassword()({ type: 'before', data: {}, params: {}, app })
+    const user = await userService.create({
+      email: 'anothertest@test.org',
+      password: hook.data.password,
+      name: 'maelis',
+      profile: { phone: '0623256968' }
+    })
+    spyUpdateAbilities.reset()
+    let allUsers = await userService.find({ query: { 'profile.name': { $search: 'Mae' } } })
+    // Diacritic should be specific
+    let singleUsers = await userService.find({ query: { 'profile.name': { $search: 'Maë' } } })
+    await userService.remove(user._id)
+    expect(allUsers.data.length === 2).beTrue()
+    expect(singleUsers.data.length === 1).beTrue()
+  })
+  // Let enough time to process
+    .timeout(10000)
 
   it('creates a user message', async () => {
     const message = await messagesService.create({
@@ -365,7 +390,7 @@ describe('core:services', () => {
       user: userObject,
       checkAuthorisation: true
     })
-    const users = await userService.find({ query: { name: 'test-user' } })
+    const users = await userService.find({ query: { name: 'maëlis' } })
     expect(users.data.length === 0).beTrue()
     const messages = await messagesService.find({ query: { title: 'Title' } })
     expect(messages.data.length === 0).beTrue()
