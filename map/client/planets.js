@@ -24,7 +24,7 @@ export const Planets = {
 
     const client = await createClient(options)
     setupApi.bind(client)(options)
-    client.on('authenticated', (data) => {
+    client.on('login', (data) => {
       // Store API gateway token if any
       if (data.gatewayToken) client.get('storage').setItem(options.gatewayJwt, data.gatewayToken)
     })
