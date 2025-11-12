@@ -250,9 +250,12 @@ export function diacriticSearch (options = {}) {
   return hook => {
     const query = hook.params.query
     _.forOwn(query, (value, key) => {
-      if (value.$regex && value.$regex.source && !value.$diacriticSensitive) {
+      // Check if applicable
+      if (value.$regex && !value.$regex.diacritic && value.$regex.source && !value.$diacriticSensitive) {
         // Take care to support as well case sensitivity by keeping flags
         query[key].$regex = new RegExp(makeDiacriticPattern(value.$regex.source), value.$regex.flags)
+        // Custom internal property to make the hook reentrant
+        query[key].$regex.diacritic = true
       }
     })
   }
