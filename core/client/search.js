@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { api } from './api.js'
+import { getLocale } from './utils/utils.locale.js'
 import { getIconName, processIcon } from './utils/index.js'
 
 // Export singleton
@@ -13,7 +14,7 @@ export const Search = {
       // Retrieve the service using the service or name key
       const service = api.getService(serviceDescriptor.service, serviceDescriptor.context)
       // Build the query using given template if any
-      const query = Object.assign({}, serviceDescriptor.baseQuery)
+      const query = Object.assign({ $locale: getLocale() }, serviceDescriptor.baseQuery)
       // Then add partial match
       // We don't use set by dot here because Mongo queries on nested fields
       // require the key to contain the path and not nested objects
