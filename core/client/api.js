@@ -267,6 +267,7 @@ export async function createClient (config) {
     // If no service we have a single generic operation
     if (service) {
       // Check for access to service fisrt
+      if (!context) context = Context.get()
       const path = api.getServicePath(service, context, false)
       result = permissions.hasServiceAbilities(abilities, path)
       if (!result) {
