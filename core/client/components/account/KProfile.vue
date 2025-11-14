@@ -1,7 +1,7 @@
 <template>
   <div v-if="User" class="full-width column">
     <!-- Header -->
-    <component :is="computedHeaderComponent" class="q-py-sm full-width justify-end no-wrap" />
+    <component v-if="hasHeader" :is="computedHeaderComponent" class="q-py-sm full-width justify-end no-wrap" />
     <!-- Avatar -->
     <div v-if="avatar && userAvatar" class="q-py-sm column items-center">
       <KAvatar
@@ -59,6 +59,7 @@ defineProps({
 // Data
 const { User, name: userName, description: userDescription, avatar: userAvatar, role: userRole } = useUser()
 const headerComponent = _.get(config, 'profile.header')
+const hasHeader = !_.isNil(headerComponent)
 
 // Computed
 const computedHeaderComponent = computed(() => {
