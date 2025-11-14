@@ -87,7 +87,18 @@ export const pmtilesLayers = {
           rules.paint_rules = rules.paintRules = _.filter(styleRules, isNotLabelSymbolizer)
           rules.label_rules = rules.labelRules = _.filter(styleRules, isLabelSymbolizer)
         } else if (styleType === 'kdk') {
+          // Translate kdk style to protomap rules
           rules = kdk_style(style, leafletOptions.dataLayer)
+          if (options.filters) {
+            // Translate layer filters to filter function
+            const filterFn = layers.getFilterFunctionFromLayerFilters(options)
+            rules.paintRules.forEach(rule => {
+              rule.filter = (zoom, feature) => {
+                // Final filter = kdk style filter + layer filters
+                return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
+              }
+            })
+          }
         }
       }
       
@@ -124,17 +135,15 @@ export const pmtilesLayers = {
       }
     },
     onLayerFilterToggledPMTilesLayers (layer, filter) {
-      // Filtering is managed by templating so that we need to update the template compiler
-      const template = layers.getFilterTemplateFromLayerFilters(layer)
-      const compiler = _.template(template)
+      // Filtering is managed by mongodb query syntax, we need to update the filter function
+      const filterFn = layers.getFilterFunctionFromLayerFilters(layer)
       // Retrieve the engine layer and update the filter function directly
-      layer = this.getLeafletLayerByName(layer.name)
+      layer = this.getLeafletLayerByName(layer. name)
       if (!layer) return
       layer.paintRules.forEach(rule => {
-        if (rule.filter) rule.filter = (zoom, feature) => {
-          const context = Object.assign({ properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }, TemplateContext.get())
-          const result = compiler(context)
-          return (result === 'true')
+        rule.filter = (zoom, feature) => {
+          // Final filter = kdk style filter + updated filter
+          return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
         }
       })
       layer.redraw()

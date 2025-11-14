@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
+import sift from 'sift'
 import { Notify, Loading, uid } from 'quasar'
 import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
@@ -686,41 +687,27 @@ export async function removeLayer (layer) {
   return true
 }
 
-export function getFilterTemplateFromLayerFilters (layer) {
+export function getFilterFunctionFromLayerFilters (layer) {
   // To be flexible enough filters can provide a query for their active and inactive state
   // Similarly, filters can be combined with a different operator for each state
-  const filterOperators = _.get(layer, 'filterOperators', { active: '||', inactive: '&&' })
+  const filterOperators = _.get(layer, 'filterOperators', { active: '$or', inactive: '$and' })
   const activeFilters = layer.filters
     .filter(filter => filter.isActive)
     .map(filter => filter.active)
     .filter(filter => !_.isEmpty(filter))
-  let activeCondition = ''
-  if (!_.isEmpty(activeFilters)) {
-    activeFilters.forEach(filter => {
-      _.forOwn(filter, (value, key) => {
-        // Merge with previous condition if any
-        if (activeCondition) activeCondition += ` ${filterOperators.active} `
-        if (typeof value === 'string') activeCondition += `(${key} === '${value}')`
-        else if ((typeof value === 'number') || (typeof value === 'boolean')) activeCondition += `(${key} === ${value})`
-        else logger.warning('Unsupported layer filter value for templating')
-      })
-    })
-  }
+  const activeCondition = activeFilters.length > 1
+    ? { [filterOperators.active]: activeFilters }
+    : activeFilters.length === 1 ? activeFilters[0] : {}
   const inactiveFilters = layer.filters
     .filter(filter => !filter.isActive)
     .map(filter => filter.inactive)
     .filter(filter => !_.isEmpty(filter))
-  let inactiveCondition = ''
-  if (!_.isEmpty(inactiveFilters)) {
-    inactiveFilters.forEach(filter => {
-      _.forOwn(filter, (value, key) => {
-        // Merge with previous condition if any
-        if (inactiveCondition) inactiveCondition += ` ${filterOperators.active} `
-        if (typeof value === 'string') inactiveCondition += `(${key} === '${value}')`
-        else if ((typeof value === 'number') || (typeof value === 'boolean')) inactiveCondition += `(${key} === ${value})`
-        else logger.warning('Unsupported layer filter value for templating')
-      })
-    })
-  }
-  return `<%= (${activeCondition || true}) && (${inactiveCondition || true}) %>`
+  const inactiveCondition = inactiveFilters.length > 1
+    ? { [filterOperators.inactive]: inactiveFilters }
+    : inactiveFilters.length === 1 ? inactiveFilters[0] : {}
+
+  const finalCondition = activeFilters.length && inactiveFilters.length
+    ? { '$and': [ activeCondition, inactiveCondition ] } : activeFilters.length ? activeCondition : inactiveCondition
+
+  return sift(finalCondition)
 }
