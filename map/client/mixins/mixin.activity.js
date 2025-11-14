@@ -110,7 +110,8 @@ export const activity = {
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
-      await this.refreshOrphanLayers()
+      // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
+      this.orphanLayers = await this.getOrphanLayers()
       this.reorderLayers()
     },
     getOrphanLayerByName (name) {
@@ -162,7 +163,8 @@ export const activity = {
       for (let i = 0; i < catalogLayers.length; i++) {
         await this.addCatalogLayer(catalogLayers[i])
       }
-      await this.refreshOrphanLayers()
+      // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
+      this.orphanLayers = await this.getOrphanLayers()
       // We need at least an active background
       const hasVisibleBaseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer') && layer.isVisible)
       if (!hasVisibleBaseLayer) {
@@ -171,10 +173,9 @@ export const activity = {
       }
       this.reorderLayers()
     },
-    // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
-    async refreshOrphanLayers () {
+    async getOrphanLayers () {
       const layersByCategory = getLayersByCategory(this.layers, this.layerCategories)
-      this.orphanLayers = getOrphanLayers(this.layers, layersByCategory)
+      return getOrphanLayers(this.layers, layersByCategory)
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,
@@ -333,9 +334,8 @@ export const activity = {
       // Removing the layer should automatically update all projects
     },
     async onAddOrphanLayer (layer) {
-      if (!this.isOrphanLayer(layer)) {
-        await this.refreshOrphanLayers()
-      }
+      // FIXME: Not easy to detect if the new layer will be orphan except by recomputing everything
+      this.orphanLayers = await this.getOrphanLayers()
     },
     async onRemoveOrphanLayer (layer) {
       if (this.isOrphanLayer(layer)) {
