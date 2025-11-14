@@ -322,9 +322,6 @@ export const activity = {
         await this.resetLayer(layer)
       }
     },
-    async onRemoveCategory (category) {
-      // virtual method
-    },
     async onRemoveLayer (layer) {
       // Stop any running edition
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
