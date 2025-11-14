@@ -337,7 +337,7 @@ export const activity = {
         await this.refreshOrphanLayers()
       }
     },
-    onRemoveOrphanLayer (layer) {
+    async onRemoveOrphanLayer (layer) {
       if (this.isOrphanLayer(layer)) {
         _.remove(this.orphanLayers, orphanLayer => layer._id ? orphanLayer._id === layer._id : orphanLayer.name === layer.name)
       }
