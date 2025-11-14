@@ -67,12 +67,7 @@ export const pmtilesLayers = {
           // protomaps allows property functions with zoom/feature as input
           const f = (zoom, feature) => {
             const context = Object.assign({ properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }, TemplateContext.get())
-            if (entry.property.endsWith('filter')) {
-              const result = entry.compiler(context)
-              return (result === 'true')
-            } else {
-              return entry.compiler(context)
-            }
+            return entry.compiler(context)
           }
           _.set(leafletOptions, entry.property, f)
         })
@@ -89,16 +84,22 @@ export const pmtilesLayers = {
         } else if (styleType === 'kdk') {
           // Translate kdk style to protomap rules
           rules = kdk_style(style, leafletOptions.dataLayer)
-          if (options.filters) {
-            // Translate layer filters to filter function
-            const filterFn = layers.getFilterFunctionFromLayerFilters(options)
-            rules.paintRules.forEach(rule => {
+        }
+        if (options.filters) {
+          // Translate layer filters to filter function
+          const filterFn = layers.getFilterFunctionFromLayerFilters(options)
+          rules.paintRules.forEach(rule => {
+            // kdkFilter member may not be present, this is added by kdk_style when translating kdk style
+            // to leaflet-protomaps rules
+            if (rule.kdkFilter) {
               rule.filter = (zoom, feature) => {
-                // Final filter = kdk style filter + layer filters
+                // Final filter = kdk style filter + updated filter
                 return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
               }
-            })
-          }
+            } else {
+              rule.filter = (zoom, feature) => filterFn({ zoom, feature, properties: feature.props })
+            }
+          })
         }
       }
       
@@ -141,9 +142,15 @@ export const pmtilesLayers = {
       layer = this.getLeafletLayerByName(layer. name)
       if (!layer) return
       layer.paintRules.forEach(rule => {
-        rule.filter = (zoom, feature) => {
-          // Final filter = kdk style filter + updated filter
-          return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
+        // kdkFilter member may not be present, this is added by kdk_style when translating kdk style
+        // to leaflet-protomaps rules
+        if (rule.kdkFilter) {
+          rule.filter = (zoom, feature) => {
+            // Final filter = kdk style filter + updated filter
+            return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
+          }
+        } else {
+          rule.filter = (zoom, feature) => filterFn({ zoom, feature, properties: feature.props })
         }
       })
       layer.redraw()
