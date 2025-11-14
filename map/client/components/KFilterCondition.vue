@@ -253,9 +253,9 @@ function checkComparisonOperatorValidity (value) {
 function checkValueValidity (value) {
   const isDefined = !!value
   // For unique value, check if the value is in the options
-  const valueInOptions = !valueOptions.value || !useMultipleValuesSelect.value && valueOptions.value.includes(value)
+  const valueInOptions = !valueOptions.value || (!useMultipleValuesSelect.value && valueOptions.value.includes(value))
   // For multiple values, check if all values are in the options
-  const valuesInOptions = !valueOptions.value || useMultipleValuesSelect.value && !_.isEmpty(value) && !_.some(value, v => !valueOptions.value.includes(v))
+  const valuesInOptions = !valueOptions.value || (useMultipleValuesSelect.value && !_.isEmpty(value) && !_.some(value, v => !valueOptions.value.includes(v)))
   if (isDefined && (valueInOptions || valuesInOptions)) {
     hasValueErrors.value = false
     return true
