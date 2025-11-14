@@ -97,7 +97,9 @@ export async function updateProjects (hook) {
   if (!Array.isArray(removedItems)) removedItems = [removedItems]
   for (let i = 0; i < removedItems.length; i++) {
     const removedItem = removedItems[i]
-    const isLayer = removedItem.type !== 'Context'
+    const isLayer = removedItem.type.endsWith('Layer')
+    const isView = (removedItem.type === 'Context')
+    if (!isLayer && !isView) continue
     const query = {}
     if (isLayer) {
       query.$or = [{ 'layers._id': removedItem._id }, { 'layers.name': removedItem.name }]
@@ -111,7 +113,7 @@ export async function updateProjects (hook) {
     // Stop when non found
     if (projects.length === 0) {
       debug(`No project to update after removing item ${removedItem.name} `)
-      return hook
+      continue
     }
     // Update each project otherwise
     await Promise.all(projects.map(project => {
