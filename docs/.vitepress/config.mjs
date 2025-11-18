@@ -103,6 +103,7 @@ function getAPISidebar () {
       items: [
         { text: 'Overview', link: '/api/core/introduction' },
         { text: 'Application', link: '/api/core/application' },
+        { text: 'Client', link: '/api/core/client' },
         { text: 'Services', link: '/api/core/services' },
         { text: 'Hooks', link: '/api/core/hooks' },
         { text: 'Utilities', link: '/api/core/utilities' },

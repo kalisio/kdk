@@ -100,7 +100,7 @@ The catalog is typically populated at application startup with a default set of 
 The details of each property are the following:
 * **name** : the layer name, typically used in the [catalog panel](./components.md#catalog-panel)
 * **description** : the layer short description, typically used in the [catalog panel](./components.md#catalog-panel)
-* **i18n**: layer translations, see [application internationalization](../core/application.md#client-ecosystem) for details
+* **i18n**: layer translations, see [application internationalization](../core/application.md#i18n) for details
   * **locale**: translations for a target locale eg `fr` or `en`
      * **Layers**: translation keys/values for layer fields
      * **Variables**: translation keys/values for variable fields
@@ -162,7 +162,7 @@ The data model of a user context as used by the API is the following:
 A *layer category* is a way to group layers of a same topic together.
 
 * **name** : the category name, typically used in the [catalog panel](./components.md#catalog-panel)
-* **i18n**: category translations, see [application internationalization](../core/application.md#client-ecosystem) for details
+* **i18n**: category translations, see [application internationalization](../core/application.md#i18n) for details
   * **locale**: translations for a target locale eg `FR`
      * **Categories**: translation keys/values for category fields
 * **options** : options for this category
@@ -180,7 +180,7 @@ Categories are not stored in the database but simply exposed through the service
 A *sublegend* or *legend category* is a way to group legends of a same topic together.
 
 * **name** : the sublegend name, typically used in the [legend](./components.md#legend)
-* **i18n**: sublegend translations, see [application internationalization](../core/application.md#client-ecosystem) for details
+* **i18n**: sublegend translations, see [application internationalization](../core/application.md#i18n) for details
   * **locale**: translations for a target locale eg `FR`
      * **Categories**: translation keys/values for sublegend fields
 * **options** : options for this sublegend
