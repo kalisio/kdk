@@ -7,7 +7,8 @@
 <script>
 import _ from 'lodash'
 import L from 'leaflet'
-import { api, utils as kCoreUtils } from '../../../core/client'
+import sift from 'sift'
+import { api, Context, utils as kCoreUtils } from '../../../core/client'
 import * as mapMixins from '../mixins/map'
 import * as mixins from '../mixins'
 import { useCatalog, useCurrentActivity } from '../composables'
@@ -66,10 +67,17 @@ export default {
       }
     },
     async refreshBaseLayer () {
-      const layers = await this.getLayers()
-      // Get first visible base layer
-      if (layers.length > 0) {
-        this.addLayer(layers[0])
+      // We get layers coming from global catalog first if any
+      let baseLayers = await this.getLayers()
+      // Then we get layers coming from contextual catalog if any
+      if (Context.get()) baseLayers = baseLayers.concat(await this.getContextLayers())
+      if (baseLayers.length > 0) {
+        const defaultLayer = _.find(baseLayers, sift({ 'leaflet.isVisible': true }))
+        // If no default layer defined use the first one
+        const baseLayer = (defaultLayer || baseLayers[0])
+        await this.addLayer(baseLayer)
+        // Ensure it is visible if not by default
+        await this.showLayer(baseLayer.name)
       }
     },
     getTimezoneMarker (feature, options) {
@@ -155,15 +163,25 @@ export default {
     const project = getActivityProject()
     // We expect the project object to expose the underlying API
     const planetApi = project && typeof project.getPlanetApi === 'function' ? project.getPlanetApi() : api
-    // Use target catalog according to project and filtering options to get base layer
+    // Use target catalog(s) according to project and filtering options to get base layer
+    // Use global catalog
     const { getLayers } = useCatalog({
       project,
-      layers: { type: 'BaseLayer', 'leaflet.isVisible': true },
-      planetApi
+      layers: { type: 'BaseLayer' },
+      planetApi,
+      context: 'global'
+    })
+    // Use local catalog if any
+    const { getLayers: getContextLayers } = useCatalog({
+      project,
+      layers: { type: 'BaseLayer' },
+      planetApi,
+      context: Context.get()
     })
     // expose
     return {
-      getLayers
+      getLayers,
+      getContextLayers
     }
   }
 }
