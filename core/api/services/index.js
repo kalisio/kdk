@@ -86,11 +86,11 @@ export function createConfigurationsService (options = {}) {
   }, options))
 }
 
-export async function createDefaultConfigurations () {
+export async function createDefaultConfigurations (context) {
   const app = this
   const defaultConfigurations = app.get('defaultConfigurations')
   if (!defaultConfigurations) return
-  const configurationsService = app.getService('configurations')
+  const configurationsService = app.getService('configurations', context)
   // Create default configurations if not already done
   const configurations = await configurationsService.find({ paginate: false })
   for (let i = 0; i < defaultConfigurations.length; i++) {
@@ -129,11 +129,11 @@ export function createTagsService (options = {}) {
   }, options))
 }
 
-export async function createDefaultTags () {
+export async function createDefaultTags (context) {
   const app = this
   const defaultTags = app.get('tags').defaultTags
   if (!defaultTags) return
-  const tagsService = app.getService('tags')
+  const tagsService = app.getService('tags', context)
   // Create default tags if not already done
   const tags = await tagsService.find({ paginate: false })
   for (let i = 0; i < defaultTags.length; i++) {
