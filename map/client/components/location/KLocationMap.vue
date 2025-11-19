@@ -17,10 +17,12 @@ import _ from 'lodash'
 import logger from 'loglevel'
 import L from 'leaflet'
 import config from 'config'
+import sift from 'sift'
 import centroid from '@turf/centroid'
 import { KPanel } from '../../../../core/client/components'
 import { api } from '../../../../core/client/api.js'
 import { Store } from '../../../../core/client/store.js'
+import { Context } from '../../../../core/client/context.js'
 import * as mapMixins from '../../mixins/map'
 import { Geolocation } from '../../geolocation.js'
 import { useCatalog, useCurrentActivity } from '../../composables'
@@ -253,16 +255,26 @@ export default {
     async mapRefCreated (container) {
       if (container) {
         if (!this.mapReady) {
-          // setup the map
+          // Setup the map
           logger.debug('[KDK] Create location map with viewer options', this.engineOptions.viewer)
           this.setupMap(container, this.engineOptions.viewer)
           this.mapReady = true
           // setup base layer
-          const baseLayers = await this.getLayers({ type: 'BaseLayer' })
+          // We get layers coming from global catalog first if any
+          let baseLayers = await this.getLayers()
+          // Then we get layers coming from contextual catalog if any
+          if (Context.get()) baseLayers = baseLayers.concat(await this.getContextLayers())
           // [!] remember Vue won’t wait for async: use mapReady as a guard to
           // prevent executing the process after the component is destroyed
           // https://github.com/kalisio/kdk/issues/1291
-          if (this.mapReady && baseLayers.length > 0) await this.addLayer(baseLayers[0])
+          if (this.mapReady && (baseLayers.length > 0)) {
+            const defaultLayer = _.find(baseLayers, sift({ 'leaflet.isVisible': true }))
+            // If no default layer defined use the first one
+            const baseLayer = (defaultLayer || baseLayers[0])
+            await this.addLayer(baseLayer)
+            // Ensure it is visible if not by default
+            await this.showLayer(baseLayer.name)
+          }
           // setup location
           if (this.mapReady) this.refresh()
         }
@@ -291,15 +303,25 @@ export default {
     const project = getActivityProject()
     // We expect the project object to expose the underlying API
     const planetApi = project && typeof project.getPlanetApi === 'function' ? project.getPlanetApi() : api
-    // Use target catalog according to project and filtering options to get base layer
+    // Use target catalog(s) according to project and filtering options to get base layer
+    // Use global catalog
     const { getLayers } = useCatalog({
       project,
-      layers: { type: 'BaseLayer', 'leaflet.isVisible': true },
-      planetApi
+      layers: { type: 'BaseLayer' },
+      planetApi,
+      context: 'global'
+    })
+    // Use local catalog if any
+    const { getLayers: getContextLayers } = useCatalog({
+      project,
+      layers: { type: 'BaseLayer' },
+      planetApi,
+      context: Context.get()
     })
     // expose
     return {
-      getLayers
+      getLayers,
+      getContextLayers
     }
   }
 }
