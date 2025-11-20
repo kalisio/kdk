@@ -439,12 +439,6 @@
   "KScrollToTop": {
     "TOOLTIP": "Scroll to top"
   },
-  "KHistory": {
-    "EMPTY_HISTORY": "@:NO_ITEM"
-  },
-  "KColumn": {
-    "EMPTY_COLUMN": "@:NO_ITEM"
-  },
   "KCard": {
     "MORE_DETAILS": "More details",
     "LESS_DETAILS": "Less details"

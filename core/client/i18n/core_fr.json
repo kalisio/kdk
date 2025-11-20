@@ -439,12 +439,6 @@
   "KScrollToTop": {
     "TOOLTIP": "Haut de page"
   },
-  "KHistory": {
-    "EMPTY_HISTORY": "@:NO_ITEM"
-  },
-  "KColumn": {
-    "EMPTY_COLUMN": "@:NO_ITEM"
-  },
   "KCard": {
     "MORE_DETAILS": "Plus de détails",
     "LESS_DETAILS": "Moins de détails"
