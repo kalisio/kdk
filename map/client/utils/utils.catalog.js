@@ -183,3 +183,18 @@ export async function getViews (options = {}) {
   }
   return views
 }
+
+// Order is given as an array of catalog item IDs or names
+export function orderCatalogItemsBy(items, itemsOrder) {
+  if (!_.isEmpty(itemsOrder)) {
+    for (let i = itemsOrder.length; i >= 0; i--) {
+      const itemIdOrName = itemsOrder[i]
+      // Move item to beginning of array          
+      const itemIndex = items.findIndex(item => (item?._id === itemIdOrName) || (item?.name === itemIdOrName))
+      if (itemIndex >= 0) {
+        const removedItems = items.splice(itemIndex, 1)
+        if (removedItems.length > 0) items.unshift(removedItems[0])
+      }
+    }
+  }
+}
