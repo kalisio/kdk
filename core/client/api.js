@@ -157,6 +157,9 @@ export async function createClient (config) {
     }
     return service
   }
+  api.hasService = function (name, context) {
+    return !_.isNil(api.getServiceInstance(name, context))
+  }
   // Used to create a frontend only service with its options
   api.createService = function (name, options = {}) {
     const servicePath = api.getServicePath(name, options.context)

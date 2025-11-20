@@ -263,7 +263,7 @@ export default {
           // We get layers coming from global catalog first if any
           let baseLayers = await this.getLayers()
           // Then we get layers coming from contextual catalog if any
-          if (Context.get()) baseLayers = baseLayers.concat(await this.getContextLayers())
+          if (typeof this.getContextLayers === 'function') baseLayers = baseLayers.concat(await this.getContextLayers())
           // [!] remember Vue won’t wait for async: use mapReady as a guard to
           // prevent executing the process after the component is destroyed
           // https://github.com/kalisio/kdk/issues/1291
@@ -311,18 +311,22 @@ export default {
       planetApi,
       context: 'global'
     })
-    // Use local catalog if any
-    const { getLayers: getContextLayers } = useCatalog({
-      project,
-      layers: { type: 'BaseLayer' },
-      planetApi,
-      context: Context.get()
-    })
     // expose
-    return {
-      getLayers,
-      getContextLayers
+    const expose = {
+      getLayers
     }
+    // Use local catalog if any
+    if (Context.get() && planetApi.hasService('catalog', Context.get())) {
+      const { getLayers: getContextLayers } = useCatalog({
+        project,
+        layers: { type: 'BaseLayer' },
+        planetApi,
+        context: Context.get()
+      })
+      Object.assign(expose, { getContextLayers })
+    }
+    // expose
+    return expose
   }
 }
 </script>
