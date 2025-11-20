@@ -1,5 +1,5 @@
 import makeDebug from 'debug'
-import { countElements, waitForTimeout } from './utils.mjs'
+import { countElements, waitForTimeout, clickXPath } from './utils.mjs'
 
 const debug = makeDebug('kdk:core:test:collection')
 
@@ -33,14 +33,7 @@ export async function clickItem (page, component, name, wait = 500) {
 
 export async function clickItemAction (page, component, name, action, wait = 500) {
   const xpath = `//div[contains(@component, "${component}") and contains(., "${name}")]//button[@id="${action}"]`
-  const elements = await page.$$('xpath/.' + xpath)
-  if (elements.length > 0) {
-    elements[0].click()
-    await waitForTimeout(wait)
-    debug(`Clicked action ${action} on item ${name}`)
-  } else {
-    debug(`Action ${action} on item ${name} not found`)
-  }
+  await clickXPath(page, xpath, wait)
 }
 
 export async function isCardExpanded (page, component, name) {
