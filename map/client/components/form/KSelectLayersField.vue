@@ -40,7 +40,7 @@
 
 <script>
 import _ from 'lodash'
-import { Context, mixins as kCoreMixins } from '../../../../core/client'
+import { Context, api, mixins as kCoreMixins } from '../../../../core/client'
 import { useCatalog } from '../../composables'
 
 export default {
@@ -123,7 +123,7 @@ export default {
   mounted () {
     this.getLayers()
     this.getCategories()
-    if (Context.get()) {
+    if (typeof this.getContextLayers === 'function') {
       this.getContextLayers()
       this.getContextCategories()
     }
@@ -132,28 +132,39 @@ export default {
     // Use global catalog
     const { layers, getLayers, categories, getCategories, layersByCategory, orphanLayers } =
       useCatalog({ context: 'global' })
-    // Use local catalog if any
-    const {
-      layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories,
-      layersByCategory: contextLayersByCategory, orphanLayers: orphanContextLayers
-    } =
-      useCatalog({ context: Context.get() })
-
     // Expose
-    return {
+    const expose = {
       layersByCategory,
       orphanLayers,
       layers,
       getLayers,
       categories,
-      getCategories,
-      contextLayersByCategory,
-      orphanContextLayers,
-      contextLayers,
-      getContextLayers,
-      contextCategories,
-      getContextCategories
+      getCategories
     }
+    // Use local catalog if any
+    if (Context.get() && api.hasService('catalog', Context.get())) {
+      const {
+        layers: contextLayers, getLayers: getContextLayers, categories: contextCategories, getCategories: getContextCategories,
+        layersByCategory: contextLayersByCategory, orphanLayers: orphanContextLayers
+      } = useCatalog({ context: Context.get() })
+      Object.assign(expose, {
+        contextLayersByCategory,
+        orphanContextLayers,
+        contextLayers,
+        getContextLayers,
+        contextCategories,
+        getContextCategories
+      })
+    } else {
+      Object.assign(expose, {
+        contextLayersByCategory: {},
+        orphanContextLayers: [],
+        contextLayers: [],
+        contextCategories: []
+      })
+    }
+
+    return expose
   }
 }
 </script>
