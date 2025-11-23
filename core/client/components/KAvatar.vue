@@ -22,7 +22,6 @@
 import _ from 'lodash'
 import { Storage } from '../storage.js'
 import { getIconName, getInitials } from '../utils/index.js'
-import { Context } from '../context.js'
 
 export default {
   props: {
