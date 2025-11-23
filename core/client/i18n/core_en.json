@@ -76,6 +76,10 @@
     "WEAK_PASSWORD_ONEOF": "Not known as one of the most common passwords",
     "WEAK_PASSWORD_PREVIOUS": "Not one of your {history} last passwords",
     "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file",
+    "CANNOT_REMOVE_USER": "Your are not allowed to remove this accound.<br>Please remove the organisations owned by <b>{user}</b> first.",
+    "CANNOT_REMOVE_ORGANISATION": "You are not allowed to remove this organisation.<br>Please remove all the groups first.",
+    "CANNOT_REMOVE_LAST_OWNER": "You are not allowed to remove the last owner of <b>{resource}</b>",
+    "DUPLICATED_FILE": "The file {file} is already added",
     "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {provider}, in order to switch to a local account reset your password first",
     "EMAIL_ALREADY_TAKEN": "A user with this email address seems to be already registered",
     "OBJECT_ID_ALREADY_TAKEN": "An item with this identifier seems to already exist. Please try again with another value.",
@@ -399,7 +403,8 @@
     "REGISTER_LABEL": "Register",
     "EMAIL_ALREADY_TAKEN": "Email already taken !",
     "REGISTER_ERROR": "Wrong input or service unavailable, please try again",
-    "CONTEXTUAL_HELP": "@:NEED_HELP"
+    "CONTEXTUAL_HELP": "@:NEED_HELP",
+    "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?"
   },
   "KLogoutScreen": {
     "TITLE": "You are now logged out",

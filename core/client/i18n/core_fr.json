@@ -76,6 +76,10 @@
     "WEAK_PASSWORD_ONEOF": "Non reconnu comme l'un des mots de passe les plus courants",
     "WEAK_PASSWORD_PREVIOUS": "Différents de vos {history} derniers mots de passe",
     "CANNOT_PROCESS_DOWNLOAD_DATA": "Fichier invalide ou incomplet",
+    "CANNOT_REMOVE_USER": "Vous n’êtes pas autorisé à supprimer ce compte.<br>Veuillez d’abord supprimer les organisations appartenant à <b>{user}</b>.",
+    "CANNOT_REMOVE_ORGANISATION": "Vous n’êtes pas autorisé à supprimer cette organisation.<br>Veuillez d’abord supprimer tous les groupes.",
+    "CANNOT_REMOVE_LAST_OWNER": "Vous n’êtes pas autorisé à supprimer le dernier propriétaire de <b>{resource}</b>",
+    "DUPLICATED_FILE": "Le fichier {file} a déjà été ajouté",
     "OAUTH2_PROVIDER": "Vous ne pouvez modifier votre compte car il est géré par {provider}, pour utiliser un compte local réinitialisez tout d'abord votre mot de passe",
     "EMAIL_ALREADY_TAKEN": "Un utilisateur semble déjà enregistré avec cette adresse mail",
     "OBJECT_ID_ALREADY_TAKEN": "Un élément semble déjà enregistré avec cet identifiant. Merci de réessayer avec une autre valeur.",
@@ -399,7 +403,8 @@
     "REGISTER_LABEL": "S'enregistrer",
     "EMAIL_ALREADY_TAKEN": "Mail déjà utilisé !",
     "REGISTER_ERROR": "Mauvaise données ou service indisponible, veuillez réessayer",
-    "CONTEXTUAL_HELP": "@:NEED_HELP"
+    "CONTEXTUAL_HELP": "@:NEED_HELP",
+    "ALREADY_HAVE_AN_ACCOUNT_LINK": "Déjà un compte ?"
   },
   "KLogoutScreen": {
     "TITLE": "Vous avez été déconnecté",
