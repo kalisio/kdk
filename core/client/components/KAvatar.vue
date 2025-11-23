@@ -83,8 +83,6 @@ export default {
                 timestamp: Date.now()
               }
             }
-            const context = Context.getId()
-            if (!_.isNil(context)) options.context = Context.getId()
             this.avatar = await Storage.getObjectUrl(options)
             return
           }
