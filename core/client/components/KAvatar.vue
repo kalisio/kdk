@@ -22,6 +22,7 @@
 import _ from 'lodash'
 import { Storage } from '../storage.js'
 import { getIconName, getInitials } from '../utils/index.js'
+import { Context } from '../context.js'
 
 export default {
   props: {
@@ -75,13 +76,16 @@ export default {
             avatar.uri = data.uri
             this.avatar = avatar.uri
             */
-            this.avatar = await Storage.getObjectUrl({
+            const options = {
               file: _.get(avatar, 'name'),
               key: avatarId,
               query: {
                 timestamp: Date.now()
               }
-            })
+            }
+            const context = Context.getId()
+            if (!_.isNil(context)) options.context = Context.getId()
+            this.avatar = await Storage.getObjectUrl(options)
             return
           }
           this.avatar = null
