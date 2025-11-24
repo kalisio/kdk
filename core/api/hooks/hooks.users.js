@@ -13,17 +13,31 @@ const verifyHooks = authManagement.hooks
 const debug = makeDebug('kdk:core:users:hooks')
 
 // Helper functions to be used in iff hooks
-export function disallowRegistration (hook) {
-  return _.get(hook.app.get('authentication'), 'disallowRegistration')
+export function disallowRegistration (context) {
+  return _.get(context.app.get('authentication'), 'disallowRegistration')
 }
-export function allowLocalAuthentication (hook) {
-  return _.get(hook.app.get('authentication'), 'authStrategies', []).includes('local')
+
+export function allowLocalAuthentication (context) {
+  return _.get(context.app.get('authentication'), 'authStrategies', []).includes('local')
 }
-export function isNotMe (hook) {
-  const userId = _.get(hook.params, 'user._id', '')
-  const item = getItems(hook)
-  const targetId = _.get(item, '_id', '')
-  return userId.toString() !== targetId.toString()
+
+export function isNotMe (context) {
+  const userId = _.toString(_.get(context.params, 'user._id'))
+  if (_.isEmpty(userId)) throw new Forbidden('Not authenticated')
+  // Before hook
+  if (context.type === 'before') {
+    if (context.method === 'find') {
+      context.params.query = {
+        ...context.params.query,
+        _id: userId
+      }
+      return context
+    }
+    return _.toString(context.id) !== userId
+  }
+  // After hook
+  const item = getItems(context)
+  return _.toString(item._id) !== userId
 }
 
 export function enforcePasswordPolicy (options = {}) {
