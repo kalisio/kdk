@@ -3,10 +3,9 @@ import makeDebug from 'debug'
 import generateRandomPassword from 'password-generator'
 import common from 'feathers-hooks-common'
 import errors from '@feathersjs/errors'
-import { Roles, RoleNames } from '../../common/permissions.js'
 import authManagement from 'feathers-authentication-management'
 
-const { Forbidden, BadRequest } = errors
+const { BadRequest } = errors
 const { getItems, replaceItems } = common
 const verifyHooks = authManagement.hooks
 
