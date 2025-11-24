@@ -58,7 +58,7 @@ import { hooks } from '@kalisio/kdk/core.api'
 // Will transform hook data from { name: 'toto' } to { profile: { name: 'toto' } }
 service.hooks({ before: { create: [ hooks.serialize([{ source: 'name', target: 'profile.name', delete: true }], { throwOnNotFound: true }) ] } })
 ```
-      
+
 ### processObjectIDs(hook)
 
 > Usually used as a app-level hook
@@ -103,7 +103,7 @@ Flag the item as deleted when required by subsequent operations.
 
 ### populatePreviousObject(hook)
 
-> To be used a a before hook 
+> To be used a a before hook
 
 Retrieve the target object before an update or a patch operation.
 
@@ -111,7 +111,7 @@ Retrieve the target object before an update or a patch operation.
 
 ### setExpireAfter(delayInSeconds)
 
-> To be used a a before hook 
+> To be used a a before hook
 > Return a hook function according to provided delay
 
 Set the MongoDB [TTL](https://docs.mongodb.com/manual/tutorial/expire-data/) on the target object.
@@ -171,9 +171,33 @@ If you'd like to force/unforce authorisation check use the `hook.params.checkAut
 
 Update cached subject abilities when permissions have changed according to the following options:
 * **subjectAsItem**: boolean indicating if the subject is the item of the current operation (e.g. when applied on the users service) or provided by `hook.params.user`
-* **fetchSubject**: boolean indicating if the subject object has to be entirely fetched from the underlying service (usefull when the item does not include permissions)
+* **fetchSubject**: boolean indicating if the subject object has to be entirely fetched from the underlying service (useful when the item does not include permissions)
 
 ## Users
+
+### isNotMe(hook)
+
+The `isNotMe` hook ensures that users can only access or manipulate their own user record.
+It returns true when the requested target user is not the authenticated user, and false when it is the authenticated user.
+It also automatically restricts find queries to return only the logged-in user.
+
+The following code shows how to use this hook inside a **Feathers** hook configuration:
+
+```js
+import { iff, disallow } from 'feathers-hooks-common'
+import { hooks } from '@kalisio/kdk/core.api.js'
+
+const { isNotMe } = hooks
+
+before: {
+  get: [
+    iff(isNotMe, disallow())
+  ],
+  find: [
+    isNotMe
+  ]
+}
+```
 
 ### enforcePasswordPolicy(options)
 
