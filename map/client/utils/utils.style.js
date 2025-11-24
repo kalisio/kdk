@@ -328,12 +328,30 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
 
     // Process all properties, for each property
     properties.forEach((property, index) => {
-      if (!_.has(style.values, property)) return
-      // Conversion from palette to RGB color is required
-      const value = (property.includes('color')
-        ? kdkCoreUtils.getHtmlColor(_.get(style.values, property))
-        : _.get(style.values, property))
+      // Don't need to create template if the section (point, line, polygon) is not defined in the style
+      if (!_.get(style.values, property.split('.')[0])) return
+
+      let value = null
+      // If no value is defined for the given property, that means this property is in a optional sub-object (e.g. stroke, icon)
+      // So we need to hide the element corresponding to this sub-object by setting all of its properties to null or default values
+      // We must create the condition anyway to prevent default style from being applied on this case
+      if (!_.get(style.values, property)) {
+        if (_.isNumber(_.get(DefaultStyle, property))) {
+          value = 0
+        } else if (property.includes('shape')) {
+          value = _.get(DefaultStyle, property)
+        } else if (property.includes('color')) {
+          value = kdkCoreUtils.getHtmlColor(_.get(defaultStyle, property))
+        }
+      } else {
+        // Conversion from palette to RGB color is required
+        value = (property.includes('color')
+          ? kdkCoreUtils.getHtmlColor(_.get(style.values, property))
+          : _.get(style.values, property))
+      }
+
       // Generate style value for given property value
+      if (_.isNil(value)) return
       templates[index] += `if (${predicate}) { %>${value}<% } else `
     })
   })
@@ -346,19 +364,28 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
     const value = (property.includes('color')
       ? kdkCoreUtils.getHtmlColor(_.get(defaultStyle, property))
       : _.get(defaultStyle, property))
-    if (_.isEmpty(value)) return
+    if (_.isNil(value)) return
     // Avoid converting numbers to string on default values
     if (hasStyles) templates[index] += `{ %>${value}<% }`
     else templates[index] = value
   })
   // Set all templates
+  options.template = []
   properties.forEach((property, index) => {
     if (!_.has(defaultStyle, property) || _.isEmpty(templates[index])) return
     // We voluntary use dot notation here by default as this object should be used to update style values using a patch operation
     if (dotify) options[`style.${property}`] = (hasStyles ? `<% ${templates[index]} %>` : templates[index])
     else _.set(options, `style.${property}`, (hasStyles ? `<% ${templates[index]} %>` : templates[index]))
+
+    // Check if templating is needed
+    if (options[`style.${property}`].startsWith('<% if')) {
+      options.template.push(`style.${property}`)
+      // Remove duplicates "<% { %>" that are added to default style (else statement) when filters are reapplied
+      options[`style.${property}`] = options[`style.${property}`].replace(/(<% { %>)+/g, '<% { %>').replace(/(<% } %>)+/g, '<% } %>')
+    } else {
+      options[`style.${property}`] = options[`style.${property}`].replace(/(<% { %>)+/g, '').replace(/(<% } %>)+/g, '')
+    }
   })
-  options.template = (hasStyles ? properties : []).map(property => `style.${property}`)
   return options
 }
 
