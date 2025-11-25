@@ -47,6 +47,7 @@
 <script>
 import _ from 'lodash'
 import { baseField } from '../../mixins'
+import { Document } from '../../document.js'
 import KTextArea from '../KTextArea.vue'
 
 export default {
@@ -112,6 +113,11 @@ export default {
   methods: {
     emptyModel () {
       return ''
+    },
+    fill (value) {
+      // Sanitize data, this prevent XSS if the content is directly edited through the API or in DB
+      this.model = Document.sanitizeHtml(value)
+      this.error = ''
     }
   }
 }
