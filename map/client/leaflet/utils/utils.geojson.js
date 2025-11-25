@@ -112,13 +112,13 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
   if (geometry && properties && properties.geodesic) {
     if (geometry.type === 'LineString') {
       return new L.Geodesic([L.GeoJSON.coordsToLatLngs(geometry.coordinates, 0)],
-        Object.assign({ steps: 4 }, options.style(geojson)))
+        Object.assign({ steps: properties.steps || 4, wrap: properties.wrap }, options.style(geojson)))
     } else if (geometry.type === 'MultiLineString') {
       const coords = geometry.coordinates.map((lineString) => L.GeoJSON.coordsToLatLngs(lineString, 0))
-      return new L.Geodesic(coords, Object.assign({ steps: 4 }, options.style(geojson)))
+      return new L.Geodesic(coords, Object.assign({ steps: properties.steps || 4, wrap: properties.wrap }, options.style(geojson)))
     } else if (geometry.type === 'Point') {
       const layer = new L.GeodesicCircle(L.GeoJSON.coordsToLatLng(geometry.coordinates),
-        Object.assign({ fill: true, steps: 360, radius: properties.radius }, options.style(geojson)))
+        Object.assign({ fill: true, steps: properties.steps || 360, wrap: properties.wrap, radius: properties.radius }, options.style(geojson)))
       return layer
     }
   }
