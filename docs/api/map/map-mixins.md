@@ -406,6 +406,7 @@ If you want to disable a default clustering configuration like `cluster: { disab
 The following options can be set as feature `properties` to manage more geometry types:
 * **geodesic** boolean set to `true` on a `LineString` will result in a geodesic line from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin
 * **geodesic** boolean set to `true` on a `Point` will result in a great circle from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin, which **radius** must be specified in meters
+* **wrap/steps** additional [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin options, when **geodesic** is specified
 * **gradient** color array set on a `LineString` will result in a color ramp applied to the line by mapping each point to the corresponding color in the array 
 * **mask** boolean set to `true` on a `Polygon` or `MultiPolygon` will result in the polygon(s) acting as a mask over the map
 * **offset** integer set to a number of pixels on a `LineString` will result in the line being offset by the specified number of pixels when drawn
