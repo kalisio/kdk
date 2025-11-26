@@ -546,6 +546,18 @@ Here's a minimal example of a PMTiles layer definition, using a KDK style :
 }
 ```
 
+::: note
+When using lodash template strings in style values, the evaluation context gets an object with the following members (among others):
+```javascript
+{
+    feature: { ... },    // the currently drawn feature
+    properties: { ... }, // the currently drawn feature's properties
+}
+```
+This allows to implement dynamic styling (KDK or protomaps).
+To know the full evaluation context, you should refer to the source code of the mixin.
+:::
+
 ## Edit Layer
 
 Make it possible to edit features of a [GeoJson layer](./map-mixins.md#geojson-layer) (geometry and properties):
