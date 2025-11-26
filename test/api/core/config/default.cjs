@@ -83,6 +83,7 @@ module.exports = {
       bucket: process.env.S3_BUCKET,
       prefix: 'import-export'
     },
+    allowedServicePaths: 'api/users',
     workingDir: 'test/api/core/tmp'
   },
   mailer: {
