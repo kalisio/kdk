@@ -508,6 +508,44 @@ Every property in the `gradientPath.properties` section will be added to the pro
 
 ![Gradient Path Classes](../../.vitepress/public/images/gradient-path.png)
 
+## PMTiles Layer
+
+Make it possible to display and style [PMTiles](https://docs.protomaps.com/) datasets in the map as other layers. The display of the PMTiles data in the map is handled using the [protomaps-leaflet plugin](https://github.com/protomaps/protomaps-leaflet).
+
+* **createLeafletPMTilesLayer(options)** automatically registered PMTiles Leaflet layer constructor
+
+PMTiles layers support:
+ * current time update, provided the style used to display data takes time value into account
+ * current `level` update, provided the style used to display data takes level value into account
+ * layer filters based on MongoDB query langage
+ * KDK styles applied to layer filters
+ * KDK style, [MapBox style](https://docs.mapbox.com/style-spec/guides/) (partially) and protomaps style, although it's not possible to mix different style *types*.
+
+The code determine which style to use based on the following algorithm:
+ * if the `style` member is a string, then it assumes this is a json file to fetch defining a Mapbox style.
+ * if the `style` member is an object and contains at least one `symbolizer` subobject, then is assumes this is a protomaps style definition
+ * finally if the `style` member is not empty, then it assumes it's a KDK style definition
+
+Here's a minimal example of a PMTiles layer definition, using a KDK style :
+
+```javascript
+{
+    name: 'PMTiles layer',
+    type: 'OverlayLayer',
+    leaflet: {
+        type: 'pmtiles',                           // required
+        url: 'https://url.to/public/file.pmtiles', // required, points to PMTiles dataset
+        dataLayer: 'pmtile_layer',                 // required, defines in which PMTiles layer we'll fetch features
+                                                   // since that's not something we can define in the KDK style object
+        style: {
+            polygon: {
+                color: 'red'
+            }
+        }
+    }
+}
+```
+
 ## Edit Layer
 
 Make it possible to edit features of a [GeoJson layer](./map-mixins.md#geojson-layer) (geometry and properties):
