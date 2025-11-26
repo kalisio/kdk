@@ -539,7 +539,9 @@ Here's a minimal example of a PMTiles layer definition, using a KDK style :
                                                    // since that's not something we can define in the KDK style object
         style: {
             polygon: {
-                color: 'red'
+                color: `<% if      (properties.type === 'car') { %>rgba(255, 0, 0, 1)<% }
+                           else if (properties.type === 'bus') { %>rgba(255, 255, 0, 1)<% }
+                           else                                { %>rgba(255, 0, 255, 1)<% }`
             }
         }
     }
@@ -557,6 +559,31 @@ When using lodash template strings in style values, the evaluation context gets 
 This allows to implement dynamic styling (KDK or protomaps).
 To know the full evaluation context, you should refer to the source code of the mixin.
 :::
+
+Here's the same example using a protomaps style definition :
+
+```javascript
+{
+    name: 'PMTiles layer',
+    type: 'OverlayLayer',
+    leaflet: {
+        type: 'pmtiles',                           // required
+        url: 'https://url.to/public/file.pmtiles', // required, points to PMTiles dataset
+        style: {
+            polygon: {                             // arbitrary key name, doesn't impacte style, it just defines a protomaps style rule
+                dataLayer: 'pmtile_layer',         // using protomaps styles, the dataLayer can be specified in the style object
+                symbolizer: {                      // protomaps symbolizer definition
+                    type: 'PolygonSymbolizer',
+                    color: `<% if      (properties.type === 'car') { %>rgba(255, 0, 0, 1)<% }
+                               else if (properties.type === 'bus') { %>rgba(255, 255, 0, 1)<% }
+                               else                                { %>rgba(255, 0, 255, 1)<% }`,
+                    // other symbolizer properties, cf protomaps-leaflet symbolizer constrctors ...
+                }
+            }
+        }
+    }
+}
+```
 
 ## Edit Layer
 
