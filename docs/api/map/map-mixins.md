@@ -548,7 +548,7 @@ Here's a minimal example of a PMTiles layer definition, using a KDK style :
 }
 ```
 
-::: note
+::: info
 When using lodash template strings in style values, the evaluation context gets an object with the following members (among others):
 ```javascript
 {
