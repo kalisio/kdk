@@ -30,7 +30,7 @@ export async function subscribeToPushNotifications () {
     return
   }
   // Data
-  const userService = api.service('api/users')
+  const usersService = api.service('api/users')
   const date = moment.utc().toISOString()
   const currentSubscription = await getPushSubscription()
   const user = Store.get('user')
@@ -44,7 +44,7 @@ export async function subscribeToPushNotifications () {
       if (subscription.endpoint === currentSubscription.endpoint) subscription.lastActivity = date
       return subscription
     })
-    userService.patch(user._id, { subscriptions: subscriptions })
+    usersService.patch(user._id, { subscriptions: subscriptions })
     logger.debug(`[KDK] New connection with subscription endpoint: ${currentSubscription.endpoint}`)
     return
   }
@@ -57,6 +57,6 @@ export async function subscribeToPushNotifications () {
   subscription.lastActivity = date
   // Patch user subscriptions
   await addSubscription(user, subscription, 'subscriptions')
-  userService.patch(user._id, { subscriptions: user.subscriptions })
+  usersService.patch(user._id, { subscriptions: user.subscriptions })
   logger.debug(`[KDK] New webpush subscription registered with endpoint: ${subscription.endpoint}`)
 }
