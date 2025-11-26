@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { ref } from 'vue'
 import { i18n } from '../../i18n.js'
 import KGrid from './KGrid.vue'
