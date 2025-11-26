@@ -515,7 +515,7 @@ Make it possible to display and style [PMTiles](https://docs.protomaps.com/) dat
 * **createLeafletPMTilesLayer(options)** automatically registered PMTiles Leaflet layer constructor
 
 PMTiles layers support:
- * current time update, provided the style used to display data takes time value into account
+ * current `time` update, provided the style used to display data takes time value into account
  * current `level` update, provided the style used to display data takes level value into account
  * layer filters based on MongoDB query langage
  * KDK styles applied to layer filters
@@ -556,7 +556,7 @@ When using lodash template strings in style values, the evaluation context gets 
     properties: { ... }, // the currently drawn feature's properties
 }
 ```
-This allows to implement dynamic styling (KDK or protomaps).
+This allows to implement dynamic styling (supported in KDK and protomaps styles).
 To know the full evaluation context, you should refer to the source code of the mixin.
 :::
 
