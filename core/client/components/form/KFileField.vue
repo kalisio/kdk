@@ -129,7 +129,6 @@ export default {
       this.onChanged()
     },
     onFileRejected (errs) {
-      console.log(errs)
       const errors = [].concat(errs)
       for (const error of errors) {
         if (error?.failedPropValidation === 'max-files') this.error = i18n.tc('errors.MAX_FILES_REACHED', this.getMaxFiles())
