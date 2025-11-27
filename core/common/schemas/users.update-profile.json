@@ -23,7 +23,8 @@
         "maxFileSize": 524288,
         "readContent": false,
         "storage": {
-          "path": "avatars/<%= _id %>"
+          "path": "avatars/<%= _id %>",
+          "context": "global"
         }
       }
     }

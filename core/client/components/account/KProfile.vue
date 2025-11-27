@@ -7,6 +7,7 @@
       <KAvatar
         :subject="userAvatar"
         size="5rem"
+        :options="options"
       />
     </div>
     <!-- Information -->
@@ -60,6 +61,7 @@ defineProps({
 const { User, name: userName, description: userDescription, avatar: userAvatar, role: userRole } = useUser()
 const headerComponent = _.get(config, 'profile.header')
 const hasHeader = !_.isNil(headerComponent)
+const options = { context: 'global' }
 
 // Computed
 const computedHeaderComponent = computed(() => {

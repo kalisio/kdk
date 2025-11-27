@@ -74,13 +74,14 @@ export default {
             })
             avatar.uri = data.uri
             this.avatar = avatar.uri
-            */
+            */  
             const options = {
               file: _.get(avatar, 'name'),
               key: avatarId,
               query: {
                 timestamp: Date.now()
-              }
+              },
+              ...(this.options.context && { context: this.options.context })
             }
             this.avatar = await Storage.getObjectUrl(options)
             return
