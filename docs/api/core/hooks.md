@@ -175,29 +175,50 @@ Update cached subject abilities when permissions have changed according to the f
 
 ## Users
 
-### isNotMe(hook)
+### isNotMe(options)
 
-The `isNotMe` hook ensures that users can only access or manipulate their own user record.
-It returns true when the requested target user is not the authenticated user, and false when it is the authenticated user.
-It also automatically restricts find queries to return only the logged-in user.
+The `isNotMe` helps ensuring that users can only access or manipulate their own user record on the [users service](./services.md#users-service).
+It returns `true` when the requested target user is not the authenticated user and `false` otherwise, typically to be used as a `get` before hook or service operations after hook.
 
 The following code shows how to use this hook inside a **Feathers** hook configuration:
-
 ```js
-import { iff, disallow } from 'feathers-hooks-common'
+import { iff, disallow, discard } from 'feathers-hooks-common'
 import { hooks } from '@kalisio/kdk/core.api.js'
 
 const { isNotMe } = hooks
 
 before: {
-  get: [
-    iff(isNotMe, disallow())
-  ],
-  find: [
-    isNotMe
-  ]
+  get: [iff(isNotMe(), disallow())],
+},
+after: {
+  all: [iff(isNotMe(),  discard('secret'))]
 }
 ```
+
+The following hook options are available:
+* **throwOnMissingUser**: will throw if called when no authenticated user can be found, defaults to `false`
+
+### onlyMe(options)
+
+The `onlyMe` helps ensuring that users can only access or manipulate their own user record on the [users service](./services.md#users-service).
+It restricts input query to return only the logged-in user, typically to be used on `find` or `patch` operations.
+
+The following code shows how to use this hook inside a **Feathers** hook configuration:
+```js
+import { iff, disallow } from 'feathers-hooks-common'
+import { hooks } from '@kalisio/kdk/core.api.js'
+
+const { onlyMe } = hooks
+
+before: {
+  find: [onlyMe()],
+  patch: [onlyMe()],
+  remove: [onlyMe()]
+}
+```
+
+The following hook options are available:
+* **throwOnMissingUser**: will throw if called when no authenticated user can be found, defaults to `true`
 
 ### enforcePasswordPolicy(options)
 
