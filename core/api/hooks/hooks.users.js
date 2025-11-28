@@ -4,7 +4,7 @@ import generateRandomPassword from 'password-generator'
 import common from 'feathers-hooks-common'
 import errors from '@feathersjs/errors'
 import authManagement from 'feathers-authentication-management'
-
+import { createObjectID } from '../db.js'
 const { Forbidden, BadRequest } = errors
 const { getItems, replaceItems } = common
 const verifyHooks = authManagement.hooks
@@ -20,23 +20,37 @@ export function allowLocalAuthentication (context) {
   return _.get(context.app.get('authentication'), 'authStrategies', []).includes('local')
 }
 
-export function isNotMe (context) {
-  const userId = _.toString(_.get(context.params, 'user._id'))
-  if (_.isEmpty(userId)) throw new Forbidden('Not authenticated')
-  // Before hook
-  if (context.type === 'before') {
-    if (context.method === 'find') {
-      context.params.query = {
-        ...context.params.query,
-        _id: userId
-      }
-      return context
+export function onlyMe (options = { throwOnMissingUser: true }) {
+  return function (context) {
+    if (context.type !== 'before') {
+      throw new Error('The \'onlyMe\' hook should only be used as a \'before\' hook.')
     }
-    return _.toString(context.id) !== userId
+    const userId = _.toString(_.get(context.params, 'user._id'))
+    if (userId) {
+      _.set(context.params, 'query._id', createObjectID(userId))
+    } else if (options.throwOnMissingUser) {
+      throw new Forbidden('This operation is subject to user identify check but none can be found')
+    }
   }
-  // After hook
-  const item = getItems(context)
-  return _.toString(item._id) !== userId
+}
+
+export function isNotMe (options = { throwOnMissingUser: false }) {
+  return function (context) {
+    const userId = _.get(context.params, 'user._id')
+    // As no user to compare with can't be me
+    if (_.isNil(userId)) {
+      if (options.throwOnMissingUser) throw new Forbidden('This operation is subject to user identify check but none can be found')
+      else return true
+  }
+    // Manage get/update/patch/remove before hook
+    if (context.id) return (_.toString(context.id) !== _.toString(userId))
+    // Manage after hook including multi-operations
+    let items = getItems(context)
+    if (!Array.isArray(items)) items = [items]
+    items = items.filter(item => _.toString(item._id) !== _.toString(userId))
+    // If any item not targetting myself
+    return items.length > 0
+  }
 }
 
 export function enforcePasswordPolicy (options = {}) {

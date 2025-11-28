@@ -174,6 +174,12 @@ describe('core:authentication', () => {
     expect(users[0]._id).to.equal(userObject._id.toString())
   })
 
+  it('removes user', async () => {
+    await userService.remove(userObject._id)
+  })
+  // Let enough time to process
+    .timeout(5000)
+
   // Cleanup
   after(async () => {
     if (server) await server.close()

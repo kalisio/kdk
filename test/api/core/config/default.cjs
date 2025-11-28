@@ -20,6 +20,7 @@ module.exports = {
     service: API_PREFIX + '/users',
     entity: 'user',
     identityFields: ['email', 'profile.phone'],
+    disallowRegistration: true,
     authStrategies: [
       'jwt',
       'local'
