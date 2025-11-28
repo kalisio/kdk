@@ -257,9 +257,9 @@ describe('core:services', () => {
       profile: { phone: '0623256968' }
     })
     spyUpdateAbilities.reset()
-    let allUsers = await usersService.find({ query: { 'profile.name': { $search: 'Mae' } } })
+    const allUsers = await usersService.find({ query: { 'profile.name': { $search: 'Mae' } } })
     // Diacritic should be specific
-    let singleUsers = await usersService.find({ query: { 'profile.name': { $search: 'Maë' } } })
+    const singleUsers = await usersService.find({ query: { 'profile.name': { $search: 'Maë' } } })
     await usersService.remove(user._id)
     expect(allUsers.data.length === 2).beTrue()
     expect(singleUsers.data.length === 1).beTrue()

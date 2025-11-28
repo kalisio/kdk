@@ -325,7 +325,7 @@ export default {
       })
       Object.assign(expose, { getContextLayers })
     }
-    
+
     return expose
   }
 }
