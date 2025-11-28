@@ -308,7 +308,6 @@ export default {
     const { getLayers } = useCatalog({
       project,
       layers: { type: 'BaseLayer' },
-      planetApi,
       context: 'global'
     })
     // expose
@@ -320,7 +319,6 @@ export default {
       const { getLayers: getContextLayers } = useCatalog({
         project,
         layers: { type: 'BaseLayer' },
-        planetApi,
         context: Context.get()
       })
       Object.assign(expose, { getContextLayers })

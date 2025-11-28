@@ -50,19 +50,11 @@ export const activity = {
       return []
     },
     async getCatalogLayers () {
-      const query = {}
-      // Do we get layers coming from project ?
-      if (this.project) {
-        Object.assign(query, this.catalogProjectQuery ? this.catalogProjectQuery : getCatalogProjectQuery(this.project))
-      } else {
-        this.project = null
-      }
-
       const context = Context.get()
       // We get layers coming from global catalog first if any
-      let layers = await getLayers({ query, context: 'global' })
+      let layers = await getLayers({ context: 'global', project: this.project })
       // Then we get layers coming from contextual catalog if any
-      if (context) layers = layers.concat(await getLayers({ query, context }))
+      if (context) layers = layers.concat(await getLayers({ context, project: this.project }))
       return layers
     },
     async addCatalogLayer (layer) {
@@ -86,18 +78,18 @@ export const activity = {
     },
     async getCatalogCategories () {
       // We get categories coming from global catalog first if any
-      let categories = await getCategories({ context: 'global' })
+      let categories = await getCategories({ context: 'global', project: this.project })
       // Then we get categories coming from contextual catalog if any
       const context = Context.get()
-      if (context) categories = categories.concat(await getCategories({ context }))
+      if (context) categories = categories.concat(await getCategories({ context, project: this.project }))
       return categories
     },
     async getCatalogSublegends () {
       // We get sublegends coming from global catalog first if any
-      let sublegends = await getSublegends({ context: 'global' })
+      let sublegends = await getSublegends({ context: 'global', project: this.project })
       // Then we get categories coming from contextual catalog if any
       const context = Context.get()
-      if (context) sublegends = sublegends.concat(await getSublegends({ context }))
+      if (context) sublegends = sublegends.concat(await getSublegends({ context, project: this.project }))
       return sublegends
     },
     async addCatalogCategory (category) {

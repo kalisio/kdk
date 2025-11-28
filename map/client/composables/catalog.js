@@ -30,13 +30,10 @@ export function useCatalog (options = {}) {
 
   // Functions
   async function getLayers (filterQuery = {}) {
-    const query = Object.assign({},
-      options.project ? Object.assign(getCatalogProjectQuery(options.project), options.layers) : options.layers,
-      filterQuery)
     layers.value = await catalog.getLayers({
-      query,
+      query: Object.assign({}, options.layers, filterQuery),
       context: options.context,
-      planetApi: options.planetApi
+      project: options.project
     })
     return layers.value
   }
@@ -44,7 +41,7 @@ export function useCatalog (options = {}) {
     categories.value = await catalog.getCategories({
       query: options.categories,
       context: options.context,
-      planetApi: options.planetApi
+      project: options.project
     })
     return categories.value
   }
@@ -52,15 +49,15 @@ export function useCatalog (options = {}) {
     sublegends.value = await catalog.getSublegends({
       query: options.sublegends,
       context: options.context,
-      planetApi: options.planetApi
+      project: options.project
     })
     return sublegends.value
   }
   async function getViews () {
     views.value = await catalog.getViews({
-      query: options.project ? Object.assign(getCatalogProjectQuery(options.project), options.views) : options.views,
+      query: options.views,
       context: options.context,
-      planetApi: options.planetApi
+      project: options.project
     })
     return views.value
   }
