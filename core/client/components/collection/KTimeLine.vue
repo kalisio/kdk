@@ -43,7 +43,7 @@
             <q-timeline-entry :color="getColor(item)">
               <template v-slot:title>
                 <slot name="title">
-                  <div v-if="getTitle(item)" class="text-h6">
+                  <div v-if="getTitle(item)" class="text-h6 ellipsis">
                     {{ getTitle(item) }}
                   </div>
                 </slot>
@@ -390,6 +390,7 @@ onBeforeUnmount(() => {
 }
 .q-timeline__title {
   margin-bottom: 4px;
+  max-width: 80vw;
 }
 .q-timeline__subtitle {
   margin-bottom: 0px;
