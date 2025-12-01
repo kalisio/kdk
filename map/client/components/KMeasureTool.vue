@@ -34,6 +34,12 @@ export default {
   components: {
     KPanel
   },
+  props: {
+    wrapCircle: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       measureMode: 'measure-distance',
@@ -480,7 +486,7 @@ export default {
       state.distToCenter = distance(center, cursor, { units: 'kilometers' }) * 1000 // GeodesicCircle requires radius in m
       this.measureValue = this.formatDistance(state.distToCenter, 'm')
       if (!state.circleLayer) {
-        state.circleLayer = L.geodesiccircle(this.measureCircle.center, { fill: true, steps: 360, radius: state.distToCenter })
+        state.circleLayer = L.geodesiccircle(this.measureCircle.center, { fill: true, wrap: this.wrapCircle, steps: 360, radius: state.distToCenter })
         state.lineLayer = L.polyline([state.center, event.latlng], { dashArray: [5, 5] })
         this.kActivity.map.addLayer(state.circleLayer)
         this.kActivity.map.addLayer(state.lineLayer)
