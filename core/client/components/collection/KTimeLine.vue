@@ -243,6 +243,10 @@ const props = defineProps({
     type: String,
     default: undefined
   },
+  heading: {
+    type: Boolean,
+    default: true
+  },
   footer: {
     type: [Array, Object],
     default: () => null
@@ -333,6 +337,7 @@ function getColor (item) {
   return _.get(item, _.get(props.schema, 'colorField'))
 }
 function getHeading (item) {
+  if (!props.heading) return null
   const currentTimestamp = moment(_.get(item, _.get(props.schema, 'timestampField')))
   if (!currentTimestamp || !currentTimestamp.isValid()) return false
   const heading = _.capitalize(currentTimestamp.format('MMMM, YYYY'))
