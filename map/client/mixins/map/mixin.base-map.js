@@ -109,7 +109,7 @@ export const baseMap = {
         rotateControl: false // Rotate plugin show this even if rotation is disabled
       })
       // Initialize the map
-      this.map = L.map(domEl, Object.assign({ zoomControl: false }, viewerOptions))
+      this.map = L.map(domEl, Object.assign({ zoomControl: false, touchZoom: true }, viewerOptions))
       const backgroundColor = _.get(viewerOptions, 'backgroundColor')
       if (backgroundColor) this.map._container.style.backgroundColor = backgroundColor
       // Make sure geoman is initialized on the map
