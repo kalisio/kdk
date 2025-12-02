@@ -67,7 +67,12 @@ export const pmtilesLayers = {
           // protomaps allows property functions with zoom/feature as input
           const f = (zoom, feature) => {
             const context = Object.assign({ properties: feature.props, feature, chroma, moment, Units, Time, level: this.selectedLevel }, TemplateContext.get())
-            return entry.compiler(context)
+            if (entry.property.endsWith('filter')) {
+              const result = entry.compiler(context)
+              return (result === 'true')
+            } else {
+              return entry.compiler(context)
+            }
           }
           _.set(leafletOptions, entry.property, f)
         })
