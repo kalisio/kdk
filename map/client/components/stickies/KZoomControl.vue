@@ -4,8 +4,8 @@
       id="zoom-out"
       icon="remove"
       tooltip="mixins.activity.ZOOM_OUT"
-      color="white"
-      text-color="grey-9"
+      :color="color"
+      :text-color="textColor"
       :flat="square"
       round
       @click="onZoomOutFn"
@@ -17,8 +17,8 @@
       id="zoom-in"
       icon="add"
       tooltip="mixins.activity.ZOOM_IN"
-      color="white"
-      text-color="grey-9"
+      :color="color"
+      :text-color="textColor"
       :flat="square"
       round
       @click="onZoomInFn"
@@ -33,16 +33,24 @@ import { composables as kCoreComposables } from '@kalisio/kdk/core.client'
 // Props
 defineProps({
   vertical: {
-    default: true,
-    type: Boolean
+    type: Boolean,
+    default: true
   },
   square: {
-    default: false,
-    type: Boolean
+    type: Boolean,
+    default: false
   },
   size: {
+    type: String,
     default: '10px',
-    type: String
+  },
+  color: {
+    type: String,
+    default: 'white'
+  },
+  textColor: {
+    type: String,
+    default: 'grey-9'
   }
 })
 
