@@ -2,7 +2,7 @@
   <q-chip
     v-model="computedState"
     :selected="selected"
-    :icon="icon"
+    :icon="computedIcon"
     :iconRight="iconRight"
     :iconRemove="iconRemove"
     :iconSelected="iconSelected"
@@ -17,7 +17,7 @@
     @click="event => emit('click', event)"
     class="k-chip"
   >
-    <div v-if="computedLabel"
+    <div v-if="!hideLabel && computedLabel"
       :id="id"
       class="ellipsis"
       :class="{ 'q-pl-sm': !dense && (icon || isTruncated ) , 'q-pl-xs': dense && (icon || isTruncated) }"
@@ -46,9 +46,20 @@ const props = defineProps({
     type: [String, Number],
     default: ''
   },
+  hideLabel: {
+    type: Boolean,
+    default: false
+  },
   tooltip: {
     type: String,
     default: undefined
+  },
+  tooltipBehavior: {
+    type: String,
+    default: 'truncated',
+    validator: (value) => {
+      return ['always', 'truncated', 'never'].includes(value)
+    }
   },
   icon: {
     type: String,
@@ -65,6 +76,10 @@ const props = defineProps({
   iconSelected: {
     type: String,
     default: 'check'
+  },
+  hideIcon: {
+    type: Boolean,
+    default: false
   },
   modelValue: {
     type: Boolean,
@@ -129,11 +144,17 @@ const computedState = computed({
   }
 })
 const computedLabel = computed(() => {
-  return i18n.tie(props.label)
+  if (!props.hideLabel && props.label) return i18n.tie(props.label)
+})
+const computedIcon = computed(() => {
+  if (!props.hideIcon) return props.icon
 })
 const computedTooltip = computed(() => {
-  if (props.tooltip) return i18n.tie(props.tooltip)
-  if (props.label && isTruncated.value) return computedLabel.value
+  if (props.tooltipBehavior === 'never') return
+  if (props.tooltipBehavior === 'truncated') {
+    if (!isTruncated.value) return
+  }
+  return props.label ? i18n.tie(props.label) : props.tooltip
 })
 const computedColor = computed(() => {
   return props.outline ? 'transparent' : getHtmlColor(props.color)
@@ -153,7 +174,8 @@ const computedBorderColor = computed(() => {
 function onResize () {
   // check whether the label is truncated
   const chipElement = document.getElementById(id)
-  if (chipElement) isTruncated.value = (chipElement && chipElement.offsetWidth < chipElement.scrollWidth)
+  if (chipElement) isTruncated.value = (chipElement && (chipElement.offsetWidth < chipElement.scrollWidth))
+  console.log(chipElement.offsetWidth, chipElement.scrollWidth, isTruncated.value)
 }
 </script>
 
