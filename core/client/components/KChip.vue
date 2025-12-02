@@ -175,7 +175,6 @@ function onResize () {
   // check whether the label is truncated
   const chipElement = document.getElementById(id)
   if (chipElement) isTruncated.value = (chipElement && (chipElement.offsetWidth < chipElement.scrollWidth))
-  console.log(chipElement.offsetWidth, chipElement.scrollWidth, isTruncated.value)
 }
 </script>
 
