@@ -9,7 +9,7 @@
           id="composer-fab"
           :icon="getKindIcon(currentType)"
           :color="getKindColor(currentType)"
-          direction="up"
+          direction="right"
           :vertical-actions-align="$q.screen.lt.md ? 'left' : 'center'"
           padding="xs"
         >
