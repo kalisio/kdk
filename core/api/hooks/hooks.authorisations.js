@@ -233,6 +233,7 @@ export async function authorise (hook) {
           _.merge(hook.params.query, dbQuery)
         } else {
           if (operation === 'find') { // You don't have right to read any items but you have access to the service so the result is empty
+            debug('Service access granted but no resource allowed')
             hook.result = (!_.get(hook, 'params.paginate', true) ? [] : { total: 0, skip: 0, data: [] })
           } else { // You don't have the right to update/patch/remove any items so any tentative should throw
             debug('Resource access not granted')

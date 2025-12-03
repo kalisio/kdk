@@ -30,6 +30,7 @@ export function getDefaultCategories (hook) {
     const service = hook.service
     // Check for default categories config
     const defaultCategories = _.get(service, 'options.categories', [])
+    debug(`Retrieving ${defaultCategories.length} default categories for query`, query)
     replaceItems(hook, addDefaultItems(query, type, getItems(hook), defaultCategories))
   }
 }
@@ -42,6 +43,7 @@ export function getDefaultSublegends (hook) {
     const service = hook.service
     // Check for default sublegends config
     const defaultSublegends = _.get(service, 'options.sublegends', [])
+    debug(`Retrieving ${defaultSublegends.length} default sublegends for query`, query)
     replaceItems(hook, addDefaultItems(query, type, getItems(hook), defaultSublegends))
   }
 }
@@ -132,13 +134,18 @@ export function convertFilterQueriesToString (hook) {
   let items = getItems(hook)
   const isArray = Array.isArray(items)
   items = (isArray ? items : [items])
+  let nbUpdatedItems = 0
   items.forEach(item => {
     const filters = _.get(item, 'filters', [])
+    nbUpdatedItems += filters.length
     _.forEach(filters, filter => {
       toString(filter, ['active', 'inactive'])
     })
   })
-  replaceItems(hook, isArray ? items : items[0])
+  if (nbUpdatedItems > 0) {
+    replaceItems(hook, isArray ? items : items[0])
+    debug(`Updated ${nbUpdatedItems} filters on items`)
+  }
 
   return hook
 }
@@ -147,13 +154,18 @@ export function convertFilterQueriesToObject (hook) {
   let items = getItems(hook)
   const isArray = Array.isArray(items)
   items = (isArray ? items : [items])
+  let nbUpdatedItems = 0
   items.forEach(item => {
     const filters = _.get(item, 'filters', [])
+    nbUpdatedItems += filters.length
     _.forEach(filters, filter => {
       toJson(filter, ['active', 'inactive'])
     })
   })
-  replaceItems(hook, isArray ? items : items[0])
+  if (nbUpdatedItems > 0) {
+    replaceItems(hook, isArray ? items : items[0])
+    debug(`Updated ${nbUpdatedItems} filters on items`)
+  }
 
   return hook
 }
