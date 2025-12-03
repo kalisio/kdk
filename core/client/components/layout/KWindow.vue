@@ -322,13 +322,16 @@ function refresh (newState, oldState) {
 }
 function setPinnedGeometry () {
   const size = computeResponsiveSize(currentWindow.sizePolicy.pinned)
+  let height = $q.screen.height
+  if (header.visible) height -= header.size[1]
+  if (footer.visible) height -= footer.size[1]
   let x, y
   if (props.placement === 'top' || props.placement === 'bottom') {
     x = $q.screen.width / 2 - size[0] / 2
-    y = props.placement === 'top' ? 0 : $q.screen.height - size[1]
+    y = props.placement === 'top' ? 0 : height - size[1]
   } else {
     x = props.placement === 'left' ? 0 : $q.screen.width - size[0]
-    y = $q.screen.height / 2 - size[1] / 2
+    y = height / 2 - size[1] / 2
   }
   updateGeometry([x, y], size)
 }
