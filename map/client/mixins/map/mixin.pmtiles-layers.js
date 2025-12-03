@@ -6,6 +6,7 @@ import L from 'leaflet'
 import * as protomaps from 'protomaps-leaflet'
 import { mapbox_style, kdk_style } from '@kalisio/leaflet-pmtiles'
 import { api, Time, Units, Events, TemplateContext } from '../../../../core/client/index.js'
+import * as time from '../../../../core/client/utils/utils.time.js'
 import * as layers from '../../utils/utils.layers.js'
 
 function detectStyleType (style) {
@@ -23,21 +24,28 @@ function detectStyleType (style) {
 
 export const pmtilesLayers = {
   methods: {
-    async createLeafletPMTilesLayer (options) {
+    async processLeafletPMTilesLayer (options) {
       const leafletOptions = options.leaflet || options
-      // Check for valid types
-      if (leafletOptions.type !== 'pmtiles') return
-
+      
       // Token required by templating
       const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
       const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
       const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
       
       const urlTemplate = _.get(leafletOptions, 'urlTemplate')
-      if (urlTemplate) leafletOptions.url = _.template(urlTemplate)({ apiJwt, gatewayJwt })
+      if (urlTemplate) {
+        const context = Object.assign({
+          apiJwt, gatewayJwt, moment, Units, Time, level: this.selectedLevel, ...time
+        }, TemplateContext.get())
+        leafletOptions.url = _.template(urlTemplate)(context)
+      }
       const styleTemplate = _.get(leafletOptions, 'styleTemplate')
-      if (styleTemplate) leafletOptions.style = _.template(styleTemplate)({ apiJwt, gatewayJwt })
-      
+      if (styleTemplate) {
+        const context = Object.assign({
+          apiJwt, gatewayJwt, moment, Units, Time, level: this.selectedLevel, ...time
+        }, TemplateContext.get())
+        leafletOptions.style = _.template(styleTemplate)(context)
+      }
       // Optimize templating by creating compilers up-front
       const layerStyleTemplate = _.get(leafletOptions, 'template')
       if (layerStyleTemplate) {
@@ -46,7 +54,14 @@ export const pmtilesLayers = {
           property, compiler: _.template(_.get(leafletOptions, property))
         }))
       }
-
+    },
+    async createLeafletPMTilesLayer (options) {
+      const leafletOptions = options.leaflet || options
+      // Check for valid types
+      if (leafletOptions.type !== 'pmtiles') return
+      // Process main options
+      await this.processLeafletPMTilesLayer(options)
+      // Then create rendering rules
       let rules = {}
       let style = _.get(leafletOptions, 'style')
       const styleType = detectStyleType(style)
@@ -121,9 +136,16 @@ export const pmtilesLayers = {
         // Skip invisible layers
         isVisible: true
       }))
-      pmtileslayers.forEach(async pmtileslayer => {
+      pmtileslayers.forEach(async pmtilesLayer => {
         // Retrieve the layer
-        const layer = this.getLeafletLayerByName(pmtileslayer.name)
+        const layer = this.getLeafletLayerByName(pmtilesLayer.name)
+        const leafletOptions = pmtilesLayer.leaflet || pmtilesLayer
+        const urlTemplate = _.get(leafletOptions, 'urlTemplate')
+        if (urlTemplate) {
+          await this.processLeafletPMTilesLayer(pmtilesLayer)
+          // Need to update underlying PMTiles source
+          layer.views = protomaps.sourcesToViews(leafletOptions)
+        }
         layer.redraw()
       })
     },

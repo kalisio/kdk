@@ -34,3 +34,21 @@ export function fromQuasarTime (time, format) {
     ? moment.tz(time, format, Time.getFormatTimezone())
     : moment(time, format))
 }
+
+/*
+  Round hours to expected interval, e.g. 6 hourly interval i.e. 00 || 06 || 12 || 18
+  @return {Number}
+ */
+export function roundHours (hours, interval) {
+  return (Math.floor(hours / interval) * interval)
+}
+
+/*
+  Round hours to expected interval
+  @return {Date}
+ */
+export function getNearestIntervalTime (datetime, interval) {
+  // Compute nearest run T0, always in the past
+  const h = roundHours(datetime.hours(), interval / 3600)
+  return datetime.clone().hours(h).minutes(0).seconds(0).milliseconds(0)
+}
