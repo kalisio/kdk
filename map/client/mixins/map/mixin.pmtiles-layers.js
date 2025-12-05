@@ -24,7 +24,7 @@ function detectStyleType (style) {
 
 export const pmtilesLayers = {
   methods: {
-    async processLeafletPMTilesLayer (options) {
+    async processLeafletPMTilesLayer (options, properties = ['urlTemplate', 'styleTemplate', 'template']) {
       const leafletOptions = options.leaflet || options
       
       // Token required by templating
@@ -32,27 +32,33 @@ export const pmtilesLayers = {
       const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
       const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
       
-      const urlTemplate = _.get(leafletOptions, 'urlTemplate')
-      if (urlTemplate) {
-        const context = Object.assign({
-          apiJwt, gatewayJwt, moment, Units, Time, level: this.selectedLevel, ...time
-        }, TemplateContext.get())
-        leafletOptions.url = _.template(urlTemplate)(context)
+      if (properties.includes('urlTemplate')) {
+        const urlTemplate = _.get(leafletOptions, 'urlTemplate')
+        if (urlTemplate) {
+          const context = Object.assign({
+            apiJwt, gatewayJwt, moment, Units, Time, level: this.selectedLevel, ...time
+          }, TemplateContext.get())
+          leafletOptions.url = _.template(urlTemplate)(context)
+        }
       }
-      const styleTemplate = _.get(leafletOptions, 'styleTemplate')
-      if (styleTemplate) {
-        const context = Object.assign({
-          apiJwt, gatewayJwt, moment, Units, Time, level: this.selectedLevel, ...time
-        }, TemplateContext.get())
-        leafletOptions.style = _.template(styleTemplate)(context)
+      if (properties.includes('styleTemplate')) {
+        const styleTemplate = _.get(leafletOptions, 'styleTemplate')
+        if (styleTemplate) {
+          const context = Object.assign({
+            apiJwt, gatewayJwt, moment, Units, Time, level: this.selectedLevel, ...time
+          }, TemplateContext.get())
+          leafletOptions.style = _.template(styleTemplate)(context)
+        }
       }
-      // Optimize templating by creating compilers up-front
-      const layerStyleTemplate = _.get(leafletOptions, 'template')
-      if (layerStyleTemplate) {
-        // We allow to template style properties according to feature, because it can be slow you have to specify a subset of properties
-        leafletOptions.template = layerStyleTemplate.map(property => ({
-          property, compiler: _.template(_.get(leafletOptions, property))
-        }))
+      if (properties.includes('template')) {
+        // Optimize templating by creating compilers up-front
+        const layerStyleTemplate = _.get(leafletOptions, 'template')
+        if (layerStyleTemplate) {
+          // We allow to template style properties according to feature, because it can be slow you have to specify a subset of properties
+          leafletOptions.template = layerStyleTemplate.map(property => ({
+            property, compiler: _.template(_.get(leafletOptions, property))
+          }))
+        }
       }
     },
     async createLeafletPMTilesLayer (options) {
@@ -142,7 +148,7 @@ export const pmtilesLayers = {
         const leafletOptions = pmtilesLayer.leaflet || pmtilesLayer
         const urlTemplate = _.get(leafletOptions, 'urlTemplate')
         if (urlTemplate) {
-          await this.processLeafletPMTilesLayer(pmtilesLayer)
+          await this.processLeafletPMTilesLayer(pmtilesLayer, ['urlTemplate'])
           // Need to update underlying PMTiles source
           layer.views = protomaps.sourcesToViews(leafletOptions)
         }
