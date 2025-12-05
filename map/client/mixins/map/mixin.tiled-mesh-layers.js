@@ -1,6 +1,8 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { Time } from '../../../../core/client/time.js'
 import { Events } from '../../../../core/client/events.js'
+import * as time from '../../../../core/client/utils/utils.time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer.js'
 
@@ -26,7 +28,7 @@ export const tiledMeshLayers = {
       if (gridSource.updateCtx) {
         // define variables for source's dynamic properties
         Object.assign(gridSource.updateCtx, {
-          apiJwt, gatewayJwt,
+          apiJwt, gatewayJwt, moment, Time, ...time,
           // This one is for backward compatibility
           jwtToken: gatewayJwt,
           meteoElements: _.get(options, 'meteoElements')

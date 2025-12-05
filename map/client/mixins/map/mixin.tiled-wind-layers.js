@@ -1,7 +1,9 @@
 import _ from 'lodash'
+import moment from 'moment'
 import 'leaflet-velocity'
 import { Time } from '../../../../core/client/time.js'
 import { Events } from '../../../../core/client/events.js'
+import * as time from '../../../../core/client/utils/utils.time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
 
@@ -30,13 +32,13 @@ export const tiledWindLayers = {
         const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
         const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
         Object.assign(uSource.updateCtx, {
-          apiJwt, gatewayJwt,
+          apiJwt, gatewayJwt, moment, Time, ...time,
           // This one is for backward compatibility
           jwtToken: gatewayJwt,
           windComponent: _.get(options, 'meteoElements[0]')
         })
         Object.assign(vSource.updateCtx, {
-          apiJwt, gatewayJwt,
+          apiJwt, gatewayJwt, ...time,
           // This one is for backward compatibility
           jwtToken: gatewayJwt,
           windComponent: _.get(options, 'meteoElements[1]')

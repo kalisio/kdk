@@ -44,11 +44,20 @@ export function roundHours (hours, interval) {
 }
 
 /*
+  Round minutes to expected interval, e.g. 10 minutely interval i.e. 00 || 10 || 20 || 30
+  @return {Number}
+ */
+export function roundMinutes (minutes, interval) {
+  return (Math.floor(minutes / interval) * interval)
+}
+
+/*
   Round hours to expected interval
   @return {Date}
  */
 export function getNearestIntervalTime (datetime, interval) {
   // Compute nearest run T0, always in the past
-  const h = roundHours(datetime.hours(), interval / 3600)
-  return datetime.clone().hours(h).minutes(0).seconds(0).milliseconds(0)
+  const h = (interval > 3600 ? roundHours(datetime.hours(), interval / 3600) : datetime.hours())
+  const m = (interval <= 3600 ? roundMinutes(datetime.minutes(), interval / 60) : datetime.minutes())
+  return datetime.clone().hours(h).minutes(m).seconds(0).milliseconds(0)
 }
