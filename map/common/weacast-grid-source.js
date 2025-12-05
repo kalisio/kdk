@@ -58,7 +58,7 @@ export class WeacastGridSource extends GridSource {
   constructor (options) {
     super(options)
 
-    this.api = options.weacastApi
+    this.api = options.planetApi
     this.usable = false
   }
 

@@ -18,14 +18,19 @@ export const tiledMeshLayers = {
 
       // Build grid source
       const [gridKey, gridConf] = extractGridSourceConfig(options)
-      const weacastApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
-      const apiToken = (weacastApi.hasConfig('gatewayJwt') ? await weacastApi.get('storage').getItem(weacastApi.getConfig('gatewayJwt')) : null)
-      const gridSource = makeGridSource(gridKey, { weacastApi, apiToken })
+      const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
+      const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
+      const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
+      const gridSource = makeGridSource(gridKey, { planetApi })
       gridSource.setup(gridConf)
       if (gridSource.updateCtx) {
         // define variables for source's dynamic properties
-        if (apiToken) gridSource.updateCtx.jwtToken = apiToken
-        gridSource.updateCtx.meteoElements = _.get(options, 'meteoElements')
+        Object.assign(gridSource.updateCtx, {
+          apiJwt, gatewayJwt,
+          // This one is for backward compatibility
+          jwtToken: gatewayJwt,
+          meteoElements: _.get(options, 'meteoElements')
+        })
       }
 
       return new TiledMeshLayer(layerOptions, gridSource)
