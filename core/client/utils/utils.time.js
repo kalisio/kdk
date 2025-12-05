@@ -58,6 +58,6 @@ export function roundMinutes (minutes, interval) {
 export function getNearestIntervalTime (datetime, interval) {
   // Compute nearest run T0, always in the past
   const h = (interval > 3600 ? roundHours(datetime.hours(), interval / 3600) : datetime.hours())
-  const m = (interval <= 3600 ? roundMinutes(datetime.minutes(), interval / 60) : datetime.minutes())
+  const m = (interval <= 3600 ? roundMinutes(datetime.minutes(), interval / 60) : 0)
   return datetime.clone().hours(h).minutes(m).seconds(0).milliseconds(0)
 }
