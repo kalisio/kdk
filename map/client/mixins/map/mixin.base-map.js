@@ -3,6 +3,8 @@ import sift from 'sift'
 import logger from 'loglevel'
 import moment from 'moment'
 import { EventBus } from 'quasar'
+import { Platform } from '../../../../core/client/platform.js'
+import { i18n } from '../../../../core/client/i18n.js'
 import { point, rhumbDistance, rhumbBearing, rhumbDestination } from '@turf/turf'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -24,6 +26,8 @@ import 'leaflet-timedimension/dist/leaflet.timedimension.control.css'
 import '@geoman-io/leaflet-geoman-free'
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css'
 import 'leaflet-rotate/dist/leaflet-rotate-src.js'
+import 'leaflet-gesture-handling'
+import 'leaflet-gesture-handling/dist/leaflet-gesture-handling.css'
 
 import { Time } from '../../../../core/client/time.js'
 import { Events } from '../../../../core/client/events.js'
@@ -108,8 +112,22 @@ export const baseMap = {
         geolocate: true,
         rotateControl: false // Rotate plugin show this even if rotation is disabled
       })
+      const gestureHandlingOptions = {
+        text: {
+          touch: i18n.t('mixins.gesture.TOUCH'),
+          scroll: i18n.t('mixins.gesture.SCROLL'),
+          scrollMac: i18n.t('mixins.gesture.SCROLL_MAC'),
+          ctrl: i18n.t('mixins.gesture.CTRL')
+        },
+        duration: 1000
+      }
       // Initialize the map
-      this.map = L.map(domEl, Object.assign({ zoomControl: false, touchZoom: true }, viewerOptions))
+      this.map = L.map(domEl, Object.assign({ 
+        zoomControl: false,
+        touchZoom: true,
+        gestureHandling: Platform.has.touch && Platform.is.desktop && !Platform.is.firefox,
+        gestureHandlingOptions
+      }, viewerOptions))
       const backgroundColor = _.get(viewerOptions, 'backgroundColor')
       if (backgroundColor) this.map._container.style.backgroundColor = backgroundColor
       // Make sure geoman is initialized on the map
