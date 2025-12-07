@@ -114,6 +114,12 @@
       "PRINT_VIEW": "Print view",
       "REMOVE_LABEL": "Remove"
     },
+    "gesture": {
+      "TOUCH": "Use two fingers to move the map",
+      "SCROLL": "Use Ctrl + scroll to zoom the map",
+      "SCROLL_MAC": "Use ⌘ + scroll to zoom the map",
+      "CTRL": "Use Ctrl + scroll to zoom the map"
+    },
     "timeseries": {
       "FORECAST_PROBE": "Forecast"
     },

@@ -114,6 +114,12 @@
       "PRINT_VIEW": "Imprimer la vue",
       "REMOVE_LABEL": "Supprimer"
     },
+    "gesture": {
+      "TOUCH": "Utilisez deux doigts pour déplacer la carte",
+      "SCROLL": "Utilisez Ctrl + molette pour zoomer",
+      "SCROLL_MAC": "Utilisez ⌘ + molette pour zoomer",
+      "CTRL": "Utilisez Ctrl + molette pour zoomer"
+    },
     "timeseries": {
       "FORECAST_PROBE": "Prévisions"
     },
