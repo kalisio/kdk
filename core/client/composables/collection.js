@@ -111,13 +111,17 @@ export function useCollection (options) {
     }
   }
 
-  const refreshCollection = _.throttle(() => {
-    const fullQuery = {
+  function getFullQuery () {
+    return {
       $locale: getLocale(),
       ...getCollectionBaseQuery(),
       ...getCollectionFilterQuery(),
       ...getCollectionPaginationQuery()
     }
+  }
+
+  const refreshCollection = _.throttle(() => {
+    const fullQuery = getFullQuery()
     subscribe(fullQuery)
   }, options.refreshThrottle.value, { leading: false })
 
@@ -141,6 +145,11 @@ export function useCollection (options) {
       })
       if (item) Object.assign(item, updatedItem)
     }
+    // Some items might not match the query anymore so that we should remove it
+    const matcher = api.matcher(getFullQuery())
+    const matchedItems = updatedItems.filter(matcher)
+    const itemsToRemove = _.differenceBy(updatedItems, matchedItems, item => item._id ? item._id.toString() : null)
+    onItemsRemoved(itemsToRemove)
   }
 
   function onItemsRemoved (removedItems) {
