@@ -9,7 +9,8 @@ import intersects from '@turf/boolean-intersects'
 import { featureEach } from '@turf/meta'
 import { unref } from 'vue'
 import * as composables from '../../../core/client/composables/index.js'
-import * as utils from '../utils.js'
+import { getFeatureId } from '../utils/utils.js'
+import * as features from '../utils/utils.features.js' // Named import to avoid conflict with similar function names
 import { convertPolygonStyleToLeafletPath } from '../leaflet/utils/index.js'
 
 export function useSelection (name, options = {}) {
@@ -31,8 +32,8 @@ export function useSelection (name, options = {}) {
         if (layer1 !== layer2) return false
         // Then compare features
         if (item1.feature && item2.feature) {
-          const id1 = utils.getFeatureId(item1.feature, item1.layer)
-          const id2 = utils.getFeatureId(item2.feature, item2.layer)
+          const id1 = getFeatureId(item1.feature, item1.layer)
+          const id2 = getFeatureId(item2.feature, item2.layer)
           return id1 === id2
         } else {
           // If only one has a feature then it cannot be the same
@@ -158,8 +159,8 @@ export function useSelection (name, options = {}) {
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
       if (item.feature && item.layer && (item.layer.name === layer.name)) {
-        const selectedId = utils.getFeatureId(item.feature, item.layer)
-        const featureId = utils.getFeatureId(feature, layer)
+        const selectedId = getFeatureId(item.feature, item.layer)
+        const featureId = getFeatureId(feature, layer)
         if (featureId === selectedId) return item
       }
     }
@@ -355,13 +356,13 @@ export function useSelection (name, options = {}) {
     hiddenFeatures.forEach((item) => selection.unselectItem(item))
   }
   function listenToFeaturesServiceEventsForLayer (layer) {
-    const listeners = utils.listenToFeaturesServiceEventsForLayer(layer, {
+    const listeners = features.listenToFeaturesServiceEventsForLayer(layer, {
       all: onFeatureUpdated, removed: onFeatureRemoved
     }, layerServiceEventListeners[layer._id])
     if (listeners) layerServiceEventListeners[layer._id] = listeners
   }
   function unlistenToFeaturesServiceEventsForLayer (layer) {
-    utils.unlistenToFeaturesServiceEventsForLayer(layer, layerServiceEventListeners[layer._id])
+    features.unlistenToFeaturesServiceEventsForLayer(layer, layerServiceEventListeners[layer._id])
     delete layerServiceEventListeners[layer._id]
   }
   function listenToFeaturesServiceEventsForLayers () {

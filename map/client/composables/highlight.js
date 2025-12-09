@@ -4,7 +4,9 @@ import bbox from '@turf/bbox'
 import bboxPolygon from '@turf/bbox-polygon'
 import { uid } from 'quasar'
 import { unref, onBeforeMount, onBeforeUnmount } from 'vue'
-import * as utils from '../utils.js'
+import { getFeatureId } from '../utils/utils.js'
+import * as features from '../utils/utils.features.js' // Named import to avoid conflict with similar function names
+import { isLayerHighlightable } from '../utils/utils.layers.js'
 import * as composables from '../../../core/client/composables/index.js'
 
 export const HighlightsLayerName = uid()
@@ -58,13 +60,13 @@ export function useHighlight (name, options = {}) {
     let id = `${name}`
     if (layer) id += `-${_.kebabCase(layer.name)}`
     if (feature) {
-      const featureId = utils.getFeatureId(feature, layer)
+      const featureId = getFeatureId(feature, layer)
       if (featureId) id += `-${featureId}`
     }
     return id
   }
   function isHighlightFor (highlightId, layer, feature) {
-    return feature ? highlightId.includes(`-${utils.getFeatureId(feature, layer)}`) : highlightId.includes(`-${_.kebabCase(layer.name)}`)
+    return feature ? highlightId.includes(`-${getFeatureId(feature, layer)}`) : highlightId.includes(`-${_.kebabCase(layer.name)}`)
   }
   function hasHighlight (feature, layer) {
     return has(getHighlightId(feature, layer))
@@ -88,7 +90,7 @@ export function useHighlight (name, options = {}) {
     highlightMode = mode
   }
   function highlight (feature, layer, selected = true) {
-    if (layer && (highlightMode === 'highlightable-layers') && !utils.isLayerHighlightable(layer)) return
+    if (layer && (highlightMode === 'highlightable-layers') && !isLayerHighlightable(layer)) return
     const highlightId = getHighlightId(feature, layer)
     // Define default highlight feature
     const highlight = {
@@ -102,7 +104,7 @@ export function useHighlight (name, options = {}) {
     // Assign style
     if (selected) {
       // Do not alter config object
-      const selectionStylePath = `engines.${activity.engine}.style.selection.${utils.getFeatureStyleType(highlight)}`
+      const selectionStylePath = `engines.${activity.engine}.style.selection.${features.getFeatureStyleType(highlight)}`
       let highlightStyle = _.cloneDeep(_.get(config, selectionStylePath, {}))
       if (activity.is2D()) {
         // adapt the size to the marker using feature style
@@ -236,13 +238,13 @@ export function useHighlight (name, options = {}) {
     })
   }
   function listenToFeaturesServiceEventsForLayer (layer) {
-    const listeners = utils.listenToFeaturesServiceEventsForLayer(layer, {
+    const listeners = features.listenToFeaturesServiceEventsForLayer(layer, {
       all: onFeatureUpdated, removed: onFeatureRemoved
     }, layerServiceEventListeners[layer._id])
     if (listeners) layerServiceEventListeners[layer._id] = listeners
   }
   function unlistenToFeaturesServiceEventsForLayer (layer) {
-    utils.unlistenToFeaturesServiceEventsForLayer(layer, layerServiceEventListeners[layer._id])
+    features.unlistenToFeaturesServiceEventsForLayer(layer, layerServiceEventListeners[layer._id])
     delete layerServiceEventListeners[layer._id]
   }
   function listenToFeaturesServiceEventsForLayers () {
