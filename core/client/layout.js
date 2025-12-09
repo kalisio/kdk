@@ -35,7 +35,7 @@ const defaults = {
   header: { ...contentDefaults, size: [undefined, 0] },
   footer: { ...contentDefaults, size: [undefined, 0] },
   page: { ...contentDefaults, size: [0, 0] },
-  stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies },
+  stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies, expand: false },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: DefaultZIndex.fab },
   panes: {
     left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: DefaultZIndex.drawer },

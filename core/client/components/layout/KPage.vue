@@ -24,6 +24,7 @@
         :pointer-events="sticky.pointerEvents"
         :position="getStickyPosition(sticky)"
         :offset="getStickyOffset(sticky)"
+        :expand="sticky.expand"
         class="k-sticky"
       >
         <KContent v-bind="sticky" />
