@@ -60,7 +60,7 @@ export default {
       let resources = _.remove(scope, resource => resource._id && (resource._id.toString() === id.toString()))
       if (resources.length === 0) {
         // Fallback as name
-        resources = _.remove(scope, resource => resource.name && (resource.name === id))
+        resources = _.remove(scope, resource => resource.name && (resource.name === id.toString()))
       }
       if (resources.length > 0) {
         // This cover the case when we create the scope on the first auth,

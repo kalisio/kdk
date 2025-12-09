@@ -1,7 +1,8 @@
 import _ from 'lodash'
-import { marshallComparisonFields, marshallTime, marshallBooleanFields, marshallNumberFields, marshallDateFields } from '../marshall.js'
 import mongodb from 'mongodb'
 import makeDebug from 'debug'
+import { marshallComparisonFields, marshallTime, marshallBooleanFields, marshallNumberFields, marshallDateFields } from '../marshall.js'
+import { isValidObjectID, isObjectID } from '../db.js'
 import { makeDiacriticPattern } from '../../common/utils.js'
 
 const { ObjectID } = mongodb
@@ -114,12 +115,12 @@ export function populateObject (options) {
     // Set the retrieved service on the same field or given one in hook params
     _.set(params, serviceProperty, service)
     // Let it work with id/name string or real object
-    if (typeof id === 'string' || ObjectID.isValid(id)) {
+    if (typeof id === 'string' || isObjectID(id)) {
       const args = { user: hook.params.user }
       let object
       try {
         // Get by ID or name ?
-        if (ObjectID.isValid(id)) {
+        if (isObjectID(id) || isValidObjectID(id)) {
           object = await service.get(id.toString(), args)
         } else {
           Object.assign(args, { query: { name: id.toString() }, paginate: false })
@@ -210,11 +211,11 @@ export function populateObjects (options) {
     } else {
       debug(`Populating ${idProperty} with ID ${id}`)
       // Let it work with id/name string or real object
-      if (typeof id === 'string' || ObjectID.isValid(id)) {
+      if (typeof id === 'string' || isObjectID(id)) {
         let object
         try {
           // Get by ID or name ?
-          if (ObjectID.isValid(id)) {
+          if (isObjectID(id) || isValidObjectID(id)) {
             object = await service.get(id.toString(), { user: hook.params.user })
           } else {
             const results = await service.find({ query: { name: id.toString() }, paginate: false, user: hook.params.user })
