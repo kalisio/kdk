@@ -258,7 +258,7 @@ describe('core:services', () => {
     })
     spyUpdateAbilities.reset()
     const allUsers = await usersService.find({ query: { 'profile.name': { $search: 'Mae' } } })
-    // Diacritic should be specific
+    // Diacritic should be more specific
     const singleUsers = await usersService.find({ query: { 'profile.name': { $search: 'Maë' } } })
     await usersService.remove(user._id)
     expect(allUsers.data.length === 2).beTrue()
