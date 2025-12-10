@@ -276,7 +276,7 @@ describe('map:grid-source', () => {
 
     it('is possible to create a Weacast source from makeGridSource', () => {
       const [key, conf] = extractGridSourceConfig(weacastOptions)
-      source = makeGridSource(key, { weacastApi: weacastOptions.weacastApi })
+      source = makeGridSource(key, { planetApi: weacastOptions.weacastApi })
       expect(source).to.exist
       expect(conf).to.deep.equal(weacastOptions.weacast)
       sourceConfig = conf
