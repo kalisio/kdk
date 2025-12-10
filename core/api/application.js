@@ -16,14 +16,12 @@ import configuration from '@feathersjs/configuration'
 import errors from '@feathersjs/errors'
 import express, { authenticate } from '@feathersjs/express'
 import socketio from '@feathersjs/socketio'
-import mongodb from 'mongodb'
 import { Database, isObjectID, idToString } from './db.js'
 import auth from './authentication.js'
 
 const debug = makeDebug('kdk:core:application')
 const debugLimiter = makeDebug('kdk:core:application:limiter')
 const { TooManyRequests, Forbidden, BadRequest } = errors
-const { ObjectID } = mongodb
 const { rest } = express
 const sift = siftModule.default
 
