@@ -15,6 +15,7 @@
         >
           <template v-for="type in availableTypes" :key="type">
             <q-fab-action
+              :id="type + '-option'"
               :icon="getKindIcon(type)"
               :color="getKindColor(type)"
               :label="getKindLabel(type)"
