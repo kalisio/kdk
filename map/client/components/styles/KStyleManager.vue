@@ -58,6 +58,7 @@ import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle, updateLayerWithFiltersStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'
 import { getTagsFilterOptions } from '../../../../core/client/utils/utils.tags.js'
+import { kmlStyleSpecialProperties } from '../../utils/utils.style.js'
 import KGrid from '../../../../core/client/components/collection/KGrid.vue'
 import KFollower from '../../../../core/client/components/KFollower.vue'
 import KTagSelection from '../../../../core/client/components/tags/KTagSelection.vue'
@@ -216,7 +217,9 @@ function applyToSelection (styleToApply) {
           if (_.has(f, 'properties.entityStyle.wall')) geometryType = 'Polygon'
           else if (_.has(f, 'properties.entityStyle.corridor')) geometryType = 'Polygon'
         }
-        _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, geometryType, 'point')], null))
+        const styleToKeep = _.pick(f.style, kmlStyleSpecialProperties)
+        const styleForGeometry = _.get(styleToApply, ['item', _.get(type, geometryType, 'point')], {})
+        _.set(f, 'style', _.merge({}, styleForGeometry, styleToKeep))
       })
       if (CurrentActivity.value.isInMemoryLayer(layer.layer)) {
         CurrentActivity.value.resetLayer(layer.layer)
