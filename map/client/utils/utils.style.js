@@ -182,6 +182,8 @@ export const DefaultStyle = {
   }
 }
 
+export const kmlStyleSpecialProperties = ['extrude', 'altitudeMode']
+
 // Map properties of a given style according to given mapping, performing number conversion if required
 export function convertStyle (style, mapping, asNumber = []) {
   let convertedStyle = {}
