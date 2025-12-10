@@ -17,7 +17,8 @@ export function useCollection (options) {
     // Refresh strategy to be used
     listStrategy: ref('smart'),
     // Item processor to be used
-    processor: ref()
+    processor: ref(),
+    service: ref()
   })
 
   // Data

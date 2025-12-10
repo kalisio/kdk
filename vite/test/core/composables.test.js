@@ -3,19 +3,18 @@ import { feathers } from '@feathersjs/feathers'
 import { rx } from 'feathers-reactive'
 import { memory } from '@feathersjs/memory'
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
-import { flushPromises } from '@vue/test-utils'
+import { mountComposable } from '../utils.js'
 import { kdkCore, kdkMap } from '../../../client/kdk.client.map.js'
+import KGrid from '../../../core/client/components/collection/KGrid.vue'
 
 describe('core:composables', () => {
   let client
   const nbItemsPerPage = ref(2)
   const baseQuery = ref({ $sort: { _id: 1 } })
   const filterQuery = ref({})
-  const getService = ref(() => client.service('/messages'))
-
-  beforeAll(() => {
-    client = feathers()
-      .configure(rx({ idField: '_id' }))
+  const getService = ref(() => client.getService('messages'))
+  
+  beforeAll(async () => {
     const service = memory({
       id: '_id',
       store: {
@@ -25,18 +24,24 @@ describe('core:composables', () => {
       },
       paginate: { default: 5, max: 5 }
     })
-    client.use('/messages', service).hooks({
-      before: {
-        // Required as some options like $locale are only supported by server-side services
-        all: [kdkCore.hooks.removeServerSideParameters]
+    client = await kdkCore.initializeApi(kdkMap.setupApi)
+    client.createService('messages', {
+      service,
+      hooks: {
+        before: {
+          // Required as some options like $locale are only supported by server-side services
+          all: [kdkCore.hooks.removeServerSideParameters]
+        }
       }
     })
   })
-
+  
   it('refresh collection in paginated mode', async () => {
-    const { items, currentPage, refreshCollection } = kdkCore.composables.useCollection({
-      nbItemsPerPage, baseQuery, filterQuery, getService
-    })
+    const { items, currentPage, refreshCollection } = mountComposable(() =>
+      kdkCore.composables.useCollection({
+        nbItemsPerPage, baseQuery, filterQuery, getService
+      }))
+
     refreshCollection()
     await vi.waitFor(() => {
       expect(items.value).to.deep.equal([{ _id: 1, name: 'xxx' }, { _id: 2, name: 'yyy' }])
@@ -55,9 +60,11 @@ describe('core:composables', () => {
   it('refresh collection in append mode', async () => {
     // Reset any filter
     filterQuery.value = {}
-    const { items, currentPage, refreshCollection } = kdkCore.composables.useCollection({
-      nbItemsPerPage, baseQuery, filterQuery, getService, appendItems: ref(true)
-    })
+    const { items, currentPage, refreshCollection } = mountComposable(() =>
+      kdkCore.composables.useCollection({
+        nbItemsPerPage, baseQuery, filterQuery, getService, appendItems: ref(true)
+      }))
+    
     refreshCollection()
     await vi.waitFor(() => {
       expect(items.value).to.deep.equal([{ _id: 1, name: 'xxx' }, { _id: 2, name: 'yyy' }])
@@ -72,6 +79,6 @@ describe('core:composables', () => {
       expect(items.value).to.deep.equal([{ _id: 2, name: 'yyy' }])
     })
   })
-
+  
   afterAll(() => {})
 })
