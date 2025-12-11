@@ -187,14 +187,17 @@ function getCategoryIcon (category) {
   return _.get(category, 'icon.name', _.get(category, 'icon'), 'las la-bars')
 }
 function isCategoryVisible (category) {
-  const options = category.options || category
   // Show a built-in category only if it has some layers.
   // Indeed, depending on the app configuration, none might be available for this category.
   // User-defined categories are visible by default, even if empty,
   // except if used inside a project as in this case having no layers means we don't want to use this category.
   // App might also force to hide it anyway with the hideIfEmpty option.
   const isEmpty = (layersByCategory.value[category.name].length === 0)
-  return (isEmpty ? !_.get(options, 'hideIfEmpty', !category._id || hasProject()) : true)
+  let hideIfEmpty = !category._id || hasProject()
+  if (category.options && _.has(category.options, 'hideIfEmpty')) hideIfEmpty = _.get(category.options, 'hideIfEmpty')
+  // Backward compatibility with KDK version <= 2.7 where it could be stored at root level and not in options subobject
+  else if (_.has(category, 'hideIfEmpty')) hideIfEmpty = _.get(category, 'hideIfEmpty')
+  return (isEmpty ? !hideIfEmpty : true)
 }
 function refresh () {
   const { layers, layerCategories, orphanLayers } = CurrentActivity.value
