@@ -15,7 +15,7 @@
       }
     },
     "avatar": { 
-      "type": "object",
+      "type": ["object", "null"],
       "field": {
         "component": "form/KFileField",
         "label": "schemas.AVATAR_FIELD_LABEL",

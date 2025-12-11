@@ -11,6 +11,19 @@
       {{ file.name }}
     </q-chip>
   </div>
+  <!-- -->
+  <q-field v-else-if="model"
+    :for="properties.name + '-field'"
+    v-model="model"
+    :label="label"
+    clearable
+    @clear="onFileCleared"
+    :disable="disabled"
+  >
+    <template v-slot:control>
+      {{ displayName }}
+    </template>
+  </q-field>
   <q-file v-else
     :for="properties.name + '-field'"
     v-model="files"
@@ -70,6 +83,10 @@ export default {
   computed: {
     multiple () {
       return _.get(this.properties, 'field.multiple', false)
+    },
+    displayName () {
+      if (_.isArray(this.model)) return _.map(this.model, 'name').join(', ')
+      return _.get(this.model, 'name', '')
     }
   },
   methods: {
