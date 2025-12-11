@@ -139,7 +139,7 @@ async function fetchDataForMeasureSeries({
 // Build timeseries to be used in charts for target feature and associated layer definition or probe location
 export function getForecastTimeSeries({
   feature, location, layer, startTime, endTime, runTime,
-  forecastLayers, forecastModel, forecastLevel, weacastApi, fetchDelay
+  forecastLayers, forecastModel, forecastLevel, forecastLevelUnit, weacastApi, fetchDelay
 }) {
   let forecastVariables = []
   if (forecastLayers && forecastLayers.length > 0) forecastLayers.forEach(layer => { forecastVariables = forecastVariables.concat(_.get(layer, 'variables', [])) })
@@ -164,12 +164,16 @@ export function getForecastTimeSeries({
     // Known by the unit system ?
     const unit = Units.getUnit(baseUnit)
     const targetUnit = Units.getTargetUnit(baseUnit)
+    // We allow variable name to be customized based on level information
+    const label = _.template(i18n.tie(variable.label))({
+      level: forecastLevel, levelUnit: forecastLevelUnit
+    })
     const serie = {
       probedLocationData: forecastData,
       data: getDataForVariable(forecastData, variable, forecastLevel, runTime),
       variable: {
         name: variable.name,
-        label: `${i18n.tie(variable.label)} (${Units.getTargetUnitSymbol(baseUnit)})`,
+        label: `${label} (${Units.getTargetUnitSymbol(baseUnit)})`,
         unit,
         targetUnit,
         chartjs: Object.assign({
@@ -196,7 +200,7 @@ export function getForecastTimeSeries({
 // Build timeseries to be used in charts for target feature and associated layer definition or probe location
 export function getMeasureTimeSeries({
   feature, location, layer, layers, startTime, endTime, runTime,
-  level, probeFunction, fetchDelay
+  level, levelUnit, probeFunction, fetchDelay
 }) {
   // A feature comes from a single layer so target variables from it by default
   let variables = _.get(layer, 'variables', [])
@@ -223,12 +227,16 @@ export function getMeasureTimeSeries({
     // Known by the unit system ?
     const unit = Units.getUnit(baseUnit)
     const targetUnit = Units.getTargetUnit(baseUnit)
+    // We allow variable name to be customized based on level information
+    const label = _.template(i18n.tie(variable.label))({
+      level, levelUnit
+    })
     const serie = {
       probedLocationData: data,
       data: getDataForVariable(data, variable),
       variable: {
         name: variable.name,
-        label: `${i18n.tie(variable.label)} (${Units.getTargetUnitSymbol(baseUnit)})`,
+        label: `${label} (${Units.getTargetUnitSymbol(baseUnit)})`,
         unit,
         targetUnit,
         chartjs: Object.assign({
@@ -279,6 +287,7 @@ export async function updateTimeSeries (previousTimeSeries) {
           location: getProbedLocation(),
           layer,
           level: activity.selectedLevel,
+          levelUnit: (activity.selectableLevels ? activity.selectableLevels.unit : ''),
           probeFunction: activity.probeLocation
         })
         if (!_.isEmpty(series)) {
@@ -297,6 +306,7 @@ export async function updateTimeSeries (previousTimeSeries) {
         forecastLayers,
         forecastModel: activity.forecastModel,
         forecastLevel: activity.forecastLevel,
+        forecastLevelUnit: (activity.selectableLevels ? activity.selectableLevels.unit : ''),
         weacastApi: activity.getWeacastApi()
       })
       if (!_.isEmpty(series)) {
