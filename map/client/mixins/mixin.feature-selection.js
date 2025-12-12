@@ -36,10 +36,10 @@ export const featureSelection = {
         this.handleWidget(this.getWidgetForProbe() || this.getWidgetForSelection())
       }
     },
-    async updateTimeSeries (path = 'state.timeSeries') {
-      if (!_.has(this, path)) return
-      const timeSeries = await updateTimeSeries(_.get(this, path))
-      _.set(this, path, timeSeries)
+    async updateTimeSeries () {
+      if (!this.state) return
+      const timeSeries = await updateTimeSeries(this.state.timeSeries || [])
+      this.state.timeSeries = timeSeries
     },
     handleWidget (widget) {
       // If window already open on another widget keep it
