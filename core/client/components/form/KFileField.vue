@@ -93,6 +93,11 @@ export default {
     emptyModel () {
       return this.multiple ? [] : null
     },
+    onFileCleared () {
+      this.files = null
+      this.error = ''
+      this.onChanged()
+    },
     getAcceptedTypes () {
       return _.get(this.properties, 'field.mimeTypes', '')
     },
