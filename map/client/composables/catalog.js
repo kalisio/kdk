@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { ref, computed } from 'vue'
 import * as catalog from '../utils/utils.catalog.js'
-import { getCatalogProjectQuery } from '../utils/utils.project.js'
 import { api } from '../../../core/client/api.js'
 
 export function useCatalog (options = {}) {
