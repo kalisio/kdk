@@ -193,7 +193,7 @@ function isCategoryVisible (category) {
   // except if used inside a project as in this case having no layers means we don't want to use this category.
   // App might also force to hide it anyway with the hideIfEmpty option.
   const isEmpty = (layersByCategory.value[category.name].length === 0)
-  let hideIfEmpty = !category._id || hasProject()
+  let hideIfEmpty = !category._id || hasProject() || _.get(CurrentActivity.value, 'project')
   if (category.options && _.has(category.options, 'hideIfEmpty')) hideIfEmpty = _.get(category.options, 'hideIfEmpty')
   // Backward compatibility with KDK version <= 2.7 where it could be stored at root level and not in options subobject
   else if (_.has(category, 'hideIfEmpty')) hideIfEmpty = _.get(category, 'hideIfEmpty')
