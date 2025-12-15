@@ -2,7 +2,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import { api, i18n, Store } from '../../../core/client/index.js'
 import { buildUrl } from '../../../core/common/index.js'
-import { getCatalogProjectQuery } from './utils.project.js'
+import { getCatalogProjectQuery, getViewsProjectQuery } from './utils.project.js'
 
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
@@ -187,7 +187,7 @@ export async function getViews (options = {}) {
   const catalogService = planetApi.getService('catalog', options.context)
   if (catalogService) {
     const response = await catalogService.find({
-      query: Object.assign({ type: 'Context' }, (options.project ? Object.assign(getCatalogProjectQuery(options.project), options.query) : options.query))
+      query: Object.assign({ type: 'Context' }, (options.project ? Object.assign(getViewsProjectQuery(options.project), options.query) : options.query))
     })
     _.forEach(response.data, processTranslations)
     views = views.concat(response.data)

@@ -6,3 +6,7 @@ export function getCatalogProjectQuery (project) {
   const nameQuery = { name: { $in: _.map(_.filter(project.layers, 'name'), 'name') } }
   return { $or: [idQuery, nameQuery] }
 }
+
+export function getViewsProjectQuery (project) {
+  return { _id: { $in: _.map(project.views, '_id') } }
+}

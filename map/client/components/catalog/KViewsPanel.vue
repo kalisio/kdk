@@ -25,6 +25,7 @@ import { utils, i18n, api, LocalCache, Context } from '../../../../core/client'
 import { KGrid } from '../../../../core/client/components'
 import { useCurrentActivity, useProject } from '../../composables'
 import { cacheView, uncacheView } from '../../utils/utils.offline.js'
+import { getViewsProjectQuery } from '../../utils/utils.project.js'
 import { Dialog, Notify } from 'quasar'
 
 // Data
@@ -41,7 +42,7 @@ const baseQuery = computed(() => {
 })
 const filterQuery = computed(() => {
   const query = {}
-  if (project.value) Object.assign(query, { _id: { $in: _.map(project.value.views, '_id') } })
+  if (project.value) Object.assign(query, getViewsProjectQuery(project.value))
   if (!_.isEmpty(searchString.value)) {
     Object.assign(query, { name: { $regex: searchString.value } })
   }
