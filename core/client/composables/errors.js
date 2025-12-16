@@ -23,7 +23,7 @@ export function useErrors () {
     // Check if user can retry to avoid this error
     if (error.retryHandler) {
       notification.actions = [{
-        label: this.$t('RETRY'),
+        label: i18n.tie('RETRY'),
         handler: error.retryHandler
       }]
       // Increase timeout so that user has a chance to retry
