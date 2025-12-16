@@ -1,0 +1,5 @@
+{
+	"all": true,
+	"include": ["core/**/*.js", "map/**/*.js"],
+	"reporter": ["html", "lcov"]
+}

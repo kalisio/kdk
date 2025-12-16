@@ -41,15 +41,14 @@ jobs:
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        # run: bash ./scripts/run_tests.sh -c -r ${{ github.job }}
-        run: bash ./scripts/run_tests.sh -r ${{ github.job }}
+        run: bash ./scripts/run_tests.sh -c -r ${{ github.job }}
   
   additional_tests:
     strategy:
       fail-fast: false
       matrix:
         node: [ 20, 22 ]
-        mongo: [ 8 ]
+        mongo: [ 7, 8 ]
     name: Additional tests
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.additional_tests ||
