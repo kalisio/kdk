@@ -83,7 +83,7 @@ export default {
               query: {
                 timestamp: Date.now()
               },
-              ...(this.options.context && { context: this.options.context })
+              ...(!_.isNil(_.get(this, 'options.context')) && { context: this.options.context })
             }
             this.avatar = await Storage.getObjectUrl(options)
             return
