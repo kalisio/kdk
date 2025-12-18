@@ -6,14 +6,14 @@ export function useLayout () {
   function configureLayout (configuration, context) {
     if (_.has(configuration, 'view')) Layout.setView(configuration.view)
     if (_.has(configuration, 'padding')) Layout.setPadding(configuration.padding)
-    if (_.has(configuration, 'header')) Layout.setHeader(configuration.header, context)
-    if (_.has(configuration, 'footer')) Layout.setFooter(configuration.footer, context)
-    if (_.has(configuration, 'page')) Layout.setPage(configuration.page, context)
-    if (_.has(configuration, 'stickies')) Layout.setStickies(configuration.stickies, context)
-    if (_.has(configuration, 'fab')) Layout.setFab(configuration.fab, context)
+    Layout.setHeader(configuration.header, context)
+    Layout.setFooter(configuration.footer, context)
+    Layout.setPage(configuration.page, context)
+    Layout.setStickies(configuration.stickies, context)
+    Layout.setFab(configuration.fab, context)
     Layout.placements.forEach(placement => {
-      if (_.has(configuration, `panes.${placement}`)) Layout.setPane(placement, _.get(configuration, `panes.${placement}`), context)
-      if (_.has(configuration, `windows.${placement}`)) Layout.setWindow(placement, _.get(configuration, `windows.${placement}`), context)
+      Layout.setPane(placement, _.get(configuration, `panes.${placement}`), context)
+      Layout.setWindow(placement, _.get(configuration, `windows.${placement}`), context)
     })
     // for backward compatibility
     if (_.has(configuration, 'leftPane')) Layout.setPane('left', configuration.leftPane, context)
@@ -41,7 +41,7 @@ export function useLayout () {
   function setLayoutMode (mode) {
     if (mode) Layout.setMode(mode)
   }
-  
+
   // immediate
   const additionalFunctions = {}
   Layout.placements.forEach(placement => {
@@ -52,7 +52,7 @@ export function useLayout () {
     additionalFunctions[`set${_.upperFirst(placement)}PaneOpener`] = (opener) => { Layout.setPaneOpener(placement, opener) }
     additionalFunctions[`clear${_.upperFirst(placement)}Pane`] = () => { Layout.clearPane(placement) }
   })
-  
+
   // expose
   return {
     Layout,
