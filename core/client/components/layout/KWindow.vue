@@ -270,7 +270,7 @@ const widgetHeight = computed(() => {
 })
 
 // Watch
-watch(() => [$q.screen.width, $q.screen.height, header.visible, footer.visible], (value) => onScreenResized())
+watch(() => [$q.screen.width, $q.screen.height, header.visible, header.size, footer.visible, footer.size], (value) => onScreenResized())
 watch(() => currentWindow.state, (newState, oldState) => refresh(newState, oldState))
 
 // Functions
