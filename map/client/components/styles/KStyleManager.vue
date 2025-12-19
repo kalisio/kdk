@@ -1,5 +1,5 @@
 <template>
-  <div class="column">
+  <div class="column no-wrap">
     <div id="style-manager-header"
       v-if="title || (toolbar && toolbar.length)"
       class="full-width"
@@ -16,36 +16,36 @@
         <KTagSelection :selection="tagsSelection" @selection-changed="onTagSelectionChanged" />
       </div>
     </div>
-    <div id="style-manager-content">
-      <q-tab-panels v-model="viewMode" animated>
-        <q-tab-panel name="list" class="q-pa-none">
-          <KGrid
-            service="styles"
-            :append-items="true"
-            :base-query="baseQuery"
-            :filter-query="filterQuery"
-            :nb-items-per-page="24"
-            :renderer="renderer"
-            class="fit"
-          />
-          <KFollower
-            :follower="follower"
-            targetId="left-window-magnet"
-            anchor="bottom-right"
-          />
-        </q-tab-panel>
-        <q-tab-panel name="editor">
-          <div class="full-width column">
-            <KStyleEditor
-              ref="styleEditor"
-              :style="style"
-              @canceled="onCanceled"
-              @applied="onApplied"
-              class="col"
-            />
-          </div>
-        </q-tab-panel>
-      </q-tab-panels>
+    <div v-if="viewMode === 'list'"
+      id="style-manager-list"
+      class="col column"
+    >
+      <KGrid
+        service="styles"
+        :append-items="true"
+        :base-query="baseQuery"
+        :filter-query="filterQuery"
+        :nb-items-per-page="24"
+        :renderer="renderer"
+        :scrollToTop="false"
+        class="col"
+      />
+      <KFollower
+        :follower="follower"
+        targetId="left-window-magnet"
+        anchor="bottom-right"
+      />
+    </div>
+    <div v-else
+      id="style-manager-editor"
+      class="col column"
+    >
+      <KStyleEditor
+        :style="style"
+        @canceled="onCanceled"
+        @applied="onApplied"
+        class="col"
+      />>
     </div>
   </div>
 </template>
@@ -74,7 +74,6 @@ defineProps({
 
 // Data
 const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
-const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
 const baseQuery = ref({ $sort: { name: 1 } })
