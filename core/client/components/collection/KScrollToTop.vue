@@ -48,6 +48,9 @@ const props = defineProps({
   }
 })
 
+// Emits
+const emit = defineEmits(['visibility-changed'])
+
 // Data
 const $q = useQuasar()
 const isVisible = ref(false)
@@ -65,6 +68,7 @@ const refresh = _.debounce(() => {
     return
   }
   isVisible.value = qScrollUtils.getVerticalScrollPosition(targetElement) > 0
+  emit('visibility-changed', isVisible.value)
   logger.trace(`[KDK] (KScrollToTop) Refreshed with visibility: ${isVisible.value}`)
 }, 100)
 function scrollToTop () {

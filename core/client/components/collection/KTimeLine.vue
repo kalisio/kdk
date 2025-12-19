@@ -78,7 +78,7 @@
                   </div>
                 </slot>
               </template>
-              <div :class="dense ? 'q-pr-sm' : 'q-pr-md'">
+              <div :class="{ 'q-pr-sm': dense, 'q-pr-md': !dense }">
                 <div v-if="bodyRenderer" :class="bodyRendererClass">
                   <component
                     :id="item._id"
@@ -138,6 +138,7 @@
           :ref="scrollDownRefCreated"
           target="timeline-content"
           :loading="loadDoneFunction ? true : false"
+          @visibility-changed="onScrollDownVisibilityChanged"
       />
       </div>
       <div class="col-4 row justify-end">
@@ -145,6 +146,7 @@
           v-if="scrollToTop"
           :ref="scrollToTopRefCreated"
           target="timeline-content"
+          @visibility-changed="onScrollToTopVisibilityChanged"
         />
       </div>
     </div>
@@ -266,7 +268,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['collection-refreshed', 'selection-changed'])
+const emit = defineEmits(['collection-refreshed', 'selection-changed', 'scroll-state-changed'])
 
 // Data
 const $q = useQuasar()
@@ -354,7 +356,7 @@ function onScroll () {
 }
 function onLoad (index, done) {
   // check whether the items are all loaded yet
-  if (items.value.length === nbTotalItems.value) {
+  if (items.value.length >= nbTotalItems.value) {
     done(true)
     return
   }
@@ -374,6 +376,12 @@ function onCollectionRefreshed () {
     loadDoneFunction.value(items.value.length === nbTotalItems.value)
     loadDoneFunction.value = null
   }
+}
+function onScrollDownVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'bottom')
+}
+function onScrollToTopVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'top')
 }
 
 // Hooks

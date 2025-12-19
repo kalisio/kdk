@@ -50,6 +50,9 @@ const props = defineProps({
   }
 })
 
+// Emits
+const emit = defineEmits(['visibility-changed'])
+
 // Data
 const $q = useQuasar()
 const isVisible = ref(false)
@@ -75,6 +78,7 @@ const refresh = _.debounce(() => {
     const percent = Math.round(ratio * 10000) / 10000
     isVisible.value = percent < 0.99
   }
+  emit('visibility-changed', isVisible.value)
   logger.trace(`[KDK] (KScrollDown) Refreshed with visibility: ${isVisible.value}`)
 }, 100)
 function scrollOnce () {

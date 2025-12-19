@@ -25,10 +25,12 @@
         :append-items="true"
         :base-query="baseQuery"
         :filter-query="filterQuery"
-        :nb-items-per-page="24"
+        :nb-items-per-page="16"
         :renderer="renderer"
         :scrollToTop="false"
+        @scroll-state-changed="onScrollStateChanged"
         class="col"
+        :class="{ 'q-pb-lg': isAtBottom }"
       />
       <KFollower
         :follower="follower"
@@ -44,8 +46,8 @@
         :style="style"
         @canceled="onCanceled"
         @applied="onApplied"
-        class="col"
-      />>
+        class="q-pa-md col"
+      />
     </div>
   </div>
 </template>
@@ -80,6 +82,7 @@ const baseQuery = ref({ $sort: { name: 1 } })
 const searchString = ref('')
 const tagsOptions = ref([])
 const tagsSelection = ref([])
+const isAtBottom = ref(false)
 const follower = {
   component: 'layout/KFab',
   direction: 'up',
@@ -242,6 +245,9 @@ function onApplied (style) {
 }
 function onCanceled () {
   viewMode.value = 'list'
+}
+function onScrollStateChanged (state) {
+  isAtBottom.value = (state === 'bottom')
 }
 
 // Hooks

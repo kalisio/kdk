@@ -102,6 +102,7 @@
               :ref="scrollDownRefCreated"
               target="grid-content"
               :loading="loadDoneFunction ? true : false"
+              @visibility-changed="onScrollDownVisibilityChanged"
           />
           </div>
           <div class="col-4 row justify-end">
@@ -109,6 +110,7 @@
               v-if="scrollToTop"
               :ref="scrollToTopRefCreated"
               target="grid-content"
+              @visibility-changed="onScrollToTopVisibilityChanged"
             />
           </div>
         </div>
@@ -223,7 +225,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['collection-refreshed', 'selection-changed'])
+const emit = defineEmits([ 'collection-refreshed', 'selection-changed', 'scroll-state-changed' ])
 
 // Data
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
@@ -280,6 +282,12 @@ function onCollectionRefreshed () {
     loadDoneFunction.value(items.value.length === nbTotalItems.value)
     loadDoneFunction.value = null
   }
+}
+function onScrollDownVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'bottom')
+}
+function onScrollToTopVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'top')
 }
 
 // Hooks
