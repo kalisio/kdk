@@ -1,5 +1,5 @@
 {
 	"all": true,
-	"include": ["core/**/*.js", "map/**/*.js"],
+	"include": ["core/api/**/*.js", "map/api/**/*.js"],
 	"reporter": ["html", "lcov"]
 }
