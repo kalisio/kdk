@@ -257,7 +257,7 @@ export function useSelection (name, options = {}) {
   let lastClickedPosition, lastBoxSelectionPosition
   function onClicked (layer, event) {
     if (!selection.isSelectionEnabled()) return
-    
+
     // FIXME: For some layers, eg based on path, we get a first click with the layer as target
     // then a second click with the map as target, we need to filter the later for selection
     // Similarly we get a click when performing a box selection
@@ -335,7 +335,7 @@ export function useSelection (name, options = {}) {
   }
   function onClusterSelection (layer, event) {
     if (!selection.isSelectionEnabled()) return
-      
+
     // Not relevent in this case
     if (selection.isSingleSelectionMode()) return
     const items = _.get(event, 'markers', []).map(marker => {
