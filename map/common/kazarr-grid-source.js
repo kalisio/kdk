@@ -172,6 +172,10 @@ export class KazarrGridSource extends GridSource {
       
     const grid = {
       hasData: () => { return true },
+      // HACK: can't import pixi here, return constant value for now
+      // cf. https://github.com/pixijs/pixijs/blob/v7.4.3/packages/constants/src/index.ts#L282
+      drawMode: () => { return 4 /* DRAW_MODES.TRIANGLES */ },
+      wireframeDrawMode: () => { return 1 /* DRAW_MODES.LINES */ },
       data: json,
       converter: this.converter,
       numPoints: json.values.length,
