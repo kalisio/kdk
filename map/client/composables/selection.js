@@ -186,6 +186,8 @@ export function useSelection (name, options = {}) {
           widget = 'time-series'
         } else if (_.get(layer, 'leaflet.type') === 'mapillary') {
           widget = 'mapillary-viewer'
+        } else if (_.get(layer, 'leaflet.type') === 'panoramax') {
+          widget = 'panoramax-viewer'
         } else {
           widget = 'information-box'
         }

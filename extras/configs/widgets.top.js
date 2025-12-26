@@ -69,5 +69,18 @@ module.exports = {
       visible: 'hasImage',
       handler: 'centerMap'
     }]
+  },
+  PANORAMAX_VIEWER: {
+    id: 'panoramax-viewer',
+    label: 'KPanoramaxViewer.LABEL',
+    icon: 'kdk:mapillary.png',
+    content: { component: 'widget/KPanoramaxViewer' },
+    header: [{
+      id: 'center',
+      icon: 'las la-eye',
+      tooltip: 'KPanoramaxViewer.CENTER_ON',
+      visible: 'hasImage',
+      handler: 'centerMap'
+    }]
   }
 }

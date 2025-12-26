@@ -636,6 +636,12 @@
     "MOVE_CLOSE_TO": "Move to the closest image",
     "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
   },
+  "KPanoramaxViewer": {
+    "LABEL": "Panoramax Viewer",
+    "CENTER_ON": "Center the view on the Panoramax marker",
+    "MOVE_CLOSE_TO": "Move to the closest image",
+    "NO_IMAGE_FOUND_CLOSE_TO": "No image found close to your location"
+  },
   "KLayerCategories": {
     "LAYER_CATEGORIES_LABEL": "Manage my categories",
     "ADD_TITLE": "Add a new layer category",
