@@ -28,6 +28,7 @@ export default {
     kdkMap.mixins.map.tiledMeshLayers,
     kdkMap.mixins.map.tiledWindLayers,
     kdkMap.mixins.map.mapillaryLayers,
+    kdkMap.mixins.map.panoramaxLayers,
     kdkMap.mixins.map.gsmapLayers,
     kdkMap.mixins.map.pmtilesLayers,
     baseActivityMixin,
