@@ -1,15 +1,10 @@
 <template>
   <div id="panoramax-widget" class="column">
     <q-resize-observer @resize="onResized" />
-    <div class="col" id="panoramax-container">
-      <pnx-viewer
-        ref="panoramaxViewer"
-        endpoint="https://api.panoramax.xyz/api"
-        :sequence="sequenceId"
-        :picture="pictureId"
-        widgets
-      />
-    </div>
+    <div
+      class="col"
+      id="panoramax-container"
+    />
   </div>
 </template>
 
@@ -41,7 +36,7 @@ export default {
     }
   },
   methods: {
-    saveStates() {
+    saveStates () {
       this.selection.panoramax = {
         position: this.position,
         bearing: this.bearing,
@@ -49,17 +44,19 @@ export default {
         pictureId: this.pictureId
       }
     },
-    restoreStates() {
+    restoreStates () {
       const states = this.selection.panoramax
-      this.position = states.position
-      this.bearing = states.bearing
-      this.sequenceId = states.sequenceId
-      this.pictureId = states.pictureId
+      if (states) {
+        this.position = states.position
+        this.bearing = states.bearing
+        this.sequenceId = states.sequenceId
+        this.pictureId = states.pictureId
+      }
     },
     getMarkerFeature () {
       const lat = this.position ? this.position.lat : 0
       const lon = this.position ? this.position.lng : 0
-      const bearing = 225 + this.bearing || 0
+      const bearing = 225 + (this.bearing || 0)
       return {
         type: 'Feature',
         style: {
@@ -84,37 +81,50 @@ export default {
         if (this.pictureId && this.sequenceId) {
           this.hasImage = true
           await this.refreshView()
-        } else if (this.position) {  
+        } else if (this.position) {
           await this.moveCloseTo(this.position.lat, this.position.lng)
         }
-      }
-      else if (this.hasSelectedItem()) {
+      } else if (this.hasSelectedItem()) {
         const location = this.getSelectedLocation()
         if (location) await this.moveCloseTo(location.lat, location.lng)
       }
     },
-    async moveCloseTo(lat, lon) {
-      const buffer = 0.0002 // ~25m bbox
-      const bbox = `${lon - buffer},${lat - buffer},${lon + buffer},${lat + buffer}`
-      const query = `https://api.panoramax.xyz/api/0.2/search/pictures?bbox=${bbox}&limit=50`
+    async moveCloseTo (lat, lon) {
+      const buffer = 0.0002
+      const left = lon - buffer
+      const bottom = lat - buffer
+      const right = lon + buffer
+      const top = lat + buffer
+      const query = `https://api.panoramax.xyz/api/search?bbox=${left},${bottom},${right},${top}&limit=50`
+      
       const response = await fetch(query)
-      if (response.status !== 200) throw new Error(`Fetch failed: ${response.status}`)
+      if (response.status !== 200) {
+        this.hasImage = false
+        throw new Error(`Impossible to fetch ${query}: ` + response.status)
+      }
       const data = await response.json()
-      if (data.pictures?.length > 0) {
+      const pictures = data.features || []
+      
+      if (pictures.length > 0) {
         const clickedPosition = point([lon, lat])
         let minDist
-        data.pictures.forEach(pic => {
-          const dist = distance(clickedPosition, point([pic.lon, pic.lat]))
-          if (!minDist || dist < minDist) {
-            minDist = dist
-            this.sequenceId = pic.sequence_id
-            this.pictureId = pic.id
+        pictures.forEach(feature => {
+          const picture = feature.properties
+          if (picture.lat && picture.lon) {
+            const dist = distance(clickedPosition, point([picture.lon, picture.lat]))
+            if (!minDist || dist < minDist) {
+              minDist = dist
+              this.sequenceId = picture.collection
+              this.pictureId = feature.id
+              this.position = { lat: picture.lat, lng: picture.lon }
+              this.bearing = picture.bearing || picture.direction || 0
+            }
           }
         })
         this.hasImage = true
-        this.refreshView()
+        await this.refreshView()
       } else {
-        Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+        Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') || 'Aucune image trouvée à proximité' })
       }
     },
     centerMap () {
@@ -122,50 +132,67 @@ export default {
     },
     async refreshView () {
       this.highlight(this.getMarkerFeature(), null, false)
-      if (this.$refs.panoramaxViewer) {
-        // Panoramax handles moveTo internally via props
-        await this.$nextTick()
+      this.centerMap()
+      // Force viewer update via attributes
+      if (this.panoramaxViewer) {
+        this.panoramaxViewer.setAttribute('sequence', this.sequenceId || '')
+        this.panoramaxViewer.setAttribute('picture', this.pictureId || '')
       }
     },
-    async onPictureEvent(picture) {
-      this.pictureId = picture.id
-      this.sequenceId = picture.sequence_id
-      this.hasImage = true
-      this.position = { lat: picture.lat, lng: picture.lon }
-      // Fetch bearing if available via API or approximate
-      this.bearing = picture.bearing || 0
-      this.centerMap()
-      this.highlight(this.getMarkerFeature(), null, false)
+    onPictureEvent (event) {
+      const picture = event.detail?.picture || event
+      if (picture) {
+        this.pictureId = picture.id
+        this.sequenceId = picture.sequence_id || picture.collection
+        this.hasImage = true
+        this.position = { lat: picture.lat, lng: picture.lon }
+        this.bearing = picture.bearing || 0
+        this.centerMap()
+        this.highlight(this.getMarkerFeature(), null, false)
+      }
     },
     onResized (size) {
+      // Web components gèrent le resize automatiquement
     }
   },
   mounted () {
-    // No explicit viewer init; web component handles it
+    // Créer le web component Panoramax dans le container
+    const container = document.getElementById('panoramax-container')
+    container.style.height = '400px'
+    container.style.position = 'relative'
+    
+    this.panoramaxViewer = document.createElement('pnx-photo-viewer')
+    this.panoramaxViewer.setAttribute('endpoint', 'https://api.panoramax.xyz/api')
+    this.panoramaxViewer.style.width = '100%'
+    this.panoramaxViewer.style.height = '100%'
+    
+    // Écouter les événements
+    this.panoramaxViewer.addEventListener('picturechange', this.onPictureEvent)
+    this.panoramaxViewer.addEventListener('image-load', this.onPictureEvent)
+    
+    container.appendChild(this.panoramaxViewer)
+    
+    // Initialiser état
     this.position = undefined
     this.bearing = undefined
     this.sequenceId = undefined
     this.pictureId = undefined
     this.refresh()
-    // Listen for picture changes (adapt to actual Panoramax event)
-    this.$refs.panoramaxViewer?.addEventListener('picture-change', (e) => this.onPictureEvent(e.detail))
   },
   beforeUnmount () {
-    // Remove event listeners
-    this.panoramaxViewer.off('image', this.onImageEvent)
-    // Save the states
+    if (this.panoramaxViewer) {
+      this.panoramaxViewer.removeEventListener('picturechange', this.onPictureEvent)
+      this.panoramaxViewer.removeEventListener('image-load', this.onPictureEvent)
+      this.panoramaxViewer.remove()
+    }
     this.saveStates()
   },
   setup () {
-    // Data
     const hasImage = ref(false)
-    // Expose
     return {
       ...useCurrentActivity(),
       ...useHighlight('panoramax'),
-      hasImage,
-      sequenceId: ref(null),
-      pictureId: ref(null)
+      hasImage
     }
   }
 }

@@ -97,6 +97,7 @@
     "@kalisio/feathers-import-export": "^1.4.1",
     "@kalisio/feathers-s3": "^1.6.0",
     "@kalisio/feathers-webpush": "^1.0.2",
+    "@panoramax/web-viewer": "^4.2.0",
     "@turf/bbox": "^6.0.1",
     "@weacast/core": "^2.2.1",
     "abort-controller": "^3.0.0",
