@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import { marshallComparisonFields, marshallTime, marshallBooleanFields, marshallNumberFields, marshallDateFields } from '../marshall.js'
 import mongodb from 'mongodb'
+import errors from '@feathersjs/errors'
 import makeDebug from 'debug'
 import { makeDiacriticPattern } from '../../common/utils.js'
 
 const { ObjectID } = mongodb
+const { Forbidden } = errors
 const debug = makeDebug('kdk:core:query:hooks')
 
 export function marshallTimeQuery (hook) {
@@ -59,10 +61,17 @@ export function marshallHttpQuery (hook) {
 }
 
 export async function aggregationQuery (hook) {
+  if (hook.type !== 'before') {
+    throw new Error('The \'aggregationQuery\' hook should only be used as a \'before\' hook.')
+  }
   const query = hook.params.query
   if (!query) return
   const service = hook.service
   if (query.$aggregation) {
+    // Generic aggregation request could allow to disclose or update information in DB so that it should only be used through controlled internal calls
+    if (hook.params.provider) {
+      throw new Forbidden('You are not allowed to perform aggregation')
+    }
     const collection = service.Model
     // Set result to avoid service DB call
     hook.result = await collection.aggregate(query.$aggregation.pipeline, query.$aggregation.options).toArray()
