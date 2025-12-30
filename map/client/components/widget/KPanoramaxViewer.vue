@@ -10,7 +10,6 @@
 
 <script>
 import _ from 'lodash'
-import logger from 'loglevel'
 import { ref } from 'vue'
 import { Notify } from 'quasar'
 import distance from '@turf/distance'
@@ -103,7 +102,7 @@ export default {
       }
       const data = await response.json()
       const pictures = data.features || []
-      
+
       if (pictures.length > 0) {
         console.log('Photos trouvées:', pictures.length)
         const clickedPosition = point([lon, lat])
@@ -121,16 +120,16 @@ export default {
             }
           }
         })
-        
-        if (this.pictureId) {  // ← AJOUTÉ : Vérifie qu'on a trouvé une photo
+
+        if (this.pictureId) {
           console.log('PictureId sélectionné:', this.pictureId, 'position:', this.position)
           this.hasImage = true
           await this.refreshView()
         } else {
-          Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO')})
+          Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
         }
       } else {
-        Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO')})
+        Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
       }
     },
     centerMap () {
