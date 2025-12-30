@@ -9,7 +9,7 @@
     <div v-if="feature" class="full-width column">
       <!-- Description -->
       <KTextArea
-        :text="feature.properties[namePath]"
+        :text="locationName"
         :minHeight="24"
         :maxHeight="204"
         :dense="true"
@@ -40,7 +40,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { utils as coreUtils } from '../../../../core.client'
 import KLocationMap from './KLocationMap.vue'
 import KLocationTip from './KLocationTip.vue'
@@ -67,6 +67,11 @@ const props = defineProps({
 
 // Data
 const feature = ref(null)
+
+// Computed
+const locationName = computed(() => {
+  return _.get(feature.value, `properties.${props.namePath}`)
+})
 
 // Watch
 watch(() => [props.item, props.locationPath], () => {
