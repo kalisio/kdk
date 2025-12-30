@@ -1,6 +1,4 @@
 import _ from 'lodash'
-import logger from 'loglevel'
-import { Store } from '../../../../core/client/index.js'
 import { LeafletEvents, bindLeafletEvents } from '../../utils.map.js'
 
 export const panoramaxLayers = {

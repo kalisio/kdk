@@ -17,6 +17,7 @@ import distance from '@turf/distance'
 import { point } from '@turf/helpers'
 import { KPanel } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
+import { PhotoViewer } from '@panoramax/web-viewer'
 import '@panoramax/web-viewer/build/index.css'
 
 export default {
@@ -40,18 +41,14 @@ export default {
       this.selection.panoramax = {
         position: this.position,
         bearing: this.bearing,
-        sequenceId: this.sequenceId,
         pictureId: this.pictureId
       }
     },
     restoreStates () {
       const states = this.selection.panoramax
-      if (states) {
-        this.position = states.position
-        this.bearing = states.bearing
-        this.sequenceId = states.sequenceId
-        this.pictureId = states.pictureId
-      }
+      this.position = states.position
+      this.bearing = states.bearing
+      this.pictureId = states.pictureId
     },
     getMarkerFeature () {
       const lat = this.position ? this.position.lat : 0
@@ -75,10 +72,11 @@ export default {
       }
     },
     async refresh () {
+      console.log('REFRESH - location:', this.location)
       this.hasImage = false
       if (_.has(this.selection, 'panoramax')) {
         this.restoreStates()
-        if (this.pictureId && this.sequenceId) {
+        if (this.pictureId) {
           this.hasImage = true
           await this.refreshView()
         } else if (this.position) {
@@ -90,13 +88,14 @@ export default {
       }
     },
     async moveCloseTo (lat, lon) {
-      const buffer = 0.0002
+      console.log('CLIC CARTE - lat:', lat, 'lon:', lon)
+      const buffer = 0.0002 // around 25m
       const left = lon - buffer
       const bottom = lat - buffer
       const right = lon + buffer
       const top = lat + buffer
       const query = `https://api.panoramax.xyz/api/search?bbox=${left},${bottom},${right},${top}&limit=50`
-      
+      console.log('URL API appelée:', query)
       const response = await fetch(query)
       if (response.status !== 200) {
         this.hasImage = false
@@ -106,25 +105,32 @@ export default {
       const pictures = data.features || []
       
       if (pictures.length > 0) {
+        console.log('Photos trouvées:', pictures.length)
         const clickedPosition = point([lon, lat])
-        let minDist
-        pictures.forEach(feature => {
+        let minDist = Infinity
+        pictures.forEach((feature, i) => {
           const picture = feature.properties
-          if (picture.lat && picture.lon) {
-            const dist = distance(clickedPosition, point([picture.lon, picture.lat]))
-            if (!minDist || dist < minDist) {
+          const coords = feature.geometry.coordinates
+          if (coords && coords[0] && coords[1]) {
+            const dist = distance(clickedPosition, point([coords[0], coords[1]]))
+            if (dist < minDist) {
               minDist = dist
-              this.sequenceId = picture.collection
               this.pictureId = feature.id
-              this.position = { lat: picture.lat, lng: picture.lon }
-              this.bearing = picture.bearing || picture.direction || 0
+              this.position = { lat: coords[1], lng: coords[0] }
+              this.bearing = picture['view:azimuth']
             }
           }
         })
-        this.hasImage = true
-        await this.refreshView()
+        
+        if (this.pictureId) {  // ← AJOUTÉ : Vérifie qu'on a trouvé une photo
+          console.log('PictureId sélectionné:', this.pictureId, 'position:', this.position)
+          this.hasImage = true
+          await this.refreshView()
+        } else {
+          Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO')})
+        }
       } else {
-        Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') || 'Aucune image trouvée à proximité' })
+        Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO')})
       }
     },
     centerMap () {
@@ -132,59 +138,46 @@ export default {
     },
     async refreshView () {
       this.highlight(this.getMarkerFeature(), null, false)
-      this.centerMap()
-      // Force viewer update via attributes
-      if (this.panoramaxViewer) {
-        this.panoramaxViewer.setAttribute('sequence', this.sequenceId || '')
-        this.panoramaxViewer.setAttribute('picture', this.pictureId || '')
+      console.log('refreshView - pictureId:', this.pictureId)
+
+      if (this.panoramaxViewer && this.pictureId) {
+        this.panoramaxViewer.picture = this.pictureId
+      } else {
+        console.log('Viewer ou pictureId manquant', this.panoramaxViewer, this.pictureId)
       }
     },
-    onPictureEvent (event) {
-      const picture = event.detail?.picture || event
-      if (picture) {
-        this.pictureId = picture.id
-        this.sequenceId = picture.sequence_id || picture.collection
-        this.hasImage = true
-        this.position = { lat: picture.lat, lng: picture.lon }
-        this.bearing = picture.bearing || 0
-        this.centerMap()
-        this.highlight(this.getMarkerFeature(), null, false)
-      }
+    async onPictureEvent (viewerPictureEvent) {
+      const picture = viewerPictureEvent.picture || viewerPictureEvent.image
+      this.pictureId = picture.id
+      this.hasImage = true
+      this.position = { lat: picture.lat, lng: picture.lon }
+      this.bearing = picture.bearing || 0
+      this.centerMap()
+      this.highlight(this.getMarkerFeature(), null, false)
     },
     onResized (size) {
-      // Web components gèrent le resize automatiquement
+      // There is no PhotoViewer.resize() in Panoramax API
     }
   },
   mounted () {
-    // Créer le web component Panoramax dans le container
-    const container = document.getElementById('panoramax-container')
-    container.style.height = '400px'
-    container.style.position = 'relative'
-    
-    this.panoramaxViewer = document.createElement('pnx-photo-viewer')
-    this.panoramaxViewer.setAttribute('endpoint', 'https://api.panoramax.xyz/api')
-    this.panoramaxViewer.style.width = '100%'
-    this.panoramaxViewer.style.height = '100%'
-    
-    // Écouter les événements
-    this.panoramaxViewer.addEventListener('picturechange', this.onPictureEvent)
-    this.panoramaxViewer.addEventListener('image-load', this.onPictureEvent)
-    
-    container.appendChild(this.panoramaxViewer)
-    
-    // Initialiser état
+    // Create the viewer
+    this.panoramaxViewer = new PhotoViewer({
+      container: 'panoramax-container',
+      endpoint: 'https://api.panoramax.xyz/api'
+    })
+
+    console.log('PhotoViewer créé:', this.panoramaxViewer)
+
+    // Add event listeners
+    this.panoramaxViewer.addEventListener('image', this.onPictureEvent)
+    // Configure the viewer
     this.position = undefined
     this.bearing = undefined
-    this.sequenceId = undefined
-    this.pictureId = undefined
+    this.key = undefined
     this.refresh()
   },
   beforeUnmount () {
-    if (this.panoramaxViewer) {
-      this.panoramaxViewer.removeEventListener('picturechange', this.onPictureEvent)
-      this.panoramaxViewer.removeEventListener('image-load', this.onPictureEvent)
-      this.panoramaxViewer.remove()
-    }
+    this.panoramaxViewer.removeEventListener('image', this.onPictureEvent)
     this.saveStates()
   },
   setup () {
