@@ -108,6 +108,9 @@ export default {
       }
       return opts
     },
+    hasNoOption () {
+      return !_.isEmpty(_.get(this.properties.field, 'noOption', {}))
+    },
     noOptionComponent () {
       return loadComponent(this.properties.field.noOption.component)
     },
@@ -142,9 +145,6 @@ export default {
     },
     hasChips () {
       return _.get(this.properties, 'field.chips', false)
-    },
-    hasNoOption () {
-      return !_.isEmpty(_.get(this.properties.field, 'noOption', {}))
     },
     getId (option) {
       let id = option.value
