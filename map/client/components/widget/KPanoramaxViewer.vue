@@ -110,11 +110,13 @@ export default {
         pictures.forEach((feature, i) => {
           const picture = feature.properties
           const coords = feature.geometry.coordinates
+          console.log("feat;", feature)
           if (coords && coords[0] && coords[1]) {
             const dist = distance(clickedPosition, point([coords[0], coords[1]]))
             if (dist < minDist) {
               minDist = dist
               this.pictureId = feature.id
+              this.sequenceId = feature.collection
               this.position = { lat: coords[1], lng: coords[0] }
               this.bearing = picture['view:azimuth']
             }
@@ -122,7 +124,7 @@ export default {
         })
 
         if (this.pictureId) {
-          console.log('PictureId sélectionné:', this.pictureId, 'position:', this.position)
+          console.log('PictureId sélectionné:', this.pictureId, 'sequence', this.sequenceId, 'position:', this.position)
           this.hasImage = true
           await this.refreshView()
         } else {
@@ -137,10 +139,10 @@ export default {
     },
     async refreshView () {
       this.highlight(this.getMarkerFeature(), null, false)
-      console.log('refreshView - pictureId:', this.pictureId)
+      console.log('refreshView - pictureId:', this.pictureId, 'sequenceId:', this.sequenceId)
 
       if (this.panoramaxViewer && this.pictureId) {
-        this.panoramaxViewer.picture = this.pictureId
+        this.panoramaxViewer.select(this.sequenceId, this.pictureId)
       } else {
         console.log('Viewer ou pictureId manquant', this.panoramaxViewer, this.pictureId)
       }
@@ -162,7 +164,7 @@ export default {
     // Create the viewer
     this.panoramaxViewer = new PhotoViewer({
       container: 'panoramax-container',
-      endpoint: 'https://api.panoramax.xyz/api'
+      endpoint: 'https://api.panoramax.xyz/api',
     })
 
     console.log('PhotoViewer créé:', this.panoramaxViewer)
