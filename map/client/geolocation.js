@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { Store, Events, utils } from '../../core/client/index.js'
 import { errors } from '../common/index.js'
 import { formatUserCoordinates } from './utils.js'
