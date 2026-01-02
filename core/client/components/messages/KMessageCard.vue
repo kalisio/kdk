@@ -39,7 +39,7 @@
         <KTextArea :text="item.body" :minHeight="44" :dense="true" />
       </div>
     </template>
-    <template v-slot:card-footer v-if="hasAttachments || computedFooter">
+    <template v-slot:card-footer v-if="hasAttachments || hasFooter">
       <q-separator />
       <!-- Message attachments -->
       <div
@@ -147,6 +147,9 @@ export default {
     },
     hasAttachments () {
       return !_.isEmpty(this.attachments)
+    },
+    hasFooter () {
+      return !_.isEmpty(this.computedFooter)
     },
     computedHeader () {
       return _.filter(this.itemActions, { scope: 'header' })
