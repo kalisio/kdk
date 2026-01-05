@@ -1,15 +1,18 @@
 <template>
   <div id="panoramax-widget" class="column">
     <q-resize-observer @resize="onResized" />
-    <div class="col" id="panoramax-container">
+    <div id="panoramax-container"
+      class="col full-width full-height" style="position: relative;">
       <pnx-photo-viewer
+        ref="pnxViewer"
         v-if="hasImage"
         id="pnx-viewer"
+        class="full-width full-height"
         :endpoint="endpoint"
         :sequence="sequenceId"
         :picture="pictureId"
         @pnx-picture-change="onPictureEvent"
-        widgets="false"
+        @select="onPictureEvent"
       />
       <div v-else class="flex flex-center text-grey">
         NOT FOUND
@@ -55,11 +58,9 @@ export default {
     },
     restoreStates () {
       const states = this.selection.panoramax
-      if (states) {
-        this.position = states.position
-        this.bearing = states.bearing
-        this.pictureId = states.pictureId
-      }
+      this.position = states.position
+      this.bearing = states.bearing
+      this.pictureId = states.pictureId
     },
     getMarkerFeature () {
       const lat = this.position ? this.position.lat : 0
@@ -102,14 +103,12 @@ export default {
     },
 
     async moveCloseTo (lat, lon) {
-      console.log('CLIC CARTE - lat:', lat, 'lon:', lon)
       const buffer = 0.0002 // around 25m
       const left = lon - buffer
       const bottom = lat - buffer
       const right = lon + buffer
       const top = lat + buffer
       const query = `https://api.panoramax.xyz/api/search?bbox=${left},${bottom},${right},${top}&limit=50`
-      console.log('URL API appelée:', query)
 
       try {
         const response = await fetch(query)
@@ -132,7 +131,6 @@ export default {
               const dist = distance(clickedPosition, point([coords[0], coords[1]]))
               if (dist < minDist) {
                 minDist = dist
-                console.log("feat;",feature)
                 this.pictureId = feature.id
                 this.sequenceId = feature.collection
                 this.position = { lat: coords[1], lng: coords[0] }
@@ -142,8 +140,8 @@ export default {
           })
 
           if (this.pictureId) {
-            console.log('PictureId sélectionné:', this.pictureId, 'sequence', this.sequenceId)
             this.hasImage = true
+            this.refreshView()
           } else {
             Notify.create({ type: 'negative', message: 'Aucune image trouvée à proximité' })
           }
@@ -151,15 +149,17 @@ export default {
           Notify.create({ type: 'negative', message: 'Aucune image trouvée à proximité' })
         }
       } catch (error) {
-        console.error('Erreur moveCloseTo:', error)
         Notify.create({ type: 'negative', message: 'Erreur lors de la recherche d\'images' })
       }
     },
 
     async refreshView () {
-      if (this.position) {
-        this.highlight(this.getMarkerFeature(), null, false)
-        logger.info('refreshView - pictureId:', this.pictureId, 'sequenceId:', this.sequenceId)
+      this.highlight(this.getMarkerFeature(), null, false)
+
+      try {
+        await this.$refs.pnxViewer.moveTo(this.pictureId)
+      } catch (error) {
+        logger.error('refreshView error:', error)
       }
     },
 
@@ -169,15 +169,36 @@ export default {
       }
     },
 
-    onPictureEvent (event) {
-      const picture = event.detail?.picture || event.detail?.image || event
-      if (picture) {
-        this.pictureId = picture.id
+    onCurrentTimeChanged (time) {
+      this.setupViewerFilters()
+    },
+
+    async onPictureEvent (event) {
+      const detail = event.detail
+      if (detail) {
+        this.pictureId = detail.picId
+        this.sequenceId = detail.seqId
         this.hasImage = true
-        this.position = { lat: picture.lat, lng: picture.lon }
-        this.bearing = picture.bearing || picture['view:azimuth'] || 0
-        this.centerMap()
-        this.highlight(this.getMarkerFeature(), null, false)
+        await this.updatePictureData(detail.picId)
+      }
+    },
+
+    async updatePictureData(picId) {
+      try {
+        const response = await fetch(`${this.endpoint}/pictures/${picId}`)
+        const feature = await response.json()
+
+        
+        const coords = feature.geometry.coordinates
+        if (coords) {
+          this.position = { lat: coords[1], lng: coords[0] }
+          this.bearing = feature.properties['view:azimuth']
+
+          this.centerMap()
+          this.highlight(this.getMarkerFeature(), null, false)
+        }
+      } catch (error) {
+        logger.error(error)
       }
     },
 
@@ -215,3 +236,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+#pnx-viewer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
