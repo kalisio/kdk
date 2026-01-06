@@ -83,7 +83,6 @@ async function refresh () {
     }
   } else if (hasSelectedItem()) {
     const loc = getSelectedLocation()
-    logger.log('l', loc)
     if (loc) await moveCloseTo(loc.lat, loc.lng)
   }
 }
@@ -95,7 +94,6 @@ async function moveCloseTo (lat, lon) {
   const top = lat + buffer
   const bottom = lat - buffer
   const token = kActivity.value.mapillaryToken
-  logger.log(kActivity, kActivity.value.mapillaryToken)
 
   const query = `https://graph.mapillary.com/images?fields=id,computed_geometry&bbox=${left},${bottom},${right},${top}&access_token=${token}&limit=50`
   const response = await fetch(query)
@@ -120,10 +118,7 @@ async function moveCloseTo (lat, lon) {
     hasImage.value = true
     await refreshView()
   } else {
-    Notify.create({
-      type: 'negative',
-      message: 'Aucune image trouvée à proximité.'
-    })
+    Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
   }
 }
 
@@ -173,10 +168,4 @@ onBeforeUnmount(() => {
   }
   saveStates()
 })
-</script>
-
-<script>
-export default {
-  components: { KPanel }
-}
 </script>
