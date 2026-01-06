@@ -351,7 +351,9 @@ export async function aggregateFeaturesQuery (hook) {
       }
     }
     // Merge with any additional group expression
-    const group = validateGroupExpression(_.get(query, '$group', {}))
+    const group = _.get(query, '$group', {})
+    // Check for possible injection
+    validateGroupExpression(group)
     Object.assign(groupBy, group)
     // The query contains the match stage except options relevent to the aggregation pipeline
     const match = _.omit(query, ['$group', '$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])
