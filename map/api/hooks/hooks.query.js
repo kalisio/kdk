@@ -1,8 +1,10 @@
 import _ from 'lodash'
+import errors from '@feathersjs/errors'
 import { marshallGeometry } from '../marshall.js'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:map:query:hooks')
+const { Forbidden } = errors
 
 export function marshallGeometryQuery (hook) {
   const query = hook.params.query
@@ -238,6 +240,62 @@ export function asGeoJson (options = {}) {
   }
 }
 
+
+
+// Verifies that only authorized accumulation operators are used
+function validateGroupExpression(expression) {
+  // Safe accumulation operators for $group
+  const SAFE_GROUP_ACCUMULATORS = new Set([
+    '$sum', '$avg', '$first', '$last', '$max', '$min'
+  ])
+  // Safe expression operators usable in $group
+  const SAFE_GROUP_EXPRESSIONS = new Set([
+    // Arithmetic operators
+    '$add', '$subtract', '$multiply', '$divide', '$mod',
+    '$abs', '$ceil', '$floor', '$round', '$trunc',
+    '$sqrt', '$pow', '$exp', '$ln', '$log', '$log10',
+    // Comparison operators
+    '$eq', '$ne', '$gt', '$gte', '$lt', '$lte', '$cmp',
+    // Logical operators
+    '$and', '$or', '$not',
+    // Date operators
+    '$dateToString', '$year', '$month', '$dayOfMonth', '$hour',
+    '$minute', '$second', '$dayOfWeek', '$dayOfYear', '$week',
+    // Conditional operators
+    '$cond', '$ifNull', '$switch',
+    // Type operators
+    '$toString', '$toInt', '$toDouble'
+  ])
+  // Dangerous operators to reject in $group (arbitrary code execution)
+  const DANGEROUS_GROUP_OPERATORS = new Set([
+    '$accumulator',  // Custom JavaScript execution
+    '$function',     // JavaScript function execution
+    '$where'         // JavaScript code execution
+  ])
+
+  if (_.isNil(expression)) {
+    return
+  } else if (Array.isArray(expression)) {
+    expression.forEach(validateGroupExpression)
+    return
+  } else if (typeof expression === 'object') {
+    for (const [key, value] of Object.entries(expression)) {
+      // Check if it's an operator
+      if (key.startsWith('$')) {
+        if (DANGEROUS_GROUP_OPERATORS.has(key)) throw new Forbidden(`You are not allowed to use ${key} operator`)
+
+        // Check if operator is in the allowed list
+        const isAccumulator = SAFE_GROUP_ACCUMULATORS.has(key)
+        const isExpression = SAFE_GROUP_EXPRESSIONS.has(key)
+        if (!isAccumulator && !isExpression) throw new Forbidden(`You are not allowed to use ${key} operator`)
+      }
+
+      // Recursively validate the value
+      validateGroupExpression(value)
+    }
+  }
+}
+
 export async function aggregateFeaturesQuery (hook) {
   const query = hook.params.query
   const service = hook.service
@@ -293,7 +351,7 @@ export async function aggregateFeaturesQuery (hook) {
       }
     }
     // Merge with any additional group expression
-    const group = _.get(query, '$group', {})
+    const group = validateGroupExpression(_.get(query, '$group', {}))
     Object.assign(groupBy, group)
     // The query contains the match stage except options relevent to the aggregation pipeline
     const match = _.omit(query, ['$group', '$groupBy', '$aggregate', '$geoNear', '$sort', '$limit', '$skip'])

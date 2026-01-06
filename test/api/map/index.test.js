@@ -402,6 +402,27 @@ describe('map:services', () => {
     $aggregate: ['H']
   }
 
+  it('performs unauthorised element aggregation on vigicrues observations service', async () => {
+    try {
+      await vigicruesObsService.find({
+        query: Object.assign({ $sort: { time: -1 }, $limit: 1, $group: { property: { $accumulator: { lang: 'js' } } } }, aggregationQuery)
+      })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
+    try {
+      await vigicruesObsService.find({
+        query: Object.assign({ $sort: { time: -1 }, $limit: 1, $group: { property: { $sum: { $function: { lang: 'js' } } } } }, aggregationQuery)
+      })
+    } catch (error) {
+      expect(error).toExist()
+      expect(error.name).to.equal('Forbidden')
+    }
+  })
+  // Let enough time to process
+    .timeout(5000)
+
   it('performs element aggregation on vigicrues observations service', async () => {
     const result = await vigicruesObsService.find({
       query: Object.assign({}, aggregationQuery)
