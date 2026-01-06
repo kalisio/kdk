@@ -14,16 +14,12 @@
         @pnx-picture-change="onPictureEvent"
         @select="onPictureEvent"
       />
-      <div v-else class="flex flex-center text-grey">
-        NOT FOUND
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
-import logger from 'loglevel'
 import { Notify } from 'quasar'
 import { ref } from 'vue'
 import distance from '@turf/distance'
@@ -90,7 +86,7 @@ export default {
         this.restoreStates()
         if (this.pictureId) {
           this.hasImage = true
-          await this.refreshView()
+          this.refreshView()
         } else if (this.position) {
           await this.moveCloseTo(this.position.lat, this.position.lng)
         }
@@ -156,10 +152,16 @@ export default {
     async refreshView () {
       this.highlight(this.getMarkerFeature(), null, false)
 
-      try {
-        await this.$refs.pnxViewer.moveTo(this.pictureId)
-      } catch (error) {
-        logger.error('refreshView error:', error)
+      if (this.hasSelectedLocation()) {
+        const location = this.getSelectedLocation()
+        await this.moveCloseTo(location.lat, location.lng)
+        return
+      }
+
+      if (_.has(this.selection, 'panoramax') && this.pictureId) {
+        this.restoreStates()
+        this.hasImage = true
+        await this.refreshView()
       }
     },
 
@@ -183,12 +185,10 @@ export default {
       }
     },
 
-    async updatePictureData(picId) {
+    async updatePictureData (picId) {
       try {
         const response = await fetch(`${this.endpoint}/pictures/${picId}`)
         const feature = await response.json()
-
-        
         const coords = feature.geometry.coordinates
         if (coords) {
           this.position = { lat: coords[1], lng: coords[0] }
@@ -198,12 +198,8 @@ export default {
           this.highlight(this.getMarkerFeature(), null, false)
         }
       } catch (error) {
-        logger.error(error)
+        Notify.create({ type: 'negative', message: 'Aucune image trouvée à proximité' })
       }
-    },
-
-    onResized (size) {
-      logger.debug('Widget resized:', size)
     }
   },
 
