@@ -114,37 +114,8 @@ export class KazarrGridSource extends GridSource {
     const reqMaxLat = bbox[2]
     const reqMaxLon = bbox[3]
 
-      /*
     let queryParams = `variable=${this.config.variable}&lon_min=${reqMinLon}&lon_max=${reqMaxLon}&lat_min=${reqMinLat}&lat_max=${reqMaxLat}`
-    if (this.config.additional) {
-      for (const [key, value] of Object.entries(this.config.additional))
-        queryParams += `&${key}=${value}`
-    }
-    
-    const question = this.config.url.indexOf('?')
-    const tileUrl = question === -1
-      ? `${this.config.url}/datasets/${this.config.dataset}/extract?${queryParams}`
-      : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/extract?${queryParams}&${this.config.url.substring(question+1)}`
-    
-    const resp = await fetch(tileUrl)
-    const json = await resp.json()
-
-    const databbox = [json.data.latitudes[json.data.latitudes.length - 1],
-      json.data.longitudes[0],
-      json.data.latitudes[0],
-      json.data.longitudes[json.data.longitudes.length-1]
-    ]
-    
-    return new Grid1D(
-      sourceKey,
-      databbox, json.shape,
-      json.data.values, true, SortOrder.DESCENDING, SortOrder.ASCENDING,
-      this.nodata, this.converter
-    )
-       */
-      
-    let queryParams = `as_mesh=true&variable=${this.config.variable}&lon_min=${reqMinLon}&lon_max=${reqMaxLon}&lat_min=${reqMinLat}&lat_max=${reqMaxLat}`
-      queryParams += `&interpolation_grid_size=16`
+    queryParams += `&mesh_tile_size=16&mesh_interpolate=true`
     if (this.config.additional) {
       for (const [key, value] of Object.entries(this.config.additional))
         queryParams += `&${key}=${value}`
