@@ -1,4 +1,4 @@
-import { unitConverters, GridSource, Grid1D, SortOrder, toHalf } from './grid.js'
+import { unitConverters, GridSource, toHalf } from './grid.js'
 
 // grid: {
 //   bounds : { min, max }
@@ -41,12 +41,7 @@ function genValuesBuffer (grid) {
 
 function genMeshIndexBuffer (grid) {
     const maxIndex = grid.data.vertices.length - 1
-    const numIndex = grid.data.indices.length
-    const index = maxIndex > 65534 ? new Uint32Array(grid.data.indices) : new Uint16Array(grid.data.indices)
-    // const index = maxIndex > 65534 ? new Uint32Array(numIndex) : new Uint16Array(numIndex)
-    // for (let i = 0; i < numIndex; ++i)
-    //     index[i] = grid.data.indices[i]
-    return index
+    return maxIndex > 65534 ? new Uint32Array(grid.data.indices) : new Uint16Array(grid.data.indices)
 }
 
 function genWireframeIndexBuffer (grid) {
@@ -107,7 +102,7 @@ export class KazarrGridSource extends GridSource {
   async fetch (abort, bbox, resolution) {
     if (!this.usable) { return null }
 
-    const sourceKey = this.sourceKey
+    // const sourceKey = this.sourceKey
 
     const reqMinLat = bbox[0]
     const reqMinLon = bbox[1]
