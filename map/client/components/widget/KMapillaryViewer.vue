@@ -17,7 +17,6 @@ import { Viewer } from 'mapillary-js'
 import 'mapillary-js/dist/mapillary.css'
 import distance from '@turf/distance'
 import { point } from '@turf/helpers'
-import { KPanel } from '../../../../core/client/components'
 import { useCurrentActivity, useHighlight } from '../../composables'
 
 const { kActivity, selection, hasSelectedItem, getSelectedLocation, hasSelectedLocation } = useCurrentActivity()
