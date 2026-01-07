@@ -77,16 +77,40 @@ The main methods are the following:
 The component allows to copy-paste feature properties or export feature as GeoJson.
 :::
 
-### Mappilary Viewer 
+### Map Viewers
 
-The **k-mapillary-viewer** is used to display street-level imagery coming from [Mapillary](https://www.mapillary.com/).
+The **k-mapillary-viewer** and **k-panoramax-viewer** are used to display street-level imagery
 
 The main methods are the following:
 * **refresh()** updates the imagery based on the currently selected position or feature
 
 ::: tip
 The component keeps in sync the viewer widget and any change in current time.
+
+You can select the location on the map using the layer, and the widget will appear with the location.
+The marker with getMarkerFeature will update the position on the map.
+
+If on the viewer, the picture update (changing position, like avancing on the street), the widget will centerMap on the new location.
 :::
+
+
+#### Mapillary Viewer
+
+The **k-mapillary-viewer** is used to display street-level imagery coming from [Mapillary](https://www.mapillary.com/).
+
+It uses Viewer from mapillary-js, with the functions
+.moveTo(imageId), to View an image
+.resize(), to resize the Viewer per the widget resize
+.on('image', onImageEvent), event for the update of image on the viewer (changing position, like avancing on the street)
+
+
+#### Panoramax Viewer 
+
+The **k-panoramax-viewer** is used to display street-level imagery coming from [Panoramax](https://panoramax.fr).
+
+There can be difference instance of panoramax.
+
+Panoramax uses pnx-photo-viewer with the endpoint, sequenceId and pictureId. It has the event @select event for sequence/picture selection
 
 ## Map
 
