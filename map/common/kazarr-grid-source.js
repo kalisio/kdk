@@ -32,8 +32,12 @@ function genCoordsBuffer(grid) {
 function genValuesBuffer (grid) {
   const value = new Float32Array(grid.numPoints)
 
-  for (let i = 0; i < grid.data.values.length; ++i) {
+  if (grid.converter) {
+    for (let i = 0; i < grid.data.values.length; ++i)
       value[i] = grid.converter(grid.data.values[i])
+  } else {
+    for (let i = 0; i < grid.data.values.length; ++i)
+      value[i] = grid.data.values[i]
   }
     
   return value
@@ -76,7 +80,7 @@ export class KazarrGridSource extends GridSource {
     this.minMaxVal = null
 
     this.config = config
-    this.converter = unitConverters[this.config.converter]
+    this.converter = this.config.converter ? unitConverters[this.config.converter] : null
     
     const question = this.config.url.indexOf('?')
     const datasetUrl = question === -1
