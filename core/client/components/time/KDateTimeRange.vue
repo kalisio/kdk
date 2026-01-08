@@ -214,7 +214,7 @@ watch(() => props.max, (newValue, oldValue) => {
 
 // Functions
 function onRangeChanged () {
-  if (!_.isEmpty(props.min && !_.isEmpty(props.max))) {
+  if (!_.isEmpty(props.min) && !_.isEmpty(props.max)) {
     const min = moment(props.min)
     const max = moment(props.max)
     const start = moment(startTimeModel.value)
