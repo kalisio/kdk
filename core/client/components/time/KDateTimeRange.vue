@@ -70,6 +70,7 @@
 
 <script setup>
 import _ from 'lodash'
+import logger from 'loglevel'
 import moment from 'moment'
 import { ref, computed, watch, onMounted } from 'vue'
 import KDateTime from './KDateTime.vue'
@@ -170,6 +171,9 @@ const rangeModel = ref({
   max: 100
 })
 const isMounted = ref(false)
+const triggerEmit = _.debounce(() => {
+  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
+}, 100)
 
 // Computed
 const canDisplaySlider = computed(() => {
@@ -181,36 +185,55 @@ const canDisplaySlider = computed(() => {
 // Watch
 watch(() => props.modelValue, (value) => {
   if (value) {
+    const start = moment(value.start)
+    const end = moment(value.end)
+    const min = moment(props.min)
+    const max = moment(props.max)
+    if (start.isBefore(min) || end.isAfter(max)) {
+      logger.warn('[KDK] Invalid model value. The range should be bounded between min and max')
+      return
+    }
     startTimeModel.value = value.start
     endTimeModel.value = value.end
+    const duration = moment.duration(max.diff(min)).asMilliseconds()
+    if (duration === 0) {
+      rangeModel.value.min = 0
+      rangeModel.value.max = 100
+    } else {
+      rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
+      rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
+    }
   }
-})
-watch(() => props.min, (newValue, oldValue) => {
-  if (_.isEmpty(props.max)) return
-  if (rangeModel.value.min === 0) startTimeModel.value = newValue
-  else {
-    const min = moment(props.min)
-    const max = moment(props.max)
+}, { immediate: true })
+watch(() => [props.min, props.max], () => {
+  if (_.isEmpty(props.max) || _.isEmpty(props.min)) return
+  const min = moment(props.min)
+  const max = moment(props.max)
+  const duration = moment.duration(max.diff(min)).asMilliseconds()
+  if (duration === 0) {
+    startTimeModel.value = min
+    endTimeModel.value = max
+    rangeModel.value.min = 0
+    rangeModel.value.max = 100
+  } else {
     const start = moment(startTimeModel.value)
-    const duration = moment.duration(max.diff(min)).asMilliseconds()
-    if (duration > 0) rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
-    else rangeModel.value.min = 0
-  }
-  triggerEmit()
-})
-watch(() => props.max, (newValue, oldValue) => {
-  if (_.isEmpty(props.min)) return
-  if (rangeModel.value.max === 100) endTimeModel.value = newValue
-  else {
-    const min = moment(props.min)
-    const max = moment(props.max)
     const end = moment(endTimeModel.value)
-    const duration = moment.duration(max.diff(min)).asMilliseconds()
-    if (duration > 0) rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
-    else rangeModel.value.max = 100
+    if (min.isSameOrAfter(start)) {
+      startTimeModel.value = min
+      rangeModel.value.min = 0
+    } else {
+      rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
+    }
+    if (max.isSameOrBefore(end)) {
+      endTimeModel.value = max
+      rangeModel.value.max = 100
+    } else {
+      rangeModel.value.max = 100 * moment.duration(end.diff(min)).asMilliseconds() / duration
+    }
   }
   triggerEmit()
-})
+}, { immediate: true })
+
 
 // Functions
 function onRangeChanged () {
@@ -245,9 +268,6 @@ function onSliderUpdated () {
 function onSliderChanged () {
   triggerEmit()
 }
-const triggerEmit = _.debounce(() => {
-  emit('update:modelValue', { start: startTimeModel.value, end: endTimeModel.value })
-}, 100)
 
 // Hooks
 onMounted(() => {
