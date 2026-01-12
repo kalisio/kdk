@@ -6,7 +6,7 @@
     <div>
       <slot name="header">
         <KPanel
-          :content="header"
+          :content="panelHeader"
           :class="headerClass"
         />
         <q-separator inset v-if="header"/>
@@ -79,7 +79,7 @@
       <slot name="footer">
         <q-separator inset v-if="footer"/>
         <KPanel
-          :content="footer"
+          :content="panelFooter"
           :class="footerClass"
         />
       </slot>
@@ -98,7 +98,7 @@ export default {
 <script setup>
 import _ from 'lodash'
 import sift from 'sift'
-import { ref, watchEffect } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { utils as coreUtils, i18n } from '../../../../core/client'
 import { useCurrentActivity, useProject } from '../../composables'
 import { getLayersByCategory } from '../../utils'
@@ -175,6 +175,18 @@ const filteredCategories = ref([])
 const layersByCategory = ref({})
 const filteredOrphanLayers = ref([])
 const draggedIndex = ref(null)
+
+// Computed
+const panelHeader = computed(() => {
+  let header = _.cloneDeep(props.header)
+  header = coreUtils.bindContent(header, CurrentActivity.value)
+  return header
+})
+const panelFooter = computed(() => {
+  let footer = _.cloneDeep(props.footer)
+  footer = coreUtils.bindContent(footer, CurrentActivity.value)
+  return footer
+})
 
 // Watch
 watchEffect(() => { refresh() })
