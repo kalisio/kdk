@@ -1,12 +1,12 @@
 <template>
-  <div v-if="hasSelection"
-    class="q-px-sm q-py-xs row items-center q-gutter-x-sm no-wrap k-time-filter"
+  <div v-if="hasTimeFilterRange && hasTimeFilterSelection"
+    class="row items-center q-gutter-x-sm no-wrap k-time-filter"
     style="width: 800px; max-width: 90vw"
   >
     <KDateTimeRange
-      v-model="timeRangeModel"
-      :min="minTimeRange"
-      :max="maxTimeRange"
+      v-model="selectionModel"
+      :min="min"
+      :max="max"
       :date-format="dateFormat"
       :date-class="textClass"
       :time-class="textClass"
@@ -40,33 +40,29 @@ defineProps({
 
 // Data
 const { dense } = useScreen()
-const { timeFilter, setTimeFilter, cleatTimeFilter } = useCollectionFilter()
+const {
+  timeFilterRange,
+  timeFilterSelection,
+  hasTimeFilterRange,
+  hasTimeFilterSelection,
+  setTimeFilterSelection,
+  clearTimeFilterSelection
+} = useCollectionFilter()
 
 // Computed
-const hasSelection = computed(() => {
-  return timeFilter.value && startTimeRange.value && endTimeRange.value
-})
-const startTimeRange = computed(() => {
-  return _.get(timeFilter.value, 'start')
-})
-const endTimeRange = computed(() => {
-  return _.get(timeFilter.value, 'end')
-})
-const minTimeRange = computed(() => {
-  return _.get(timeFilter.value, 'min')
-})
-const maxTimeRange = computed(() => {
-  return _.get(timeFilter.value, 'max')
-})
-const timeRangeModel = computed({
+const min = computed(() => _.get(timeFilterRange.value, 'min'))
+const max = computed(() => _.get(timeFilterRange.value, 'max'))
+const start = computed(() => _.get(timeFilterSelection.value, 'start'))
+const end = computed(() => _.get(timeFilterSelection.value, 'end'))
+const selectionModel = computed({
   get: function () {
     return {
-      start: startTimeRange.value,
-      end: endTimeRange.value
+      start: start.value,
+      end: end.value
     }
   },
   set: function (value) {
-    setTimeFilter({ start: value.start, end: value.end })
+    setTimeFilterSelection({ start: value.start, end: value.end })
   }
 })
 const textClass = computed(() => {
@@ -82,7 +78,7 @@ const slider = computed(() => {
 
 // Functions
 function onClear () {
-  cleatTimeFilter()
+  clearTimeFilterSelection()
 }
 </script>
 

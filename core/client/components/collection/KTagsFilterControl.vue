@@ -1,7 +1,7 @@
 <template>
   <KTagFilter
     :options="options"
-    :selection="selection"
+    :selection="tagsFilterSelection"
     :alignment="computedAlignment"
     @selection-changed="onSelectionChanged"
   />
@@ -23,14 +23,15 @@ const props = defineProps({
 
 // Data
 const { Screen } = useScreen()
-const { tagsFilter, setTagsFilter } = useCollectionFilter()
+const {
+  tagsFilterOptions,
+  tagsFilterSelection,
+  setTagsFilterSelection
+} = useCollectionFilter()
 
 // Computed
-const selection = computed(() => {
-  return _.get(tagsFilter.value, 'selection', [])
-})
 const options = computed(() => {
-  return _.difference(_.get(tagsFilter.value, 'options'), selection.value)
+  return _.difference(tagsFilterOptions.value, tagsFilterSelection.value)
 })
 const computedAlignment = computed(() => {
   if (_.isString(props.alignment)) return props.alignment
@@ -39,6 +40,6 @@ const computedAlignment = computed(() => {
 
 // Function
 function onSelectionChanged (selection) {
-  setTagsFilter(selection, 'selection')
+  setTagsFilterSelection(selection)
 }
 </script>
