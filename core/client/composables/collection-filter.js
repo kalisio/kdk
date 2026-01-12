@@ -1,6 +1,10 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { getCollectionService, getLatestTime, getOldestTime, listenToServiceEvents, unlistenToServiceEvents } from '../utils/index.js'
+import {
+  getCollectionService, getLatestTime, getOldestTime,
+  listenToServiceEvents, unlistenToServiceEvents
+} from '../utils/index.js'
 import { useCurrentActivity } from './activity.js'
 
 export function useCollectionFilter () {
@@ -10,67 +14,82 @@ export function useCollectionFilter () {
   // Computed
   const tagsFilter = computed(() => _.get(CurrentActivityContext.state, 'tagsFilter'))
   const timeFilter = computed(() => _.get(CurrentActivityContext.state, 'timeFilter'))
+  const tagsFilterOptions = computed(() => _.get(tagsFilter.value, 'options'))
+  const tagsFilterSelection = computed(() => _.get(tagsFilter.value, 'selection'))
+  const timeFilterRange = computed(() => _.get(timeFilter.value, 'range'))
+  const timeFilterSelection = computed(() => _.get(timeFilter.value, 'selection'))
+  const hasTagsFilterOptions = computed(() => !_.isEmpty(tagsFilterOptions.value))
+  const hasTagsFilterSelection = computed(() => !_.isEmpty(tagsFilterSelection.value))
+  const hasTimeFilterRange= computed(() => {
+    const min = timeFilterRange.value?.min
+    const max = timeFilterRange.value?.max
+    return !_.isEmpty(min) && !_.isEmpty(max) && min !== max
+  })
+  const hasTimeFilterSelection = computed(() =>
+    !_.isEmpty(timeFilterSelection.value?.start) &&
+    !_.isEmpty(timeFilterSelection.value?.end)
+  )
 
   // Functions
-  function setTagsFilter (value, scope) {
+  function setTagsFilterOptions (options) {
     const tagsFilter = CurrentActivityContext.state.tagsFilter
-    if (!tagsFilter) return
-    if (scope) _.set(tagsFilter, scope, value)
-    else Object.assign(tagsFilter, value)
+    _.set(tagsFilter, 'options', options)
   }
-  function setTimeFilter (value, scope) {
+  function setTagsFilterSelection (selection) {
+    const tagsFilter = CurrentActivityContext.state.tagsFilter
+    _.set(tagsFilter, 'selection', selection)
+  }
+  function setTimeFilterRange (range) {
     const timeFilter = CurrentActivityContext.state.timeFilter
-    if (!timeFilter) return
-    if (scope) _.set(timeFilter, scope, value)
-    else Object.assign(timeFilter, value)
+    _.set(timeFilter, 'range', range)
   }
-  function clearTagsFilter () {
-    setTagsFilter([], 'selection')
+  function setTimeFilterSelection (selection) {
+    const timeFilter = CurrentActivityContext.state.timeFilter
+    _.set(timeFilter, 'selection', selection)
   }
-  function cleatTimeFilter () {
-    setTimeFilter({ start: null, end: null })
+  function clearTagsFilterSelection () {
+    setTagsFilterSelection([])
+  }
+  function clearTimeFilterSelection () {
+    setTimeFilterSelection({ start: null, end: null })
   }
 
   // Expose
   return {
     tagsFilter,
     timeFilter,
-    setTagsFilter,
-    setTimeFilter,
-    clearTagsFilter,
-    cleatTimeFilter
+    tagsFilterOptions,
+    tagsFilterSelection,
+    timeFilterRange,
+    timeFilterSelection,
+    hasTagsFilterOptions,
+    hasTagsFilterSelection,
+    hasTimeFilterRange,
+    hasTimeFilterSelection,
+    setTagsFilterOptions,
+    setTagsFilterSelection,
+    setTimeFilterRange,
+    setTimeFilterSelection,
+    clearTagsFilterSelection,
+    clearTimeFilterSelection
   }
 }
 
 export function useCollectionFilterQuery (options = {}) {
   // Data
   const { CurrentActivityContext } = useCurrentActivity()
-  const tagsFilter = CurrentActivityContext.state.tagsFilter
-  const timeFilter = CurrentActivityContext.state.timeFilter
+  const {
+    tagsFilterSelection,
+    timeFilterSelection,
+    hasTagsFilterSelection,
+    hasTimeFilterSelection
+  } = useCollectionFilter()
   const filterQuery = ref({})
   let listeners
 
-  // Computed
-  const selectedTags = computed(() => {
-    return _.get(tagsFilter, 'selection', [])
-  })
-  const hasTagsSelection = computed(() => {
-    return !_.isEmpty(selectedTags.value)
-  })
-  const selectedTime = computed(() => {
-    return _.cloneDeep(timeFilter)
-  })
-  const hasTimeSelection = computed(() => {
-    const start = _.get(timeFilter, 'start')
-    const end = _.get(timeFilter, 'end')
-    return start && end && start !== end
-  })
-
   // Watch
-  watch(selectedTags, () => refreshFilterQuery(), { immediate: true })
-  watch(selectedTime, (newTimeRange, oldTimeRange) => {
-    if (oldTimeRange && oldTimeRange.start !== null && oldTimeRange.end !== null) refreshFilterQuery()
-  }, { deep: true })
+  watch(tagsFilterSelection, () => refreshFilterQuery(), { immediate: true })
+  watch(timeFilterSelection, () => refreshFilterQuery(), { immediate: true })
 
   // Functions
   function getService () {
@@ -86,12 +105,23 @@ export function useCollectionFilterQuery (options = {}) {
     return _.get(options, 'tagFields', [])
   }
   async function refreshOptions () {
+    const tagsFilter = CurrentActivityContext.state.tagsFilter
+    const timeFilter = CurrentActivityContext.state.timeFilter
     const timeField = getTimeField()
     // update time filter
     const min = await getOldestTime(getService(), timeField, getBaseQuery())
-    if (min) _.set(timeFilter, 'min', min)
     const max = await getLatestTime(getService(), timeField, getBaseQuery())
-    if (max) _.set(timeFilter, 'max', max)
+    if (min && max) {
+      _.set(timeFilter, 'range', { min, max })
+      const timeFilterSelection = _.get(timeFilter, 'selection')
+      if (timeFilterSelection) {
+        let start = timeFilterSelection.start
+        if (start && (((start === 'min') || moment(start).isBefore(min)))) start = min
+        let end = timeFilterSelection.end
+        if (end && (( end === 'max' || moment(end).isAfter(max)))) end = max
+        if (start && end) _.set(timeFilter, 'selection', { start, end })
+      }
+    }
     // update tags filter
     const tagFields = getTagFields()
     let tagsOptions = []
@@ -106,21 +136,21 @@ export function useCollectionFilterQuery (options = {}) {
   function refreshFilterQuery () {
     const query = {}
     // filter against the selected tags
-    if (hasTagsSelection.value) {
+    if (hasTagsFilterSelection.value) {
       const tagFields = getTagFields()
       _.forEach(tagFields, (values, property) => {
-        const tagsProperty = _.map(_.filter(selectedTags.value, { scope: property }), tag => { return tag.name })
+        const tagsProperty = _.map(_.filter(tagsFilterSelection.value, { scope: property }), tag => { return tag.name })
         if (!_.isEmpty(tagsProperty)) {
           _.merge(query, { [property]: { $in: tagsProperty } })
         }
       })
     }
     // filter against the selected time range
-    if (hasTimeSelection.value) {
+    if (hasTimeFilterSelection.value) {
       _.merge(query, {
         [getTimeField()]: {
-          $gte: selectedTime.value.start,
-          $lte: selectedTime.value.end
+          $gte: timeFilterSelection.value.start,
+          $lte: timeFilterSelection.value.end
         }
       })
     }
@@ -131,10 +161,10 @@ export function useCollectionFilterQuery (options = {}) {
   onMounted(async () => {
     await refreshOptions()
     listeners = listenToServiceEvents(getService(), {
-      created: () => refreshOptions('created'),
-      updated: () => refreshOptions('updated'),
-      patched: () => refreshOptions('patched'),
-      removed: () => refreshOptions('removed')
+      created: () => refreshOptions(),
+      updated: () => refreshOptions(),
+      patched: () => refreshOptions(),
+      removed: () => refreshOptions()
     })
   })
   onBeforeUnmount(() => {
@@ -144,7 +174,9 @@ export function useCollectionFilterQuery (options = {}) {
   // Expose
   return {
     filterQuery,
-    hasTagsSelection,
-    hasTimeSelection
+    tagsFilterSelection,
+    timeFilterSelection,
+    hasTagsFilterSelection,
+    hasTimeFilterSelection
   }
 }
