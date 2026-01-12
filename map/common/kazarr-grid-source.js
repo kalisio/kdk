@@ -8,48 +8,45 @@ import { unitConverters, GridSource, toHalf } from './grid.js'
 //   values: []
 // }
 
-function genCoordsBuffer(grid) {
-    const coords = new Uint16Array(2 * grid.numPoints)
+function genCoordsBuffer (grid) {
+  const coords = new Uint16Array(2 * grid.numPoints)
 
-    const deltaLat = grid.maxLat - grid.minLat
-    const deltaLon = grid.maxLon - grid.minLon
+  const deltaLat = grid.maxLat - grid.minLat
+  const deltaLon = grid.maxLon - grid.minLon
 
-    let idx = 0
-    for (let i = 0; i < grid.data.vertices.length; i += 3) {
-        const lon = grid.data.vertices[i]
-        const lat = grid.data.vertices[i+1]
+  let idx = 0
+  for (let i = 0; i < grid.data.vertices.length; i += 3) {
+    const lon = grid.data.vertices[i]
+    const lat = grid.data.vertices[i + 1]
 
-        coords[idx * 2] = toHalf((lat - grid.minLat) / deltaLat)
-        coords[idx * 2 + 1] = toHalf((lon - grid.minLon) / deltaLon)
+    coords[idx * 2] = toHalf((lat - grid.minLat) / deltaLat)
+    coords[idx * 2 + 1] = toHalf((lon - grid.minLon) / deltaLon)
 
-        ++idx
-    }
-    
-    return { coords, minLat: grid.minLat, maxLat: grid.maxLat, minLon: grid.minLon, maxLon: grid.maxLon, deltaLat, deltaLon }
+    ++idx
+  }
+
+  return { coords, minLat: grid.minLat, maxLat: grid.maxLat, minLon: grid.minLon, maxLon: grid.maxLon, deltaLat, deltaLon }
 }
-
 
 function genValuesBuffer (grid) {
   const value = new Float32Array(grid.numPoints)
 
   if (grid.converter) {
-    for (let i = 0; i < grid.data.values.length; ++i)
-      value[i] = grid.converter(grid.data.values[i])
+    for (let i = 0; i < grid.data.values.length; ++i) { value[i] = grid.converter(grid.data.values[i]) }
   } else {
-    for (let i = 0; i < grid.data.values.length; ++i)
-      value[i] = grid.data.values[i]
+    for (let i = 0; i < grid.data.values.length; ++i) { value[i] = grid.data.values[i] }
   }
-    
+
   return value
 }
 
 function genMeshIndexBuffer (grid) {
-    const maxIndex = grid.data.vertices.length - 1
-    return maxIndex > 65534 ? new Uint32Array(grid.data.indices) : new Uint16Array(grid.data.indices)
+  const maxIndex = grid.data.vertices.length - 1
+  return maxIndex > 65534 ? new Uint32Array(grid.data.indices) : new Uint16Array(grid.data.indices)
 }
 
 function genWireframeIndexBuffer (grid) {
-    return genMeshIndexBuffer(grid)
+  return genMeshIndexBuffer(grid)
 }
 
 export class KazarrGridSource extends GridSource {
@@ -81,18 +78,18 @@ export class KazarrGridSource extends GridSource {
 
     this.config = config
     this.converter = this.config.converter ? unitConverters[this.config.converter] : null
-    
+
     const question = this.config.url.indexOf('?')
     const datasetUrl = question === -1
       ? `${this.config.url}/datasets/${this.config.dataset}`
       : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}${this.config.url.substring(question)}`
-    
+
     try {
       const resp = await fetch(datasetUrl)
       const json = await resp.json()
       if (json.bounding_box) {
-        this.minMaxLat = [ json.bounding_box.lat.min, json.bounding_box.lat.max ]
-        this.minMaxLon = [ json.bounding_box.lon.min, json.bounding_box.lon.max ]
+        this.minMaxLat = [json.bounding_box.lat.min, json.bounding_box.lat.max]
+        this.minMaxLon = [json.bounding_box.lon.min, json.bounding_box.lon.max]
       }
     } catch (error) {
       console.error(`Failed requesting ${this.config.dataset} metadata from ${this.config.url}`)
@@ -114,17 +111,16 @@ export class KazarrGridSource extends GridSource {
     const reqMaxLon = bbox[3]
 
     let queryParams = `variable=${this.config.variable}&lon_min=${reqMinLon}&lon_max=${reqMaxLon}&lat_min=${reqMinLat}&lat_max=${reqMaxLat}`
-    queryParams += `&mesh_tile_size=16&mesh_interpolate=true`
+    queryParams += '&mesh_tile_size=16&mesh_interpolate=true'
     if (this.config.additional) {
-      for (const [key, value] of Object.entries(this.config.additional))
-        queryParams += `&${key}=${value}`
+      for (const [key, value] of Object.entries(this.config.additional)) { queryParams += `&${key}=${value}` }
     }
-    
+
     const question = this.config.url.indexOf('?')
     const tileUrl = question === -1
       ? `${this.config.url}/datasets/${this.config.dataset}/extract?${queryParams}`
-      : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/extract?${queryParams}&${this.config.url.substring(question+1)}`
-    
+      : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/extract?${queryParams}&${this.config.url.substring(question + 1)}`
+
     const resp = await fetch(tileUrl)
     const json = await resp.json()
 
@@ -133,13 +129,13 @@ export class KazarrGridSource extends GridSource {
     let dataMinLat = json.vertices[1]
     let dataMaxLat = json.vertices[1]
 
-    for (let i = 3; i < json.vertices.length; i+=3) {
-        dataMinLon = Math.min(dataMinLon, json.vertices[i])
-        dataMaxLon = Math.max(dataMaxLon, json.vertices[i])
-        dataMinLat = Math.min(dataMinLat, json.vertices[i+1])
-        dataMaxLat = Math.max(dataMaxLat, json.vertices[i+1])
+    for (let i = 3; i < json.vertices.length; i += 3) {
+      dataMinLon = Math.min(dataMinLon, json.vertices[i])
+      dataMaxLon = Math.max(dataMaxLon, json.vertices[i])
+      dataMinLat = Math.min(dataMinLat, json.vertices[i + 1])
+      dataMaxLat = Math.max(dataMaxLat, json.vertices[i + 1])
     }
-      
+
     const grid = {
       hasData: () => { return true },
       // HACK: can't import pixi here, return constant value for now
@@ -153,7 +149,7 @@ export class KazarrGridSource extends GridSource {
       maxLat: dataMaxLat,
       minLon: dataMinLon,
       maxLon: dataMaxLon
-   }
+    }
 
     grid.genCoordsBuffer = () => genCoordsBuffer(grid)
     grid.genValuesBuffer = () => genValuesBuffer(grid)
