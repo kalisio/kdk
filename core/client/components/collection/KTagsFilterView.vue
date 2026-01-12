@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { useCollectionFilter } from '../../composables'
 import KTagSelection from '../tags/KTagSelection.vue'
 

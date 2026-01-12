@@ -225,7 +225,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits([ 'collection-refreshed', 'selection-changed', 'scroll-state-changed' ])
+const emit = defineEmits(['collection-refreshed', 'selection-changed', 'scroll-state-changed'])
 
 // Data
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))

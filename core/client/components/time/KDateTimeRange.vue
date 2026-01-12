@@ -234,7 +234,6 @@ watch(() => [props.min, props.max], () => {
   triggerEmit()
 }, { immediate: true })
 
-
 // Functions
 function onRangeChanged () {
   if (!_.isEmpty(props.min) && !_.isEmpty(props.max)) {
