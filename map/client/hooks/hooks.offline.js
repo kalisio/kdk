@@ -23,55 +23,11 @@ export function removeServerSideParameters(context) {
   }
 }
 
-async function updateReferenceCount(service, id, increment) {
-  const feature = await service._get(id)
-  const count = _.get(feature, 'referenceCount', 0) + increment
-  const data = await service._patch(id, { referenceCount: count })
-  return data
-}
-export async function referenceCountCreateHook(context) {
-  const service = context.service
-  const features = (Array.isArray(context.data) ? context.data : [context.data])
-  for (let i = 0; i < features.length; i++) {
-    const feature = features[i]
-    try {
-      // This will raise if feature does not exist
-      await updateReferenceCount(service, feature._id, +1)
-    } catch (error) {
-      feature.referenceCount = 1
-      await service._create(feature)
-    }
-  }
-  context.result = context.data
-}
-
-export async function referenceCountRemoveHook(context) {
-  const service = context.service
-  // By ID or by query ?
-  if (!context.id) {
-    context.result = await service._find(Object.assign(context.params, { paginate: false }))
-    for (let i = 0; i < context.result.length; i++) {
-      const feature = context.result[i]
-      try {
-        const { referenceCount } = await updateReferenceCount(service, feature._id, -1)
-        // Skip removing if still used
-        if (referenceCount <= 0) await service._remove(feature._id)
-      } catch (error) {
-        logger.debug('[KDK] reference count update failed: ', error)
-      }
-    }
-  } else {
-    const feature = await updateReferenceCount(service, context.id, -1)
-    // Skip removing if still used
-    if (feature.referenceCount <= 0) await service._remove(context.id)
-    context.result = feature
-  }
-}
-
 export function geoJsonPaginationHook(context) {
   const result = context.result
   const features = result.data
-  if (_.get(features, '[0].type') !== 'Feature') return
+  // Not features ?
+  if ((features.length > 0) && (_.get(features, '[0].type') !== 'Feature')) return
   context.result = Object.assign({
     type: 'FeatureCollection',
     features: result.data
@@ -81,15 +37,14 @@ export function geoJsonPaginationHook(context) {
 export async function intersectBBoxHook(context) {
   const params = context.params
   if (!_.has(params, 'east') || !_.has(params, 'west') || !_.has(params, 'north') || !_.has(params, 'south')) return context
-  const service = context.service
-  const query = await service._find(_.omit(params, ['east', 'west', 'north', 'south']))
-  const features = query.data
+  const result = context.result
+  const features = result.data
   const bbox = polygon([[[params.east, params.south], [params.west, params.south], [params.west, params.north], [params.east, params.north], [params.east, params.south]]])
-  let result = []
+  let featuresInBbox = []
   for (let feature of features) {
     if (booleanIntersects(bbox, feature)) {
-      result.push(feature)
+      featuresInBbox.push(feature)
     }
   }
-  _.set(context, 'result.data', result)
+  _.set(context, 'result.data', featuresInBbox)
 }
