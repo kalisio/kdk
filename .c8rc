@@ -1,5 +1,16 @@
 {
 	"all": true,
-	"include": ["core/api/**/*.js", "map/api/**/*.js"],
+	"include": [
+		"core/api/**/*.js",
+		"map/api/**/*.js"
+	],
+	"exclude": [
+		"core/client/**",
+		"map/client/**",
+		"core/common/**",
+		"map/common/**",
+		"docs/**",
+		"extras/**"
+	],
 	"reporter": ["html", "lcov"]
 }
