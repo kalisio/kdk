@@ -54,7 +54,7 @@ const getMarkerFeature = () => {
       shape: 'none',
       icon: {
         url: '/kdk/panoramax-marker.png',
-        size: 40,
+        size: 80,
         rotation: rot
       }
     },
@@ -120,10 +120,10 @@ const moveCloseTo = async (lat, lon) => {
         }
       })
     } else {
-      Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+      Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
     }
   } catch (error) {
-    Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+    Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
   }
 }
 
@@ -141,7 +141,10 @@ const onPictureEvent = async (event) => {
     hasImage.value = true
 
     const response = await fetch(`${endpoint}/pictures/${detail.picId}`)
-    if (!response.ok) throw new Error(`Erreur lors du fetch image ${detail.picId}`)
+    if (!response.ok) {
+      Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+      return
+    }
 
     const feature = await response.json()
     const coords = feature.geometry?.coordinates
@@ -151,16 +154,16 @@ const onPictureEvent = async (event) => {
       centerMap()
       highlight(getMarkerFeature(), null, false)
     } else {
-      Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+      Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
     }
   } catch (err) {
-    Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+    Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
   }
 }
 
 const refresh = async () => {
   highlight(getMarkerFeature(), null, false)
-  if (hasSelectedLocation()) {
+  if (hasSelectedItem()) {
     const loc = getSelectedLocation()
     await moveCloseTo(loc.lat, loc.lng)
     return
