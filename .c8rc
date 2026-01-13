@@ -1,5 +1,5 @@
 {
-	"all": true,
+	"all": false,
 	"include": [
 		"core/api/**/*.js",
 		"map/api/**/*.js"
