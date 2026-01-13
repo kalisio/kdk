@@ -9,12 +9,13 @@
           id="composer-fab"
           :icon="getKindIcon(currentType)"
           :color="getKindColor(currentType)"
-          direction="up"
+          direction="right"
           :vertical-actions-align="$q.screen.lt.md ? 'left' : 'center'"
           padding="xs"
         >
           <template v-for="type in availableTypes" :key="type">
             <q-fab-action
+              :id="type + '-option'"
               :icon="getKindIcon(type)"
               :color="getKindColor(type)"
               :label="getKindLabel(type)"

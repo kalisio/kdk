@@ -4,6 +4,7 @@ import config from 'config'
 import { Store } from './store.js'
 import { Theme } from './theme.js'
 import { Context } from './context.js'
+import { Configurations } from './configurations.js'
 import { Platform } from './platform.js'
 import { Capabilities } from './capabilities.js'
 import { LocalStorage } from './local-storage.js'
@@ -33,6 +34,7 @@ import { Schema } from '../common/index.js'
 export { Store }
 export { Theme }
 export { Context }
+export { Configurations }
 export { Platform }
 export { Capabilities }
 export { LocalStorage }

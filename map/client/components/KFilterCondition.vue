@@ -191,17 +191,24 @@ async function onPropertyChange (property) {
     return
   }
 
-  const options = await api.getService(_.get(layer, 'service'))
-    .find({ query: Object.assign({ $distinct: `properties.${property}` }, _.get(layer, 'baseQuery')) })
+  // If layer isn't backed by some feathers service, dont' bother querying the list
+  // of allowed values.
+  if (layer.service) {
+    const options = await api.getService(_.get(layer, 'service'))
+      .find({ query: Object.assign({ $distinct: `properties.${property}` }, _.get(layer, 'baseQuery')) })
 
-  // Filter values that are not in the new options
-  if (value.value && !_.isArray(value.value)) {
-    value.value = options.includes(value.value) ? value.value : null
-  } else if (value.value && _.isArray(value.value)) {
-    value.value = _.filter(value.value, v => options.includes(v))
+    // Filter values that are not in the new options
+    if (value.value && !_.isArray(value.value)) {
+      value.value = options.includes(value.value) ? value.value : null
+    } else if (value.value && _.isArray(value.value)) {
+      value.value = _.filter(value.value, v => options.includes(v))
+    }
+
+    valueOptions.value = options.sort()
+  } else {
+    valueOptions.value = null
   }
 
-  valueOptions.value = options.sort()
   valueIsNumber.value = false
 
   checkPropertyValidity(property)
@@ -246,9 +253,9 @@ function checkComparisonOperatorValidity (value) {
 function checkValueValidity (value) {
   const isDefined = !!value
   // For unique value, check if the value is in the options
-  const valueInOptions = !useMultipleValuesSelect.value && valueOptions.value.includes(value)
+  const valueInOptions = !valueOptions.value || (!useMultipleValuesSelect.value && valueOptions.value.includes(value))
   // For multiple values, check if all values are in the options
-  const valuesInOptions = useMultipleValuesSelect.value && !_.isEmpty(value) && !_.some(value, v => !valueOptions.value.includes(v))
+  const valuesInOptions = !valueOptions.value || (useMultipleValuesSelect.value && !_.isEmpty(value) && !_.some(value, v => !valueOptions.value.includes(v)))
   if (isDefined && (valueInOptions || valuesInOptions)) {
     hasValueErrors.value = false
     return true

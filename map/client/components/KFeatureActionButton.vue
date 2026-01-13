@@ -7,13 +7,13 @@
     :actions="featureActions"
     @close="onCloseMenu">
     <!--template v-slot:closed-menu-container>
-      <q-btn round color="accent" icon="las la-chevron-up" />
+      <q-btn round :color="color" icon="las la-chevron-up" />
     </template-->
     <template v-slot:open-menu-container>
-      <q-btn round color="accent" icon="las la-times" />
+      <q-btn round :color="color" icon="las la-times" />
     </template>
     <template v-slot:menu-item="action">
-      <q-btn round color="accent" :icon="action.icon" @click="onFeatureActionClicked(action)">
+      <q-btn round :color="color" :icon="action.icon" @click="onFeatureActionClicked(action)">
         <!-- tooltip -->
         <q-tooltip v-if="action.label">
           {{action.label}}
@@ -35,6 +35,12 @@ export default {
   inject: ['kActivity'],
   components: {
     KRadialFab
+  },
+  props: {
+    color: {
+      type: String,
+      default: 'accent'
+    }
   },
   data () {
     return {

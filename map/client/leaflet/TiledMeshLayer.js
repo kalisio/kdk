@@ -147,15 +147,16 @@ const TiledMeshLayer = L.GridLayer.extend({
             }
 
             const shader = new PIXI.Shader(this.program, uniforms)
-            const mode = this.conf.debug.meshAsPoints ? PIXI.DRAW_MODES.POINTS : PIXI.DRAW_MODES.TRIANGLE_STRIP
-            tile.mesh = new PIXI.Mesh(geometry, shader, this.pixiState, mode)
+            const drawMode = grid.drawMode ? grid.drawMode() : PIXI.DRAW_MODES.TRIANGLE_STRIP
+            tile.mesh = new PIXI.Mesh(geometry, shader, this.pixiState, drawMode)
 
             if (this.conf.render.showWireframe) {
               const wireframeGeometry = new PIXI.Geometry()
                 .addAttribute('in_layerCoord', geometry.getBuffer('in_layerCoord'), 2, false, PIXI.TYPES.HALF_FLOAT_VERTEX)
                 .addIndex(grid.genWireframeIndexBuffer())
               const wireframeShader = new PIXI.Shader(this.wireframeProgram, uniforms)
-              tile.wireframe = new PIXI.Mesh(wireframeGeometry, wireframeShader, this.pixiState, PIXI.DRAW_MODES.LINE_STRIP)
+              const wireframeDrawMode = grid.wireframeDrawMode ? grid.wireframeDrawMode() : PIXI.DRAW_MODES.LINE_STRIP
+              tile.wireframe = new PIXI.Mesh(wireframeGeometry, wireframeShader, this.pixiState, wireframeDrawMode)
             }
 
             if (this.conf.debug.showTileInfos) {

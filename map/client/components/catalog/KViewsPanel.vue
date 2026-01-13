@@ -21,9 +21,10 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { ref, computed } from 'vue'
-import { utils, i18n, api, LocalCache, Store } from '../../../../core/client'
+import { utils, i18n, api, LocalCache, Context } from '../../../../core/client'
 import { KGrid } from '../../../../core/client/components'
 import { useCurrentActivity, useProject } from '../../composables'
+import { getViewsProjectQuery } from '../../utils/utils.project.js'
 import { Dialog, Notify } from 'quasar'
 
 // Data
@@ -40,7 +41,7 @@ const baseQuery = computed(() => {
 })
 const filterQuery = computed(() => {
   const query = {}
-  if (project.value) Object.assign(query, { _id: { $in: _.map(project.value.views, '_id') } })
+  if (project.value) Object.assign(query, getViewsProjectQuery(project.value))
   if (!_.isEmpty(searchString.value)) {
     Object.assign(query, { name: { $regex: searchString.value } })
   }
@@ -172,7 +173,7 @@ async function onViewSelected (view, action) {
           spinner: true
         })
         await CurrentActivity.value.cacheView(view, getProjectLayers(), {
-          contextId: Store.get('context'),
+          contextId: Context.get(),
           ...values
         })
         view.isCached = true
@@ -190,7 +191,7 @@ async function onViewSelected (view, action) {
         spinner: true
       })
       await CurrentActivity.value.uncacheView(view, getProjectLayers(), {
-        contextId: Store.get('context')
+        contextId: Context.get()
       })
       view.isCached = false
       dismiss()

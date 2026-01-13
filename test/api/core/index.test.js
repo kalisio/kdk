@@ -6,6 +6,7 @@ import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'
+import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import core, { kdk, hooks, permissions, createMessagesService } from '../../../core/api/index.js'
 import { fileURLToPath } from 'url'
 
@@ -15,7 +16,7 @@ const { util, expect } = chai
 
 describe('core:services', () => {
   let app, server, port, baseUrl, accessToken,
-    userService, userObject, authorisationService, messagesService, messageObject,
+    usersService, userObject, authorisationService, messagesService, messageObject,
     spyUpdateAbilities
 
   before(async () => {
@@ -44,8 +45,12 @@ describe('core:services', () => {
   it('registers the services', async () => {
     await app.configure(core)
 
-    userService = app.getService('users')
-    expect(userService).toExist()
+    usersService = app.getService('users')
+    expect(usersService).toExist()
+    // Register search hooks
+    usersService.hooks({
+      before: { find: [fuzzySearch({ fields: ['profile.name'] }), hooks.diacriticSearch()] }
+    })
     // Create a global messages service for tests
     await createMessagesService.call(app)
     messagesService = app.getService('messages')
@@ -108,11 +113,11 @@ describe('core:services', () => {
     const [localStrategy] = app.service('api/authentication').getStrategies('local')
     const previousPassword = await localStrategy.hashPassword('weak;')
 
-    await assert.rejects(() => userService.create({
+    await assert.rejects(() => usersService.create({
       email: 'test@test.org',
       password: 'weak;',
       previousPasswords: [previousPassword],
-      name: 'test-user'
+      name: 'maëlis'
     }), error => {
       expect(error).toExist()
       expect(error.name).to.equal('BadRequest')
@@ -120,10 +125,10 @@ describe('core:services', () => {
       return true
     })
 
-    await assert.rejects(() => userService.create({
+    await assert.rejects(() => usersService.create({
       email: 'test@test.org',
       password: '12345678',
-      name: 'test-user'
+      name: 'maëlis'
     }), error => {
       expect(error).toExist()
       expect(error.name).to.equal('BadRequest')
@@ -137,17 +142,17 @@ describe('core:services', () => {
   it('creates a user', async () => {
     // Test password generation
     const hook = hooks.generatePassword()({ type: 'before', data: {}, params: {}, app })
-    userObject = await userService.create({
+    userObject = await usersService.create({
       email: 'test@test.org',
       password: hook.data.password,
-      name: 'test-user',
+      name: 'maëlis',
       profile: { phone: '0623256968' }
     }, { checkAuthorisation: true })
     expect(spyUpdateAbilities).to.have.been.called.once
     spyUpdateAbilities.reset()
     // Keep track of clear password
     userObject.clearPassword = hook.data.password
-    const users = await userService.find({ query: { 'profile.name': 'test-user' } })
+    const users = await usersService.find({ query: { 'profile.name': 'maëlis' } })
     expect(users.data.length > 0).beTrue()
     expect(users.data[0].email).toExist()
     expect(users.data[0].clearPassword).beUndefined()
@@ -159,10 +164,10 @@ describe('core:services', () => {
     .timeout(10000)
 
   it('changing user password keeps password history', async () => {
-    await userService.patch(userObject._id.toString(), { password: userObject.password })
+    await usersService.patch(userObject._id.toString(), { password: userObject.password })
     expect(spyUpdateAbilities).to.have.been.called.once
     spyUpdateAbilities.reset()
-    const user = await userService.get(userObject._id.toString())
+    const user = await usersService.get(userObject._id.toString())
     expect(user.previousPasswords).toExist()
     expect(user.previousPasswords).to.deep.equal([userObject.password])
   })
@@ -226,21 +231,41 @@ describe('core:services', () => {
     .timeout(5000)
 
   it('authenticated user can access services', () => {
-    return userService.find({ query: {}, params: { user: userObject, checkAuthorisation: true } })
+    return usersService.find({ query: {}, params: { user: userObject, checkAuthorisation: true } })
       .then(users => {
         expect(users.data.length === 1).beTrue()
       })
   })
 
   it('get user profile', () => {
-    return userService.find({ query: { $select: ['profile'] } })
+    return usersService.find({ query: { $select: ['profile'] } })
       .then(users => {
+        expect(users.data.length > 0).beTrue()
         expect(users.data[0].name).beUndefined()
         expect(users.data[0].profile.name).toExist()
         expect(users.data[0].profile.description).toExist()
         expect(users.data[0].profile.phone).toExist()
       })
   })
+
+  it('search user profile', async () => {
+    const hook = hooks.generatePassword()({ type: 'before', data: {}, params: {}, app })
+    const user = await usersService.create({
+      email: 'anothertest@test.org',
+      password: hook.data.password,
+      name: 'maelis',
+      profile: { phone: '0623256968' }
+    })
+    spyUpdateAbilities.reset()
+    const allUsers = await usersService.find({ query: { 'profile.name': { $search: 'Mae' } } })
+    // Diacritic should be more specific
+    const singleUsers = await usersService.find({ query: { 'profile.name': { $search: 'Maë' } } })
+    await usersService.remove(user._id)
+    expect(allUsers.data.length === 2).beTrue()
+    expect(singleUsers.data.length === 1).beTrue()
+  })
+  // Let enough time to process
+    .timeout(10000)
 
   it('creates a user message', async () => {
     const message = await messagesService.create({
@@ -271,7 +296,7 @@ describe('core:services', () => {
     expect(authorisation).toExist()
     expect(spyUpdateAbilities).to.have.been.called.once
     spyUpdateAbilities.reset()
-    userObject = await userService.get(userObject._id.toString())
+    userObject = await usersService.get(userObject._id.toString())
     expect(userObject.authorisations).toExist()
     expect(userObject.authorisations.length > 0).beTrue()
     expect(userObject.authorisations[0].permissions).to.deep.equal('manager')
@@ -334,7 +359,7 @@ describe('core:services', () => {
     expect(authorisation).toExist()
     expect(spyUpdateAbilities).to.have.been.called.once
     spyUpdateAbilities.reset()
-    const user = await userService.get(userObject._id.toString())
+    const user = await usersService.get(userObject._id.toString())
     expect(user.authorisations).toExist()
     expect(user.authorisations.length === 0).beTrue()
   })
@@ -361,11 +386,11 @@ describe('core:services', () => {
   })
 
   it('removes a user', async () => {
-    await userService.remove(userObject._id, {
+    await usersService.remove(userObject._id, {
       user: userObject,
       checkAuthorisation: true
     })
-    const users = await userService.find({ query: { name: 'test-user' } })
+    const users = await usersService.find({ query: { name: 'maëlis' } })
     expect(users.data.length === 0).beTrue()
     const messages = await messagesService.find({ query: { title: 'Title' } })
     expect(messages.data.length === 0).beTrue()

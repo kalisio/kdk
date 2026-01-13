@@ -49,7 +49,7 @@
 
 <script>
 import _ from 'lodash'
-import { Store, mixins as kCoreMixins } from '../../../../core/client'
+import { Context, api, mixins as kCoreMixins } from '../../../../core/client'
 import { useCatalog } from '../../composables'
 
 export default {
@@ -99,23 +99,32 @@ export default {
   },
   mounted () {
     this.getViews()
-    if (Store.get('context')) {
+    if (typeof this.getContextViews === 'function') {
       this.getContextViews()
     }
   },
   setup (props) {
     // Use global catalog
     const { views, getViews } = useCatalog({ context: 'global' })
-    // Use local catalog
-    const { views: contextViews, getViews: getContextViews } = useCatalog({ context: Store.get('context') })
-
     // Expose
-    return {
+    const expose = {
       views,
-      getViews,
-      contextViews,
-      getContextViews
+      getViews
     }
+    // Use local catalog if any
+    if (Context.get() && api.hasService('catalog', Context.get())) {
+      const { views: contextViews, getViews: getContextViews } = useCatalog({ context: Context.get() })
+      Object.assign(expose, {
+        contextViews,
+        getContextViews
+      })
+    } else {
+      Object.assign(expose, {
+        contextViews: []
+      })
+    }
+
+    return expose
   }
 }
 </script>

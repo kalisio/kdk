@@ -2,7 +2,7 @@ import logger from 'loglevel'
 import _ from 'lodash'
 import { kml } from '@tmcw/togeojson'
 import { i18n } from '../../../core/client/i18n.js'
-import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle } from '../utils/utils.style.js'
+import { convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, kmlStyleSpecialProperties } from '../utils/utils.style.js'
 
 export const KMLReader = {
   read (files, options) {
@@ -39,13 +39,12 @@ export const KMLReader = {
 
 function getExtraPropertiesFromKMLByName (document) {
   const properties = {}
-  const propertiesToAdd = ['extrude', 'altitudeMode']
   const placemarks = document.getElementsByTagName('Placemark')
   _.forEach(placemarks, placemark => {
     const nameElements = placemark.getElementsByTagName('name')
     if (!nameElements.length) return
     const name = nameElements[0].textContent
-    _.forEach(propertiesToAdd, property => {
+    _.forEach(kmlStyleSpecialProperties, property => {
       const propertyElements = placemark.getElementsByTagName(property)
       if (!propertyElements.length) return
 

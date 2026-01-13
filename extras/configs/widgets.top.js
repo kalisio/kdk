@@ -27,10 +27,10 @@ module.exports = {
   }, 
   TIME_SERIES: {
     id: 'time-series',
-    label: 'TimeSeries.LABEL',
+    label: 'KTimeSeries.LABEL',
     icon: 'las la-chart-line',
-    content: { component: 'TimeSeries' },
-    header: [{ component: 'TimeSeriesToolbar' }]
+    content: { component: 'widget/KTimeSeries' },
+    header: [{ component: 'widget/KTimeSeriesToolbar' }]
   }, 
   ELEVATION_PROFILE: {
     id: 'elevation-profile',

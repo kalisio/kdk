@@ -368,6 +368,52 @@ graph TB
   class FIND,CREATE,REMOVE operationClass
 ```
 
+## Configurations service
+
+::: tip
+Available as a global and a contextual service
+:::
+
+::: warning
+From the client side and even if most of the methods are available, we higly recomment to use the helper functions provide by the [configurations](./client.md#configurations) singleton.
+:::
+
+This service allows to manage generic named objects designed to store application-specific configuration options that can be edited client-side.
+
+### Data model
+
+The data model is as simple as a named object associated with a generic value `{ name, value }`.
+
+### Hooks
+
+The following [hooks](./hooks.md) are executed on the `configurations` service:
+
+```mermaid
+graph TB
+  before{none before all}
+  after{none after all}
+  before --> FIND[FIND]
+  FIND --> after
+  before --> GET[GET]
+  GET --> after  
+  before --> hook4("disallow('external')")
+  hook4 --> CREATE[CREATE]
+  CREATE --> after
+  before --> hook5(disallow)
+  hook5 --> UPDATE[UPDATE]
+  UPDATE --> after
+  before --> PATCH[PATCH]
+  PATCH --> after
+  before --> hook6(disallow)
+  hook6 --> REMOVE[REMOVE]
+  REMOVE --> after
+  linkStyle default stroke-width:2px,fill:none,stroke:black
+  classDef hookClass fill:#f96,stroke:#333,stroke-width:2px
+  class hook1,hook2,hook3,hook4,hook5,hook6,hook7,hook8,hook9 hookClass
+  classDef operationClass fill:#9c6,stroke:#333,stroke-width:2px
+  class FIND,GET,CREATE,UPDATE,PATCH,REMOVE operationClass
+```
+
 ## Local settings service
 
 This **client-side** service allows to restore/save persistent settings to/from the [global store](./application.md#store) from/to [local storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).

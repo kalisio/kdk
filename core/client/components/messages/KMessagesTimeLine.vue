@@ -1,5 +1,5 @@
 <template>
-  <div class="fit row no-wrap">
+  <div class="row no-wrap">
     <!-- missions timeline  -->
     <div :class="wide ? 'col-11' : 'col-12'">
       <KTimeLine

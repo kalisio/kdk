@@ -3,9 +3,8 @@ import makeDebug from 'debug'
 import generateRandomPassword from 'password-generator'
 import common from 'feathers-hooks-common'
 import errors from '@feathersjs/errors'
-import { Roles, RoleNames } from '../../common/permissions.js'
 import authManagement from 'feathers-authentication-management'
-
+import { createObjectID } from '../db.js'
 const { Forbidden, BadRequest } = errors
 const { getItems, replaceItems } = common
 const verifyHooks = authManagement.hooks
@@ -13,17 +12,45 @@ const verifyHooks = authManagement.hooks
 const debug = makeDebug('kdk:core:users:hooks')
 
 // Helper functions to be used in iff hooks
-export function disallowRegistration (hook) {
-  return _.get(hook.app.get('authentication'), 'disallowRegistration')
+export function disallowRegistration (context) {
+  return _.get(context.app.get('authentication'), 'disallowRegistration')
 }
-export function allowLocalAuthentication (hook) {
-  return _.get(hook.app.get('authentication'), 'authStrategies', []).includes('local')
+
+export function allowLocalAuthentication (context) {
+  return _.get(context.app.get('authentication'), 'authStrategies', []).includes('local')
 }
-export function isNotMe (hook) {
-  const userId = _.get(hook.params, 'user._id', '')
-  const item = getItems(hook)
-  const targetId = _.get(item, '_id', '')
-  return userId.toString() !== targetId.toString()
+
+export function onlyMe (options = { throwOnMissingUser: true }) {
+  return function (context) {
+    if (context.type !== 'before') {
+      throw new Error('The \'onlyMe\' hook should only be used as a \'before\' hook.')
+    }
+    const userId = _.toString(_.get(context.params, 'user._id'))
+    if (userId) {
+      _.set(context.params, 'query._id', createObjectID(userId))
+    } else if (options.throwOnMissingUser) {
+      throw new Forbidden('This operation is subject to user identify check but none can be found')
+    }
+  }
+}
+
+export function isNotMe (options = { throwOnMissingUser: false }) {
+  return function (context) {
+    const userId = _.get(context.params, 'user._id')
+    // As no user to compare with can't be me
+    if (_.isNil(userId)) {
+      if (options.throwOnMissingUser) throw new Forbidden('This operation is subject to user identify check but none can be found')
+      else return true
+  }
+    // Manage get/update/patch/remove before hook
+    if (context.id) return (_.toString(context.id) !== _.toString(userId))
+    // Manage after hook including multi-operations
+    let items = getItems(context)
+    if (!Array.isArray(items)) items = [items]
+    items = items.filter(item => _.toString(item._id) !== _.toString(userId))
+    // If any item not targetting myself
+    return items.length > 0
+  }
 }
 
 export function enforcePasswordPolicy (options = {}) {

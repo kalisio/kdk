@@ -76,6 +76,10 @@
     "WEAK_PASSWORD_ONEOF": "Not known as one of the most common passwords",
     "WEAK_PASSWORD_PREVIOUS": "Not one of your {history} last passwords",
     "CANNOT_PROCESS_DOWNLOAD_DATA": "Invalid or incomplete data file",
+    "CANNOT_REMOVE_USER": "Your are not allowed to remove this accound.<br>Please remove the organisations owned by <b>{user}</b> first.",
+    "CANNOT_REMOVE_ORGANISATION": "You are not allowed to remove this organisation.<br>Please remove all the groups first.",
+    "CANNOT_REMOVE_LAST_OWNER": "You are not allowed to remove the last owner of <b>{resource}</b>",
+    "DUPLICATED_FILE": "The file {file} is already added",
     "OAUTH2_PROVIDER": "You cannot update your account because it is managed by {provider}, in order to switch to a local account reset your password first",
     "EMAIL_ALREADY_TAKEN": "A user with this email address seems to be already registered",
     "OBJECT_ID_ALREADY_TAKEN": "An item with this identifier seems to already exist. Please try again with another value.",
@@ -399,7 +403,8 @@
     "REGISTER_LABEL": "Register",
     "EMAIL_ALREADY_TAKEN": "Email already taken !",
     "REGISTER_ERROR": "Wrong input or service unavailable, please try again",
-    "CONTEXTUAL_HELP": "@:NEED_HELP"
+    "CONTEXTUAL_HELP": "@:NEED_HELP",
+    "ALREADY_HAVE_AN_ACCOUNT_LINK": "Already have an account ?"
   },
   "KLogoutScreen": {
     "TITLE": "You are now logged out",
@@ -408,38 +413,6 @@
   "KProfile": {
     "EDIT_PROFILE": "Edit my profile",
     "MANAGE_ACCOUNT": "Manage my account"
-  },
-  "KDeleteAccountManager": {
-    "TITLE": "Delete my account",
-    "QUESTION": "Are you sure you want to delete your account ?",
-    "CONFIRMATION_TITLE": "Warning: the deletion of your account is irrevocable and all data attached to it will be lost",
-    "CONFIRMATION": "Enter your account name to confirm the deletion"
-  },
-  "KPasswordManager": {
-    "TITLE": "Change my password",
-    "PASSWORD_CHANGED": "Your password has been successfully changed",
-    "OLD_PASSWORD_FIELD_LABEL": "Enter your old password",
-    "PASSWORD_FIELD_LABEL": "Enter your new password",
-    "CONFIRM_PASSWORD_FIELD_LABEL": "Confirm your new password"
-  },
-  "KEmailManager": {
-    "TITLE": "Change my email address",
-    "PASSWORD_FIELD_LABEL": "Enter your password",
-    "EMAIL_FIELD_LABEL": "Enter your new email address",
-    "TOKEN_LABEL": "To validate your new email address, enter the code you received by email",
-    "EMAIL_CHANGED": "You new address has been taken into account. An email has been sent to you to confirm the change.",
-    "ERROR_MESSAGE": "Invalid code"
-  },
-  "KVerifyEmailManager": {
-    "TITLE": "Check my email address",
-    "HELP_LABEL": "Why should I verify my email address ?",
-    "HELP_TEXT": "Verifying your email address improves the security of your account. Once you have verified your email address, both your password and access to your email account are required in order to make any changes to your account credentials, such as your password and contact email address. This helps further protect your account from being stolen by a potential phisher.",
-    "HELP_EMAIL_LABEL": "I never received the verification email, what should I do ?",
-    "HELP_EMAIL_TEXT": "If you do not receive your signup verification email and you are running a Spam filter, check and make sure the message has not been filtered as spam. Please try adding {email} to your contacts or trusted senders list within your email client and attempt to re-verify your email address. You can also click the button below and we'll send you the email again.",
-    "TOKEN_LABEL": "Enter the code received by email to validate your email address",
-    "EMAIL_VERIFIED": "Your address has been verified. An email has been sent to you to confirm the change.",
-    "ACTION": "Resend verification code",
-    "ERROR_MESSAGE": "Invalid code, request a new one"
   },
   "KSubscriptionsManager": {
     "TITLE": "Manage my subscriptions",
@@ -470,12 +443,6 @@
   },
   "KScrollToTop": {
     "TOOLTIP": "Scroll to top"
-  },
-  "KHistory": {
-    "EMPTY_HISTORY": "@:NO_ITEM"
-  },
-  "KColumn": {
-    "EMPTY_COLUMN": "@:NO_ITEM"
   },
   "KCard": {
     "MORE_DETAILS": "More details",

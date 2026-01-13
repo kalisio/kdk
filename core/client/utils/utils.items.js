@@ -26,5 +26,9 @@ export const CardSectionProps = {
   dense: {
     type: Boolean,
     default: false
+  },
+  context: {
+    type: Object,
+    default: () => null
   }
 }

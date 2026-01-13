@@ -20,6 +20,7 @@ module.exports = {
     service: API_PREFIX + '/users',
     entity: 'user',
     identityFields: ['email', 'profile.phone'],
+    disallowRegistration: true,
     authStrategies: [
       'jwt',
       'local'
@@ -83,6 +84,7 @@ module.exports = {
       bucket: process.env.S3_BUCKET,
       prefix: 'import-export'
     },
+    allowedServicePaths: 'api/users',
     workingDir: 'test/api/core/tmp'
   },
   mailer: {

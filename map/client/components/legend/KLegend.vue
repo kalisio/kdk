@@ -146,7 +146,7 @@ function refresh () {
   // set the current zoom
   zoom.value = CurrentActivity.value.getCenter().zoomLevel
   // set the layers for which it is required to display a legend
-  let iterator = {
+  const iterator = {
     layers: [],
     groups: []
   }

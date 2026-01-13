@@ -14,6 +14,7 @@
         v-model="fieldValues[i - 1]"
         style="width: 5ch"
         :disable="disabled"
+        :autofocus="hasFocus"
         outlined
         :ref="el => updateFieldRef(el, i - 1)"
         @update:model-value='updateModel(i)'

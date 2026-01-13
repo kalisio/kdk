@@ -12,6 +12,7 @@
     :disable="disabled"
     :error="hasError"
     :error-message="errorLabel"
+    :autofocus="hasFocus"
     bottom-slot
     @blur="onChanged"
     @update:model-value="onUpdated"

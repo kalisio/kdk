@@ -1,8 +1,10 @@
 import _ from 'lodash'
 import L from 'leaflet'
+import logger from 'loglevel'
 import bearing from '@turf/bearing'
 import { getType, getCoords, getGeom } from '@turf/invariant'
 import { uid } from 'quasar'
+import { Context } from '../../../../core/client/context.js'
 import { Store } from '../../../../core/client/store.js'
 import { Units } from '../../../../core/client/units.js'
 import { api } from '../../../../core/client/api.js'
@@ -57,7 +59,9 @@ export const editLayers = {
   },
   methods: {
     isLayerEdited (layer) {
-      return this.editedLayer && (this.editedLayer.name === layer.name)
+      if (!this.editedLayer) return false
+      if (this.editedLayer._id && layer._id) return (this.editedLayer._id === layer._id)
+      else return (this.editedLayer.name === layer.name)
     },
     getGeoJsonEditOptions (options, geometryTypes) {
       let filteredOptions = options
@@ -95,6 +99,12 @@ export const editLayers = {
             // Skip polygon editing style if not editing polygons
             if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Polygon') && !geometryTypes.includes('MultiPolygon')) return style(feature)
             else return getDefaultPolygonStyle(feature, layerStyle, _.get(this, 'activityOptions.engine.style.edition.polygon'))
+          }
+          const isPoint = ((feature.geometry.type === 'Point') || (feature.geometry.type === 'MultiPoint'))
+          if (isPoint) {
+            // Skip point editing style if not editing points
+            if (!_.isEmpty(geometryTypes) && !geometryTypes.includes('Point') && !geometryTypes.includes('MultiPoint')) return style(feature)
+            else return getDefaultPointStyle(feature, layerStyle, _.get(this, 'activityOptions.engine.style.edition.point'))
           }
           logger.warn(`[KDK] the geometry of type of ${feature.geometry.type} is not supported`)
         },
@@ -398,7 +408,7 @@ export const editLayers = {
           layerId: this.editedLayer._id,
           layerName: this.editedLayer.name,
           featureId: feature._id,
-          contextId: Store.get('context')
+          contextId: Context.get()
         })
       })
     },

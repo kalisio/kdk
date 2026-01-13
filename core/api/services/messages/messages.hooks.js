@@ -11,9 +11,15 @@ export default {
       marshallComparisonQuery
     ],
     get: [],
-    create: [commonHooks.setNow('createdAt')],
-    update: [],
-    patch: [],
+    create: [commonHooks.setNow('createdAt', 'updatedAt')],
+    update: [
+      commonHooks.discard('createdAt', 'updatedAt'),
+      commonHooks.setNow('updatedAt')
+    ],
+    patch: [
+      commonHooks.discard('createdAt', 'updatedAt'),
+      commonHooks.setNow('updatedAt')
+    ],
     remove: []
   },
 

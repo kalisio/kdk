@@ -1,21 +1,23 @@
 <template>
-  <q-avatar v-if="avatar" :size="size">
-    <q-img :src="avatar" />
-    <q-tooltip v-if="tooltip">
-      {{ name }}
-    </q-tooltip>
-  </q-avatar>
-  <q-avatar v-else-if="icon" :size="size" :color="color" text-color="white" :icon="icon">
-    <q-tooltip v-if="tooltip">
-      {{ name }}
-    </q-tooltip>
-  </q-avatar>
-  <q-avatar v-else-if="initials" :size="size" color="primary" text-color="white">
-    {{ initials }}
-    <q-tooltip v-if="tooltip">
-      {{ name }}
-    </q-tooltip>
-  </q-avatar>
+  <div>
+    <q-avatar v-if="avatar" :size="size">
+      <q-img :src="avatar" />
+      <q-tooltip v-if="tooltip">
+        {{ name }}
+      </q-tooltip>
+    </q-avatar>
+    <q-avatar v-else-if="icon" :size="size" :color="color" text-color="white" :icon="icon">
+      <q-tooltip v-if="tooltip">
+        {{ name }}
+      </q-tooltip>
+    </q-avatar>
+    <q-avatar v-else-if="initials" :size="size" color="primary" text-color="white">
+      {{ initials }}
+      <q-tooltip v-if="tooltip">
+        {{ name }}
+      </q-tooltip>
+    </q-avatar>
+  </div>
 </template>
 
 <script>
@@ -75,13 +77,15 @@ export default {
             avatar.uri = data.uri
             this.avatar = avatar.uri
             */
-            this.avatar = await Storage.getObjectUrl({
+            const options = {
               file: _.get(avatar, 'name'),
               key: avatarId,
               query: {
                 timestamp: Date.now()
-              }
-            })
+              },
+              ...(!_.isNil(_.get(this, 'options.context')) && { context: this.options.context })
+            }
+            this.avatar = await Storage.getObjectUrl(options)
             return
           }
           this.avatar = null

@@ -10,6 +10,8 @@ import { getFeatureId } from '../utils.js'
 const TiledFeatureLayer = L.GridLayer.extend({
   initialize (options) {
     this.enableDebug = _.get(options, 'enableDebug', false)
+    this.enableMergeRequests = _.get(options, 'enableMergeRequests', true)
+
     // this.enableDebug = true
     L.GridLayer.prototype.initialize.call(this, options)
 
@@ -168,98 +170,99 @@ const TiledFeatureLayer = L.GridLayer.extend({
   mergeRequests (tiles) {
     const requests = []
 
-    // Try to merge tiles vertically, then horizontally
-    const sortedTiles = tiles.sort((a, b) => {
-      if (a.coords.x === b.coords.x) {
-        return a.coords.y < b.coords.y ? -1 : a.coords.y !== b.coords.y ? 1 : 0
-      }
-      return a.coords.x < b.coords.x ? -1 : 1
-    })
+    if (this.enableMergeRequests) {
+      // Try to merge tiles vertically, then horizontally
+      const sortedTiles = tiles.sort((a, b) => {
+        if (a.coords.x === b.coords.x) {
+          return a.coords.y < b.coords.y ? -1 : a.coords.y !== b.coords.y ? 1 : 0
+        }
+        return a.coords.x < b.coords.x ? -1 : 1
+      })
 
-    if (sortedTiles.length) {
-      const z = sortedTiles[0].coords.z
-      const vrequests = []
-      sortedTiles.forEach((tile) => {
-        let newRequest = true
-        if (vrequests.length) {
-          const r = vrequests[vrequests.length - 1]
-          if (tile.coords.x === r.x) {
-            if (tile.coords.y === r.maxy + 1) {
-              r.tiles.push(tile)
-              r.maxy = tile.coords.y
+      if (sortedTiles.length) {
+        const z = sortedTiles[0].coords.z
+        const vrequests = []
+        sortedTiles.forEach((tile) => {
+          let newRequest = true
+          if (vrequests.length) {
+            const r = vrequests[vrequests.length - 1]
+            if (tile.coords.x === r.x) {
+              if (tile.coords.y === r.maxy + 1) {
+                r.tiles.push(tile)
+                r.maxy = tile.coords.y
+                newRequest = false
+              }
+            }
+          }
+          if (newRequest) {
+            vrequests.push({
+              x: tile.coords.x,
+              miny: tile.coords.y,
+              maxy: tile.coords.y,
+              tiles: [tile]
+            })
+          }
+        })
+
+        // Now try to merge horizontally adjacent vertical requests
+        vrequests.forEach((v) => {
+          let newRequest = true
+          if (requests.length) {
+            const h = requests[requests.length - 1]
+            if (v.miny === h.miny && v.maxy === h.maxy && v.x === h.maxx + 1) {
+              h.tiles.push(...v.tiles)
+              h.maxx = v.x
               newRequest = false
             }
           }
-        }
-        if (newRequest) {
-          vrequests.push({
-            x: tile.coords.x,
-            miny: tile.coords.y,
-            maxy: tile.coords.y,
-            tiles: [tile]
-          })
-        }
-      })
+          if (newRequest) {
+            requests.push({
+              minx: v.x,
+              maxx: v.x,
+              miny: v.miny,
+              maxy: v.maxy,
+              tiles: [].concat(v.tiles)
+            })
+          }
+        })
 
-      // Now try to merge horizontally adjacent vertical requests
-      vrequests.forEach((v) => {
-        let newRequest = true
-        if (requests.length) {
-          const h = requests[requests.length - 1]
-          if (v.miny === h.miny && v.maxy === h.maxy && v.x === h.maxx + 1) {
-            h.tiles.push(...v.tiles)
-            h.maxx = v.x
-            newRequest = false
+        // Compute final query
+        requests.forEach((r) => {
+          const minp = L.point(r.minx, r.miny); const maxp = L.point(r.maxx, r.maxy)
+          minp.z = maxp.z = z
+          const bounds = this._tileCoordsToBounds(minp)
+          bounds.extend(this._tileCoordsToBounds(maxp))
+          r.query = {
+            south: bounds.getSouth(),
+            north: bounds.getNorth(),
+            west: bounds.getWest(),
+            east: bounds.getEast()
+          }
+        })
+
+        if (this.enableDebug) {
+          let numTilesR = 0
+          requests.forEach((r) => { numTilesR += r.tiles.length })
+          if (numTilesR !== tiles.length) {
+            logger.debug('TiledFeatureLayer: less requested tiles than expected !')
           }
         }
-        if (newRequest) {
-          requests.push({
-            minx: v.x,
-            maxx: v.x,
-            miny: v.miny,
-            maxy: v.maxy,
-            tiles: [].concat(v.tiles)
-          })
-        }
-      })
-
-      // Compute final query
-      requests.forEach((r) => {
-        const minp = L.point(r.minx, r.miny); const maxp = L.point(r.maxx, r.maxy)
-        minp.z = maxp.z = z
-        const bounds = this._tileCoordsToBounds(minp)
-        bounds.extend(this._tileCoordsToBounds(maxp))
-        r.query = {
-          south: bounds.getSouth(),
-          north: bounds.getNorth(),
-          west: bounds.getWest(),
-          east: bounds.getEast()
-        }
-      })
-
-      if (this.enableDebug) {
-        let numTilesR = 0
-        requests.forEach((r) => { numTilesR += r.tiles.length })
-        if (numTilesR !== tiles.length) {
-          logger.debug('TiledFeatureLayer: less requested tiles than expected !')
-        }
       }
+    } else {
+      // Request merging disabled => one request per tile
+      tiles.forEach((tile) => {
+        const r = {
+          tiles: [tile],
+          query: {
+            south: tile.bbox.getSouth(),
+            north: tile.bbox.getNorth(),
+            west: tile.bbox.getWest(),
+            east: tile.bbox.getEast()
+          }
+        }
+        requests.push(r)
+      })
     }
-
-    /* One request per tile
-    tiles.forEach((tile) => {
-      const r = {
-        tiles: [tile],
-        query: {
-          south: tile.bbox.getSouth(),
-          north: tile.bbox.getNorth(),
-          west: tile.bbox.getWest(),
-          east: tile.bbox.getEast()
-        }
-      }
-      requests.push(r)
-    })
-    */
 
     if (this.enableDebug && tiles.length) {
       logger.debug(`TiledFeatureLayer: ${tiles.length} requests reduced to ${requests.length}`)

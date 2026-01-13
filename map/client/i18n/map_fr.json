@@ -15,6 +15,7 @@
     "TAGS_MANAGER": "Gestionnaire d'étiquettes",
     "TIME_SERIES": "Series temporelles",
     "POSITION": "Coordonnées géographiques",
+    "ZOOM_CONTROL": "Boutons de zoom",
     "NORTH_ARROW": "Flèche nord",
     "MEASURE_TOOL": "Outil de mesure",
     "PRINT_TOOL": "Outil d'impression",
@@ -112,6 +113,12 @@
       "SAVE_LABEL": "Sauvegarder la couche",
       "PRINT_VIEW": "Imprimer la vue",
       "REMOVE_LABEL": "Supprimer"
+    },
+    "gesture": {
+      "TOUCH": "Utilisez deux doigts pour déplacer la carte",
+      "SCROLL": "Utilisez Ctrl + molette pour zoomer",
+      "SCROLL_MAC": "Utilisez ⌘ + molette pour zoomer",
+      "CTRL": "Utilisez Ctrl + molette pour zoomer"
     },
     "timeseries": {
       "FORECAST_PROBE": "Prévisions"
@@ -459,14 +466,16 @@
   },
   "KTimeSeries": {
     "LABEL": "Séries chronologiques",
-    "RESTORE_TIME_RANGE": "Restaurer la vue précédente",
-    "NO_DATA_AVAILABLE": "Aucune donnée disponible",
-    "CENTER_ON": "Centrer la vue sur la sonde",
-    "SPAN": "Intervalle de la série temporelle",
+    "CHART_SERIE_TOOLTIP": "Voir le graphe",
+    "TABLE_SERIE_TOOLTIP": "Voir la table",
+    "LOGARITHMIC_SERIE_TOOLTIP": "Echelle logarithmique",
+    "LINEAR_SERIE_TOOLTIP": "Echelle linéaire",
+    "PIN_SERIE_TOOLTIP": "Epingler le graphe",
+    "UNPIN_SERIE_TOOLTIP": "Désépingler le graphe",
+    "EXPORT_SERIE_TOOLTIP": "Exporter les données",
+    "RESTORE_ZOOM": "Restaurer la vue précédente",
     "RUN": "Réseau de prévision",
-    "TIME_LABEL": "Temps",
-    "EXPORT_SERIES": "Exporter les données",
-    "SERIES_EXPORT_FILE": "Series"
+    "CENTER_ON": "Centrer la vue sur la sonde"
   },
   "KStackableTimeSeries": {
     "NO_DATA_AVAILABLE": "Aucune donnée disponible"

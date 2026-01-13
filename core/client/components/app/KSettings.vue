@@ -45,6 +45,7 @@ onMounted(async () => {
   else {
     const mapping = serviceSettings.getSettingsMapping()
     schemaFilter.value = Object.keys(mapping).filter(value => _.get(mapping, value))
+    if (_.isEmpty(schemaFilter.value)) schemaFilter.value = null
   }
 })
 

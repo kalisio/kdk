@@ -14,6 +14,7 @@
     :disable="disabled"
     :error="hasError"
     :error-message="errorLabel"
+    :autofocus="hasFocus"
     bottom-slots
   >
     <!-- Helper -->

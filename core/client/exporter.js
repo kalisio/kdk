@@ -32,7 +32,7 @@ const ExporterQueue = {
         filename = `${_.get(request, 'basename', request.service)}_${timestamp}.${request.format}`
       }
       // retrieve the target service path
-      let servicePath = api.getServicePath(request.service)
+      let servicePath = api.getServicePath(request.service, request.context)
       if (servicePath.startsWith('/')) servicePath = servicePath.substring(1)
       // retrieve the transform assigned to the format
       const transform = _.get(request, 'transform.' + request.format)

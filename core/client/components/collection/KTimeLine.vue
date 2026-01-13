@@ -43,7 +43,7 @@
             <q-timeline-entry :color="getColor(item)">
               <template v-slot:title>
                 <slot name="title">
-                  <div v-if="getTitle(item)" class="text-h6">
+                  <div v-if="getTitle(item)" class="text-h6 ellipsis">
                     {{ getTitle(item) }}
                   </div>
                 </slot>
@@ -78,7 +78,7 @@
                   </div>
                 </slot>
               </template>
-              <div :class="dense ? 'q-pr-sm' : 'q-pr-md'">
+              <div :class="{ 'q-pr-sm': dense, 'q-pr-md': !dense }">
                 <div v-if="bodyRenderer" :class="bodyRendererClass">
                   <component
                     :id="item._id"
@@ -138,6 +138,7 @@
           :ref="scrollDownRefCreated"
           target="timeline-content"
           :loading="loadDoneFunction ? true : false"
+          @visibility-changed="onScrollDownVisibilityChanged"
       />
       </div>
       <div class="col-4 row justify-end">
@@ -145,6 +146,7 @@
           v-if="scrollToTop"
           :ref="scrollToTopRefCreated"
           target="timeline-content"
+          @visibility-changed="onScrollToTopVisibilityChanged"
         />
       </div>
     </div>
@@ -243,6 +245,10 @@ const props = defineProps({
     type: String,
     default: undefined
   },
+  heading: {
+    type: Boolean,
+    default: true
+  },
   footer: {
     type: [Array, Object],
     default: () => null
@@ -262,7 +268,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['collection-refreshed', 'selection-changed'])
+const emit = defineEmits(['collection-refreshed', 'selection-changed', 'scroll-state-changed'])
 
 // Data
 const $q = useQuasar()
@@ -333,6 +339,7 @@ function getColor (item) {
   return _.get(item, _.get(props.schema, 'colorField'))
 }
 function getHeading (item) {
+  if (!props.heading) return null
   const currentTimestamp = moment(_.get(item, _.get(props.schema, 'timestampField')))
   if (!currentTimestamp || !currentTimestamp.isValid()) return false
   const heading = _.capitalize(currentTimestamp.format('MMMM, YYYY'))
@@ -349,7 +356,7 @@ function onScroll () {
 }
 function onLoad (index, done) {
   // check whether the items are all loaded yet
-  if (items.value.length === nbTotalItems.value) {
+  if (items.value.length >= nbTotalItems.value) {
     done(true)
     return
   }
@@ -370,6 +377,12 @@ function onCollectionRefreshed () {
     loadDoneFunction.value = null
   }
 }
+function onScrollDownVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'bottom')
+}
+function onScrollToTopVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'top')
+}
 
 // Hooks
 onBeforeMount(() => {
@@ -378,6 +391,8 @@ onBeforeMount(() => {
 })
 onBeforeUnmount(() => {
   Events.off('user-abilities-changed', refreshCollection)
+  if (scrollDownRef.value) scrollDownRef.value.refresh.cancel()
+  if (scrollToTopRef.value) scrollToTopRef.value.refresh.cancel()
 })
 </script>
 
@@ -388,6 +403,7 @@ onBeforeUnmount(() => {
 }
 .q-timeline__title {
   margin-bottom: 4px;
+  max-width: 80vw;
 }
 .q-timeline__subtitle {
   margin-bottom: 0px;

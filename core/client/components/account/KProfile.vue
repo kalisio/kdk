@@ -1,18 +1,13 @@
 <template>
   <div v-if="User" class="full-width column">
     <!-- Header -->
-    <KPanel
-      id="profile-header"
-      :content="header"
-      :context="User"
-      class="q-py-sm full-width justify-end no-wrap"
-      @triggered="onTriggered"
-    />
+    <component v-if="hasHeader" :is="computedHeaderComponent" class="q-py-sm full-width justify-end no-wrap" />
     <!-- Avatar -->
     <div v-if="avatar && userAvatar" class="q-py-sm column items-center">
       <KAvatar
         :subject="userAvatar"
         size="5rem"
+        :options="options"
       />
     </div>
     <!-- Information -->
@@ -41,20 +36,13 @@
 import _ from 'lodash'
 import { computed } from 'vue'
 import { useUser } from '../../composables'
+import { loadComponent } from '../../utils/index.js'
+import config from 'config'
 import KAvatar from '../KAvatar.vue'
-import KPanel from '../KPanel.vue'
 import KChip from '../KChip.vue'
 
 // Props
-const props = defineProps({
-  editable: {
-    type: Boolean,
-    default: true
-  },
-  manageable: {
-    type: Boolean,
-    default: true
-  },
+defineProps({
   avatar: {
     type: Boolean,
     default: true
@@ -69,63 +57,14 @@ const props = defineProps({
   }
 })
 
-// Emit
-const emit = defineEmits(['triggered'])
-
 // Data
 const { User, name: userName, description: userDescription, avatar: userAvatar, role: userRole } = useUser()
+const headerComponent = _.get(config, 'profile.header')
+const hasHeader = !_.isNil(headerComponent)
+const options = { context: 'global' }
 
 // Computed
-const header = computed(() => {
-  const actions = []
-  if (props.editable) {
-    actions.push({
-      id: 'edit-profile',
-      icon: 'las la-edit',
-      size: '0.75rem',
-      tooltip: 'KProfile.EDIT_PROFILE',
-      dialog: {
-        component: 'editor/KEditor',
-        service: 'users',
-        objectId: User.value._id,
-        perspective: 'profile',
-        hideButtons: true,
-        cancelAction: 'CANCEL',
-        okAction: {
-          id: 'ok-button',
-          label: 'APPLY',
-          handler: 'apply'
-        }
-      }
-    })
-  }
-  if (props.manageable) {
-    const manageAccountAction = {
-      id: 'manage-account',
-      icon: 'las la-cog',
-      size: '0.75rem',
-      tooltip: 'KProfile.MANAGE_ACCOUNT',
-      dialog: {
-        component: 'account/KAccount',
-        okAction: 'CLOSE'
-      }
-    }
-    if (_.has(User.value, 'isVerified') && !User.value.isVerified) {
-      manageAccountAction.badge = {
-        rounded: true,
-        floating: true,
-        class: 'q-ma-sm',
-        color: 'red',
-        icon: { name: 'fas fa-exclamation', size: '8px' }
-      }
-    }
-    actions.push(manageAccountAction)
-  }
-  return actions
+const computedHeaderComponent = computed(() => {
+  return loadComponent(headerComponent)
 })
-
-// Functions
-function onTriggered (args) {
-  emit('triggered', args)
-}
 </script>

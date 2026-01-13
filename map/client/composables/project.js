@@ -38,7 +38,7 @@ export function useProject (options = {}) {
 
   // Functions
   function hasProject () {
-    return projectId.value
+    return projectId.value || project.value
   }
   function isProjectLoaded () {
     return project.value

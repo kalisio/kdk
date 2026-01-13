@@ -18,7 +18,13 @@ async function authenticate(authentication) {
   // Do it based on the 'login' event does not work fine due to interleaved async operations
   await setOfflineServicesDocumentHandle()
   // Anonymous user or user account ?
+  const payload = _.get(authentication, 'authentication.payload')
+  const subjectId = payload && (payload.sub || payload.appId)
   user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
+  // If no user we also allow for a stateless token with permissions inside
+  if (!authentication.user && subjectId) {
+    Object.assign(user, { _id: subjectId }, payload)
+  }
   Store.set('user', user)
   await updateAbilities()
 }

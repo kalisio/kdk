@@ -102,6 +102,7 @@
               :ref="scrollDownRefCreated"
               target="grid-content"
               :loading="loadDoneFunction ? true : false"
+              @visibility-changed="onScrollDownVisibilityChanged"
           />
           </div>
           <div class="col-4 row justify-end">
@@ -109,6 +110,7 @@
               v-if="scrollToTop"
               :ref="scrollToTopRefCreated"
               target="grid-content"
+              @visibility-changed="onScrollToTopVisibilityChanged"
             />
           </div>
         </div>
@@ -150,7 +152,11 @@ import KPanel from '../KPanel.vue'
 const props = defineProps({
   service: {
     type: String,
-    required: true
+    required: false
+  },
+  getService: {
+    type: Function,
+    required: false
   },
   baseQuery: {
     type: Object,
@@ -219,7 +225,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['collection-refreshed', 'selection-changed'])
+const emit = defineEmits(['collection-refreshed', 'selection-changed', 'scroll-state-changed'])
 
 // Data
 const { items, nbTotalItems, nbPages, currentPage, refreshCollection, resetCollection } = useCollection(toRefs(props))
@@ -277,6 +283,12 @@ function onCollectionRefreshed () {
     loadDoneFunction.value = null
   }
 }
+function onScrollDownVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'bottom')
+}
+function onScrollToTopVisibilityChanged (isVisible) {
+  emit('scroll-state-changed', isVisible ? 'scroll' : 'top')
+}
 
 // Hooks
 onBeforeMount(() => {
@@ -286,6 +298,8 @@ onBeforeMount(() => {
 })
 onBeforeUnmount(() => {
   Events.off('user-abilities-changed', refreshCollection)
+  if (scrollDownRef.value) scrollDownRef.value.refresh.cancel()
+  if (scrollToTopRef.value) scrollToTopRef.value.refresh.cancel()
 })
 
 // Expose

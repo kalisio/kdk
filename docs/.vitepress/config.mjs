@@ -76,6 +76,8 @@ function getGuidesSidebar () {
       text: 'Migration', 
       collapsed: true, 
       items: [
+        { text: 'v2.8', link: '/guides/migration/v2.8' },
+        { text: 'v2.7', link: '/guides/migration/v2.7' },
         { text: 'v2.6', link: '/guides/migration/v2.6' },
         { text: 'v2.5', link: '/guides/migration/v2.5' }
       ]
@@ -102,6 +104,7 @@ function getAPISidebar () {
       items: [
         { text: 'Overview', link: '/api/core/introduction' },
         { text: 'Application', link: '/api/core/application' },
+        { text: 'Client', link: '/api/core/client' },
         { text: 'Services', link: '/api/core/services' },
         { text: 'Hooks', link: '/api/core/hooks' },
         { text: 'Utilities', link: '/api/core/utilities' },

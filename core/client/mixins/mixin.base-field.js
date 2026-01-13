@@ -53,6 +53,9 @@ export const baseField = {
     helperContext () {
       return _.get(this.properties.field.helper, 'context', null)
     },
+    hasFocus () {
+      return _.get(this.properties.field, 'focus', false)
+    },
     hasError () {
       return !_.isEmpty(this.error)
     },
@@ -117,9 +120,6 @@ export const baseField = {
       }
       // Tell the form that this field has a new value.
       // Consequently the form will validate or invalidate the field
-      // Warning: This method must be called once the form is mounted
-      // We need to force a refresh so that the model is correctly updated by Vuejs
-      await this.$nextTick()
       this.$emit('field-changed', this.properties.name, this.model)
     },
     apply (object, field) {

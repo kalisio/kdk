@@ -11,6 +11,7 @@
     :disable="disabled"
     :error="hasError"
     :error-message="errorLabel"
+    :autofocus="hasFocus"
     bottom-slots
     :autocomplete="autocomplete"
     @blur="onChanged"

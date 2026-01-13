@@ -78,6 +78,36 @@ export function removeMessagesService (options = {}) {
   return app.removeService(app.getService('messages', options.context))
 }
 
+export function createConfigurationsService (options = {}) {
+  const app = this
+  return app.createService('configurations', Object.assign({
+    servicesPath,
+    modelsPath
+  }, options))
+}
+
+export async function createDefaultConfigurations (context) {
+  const app = this
+  const defaultConfigurations = app.get('defaultConfigurations')
+  if (!defaultConfigurations) return
+  const configurationsService = app.getService('configurations', context)
+  // Create default configurations if not already done
+  const configurations = await configurationsService.find({ paginate: false })
+  for (let i = 0; i < defaultConfigurations.length; i++) {
+    const defaultConfiguration = defaultConfigurations[i]
+    const createdConfiguration = _.find(configurations, { name: defaultConfiguration.name })
+    if (!createdConfiguration) {
+      app.logger.info('Initializing default configuration (name = ' + defaultConfiguration.name + ')')
+      await configurationsService.create(defaultConfiguration)
+    }
+  }
+}
+
+export function removeConfigurationsService (options = {}) {
+  const app = this
+  return app.removeService(app.getService('configurations', options.context))
+}
+
 export function createDatabasesService (options = {}) {
   const app = this
 
@@ -99,11 +129,11 @@ export function createTagsService (options = {}) {
   }, options))
 }
 
-export async function createDefaultTags () {
+export async function createDefaultTags (context) {
   const app = this
   const defaultTags = app.get('tags').defaultTags
   if (!defaultTags) return
-  const tagsService = app.getService('tags')
+  const tagsService = app.getService('tags', context)
   // Create default tags if not already done
   const tags = await tagsService.find({ paginate: false })
   for (let i = 0; i < defaultTags.length; i++) {
@@ -174,5 +204,11 @@ export default async function () {
   if (tagsConfig) {
     await createTagsService.call(app, tagsConfig)
     debug('\'tags\' service created')
+  }
+
+  const configurationsConfig = app.get('configurations')
+  if (configurationsConfig) {
+    await createConfigurationsService.call(app, configurationsConfig)
+    debug('\'configurations\' service created')
   }
 }

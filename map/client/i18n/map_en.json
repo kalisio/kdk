@@ -15,6 +15,7 @@
     "TAGS_MANAGER": "Tags manager",
     "TIME_SERIES": "Time series",
     "POSITION": "Geographical coordinates",
+    "ZOOM_CONTROL": "Zoom control",
     "NORTH_ARROW": "North arrow",
     "MEASURE_TOOL": "Measure tool",
     "PRINT_TOOL": "Print tool",
@@ -112,6 +113,12 @@
       "SAVE_LABEL": "Save layer",
       "PRINT_VIEW": "Print view",
       "REMOVE_LABEL": "Remove"
+    },
+    "gesture": {
+      "TOUCH": "Use two fingers to move the map",
+      "SCROLL": "Use Ctrl + scroll to zoom the map",
+      "SCROLL_MAC": "Use ⌘ + scroll to zoom the map",
+      "CTRL": "Use Ctrl + scroll to zoom the map"
     },
     "timeseries": {
       "FORECAST_PROBE": "Forecast"
@@ -458,15 +465,17 @@
     "OUTSIDE_MAP": "Indeterminated position"
   },
   "KTimeSeries": {
-    "LABEL": "Time Series",
-    "RESTORE_TIME_RANGE": "Restore previous view",
-    "NO_DATA_AVAILABLE": "No data available",
-    "CENTER_ON": "Center the view on the probed location",
-    "SPAN": "Timeseries span",
+    "LABEL": "Time series",
+    "CHART_SERIE_TOOLTIP": "View graph",
+    "TABLE_SERIE_TOOLTIP": "View table",
+    "LOGARITHMIC_SERIE_TOOLTIP": "Logarithmic scale",
+    "LINEAR_SERIE_TOOLTIP": "Linear scale",
+    "PIN_SERIE_TOOLTIP": "Pin graph",
+    "UNPIN_SERIE_TOOLTIP": "Unpin graph",
+    "EXPORT_SERIE_TOOLTIP": "Export data",
+    "RESTORE_ZOOM": "Restore previous view",
     "RUN": "Forecast run",
-    "TIME_LABEL": "Time",
-    "EXPORT_SERIES": "Export data",
-    "SERIES_EXPORT_FILE": "Series"
+    "CENTER_ON": "Center the view on the probed location"
   },
   "KStackableTimeSeries": {
     "NO_DATA_AVAILABLE": "No data available"

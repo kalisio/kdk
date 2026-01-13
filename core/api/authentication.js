@@ -29,6 +29,16 @@ export class Authentication extends AuthenticationService {
       return {}
     }
   }
+
+  // Similarly the subject will not be set by Feathers for stateless tokens that do not target existing users.
+  async getTokenOptions (authResult, params) {
+    const jwtOptions = await super.getTokenOptions(authResult, params)
+    if (!jwtOptions.subject) {
+      const subject = _.get(authResult, 'authentication.payload.sub')
+      if (subject) jwtOptions.subject = subject
+    }
+    return jwtOptions
+  }
 }
 
 export class AuthenticationProviderStrategy extends OAuthStrategy {
@@ -104,6 +114,7 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
     const { identityFields } = authConfig
     const { entity } = this.configuration
     const renewJwt = _.get(this.configuration, 'renewJwt', true)
+    const { provider, ...paramsWithoutProvider } = params
 
     if (!accessToken) {
       throw new NotAuthenticated('No access token')
@@ -141,7 +152,8 @@ export class JWTAuthenticationStrategy extends JWTStrategy {
           $or: _.reduce(identityFields, (or, field) => or.concat([{ [field]: payload.sub }]), []),
           $limit: 1
         }
-        const response = await this.entityService.find({ ...params, query })
+        // Avoid sending provider to internal call as it might raises some issues with hooks relying on it otherwise
+        const response = await this.entityService.find({ ...paramsWithoutProvider, query })
         const [value = null] = response.data ? response.data : response
         // Otherwise assume a stateless token
         if (value) {

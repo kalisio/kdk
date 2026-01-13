@@ -262,11 +262,11 @@ export function removeStylesService (options = {}) {
   return app.removeService(app.getService('styles', options.context))
 }
 
-export async function createDefaultStyles () {
+export async function createDefaultStyles (context) {
   const app = this
   const defaultStyles = app.get('styles').defaultStyles
   if (!defaultStyles) return
-  const stylesService = app.getService('styles')
+  const stylesService = app.getService('styles', context)
   // Create default styles if not already done
   const styles = await stylesService.find({ paginate: false })
   for (let i = 0; i < defaultStyles.length; i++) {

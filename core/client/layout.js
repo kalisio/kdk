@@ -35,7 +35,7 @@ const defaults = {
   header: { ...contentDefaults, size: [undefined, 0] },
   footer: { ...contentDefaults, size: [undefined, 0] },
   page: { ...contentDefaults, size: [0, 0] },
-  stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies },
+  stickies: { ...contentDefaults, zIndex: DefaultZIndex.stickies, expand: false },
   fab: { ...contentDefaults, icon: 'las la-ellipsis-v', position: 'bottom-right', offset: [16, 16], zIndex: DefaultZIndex.fab },
   panes: {
     left: { ...contentDefaults, ...paneDefaults, sizes: 300, zIndex: DefaultZIndex.drawer },
@@ -106,14 +106,14 @@ export const Layout = {
   set (layout) {
     if (_.has(layout, 'view')) this.setView(layout.view)
     if (_.has(layout, 'padding')) this.setPadding(layout.padding)
-    if (_.has(layout, 'header')) this.setHeader(layout.header)
-    if (_.has(layout, 'footer')) this.setFooter(layout.footer)
-    if (_.has(layout, 'page')) this.setPage(layout.page)
-    if (_.has(layout, 'stickies')) this.setStickies(layout.stickies)
-    if (_.has(layout, 'fab')) this.setFab(layout.fab)
+    this.setHeader(layout.header)
+    this.setFooter(layout.footer)
+    this.setPage(layout.page)
+    this.setStickies(layout.stickies)
+    this.setFab(layout.fab)
     this.placements.forEach(placement => {
-      if (_.has(layout, `panes.${placement}`)) this.setPane(placement, _.get(layout, `panes.${placement}`))
-      if (_.has(layout, `windows.${placement}`)) this.setWindow(placement, _.get(layout, `windows.${placement}`))
+      this.setPane(placement, _.get(layout, `panes.${placement}`))
+      this.setWindow(placement, _.get(layout, `windows.${placement}`))
     })
     if (_.has(layout, 'mode')) this.setMode(layout.mode)
     if (_.has(layout, 'focus')) this.setFocus(layout.focus)

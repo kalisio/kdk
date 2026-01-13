@@ -2,6 +2,7 @@ import _ from 'lodash'
 import sift from 'sift'
 import { api, i18n, Store } from '../../../core/client/index.js'
 import { buildUrl } from '../../../core/common/index.js'
+import { getCatalogProjectQuery, getViewsProjectQuery } from './utils.project.js'
 
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
@@ -104,17 +105,19 @@ export async function getLayers (options = {}) {
     context: '',
     planetApi: api
   })
-
+  // We expect the project object to expose the underlying API
+  const planetApi = (options.project && typeof options.project.getPlanetApi === 'function' ? options.project.getPlanetApi() : options.planetApi)
+    
   let layers = []
-  const catalogService = options.planetApi.getService('catalog', options.context)
+  const catalogService = planetApi.getService('catalog', options.context)
   if (catalogService) {
-    const response = await catalogService.find({ query: options.query })
+    const response = await catalogService.find({ query: (options.project ? Object.assign(getCatalogProjectQuery(options.project), options.query) : options.query) })
     _.forEach(response.data, processTranslations)
     // Set which API to use to retrieve layer data
-    layers = layers.concat(response.data.map(layer => Object.assign(layer, { getPlanetApi: () => options.planetApi })))
+    layers = layers.concat(response.data.map(layer => Object.assign(layer, { getPlanetApi: () => planetApi })))
   }
   // Do we need to inject a token ?
-  await setEngineJwt(layers, options.planetApi)
+  await setEngineJwt(layers, planetApi)
   return layers
 }
 
@@ -124,9 +127,11 @@ export async function getCategories (options = {}) {
     context: '',
     planetApi: api
   })
+  // We expect the project object to expose the underlying API
+  const planetApi = (options.project && typeof options.project.getPlanetApi === 'function' ? options.project.getPlanetApi() : options.planetApi)
 
   let categories = []
-  const catalogService = options.planetApi.getService('catalog', options.context)
+  const catalogService = planetApi.getService('catalog', options.context)
   if (catalogService) {
     const response = await catalogService.find({ query: Object.assign({ type: 'Category' }, options.query) })
     _.forEach(response.data, processTranslations)
@@ -141,9 +146,11 @@ export async function getSublegends (options = {}) {
     context: '',
     planetApi: api
   })
+  // We expect the project object to expose the underlying API
+  const planetApi = (options.project && typeof options.project.getPlanetApi === 'function' ? options.project.getPlanetApi() : options.planetApi)
 
   let sublegends = []
-  const catalogService = options.planetApi.getService('catalog', options.context)
+  const catalogService = planetApi.getService('catalog', options.context)
   if (catalogService) {
     const response = await catalogService.find({ query: Object.assign({ type: 'Sublegend' }, options.query) })
     _.forEach(response.data, processTranslations)
@@ -173,13 +180,32 @@ export async function getViews (options = {}) {
     context: '',
     planetApi: api
   })
-
+  // We expect the project object to expose the underlying API
+  const planetApi = (options.project && typeof options.project.getPlanetApi === 'function' ? options.project.getPlanetApi() : options.planetApi)
+  
   let views = []
-  const catalogService = options.planetApi.getService('catalog', options.context)
+  const catalogService = planetApi.getService('catalog', options.context)
   if (catalogService) {
-    const response = await catalogService.find({ query: Object.assign({ type: 'Context' }, options.query) })
+    const response = await catalogService.find({
+      query: Object.assign({ type: 'Context' }, (options.project ? Object.assign(getViewsProjectQuery(options.project), options.query) : options.query))
+    })
     _.forEach(response.data, processTranslations)
     views = views.concat(response.data)
   }
   return views
+}
+
+// Order is given as an array of catalog item IDs or names
+export function orderCatalogItemsBy(items, itemsOrder) {
+  if (!_.isEmpty(itemsOrder)) {
+    for (let i = itemsOrder.length; i >= 0; i--) {
+      const itemIdOrName = itemsOrder[i]
+      // Move item to beginning of array          
+      const itemIndex = items.findIndex(item => (item?._id === itemIdOrName) || (item?.name === itemIdOrName))
+      if (itemIndex >= 0) {
+        const removedItems = items.splice(itemIndex, 1)
+        if (removedItems.length > 0) items.unshift(removedItems[0])
+      }
+    }
+  }
 }

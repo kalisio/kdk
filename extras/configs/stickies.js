@@ -6,7 +6,7 @@ module.exports = {
       offset: [0, 50],
       component: 'collection/KFilterView'
     })
-  },  
+  },
   position: (options) => {
     return Object.assign({
       id: 'position-sticky',
@@ -17,40 +17,50 @@ module.exports = {
     }, options)
   },
   target: (options) => {
-    return Object.assign({ 
+    return Object.assign({
       id: 'target-sticky',
       visible: false,
       position: 'center',
-      offset: [0, -20], 
+      offset: [0, -20],
       pointerEvents: 'none',
       component: 'stickies/KTarget'
     }, options)
   },
   levelSlider: (options) => {
-    return Object.assign({ 
-      id: 'level-slider-sticky', 
+    return Object.assign({
+      id: 'level-slider-sticky',
       visible: true,
-      position: 'right', 
-      offset: [40, 0], 
+      position: 'right',
+      offset: [40, 0],
       component: 'stickies/KLevelSlider'
     }, options)
   },
-  northArrow: (options) => {
-    return Object.assign({ 
-      id: 'north-arrow-sticky',
-      visible: true, 
+  zoomControl: (options) => {
+    return Object.assign({
+      id: 'zoom-control-sticky',
+      visible: true,
+      vertical: true,
       position: 'bottom-left',
-      offset: [110, 2], 
+      offset: [12, 60],
+      component: 'stickies/KZoomControl'
+    }, options)
+  },
+  northArrow: (options) => {
+    return Object.assign({
+      id: 'north-arrow-sticky',
+      visible: true,
+      position: 'bottom-left',
+      offset: [110, 2],
       pointerEvents: 'none',
-      component: 'stickies/KNorthArrow' 
+      component: 'stickies/KNorthArrow'
     }, options)
   },
   attribution: (options) => {
     return Object.assign({
       id: 'attribution-sticky',
-      visible: true, 
-      position: 'bottom-right', 
-      offset: [80, 24], 
+      visible: true,
+      position: 'bottom-right',
+      offset: [80, 24],
       component: 'stickies/KAttribution'
     }, options)
   }

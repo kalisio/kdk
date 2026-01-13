@@ -1,5 +1,5 @@
 <template>
-  <div class="column">
+  <div class="column no-wrap">
     <div id="style-manager-header"
       v-if="title || (toolbar && toolbar.length)"
       class="full-width"
@@ -16,36 +16,38 @@
         <KTagSelection :selection="tagsSelection" @selection-changed="onTagSelectionChanged" />
       </div>
     </div>
-    <div id="style-manager-content">
-      <q-tab-panels v-model="viewMode" animated>
-        <q-tab-panel name="list" class="q-pa-none">
-          <KGrid
-            service="styles"
-            :append-items="true"
-            :base-query="baseQuery"
-            :filter-query="filterQuery"
-            :nb-items-per-page="24"
-            :renderer="renderer"
-            class="fit"            
-          />
-          <KFollower
-            :follower="follower"
-            targetId="left-window-magnet"
-            anchor="bottom-right"
-          />
-        </q-tab-panel>
-        <q-tab-panel name="editor">
-          <div class="full-width column">
-            <KStyleEditor
-              ref="styleEditor"
-              :style="style"
-              @canceled="onCanceled"
-              @applied="onApplied"
-              class="col"
-            />
-          </div>
-        </q-tab-panel>
-      </q-tab-panels>
+    <div v-if="viewMode === 'list'"
+      id="style-manager-list"
+      class="col column"
+    >
+      <KGrid
+        service="styles"
+        :append-items="true"
+        :base-query="baseQuery"
+        :filter-query="filterQuery"
+        :nb-items-per-page="16"
+        :renderer="renderer"
+        :scrollToTop="false"
+        @scroll-state-changed="onScrollStateChanged"
+        class="col"
+        :class="{ 'q-pb-lg': isAtBottom }"
+      />
+      <KFollower
+        :follower="follower"
+        targetId="left-window-magnet"
+        anchor="bottom-right"
+      />
+    </div>
+    <div v-else
+      id="style-manager-editor"
+      class="col column"
+    >
+      <KStyleEditor
+        :style="style"
+        @canceled="onCanceled"
+        @applied="onApplied"
+        class="q-pa-md col"
+      />
     </div>
   </div>
 </template>
@@ -58,6 +60,7 @@ import { useCurrentActivity } from '../../composables/activity.js'
 import { isLayerStyleEditable, editLayerStyle, updateLayerWithFiltersStyle } from '../../utils/utils.layers.js'
 import { editFeaturesStyle } from '../../utils/utils.features.js'
 import { getTagsFilterOptions } from '../../../../core/client/utils/utils.tags.js'
+import { kmlStyleSpecialProperties } from '../../utils/utils.style.js'
 import KGrid from '../../../../core/client/components/collection/KGrid.vue'
 import KFollower from '../../../../core/client/components/KFollower.vue'
 import KTagSelection from '../../../../core/client/components/tags/KTagSelection.vue'
@@ -73,13 +76,13 @@ defineProps({
 
 // Data
 const { getSelectedFeaturesByLayer, CurrentActivity } = useCurrentActivity()
-const styleEditor = ref(null)
 const style = ref(null)
 const viewMode = ref('list')
 const baseQuery = ref({ $sort: { name: 1 } })
 const searchString = ref('')
 const tagsOptions = ref([])
 const tagsSelection = ref([])
+const isAtBottom = ref(false)
 const follower = {
   component: 'layout/KFab',
   direction: 'up',
@@ -216,7 +219,9 @@ function applyToSelection (styleToApply) {
           if (_.has(f, 'properties.entityStyle.wall')) geometryType = 'Polygon'
           else if (_.has(f, 'properties.entityStyle.corridor')) geometryType = 'Polygon'
         }
-        _.set(f, 'style', _.get(styleToApply, ['item', _.get(type, geometryType, 'point')], null))
+        const styleToKeep = _.pick(f.style, kmlStyleSpecialProperties)
+        const styleForGeometry = _.get(styleToApply, ['item', _.get(type, geometryType, 'point')], {})
+        _.set(f, 'style', _.merge({}, styleForGeometry, styleToKeep))
       })
       if (CurrentActivity.value.isInMemoryLayer(layer.layer)) {
         CurrentActivity.value.resetLayer(layer.layer)
@@ -240,6 +245,9 @@ function onApplied (style) {
 }
 function onCanceled () {
   viewMode.value = 'list'
+}
+function onScrollStateChanged (state) {
+  isAtBottom.value = (state === 'bottom')
 }
 
 // Hooks

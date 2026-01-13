@@ -16,14 +16,12 @@ import configuration from '@feathersjs/configuration'
 import errors from '@feathersjs/errors'
 import express, { authenticate } from '@feathersjs/express'
 import socketio from '@feathersjs/socketio'
-import mongodb from 'mongodb'
-import { Database, idToString } from './db.js'
+import { Database, isObjectID, idToString } from './db.js'
 import auth from './authentication.js'
 
 const debug = makeDebug('kdk:core:application')
 const debugLimiter = makeDebug('kdk:core:application:limiter')
 const { TooManyRequests, Forbidden, BadRequest } = errors
-const { ObjectID } = mongodb
 const { rest } = express
 const sift = siftModule.default
 
@@ -507,7 +505,7 @@ export function kdk (config = {}) {
         return app.service(app.get('apiPath') + '/' + context + '/' + path)
       } else if (context && typeof context === 'object') {
         // Could be Object ID or raw object
-        if (ObjectID.isValid(context)) return app.service(app.get('apiPath') + '/' + context.toString() + '/' + path)
+        if (isObjectID(context)) return app.service(app.get('apiPath') + '/' + context.toString() + '/' + path)
         else return app.service(app.get('apiPath') + '/' + context._id.toString() + '/' + path)
       } else {
         return app.service(app.get('apiPath') + '/' + path)

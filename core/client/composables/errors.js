@@ -12,18 +12,18 @@ export function useErrors () {
   const Route = useRoute()
 
   // Functions
-  function showError (error) {
+  function showError (error, options = { html: true }) {
     // Check if this error is a quiet one or not
     if (error.ignore) {
       // In this case simply log
       logger.error(error)
       return
     }
-    const notification = { type: 'negative', message: error.message || error.error_message || error.error, html: true }
+    const notification = { type: 'negative', message: error.message || error.error_message || error.error, html: options.html }
     // Check if user can retry to avoid this error
     if (error.retryHandler) {
       notification.actions = [{
-        label: this.$t('RETRY'),
+        label: i18n.tie('RETRY'),
         handler: error.retryHandler
       }]
       // Increase timeout so that user has a chance to retry
@@ -34,12 +34,14 @@ export function useErrors () {
   function showRouteError (route) {
     // We handle error on any page with query string
     if (route.query && (route.query.error_message || route.query.error)) {
-      showError(route.query)
+      // Avoid XSS in this case as a user can use the query paramter
+      showError(route.query, { html: false })
     }
     // OAuth login is using token set as route param like 'access_token=jwt'.
     // However in case of error it will be like 'error=message' instead.
     else if (route.params && route.params.token && route.params.token.startsWith('error=')) {
-      showError({ message: route.params.token.split('=')[1] })
+      // Avoid XSS in this case as a user can use the query paramter
+      showError({ message: route.params.token.split('=')[1] }, { html: false })
     }
   }
 

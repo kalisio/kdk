@@ -17,13 +17,12 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { ref } from 'vue'
 import { i18n } from '../../i18n.js'
 import KGrid from './KGrid.vue'
 
 // Props
-defineProps({
+const props = defineProps({
   columns: {
     type: Array,
     default: () => null
@@ -35,7 +34,9 @@ const columnRefs = ref([])
 
 // Functions
 function getColumn (value) {
-  return _.find(columnRefs.value, { name: value })
+  const index = props.columns.findIndex(column => column.name === value)
+  if (index === -1) return undefined
+  return columnRefs.value[index] || undefined
 }
 function getColumns (values) {
   return values.map(value => getColumn(value))

@@ -1,10 +1,13 @@
 import _ from 'lodash'
-import { marshallComparisonFields, marshallTime, marshallBooleanFields, marshallNumberFields, marshallDateFields } from '../marshall.js'
 import mongodb from 'mongodb'
+import errors from '@feathersjs/errors'
 import makeDebug from 'debug'
+import { marshallComparisonFields, marshallTime, marshallBooleanFields, marshallNumberFields, marshallDateFields } from '../marshall.js'
+import { isValidObjectID, isObjectID } from '../db.js'
 import { makeDiacriticPattern } from '../../common/utils.js'
 
 const { ObjectID } = mongodb
+const { Forbidden } = errors
 const debug = makeDebug('kdk:core:query:hooks')
 
 export function marshallTimeQuery (hook) {
@@ -59,10 +62,17 @@ export function marshallHttpQuery (hook) {
 }
 
 export async function aggregationQuery (hook) {
+  if (hook.type !== 'before') {
+    throw new Error('The \'aggregationQuery\' hook should only be used as a \'before\' hook.')
+  }
   const query = hook.params.query
   if (!query) return
   const service = hook.service
   if (query.$aggregation) {
+    // Generic aggregation request could allow to disclose or update information in DB so that it should only be used through controlled internal calls
+    if (hook.params.provider) {
+      throw new Forbidden('You are not allowed to perform aggregation')
+    }
     const collection = service.Model
     // Set result to avoid service DB call
     hook.result = await collection.aggregate(query.$aggregation.pipeline, query.$aggregation.options).toArray()
@@ -114,12 +124,12 @@ export function populateObject (options) {
     // Set the retrieved service on the same field or given one in hook params
     _.set(params, serviceProperty, service)
     // Let it work with id/name string or real object
-    if (typeof id === 'string' || ObjectID.isValid(id)) {
+    if (typeof id === 'string' || isObjectID(id)) {
       const args = { user: hook.params.user }
       let object
       try {
         // Get by ID or name ?
-        if (ObjectID.isValid(id)) {
+        if (isObjectID(id) || isValidObjectID(id)) {
           object = await service.get(id.toString(), args)
         } else {
           Object.assign(args, { query: { name: id.toString() }, paginate: false })
@@ -210,11 +220,11 @@ export function populateObjects (options) {
     } else {
       debug(`Populating ${idProperty} with ID ${id}`)
       // Let it work with id/name string or real object
-      if (typeof id === 'string' || ObjectID.isValid(id)) {
+      if (typeof id === 'string' || isObjectID(id)) {
         let object
         try {
           // Get by ID or name ?
-          if (ObjectID.isValid(id)) {
+          if (isObjectID(id) || isValidObjectID(id)) {
             object = await service.get(id.toString(), { user: hook.params.user })
           } else {
             const results = await service.find({ query: { name: id.toString() }, paginate: false, user: hook.params.user })
@@ -245,15 +255,31 @@ export function unpopulateObjects (options) {
   return unpopulateObject(options)
 }
 
+// Recursively transform any $regex on object to a new $regex managing diacritics.
+// Will flag the regex items with a diacritic property in order to avoid do it twice.
+export function toDiacriticRegex(object) {
+  if (Array.isArray(object)) {
+    object.forEach(toDiacriticRegex)
+  } else if (typeof object === 'object') {
+    _.forOwn(object, (value, key) => {
+      if (!value) return
+      // Check if applicable
+      if (value.$regex && !value.$regex.diacritic && value.$regex.source && !value.$diacriticSensitive) {
+        // Take care to support as well case sensitivity by keeping flags
+        value.$regex = new RegExp(makeDiacriticPattern(value.$regex.source), value.$regex.flags)
+        // Custom internal property to make the hook reentrant
+        value.$regex.diacritic = true
+      } else {
+        toDiacriticRegex(value)
+      }
+    })
+  }
+}
+
 // Used to manage diacritic insensitive fuzzy search
 export function diacriticSearch (options = {}) {
   return hook => {
     const query = hook.params.query
-    _.forOwn(query, (value, key) => {
-      if (value.$regex && value.$regex.source && !value.$diacriticSensitive) {
-        // Take care to support as well case sensitivity by keeping flags
-        query[key].$regex = new RegExp(makeDiacriticPattern(value.$regex.source), value.$regex.flags)
-      }
-    })
+    if (query) toDiacriticRegex(query)
   }
 }

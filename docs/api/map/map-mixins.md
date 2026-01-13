@@ -406,6 +406,8 @@ If you want to disable a default clustering configuration like `cluster: { disab
 The following options can be set as feature `properties` to manage more geometry types:
 * **geodesic** boolean set to `true` on a `LineString` will result in a geodesic line from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin
 * **geodesic** boolean set to `true` on a `Point` will result in a great circle from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin, which **radius** must be specified in meters
+* **wrap** additional [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin option, when **geodesic** is specified, defaults to `false`
+* **steps** additional [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin option, when **geodesic** is specified, defaults to `4` or `360` for circles
 * **gradient** color array set on a `LineString` will result in a color ramp applied to the line by mapping each point to the corresponding color in the array 
 * **mask** boolean set to `true` on a `Polygon` or `MultiPolygon` will result in the polygon(s) acting as a mask over the map
 * **offset** integer set to a number of pixels on a `LineString` will result in the line being offset by the specified number of pixels when drawn
@@ -505,6 +507,83 @@ The required fields are:
 Every property in the `gradientPath.properties` section will be added to the produced GeoJSON line string.
 
 ![Gradient Path Classes](../../.vitepress/public/images/gradient-path.png)
+
+## PMTiles Layer
+
+Make it possible to display and style [PMTiles](https://docs.protomaps.com/) datasets in the map as other layers. The display of the PMTiles data in the map is handled using the [protomaps-leaflet plugin](https://github.com/protomaps/protomaps-leaflet).
+
+* **createLeafletPMTilesLayer(options)** automatically registered PMTiles Leaflet layer constructor
+
+PMTiles layers support:
+ * current `time` update, provided the style used to display data takes time value into account
+ * current `level` update, provided the style used to display data takes level value into account
+ * layer filters based on MongoDB query langage
+ * KDK styles applied to layer filters
+ * KDK style, [MapBox style](https://docs.mapbox.com/style-spec/guides/) (partially) and protomaps style, although it's not possible to mix different style *types*.
+
+The code determine which style to use based on the following algorithm:
+ * if the `style` member is a string, then it assumes this is a json file to fetch defining a Mapbox style.
+ * if the `style` member is an object and contains at least one `symbolizer` subobject, then is assumes this is a protomaps style definition
+ * finally if the `style` member is not empty, then it assumes it's a KDK style definition
+
+Here's a minimal example of a PMTiles layer definition, using a KDK style :
+
+```javascript
+{
+    name: 'PMTiles layer',
+    type: 'OverlayLayer',
+    leaflet: {
+        type: 'pmtiles',                           // required
+        url: 'https://url.to/public/file.pmtiles', // required, points to PMTiles dataset
+        dataLayer: 'pmtile_layer',                 // required, defines in which PMTiles layer we'll fetch features
+                                                   // since that's not something we can define in the KDK style object
+        style: {
+            polygon: {
+                color: `<% if      (properties.type === 'car') { %>rgba(255, 0, 0, 1)<% }
+                           else if (properties.type === 'bus') { %>rgba(255, 255, 0, 1)<% }
+                           else                                { %>rgba(255, 0, 255, 1)<% }`
+            }
+        }
+    }
+}
+```
+
+::: info
+When using lodash template strings in style values, the evaluation context gets an object with the following members (among others):
+```javascript
+{
+    feature: { ... },    // the currently drawn feature
+    properties: { ... }, // the currently drawn feature's properties
+}
+```
+This allows to implement dynamic styling (supported in KDK and protomaps styles).
+To know the full evaluation context, you should refer to the source code of the mixin.
+:::
+
+Here's the same example using a protomaps style definition :
+
+```javascript
+{
+    name: 'PMTiles layer',
+    type: 'OverlayLayer',
+    leaflet: {
+        type: 'pmtiles',                           // required
+        url: 'https://url.to/public/file.pmtiles', // required, points to PMTiles dataset
+        style: {
+            polygon: {                             // arbitrary key name, doesn't impacte style, it just defines a protomaps style rule
+                dataLayer: 'pmtile_layer',         // using protomaps styles, the dataLayer can be specified in the style object
+                symbolizer: {                      // protomaps symbolizer definition
+                    type: 'PolygonSymbolizer',
+                    color: `<% if      (properties.type === 'car') { %>rgba(255, 0, 0, 1)<% }
+                               else if (properties.type === 'bus') { %>rgba(255, 255, 0, 1)<% }
+                               else                                { %>rgba(255, 0, 255, 1)<% }`,
+                    // other symbolizer properties, cf protomaps-leaflet symbolizer constrctors ...
+                }
+            }
+        }
+    }
+}
+```
 
 ## Edit Layer
 

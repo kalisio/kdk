@@ -272,6 +272,12 @@ describe('core:hooks', () => {
     fuzzySearch({ fields: ['name'] })(hook)
     hooks.diacriticSearch()(hook)
     expect(hook.params.query.name.$regex.source).to.equal('árë')
+    // Ensure it works on complex queries
+    hook.params.query = { $or: [{ name: { $search: 'are' } }, { name: { $search: 'árë' } }] }
+    fuzzySearch({ fields: ['name'] })(hook)
+    hooks.diacriticSearch()(hook)
+    expect(hook.params.query.$or[0].name.$regex.source).to.equal('[a,á,à,ä,â,ã]r[e,é,ë,è,ê]')
+    expect(hook.params.query.$or[1].name.$regex.source).to.equal('árë')
   })
 
   it('rate limiting', (done) => {

@@ -14,7 +14,7 @@ const { util, expect } = chai
 
 describe('core:push', () => {
   let app, server, port, mailerStub, gmailUser, user,
-    mailerService, userService, pushService
+    mailerService, usersService, pushService
 
   const subscription = {
     endpoint: process.env.SUBSCRIPTION_ENDPOINT,
@@ -71,9 +71,9 @@ describe('core:push', () => {
 
   it('registers the services', async () => {
     await app.configure(core)
-    userService = app.getService('users')
-    expect(userService).toExist()
-    userService.hooks({
+    usersService = app.getService('users')
+    expect(usersService).toExist()
+    usersService.hooks({
       before: {
         remove: [hooks.unregisterDevices]
       },
@@ -101,7 +101,7 @@ describe('core:push', () => {
     .timeout(5000)
 
   it('create a user', () => {
-    return userService.create({
+    return usersService.create({
       email: gmailUser,
       password: 'Pass;word1',
       name: 'user'
@@ -117,7 +117,7 @@ describe('core:push', () => {
     const previousUser = _.cloneDeep(user)
     await addSubscription(user, subscription, 'subscriptions')
     // Subscriptions change detection requires the previous user to be set
-    await userService.patch(user._id, { subscriptions: user.subscriptions }, { user: previousUser })
+    await usersService.patch(user._id, { subscriptions: user.subscriptions }, { user: previousUser })
     expect(user.subscriptions).toExist()
     expect(user.subscriptions.length === 1).beTrue()
     expect(user.subscriptions[0].endpoint).to.equal(subscription.endpoint)
@@ -156,7 +156,7 @@ describe('core:push', () => {
   it('delete expired subscriptions', async () => {
     // Add expired subscription
     await addSubscription(user, expiredSubscription, 'subscriptions')
-    await userService.patch(user._id, { subscriptions: user.subscriptions })
+    await usersService.patch(user._id, { subscriptions: user.subscriptions })
     expect(user.subscriptions).toExist()
     expect(user.subscriptions.length === 2).beTrue()
     // Send push notification
@@ -166,7 +166,7 @@ describe('core:push', () => {
       subscriptionProperty: 'subscriptions',
       subscriptionFilter: { _id: user._id }
     })
-    const users = await userService.find({ query: { email: gmailUser } })
+    const users = await usersService.find({ query: { email: gmailUser } })
     expect(users.data.length > 0).beTrue()
     user = users.data[0]
     // Check that expired subscriptions have been deleted

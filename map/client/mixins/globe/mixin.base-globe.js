@@ -4,7 +4,7 @@ import logger from 'loglevel'
 import { EventBus, getCssVar } from 'quasar'
 import { Ion, Viewer, Color, viewerCesiumInspectorMixin, Rectangle, ScreenSpaceEventType, ScreenSpaceEventHandler, buildModuleUrl,
          Cesium3DTileset, ImageryLayer, Cartesian3, PinBuilder, BoundingSphere, Ellipsoid, Cartographic, Entity, EntityCollection,
-         exportKml, VerticalOrigin, Transforms, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive, 
+         exportKml, VerticalOrigin, Transforms, HeadingPitchRoll, HeadingPitchRange, Matrix3, Matrix4, DebugCameraPrimitive,
          DebugModelMatrixPrimitive, Math as CesiumMath } from 'cesium'
 // We need to import cesium as an object to dynamically get constructors
 import * as Cesium from 'cesium'
@@ -259,8 +259,10 @@ export const baseGlobe = {
         if (!this.viewer.scene.primitives.contains(cesiumLayer)) this.viewer.scene.primitives.add(cesiumLayer)
       } else { // Entity data source otherwise
         // Handle potential custom primitives
-        for (const [id, custom] of cesiumLayer.primitives)
-          custom.primitive.show = true
+        if (cesiumLayer.primitives) {
+          for (const [id, custom] of cesiumLayer.primitives)
+            custom.primitive.show = true
+        }
         this.viewer.dataSources.add(cesiumLayer)
       }
       layer.isVisible = true
@@ -288,8 +290,10 @@ export const baseGlobe = {
         cesiumLayer.show = false
       } else { // Entity data source otherwise
         // Hide custom primitives before removing the data source
-        for (const [id, custom] of cesiumLayer.primitives)
-          custom.primitive.show = false
+        if (cesiumLayer.primitives) {
+          for (const [id, custom] of cesiumLayer.primitives)
+            custom.primitive.show = false
+        }
         this.viewer.dataSources.remove(cesiumLayer, true)
       }
       this.onLayerHidden(layer, cesiumLayer)
@@ -372,6 +376,14 @@ export const baseGlobe = {
       if (!layer.entities) return
       const geoJson = await convertEntitiesToGeoJson(layer.entities)
       return geoJson
+    },
+    zoomIn () {
+      const center = this.getCenter()
+      this.center(center.longitude, center.latitude, center.altitude * 0.8)
+    },
+    zoomOut () {
+      const center = this.getCenter()
+      this.center(center.longitude, center.latitude, center.altitude / 0.8)
     },
     zoomToBounds (bounds, heading = 0, pitch = -90, roll = 0, duration = 0) {
       this.viewer.camera.flyTo({

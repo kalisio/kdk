@@ -2,7 +2,7 @@ import config from 'config'
 import _ from 'lodash'
 import logger from 'loglevel'
 import sift from 'sift'
-import { Store } from '../../../core/client/store.js'
+import { Context } from '../../../core/client/context.js'
 import { Events } from '../../../core/client/events.js'
 import { api } from '../../../core/client/api.js'
 import { isDataOperation } from '../../../core/client/utils/utils.services.js'
@@ -51,19 +51,11 @@ export const activity = {
       return []
     },
     async getCatalogLayers () {
-      const query = {}
-      // Do we get layers coming from project ?
-      if (this.project) {
-        Object.assign(query, this.catalogProjectQuery ? this.catalogProjectQuery : getCatalogProjectQuery(this.project))
-      } else {
-        this.project = null
-      }
-
+      const context = Context.get()
       // We get layers coming from global catalog first if any
-      let layers = await getLayers({ query })
+      let layers = await getLayers({ context: 'global', project: this.project })
       // Then we get layers coming from contextual catalog if any
-      const context = Store.get('context')
-      if (context) layers = layers.concat(await getLayers({ query, context }))
+      if (context) layers = layers.concat(await getLayers({ context, project: this.project }))
       return layers
     },
     async addCatalogLayer (layer) {
@@ -87,31 +79,32 @@ export const activity = {
     },
     async getCatalogCategories () {
       // We get categories coming from global catalog first if any
-      let categories = await getCategories()
+      let categories = await getCategories({ context: 'global', project: this.project })
       // Then we get categories coming from contextual catalog if any
-      const context = Store.get('context')
-      if (context) categories = categories.concat(await getCategories({ context }))
+      const context = Context.get()
+      if (context) categories = categories.concat(await getCategories({ context, project: this.project }))
       return categories
     },
     async getCatalogSublegends () {
       // We get sublegends coming from global catalog first if any
-      let sublegends = await getSublegends()
+      let sublegends = await getSublegends({ context: 'global', project: this.project })
       // Then we get categories coming from contextual catalog if any
-      const context = Store.get('context')
-      if (context) sublegends = sublegends.concat(await getSublegends({ context }))
+      const context = Context.get()
+      if (context) sublegends = sublegends.concat(await getSublegends({ context, project: this.project }))
       return sublegends
     },
     async addCatalogCategory (category) {
       this.layerCategories.push(category)
     },
-    // Retrieve layer categories from catalog 
+    // Retrieve layer categories from catalog
     async refreshLayerCategories () {
       this.layerCategories.splice(0, this.layerCategories.length)
       const layerCategories = await this.getCatalogCategories()
       for (let i = 0; i < layerCategories.length; i++) {
         this.addCatalogCategory(layerCategories[i])
       }
-      await this.refreshOrphanLayers()
+      // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
+      this.orphanLayers = await this.getOrphanLayers()
       this.reorderLayers()
     },
     getOrphanLayerByName (name) {
@@ -152,7 +145,7 @@ export const activity = {
         this.bringLayerToFront(layer.name)
       }
     },
-    // Retrieve layers from catalog 
+    // Retrieve layers from catalog
     async refreshLayers () {
       // Clear layers and variables
       this.clearLayers()
@@ -163,7 +156,8 @@ export const activity = {
       for (let i = 0; i < catalogLayers.length; i++) {
         await this.addCatalogLayer(catalogLayers[i])
       }
-      await this.refreshOrphanLayers()
+      // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
+      this.orphanLayers = await this.getOrphanLayers()
       // We need at least an active background
       const hasVisibleBaseLayer = catalogLayers.find((layer) => (layer.type === 'BaseLayer') && layer.isVisible)
       if (!hasVisibleBaseLayer) {
@@ -172,10 +166,9 @@ export const activity = {
       }
       this.reorderLayers()
     },
-    // Update orphan layers list (ie layers without any category) based on current loaded categories/layers
-    async refreshOrphanLayers () {
+    async getOrphanLayers () {
       const layersByCategory = getLayersByCategory(this.layers, this.layerCategories)
-      this.orphanLayers = getOrphanLayers(this.layers, layersByCategory)
+      return getOrphanLayers(this.layers, layersByCategory)
     },
     isInMemoryLayer: layers.isInMemoryLayer,
     isUserLayer: layers.isUserLayer,
@@ -255,12 +248,10 @@ export const activity = {
       this.$engineEvents.emit('layer-filter-toggled', layer, filter)
     },
     onZoomIn () {
-      const center = this.getCenter()
-      this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel + 1 : center.altitude * 0.5)
+      this.zoomIn()
     },
     onZoomOut () {
-      const center = this.getCenter()
-      this.center(center.longitude, center.latitude, center.zoomLevel ? center.zoomLevel - 1 : center.altitude * 2)
+      this.zoomOut()
     },
     onZoomToLayer (layer) {
       this.zoomToLayer(layer.name)
@@ -325,9 +316,6 @@ export const activity = {
         await this.resetLayer(layer)
       }
     },
-    async onRemoveCategory (category) {
-      // virtual method
-    },
     async onRemoveLayer (layer) {
       // Stop any running edition
       if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
@@ -339,11 +327,10 @@ export const activity = {
       // Removing the layer should automatically update all projects
     },
     async onAddOrphanLayer (layer) {
-      if (!this.isOrphanLayer(layer)) {
-        await this.refreshOrphanLayers()
-      }
+      // FIXME: Not easy to detect if the new layer will be orphan except by recomputing everything
+      this.orphanLayers = await this.getOrphanLayers()
     },
-    onRemoveOrphanLayer (layer) {
+    async onRemoveOrphanLayer (layer) {
       if (this.isOrphanLayer(layer)) {
         _.remove(this.orphanLayers, orphanLayer => layer._id ? orphanLayer._id === layer._id : orphanLayer.name === layer.name)
       }
@@ -430,7 +417,15 @@ export const activity = {
       if (layer) {
         // Stop any running edition
         if ((typeof this.isLayerEdited === 'function') && this.isLayerEdited(layer)) await this.stopEditLayer('reject')
-        await this.removeCatalogLayer(layer)
+        // Check if available for current engine
+        if (layer[this.engine]) {
+          let name = layer.name
+          // We might have a patch event changing the name so that in this case we need to use the old one
+          // because layers are indexed by name in map activities
+          const previousLayer = this.getLayerById(layer._id)
+          if (previousLayer && (previousLayer.name !== name)) name = previousLayer.name
+          await this.removeLayer(name)
+        }
       }
       if (event !== 'removed') {
         // Do we need to inject a token or restore planet API ?

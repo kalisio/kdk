@@ -6,7 +6,7 @@
     <div>
       <slot name="header">
         <KPanel
-          :content="header"
+          :content="panelHeader"
           :class="headerClass"
         />
         <q-separator inset v-if="header"/>
@@ -79,7 +79,7 @@
       <slot name="footer">
         <q-separator inset v-if="footer"/>
         <KPanel
-          :content="footer"
+          :content="panelFooter"
           :class="footerClass"
         />
       </slot>
@@ -98,7 +98,7 @@ export default {
 <script setup>
 import _ from 'lodash'
 import sift from 'sift'
-import { ref, watchEffect } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { utils as coreUtils, i18n } from '../../../../core/client'
 import { useCurrentActivity, useProject } from '../../composables'
 import { getLayersByCategory } from '../../utils'
@@ -176,6 +176,18 @@ const layersByCategory = ref({})
 const filteredOrphanLayers = ref([])
 const draggedIndex = ref(null)
 
+// Computed
+const panelHeader = computed(() => {
+  let header = _.cloneDeep(props.header)
+  header = coreUtils.bindContent(header, CurrentActivity.value)
+  return header
+})
+const panelFooter = computed(() => {
+  let footer = _.cloneDeep(props.footer)
+  footer = coreUtils.bindContent(footer, CurrentActivity.value)
+  return footer
+})
+
 // Watch
 watchEffect(() => { refresh() })
 
@@ -187,14 +199,17 @@ function getCategoryIcon (category) {
   return _.get(category, 'icon.name', _.get(category, 'icon'), 'las la-bars')
 }
 function isCategoryVisible (category) {
-  const options = category.options || category
   // Show a built-in category only if it has some layers.
   // Indeed, depending on the app configuration, none might be available for this category.
   // User-defined categories are visible by default, even if empty,
   // except if used inside a project as in this case having no layers means we don't want to use this category.
   // App might also force to hide it anyway with the hideIfEmpty option.
   const isEmpty = (layersByCategory.value[category.name].length === 0)
-  return (isEmpty ? !_.get(options, 'hideIfEmpty', !category._id || hasProject()) : true)
+  let hideIfEmpty = !category._id || hasProject() || _.get(CurrentActivity.value, 'project')
+  if (category.options && _.has(category.options, 'hideIfEmpty')) hideIfEmpty = _.get(category.options, 'hideIfEmpty')
+  // Backward compatibility with KDK version <= 2.7 where it could be stored at root level and not in options subobject
+  else if (_.has(category, 'hideIfEmpty')) hideIfEmpty = _.get(category, 'hideIfEmpty')
+  return (isEmpty ? !hideIfEmpty : true)
 }
 function refresh () {
   const { layers, layerCategories, orphanLayers } = CurrentActivity.value
@@ -222,20 +237,15 @@ async function onOrphanLayerUpdated (targetIndex, draggedIndex) {
   const removedLayers = filteredOrphanLayers.value.splice(draggedIndex, 1)
   // As orphan layers are filtered we might have a mismatch between activity list index and panel index
   // so that we find the layer by name in the activity list to perform the same reordering
-  let orphanLayer
-  draggedIndex = _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === layer.name)
-  if (draggedIndex >= 0) {
-    orphanLayer = orphanLayers[draggedIndex]
-    orphanLayers.splice(draggedIndex, 1)
-  }
+  const unfilteredDraggedIndex = _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === layer.name)
+  const unfilteredTargetIndex = (targetLayer ? _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === targetLayer.name) : -1)
+  orphanLayers.splice(unfilteredDraggedIndex, 1)
+  
   // If not -1 it means the orphan layer has been moved within the orphan layers list.
   // Otherwise it has been moved to another category so that we only need to remove it from the list
   if ((removedLayers.length > 0) && targetLayer) {
     filteredOrphanLayers.value.splice(targetIndex, 0, removedLayers[0])
-    // As orphan layers are filtered we might have a mismatch between activity list index and panel index
-    // so that we find the layer by name in the activity list to perform the same reordering
-    targetIndex = _.findIndex(orphanLayers, orphanLayer => orphanLayer.name === targetLayer.name)
-    if (orphanLayer && (targetIndex >= 0)) orphanLayers.splice(targetIndex, 0, orphanLayer)
+    orphanLayers.splice(unfilteredTargetIndex, 0, removedLayers[0])
   }
   await updateOrphanLayersOrder(filteredOrphanLayers.value.map(layer => layer?._id || layer?.name), layer)
 }
@@ -251,7 +261,7 @@ async function onDrop (event, targetIndex) {
   const sourceCategoryId = event.dataTransfer.getData('categoryID')
   const layerName = event.dataTransfer.getData('layerName')
   const layers = _.flatten(_.values(layersByCategory.value)).concat(filteredOrphanLayers.value)
-  const layer = layers.find(layer => layer.name === layerName)
+  const layer = layers.find(layer => layer?.name === layerName)
   const draggedLayerIndex = event.dataTransfer.getData('draggedIndex')
   if (layerName && layerName.length > 0) { // drag source is layer: change layer category
     const currentCategoryLayers = filteredCategories.value[targetIndex]?.layers

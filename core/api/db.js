@@ -26,7 +26,7 @@ export function isValidObjectID (id) {
 
 export function idToString (id) {
   return (typeof id === 'object'
-    ? (ObjectID.isValid(id)
+    ? (isObjectID(id)
         ? id.toString()
         : idToString(id._id))
     : id)
@@ -36,7 +36,7 @@ export function createObjectID (id) {
   // This ensure it works even if id is already an ObjectID
   if (isObjectID(id)) return id
   // Take care that numbers could be a valid object ID
-  else if ((typeof id === 'number') || !ObjectID.isValid(id)) return null
+  else if ((typeof id === 'number') || !isValidObjectID(id)) return null
   else {
     const objectId = new ObjectID(id)
     // It appears that ObjectID.isValid is not reliable in some driver versions, see eg https://jira.mongodb.org/browse/NODE-3760

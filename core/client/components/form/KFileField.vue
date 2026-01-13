@@ -11,6 +11,19 @@
       {{ file.name }}
     </q-chip>
   </div>
+  <!-- -->
+  <q-field v-else-if="model"
+    :for="properties.name + '-field'"
+    v-model="model"
+    :label="label"
+    clearable
+    @clear="onFileCleared"
+    :disable="disabled"
+  >
+    <template v-slot:control>
+      {{ displayName }}
+    </template>
+  </q-field>
   <q-file v-else
     :for="properties.name + '-field'"
     v-model="files"
@@ -70,11 +83,20 @@ export default {
   computed: {
     multiple () {
       return _.get(this.properties, 'field.multiple', false)
+    },
+    displayName () {
+      if (_.isArray(this.model)) return _.map(this.model, 'name').join(', ')
+      return _.get(this.model, 'name', '')
     }
   },
   methods: {
     emptyModel () {
       return this.multiple ? [] : null
+    },
+    onFileCleared () {
+      this.files = null
+      this.error = ''
+      this.onChanged()
     },
     getAcceptedTypes () {
       return _.get(this.properties, 'field.mimeTypes', '')
@@ -129,7 +151,6 @@ export default {
       this.onChanged()
     },
     onFileRejected (errs) {
-      console.log(errs)
       const errors = [].concat(errs)
       for (const error of errors) {
         if (error?.failedPropValidation === 'max-files') this.error = i18n.tc('errors.MAX_FILES_REACHED', this.getMaxFiles())

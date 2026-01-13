@@ -1,7 +1,9 @@
 import _ from 'lodash'
+import moment from 'moment'
 import 'leaflet-velocity'
 import { Time } from '../../../../core/client/time.js'
 import { Events } from '../../../../core/client/events.js'
+import * as time from '../../../../core/client/utils/utils.time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
 
@@ -20,20 +22,27 @@ export const tiledWindLayers = {
       // Build u & v grid sources
       const [gridKey, gridConf] = extractGridSourceConfig(options)
       // Check API to be used in case the layer is coming from a remote "planet"
-      const weacastApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
-      const uSource = makeGridSource(gridKey, { weacastApi })
-      const vSource = makeGridSource(gridKey, { weacastApi })
+      const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : this.getWeacastApi())
+      const uSource = makeGridSource(gridKey, { planetApi })
+      const vSource = makeGridSource(gridKey, { planetApi })
       uSource.setup(gridConf)
       vSource.setup(gridConf)
       if (uSource.updateCtx) {
         // define variables for source's dynamic properties
-        const gatewayToken = (weacastApi.hasConfig('gatewayJwt') ? await weacastApi.get('storage').getItem(weacastApi.getConfig('gatewayJwt')) : null)
-        if (gatewayToken) {
-          uSource.updateCtx.jwtToken = gatewayToken
-          vSource.updateCtx.jwtToken = gatewayToken
-        }
-        uSource.updateCtx.windComponent = _.get(options, 'meteoElements[0]')
-        vSource.updateCtx.windComponent = _.get(options, 'meteoElements[1]')
+        const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
+        const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
+        Object.assign(uSource.updateCtx, {
+          apiJwt, gatewayJwt, moment, Time, ...time,
+          // This one is for backward compatibility
+          jwtToken: gatewayJwt,
+          windComponent: _.get(options, 'meteoElements[0]')
+        })
+        Object.assign(vSource.updateCtx, {
+          apiJwt, gatewayJwt, ...time,
+          // This one is for backward compatibility
+          jwtToken: gatewayJwt,
+          windComponent: _.get(options, 'meteoElements[1]')
+        })
       }
 
       return new TiledWindLayer(layerOptions, uSource, vSource)

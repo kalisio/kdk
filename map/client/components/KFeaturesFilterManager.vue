@@ -25,8 +25,8 @@
           <q-list separator v-if="filters.length">
             <q-item v-for="item in filters" :key="item.id">
               <q-item-section>
-                <q-item-label>{{ item.label }}</q-item-label>
-                <q-item-label caption>{{ item.description }}</q-item-label>
+                <q-item-label>{{ $t(item.label) }}</q-item-label>
+                <q-item-label caption>{{ item.description ? $t(item.description) : '' }}</q-item-label>
               </q-item-section>
               <q-item-section class="col-auto">
                 <KPanel

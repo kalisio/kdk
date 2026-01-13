@@ -1,6 +1,7 @@
 <template>
   <q-form
     v-if="schema"
+    autofocus
     @submit.prevent="onSubmit"
     class="column"
   >
@@ -295,6 +296,7 @@ onMounted(async () => {
 
 // Expose
 defineExpose({
+  isReady,
   getField,
   fill,
   clear,

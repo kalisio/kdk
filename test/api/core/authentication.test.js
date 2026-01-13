@@ -152,6 +152,7 @@ describe('core:authentication', () => {
     expect(accessToken).not.to.equal(statelessAccessToken)
     expect(user).beUndefined()
     const payload = await authenticationService.verifyAccessToken(accessToken, app.get('authentication').jwtOptions)
+    expect(payload.sub).to.equal('mycustomapp')
     expect(payload.property).to.equal('mycustomproperty')
   })
 
@@ -172,6 +173,12 @@ describe('core:authentication', () => {
     expect(users).toExist()
     expect(users[0]._id).to.equal(userObject._id.toString())
   })
+
+  it('removes user', async () => {
+    await userService.remove(userObject._id)
+  })
+  // Let enough time to process
+    .timeout(5000)
 
   // Cleanup
   after(async () => {

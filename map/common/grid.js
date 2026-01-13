@@ -8,7 +8,7 @@ export const SortOrder = {
 export const gridSourceFactories = { }
 export const unitConverters = { }
 
-const toHalf = (function () {
+export const toHalf = (function () {
   const floatView = new Float32Array(1)
   const int32View = new Int32Array(floatView.buffer)
 

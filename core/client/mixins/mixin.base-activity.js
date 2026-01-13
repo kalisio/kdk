@@ -13,6 +13,9 @@ export function baseActivity (name) {
       configurePadding () {
         if (_.has(this.activityOptions, 'padding')) Layout.setPadding(_.get(this.activityOptions, 'padding'))
       },
+      setPadding (padding) {
+        Layout.setPadding(padding)
+      },
       clearPadding () {
         Layout.setPadding(true)
       },

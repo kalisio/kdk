@@ -17,7 +17,8 @@ export function useCollection (options) {
     // Refresh strategy to be used
     listStrategy: ref('smart'),
     // Item processor to be used
-    processor: ref()
+    processor: ref(),
+    service: ref()
   })
 
   // Data
@@ -111,18 +112,22 @@ export function useCollection (options) {
     }
   }
 
-  const refreshCollection = _.throttle(() => {
-    const fullQuery = {
+  function getFullQuery () {
+    return {
       $locale: getLocale(),
       ...getCollectionBaseQuery(),
       ...getCollectionFilterQuery(),
       ...getCollectionPaginationQuery()
     }
+  }
+
+  const refreshCollection = _.throttle(() => {
+    const fullQuery = getFullQuery()
     subscribe(fullQuery)
   }, options.refreshThrottle.value, { leading: false })
 
   function resetCollection () {
-    // Do not reset the collection since it is initializing 
+    // Do not reset the collection since it is initializing
     if (_.isNil(items.value)) return
     // Reset pagination and start again refreshing the collection
     if (options.appendItems.value) setCollectionItems([])
@@ -134,9 +139,30 @@ export function useCollection (options) {
     // When we append items some items of the previous pages might have been updated.
     // In this case we need to reset the full collection as Rx only tracks changes on the current page
     updatedItems = (Array.isArray(updatedItems) ? updatedItems : [updatedItems])
-    // We keep order from the updated list as depending on the sorting criteria a new item might have to be pushed on top of current items
-    updatedItems = _.intersectionWith(items.value, updatedItems, (item1, item2) => item1._id && item2._id && (item1._id.toString() === item2._id.toString()))
-    if (updatedItems.length > 0) resetCollection()
+    // Update the required items
+    for (const updatedItem of updatedItems) {
+      const item = _.find(items.value, item => {
+        return updatedItem._id && item._id && (updatedItem._id.toString() === item._id.toString())
+      })
+      if (item) Object.assign(item, updatedItem)
+    }
+    // Some items might not match the query anymore so that we should remove it
+    const matcher = api.matcher(getFullQuery())
+    const matchedItems = updatedItems.filter(matcher)
+    const itemsToRemove = _.differenceBy(updatedItems, matchedItems, item => item._id ? item._id.toString() : null)
+    onItemsRemoved(itemsToRemove)
+  }
+
+  function onItemsRemoved (removedItems) {
+    // When we append items some items of the previous pages might have been updated.
+    // In this case we need to reset the full collection as Rx only tracks changes on the current page
+    removedItems = (Array.isArray(removedItems) ? removedItems : [removedItems])
+    // Remove the required items
+    for (const removedItem of removedItems) {
+      _.remove(items.value, item => {
+        return removedItem._id && item._id && (removedItem._id.toString() === item._id.toString())
+      })
+    }
   }
 
   // Lifecycle hooks
@@ -154,7 +180,7 @@ export function useCollection (options) {
       serviceEventListeners = listenToServiceEvents(getService(), {
         patched: onItemsUpdated,
         updated: onItemsUpdated,
-        removed: onItemsUpdated
+        removed: onItemsRemoved
       })
     }
   })

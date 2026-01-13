@@ -163,10 +163,10 @@ export default {
     computedSections () {
       return _.map(this.sections, (value, key) => {
         return {
-          ...value,
           item: this.item,
           actions: _.filter(this.itemActions, { scope: key }),
-          dense: this.dense
+          dense: this.dense,
+          ...value
         }
       })
     },

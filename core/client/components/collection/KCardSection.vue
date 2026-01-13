@@ -11,6 +11,7 @@
       <KPanel
         v-if="filteredActions"
         :content="filteredActions"
+        :context="context"
         class="no-wrap"
       />
     </div>

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { Store, Events, utils } from '../../core/client/index.js'
 import { errors } from '../common/index.js'
 import { formatUserCoordinates } from './utils.js'
@@ -50,11 +51,12 @@ export const Geolocation = {
   get altitudeAccuracy () {
     return this.getAltitudeAccuracy()
   },
-  async update () {
+  async update (params = {}) {
+    const refreshParams = _.merge({ timeout: 30000, enableHighAccuracy: true }, params)
     let location = null
     // Get the position
     try {
-      location = await this.refresh()
+      location = await this.refresh(refreshParams)
       Store.patch('geolocation', { location, error: undefined })
       logger.debug('[KDK] Geolocation updated:', location)
     } catch (error) {
@@ -78,13 +80,14 @@ export const Geolocation = {
       Events.emit('error', Object.assign(geolocationError, {
         // By default we only show geolocation errors, nothing if disabled by user
         ignore: (code === error.PERMISSION_DENIED),
-        retryHandler: () => this.refresh()
+        retryHandler: () => this.refresh(refreshParams)
       }))
       logger.debug('[KDK] geolocation failed: ', error)
     }
     return location
   },
-  async refresh () {
+  async refresh (params = {}) {
+    const refreshParams = _.merge({ timeout: 30000, enableHighAccuracy: true }, params)
     this.positionPromise = utils.createQuerablePromise(new Promise((resolve, reject) => {
       if (!window.navigator.geolocation) {
         Events.emit('error', {
@@ -112,7 +115,7 @@ export const Geolocation = {
             }
           })
         },
-        (error) => reject(error), { timeout: 30000, enableHighAccuracy: true })
+        (error) => reject(error), refreshParams)
     }))
     return this.positionPromise
   }
