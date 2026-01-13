@@ -70,21 +70,6 @@ function getMarkerFeature () {
   }
 }
 
-async function refresh () {
-  hasImage.value = false
-  if (_.has(selection.value, 'mapillary')) {
-    restoreStates()
-    if (imageId.value) {
-      hasImage.value = true
-      await refreshView()
-    } else if (position.value) {
-      await moveCloseTo(position.value.lat, position.value.lng)
-    }
-  } else if (hasSelectedItem()) {
-    const loc = getSelectedLocation()
-    if (loc) await moveCloseTo(loc.lat, loc.lng)
-  }
-}
 
 async function moveCloseTo (lat, lon) {
   const buffer = 0.0002 // ~25m
@@ -93,7 +78,7 @@ async function moveCloseTo (lat, lon) {
   const top = lat + buffer
   const bottom = lat - buffer
   const token = kActivity.value.mapillaryToken
-
+  
   const query = `https://graph.mapillary.com/images?fields=id,computed_geometry&bbox=${left},${bottom},${right},${top}&access_token=${token}&limit=50`
   const response = await fetch(query)
   if (response.status !== 200) {
@@ -103,7 +88,7 @@ async function moveCloseTo (lat, lon) {
 
   const data = await response.json()
   const images = data.data || []
-
+  
   if (images.length > 0) {
     const clickedPosition = point([lon, lat])
     let minDist
@@ -125,15 +110,6 @@ function centerMap () {
   if (position.value) kActivity.value.center(position.value.lng, position.value.lat)
 }
 
-async function refreshView () {
-  highlight(getMarkerFeature(), null, false)
-  try {
-    await mapillaryViewer.moveTo(imageId.value)
-  } catch (error) {
-    logger.error(error)
-  }
-}
-
 async function onImageEvent (e) {
   const image = e.image
   imageId.value = image.id
@@ -143,6 +119,32 @@ async function onImageEvent (e) {
   centerMap()
   highlight(getMarkerFeature(), null, false)
 }
+
+async function refresh () {
+  hasImage.value = false
+  if (_.has(selection.value, 'mapillary')) {
+    restoreStates()
+    if (imageId.value) {
+      hasImage.value = true
+      await refreshView()
+    } else if (position.value) {
+      await moveCloseTo(position.value.lat, position.value.lng)
+    }
+  } else if (hasSelectedItem()) {
+    const loc = getSelectedLocation()
+    if (loc) await moveCloseTo(loc.lat, loc.lng)
+  }
+}
+
+async function refreshView () {
+  highlight(getMarkerFeature(), null, false)
+  try {
+    await mapillaryViewer.moveTo(imageId.value)
+  } catch (error) {
+    logger.error(error)
+  }
+}
+
 
 function onResized () {
   if (mapillaryViewer) mapillaryViewer.resize()

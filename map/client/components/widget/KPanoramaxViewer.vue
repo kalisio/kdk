@@ -53,7 +53,7 @@ const getMarkerFeature = () => {
     style: {
       shape: 'none',
       icon: {
-        url: '/kdk/mapillary-marker.png',
+        url: '/kdk/panoramax-marker.png',
         size: 40,
         rotation: rot
       }
@@ -112,19 +112,13 @@ const moveCloseTo = async (lat, lon) => {
           if (dist < minDist) {
             minDist = dist
             pictureId.value = feature.id
+            hasImage.value = true
             sequenceId.value = feature.collection
             position.value = { lat: coords[1], lng: coords[0] }
             bearing.value = picture['view:azimuth']
           }
         }
       })
-
-      if (pictureId.value) {
-        hasImage.value = true
-        await refreshView()
-      } else {
-        Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
-      }
     } else {
       Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
     }
@@ -156,7 +150,6 @@ const onPictureEvent = async (event) => {
       bearing.value = feature.properties?.['view:azimuth']
       centerMap()
       highlight(getMarkerFeature(), null, false)
-      refresh()
     } else {
       Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
     }
@@ -165,35 +158,17 @@ const onPictureEvent = async (event) => {
   }
 }
 
-const refreshView = async () => {
+const refresh = async () => {
   highlight(getMarkerFeature(), null, false)
   if (hasSelectedLocation()) {
     const loc = getSelectedLocation()
     await moveCloseTo(loc.lat, loc.lng)
     return
   }
-}
-
-const refresh = async () => {
-  if (hasImage.value && pictureId.value) {
-    highlight(getMarkerFeature(), null, false)
-    return
-  }
 
   if (_.has(selection.value, 'panoramax')) {
     restoreStates()
-    if (pictureId.value) {
-      hasImage.value = true
-      await refreshView()
-    } else if (position.value) {
-      await moveCloseTo(position.value.lat, position.value.lng)
-    }
-  }
-  else if (hasSelectedItem()) {
-    const loc = getSelectedLocation()
-    if (loc) {
-      await moveCloseTo(loc.lat, loc.lng)
-    }
+    if (pictureId.value) hasImage.value = true
   }
 }
 
