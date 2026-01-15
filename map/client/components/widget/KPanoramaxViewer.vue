@@ -139,7 +139,8 @@ const onPictureEvent = async (event) => {
     sequenceId.value = detail.seqId
     hasImage.value = true
 
-    const response = await fetch(`${endpoint}/pictures/${detail.picId}`)
+    const query = `${endpoint}/pictures/${detail.picId}`
+    const response = await fetch(query)
     if (!response.ok) {
       throw new Error(`Impossible to fetch ${query}: ` + response.status)
     }
