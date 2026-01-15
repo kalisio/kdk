@@ -1,9 +1,11 @@
 import L from 'leaflet'
 import _ from 'lodash'
 import sift from 'sift'
+import moment from 'moment'
 import logger from 'loglevel'
 import { point, rhumbDistance, rhumbBearing, rhumbDestination, getType } from '@turf/turf'
-import { Time, Units, Events, utils as kdkCoreUtils } from '../../../../core.client.js'
+import { api, Time, Units, Events, TemplateContext, utils as kdkCoreUtils } from '../../../../core.client.js'
+import * as time from '../../../../core/client/utils/utils.time.js'
 import { getUpdateFeatureFunction, hasUnitInLeafletLayerTemplate, GeoJsonLeafletLayerFilters } from '../../leaflet/utils/utils.geojson.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
@@ -100,8 +102,15 @@ export const geojsonLayers = {
         let lastFetchedSource
         // Tell realtime plugin how to update/load data
         _.set(leafletOptions, 'source', async (successCallback, errorCallback) => {
+          // Token required by templating
+          const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
+          const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
+          const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
+          const context = Object.assign({
+            apiJwt, gatewayJwt, moment, Units, Time, level: this.selectedLevel, ...time
+          }, TemplateContext.get())
           try {
-            const sourceToFetch = sourceCompiler({ time: Time.getCurrentTime() })
+            const sourceToFetch = sourceCompiler(context)
             if (!lastFetchedSource || (lastFetchedSource !== sourceToFetch)) {
               lastFetchedSource = sourceToFetch
               successCallback(await fetchGeoJson(sourceToFetch, options))
