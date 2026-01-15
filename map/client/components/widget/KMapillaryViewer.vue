@@ -18,6 +18,7 @@ import 'mapillary-js/dist/mapillary.css'
 import distance from '@turf/distance'
 import { point } from '@turf/helpers'
 import { useCurrentActivity, useHighlight } from '../../composables'
+import { i18n } from '../../../../core/client/i18n.js'
 
 const { kActivity, selection, hasSelectedItem, getSelectedLocation, hasSelectedLocation } = useCurrentActivity()
 const { highlight } = useHighlight('mapillary')
@@ -102,7 +103,7 @@ async function moveCloseTo (lat, lon) {
     hasImage.value = true
     await refreshView()
   } else {
-    Notify.create({ type: 'negative', message: this.$t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+    Notify.create({ type: 'negative', message: i18n.t('KMapillaryViewer.NO_IMAGE_FOUND_CLOSE_TO') })
   }
 }
 

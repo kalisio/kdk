@@ -25,6 +25,7 @@ import { Notify } from 'quasar'
 import { useCurrentActivity, useHighlight } from '../../composables'
 import '@panoramax/web-viewer/build/photoviewer.css'
 import '@panoramax/web-viewer/build/photoviewer'
+import { i18n } from '../../../../core/client/i18n.js'
 
 // Composables externes
 const { kActivity, selection, hasSelectedItem, hasSelectedLocation, getSelectedLocation } = useCurrentActivity()
@@ -95,7 +96,7 @@ const moveCloseTo = async (lat, lon) => {
 
   try {
     const response = await fetch(query)
-    if (response.status !== 200) throw new Error(`Impossible de fetch ${query}`)
+    if (response.status !== 200) throw new Error(`Impossible to fetch ${query}: ` + response.status)
 
     const data = await response.json()
     const pictures = data.features || []
@@ -119,11 +120,9 @@ const moveCloseTo = async (lat, lon) => {
           }
         }
       })
-    } else {
-      Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
-    }
+    } else { throw new Error('No image found') }
   } catch (error) {
-    Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+    Notify.create({ type: 'negative', message: i18n.t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
   }
 }
 
@@ -142,8 +141,7 @@ const onPictureEvent = async (event) => {
 
     const response = await fetch(`${endpoint}/pictures/${detail.picId}`)
     if (!response.ok) {
-      Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
-      return
+      throw new Error(`Impossible to fetch ${query}: ` + response.status)
     }
 
     const feature = await response.json()
@@ -154,10 +152,10 @@ const onPictureEvent = async (event) => {
       centerMap()
       highlight(getMarkerFeature(), null, false)
     } else {
-      Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+      throw new Error('No coords found')
     }
   } catch (err) {
-    Notify.create({ type: 'negative', message: this.$t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
+    Notify.create({ type: 'negative', message: i18n.t('KPanoramaxViewer.NO_IMAGE_FOUND_CLOSE_TO') })
   }
 }
 
