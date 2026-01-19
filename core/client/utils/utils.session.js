@@ -11,7 +11,11 @@ async function authenticate(authentication) {
   let user = Store.get('user')
   if (user) return
   // Store latest authentication data for offline mode
-  await LocalCache.setItem('authentication', authentication)
+  try {    
+    await LocalCache.setItem('authentication', authentication)
+  } catch (error) {
+    logger.error(error)
+  }
   // Anonymous user or user account ?
   user = authentication.user ? authentication.user : { name: i18n.t('composables.ANONYMOUS'), anonymous: true }
   Store.set('user', user)
