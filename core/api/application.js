@@ -82,6 +82,17 @@ export function declareService (name, app, service, serviceOptions = {}) {
     service.getContextId = function () {
       return contextId // As string
     }
+    const getCustomEventHookContext = function (data, params) {
+      // 'this' is the service
+      return {
+        path: _.findKey(this.app.services, service => service === this),
+        service: this,
+        app: this.app,
+        result: data,
+        params
+      }
+    }
+    service.getCustomEventHookContext = getCustomEventHookContext.bind(service)
     return service
   }
 }

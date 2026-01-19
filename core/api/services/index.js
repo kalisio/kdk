@@ -12,16 +12,6 @@ const servicesPath = path.join(__dirname, '..', 'services')
 
 const debug = makeDebug('kdk:core:services')
 
-export function getCustomEventHookContext (app, service, data, params) {
-  return {
-    path: _.findKey(app.services, srv => srv === service),
-    service: service,
-    app: app,
-    result: data,
-    params
-  }
-}
-
 export function getServiceNameAndContext (servicePath) {
   const app = this
   // Get name from service path without api prefix
