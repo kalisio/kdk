@@ -3,12 +3,14 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar, Loading } from 'quasar'
 import { api } from '../api.js'
-import { i18n } from '../i18n.js'
 import { Events } from '../events.js'
 import { beforeGuard } from '../guards.js'
 import { LocalStorage } from '../local-storage.js'
 import { restoreSession } from '../utils/utils.session.js'
 import { useUser } from './user.js'
+import KPendingReconnectPrompt from '../components/prompt/KPendingReconnectPrompt.vue'
+import KPendingReloadPrompt from '../components/prompt/KPendingReloadPrompt.vue'
+import KRateLimitPrompt from '../components/prompt/KRateLimitPrompt.vue'
 
 export function useSession (options = {}) {
   // Data
@@ -85,31 +87,16 @@ export function useSession (options = {}) {
         return
       }
       pendingReconnection = $q.dialog({
-        title: i18n.t('composables.session.ALERT'),
-        message: i18n.t('composables.session.DISCONNECT'),
-        html: true,
-        persistent: true,
-        cancel: {
-          id: 'ignore-button',
-          label: i18n.t('composables.session.IGNORE'),
-          color: 'primary',
-          outline: true
-        },
-        ok: {
-          id: 'close-button',
-          label: i18n.t('CLOSE'),
-          color: 'primary'
-        },
-        position: 'bottom'
+        component: KPendingReconnectPrompt
       })
-      .onOk(() => {
-        pendingReconnection = null
-        ignoreReconnectionError = false
-      })
-      .onCancel(() => {
-        pendingReconnection = null
-        ignoreReconnectionError = true
-      })
+        .onOk(() => {
+          pendingReconnection = null
+          ignoreReconnectionError = false
+        })
+        .onCancel(() => {
+          pendingReconnection = null
+          ignoreReconnectionError = true
+        })
     }
   }
   function onReconnect () {
@@ -125,38 +112,17 @@ export function useSession (options = {}) {
       // Reconnect prompt can be avoided, eg in tests
       if (!LocalStorage.get(reconnectKey, true)) return
       pendingReload = $q.dialog({
-        title: i18n.t('composables.session.INFORMATION'),
-        message: i18n.t('composables.session.RECONNECT'),
-        html: true,
-        cancel: {
-          id: 'ignore-button',
-          label: i18n.t('composables.session.IGNORE'),
-          color: 'primary',
-          outline: true
-        },
-        ok: {
-          id: 'update-button',
-          label: i18n.t('composables.session.RELOAD'),
-          color: 'primary'
-        },
-        position: 'bottom'
+        component: KPendingReloadPrompt
       })
-      .onOk(() => { window.location.reload() })
-      .onCancel(() => { pendingReload = null })
+        .onOk(() => { window.location.reload() })
+        .onCancel(() => { pendingReload = null })
     }
   }
   function onRateLimit () {
     $q.dialog({
-      title: i18n.t('composables.session.ALERT'),
-      message: i18n.t('composables.session.REFUSED'),
-      html: true,
-      ok: {
-        label: i18n.t('composables.session.RETRY'),
-        flat: true
-      },
-      position: 'bottom'
+      component: KRateLimitPrompt
     })
-    .onOk(() => window.location.reload())
+      .onOk(() => window.location.reload())
   }
 
   // Hooks

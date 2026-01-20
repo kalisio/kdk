@@ -350,6 +350,9 @@
     "BUG_REPORT_BODY": "Please detail your problem here%0D%0A%0D%0APlatform information to be kept%0D%0A%0D%0A",
     "PLATFORM_INFO": "Platform information"
   },
+  "KPrompt": {
+    "HIDE": "Don't display this message again"
+  },
   "KWelcome": {
     "WELCOME_TITLE": "Welcome !",
     "WELCOME_MESSAGE": "This quick start guide covers the main application features.",

@@ -350,6 +350,9 @@
     "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
     "PLATFORM_INFO": "Informations système"
   },
+  "KPrompt": {
+    "HIDE": "Ne plus afficher ce message"
+  },
   "KWelcome": {
     "WELCOME_TITLE": "Bienvenue !",
     "WELCOME_MESSAGE": "Cette prise en main rapide va vous permettre de balayer les principales fonctionnalités de l'application.",
