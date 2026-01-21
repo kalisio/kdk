@@ -2,11 +2,13 @@
   <div id="panoramax-widget" class="column">
     <q-resize-observer />
     <div id="panoramax-container"
-      class="col full-width full-height" style="position: relative;">
+      class="col" style="position: relative;">
       <pnx-photo-viewer
-        v-if="hasImage"
+        v-show="hasImage"
         id="pnx-viewer"
-        class="full-width full-height"
+        widgets="false"
+        class="fit"
+        style="position: absolute;"
         :endpoint="endpoint"
         :sequence="sequenceId"
         :picture="pictureId"
@@ -161,14 +163,22 @@ const onPictureEvent = async (event) => {
 }
 
 const refresh = async () => {
-  highlight(getMarkerFeature(), null, false)
+  // clear the url query parameter
+  window.history.replaceState({}, '', window.location.pathname);
+
+  restoreStates()
+
+  if (position.value) {
+    highlight(getMarkerFeature(), null, false)
+  }
+
   if (hasSelectedItem()) {
     const loc = getSelectedLocation()
     await moveCloseTo(loc.lat, loc.lng)
     return
   }
 
-  if (_.has(selection.value, 'panoramax')) {
+  if (_.has(selection, 'panoramax')) {
     restoreStates()
     if (pictureId.value) hasImage.value = true
   }
@@ -185,11 +195,3 @@ onBeforeUnmount(() => {
   saveStates()
 })
 </script>
-
-<style scoped>
-#pnx-viewer {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-</style>
