@@ -180,16 +180,6 @@
   "composables": {
     "ANONYMOUS": "Anonymous",
     "VERSION_MISMATCH": "Application version mismatch, please install the latest available version or check your end point",
-    "session": {
-      "DISCONNECT": "The server connection has been lost, please wait until reconnection...",
-      "RECONNECT": "The server connection has been restored, you can refresh the application in case data has been updated during the disconnection.",
-      "RELOAD": "Refresh",
-      "REFUSED": "Your connection have been refused by the server, you have been disconnected...",
-      "IGNORE": "Ignore",
-      "RETRY": "Retry",
-      "ALERT": "Alert",
-      "INFORMATION": "Information"
-    },
     "pwa": {
       "UPDATE_MESSAGE": "<b>A new version is available</b>, the application will be updated in a couple of seconds."
     },
@@ -202,14 +192,6 @@
       "B": "B",
       "KB": "KB",
       "MB": "MB"
-    },
-    "pwa": {
-      "INSTALL_TITLE": "Install the application ?",
-      "INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features",
-      "IOS_INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features.<br>For <b>Safari</b> click on <i class=\"material-icons\">ios_share</i> then on <b>Add to home screen</b>",
-      "FIREFOX_DESKTOP_INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features. For this use the <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a> extension.",
-      "INSTALL": "Installer",
-      "IGNORE": "Ignorer"
     }
   },
   "schemas": {
@@ -352,6 +334,27 @@
   },
   "KPrompt": {
     "HIDE": "Don't display this message again"
+  },
+  "KPwaPrompt": {
+    "INSTALL_TITLE": "Install the application ?",
+    "INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features",
+    "IOS_INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features.<br>For <b>Safari</b> click on <i class=\"material-icons\">ios_share</i> then on <b>Add to home screen</b>",
+    "FIREFOX_DESKTOP_INSTALL_MESSAGE": "We recommend to install the application to take full advantage of all the features. For this use the <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a> extension.",
+    "INSTALL": "Install",
+    "IGNORE": "Ignore"
+  },
+  "KPendingReconnectPrompt": {
+    "DISCONNECT": "The server connection has been lost, please wait until reconnection...",
+    "IGNORE": "Ignore"
+  },
+  "KPendingReloadPrompt": {
+    "RECONNECT": "The server connection has been restored, you can refresh the application in case data has been updated during the disconnection.",
+    "IGNORE": "Ignore",
+    "RELOAD": "Refresh"
+  },
+  "KRateLimitPrompt": {
+    "REFUSED": "Your connection have been refused by the server, you have been disconnected...",
+    "RETRY": "Retry"
   },
   "KWelcome": {
     "WELCOME_TITLE": "Welcome !",

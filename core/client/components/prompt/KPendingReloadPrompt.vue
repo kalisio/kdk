@@ -2,15 +2,15 @@
   <q-dialog persistent position="bottom" ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-pa-xs column items-center q-gutter-y-xs no-wrap">
       <q-card-section>
-        <div class="text-h6">{{ $t('composables.session.INFORMATION') }}</div>
+        <div class="text-h6">{{ $t('INFORMATION') }}</div>
       </q-card-section>
       <q-card-section class="q-py-none text-center" style="max-width: 400px">
-        {{ $t('composables.session.RECONNECT') }}
+        {{ $t('KPendingReloadPrompt.RECONNECT') }}
       </q-card-section>
       <div :class="dense ? 'q-py-xs flex' : 'q-py-md flex'">
         <KAction
           id="ignore-button"
-          label="composables.session.IGNORE"
+          label="KPendingReloadPrompt.IGNORE"
           renderer="form-button"
           :outline="true"
           :handler="() => onDialogCancel()"
@@ -18,7 +18,7 @@
         <div class="q-mx-sm"></div>
         <KAction
           id="update-button"
-          label="composables.session.RELOAD"
+          label="KPendingReloadPrompt.RELOAD"
           renderer="form-button"
           :handler="() => onDialogOK()"
         />
