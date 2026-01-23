@@ -22,6 +22,7 @@ import logger from 'loglevel'
 import { computed } from 'vue'
 import { i18n } from '../../../../core/client'
 import { Units } from '../../../../core/client/units'
+import { useCurrentActivity } from '../../composables'
 import { KColorScale } from '../../../../core/client/components'
 import KLegendRenderer from './KLegendRenderer.vue'
 
@@ -41,6 +42,9 @@ const props = defineProps({
   }
 })
 
+// Data
+const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
+
 // Computed
 const variables = computed(() => {
   const regexp = new RegExp(props.content)
@@ -54,9 +58,14 @@ const variables = computed(() => {
     .map(variable => {
       // Pick useful properties
       let { name, label, chromajs, unit } = _.pick(variable, ['name', 'label', 'chromajs', 'unit'])
+      // We allow variable name to be customized based on level information
+      label = _.template(i18n.tie(label))({
+        level: (CurrentActivity.value ? CurrentActivity.value.selectedLevel : null),
+        levelUnit: (CurrentActivity.value && CurrentActivity.value.selectableLevels ? CurrentActivity.value.selectableLevels.unit : '')
+      })
       // Avoid mutating layer data
       const colorScale = _.cloneDeep(chromajs)
-      label = `${i18n.tie(label)} (${Units.getTargetUnitSymbol(unit)})`
+      label = `${label} (${Units.getTargetUnitSymbol(unit)})`
       // Rename required properties for backward compatibility
       if (colorScale.scale) {
         colorScale.colors = colorScale.scale
