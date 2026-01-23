@@ -10,7 +10,7 @@
       <div :class="dense ? 'q-py-xs flex' : 'q-py-md flex'">
         <KAction
           id="ignore-button"
-          label="KPendingReloadPrompt.IGNORE"
+          :label="$t('KPendingReloadPrompt.IGNORE')"
           renderer="form-button"
           :outline="true"
           :handler="() => onDialogCancel()"
@@ -18,7 +18,7 @@
         <div class="q-mx-sm"></div>
         <KAction
           id="update-button"
-          label="KPendingReloadPrompt.RELOAD"
+          :label="$t('KPendingReloadPrompt.RELOAD')"
           renderer="form-button"
           :handler="() => onDialogOK()"
         />

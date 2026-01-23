@@ -10,7 +10,7 @@
       <div :class="dense ? 'q-py-xs flex' : 'q-py-md flex'">
         <KAction
           id="retry-button"
-          label="KRateLimitPrompt.RETRY"
+          :label="$t('KRateLimitPrompt.RETRY')"
           renderer="form-button"
           :handler="() => onDialogOK()"
         />

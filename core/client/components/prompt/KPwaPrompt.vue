@@ -13,7 +13,7 @@
       >
         <KAction
           id="ignore-button"
-          label="KPwaPrompt.IGNORE"
+          :label="$t('KPwaPrompt.IGNORE')"
           renderer="form-button"
           :outline="true"
           :handler="() => onDialogCancel()"
@@ -21,7 +21,7 @@
         <div class="q-mx-sm"></div>
         <KAction
           id="install-button"
-          label="KPwaPrompt.INSTALL"
+          :label="$t('KPwaPrompt.INSTALL')"
           renderer="form-button"
           :handler="() => onDialogOK()"
         />

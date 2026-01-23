@@ -10,7 +10,7 @@
       <div :class="dense ? 'q-py-xs flex' : 'q-py-md flex'">
         <KAction
           id="ignore-button"
-          label="KPendingReconnectPrompt.IGNORE"
+          :label="$t('KPendingReconnectPrompt.IGNORE')"
           renderer="form-button"
           :outline="true"
           :handler="() => onDialogCancel()"
