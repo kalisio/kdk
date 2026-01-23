@@ -356,7 +356,7 @@
     "REFUSED": "Your connection have been refused by the server, you have been disconnected...",
     "RETRY": "Retry"
   },
-  "KWelcome": {
+  "KWelcomePrompt": {
     "WELCOME_TITLE": "Welcome !",
     "WELCOME_MESSAGE": "This quick start guide covers the main application features.",
     "ONLINE_HELP": "Read first our online help to get an overview of the basic concepts",

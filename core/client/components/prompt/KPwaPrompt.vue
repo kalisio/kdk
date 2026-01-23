@@ -4,8 +4,7 @@
       <q-card-section>
         <div class="text-h6">{{ $t('KPwaPrompt.INSTALL_TITLE') }}</div>
       </q-card-section>
-      <q-card-section class="q-py-none text-center" style="max-width: 400px">
-        {{ $t(computedMessage) }}
+      <q-card-section v-html="$t(computedMessage)" class="q-py-none text-center" style="max-width: 400px">
       </q-card-section>
       <div
         v-if="computedMessage === 'KPwaPrompt.INSTALL_MESSAGE'"

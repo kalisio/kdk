@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showWelcome" persistent>
+  <q-dialog persistent ref="dialogRef">
     <q-card class="q-pa-xs column items-center q-gutter-y-xs no-wrap">
       <!-- Logo -->
       <component
@@ -22,9 +22,9 @@
           name="welcome"
           class="column no-wrap justify-center text-center q-gutter-sm"
         >
-          <div :class="dense ? 'text-weight-medium' : 'text-h6'">{{ $t('KWelcome.WELCOME_TITLE') }}</div>
-          <div>{{ $t('KWelcome.WELCOME_MESSAGE') }}</div>
-          <div>{{ $t('KWelcome.ONLINE_HELP') }}
+          <div :class="dense ? 'text-weight-medium' : 'text-h6'">{{ $t('KWelcomePrompt.WELCOME_TITLE') }}</div>
+          <div>{{ $t('KWelcomePrompt.WELCOME_MESSAGE') }}</div>
+          <div>{{ $t('KWelcomePrompt.ONLINE_HELP') }}
             <q-icon size="1.5em" class="text-primary cursor-pointer" name="las la-external-link-square-alt" @click="onOnlineHelp()"/>
           </div>
         </q-carousel-slide>
@@ -32,10 +32,10 @@
           name="tour"
           class="column no-wrap justify-center text-center q-gutter-sm"
         >
-          <div>{{ $t('KWelcome.TOUR_MESSAGE') }}
+          <div>{{ $t('KWelcomePrompt.TOUR_MESSAGE') }}
             <q-icon size="1.5em" class="text-primary cursor-pointer" name="las la-external-link-square-alt" @click="onDefaultTour()"/>
           </div>
-          <div>{{ $t('KWelcome.TOUR_LINK_MESSAGE') }}</div>
+          <div>{{ $t('KWelcomePrompt.TOUR_LINK_MESSAGE') }}</div>
         </q-carousel-slide>
         <q-carousel-slide
           name="goodbye"
@@ -43,11 +43,11 @@
         >
           <div>
             <span>
-              {{ $t('KWelcome.CONTEXTUAL_HELP') }}
+              {{ $t('KWelcomePrompt.CONTEXTUAL_HELP') }}
               <q-icon size="1.5em" class="text-primary cursor-pointer" name="las la-question-circle"/>
             </span>
           </div>
-          <div>{{ $t('KWelcome.GOODBYE_MESSAGE') }}</div>
+          <div>{{ $t('KWelcomePrompt.GOODBYE_MESSAGE') }}</div>
         </q-carousel-slide>
       </q-carousel>
       <div :class="dense ? 'q-py-xs' : 'q-py-md'">
@@ -55,12 +55,12 @@
           id="close-button"
           label="CLOSE"
           renderer="form-button"
-          :handler="() => hide()"
+          :handler="() => onDialogCancel()"
         />
       </div>
       <q-checkbox
         v-model="toggle"
-        :label="$t('KWelcome.HIDE_WELCOME')"
+        :label="$t('KWelcomePrompt.HIDE_WELCOME')"
         color="primary"
         size="xs"
         :dense="dense"
@@ -74,9 +74,9 @@
 <script setup>
 import _ from 'lodash'
 import config from 'config'
-import { ref, computed, onBeforeUnmount } from 'vue'
-import { openURL, useQuasar } from 'quasar'
-import { Store, api } from '../..'
+import { ref, computed } from 'vue'
+import { openURL, useQuasar, useDialogPluginComponent } from 'quasar'
+import { Store } from '../..'
 import { loadComponent } from '../../utils'
 import { LocalStorage } from '../../local-storage.js'
 import KAction from '../action/KAction.vue'
@@ -85,9 +85,10 @@ import KAction from '../action/KAction.vue'
 const $q = useQuasar()
 const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo')))
 const defaultTour = _.get(config, 'welcome.tour', 'home')
-const showWelcome = ref(false)
 const currentSlide = ref('welcome')
 const toggle = ref(false)
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+  useDialogPluginComponent()
 
 // Computed
 const dense = computed(() => {
@@ -95,14 +96,6 @@ const dense = computed(() => {
 })
 
 // functions
-function show () {
-  const canShow = LocalStorage.get('welcome')
-  // Introduction is only for logged users
-  showWelcome.value = (_.isNil(canShow) ? _.get(config, 'layout.welcome', true) : JSON.parse(canShow))
-}
-function hide () {
-  showWelcome.value = false
-}
 function onToggleIntroduction (toggle) {
   LocalStorage.set('welcome', !toggle)
 }
@@ -115,17 +108,7 @@ function onOnlineHelp () {
   }
 }
 function onDefaultTour () {
-  hide()
+  onDialogCancel()
   Store.patch('tours.current', { name: defaultTour })
 }
-
-// hooks
-onBeforeUnmount(() => {
-  api.off('login', show)
-  api.off('logout', hide)
-})
-
-// immediate
-api.on('login', show)
-api.on('logout', hide)
 </script>

@@ -356,7 +356,7 @@
     "REFUSED": "Votre connexion a été refusée par le serveur, vous avez été déconnecté...",
     "RETRY": "Réessayer"
   },
-  "KWelcome": {
+  "KWelcomePrompt": {
     "WELCOME_TITLE": "Bienvenue !",
     "WELCOME_MESSAGE": "Cette prise en main rapide va vous permettre de balayer les principales fonctionnalités de l'application.",
     "ONLINE_HELP": "Parcourez tout d'abord notre aide en ligne pour vous familiariser avec les notions de base",
