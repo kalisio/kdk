@@ -87,7 +87,7 @@ const logoComponent = ref(loadComponent(_.get(config, 'logoComponent', 'KLogo'))
 const defaultTour = _.get(config, 'welcome.tour', 'home')
 const currentSlide = ref('welcome')
 const toggle = ref(false)
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+const { dialogRef, onDialogCancel } =
   useDialogPluginComponent()
 
 // Computed
