@@ -10,6 +10,7 @@ import { bindContent, filterContent, listenToServiceEvents, unlistenToServiceEve
 import { Geolocation } from '../geolocation.js'
 import { getCategories, getLayers, getLayersByCategory, getOrphanLayers, getSublegends, processTranslations, setEngineJwt } from '../utils/utils.catalog.js'
 import * as layers from '../utils/utils.layers.js'
+import * as offline from '../utils/utils.offline.js'
 import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
 export const activity = {
@@ -334,6 +335,8 @@ export const activity = {
         _.remove(this.orphanLayers, orphanLayer => layer._id ? orphanLayer._id === layer._id : orphanLayer.name === layer.name)
       }
     },
+    cacheView: offline.cacheView,
+    uncacheView: offline.uncacheView,
     onEngineReady (engine) {
       this.engine = engine
       this.engineReady = true

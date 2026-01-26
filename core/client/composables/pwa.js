@@ -1,12 +1,20 @@
 import _ from 'lodash'
 import config from 'config'
 import { onMounted, onBeforeUnmount } from 'vue'
-import { useQuasar } from 'quasar'
+import { useQuasar, Dialog } from 'quasar'
 import { Events } from '../events.js'
 import { i18n } from '../i18n.js'
 import { LocalStorage } from '../local-storage.js'
 import { Platform } from '../platform.js'
-import { InstallPwaPrompt, installFFDesktopPrompt, installSafariPrompt, installDefaultPrompt } from '../utils/utils.pwa.js'
+import KPwaPrompt from '../components/prompt/KPwaPrompt.vue'
+
+let InstallPwaPrompt = null
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault()
+  // Stash the event so it can be triggered later
+  InstallPwaPrompt = e
+})
 
 // We start listening as soon as possible because PWA events might be raised by service worker before the component is initialized
 let pwaUpdated = false
@@ -31,12 +39,15 @@ export function usePwa (options = { updateTimeout: 5000 }) {
     if (isNotPWA || isPWAInstalled || withinIframe) return
     // install prompt can be avoided, eg in tests
     if (!LocalStorage.get(installKey, true)) return
-    // take care of install prompt
-    if (InstallPwaPrompt) installDefaultPrompt()
-    // take care of iOS
-    if ($q.platform.is.ios) installSafariPrompt()
-    // take care of Firefox desktop
-    if ($q.platform.is.firefox && $q.platform.is.desktop) installFFDesktopPrompt()
+    Dialog.create({
+      component: KPwaPrompt
+    }).onOk(async () => {
+      InstallPwaPrompt.prompt()
+      // Wait for the user to respond to the prompt
+      const { outcome } = await InstallPwaPrompt.userChoice
+      // Refresh page
+      if (outcome === 'accepted') location.reload()
+    })
   }
   function update (registration) {
     // refresh the page once the update has been applied

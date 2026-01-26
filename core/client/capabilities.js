@@ -17,7 +17,12 @@ export const Capabilities = {
       const capabilities = await window.fetch(api.getConfig('domain') + _.get(config, 'apiPath') + '/capabilities')
       this.content = await capabilities.json()
       // Store latest capabilities data for offline mode
-      await LocalCache.setItem('capabilities', this.content)
+      // Avoid blocking on eg QuotaExceededError
+      try {
+        await LocalCache.setItem('capabilities', this.content)
+      } catch (error) {
+        logger.error(error)
+      }
     }
     logger.debug('[KDK] Capabilities initialized with content:', this.content)
     if (!this.content) return

@@ -24,7 +24,6 @@ import { ref, computed } from 'vue'
 import { utils, i18n, api, LocalCache, Context } from '../../../../core/client'
 import { KGrid } from '../../../../core/client/components'
 import { useCurrentActivity, useProject } from '../../composables'
-import { cacheView, uncacheView } from '../../utils/utils.offline.js'
 import { getViewsProjectQuery } from '../../utils/utils.project.js'
 import { Dialog, Notify } from 'quasar'
 
@@ -153,7 +152,8 @@ async function onViewSelected (view, action) {
         component: 'KDialog',
         componentProps: {
           component: 'catalog/KCreateOfflineView',
-          zoomLevel: center.zoomLevel,
+          // Take care to possible fractional zoom
+          zoomLevel: Math.ceil(center.zoomLevel),
           view,
           okAction: {
             id: 'ok-button',
@@ -172,7 +172,7 @@ async function onViewSelected (view, action) {
           timeout: 0,
           spinner: true
         })
-        await cacheView(view, getProjectLayers(), {
+        await CurrentActivity.value.cacheView(view, getProjectLayers(), {
           contextId: Context.get(),
           ...values
         })
@@ -190,7 +190,7 @@ async function onViewSelected (view, action) {
         timeout: 0,
         spinner: true
       })
-      await uncacheView(view, getProjectLayers(), {
+      await CurrentActivity.value.uncacheView(view, getProjectLayers(), {
         contextId: Context.get()
       })
       view.isCached = false
@@ -216,7 +216,7 @@ async function removeView (view) {
     }
   })
   if (!result.ok) return false
-  await uncacheView(view, getProjectLayers())
+  await CurrentActivity.value.uncacheView(view, getProjectLayers())
   await api.getService('catalog').remove(view._id)
 }
 </script>

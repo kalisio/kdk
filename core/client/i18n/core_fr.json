@@ -180,16 +180,6 @@
   "composables": {
     "ANONYMOUS": "Anonyme",
     "VERSION_MISMATCH": "Discordance de version, merci d'installer la dernière version disponible ou de vérifier votre point d'accès",
-    "session": {
-      "DISCONNECT": "La connexion au serveur a été interrompue, merci de patienter jusqu'à la reconnexion...",
-      "RECONNECT": "La connexion au serveur a été rétablie, vous pouvez rafraîchir l'application si des données ont été mises à jour.",
-      "RELOAD": "Rafraîchir",
-      "REFUSED": "Votre connexion a été refusée par le serveur, vous avez été déconnecté...",
-      "IGNORE": "Ignorer",
-      "RETRY": "Réessayer",
-      "ALERT": "Alerte",
-      "INFORMATION": "Information"
-    },
     "pwa": {
       "UPDATE_MESSAGE": "<b>Une nouvelle version est disponible</b>, l'application sera mise à jour d'ici quelques secondes."
     },
@@ -202,14 +192,6 @@
       "B": "o",
       "KB": "Ko",
       "MB": "Mo"
-    },
-    "pwa": {
-      "INSTALL_TITLE": "Installer l'application ?",
-      "INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités",
-      "IOS_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités.<br>Depuis <b>Safari</b> cliquez sur <i class=\"material-icons\">ios_share</i> puis sur <b>Ajouter à l'écran d'accueil</b>",
-      "FIREFOX_DESKTOP_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités. Pour l'installer utiliser l'extension <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a>.",
-      "INSTALL": "Installer",
-      "IGNORE": "Ignorer"
     }
   },
   "schemas": {
@@ -350,7 +332,31 @@
     "BUG_REPORT_BODY": "Merci de détailler ici le problème rencontré%0D%0A%0D%0AInformations à conserver concernant votre système%0D%0A%0D%0A",
     "PLATFORM_INFO": "Informations système"
   },
-  "KWelcome": {
+  "KPrompt": {
+    "HIDE": "Ne plus afficher ce message"
+  },
+  "KPwaPrompt": {
+    "INSTALL_TITLE": "Installer l'application ?",
+    "INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités",
+    "IOS_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités.<br>Depuis <b>Safari</b> cliquez sur <i class=\"material-icons\">ios_share</i> puis sur <b>Ajouter à l'écran d'accueil</b>",
+    "FIREFOX_DESKTOP_INSTALL_MESSAGE": "Nous vous recommandons d'installer l'application pour profiter pleinement de toutes les fonctionnalités. Pour l'installer utiliser l'extension <a href='https://addons.mozilla.org/fr/firefox/addon/pwas-for-firefox/' target='_blank'>Progressive Web Apps for Firefox</a>.",
+    "INSTALL": "Installer",
+    "IGNORE": "Ignorer"
+  },
+  "KPendingReconnectPrompt": {
+    "DISCONNECT": "La connexion au serveur a été interrompue, merci de patienter jusqu'à la reconnexion...",
+    "IGNORE": "Ignorer"
+  },
+  "KPendingReloadPrompt": {
+    "RECONNECT": "La connexion au serveur a été rétablie, vous pouvez rafraîchir l'application si des données ont été mises à jour.",
+    "IGNORE": "Ignorer",
+    "RELOAD": "Rafraîchir"
+  },
+  "KRateLimitPrompt": {
+    "REFUSED": "Votre connexion a été refusée par le serveur, vous avez été déconnecté...",
+    "RETRY": "Réessayer"
+  },
+  "KWelcomePrompt": {
     "WELCOME_TITLE": "Bienvenue !",
     "WELCOME_MESSAGE": "Cette prise en main rapide va vous permettre de balayer les principales fonctionnalités de l'application.",
     "ONLINE_HELP": "Parcourez tout d'abord notre aide en ligne pour vous familiariser avec les notions de base",

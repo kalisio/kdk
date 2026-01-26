@@ -62,7 +62,7 @@ export default {
           components.push({
             component: 'QSeparator',
             vertical: true,
-            color: 'lighgrey'
+            color: 'lightgrey'
           })
         }
         if (component === 'location') {
