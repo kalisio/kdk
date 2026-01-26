@@ -307,30 +307,4 @@ export default async function () {
     await createStylesService.call(app, stylesConfig)
     debug('\'styles\' service created')
   }
-
-  /*
-  app.createService('daptiles', Object.assign({
-    servicesPath,
-    middlewares: {
-      after: [
-        (req, res, next) => {
-          const buffers = _.get(res.data, 'buffers')
-          if (buffers) {
-            const binary = Buffer.concat(buffers)
-            res.set({
-              'Content-Type': 'application/octet-stream'
-            }).status(200)
-            // for (const buf of buffers) {
-            //   // res.send(buf)
-            //   res.write(buf)
-            // }
-            // res.end()
-            res.end(binary)
-          }
-          next()
-        }
-      ]
-    }
-  }))
-  */
 }
