@@ -71,7 +71,6 @@ function getMarkerFeature () {
   }
 }
 
-
 async function moveCloseTo (lat, lon) {
   const buffer = 0.0002 // ~25m
   const left = lon - buffer
@@ -79,7 +78,7 @@ async function moveCloseTo (lat, lon) {
   const top = lat + buffer
   const bottom = lat - buffer
   const token = kActivity.value.mapillaryToken
-  
+
   const query = `https://graph.mapillary.com/images?fields=id,computed_geometry&bbox=${left},${bottom},${right},${top}&access_token=${token}&limit=50`
   const response = await fetch(query)
   if (response.status !== 200) {
@@ -89,7 +88,7 @@ async function moveCloseTo (lat, lon) {
 
   const data = await response.json()
   const images = data.data || []
-  
+
   if (images.length > 0) {
     const clickedPosition = point([lon, lat])
     let minDist
@@ -145,7 +144,6 @@ async function refreshView () {
     logger.error(error)
   }
 }
-
 
 function onResized () {
   if (mapillaryViewer) mapillaryViewer.resize()

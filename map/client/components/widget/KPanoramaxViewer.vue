@@ -152,7 +152,7 @@ const onPictureEvent = async (event) => {
     if (coords) {
       position.value = { lat: coords[1], lng: coords[0] }
       bearing.value = feature.properties?.['view:azimuth']
-      window.history.replaceState({}, '', window.location.pathname);
+      window.history.replaceState({}, '', window.location.pathname)
       centerMap()
       highlight(getMarkerFeature(), null, false)
     } else {
@@ -165,7 +165,7 @@ const onPictureEvent = async (event) => {
 
 const refresh = async () => {
   // clear the url query parameter
-  window.history.replaceState({}, '', window.location.pathname);
+  window.history.replaceState({}, '', window.location.pathname)
 
   restoreStates()
 
@@ -194,6 +194,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   saveStates()
-  window.history.replaceState({}, '', window.location.pathname);
+  window.history.replaceState({}, '', window.location.pathname)
 })
 </script>
