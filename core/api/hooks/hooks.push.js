@@ -21,7 +21,11 @@ export async function sendNewSubscriptionEmail (hook) {
   const currentUser = hook.result
   const previousUser = hook.params.user
   // If we can't compare abort, eg f-a-m might patch user to update tokens
-  if (!currentUser || !previousUser) return 
+  if (!currentUser || !previousUser) return
+  // Or an app might allow a user to patch another for eg permissions management
+  const currentUserId = (currentUser._id ? currentUser._id.toString() : null)
+  const previousUserId = (previousUser._id ? previousUser._id.toString() : null)
+  if (!currentUserId || !previousUserId || (currentUserId !== previousUserId)) return 
   // Retrieve the last subscription
   const lastSubscription = _.last(_.get(currentUser, 'subscriptions', []))
   if (!lastSubscription) return
