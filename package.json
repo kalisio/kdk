@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/kdk",
   "description": "Kalisio Development Kit",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "homepage": "https://github.com/kalisio/kdk",
   "type": "module",
   "keywords": [
