@@ -54,6 +54,21 @@ function getExtraPropertiesFromKMLByName (document) {
       }
       _.set(properties, [name, property].join('.'), value)
     })
+    // Specific case of parent folder
+    const folderElement = placemark.parentElement
+    if (folderElement && folderElement.tagName ==='Folder') {
+      let folderName = ''
+      for (let i = 0; i < folderElement.children.length; i++) {
+        const element = folderElement.children.item(i)
+        if (element.tagName === 'name') {
+          folderName = element.textContent
+          break;
+        }
+      }
+      if (folderName) {
+        _.set(properties, [name, 'folder'].join('.'), folderName)
+      }
+    }
   })
   return properties
 }
@@ -68,12 +83,14 @@ export function convertToGeoJsonWithStyle (document) {
     // Apply all styles to prevent them for being overridden by the default ones
     const style = _.merge(convertSimpleStyleToPointStyle(feature.properties), convertSimpleStyleToLineStyle(feature.properties), convertSimpleStyleToPolygonStyle(feature.properties))
     if (name && _.has(extraProperties, name)) {
-      _.merge(style, extraProperties[name])
+      // Folder will be merged in standard feature properties not style
+      _.merge(style, _.omit(extraProperties[name], 'folder'))
     }
     _.set(feature, 'style', style)
 
     // Trim all string properties
-    const trimmedProperties = _.mapValues(_.get(feature, 'properties', {}), value => {
+    const trimmedProperties = _.mapValues(
+      _.merge(_.get(feature, 'properties', {}), _.pick(extraProperties[name], 'folder')), value => {
       return typeof value === 'string' ? value.trim() : value
     })
     _.set(feature, 'properties', trimmedProperties)
