@@ -1,8 +1,10 @@
 import _ from 'lodash'
-import { Store, Events, utils } from '../../core/client/index.js'
+import { Store, Events, utils, LocalStorage } from '../../core/client/index.js'
 import { errors } from '../common/index.js'
 import { formatUserCoordinates } from './utils.js'
+import { Dialog } from 'quasar'
 import logger from 'loglevel'
+import KGeolocatePermissionDeniedPrompt from '../../core/client/components/prompt/KGeolocatePermissionDeniedPrompt.vue'
 
 // Export singleton
 export const Geolocation = {
@@ -52,6 +54,20 @@ export const Geolocation = {
     return this.getAltitudeAccuracy()
   },
   async update (params = {}) {
+    // Check geolocate permission
+    const result = await window.navigator.permissions.query({ name: 'geolocation' })
+    if (result.state === 'denied') {
+      const geolocationError = new errors.KGeolocationError()
+      geolocationError.code = 'GEOLOCATION_PERMISSION_DENIED'
+      if (LocalStorage.get('geolocate-permission-error-prompt', true)) {
+        Dialog.create({
+          component: KGeolocatePermissionDeniedPrompt
+        })
+      }
+      Store.patch('geolocation', { location: null, error: geolocationError })
+      return
+    }
+    // Get params
     const refreshParams = _.merge({ timeout: 30000, enableHighAccuracy: true }, params)
     let location = null
     // Get the position

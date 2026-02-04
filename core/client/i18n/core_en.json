@@ -366,6 +366,10 @@
     "GOODBYE_MESSAGE": "Thanks for reading this tutorial, you are now ready to use the application !",
     "HIDE_WELCOME": "Don't display this message again"
   },
+  "KGeolocatePermissionDeniedPrompt": {
+    "TITLE": "Geolocate permission denied",
+    "MESSAGE": "You have disabled geolocation on this application. In order to locate the user, the application needs permissions for geolocation."
+  },
   "KTour": {
     "SKIP_LABEL": "Skip",
     "NEXT_LABEL": "Next",

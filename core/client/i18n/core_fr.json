@@ -366,6 +366,10 @@
     "GOODBYE_MESSAGE": "Merci d'avoir parcouru ce didacticiel, vous êtes maintenant prêt à utiliser l'application !",
     "HIDE_WELCOME": "Ne plus afficher ce message"
   },
+  "KGeolocatePermissionDeniedPrompt": {
+    "TITLE": "Localisation refusée",
+    "MESSAGE": "Vous avez désactivé la localisation sur cette application. Pour utiliser la fonctionnalité de position utilisateur, la localisation doit être manuellement réactivée."
+  },
   "KTour": {
     "SKIP_LABEL": "Fermer",
     "NEXT_LABEL": "Suivant",

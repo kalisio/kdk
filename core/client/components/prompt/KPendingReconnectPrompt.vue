@@ -32,7 +32,7 @@ import { computed } from 'vue'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
 
 // Emits
-defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'])
+defineEmits([...useDialogPluginComponent.emits])
 
 // Data
 const $q = useQuasar()
