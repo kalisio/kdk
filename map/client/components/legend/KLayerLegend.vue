@@ -5,6 +5,7 @@
         :is="legend.renderer"
         :layer="layer"
         :label="legend.label"
+        :labelClass="legend.labelClass"
         :content="legend.content"
       />
     </div>
@@ -70,6 +71,7 @@ const legends = computed(() => {
       result.push({
         layer: props.layer,
         label: legend.label,
+        labelClass: legend.labelClass,
         content: legend.content,
         renderer: coreUtils.loadComponent(renderer)
       })

@@ -2,6 +2,7 @@
   <KLegendRenderer
     v-if="content"
     :label="label"
+    :labelClass="labelClass"
   >
     <!-- content -->
     <div class="q-pa-xs">
@@ -20,6 +21,10 @@ import { KColorScale } from '../../../../core/client/components'
 // props
 defineProps({
   label: {
+    type: String,
+    default: undefined
+  },
+  labelClass: {
     type: String,
     default: undefined
   },

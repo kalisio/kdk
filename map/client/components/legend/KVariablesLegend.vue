@@ -2,6 +2,7 @@
   <KLegendRenderer
     v-if="content"
     :label="label"
+    :labelClass="labelClass"
   >
     <!-- content -->
     <template v-for="variable in variables" :key="variable.name">
@@ -33,6 +34,10 @@ const props = defineProps({
     required: true
   },
   label: {
+    type: String,
+    default: undefined
+  },
+  labelClass: {
     type: String,
     default: undefined
   },

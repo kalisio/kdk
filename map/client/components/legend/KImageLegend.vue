@@ -2,6 +2,7 @@
   <KLegendRenderer
     v-if="content"
     :label="label"
+    :labelClass="labelClass"
   >
     <!-- content -->
     <div class="k-image-legend">
@@ -20,6 +21,10 @@ import KLegendRenderer from './KLegendRenderer.vue'
 // props
 const props = defineProps({
   label: {
+    type: String,
+    default: undefined
+  },
+  labelClass: {
     type: String,
     default: undefined
   },

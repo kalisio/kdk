@@ -1,6 +1,6 @@
 <template>
   <div class="column full-width q-gutter-xs">
-    <div v-if="label" class="text-weight-medium">
+    <div v-if="label" :class="labelClass">
       {{ $tie(label) }}
     </div>
     <div class="q-pr-sm">
@@ -17,6 +17,10 @@ defineProps({
   label: {
     type: String,
     default: undefined
+  },
+  labelClass: {
+    type: String,
+    default: 'text-weight-medium'
   }
 })
 </script>

@@ -2,6 +2,7 @@
   <KLegendRenderer
     v-if="content"
     :label="label"
+    :labelClass="labelClass"
   >
     <!-- content -->
     <div>
@@ -26,8 +27,8 @@
                 </div>
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-caption">
-                  {{ $tie(element.label )}}
+                <q-item-label :class="element.labelClass || 'text-caption'">
+                  {{ $tie(element.label) }}
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -52,6 +53,10 @@ const props = defineProps({
     type: String,
     default: undefined
   },
+  labelClass: {
+    type: String,
+    default: undefined
+  },
   content: {
     type: Object,
     default: () => null
@@ -68,6 +73,7 @@ function getElements (section) {
   return _.map(props.content[section], element => {
     const symbol = element.symbol
     const label = element.label
+    const labelClass = element.labelClass
     if (!symbol && !label) {
       logger.error(`element ${element.label || element} is invalid in section ${section}`)
       return
@@ -84,9 +90,9 @@ function getElements (section) {
       if (!_.startsWith(component, 'Q') && !_.startsWith(component, 'q-')) {
         component = loadComponent(component)
       }
-      return { label, component, props }
+      return { label, labelClass, component, props }
     } else {
-      return { label }
+      return { label, labelClass }
     }
   })
 }
