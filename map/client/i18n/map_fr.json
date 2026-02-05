@@ -318,7 +318,8 @@
       "TOGGLE_VR_LABEL": "Basculez en mode <b>Réalité Virtuelle</b> (VR) avec ce bouton.",
       "TOGGLE_FULLSCREEN_LABEL": "Basculez en mode plein écran avec ce bouton.",
       "TOGGLE_CATALOG_LABEL": "Ouvrez le <b>catalogue</b> avec ce bouton.",
-      "NORTH_ARROW_LABEL": "Affichez ou cachez la flèche nord avec ce bouton."
+      "NORTH_ARROW_LABEL": "Affichez ou cachez la flèche nord avec ce bouton.",
+      "ZOOM_CONTROL_LABEL": "Affichez ou cachez les boutons de zoom avec ce bouton."
     },
     "catalog-panel": {
       "CATALOG_LABEL": "Le <b>catalogue</b> permet de gérer les données affichées sur votre carte.<br/>Le catalogue se décompose en 3 onglets.",

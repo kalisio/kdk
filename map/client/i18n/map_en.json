@@ -318,7 +318,8 @@
       "TOGGLE_VR_LABEL": "Switch to Virtual Reality (VR) mode with this button.",
       "TOGGLE_FULLSCREEN_LABEL": "Switch to fullscreen mode with this button.",
       "TOGGLE_CATALOG_LABEL": "Open the catalog with this button.",
-      "NORTH_ARROW_LABEL": "Display or hide the north arrow using this button."
+      "NORTH_ARROW_LABEL": "Display or hide the north arrow using this button.",
+      "ZOOM_CONTROL_LABEL": "Display or hide the zoom control buttons using this button."
     },
     "catalog-panel": {
       "CATALOG_LABEL": "The <b>catalog</b> allows to manage data displayed on your map.<br/>The catalogd is divided into 3 different tabs.",
