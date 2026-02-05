@@ -105,6 +105,15 @@ module.exports = {
       }
     }, options)
   },
+  toggleZoomControl: (options) => {
+    return Object.assign({
+      target: '#toggle-zoom-control-sticky',
+      title: 'tours.navigation-bar.ZOOM_CONTROL_LABEL',
+      params: {
+        placement: 'bottom'
+      }
+    }, options)
+  },
   positionIndicator: (options) => {
     return Object.assign({
       target: '#position-indicator',
