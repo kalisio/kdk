@@ -58,8 +58,15 @@ export function useWeather (options = {}) {
     if (variables && variables.length > 0) {
       _.forOwn(fields, (value, key) => {
         // Take care that weather fields are prefixed by 'properties.' because they target feature
-        const variable = _.find(variables, { name: `${value.property.replace('properties.', '')}` })
-        if (variable) value.label = variable.label
+        let name = value.property.replace('properties.', '')
+        // Also weacast properties are postfixed by forecast level
+        if (activity.forecastLevel) name = name.replace(`-${activity.forecastLevel}`, '')
+        const variable = _.find(variables, { name })
+        // We allow variable name to be customized based on level information
+        if (variable) value.label = _.template(i18n.tie(variable.label))({
+          level: (activity ? activity.selectedLevel : null),
+          levelUnit: (activity && activity.selectableLevels ? activity.selectableLevels.unit : '')
+        })
       })
     }
     return fields
