@@ -40,7 +40,7 @@ defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'])
 // Data
 const $q = useQuasar()
 const toggle = ref(false)
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+const { dialogRef, onDialogHide, onDialogCancel } =
   useDialogPluginComponent()
 
 // Computed
