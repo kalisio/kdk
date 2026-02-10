@@ -4,9 +4,7 @@
       <component
         :is="legend.renderer"
         :layer="layer"
-        :label="legend.label"
-        :labelClass="legend.labelClass"
-        :content="legend.content"
+        v-bind="legend.props"
       />
     </div>
   </template>
@@ -69,11 +67,8 @@ const legends = computed(() => {
         return
       }
       result.push({
-        layer: props.layer,
-        label: legend.label,
-        labelClass: legend.labelClass,
-        content: legend.content,
-        renderer: coreUtils.loadComponent(renderer)
+        renderer: coreUtils.loadComponent(renderer),
+        props: _.omit(legend, ['minZoom', 'maxZoom']) // Pass through additional legend props
       })
     }
   })
