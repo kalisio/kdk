@@ -1,3 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- License: GPL. Made by Viglino: https://github.com/Viglino/font-gis -->
-<svg width="800px" height="800px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--gis" preserveAspectRatio="xMidYMid meet"><path d="M42.066 0v20h3.752V6.957L53.881 20h4.053V0h-3.752v13.355L45.996 0zm5.57 26.688l-25.77 69.949c-.823 2.238 1.658 4.248 3.677 2.978L50 84.195l24.455 15.42c2.02 1.273 4.504-.738 3.68-2.978l-25.79-70c-.472-1.096-1.283-1.632-2.384-1.635c-1.1-.003-2.017.856-2.324 1.686zm-.136 14.83V79.86L29.1 91.463z" fill="#000000" fill-rule="evenodd"></path></svg>
+<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_ddd_2164_6646)">
+<path d="M4 15C4 6.71573 10.7157 0 19 0C27.2843 0 34 6.71573 34 15C34 23.2843 27.2843 30 19 30C10.7157 30 4 23.2843 4 15Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M19 12C19.2697 12 19.513 12.16 19.6162 12.4053L24.9492 25.0928C25.0556 25.3458 24.9907 25.6376 24.7871 25.8242C24.5836 26.0106 24.2838 26.0529 24.0352 25.9307L19 23.4521L13.9648 25.9307C13.7162 26.0529 13.4164 26.0106 13.2129 25.8242C13.0093 25.6376 12.9444 25.3458 13.0508 25.0928L18.3838 12.4053L18.4287 12.3184C18.548 12.1232 18.7638 12 19 12ZM14.9658 23.9707L18.7021 22.1318L18.7734 22.1016C18.8466 22.0755 18.9234 22.0645 19 22.0645V14.373L14.9658 23.9707Z" fill="#424242"/>
+<path d="M22 3V11H20.6961L17.3039 5.26923V11H16V3H17.3039L20.7065 8.74176V3H22Z" fill="#424242"/>
+</g>
+<defs>
+<filter id="filter0_ddd_2164_6646" x="0" y="0" width="38" height="38" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2"/>
+<feGaussianBlur stdDeviation="1"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.14 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2164_6646"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="effect1_dropShadow_2164_6646" result="effect2_dropShadow_2164_6646"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="3"/>
+<feGaussianBlur stdDeviation="0.5"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0"/>
+<feBlend mode="normal" in2="effect2_dropShadow_2164_6646" result="effect3_dropShadow_2164_6646"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect3_dropShadow_2164_6646" result="shape"/>
+</filter>
+</defs>
+</svg>
