@@ -32,7 +32,6 @@
 
 <script setup>
 import _ from 'lodash'
-import moment from 'moment'
 import { ref, computed, watch } from 'vue'
 import { Time } from '../../time.js'
 import KDate from './KDate.vue'
