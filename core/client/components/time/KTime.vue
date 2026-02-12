@@ -74,7 +74,7 @@ const computedButton = computed(() => {
   if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'time.long')
   // compute label
   let label
-  if (!_.isEmpty(computedModel.value)) label = moment(computedModel.value, mask).format(format)
+  if (!_.isEmpty(computedModel.value)) label = moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
   else label = i18n.tie(props.placeholder)
   // define button spec
   const spec = {
