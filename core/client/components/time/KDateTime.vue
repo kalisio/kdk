@@ -34,7 +34,6 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { ref, computed, watch } from 'vue'
-import { toLocalTimezone } from '../../utils/utils.time.js'
 import { Time } from '../../time.js'
 import KDate from './KDate.vue'
 import KTime from './KTime.vue'
@@ -143,7 +142,8 @@ const computedDateModel = computed({
 })
 const computedTimeModel = computed({
   get: function () {
-    return dateTime.value ? dateTime.value.format(timeMask) : null
+    const time = (dateTime.value ? dateTime.value.format(timeMask) : null)
+    return time
   },
   set: function (value) {
     const { HH, mm, ss } = toHMS(value)
@@ -164,18 +164,18 @@ const computedTimePicker = computed(() => {
 
 // Watch
 watch(() => props.modelValue, (value) => {
-  dateTime.value = toLocalTimezone(props.modelValue, Time.getFormatTimezone())
+  dateTime.value = Time.convertToLocal(props.modelValue)
 })
 watch(() => props.timezone, (value) => {
-  dateTime.value = toLocalTimezone(props.modelValue, Time.getFormatTimezone())
-  minDateTime.value = toLocalTimezone(props.min, Time.getFormatTimezone())
-  maxDateTime.value = toLocalTimezone(props.max, Time.getFormatTimezone())
+  dateTime.value = Time.convertToLocal(props.modelValue)
+  minDateTime.value = Time.convertToLocal(props.min)
+  maxDateTime.value = Time.convertToLocal(props.max)
 })
 watch(() => props.min, (value) => {
-  minDateTime.value = toLocalTimezone(props.min, Time.getFormatTimezone())
+  minDateTime.value = Time.convertToLocal(props.min)
 })
 watch(() => props.max, (value) => {
-  maxDateTime.value = toLocalTimezone(props.max, Time.getFormatTimezone())
+  maxDateTime.value = Time.convertToLocal(props.max)
 })
 
 // Functions
@@ -238,7 +238,7 @@ const triggerEmit = _.debounce(() => {
 }, 100)
 
 // Immediate
-if (props.modelValue) dateTime.value = toLocalTimezone(props.modelValue, Time.getFormatTimezone())
-if (props.min) minDateTime.value = toLocalTimezone(props.min, Time.getFormatTimezone())
-if (props.max) maxDateTime.value = toLocalTimezone(props.max, Time.getFormatTimezone())
+if (props.modelValue) dateTime.value = Time.convertToLocal(props.modelValue)
+if (props.min) minDateTime.value = Time.convertToLocal(props.min)
+if (props.max) maxDateTime.value = Time.convertToLocal(props.max)
 </script>

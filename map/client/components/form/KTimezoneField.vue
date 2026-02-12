@@ -10,6 +10,7 @@
         v-model="model"
         :label="label"
         :options="options"
+        clearable
         use-input
         hide-dropdown-icon
         @update:model-value='onChanged'

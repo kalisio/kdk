@@ -69,7 +69,7 @@ const computedButton = computed(() => {
   let format = props.format
   if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'date.short')
   // compute label
-  const label = _.isEmpty(computedModel.value) ? i18n.tie(props.placeholder) : moment(computedModel.value).format(format)
+  const label = _.isEmpty(computedModel.value) ? i18n.tie(props.placeholder) : Time.convertToLocal(computedModel.value).format(format)
   // define button spec
   const spec = {
     id: 'date-button',
