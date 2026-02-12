@@ -12,7 +12,6 @@
 
 <script setup>
 import _ from 'lodash'
-import moment from 'moment'
 import { computed } from 'vue'
 import { Time } from '../../time.js'
 import { i18n } from '../../i18n.js'
