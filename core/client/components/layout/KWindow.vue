@@ -4,6 +4,7 @@
       Window header
      -->
     <div
+      v-if="currentWindow.header.visible"
       :id="`${placement}-window-header`"
       class="k-window-header full-width row items-center"
       :style="`min-width: ${widgetWidth}px; max-width: ${widgetWidth}px;`"
@@ -81,6 +82,7 @@
       Window footer
      -->
     <div
+      v-if="currentWindow.footer.visible"
       :id="`${placement}-window-footer`"
       class="k-window-footer full-width row justify-end"
     >
