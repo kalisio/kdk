@@ -10,6 +10,7 @@
       <q-expansion-item
         v-if="!_.isEmpty(layersBySublegend[sublegend.name])"
         :label="$tie(sublegend.name)"
+        :hide-expand-icon="hideExpandIcon"
         :header-class="sublegend.headerClass || headerClass"
         :default-opened="sublegend.opened || opened"
         dense
@@ -64,6 +65,10 @@ const props = defineProps({
   opened: {
     type: Boolean,
     default: true
+  },
+  hideExpandIcon: {
+    type: Boolean,
+    default: false
   },
   sublegends: {
     type: Array,
