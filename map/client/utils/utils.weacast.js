@@ -11,8 +11,8 @@ export async function getForecastForLocation ({ longitude, latitude, startTime, 
   }
   const query = {
     forecastTime: {
-      $gte: startTime.format(),
-      $lte: endTime.format()
+      $gte: startTime.toISOString(),
+      $lte: endTime.toISOString()
     },
     geometry: {
       $geoIntersects: {
@@ -84,8 +84,8 @@ export async function getForecastForFeature ({ probe, featureId, startTime, endT
       query: {
         probeId: probe._id,
         forecastTime: {
-          $gte: startTime.format(),
-          $lte: endTime.format()
+          $gte: startTime.toISOString(),
+          $lte: endTime.toISOString()
         },
         [probe.featureId]: featureId,
         $groupBy: probe.featureId,
