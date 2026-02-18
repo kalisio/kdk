@@ -119,12 +119,14 @@ export class Runner {
       if (message.type() === 'error') {
         this.errors.push(message)
         debug('Console error:', message.text())
-      } else if (message.type() === 'warning') {
+      } else if (message.type() === 'warn') {
         this.warnings.push(message)
         debug('Console warning:', message.text())
       } else if (message.type() === 'info') {
         this.infos.push(message)
         debug('Console info:', message.text())
+      } else {
+        debug(`Console ${message.type()}: `, message.text())
       }
     })
     this.page.on('pageerror', message => {
