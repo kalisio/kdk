@@ -18,8 +18,8 @@
             multiple
             clearable
             @filter="filter"
-            @add="toggleLayer"
-            @remove="toggleLayer"
+            @add="addLayer"
+            @remove="removeLayer"
             @clear="clear"
           >
             <template v-slot:prepend>
@@ -94,6 +94,17 @@ const filteredLayers = computed(() =>
 )
 
 // Functions
+function addLayer (layerId) {
+  const layer = props.layers.find((l) => l._id === layerId.value)
+  if (layer?.isVisible) return
+  toggleLayer(layerId)
+}
+function removeLayer (layerId) {
+  const layer = props.layers.find((l) => l._id === layerId.value)
+  if (layer?.isVisible) {
+    toggleLayer(layerId)
+  }
+}
 function toggleLayer (layerId) {
   const layer = props.layers.find((l) => l._id === layerId.value)
   const toggleAction = _.find(layer.actions, { id: 'toggle' })
