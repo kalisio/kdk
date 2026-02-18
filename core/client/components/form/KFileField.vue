@@ -12,7 +12,7 @@
     </q-chip>
   </div>
   <!-- -->
-  <q-field v-else-if="model"
+  <q-field v-else-if="!isModelEmpty"
     :for="properties.name + '-field'"
     v-model="model"
     :label="label"
@@ -81,6 +81,9 @@ export default {
     }
   },
   computed: {
+    isModelEmpty () {
+      return _.isEmpty(this.model)
+    },
     multiple () {
       return _.get(this.properties, 'field.multiple', false)
     },
