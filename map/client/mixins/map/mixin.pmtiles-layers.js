@@ -26,12 +26,12 @@ export const pmtilesLayers = {
   methods: {
     async processLeafletPMTilesLayer (options, properties = ['urlTemplate', 'styleTemplate', 'template']) {
       const leafletOptions = options.leaflet || options
-      
+
       // Token required by templating
       const planetApi = (typeof options.getPlanetApi === 'function' ? options.getPlanetApi() : api)
       const apiJwt = (planetApi.hasConfig('apiJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('apiJwt')) : null)
       const gatewayJwt = (planetApi.hasConfig('gatewayJwt') ? await planetApi.get('storage').getItem(planetApi.getConfig('gatewayJwt')) : null)
-      
+
       if (properties.includes('urlTemplate')) {
         const urlTemplate = _.get(leafletOptions, 'urlTemplate')
         if (urlTemplate) {
@@ -128,7 +128,7 @@ export const pmtilesLayers = {
           })
         }
       }
-      
+
       return this.createLeafletLayer({
         ...leafletOptions,
         ...rules,
@@ -136,24 +136,28 @@ export const pmtilesLayers = {
         //levelDiff: 2
       })
     },
-    onCurrentTimeChangedPMTilesLayers (time) {
-      const pmtileslayers = _.values(this.layers).filter(sift({
+    async updatePMTilesLayers() {
+      const pmtilesLayers = _.values(this.layers).filter(sift({
         'leaflet.type': 'pmtiles',
-        // Skip invisible layers
         isVisible: true
       }))
-      pmtileslayers.forEach(async pmtilesLayer => {
-        // Retrieve the layer
+
+      pmtilesLayers.forEach(async pmtilesLayer => {
         const layer = this.getLeafletLayerByName(pmtilesLayer.name)
         const leafletOptions = pmtilesLayer.leaflet || pmtilesLayer
         const urlTemplate = _.get(leafletOptions, 'urlTemplate')
         if (urlTemplate) {
           await this.processLeafletPMTilesLayer(pmtilesLayer, ['urlTemplate'])
-          // Need to update underlying PMTiles source
           layer.views = protomaps.sourcesToViews(leafletOptions)
         }
         layer.redraw()
       })
+    },
+    onCurrentTimeChangedPMTilesLayers (time) {
+      this.updatePMTilesLayers()
+    },
+    onTemplateContextChangedPMTilesLayers(path, value, previousValue) {
+      this.updatePMTilesLayers()
     },
     onCurrentLevelChangedPMTilesLayers (level) {
       // Retrieve the layer associated to current level sélection
@@ -192,11 +196,13 @@ export const pmtilesLayers = {
   created () {
     this.registerLeafletConstructor(this.createLeafletPMTilesLayer)
     Events.on('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
+    Events.on('template-context-changed', this.onTemplateContextChangedPMTilesLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
     this.$engineEvents.on('layer-filter-toggled', this.onLayerFilterToggledPMTilesLayers)
   },
   beforeUnmount () {
     Events.off('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
+    Events.off('template-context-changed', this.onTemplateContextChangedPMTilesLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
     this.$engineEvents.off('layer-filter-toggled', this.onLayerFilterToggledPMTilesLayers)
   }
