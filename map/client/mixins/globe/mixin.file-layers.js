@@ -3,8 +3,8 @@ import logger from 'loglevel'
 import { viewerDragDropMixin } from 'cesium'
 
 export const fileLayers = {
-  mounted () {
-    this.$engineEvents.on('globe-ready', () => {
+  methods: {
+    initializeDragDropFile () {
       const fileLayersOptions = _.defaults(_.get(this, 'activityOptions.engine.fileLayers', {}), {
         clearOnDrop: false,
         flyToOnDrop: true,
@@ -38,6 +38,10 @@ export const fileLayers = {
           }
         })
       })
-    })
+    }
+  },
+  mounted () {
+    if (this.viewer) this.initializeDragDropFile()
+    else this.$engineEvents.on('globe-ready', this.initializeDragDropFile)
   }
 }

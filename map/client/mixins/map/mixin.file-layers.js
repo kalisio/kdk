@@ -47,8 +47,8 @@ export const fileLayers = {
       }, false)
     }
   },
-  async mounted () {
-    if (this.map) await this.createDropFileInput()
+  mounted () {
+    if (this.map) this.createDropFileInput()
     else this.$engineEvents.on('map-ready', this.createDropFileInput)
   }
 }
