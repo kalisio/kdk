@@ -408,7 +408,8 @@ The following options can be set as feature `properties` to manage more geometry
 * **geodesic** boolean set to `true` on a `Point` will result in a great circle from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin, which **radius** must be specified in meters
 * **wrap** additional [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin option, when **geodesic** is specified, defaults to `false`
 * **steps** additional [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin option, when **geodesic** is specified, defaults to `4` or `360` for circles
-* **gradient** color array set on a `LineString` will result in a color ramp applied to the line by mapping each point to the corresponding color in the array 
+* **gradient** color array set on a `LineString` will result in a color ramp applied to the line by mapping each point to the corresponding color in the array
+* **svg** for gradient set it to `true` to use SVG rendering otherwise WebGL will be used
 * **mask** boolean set to `true` on a `Polygon` or `MultiPolygon` will result in the polygon(s) acting as a mask over the map
 * **offset** integer set to a number of pixels on a `LineString` will result in the line being offset by the specified number of pixels when drawn
 
