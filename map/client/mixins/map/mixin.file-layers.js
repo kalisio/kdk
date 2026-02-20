@@ -18,10 +18,8 @@ export const fileLayers = {
           // nothing to do
         }
       }
-    }
-  },
-  mounted () {
-    this.$engineEvents.on('map-ready', () => {
+    },
+    async createDropFileInput () {
       // Create a dummy dropFileInput element to enable puppeteer
       const container = this.map.getContainer()
       const dropFileInput = document.createElement('input')
@@ -47,6 +45,10 @@ export const fileLayers = {
         await this.importFiles(event.dataTransfer.files)
         this.map.scrollWheelZoom.enable()
       }, false)
-    })
+    }
+  },
+  async mounted () {
+    if (this.map) await this.createDropFileInput()
+    this.$engineEvents.on('map-ready', this.createDropFileInput)
   }
 }
