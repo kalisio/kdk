@@ -195,7 +195,8 @@ export default {
     beginMeasureDistance () {
       this.kActivity.map.on('pm:drawstart', this.onMeasureDistanceDrawStart)
       this.kActivity.map.on('pm:create', this.onMeasureDistanceCreate)
-      this.kActivity.map.on('mousemove', this.onMeasureDistanceMouseMove)
+      this.kActivity.$engineEvents.on('mousemove', this.onMeasureDistanceMouseMove)
+      this.kActivity.$engineEvents.on('click', this.onMeasureDistanceMouseClick)
 
       this.kActivity.map.pm.enableDraw('Line', { tooltips: false, continueDrawing: true, cursorMarker: false })
     },
@@ -228,7 +229,7 @@ export default {
       state.markers.push(marker)
       this.kActivity.map.addLayer(marker)
     },
-    onMeasureDistanceMouseMove (event) {
+    onMeasureDistanceMouseMove (layer, event) {
       const state = this.measureDistance
       // Only coordinates while no first location selected
       if (!state.workingLayer) {
@@ -256,6 +257,15 @@ export default {
       coords.push(geoCoords1)
       const d2 = length(lineString(coords), { units: 'kilometers' })
       this.measureValue = this.formatDistance(d2, 'km')
+    },
+    onMeasureDistanceMouseClick (layer, event) {
+      const leafletLayer = event && event.target
+      const feature = _.get(leafletLayer, 'feature')
+      const isMarker = (leafletLayer instanceof L.Marker || leafletLayer instanceof L.CircleMarker)
+      // Not sure why but markers intercept the click event so that geoman is not adding the vertex by himself
+      if (feature && isMarker) {
+        this.kActivity.map.pm.Draw.Line._createVertex(event)
+      }
     },
     measureDistanceTooltip (marker) {
       return this.geometryVertexTooltip(marker)
@@ -290,9 +300,10 @@ export default {
       if (state.markers) {
         for (const marker of state.markers) { this.kActivity.map.removeLayer(marker) }
       }
-      this.kActivity.map.off('mousemove', this.onMeasureDistanceMouseMove)
+      this.kActivity.$engineEvents.off('mousemove', this.onMeasureDistanceMouseMove)
       this.kActivity.map.off('pm:drawstart', this.onMeasureDistanceDrawStart)
       this.kActivity.map.off('pm:create', this.onMeasureDistanceCreate)
+      this.kActivity.$engineEvents.off('click', this.onMeasureDistanceMouseClick)
 
       state.workingLayer = null
       state.markers = null
@@ -302,7 +313,8 @@ export default {
     beginMeasureArea () {
       this.kActivity.map.on('pm:drawstart', this.onMeasureAreaDrawStart)
       this.kActivity.map.on('pm:create', this.onMeasureAreaCreate)
-      this.kActivity.map.on('mousemove', this.onMeasureAreaMouseMove)
+      this.kActivity.$engineEvents.on('mousemove', this.onMeasureAreaMouseMove)
+      this.kActivity.$engineEvents.on('click', this.onMeasureAreaMouseClick)
 
       this.kActivity.map.pm.enableDraw('Polygon', { tooltips: false, continueDrawing: true, cursorMarker: false })
     },
@@ -334,7 +346,7 @@ export default {
       state.markers.push(marker)
       this.kActivity.map.addLayer(marker)
     },
-    onMeasureAreaMouseMove (event) {
+    onMeasureAreaMouseMove (layer, event) {
       const state = this.measureArea
 
       // Only coordinates while no first location selected
@@ -365,6 +377,15 @@ export default {
         coords.push(coords[0])
         const a = area(polygon([coords]))
         this.measureValue = this.formatArea(a, 'm^2')
+      }
+    },
+    onMeasureAreaMouseClick (layer, event) {
+      const leafletLayer = event && event.target
+      const feature = _.get(leafletLayer, 'feature')
+      const isMarker = (leafletLayer instanceof L.Marker || leafletLayer instanceof L.CircleMarker)
+      // Not sure why but markers intercept the click event so that geoman is not adding the vertex by himself
+      if (feature && isMarker) {
+        this.kActivity.map.pm.Draw.Polygon._createVertex(event)
       }
     },
     measureAreaTooltip (marker) {
@@ -400,7 +421,8 @@ export default {
       if (state.markers) {
         for (const marker of state.markers) { this.kActivity.map.removeLayer(marker) }
       }
-      this.kActivity.map.off('mousemove', this.onMeasureAreaMouseMove)
+      this.kActivity.$engineEvents.off('mousemove', this.onMeasureAreaMouseMove)
+      this.kActivity.$engineEvents.off('click', this.onMeasureAreaMouseClick)
       this.kActivity.map.off('pm:drawstart', this.onMeasureAreaDrawStart)
       this.kActivity.map.off('pm:create', this.onMeasureAreaCreate)
 

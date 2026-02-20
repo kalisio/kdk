@@ -135,6 +135,8 @@ export const baseMap = {
         this.map.options.pmIgnore = false
         L.PM.reInitLayer(this.map)
         this.map.pm.setLang(getLocale())
+        // Enable snapping in geoman
+        this.map.pm.setGlobalOptions({ snappable: true })
       }
       // Leaflet does not really manage touch events, it provides compatibility mapping with mouse events
       // but it will not really trigger touch event from the map object, as a consequence we manage this by ourselves

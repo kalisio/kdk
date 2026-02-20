@@ -264,6 +264,8 @@ export const geojsonLayers = {
           // Indeed the style property must be overriden to install the Leaflet function style
           if (!_.has(leafletOptions, key) || (key === 'style')) _.set(leafletOptions, key, _.get(geoJsonOptions, key))
         })
+        // Required for geoman snapping to work
+        leafletOptions.pmIgnore = false
         // Create the layer
         let layer = this.createLeafletLayer(options)
         // Specific case of realtime layer where the underlying container also need to be added to map

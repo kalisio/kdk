@@ -13,7 +13,9 @@ export const ShapeMarker = L.Marker.extend({
     if (options.icon instanceof L.Icon) { // We allow to directly provide the icon
       L.Marker.prototype.initialize.call(this, latlng, {
         icon: options.icon,
-        ...markerOptions
+        ...markerOptions,
+        // Required for geoman snapping to work
+        pmIgnore: false
       })
     } else {
       const shape = coreUtils.createShape(options)
@@ -26,7 +28,9 @@ export const ShapeMarker = L.Marker.extend({
             html: shape.html,
             className: ''
           }),
-          ...markerOptions
+          ...markerOptions,
+          // Required for geoman snapping to work
+          pmIgnore: false
         })
       } else {
         logger.warn(`[KDK] unable to create the shape with the options: ${options}` )
