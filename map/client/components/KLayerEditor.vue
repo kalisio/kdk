@@ -244,6 +244,17 @@ const schema = {
   },
   required: ['name']
 }
+// Allow schema edition in this case
+if (isVectorLayer) {
+  schema.properties['schema'] = {
+    type: ['object', 'null'],
+    field: {
+      component: 'form/KFileField',
+      label: 'schemas.CATALOG_SCHEMA_FIELD_LABEL',
+      mimeTypes: 'application/json'
+    }
+  }
+}
 
 // Functions
 function getPopupId (option) {
@@ -280,7 +291,8 @@ function getValues () {
       name: _.get(layer, 'name', ''),
       description: _.get(layer, 'description', ''),
       featureId: _.get(layer, 'featureId', ''),
-      featureLabel: _.get(layer, 'featureLabel', '')
+      featureLabel: _.get(layer, 'featureLabel', ''),
+      schema: _.pick(_.get(layer, 'schema', {}), ['name', 'content'])
     },
     display: {
       isVisible: _.get(layer, 'leaflet.isVisible', _.get(DefaultStyle, 'isVisible')),
@@ -445,8 +457,8 @@ function apply () {
     CurrentActivity.value.resetLayer(layer)
   } else {
     // Dotify the layer to avoid patching the whole object
-    const dotifiedLayer = dotify(updatedLayer)
-
+    // Schema is an exception as internal hooks will convert JSON to string
+    const dotifiedLayer = dotify(_.omit(updatedLayer, ['schema']))
     const keys = ['leaflet.cluster', 'leaflet.popup', 'leaflet.tooltip', 'leaflet.infobox', 'cesium.cluster', 'cesium.popup', 'cesium.tooltip', 'cesium.infobox']
     // Remove keys of objects that don't need to be dotified
     _.forIn(dotifiedLayer, (value, key) => {
@@ -463,6 +475,11 @@ function apply () {
         dotifiedLayer[key] = _.get(updatedLayer, key, false)
       }
     })
+    // Manage schema special case
+    dotifiedLayer.schema = {
+      name: updatedLayer.schema.name,
+      content: updatedLayer.schema.content
+    }
 
     api.getService('catalog').patch(layer._id, dotifiedLayer)
   }

@@ -64,7 +64,7 @@ const propertiesFormSchema = computed(() => {
         }
       },
       schema: {
-        type: 'object',
+        type: ['object', 'null'],
         field: {
           component: 'form/KFileField',
           label: 'KCreateLayer.CATALOG_SCHEMA_FIELD_LABEL',
