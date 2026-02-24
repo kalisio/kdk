@@ -23,6 +23,7 @@ import * as wmts from '../../../common/wmts-utils'
 import { i18n } from '../../../../core/client'
 import { KPanel } from '../../../../core/client/components'
 import KForm from '../../../../core/client/components/form/KForm.vue'
+import { setEngineJwt } from '../../utils/utils.catalog.js'
 import { useCurrentActivity } from '../../composables'
 
 // Emits
@@ -195,7 +196,19 @@ async function onConnect () {
     const { west, east, south, north } = layer.value.extent
     newLayer.bbox = [west, south, east, north]
   }
-  if (service.value.protocol === 'WMS') {
+  if (service.value.protocol === 'PMTiles') {
+    // This will allow to design data filters even if not features layer
+    Object.assign(newLayer, {
+      schema: { content: layer.value.schema },
+      isFilterEditable: true
+    })
+    newLayer.leaflet = {
+      type: 'pmtiles',
+      url: service.value.request,
+      dataLayer: layer.value.id,
+      style: {} // This will force KDK-based style to be used
+    }
+  } else if (service.value.protocol === 'WMS') {
     const style = propertiesResult.values.style
     const timeDimension = layer.value.timeDimension
 
@@ -336,6 +349,7 @@ async function onConnect () {
   if (newLayer.leaflet) newLayer.leaflet.isVisible = true
   if (newLayer.cesium) newLayer.cesium.isVisible = true
   // Add the layer
+  await setEngineJwt([newLayer])
   await CurrentActivity.value.addLayer(newLayer)
   connecting.value = false
   emit('done')

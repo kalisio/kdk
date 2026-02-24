@@ -108,8 +108,9 @@ export const pmtilesLayers = {
           rules.paint_rules = rules.paintRules = _.filter(styleRules, isNotLabelSymbolizer)
           rules.label_rules = rules.labelRules = _.filter(styleRules, isLabelSymbolizer)
         } else if (styleType === 'kdk') {
-          // Translate kdk style to protomap rules
-          rules = kdk_style(style, leafletOptions.dataLayer)
+          // Translate kdk style to protomap rules, take care to merge with default engine style
+          const engineStyle = _.pick(_.get(this.activityOptions, 'engine.style', {}), ['point', 'line', 'polygon'])
+          rules = kdk_style(_.merge(engineStyle, style), leafletOptions.dataLayer)
         }
         if (options.filters) {
           // Translate layer filters to filter function
@@ -123,7 +124,9 @@ export const pmtilesLayers = {
                 return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
               }
             } else {
-              rule.filter = (zoom, feature) => filterFn({ zoom, feature, properties: feature.props })
+              rule.filter = (zoom, feature) => {
+                return filterFn({ zoom, feature, properties: feature.props })
+              }
             }
           })
         }

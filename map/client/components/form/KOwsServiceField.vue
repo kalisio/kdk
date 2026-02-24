@@ -81,8 +81,9 @@
 <script>
 import _ from 'lodash'
 import xml2js from 'xml2js'
-import { api, mixins as kCoreMixins } from '../../../../core/client'
+import { api, Store, mixins as kCoreMixins } from '../../../../core/client'
 import { KAction } from '../../../../core/client/components'
+import * as pmtiles from '../../../common/pmtiles-utils'
 import * as wms from '../../../common/wms-utils'
 import * as wfs from '../../../common/wfs-utils'
 import * as wmts from '../../../common/wmts-utils'
@@ -181,6 +182,10 @@ export default {
        fetch('https://host.com', {headers: headers})
        */
       try {
+        // Check both the default built-in config or the server provided one if any for gateway URL
+        const gatewayUrl = (api.hasConfig('gateway') ? api.getConfig('gateway') : Store.get('capabilities.api.gateway'))
+        const jwt = (api.hasConfig('gatewayJwt') ? await api.get('storage').getItem(api.getConfig('gatewayJwt')) : null)
+        const jwtField = api.getConfig('gatewayJwtField')
         let caps = null
         if (url.protocol === 'http:' || url.protocol === 'https:') {
           result.request = url.href
@@ -188,11 +193,22 @@ export default {
           result.headers = headers
           result.name = result.baseUrl
           for (const [k, v] of url.searchParams) result.searchParams[k] = v
-          // fetch content and try to convert to json
-          const query = url.href
           if (this.headerKey && this.headerValue) {
             Object.assign(result.headers, { [this.headerKey]: this.headerValue })
           }
+          let query = url.href
+          // Automatically add token in this case
+          if (result.baseUrl.startsWith(gatewayUrl)) {
+            query = `${query}?${jwtField}=${jwt}`
+          }
+          // Fetch content and process it
+          const { header, metadata } = await pmtiles.getPMTilesMetadata(query)
+          if (header) {
+            result.protocol = 'PMTiles'
+            result.availableLayers = pmtiles.getPMTilesLayers(header, metadata)
+            return result
+          }
+          // OGC Web Services
           const resp = await fetch(query, { redirect: 'follow', headers: result.headers })
           if ((resp.status === 401) || (resp.status === 403)) {
             this.unhautorized = true

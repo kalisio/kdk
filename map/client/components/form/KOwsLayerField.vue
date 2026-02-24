@@ -49,6 +49,7 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
+import * as pmtiles from '../../../common/pmtiles-utils'
 import * as wfs from '../../../common/wfs-utils'
 
 export default {
@@ -95,7 +96,9 @@ export default {
       this.loading = true
       const newModel = Object.assign({}, layer)
       if (layer) {
-        if (this.service.protocol === 'WFS') {
+        if (this.service.protocol === 'PMTiles') {
+          newModel.schema = pmtiles.generatePropertiesSchema(layer)
+        } else if (this.service.protocol === 'WFS') {
           try {
             const desc = await wfs.DescribeFeatureType(this.service.baseUrl, this.service.version, layer.id, this.service.searchParams, this.service.headers)
             newModel.schema = wfs.generatePropertiesSchema(desc, layer.display)

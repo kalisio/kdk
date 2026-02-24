@@ -6,10 +6,14 @@ import { getCatalogProjectQuery, getViewsProjectQuery } from './utils.project.js
 
 // Helper to set a JWT as query param in a target URL
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
-  const url = _.get(item, path)
+  let url = _.get(item, path)
   if (!url) return
   // Check it conforms to required base URL
   if (!url.startsWith(baseUrl)) return
+  // Take care it might inlcude an old token that needs to be refreshed
+  if (url.includes(`?${jwtField}=`)) {
+    url = url.replace(/eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*/g, '').replace(`?${jwtField}=`, '')
+  }
   // FIXME: specific case of Cesium OpenStreetMap provider
   // Because Cesium generates the final url as base url + tile scheme + extension
   // updating the base url property breaks it, for now we modify the extension
