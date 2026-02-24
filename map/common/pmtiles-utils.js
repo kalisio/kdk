@@ -28,8 +28,8 @@ export function getPMTilesLayers(header, metadata) {
 
 export function generatePropertiesSchema (layer) {
   const schema = {
-    $id: `http://www.kalisio.xyz/schemas/${_.kebabCase(name)}#`,
-    title: name,
+    $id: `http://www.kalisio.xyz/schemas/${_.kebabCase(layer.id)}#`,
+    title: layer.id,
     $schema: 'http://json-schema.org/draft-07/schema#',
     type: 'object',
     properties: {}
