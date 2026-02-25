@@ -61,9 +61,20 @@
         id="condition-value"
       />
       <q-input
+        v-else-if="valueIsNumber"
+        v-model.number="value"
+        type="number"
+        :label="$t('KFilterCondition.VALUE')"
+        :error="hasValueErrors"
+        :error-message="$t('KFilterCondition.CANNOT_BE_EMPTY')"
+        @update:model-value="checkValueValidity"
+        dense
+        id="condition-value"
+      />
+      <q-input
         v-else
         v-model="value"
-        :type="valueIsNumber ? 'number' : 'text'"
+        type="text"
         :label="$t('KFilterCondition.VALUE')"
         :error="hasValueErrors"
         :error-message="$t('KFilterCondition.CANNOT_BE_EMPTY')"
@@ -180,8 +191,8 @@ function getProperties () {
 }
 async function onPropertyChange (property) {
   if (!property) return null
-  // Use input of type number if the component from schema is KNumberField
-  if (_.get(layer, ['schema', 'content', 'properties', property, 'field', 'component']) === 'form/KNumberField') {
+  // Use input of type number if the schema is like
+  if (_.get(layer, ['schema', 'content', 'properties', property, 'type']) === 'number') {
     valueOptions.value = null
     valueIsNumber.value = true
     // Switch comparison operator if not in operators that can be applied to numbers
