@@ -8,19 +8,7 @@ import { mapbox_style, kdk_style } from '@kalisio/leaflet-pmtiles'
 import { api, Time, Units, Events, TemplateContext } from '../../../../core/client/index.js'
 import * as time from '../../../../core/client/utils/utils.time.js'
 import * as layers from '../../utils/utils.layers.js'
-
-function detectStyleType (style) {
-  // `style` field on pmtile layer definition can be one of:
-  // - string => in this case we assume this is a mapbox json style
-  // - kdk style object
-  // - protomaps style object
-
-  if (typeof style === 'string') return 'mapbox'
-  // Look for 'symbolizer' keys in the object, if we find one, this is a protomaps style
-  if (_.some(style, (rule) => rule.symbolizer !== undefined)) return 'protomaps'
-  // Otherwise we assume this is a kdk style object
-  return style ? 'kdk' : 'empty'
-}
+import { detectStyleType, applyLayerFilters } from '../../../common/pmtiles-utils.js'
 
 export const pmtilesLayers = {
   methods: {
@@ -110,28 +98,12 @@ export const pmtilesLayers = {
         } else if (styleType === 'kdk') {
           // Translate kdk style to protomap rules, take care to merge with default engine style
           const engineStyle = _.pick(_.get(this.activityOptions, 'engine.style', {}), ['point', 'line', 'polygon'])
-          rules = kdk_style(_.merge(engineStyle, style), leafletOptions.dataLayer)
+          rules = kdk_style(_.merge(_.cloneDeep(engineStyle), style), leafletOptions.dataLayer)
         }
         if (options.filters) {
           // Translate layer filters to filter function
           const filterFn = layers.getFilterFunctionFromLayerFilters(options)
-          rules.paintRules.forEach(rule => {
-            // kdkFilter member may not be present, this is added by kdk_style when translating kdk style
-            // to leaflet-protomaps rules
-            if (rule.kdkFilter) {
-              rule.filter = (zoom, feature) => {
-                const kdkFilter = rule.kdkFilter(zoom, feature)
-                const filter = filterFn({ zoom, feature, properties: feature.props })
-                // Final filter = kdk style filter + updated filter
-                return kdkFilter && filter
-              }
-            } else {
-              rule.filter = (zoom, feature) => {
-                const filter = filterFn({ zoom, feature, properties: feature.props })
-                return filter
-              }
-            }
-          })
+          applyLayerFilters(filterFn, rules.paintRules)
         }
       }
 
@@ -179,24 +151,13 @@ export const pmtilesLayers = {
       }
     },
     onLayerFilterToggledPMTilesLayers (layer, filter) {
+      // Retrieve the engine layer and update the filter function directly
+      const leafletLayer = this.getLeafletLayerByName(layer. name)
+      if (!leafletLayer) return
       // Filtering is managed by mongodb query syntax, we need to update the filter function
       const filterFn = layers.getFilterFunctionFromLayerFilters(layer)
-      // Retrieve the engine layer and update the filter function directly
-      layer = this.getLeafletLayerByName(layer. name)
-      if (!layer) return
-      layer.paintRules.forEach(rule => {
-        // kdkFilter member may not be present, this is added by kdk_style when translating kdk style
-        // to leaflet-protomaps rules
-        if (rule.kdkFilter) {
-          rule.filter = (zoom, feature) => {
-            // Final filter = kdk style filter + updated filter
-            return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
-          }
-        } else {
-          rule.filter = (zoom, feature) => filterFn({ zoom, feature, properties: feature.props })
-        }
-      })
-      layer.redraw()
+      applyLayerFilters(filterFn, leafletLayer.paintRules)
+      leafletLayer.redraw()
     }
   },
   created () {

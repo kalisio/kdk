@@ -18,7 +18,7 @@ export function getPMTilesLayers(header, metadata) {
       id: layer.id,
       display: layer.id,
       description: layer.description,
-      bounds: metadata.bounds || [header.minLon, header.maxLon, header.minLat, header.maxLat],
+      bounds: metadata.bounds || [header.minLon, header.minLat, header.maxLon, header.maxLat],
       fields: layer.fields,
       minZoom: layer.minzoom || header.minZoom,
       maxZoom: layer.maxzoom || header.maxZoom
@@ -48,4 +48,38 @@ export function generatePropertiesSchema (layer) {
   })
 
   return schema
+}
+
+export function detectStyleType (style) {
+  // `style` field on pmtiles layer definition can be one of:
+  // - string => in this case we assume this is the URL to a mapbox json style
+  // - kdk style object
+  // - protomaps style object
+
+  if (typeof style === 'string') return 'mapbox'
+  // Look for 'symbolizer' keys in the object, if we find one, this is a protomaps style
+  if (_.some(style, (rule) => rule.symbolizer !== undefined)) return 'protomaps'
+  // Otherwise we assume this is a kdk style object
+  return style ? 'kdk' : 'empty'
+}
+
+// Apply layer filters function to paint rules
+export function applyLayerFilters(filterFn, paintRules) {
+  paintRules.forEach(rule => {
+    // kdkFilter member may not be present, this is added by kdk_style when translating kdk style
+    // to leaflet-protomaps rules
+    if (rule.kdkFilter) {
+      rule.filter = (zoom, feature) => {
+        const kdkFilter = rule.kdkFilter(zoom, feature)
+        const filter = filterFn({ zoom, feature, properties: feature.props })
+        // Final filter = kdk style filter + updated filter
+        return kdkFilter && filter
+      }
+    } else {
+      rule.filter = (zoom, feature) => {
+        const filter = filterFn({ zoom, feature, properties: feature.props })
+        return filter
+      }
+    }
+  })
 }
