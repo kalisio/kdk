@@ -190,7 +190,8 @@ async function onConnect () {
     type: 'OverlayLayer',
     icon: 'las la-plug',
     scope: 'user',
-    tags: ['user']
+    tags: ['user'],
+    bbox: layer.value.bbox
   }
   if (layer.value.extent) {
     const { west, east, south, north } = layer.value.extent

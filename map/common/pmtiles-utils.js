@@ -18,7 +18,7 @@ export function getPMTilesLayers(header, metadata) {
       id: layer.id,
       display: layer.id,
       description: layer.description,
-      bounds: metadata.bounds || [header.minLon, header.minLat, header.maxLon, header.maxLat],
+      bbox: metadata.bounds || [header.minLon, header.minLat, header.maxLon, header.maxLat],
       fields: layer.fields,
       minZoom: layer.minzoom || header.minZoom,
       maxZoom: layer.maxzoom || header.maxZoom
