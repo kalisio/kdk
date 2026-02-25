@@ -120,12 +120,15 @@ export const pmtilesLayers = {
             // to leaflet-protomaps rules
             if (rule.kdkFilter) {
               rule.filter = (zoom, feature) => {
+                const kdkFilter = rule.kdkFilter(zoom, feature)
+                const filter = filterFn({ zoom, feature, properties: feature.props })
                 // Final filter = kdk style filter + updated filter
-                return rule.kdkFilter(zoom, feature) && filterFn({ zoom, feature, properties: feature.props })
+                return kdkFilter && filter
               }
             } else {
               rule.filter = (zoom, feature) => {
-                return filterFn({ zoom, feature, properties: feature.props })
+                const filter = filterFn({ zoom, feature, properties: feature.props })
+                return filter
               }
             }
           })
