@@ -220,7 +220,7 @@ export function createShape (options) {
   // Render icon 
   let iconTag = ''
   if (options.icon) {
-    if (!_.isNil(options.icon.classes) || !_.isNil(options.icon.url)) {
+    if (!_.isNil(options.icon.classes) || !_.isNil(options.icon.url) || !_.isNil(options.icon.symbol)) {
       if (!_.isEmpty(options.icon.classes) || !_.isEmpty(options.icon.url)) {
         let specificStyle = ''
         if (options.icon.url) {
@@ -242,6 +242,13 @@ export function createShape (options) {
         const rotation = options.icon.rotation || _.get(shape, 'icon.rotation', 0)
         iconTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); opacity: ${opacity}; ${specificStyle}"`
         iconTag += '/>'
+      } else {
+        let iconSize = options.icon.size ? getSize(options.icon.size) : size
+        const color = getHtmlColor(options.icon.color, defaultColor)
+        const opacity = options.icon.opacity || 1
+        const translation = options.icon.translation || _.get(shape, 'icon.translation', ['-50%', '-50%'])
+        const rotation = options.icon.rotation || _.get(shape, 'icon.rotation', 0)
+        iconTag = `<svg width=${iconSize.width} height=${iconSize.height} style="position: absolute; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); opacity: ${opacity}" fill="${color}"><use href="${options.icon.symbol}"></svg>`
       }
     } else {
       logger.warn(`[KDK] icon must contain either the 'classes' property or the 'url' property`)
