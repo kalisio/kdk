@@ -5,7 +5,8 @@
       <KForm
         ref="formRef"
         :values="values.base"
-        :schema="schema"
+        :schema="formSchema"
+        @field-changed="onLayerFormFieldChanged"
         class="q-ma-md"
       />
     </q-expansion-item>
@@ -168,13 +169,13 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { api } from '../../../core/client/api.js'
 import { useCurrentActivity } from '../composables/activity.js'
 import { DefaultStyle } from '../utils/utils.style.js'
 import { hasFeatureSchema, isInMemoryLayer } from '../utils/utils.layers.js'
 import { dotify } from '../../../core/client/utils/index.js'
-import layerSchema from '../../common/schemas/catalog.update.json'
+import layerFormSchema from '../../common/schemas/catalog.update.json'
 
 // Props
 const props = defineProps({
@@ -188,6 +189,7 @@ const props = defineProps({
 const { CurrentActivity } = useCurrentActivity()
 const formRef = ref(null)
 const layer = CurrentActivity.value.getLayerByName(props.layerName)
+let layerSchema = _.get(layer, 'schema', {})
 const activityOptions = CurrentActivity.value.activityOptions.engine
 const is2D = CurrentActivity.value.is2D()
 const leafletZoomBounds = {
@@ -199,14 +201,17 @@ const cesiumZoomBounds = {
   max: 24000000
 }
 const values = ref(getValues())
-const properties = getProperties()
-const layerHasFeatureSchema = hasFeatureSchema(layer)
-const isVectorLayer = layerHasFeatureSchema || (_.get(layer, 'leaflet.type') === 'geoJson')
-const schema = _.cloneDeep(layerSchema)
+const properties = ref(getProperties())
+
+// Computed
+let layerHasFeatureSchema = !_.isEmpty(layerSchema)
+let isVectorLayer = layerHasFeatureSchema || (_.get(layer, 'leaflet.type') === 'geoJson')
+const formSchema = _.cloneDeep(layerFormSchema)
 // Allow schema edition in this case
 if (isVectorLayer) {
-  schema.properties['schema'] = {
+  formSchema.properties['schema'] = {
     type: ['object', 'null'],
+    nullable: true,
     field: {
       component: 'form/KFileField',
       label: 'schemas.CATALOG_SCHEMA_FIELD_LABEL',
@@ -216,13 +221,32 @@ if (isVectorLayer) {
 }
 
 // Functions
+function onLayerFormFieldChanged (field, value) {
+  // We need to update available properties
+  if (field === 'schema') {
+    layerSchema = value || {}
+    properties.value = getProperties()
+    // Remove any previous property that does not exist anymore in schema
+    if (values.value.popup.properties) {
+      values.value.popup.properties = values.value.popup.properties.filter(property => _.has(layerSchema, `content.properties.${property}`))
+      if (_.isEmpty(values.value.popup.properties)) values.value.popup.enabled = false
+    }
+    if (!_.has(layerSchema, `content.properties.${values.value.tooltip.property}`)) {
+      values.value.tooltip.property = ''
+      values.value.tooltip.enabled = false
+    }
+    if (values.value.infobox.properties) {
+      values.value.infobox.properties = values.value.popup.properties.filter(property => _.has(layerSchema, `content.properties.${property}`))
+      if (_.isEmpty(values.value.infobox.properties)) values.value.infobox.enabled = false
+    }
+  }
+}
 function getPopupId (option) {
   return _.kebabCase(option.label)
 }
 function getProperties () {
-  const layer = CurrentActivity.value.getLayerByName(props.layerName)
   // Avoid modifying the layer schema as we might update it internally
-  const fields = _.cloneDeep(_.get(layer, 'schema.content.properties', {}))
+  const fields = _.cloneDeep(_.get(layerSchema, 'content.properties', {}))
   const properties = []
   _.forOwn(fields, (value, key) => {
     // Use label or ID
@@ -245,13 +269,14 @@ function getIfNumber (value, defaultValue) {
   return _.isNil(value) || !_.isNumber(value) ? defaultValue : value
 }
 function getValues () {
+  const opacity = _.get(layer, 'leaflet.opacity', 1)
   const values = {
     base: {
       name: _.get(layer, 'name', ''),
       description: _.get(layer, 'description', ''),
       featureId: _.get(layer, 'featureId', ''),
       featureLabel: _.get(layer, 'featureLabel', ''),
-      schema: _.pick(_.get(layer, 'schema', {}), ['name', 'content'])
+      schema: _.pick(layerSchema, ['name', 'content'])
     },
     display: {
       isVisible: _.get(layer, 'leaflet.isVisible', _.get(DefaultStyle, 'isVisible')),
@@ -295,11 +320,11 @@ function getValues () {
       },
       isSelectable: _.get(layer, 'isSelectable', _.get(DefaultStyle, 'isSelectable')),
       opacity: {
-        enabled: _.get(layer, 'leaflet.opacity', false) !== false,
+        enabled: opacity !== false,
         min: 0,
         max: 1,
         step: 0.1,
-        value: _.get(layer, 'leaflet.opacity', 0.5)
+        value: (opacity === false ? 1 : opacity) // QSlider dislike boolean values
       }
     },
     popup: {
@@ -435,9 +460,13 @@ function apply () {
       }
     })
     // Manage schema special case
-    if (updatedLayer.schema) dotifiedLayer.schema = {
-      name: updatedLayer.schema.name,
-      content: updatedLayer.schema.content
+    if (updatedLayer.schema) {
+      dotifiedLayer.schema = {
+        name: updatedLayer.schema.name,
+        content: updatedLayer.schema.content
+      }
+    } else {
+      dotifiedLayer.schema = null
     }
 
     api.getService('catalog').patch(layer._id, dotifiedLayer)

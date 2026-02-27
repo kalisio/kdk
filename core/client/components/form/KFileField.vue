@@ -98,6 +98,8 @@ export default {
     },
     onFileCleared () {
       this.files = null
+      // field cleared
+      this.model = this.emptyModel()
       this.error = ''
       this.onChanged()
     },
