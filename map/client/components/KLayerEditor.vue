@@ -476,7 +476,7 @@ function apply () {
       }
     })
     // Manage schema special case
-    dotifiedLayer.schema = {
+    if (updatedLayer.schema) dotifiedLayer.schema = {
       name: updatedLayer.schema.name,
       content: updatedLayer.schema.content
     }
