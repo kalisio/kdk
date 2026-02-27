@@ -174,6 +174,7 @@ import { useCurrentActivity } from '../composables/activity.js'
 import { DefaultStyle } from '../utils/utils.style.js'
 import { hasFeatureSchema, isInMemoryLayer } from '../utils/utils.layers.js'
 import { dotify } from '../../../core/client/utils/index.js'
+import layerSchema from '../../common/schemas/catalog.update.json'
 
 // Props
 const props = defineProps({
@@ -201,49 +202,7 @@ const values = ref(getValues())
 const properties = getProperties()
 const layerHasFeatureSchema = hasFeatureSchema(layer)
 const isVectorLayer = layerHasFeatureSchema || (_.get(layer, 'leaflet.type') === 'geoJson')
-const schema = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'http://www.kalisio.xyz/schemas/catalog.update.json#',
-  title: 'schemas.OBJECT_NAME',
-  description: 'Layer edition schema',
-  type: 'object',
-  properties: {
-    name: {
-      type: 'string',
-      maxLength: 128,
-      minLength: 3,
-      field: {
-        component: 'form/KTextField',
-        label: 'schemas.CATALOG_NAME_FIELD_LABEL'
-      }
-    },
-    description: {
-      type: ['string', 'null'],
-      maxLength: 256,
-      field: {
-        component: 'form/KTextField',
-        label: 'schemas.CATALOG_DESCRIPTION_FIELD_LABEL'
-      }
-    },
-    featureId: {
-      type: ['string', 'null'],
-      maxLength: 256,
-      field: {
-        component: 'form/KTextField',
-        label: 'schemas.CATALOG_FEATURE_ID_FIELD_LABEL'
-      }
-    },
-    featureLabel: {
-      type: ['string', 'null'],
-      maxLength: 256,
-      field: {
-        component: 'form/KTextField',
-        label: 'schemas.CATALOG_FEATURE_LABEL_FIELD_LABEL'
-      }
-    }
-  },
-  required: ['name']
-}
+const schema = _.cloneDeep(layerSchema)
 // Allow schema edition in this case
 if (isVectorLayer) {
   schema.properties['schema'] = {
