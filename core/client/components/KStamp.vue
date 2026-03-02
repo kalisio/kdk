@@ -34,7 +34,7 @@ const props = defineProps({
   },
   text: {
     type: String,
-    defatult: ''
+    default: ''
   },
   textSize: {
     type: String,
