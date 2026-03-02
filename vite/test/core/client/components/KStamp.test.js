@@ -37,4 +37,22 @@ describe('KStamp', () => {
     })
     expect(wrapper.find('.row').exists()).toBe(true)
   })
+
+  it('applies small padding classes on small screens (lt.sm)', () => {
+    const wrapper = mount(KStamp, {
+      props: { text: 'Test' },
+      global: { mocks: { $q: { screen: { lt: { sm: true }, gt: { xs: false } } } } }
+    })
+    expect(wrapper.find('.q-pl-xs').exists()).toBe(true)
+    expect(wrapper.find('.q-pl-sm').exists()).toBe(false)
+  })
+
+  it('applies large padding classes on large screens (gt.xs)', () => {
+    const wrapper = mount(KStamp, {
+      props: { text: 'Test' },
+      global: { mocks: { $q: { screen: { lt: { sm: false }, gt: { xs: true } } } } }
+    })
+    expect(wrapper.find('.q-pl-sm').exists()).toBe(true)
+    expect(wrapper.find('.q-pl-xs').exists()).toBe(false)
+  })
 })
