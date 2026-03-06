@@ -165,8 +165,9 @@ style: {
         dashOffset: 0 // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dashoffset
     },
     icon: {
-      classes: undefined // must be specified, e.g 'las la-home'
-      url: '' // url to the image to be displayed. Alternative to the classes property
+      classes: undefined // CSS class to use when icon comes from an icon font, e.g 'las la-home' (one of classes/url/symbol must be specified)
+      url: '' // url to the image to be displayed. Alternative to the classes/symbol properties.
+      symbol: '' // url to the svg sprite file + id of icon (eg. /assets/icons.svg#aircraft). Alternative to the classes/url properties.
       color: 'black', // any HTML color or [Quasar color](https://quasar.dev/style/color-palette/)
       opacity: 1.0, // range from 0.0 (transparent) to 1.0 (opaque)
       size: '14px', // any HTML size
@@ -187,6 +188,27 @@ style: {
 ```
 
 **KDK** comes with a set of predefined marker shapes: `circle`, `rect`, `rounded-rect`, `diamond`, `triangle`, `triangle-down`, `triangle-left`, `triangle-right`, `star`, `marker-pin`, `square-pin`. But it allows you to register you own shape. See the [Shapes](../core/components.md#shapes) section to understaned how to register a new shape.
+
+When using the `point.icon.symbol` property, you must have an svg sprite file somewhere in which you define all your icons. An example of such a sprite file can be the following:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- icon1 -->
+    <symbol id="icon1" viewBox="0 0 24 24">
+      <path d="M19.88 ... "/>
+      <path d="M1.8 ... "/>
+    </symbol>
+    <!-- icon2 -->
+    <symbol id="icon2" viewBox="0 0 24 24">
+      <path d="M88 ... "/>
+    </symbol>
+  </defs>
+</svg>
+```
+
+And in the `point.icon.symbol` you can then reference your icons using `/path/where/to/fetch/file.svg#icon1`.
 
 In addition and for backward compatibility, **KDK** supports an enhanced [simple style spec options](https://github.com/mapbox/simplestyle-spec) with the following mapping:
 
