@@ -111,7 +111,7 @@ export class KazarrGridSource extends GridSource {
     const reqMaxLon = bbox[3]
 
     let queryParams = `variable=${this.config.variable}&lon_min=${reqMinLon}&lon_max=${reqMaxLon}&lat_min=${reqMinLat}&lat_max=${reqMaxLat}`
-    queryParams += '&mesh_tile_size=16&mesh_interpolate=true'
+    queryParams += '&format=mesh&mesh_tile_size=16&mesh_interpolate=true'
     if (this.config.additional) {
       for (const [key, value] of Object.entries(this.config.additional)) { queryParams += `&${key}=${value}` }
     }
