@@ -169,11 +169,11 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { api } from '../../../core/client/api.js'
 import { useCurrentActivity } from '../composables/activity.js'
 import { DefaultStyle } from '../utils/utils.style.js'
-import { hasFeatureSchema, isInMemoryLayer } from '../utils/utils.layers.js'
+import { isInMemoryLayer } from '../utils/utils.layers.js'
 import { dotify } from '../../../core/client/utils/index.js'
 import layerFormSchema from '../../common/schemas/catalog.update.json'
 
