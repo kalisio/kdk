@@ -95,7 +95,7 @@ export function baseActivity (name) {
         Layout.setPaneMode('bottom', mode)
       },
       setBottomPaneVisible (visible) {
-        Layout.setPaneMode('bottom', visible)
+        Layout.setPaneVisible('bottom', visible)
       },
       configureBottomPane () {
         if (_.has(this.activityOptions, 'bottomPane')) Layout.setPane('bottom', _.get(this.activityOptions, 'bottomPane'), this)
@@ -119,7 +119,7 @@ export function baseActivity (name) {
         Layout.setPaneMode('right', mode)
       },
       setRightPaneVisible (visible) {
-        Layout.setPaneMode('right', visible)
+        Layout.setPaneVisible('right', visible)
       },
       configureRightPane () {
         if (_.has(this.activityOptions, 'rightPane')) Layout.setPane('right', _.get(this.activityOptions, 'rightPane'), this)
