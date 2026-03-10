@@ -55,6 +55,7 @@ export const i18n = {
     this.i18n = createI18n({
       locale,
       fallbackLocale,
+      escapeParameterHtml: true,
       messages: await loadTranslationBundles(bundles, locale, fallbackLocale),
       silentFallbackWarn: true
     })
