@@ -1,189 +1,97 @@
 # Composables
 
-## useStore
+## Store
 
-Used to setup a reactive store, call **useStore()** with the following arguments:
-* **name** unique store name within the application
-* **initialStore** initial store content if any
+### [useStore](./composables/composables.store.md)
 
-The composable exposes the following:
-* **store**: the created store object
-* **clear()**: reset store content
-* **set(path, value)**: set a store value by path
-* **get(path)**: get a store value by path
-* **unset(path)**: unset a store value by path
-* **has(path)**: test if a store has a value by path
-* **forOwn(f)**: call function `f` on each `(value, key)` of the store
+Used to setup a named reactive store backed by Vue's `reactive()`. All stores share a single global registry; calling `useStore` with the same name from multiple components returns the same reactive object.
+
+## Version
+
+### [useVersion](./composables/composables.version.md)
+
+Exposes read-only access to the client and API version information. On first call it fetches the API version from the `Capabilities` singleton.
 
 ## User & Session
 
-### useUser
+### [useUser](./composables/composables.user.md)
 
-Used to access the current user information.
+Provides reactive access to the currently authenticated user (`name`, `description`, `avatar`, `role`) read directly from the global KDK store.
 
-The composable exposes the following:
-* **User**: current user (null if none currently authenticated).
-* **name**: the user name
-* **description**: the user description
-* **avatar**: the user avatar
-* **permissions**: the user permissions
-* **role**: the user role
+### [useSession](./composables/composables.session.md)
 
-### useSession
+Manages the full client session lifecycle: restoring an existing session on mount, redirecting based on route guards and user abilities, and handling socket disconnection/reconnection events with appropriate UI prompts.
 
-Used to manage user client session with the following options:
-* **redirect** function to override default redirection behaviour with the following arguments:
-  * `route` current route,
-  * `result` from before guard,
-  * `user` current user (null if none currently authenticated).
+## Context
 
-Rely on [global guards](./application.md#guards) to ensure redirection. It also manages the socket connection state and will display disconnection/reconnection dialogs accordingly.
+### [useContext](./composables/composables.context.md)
 
-## useContext
+Manages the current application context (e.g. an organisation or project). Keeps the context in sync with the backend via service events and redirects to a fallback route when the context is deleted.
 
-Used to manage the current context of the application, call **useContext()** with the following arguments:
-* **fallbackRoute** the route used to redirect the application when the current context is removed or does not exist
+## Selection
 
-The composable exposes the following:
-* **Context**: the current context as a ref
-* **setContext(objectOrId)**: clears the current context and set the current context with the provided object or the object corresponding to the given id.
-* **clearContext()**: clears the current context
-* **getService()**: returns the service used to manage the context
+### [useSelection](./composables/composables.selection.md)
 
-The context service to be used is the one set in the `context.service` property of the [configuration](./application.md#configuration).
-
-> Causes the context to be automatically refreshed on route change.
-
-> Will make the context available in the `context` property of the [global store](./application.md#store).
-
-## useSelection
-
-Used to setup a reactive store for selection items, call **useSelection()** with the following arguments:
-* **name** unique store name within the application
-* **options** options to setup the store
-  * **matches** comparison function to identify two selected items as equal, defaults to Lodash [matches](https://lodash.com/docs/4.17.15#matches)
-
-The composable exposes the following:
-* **selection**: the created store object
-* **clearSelection()**: reset selection content
-* **get/setSelectionMode(mode)**: get current selection mode or switch between `'single'` or `'multiple'` mode
-* **get/setSelectionFilter(filter)**: get/set filtering function to avoid selecting certain items
-* **selectItem(path)**: select a new item
-* **unselectItem(path)**: unselect an item
-* **has/getSelectedItem()**, **has/getSelectedItems()**: check for selected item(s) depending on selection mode
+Creates or retrieves a named reactive selection store. Supports single/multiple selection modes, optional item filtering, and configurable item comparison.
 
 ## Screen & Layout
 
-### useScreen
+### [useScreen](./composables/composables.screen.md)
 
-Used to watch the screen properties, call **useScreen()** without the following arguments:
-* **options** options to setup the `dense` and `wide` [breakpoints](https://quasar.dev/style/breakpoints#introduction)
-  * **denseBreakpoint** the breakpoint that sets the maximum screen width below which the `dense` property is true. Default value is `sm`.
-  * **wideBreakpoint** the breakpoint that specifies the minimum screen width at which the `wide` property becomes true. Default value is `sm`.
+Wraps the Quasar Screen plugin with additional helpers for `dense`/`wide` breakpoints, orientation detection, and fullscreen management.
 
-The composable exposes the [properties provide by the Quasar screen plugin](https://quasar.dev/options/screen-plugin/), as well as the following capabilities:
-* **dense**: `true` if the screen size is `xs`
-* **wide**: `true` if the screen size is greater than `sm`
-* **orientation**: `portrait` or `landscape` according the screen orientation
-* **Fullscreen**: true if the screen is in fullscreen mode
-* **toggleFullscreen**: toggle the fullscreen mode
-* **lockOrientation**: locks the screen orientation to either 'portrait' or 'landscape'
+### [useLayout](./composables/composables.layout.md)
 
-### useLayout
-
-Used to manipulate the **layout**, call **useLayout()** without arguments.
-
-The composable exposes the following (**{Placement}** can be **Top**, **Bottom**, **Left**, **Right**):
-* **configureLayout(configuration, context)**: apply the layout configuration with provided binding context (i.e. `this`)
-* **clearLayout()**: reset layout content
-* **setLayoutMode(mode)**: change current layout mode
-* **set{Placement}Pane(configuration, context)**: apply the layout configuration to target placement with provided binding context (i.e. `this`)
-* **set{Placement}PaneMode(mode)**: change current layout mode of target placement
-* **set{Placement}PaneFilter(filter)**: change filter applied on elements of target placement
-* **set{Placement}PaneVisible(visible)**: change the visibility of target placement
-* **set{Placement}PaneOpener(opener)**: change the visibility of target placement's opener
-* **clear{Placement}Layout()**: reset layout content of target placement
+Provides programmatic control over the KDK application layout. Exposes `configureLayout`, `clearLayout`, `setLayoutMode`, and per-placement pane methods for `top`, `left`, `bottom`, and `right`.
 
 ## Activity
 
-### useActivity
+### [useActivity / useCurrentActivity](./composables/composables.activity.md)
 
-Used to setup states and options for a new activity, call **useActivity()** with the following arguments:
-* **name** unique activity name within the application
-* **options** options to setup the activity
-  * **selection** `true` to also create a selection store associated with the activity
-  * **state** initial state content if any
-
-> Causes the current activity to be automatically reset on unmount.
-
-The composable exposes the following:
-* **state**: the store object for activity state
-* **options**: the store object for activity options
-* **setCurrentActivity(activity)**: set the given component as the current activity
-* elements exposed by the [selection composable](./composables#useselection) associated to the activity
-
-### useCurrentActivity
-
-Used to access the current activity, call **useCurrentActivity()** with the following arguments:
-* **options** options to retrieve the activity
-  * **selection** `true` to also retrieve the selection store associated with the activity
-  * **state** initial state content if any
-
-> Causes the current activity to be automatically reset on unmount.
-
-The composable exposes the following:
-* **state**: the store object for current activity state
-* **options**: the store object for current activity options
-* elements exposed by the [selection composable](./composables#useselection) associated to the activity
+- **`useActivity(name, options)`** — sets up state and configuration stores for a named activity and registers it as the current activity.
+- **`useCurrentActivity(options)`** — retrieves the current activity context from anywhere in the component tree.
 
 ## Collection
 
-### useCollection
+### [useCollection](./composables/composables.collection.md)
 
-_TODO_
+Manages a reactive, paginated collection backed by a FeathersJS service using `feathers-reactive`. Supports replace-on-page and append-on-scroll strategies.
 
-### useCollectionCounter
+### [useCollectionCounter](./composables/composables.collection-counter.md)
 
-Used to count the items within a collection. Call **useCollectionCounter** with the following arguments:
-* **options** options to define the access to the service 
-  * **service** the service name
-  * **contextId** the context Id if the service is contextual
-  * **baseQuery** the base query to apply
-  * **filterQuery** the filter query to apply
+Reactively tracks the total number of items in a FeathersJS service collection using a `$limit: 0` query.
 
-::: details  Example
-```js
-import { composables as kdkComposables } from '@kalisio/kdk/core.client'
-...
-// Data
-const { counter } = kdkComposables.useCollectionCounter({ 
-  service: ref('missions'), 
-  contextId: ref(props.eventId) 
-})
-```
-:::
+### [useCollectionTimeRange](./composables/composables.collection-timerange.md)
 
-### useCollectionTimeRange
+Reactively tracks the minimum and maximum values of a time property across a FeathersJS collection.
 
-Used to get min and max value from a collection. Call **useCollectionTimeRange** with the following arguments:
-* **options** options to define the access to the service
-  * **service** the service name
-  * **contextId** the context Id if the service is contextual
-  * **baseQuery** the base query to apply
-  * **filterQuery** the filter query to apply
-  * **property** the collection property to search on (default: ``createdAt``)
-* **return** Object 
-  * **start** the min property value
-  * **end** the max property value
+### [useCollectionFilter / useCollectionFilterQuery](./composables/composables.collection-filter.md)
 
-::: details Example 
-```js
-import { composables as kdkComposables } from '@kalisio/kdk/core.client'
-...
-// Data
-const { timeRange } = kdkComposables.useCollectionTimeRange({
-  service: ref('events'),
-  property: ref('updatedAt'),
-})
-```
-:::
+- **`useCollectionFilter()`** — exposes tag and time filter state from the current activity context.
+- **`useCollectionFilterQuery(options)`** — builds a reactive `filterQuery` from active tag and time filter selections.
+
+## Schema
+
+### [useSchema](./composables/composables.schema.md)
+
+Provides JSON Schema loading, optional property filtering, AJV compilation, and localised validation within a Vue component.
+
+## Errors & Messages
+
+### [useErrors](./composables/composables.errors.md)
+
+Sets up a centralised error display handler. Listens to the global `error` event bus, translates messages using i18n, and displays Quasar notifications. Also handles errors embedded in route query parameters.
+
+### [useMessages](./composables/composables.messages.md)
+
+Thin wrapper around the KDK `messages` FeathersJS service for creating messages.
+
+## PWA
+
+### [usePwa](./composables/composables.pwa.md)
+
+Manages the Progressive Web App installation prompt and service worker update lifecycle.
+
+### [useWelcome](./composables/composables.welcome.md)
+
+Displays a welcome prompt dialog automatically after each login and hides it on logout, respecting a user preference stored in `LocalStorage`.
