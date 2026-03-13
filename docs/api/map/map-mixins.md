@@ -16,6 +16,7 @@ Make it possible to manage map layers and extend supported layer types:
 * **isLayerVisible(name)** check if a given layer is visible and underlying Leaflet object created
 * **zoomToLayer(name)** fits the map view to visualize a given layer
 * **zoomToBounds(bounds)** fits the map view to visualize a given extent as bounds [ [south, west], [north, east] ]
+* **toGeoJson(name)** retrieve the content of a given layer as GeoJson features
 * **getLayerByName(name)** retrieve the [catalog layer descriptor](./services.md#catalog-service) for a given layer
 * **renameLayer(previousName, newName)** rename a given layer
 * **removeLayer(name)** destroys a given layer
