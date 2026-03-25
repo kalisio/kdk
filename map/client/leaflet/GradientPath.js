@@ -49,6 +49,19 @@ function buildSVGFromGradientPath (geojson)
   // Project geojson coordinates to spherical mercator
   const latlngs = L.GeoJSON.coordsToLatLngs(geojson.geometry.coordinates)
   const coordinates = latlngs.map((latlng) => rescalePoint(L.Projection.SphericalMercator.project(latlng)))
+
+  // Build a wider path if a border needs to be drawn
+  const stroke = _.get(geojson, 'properties.stroke')
+  if (stroke) {
+    const color = _.get(stroke, 'color', 'black')
+    const width = _.get(stroke, 'width', 1)
+    if (color !== 'transparent' && width > 0) {
+      const border = coordinates.map((p, i) => i === 0 ? `M ${p[0]} ${p[1]}` : `L ${p[0]} ${p[1]}`).join(' ')
+      lines.push(`<path d="${border}" stroke="${color}" stroke-width="${geojson.properties.weight + width}" fill="none" vector-effect="non-scaling-stroke"/>`)
+    }
+  }
+
+  // Build the gradient path
   for (let i = 0; i < gradient.length - 1; ++i) {
     const p0 = coordinates[i]
     const p1 = coordinates[i+1]
@@ -56,6 +69,7 @@ function buildSVGFromGradientPath (geojson)
     defs.push(`<linearGradient gradientUnits="userSpaceOnUse" x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" id="gradient${i}_${idSuffix}"><stop offset="0" stop-color="${gradient[i]}"/><stop offset="1" stop-color="${gradient[i+1]}"/></linearGradient>`)
     // The associated line segment, vector-effect="non-sclaing-stroke" make it so stroke-width is a final pixel value, independent of zoom level
     // Use 'path' elements instead of 'line' because leaflet CSS defines 'pointer' cursor only on 'path' elements, not lines
+    //lines.push(`<path d="M ${p0[0]} ${p0[1]} L ${p1[0]} ${p1[1]}" stroke="black" vector-effect="non-scaling-stroke" stroke-width="8"/>`)
     lines.push(`<path d="M ${p0[0]} ${p0[1]} L ${p1[0]} ${p1[1]}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke" class="leaflet-interactive"/>`)
   }
 
@@ -73,6 +87,7 @@ function buildSVGFromGradientPath (geojson)
 
 const SVGGradientPath = L.SVGOverlay.extend({
   initialize (geojson, options) {
+    console.log
     const path = buildSVGFromGradientPath(geojson)
 
     // We don't simply use the options.interactive constructor option since it also add 'leaflet-interactive' class
