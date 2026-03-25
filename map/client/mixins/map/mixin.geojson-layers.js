@@ -9,7 +9,7 @@ import * as time from '../../../../core/client/utils/utils.time.js'
 import { getUpdateFeatureFunction, hasUnitInLeafletLayerTemplate, GeoJsonLeafletLayerFilters } from '../../leaflet/utils/utils.geojson.js'
 import { MaskLayer } from '../../leaflet/MaskLayer.js'
 import { TiledFeatureLayer } from '../../leaflet/TiledFeatureLayer.js'
-import { 
+import {
   fetchGeoJson, getGeoJsonFeatures, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, getFeatureStyleType,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
@@ -260,8 +260,8 @@ export const geojsonLayers = {
         // Merge generic GeoJson options and layer options
         const geoJsonOptions = this.getGeoJsonOptions(options)
         Object.keys(geoJsonOptions).forEach(key => {
-          // If layer provided do not override execpt for the style 
-          // Indeed the style property must be overriden to install the Leaflet function style
+          // If layer provided do not override except for the style
+          // Indeed the style property must be overridden to install the Leaflet function style
           if (!_.has(leafletOptions, key) || (key === 'style')) _.set(leafletOptions, key, _.get(geoJsonOptions, key))
         })
         // Required for geoman snapping to work

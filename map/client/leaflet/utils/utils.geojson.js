@@ -83,7 +83,7 @@ const simplifyPoints = L.Polyline.prototype._simplifyPoints
 L.Polyline.include({
   _simplifyPoints: function () {
     simplifyPoints.call(this)
-    // Offset simplified version 
+    // Offset simplified version
     if (this.options.offset) {
       // We'd like to ensure a pixel constant offset when zooming
       // Zoom 0 resolution is 156 543 m/pixel at equator in default map tiles,
@@ -141,7 +141,7 @@ L.GeoJSON.geometryToLayer = function (geojson, options) {
   if (geometry && (options.arrowheads || (properties && properties.arrowheads))) {
     if (layer instanceof L.Polyline) layer.arrowheads(options.arrowheads || properties.arrowheads)
   }
-  
+
   return layer
 }
 
@@ -217,7 +217,7 @@ export function getUpdateFeatureFunction(leafletOptions) {
     }
     return oldLayer
   }
-  
+
   return updateFeature
 }
 
