@@ -115,7 +115,7 @@ export const SimpleStyleToPolygonStyle = {
   'stroke-opacity': 'stroke.opacity',
   'stroke-width': 'stroke.width',
   fill: 'color',
-  'fill-color': 'color',  
+  'fill-color': 'color',
   'fill-opacity': 'opacity',
   'z-index': 'pane',
   pane: 'pane',
@@ -189,7 +189,7 @@ export function convertStyle (style, mapping, asNumber = []) {
   let convertedStyle = {}
   _.forOwn(style, (value, key) => {
     const mappedKey = _.get(mapping, key)
-    if (mappedKey) _.set(convertedStyle, mappedKey, asNumber.includes(mappedKey) ? _.toNumber(value) : value)
+    if (mappedKey && _.isString(value)) _.set(convertedStyle, mappedKey, asNumber.includes(mappedKey) ? _.toNumber(value) : value)
   })
   return convertedStyle
 }
@@ -240,7 +240,7 @@ export function getStyleType (geometryType) {
       return 'line'
     case 'Polygon':
     case 'MultiPolygon':
-      return 'polygon' 
+      return 'polygon'
   }
 }
 
