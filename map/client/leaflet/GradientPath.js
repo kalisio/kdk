@@ -4,130 +4,266 @@ import L from 'leaflet'
 import * as PIXI from 'pixi.js'
 import turfbbox from '@turf/bbox'
 import 'leaflet-pixi-overlay'
+import chroma from 'chroma-js'
 
 // Build a svgOverlay leaflet layer
-// geojson geometry must be a line string, with gradient information
+// geoJson geometry must be a line string, with gradient information
 // The svg points (inside the svg element) will be populated with coordinates in spherical mercator scaled between [0,1] on both x and y
 // We do this to prevent numerical issues affecting rendering due to spherical mercator coordinates being huge numbers.
-// The svg overlay will be placed in the map covering the bbox of the geojson
-function buildSVGFromGradientPath (geojson)
-{
-  const defs = []  // We'll push every linearGradient we need here
-  const lines = [] // and every line segment we need here
+// The svg overlay will be placed in the map covering the bbox of the geoJson
+
+
+class MinHeap {
+  constructor (compare) {
+    this._data = []
+    this._compare = compare
+  }
+  push (val) {
+    this._data.push(val)
+    this._bubbleUp(this._data.length - 1)
+  }
+  pop () {
+    const top = this._data[0]
+    const last = this._data.pop()
+    if (this._data.length > 0) {
+      this._data[0] = last
+      this._sinkDown(0)
+    }
+    return top
+  }
+  peek () { return this._data[0] }
+  get size () { return this._data.length }
+  _bubbleUp (i) {
+    while (i > 0) {
+      const parent = (i - 1) >> 1
+      if (this._compare(this._data[i], this._data[parent]) < 0) {
+        ;[this._data[i], this._data[parent]] = [this._data[parent], this._data[i]]
+        i = parent
+      } else break
+    }
+  }
+  _sinkDown (i) {
+    const n = this._data.length
+    while (true) {
+      let min = i
+      const l = 2 * i + 1, r = 2 * i + 2
+      if (l < n && this._compare(this._data[l], this._data[min]) < 0) min = l
+      if (r < n && this._compare(this._data[r], this._data[min]) < 0) min = r
+      if (min === i) break
+      ;[this._data[i], this._data[min]] = [this._data[min], this._data[i]]
+      i = min
+    }
+  }
+}
+
+function triangleArea (a, b, c) {
+  return Math.abs(
+    (a[0] * (b[1] - c[1]) +
+     b[0] * (c[1] - a[1]) +
+     c[0] * (a[1] - b[1])) / 2
+  )
+}
+
+function simplifyWeightedPath (coords, { tolerance = 0, getWeight = () => 1 } = {}) {
+  if (coords.length <= 2) return coords
+
+  // Doubly linked list for O(1) removal
+  const pts = coords.map((coord, i) => ({ coord, i, area: Infinity, removed: false, prev: null, next: null }))
+  for (let i = 0; i < pts.length; i++) {
+    if (i > 0) pts[i].prev = pts[i - 1]
+    if (i < pts.length - 1) pts[i].next = pts[i + 1]
+  }
+
+  const computeArea = (node) => {
+    if (!node.prev || !node.next) return Infinity
+    const area = triangleArea(node.prev.coord, node.coord, node.next.coord)
+    return area * getWeight(node.coord, node.i)
+  }
+
+  // Initialize heap with interior points
+  const heap = new MinHeap((a, b) => a.area - b.area)
+  for (let i = 1; i < pts.length - 1; i++) {
+    pts[i].area = computeArea(pts[i])
+    heap.push(pts[i])
+  }
+
+  let maxArea = 0
+
+  while (heap.size > 0) {
+    const node = heap.pop()
+    // Skip if already removed or stale (area recomputed since push)
+    if (node.removed) continue
+    if (node.area < maxArea) node.area = maxArea
+    else maxArea = node.area
+
+    if (node.area >= tolerance) break  // remaining points are all above threshold
+
+    // Remove node from linked list
+    node.removed = true
+    if (node.prev) node.prev.next = node.next
+    if (node.next) node.next.prev = node.prev
+
+    // Recompute area for neighbors and push updated versions
+    if (node.prev && node.prev.prev) {
+      node.prev.area = computeArea(node.prev)
+      heap.push(node.prev)
+    }
+    if (node.next && node.next.next) {
+      node.next.area = computeArea(node.next)
+      heap.push(node.next)
+    }
+  }
+
+  // Collect remaining points in order
+  const result = []
+  let cur = pts[0]
+  while (cur) {
+    if (!cur.removed) result.push(cur.coord)
+    cur = cur.next
+  }
+  return result
+}
+
+function buildSVGGradientPath (geojson, coordinates) {
+  const defs = []
+  const lines = []
   const gradient = geojson.properties.gradient
-  const bbox = turfbbox(geojson)
-  // Grow the bbox a bit because we use it to position the svgOverlay. If it matches exaclty
-  // it'll crop the svg lines when using a big stroke-width, they'll exceed the geojson bbox ...
-  // TODO: we should use stroke width * extent it represent at zoom level 2 or 3 ...
-  let width = bbox[2] - bbox[0]
-  let height = bbox[3] - bbox[1]
-  // This is to handle single points
-  if (width === 0) width = 0.1
-  if (height === 0) height = 0.1
-  bbox[0] -= width * 0.1
-  bbox[1] -= height * 0.1
-  bbox[2] += width * 0.1
-  bbox[3] += height * 0.1
-
-  // Compute WGS84 bbox in spherical mercator coordinates
-  const b0 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(0, 2)))
-  const b1 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(2, 4)))
-
-  // Rescale sperical mercator points to [0,1] on biggest axis, where bbox.min is 0 and bbox.max is 1
-  // Other axis is rescaled to maintain aspect ratio, otherwise final display using svg element is not correct
-  const min = { x: Math.min(b0.x, b1.x), y: Math.min(b0.y, b1.y) }
-  const max = { x: Math.max(b0.x, b1.x), y: Math.max(b0.y, b1.y) }
-  const delta = { x: max.x - min.x, y: max.y - min.y }
-  // This scale factor is used to maintain original aspect ratio in svg coordinates
-  const scale = { x: delta.x > delta.y ? 1.0 : delta.x / delta.y, y: delta.y > delta.x ? 1.0 : delta.y / delta.x }
-  // This is how we map from spherical mercator point to svg element coordinates.
-  // Y is reversed to match svg canvas origin
-  const rescalePoint = (point) => [scale.x * ((point.x - min.x) / delta.x), scale.y * (1.0 - ((point.y - min.y) / delta.y))]
-
-  // Create an id suffix to make linearGradient ids unique
-  const idSuffix = `${bbox.join('_')}_${gradient.length}`
-  // Project geojson coordinates to spherical mercator
-  const latlngs = L.GeoJSON.coordsToLatLngs(geojson.geometry.coordinates)
-  const coordinates = latlngs.map((latlng) => rescalePoint(L.Projection.SphericalMercator.project(latlng)))
-
+  const idSuffix = `${geojson.properties.id || Date.now()}_${gradient.length}`
   // Build a wider path if a border needs to be drawn
   const stroke = _.get(geojson, 'properties.stroke')
   if (stroke) {
     const color = _.get(stroke, 'color', 'black')
     const width = _.get(stroke, 'width', 1)
     if (color !== 'transparent' && width > 0) {
-      const border = coordinates.map((p, i) => i === 0 ? `M ${p[0]} ${p[1]}` : `L ${p[0]} ${p[1]}`).join(' ')
-      lines.push(`<path d="${border}" stroke="${color}" stroke-width="${geojson.properties.weight + width}" fill="none" vector-effect="non-scaling-stroke"/>`)
+      const border = coordinates.map((p, i) => i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`).join(' ')
+      lines.push(`<path d="${border}" stroke="${color}" stroke-width="${geojson.properties.weight + 2 * width}" stroke-linecap="round" stroke-linejoin="bevel" fill="none" vector-effect="non-scaling-stroke"/>`)
     }
   }
-
-  // Build the gradient path
-  for (let i = 0; i < gradient.length - 1; ++i) {
+  // Build the gradient path segment by segment
+  for (let i = 0; i < coordinates.length - 1; ++i) {
     const p0 = coordinates[i]
-    const p1 = coordinates[i+1]
-    // The linear gradient to apply on the current segment
-    defs.push(`<linearGradient gradientUnits="userSpaceOnUse" x1="${p0[0]}" y1="${p0[1]}" x2="${p1[0]}" y2="${p1[1]}" id="gradient${i}_${idSuffix}"><stop offset="0" stop-color="${gradient[i]}"/><stop offset="1" stop-color="${gradient[i+1]}"/></linearGradient>`)
-    // The associated line segment, vector-effect="non-sclaing-stroke" make it so stroke-width is a final pixel value, independent of zoom level
-    // Use 'path' elements instead of 'line' because leaflet CSS defines 'pointer' cursor only on 'path' elements, not lines
-    //lines.push(`<path d="M ${p0[0]} ${p0[1]} L ${p1[0]} ${p1[1]}" stroke="black" vector-effect="non-scaling-stroke" stroke-width="8"/>`)
-    lines.push(`<path d="M ${p0[0]} ${p0[1]} L ${p1[0]} ${p1[1]}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke" class="leaflet-interactive"/>`)
+    const p1 = coordinates[i + 1]
+    const color0 = gradient[p0._idx ?? i]
+    const color1 = gradient[p1._idx ?? i + 1]
+    defs.push(`<linearGradient gradientUnits="userSpaceOnUse" x1="${p0.x}" y1="${p0.y}" x2="${p1.x}" y2="${p1.y}" id="gradient${i}_${idSuffix}"><stop offset="0" stop-color="${color0}"/><stop offset="1" stop-color="${color1}"/></linearGradient>`)
+    lines.push(`<path d="M ${p0.x} ${p0.y} L ${p1.x} ${p1.y}" stroke="url(#gradient${i}_${idSuffix})" vector-effect="non-scaling-stroke" class="leaflet-interactive"/>`)
   }
-
-  // Create svg HTML element
-  var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg")
-  svgElement.setAttribute('xmlns', "http://www.w3.org/2000/svg")
-  // Viewbox is used to define which part of the svg must be displayed in it's html element, and is in svg coordinates.
-  // For us it's 0 0 scale.x scale.y since we rescaled everything
-  svgElement.setAttribute('viewBox', `0 0 ${scale.x} ${scale.y}`)
-  // svg html content, round linecap + stroke-width
-  svgElement.innerHTML = `<g stroke-linecap="round" stroke-width="${geojson.properties.weight}"><defs>${defs.join('')}</defs>${lines.join('')}</g>`
-
-  return { svg: svgElement, bounds: L.latLngBounds(L.latLng(bbox[1], bbox[0]), L.latLng(bbox[3], bbox[2])) }
+  return `<g stroke-linecap="round" stroke-width="${geojson.properties.weight}"><defs>${defs.join('')}</defs>${lines.join('')}</g>`
 }
 
 const SVGGradientPath = L.SVGOverlay.extend({
+
   initialize (geojson, options) {
-    console.log
-    const path = buildSVGFromGradientPath(geojson)
-
-    // We don't simply use the options.interactive constructor option since it also add 'leaflet-interactive' class
-    // on the svg html element and this requests 'pointer' cursor on the whole svg, even if there's nothing drawn.
-    // Instead we just declare the layer interactive for leaflet (see onAdd()), without adding the 'leaflet-interactive' class.
-    // 'leaflet-interactive' is set in 'path' elements of the svg element, which are actually rendered.
-    L.SVGOverlay.prototype.initialize.call(this, path.svg, path.bounds, Object.assign({ interactive: false }, options))
-
-    const opacity = _.get(geojson.properties, 'opacity')
-    if (opacity !== undefined)
-      this.setOpacity(opacity)
+    this._geojson = geojson
+    this._setup()
+    // Create SVG element
+    const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    svgElement.setAttribute('viewBox', `0 0 ${this._scale.x} ${this._scale.y}`)
+    // We don't use the interactive constructor option to avoid adding 'leaflet-interactive'
+    // on the svg element itself (which would show a pointer cursor over the whole bbox).
+    // Instead we mark individual path elements as interactive (see onAdd).
+    L.SVGOverlay.prototype.initialize.call(this, svgElement, this.getBounds(), Object.assign({ interactive: false }, options))
   },
 
   getCenter () {
     return this._bounds.getCenter()
   },
 
-  // This method is called when source data changes
   setData (geojson) {
-    // Remove old svg
-    this.onRemove()
-
-    // Build new one
-    const path = buildSVGFromGradientPath(geojson)
-    // Mess with ImageOverlay and SVGOverlay internals to update element
-    this._url = path.svg
-    this._initImage()
-    this.setBounds(path.bounds)
-    const opacity = _.get(geojson.properties, 'opacity')
-    if (opacity !== undefined)
-      this.setOpacity(opacity)
-
-    // Add new svg
-    this.onAdd()
+    this._geojson = geojson
+    this._setup()
+    // Update SVG element
+    this._image.setAttribute('viewBox', `0 0 ${this._scale.x} ${this._scale.y}`)
+    // Rebuild path
+    if (this._map) this._rebuild()
   },
 
-  onAdd () {
-    L.SVGOverlay.prototype.onAdd.call(this)
-    // See constructor explanation
+  onAdd (map) {
+    L.SVGOverlay.prototype.onAdd.call(this, map)
+    // Mark the svg element as interactive target (see constructor explanation)
     this.addInteractiveTarget(this._image)
+    map.on('zoomend', this._onZoom, this)
+    // Trigger initial rebuild now that map is available
+    this._rebuild()
+  },
+
+  onRemove (map) {
+    map.off('zoomend', this._onZoom, this)
+    L.SVGOverlay.prototype.onRemove.call(this, map)
+  },
+
+  _onZoom () {
+    this._rebuild()
+  },
+
+  _setup () {
+    const bbox = turfbbox(this._geojson)
+    let width = bbox[2] - bbox[0]
+    let height = bbox[3] - bbox[1]
+    // Handle single point edge case
+    if (width === 0) width = 0.1
+    if (height === 0) height = 0.1
+    // Grow bbox slightly to avoid clipping thick strokes at the edges
+    bbox[0] -= width * 0.1
+    bbox[1] -= height * 0.1
+    bbox[2] += width * 0.1
+    bbox[3] += height * 0.1
+    // Reproject the bbox in SphericalMercator
+    const b0 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(0, 2)))
+    const b1 = L.Projection.SphericalMercator.project(L.GeoJSON.coordsToLatLng(bbox.slice(2, 4)))
+    // Extract min/max
+    const min = { x: Math.min(b0.x, b1.x), y: Math.min(b0.y, b1.y) }
+    const max = { x: Math.max(b0.x, b1.x), y: Math.max(b0.y, b1.y) }
+    const delta = { x: max.x - min.x, y: max.y - min.y }
+    // Scale factor to maintain original aspect ratio in SVG coordinates
+    this._scale = { x: delta.x > delta.y ? 1.0 : delta.x / delta.y, y: delta.y > delta.x ? 1.0 : delta.y / delta.x }
+    // Maps a spherical mercator point to normalized SVG coordinates, Y axis is flipped
+    this._rescalePoint = (point) => ({ x: this._scale.x * ((point.x - min.x) / delta.x), y: this._scale.y * (1.0 - ((point.y - min.y) / delta.y)) })
+    // Stores mercator path
+    this._mercatorPath = this._geojson.geometry.coordinates.map((coord, i) => {
+      const ll = L.GeoJSON.coordsToLatLng(coord)
+      const p = L.Projection.SphericalMercator.project(ll)
+      return [p.x, p.y, i] // keep original index
+    })
+    // Update bounds
+    const bounds = L.latLngBounds(L.latLng(bbox[1], bbox[0]), L.latLng(bbox[3], bbox[2]))
+    this.setBounds(bounds)
+    // Updated opacity
+    const opacity = _.get(this._geojson.properties, 'opacity')
+    if (opacity !== undefined) this.setOpacity(opacity)
+  },
+
+  _rebuild () {
+    const smoothFactor = _.toNumber(_.get(this._geojson, 'properties.smoothFactor', 1))
+    const zoom = this._map.getZoom()
+    const maxZoom = this._map.getMaxZoom() ?? 20
+    const tolerance = smoothFactor * 3 * Math.pow(2, maxZoom - zoom) // multiply by 3 because of the weight
+    logger.debug(`[KDK] Building SVGGradientPath (length:${this._mercatorPath.length} | smoothFactor:${smoothFactor} | zoom:${zoom} | tolerance:${tolerance})`)
+    // Simplify the path
+    let simplifiedPath = this._mercatorPath
+    if (smoothFactor > 0) {
+      simplifiedPath = simplifyWeightedPath(this._mercatorPath, {
+        tolerance: tolerance,
+        getWeight: (p) => {
+          const idx = p[2]
+          const gradient = this._geojson.properties.gradient
+          if (idx === 0 || idx === gradient.length - 1) return 1
+          // Measure color break: how different is this point from both its neighbors
+          const deltaPrev = chroma.deltaE(gradient[idx - 1], gradient[idx]) / 100
+          const deltaNext = chroma.deltaE(gradient[idx], gradient[idx + 1]) / 100
+          return 1 + deltaPrev + deltaNext
+        }
+      })
+      logger.debug(`[KDK] SVGGradientPath simplified to ${simplifiedPath.length} points`)
+    }
+    // Reproject to SVG space
+    const svgPath = simplifiedPath.map(([x, y, idx]) => {
+      const { x: sx, y: sy } = this._rescalePoint({ x, y })
+      return { x: sx, y: sy, _idx: idx }
+    })
+    // Update SVG element
+    this._image.innerHTML = buildSVGGradientPath(this._geojson, svgPath)
   }
 })
 
