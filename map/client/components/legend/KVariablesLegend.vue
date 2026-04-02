@@ -1,6 +1,6 @@
 <template>
   <KLegendRenderer
-    v-if="content"
+    v-if="variables.length"
     :label="label"
     :labelClass="labelClass"
   >
@@ -11,7 +11,6 @@
       <!-- colorscale -->
       <KColorScale
         v-bind="variable.colorScale"
-        style="height: 46px;"
       />
     </template>
   </KLegendRenderer>
@@ -42,8 +41,8 @@ const props = defineProps({
     default: undefined
   },
   content: {
-    type: String,
-    default: '.'
+    type: Object,
+    default: () => null
   }
 })
 
@@ -52,12 +51,9 @@ const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false 
 
 // Computed
 const variables = computed(() => {
-  const regexp = new RegExp(props.content)
   return _.filter(props.layer.variables, variable => {
-    if (regexp.test(variable)) {
-      if (variable.chromajs) return true
-      logger.warn(`[KDK] variable '${variable.name}' must have a 'chromajs' property`)
-    }
+    if (variable.chromajs) return true
+    logger.warn(`[KDK] variable '${variable.name}' must have a 'chromajs' property`)
     return false
   })
     .map(variable => {
@@ -84,7 +80,7 @@ const variables = computed(() => {
         colorScale.classes = colorScale.classes.map(value => Units.convert(value, unit))
       }
       return {
-        name, label, colorScale
+        name, label, colorScale: Object.assign(colorScale, props.content)
       }
     })
 })
