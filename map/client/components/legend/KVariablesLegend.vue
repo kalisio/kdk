@@ -11,6 +11,7 @@
       <!-- colorscale -->
       <KColorScale
         v-bind="variable.colorScale"
+        style="height: 46px;"
       />
     </template>
   </KLegendRenderer>
