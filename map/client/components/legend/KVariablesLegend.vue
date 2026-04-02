@@ -40,7 +40,7 @@ const props = defineProps({
     type: String,
     default: undefined
   },
-  content: {
+  content: { // Used to provide properties to underlying color scale
     type: Object,
     default: () => null
   }
@@ -59,13 +59,20 @@ const variables = computed(() => {
     .map(variable => {
       // Pick useful properties
       let { name, label, chromajs, unit } = _.pick(variable, ['name', 'label', 'chromajs', 'unit'])
+      // Avoid mutating layer data for color scale props
+      const colorScale = _.merge(_.cloneDeep(chromajs), props.content)
       // We allow variable name to be customized based on level information
       label = _.template(i18n.tie(label))({
+        Units,
         level: (CurrentActivity.value ? CurrentActivity.value.selectedLevel : null),
         levelUnit: (CurrentActivity.value && CurrentActivity.value.selectableLevels ? CurrentActivity.value.selectableLevels.unit : '')
       })
-      // Avoid mutating layer data
-      const colorScale = _.cloneDeep(chromajs)
+      // The same for legend ticks
+      const format = _.get(props.content, 'layout.ticks.format')
+      // Template function as by default it's a configuration object for mathjs ?
+      if (typeof format === 'string') {
+        _.set(colorScale, 'layout.ticks.format', _.template(format))
+      }
       label = `${label} (${Units.getTargetUnitSymbol(unit)})`
       // Rename required properties for backward compatibility
       if (colorScale.scale) {
@@ -80,7 +87,9 @@ const variables = computed(() => {
         colorScale.classes = colorScale.classes.map(value => Units.convert(value, unit))
       }
       return {
-        name, label, colorScale: Object.assign(colorScale, props.content)
+        name,
+        label,
+        colorScale
       }
     })
 })
