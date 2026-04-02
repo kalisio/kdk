@@ -111,6 +111,9 @@ const ticksFont = computed(() => {
 const ticksColor = computed(() => {
   return _.get(props.layout, 'ticks.color', 'black')
 })
+const ticksFormat = computed(() => {
+  return _.get(props.layout, 'ticks.format', { notation: 'auto', precision: 3 })
+})
 const gutter = computed(() => {
   return _.get(props.layout, 'gutter', 4)
 })
@@ -120,7 +123,7 @@ const reversed = computed(() => {
 
 // Functions
 function formatTick (tick) {
-  return math.format(tick, props.layout.ticks.format)
+  return (typeof ticksFormat.value === 'function' ? ticksFormat.value({ tick }) : math.format(tick, ticksFormat.value))
 }
 function drawLabel () {
   if (_.isNil(labelText.value)) return
@@ -215,9 +218,9 @@ function drawContinuousHorizontalScale () {
   canvasContext.font = ticksFont.value
   canvasContext.fillStyle = ticksColor.value
   canvasContext.textAlign = 'left'
-  canvasContext.fillText(props.domain[reversed.value ? props.domain.length - 1 : 0], 0, yTicks)
+  canvasContext.fillText(formatTick(props.domain[reversed.value ? props.domain.length - 1 : 0]), 0, yTicks)
   canvasContext.textAlign = 'right'
-  canvasContext.fillText(props.domain[reversed.value ? 0 : props.domain.length - 1], canvas.width, yTicks)
+  canvasContext.fillText(formatTick(props.domain[reversed.value ? 0 : props.domain.length - 1]), canvas.width, yTicks)
 }
 function drawContinuousVerticalScale () {
   drawLabel()
@@ -235,8 +238,8 @@ function drawContinuousVerticalScale () {
   canvasContext.fillStyle = ticksColor.value
   const x = barWidth.value + gutter.value
   canvasContext.textAlign = 'left'
-  canvasContext.fillText(props.domain[reversed.value ? props.domain.length - 1 : 0], x, canvas.height)
-  canvasContext.fillText(props.domain[reversed.value ? 0 : props.domain.length - 1], x, yBar + ticksSize.value)
+  canvasContext.fillText(formatTick(props.domain[reversed.value ? props.domain.length - 1 : 0]), x, canvas.height)
+  canvasContext.fillText(formatTick(props.domain[reversed.value ? 0 : props.domain.length - 1]), x, yBar + ticksSize.value)
 }
 function refresh () {
   if (!canvas || !expectedSize) return
