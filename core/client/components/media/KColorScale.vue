@@ -122,8 +122,11 @@ const reversed = computed(() => {
 })
 
 // Functions
-function formatTick (tick) {
-  return (typeof ticksFormat.value === 'function' ? ticksFormat.value({ tick }) : math.format(tick, ticksFormat.value))
+function formatTick (tick, previousTick) {
+  return (typeof ticksFormat.value === 'function' ? ticksFormat.value({ tick, previousTick }) : math.format(tick, ticksFormat.value))
+}
+function normalize (x, domain) {
+  return Math.min(1, Math.max(0, (x - domain[0]) / (domain[domain.length - 1] - domain[0])))
 }
 function drawLabel () {
   if (_.isNil(labelText.value)) return
@@ -157,23 +160,31 @@ function drawDiscreteHorizontalScale () {
   const yTicks = yBar + barHeight.value + gutter.value + ticksSize.value
   canvasContext.font = ticksFont.value
   canvasContext.fillStyle = ticksColor.value
+  let previousTickValue
   for (let i = 0; i < props.classes.length; ++i) {
-    let tick
+    let tickValue
     if (i === 0) {
       if (props.classes[i] !== Number.MIN_VALUE) {
         canvasContext.textAlign = 'left'
-        tick = formatTick(props.classes[i])
+        tickValue = props.classes[i]
       }
     } else if (i === props.classes.length - 1) {
       if (props.classes[i] !== Number.MAX_VALUE) {
         canvasContext.textAlign = 'right'
-        tick = formatTick(props.classes[i])
+        tickValue = props.classes[i]
       }
     } else {
       canvasContext.textAlign = 'center'
-      tick = formatTick(props.classes[i])
+      tickValue = props.classes[i]
     }
-    if (tick) canvasContext.fillText(tick, i * boxWidth, yTicks)
+    if (!_.isNil(tickValue)) {
+      const tick = formatTick(tickValue, previousTickValue)
+      // Tick to be displayed or not ?
+      if (tick) {
+        canvasContext.fillText(tick, i * boxWidth, yTicks)
+        previousTickValue = tickValue
+      }
+    }
   }
 }
 function drawDiscreteVerticalScale () {
@@ -192,14 +203,24 @@ function drawDiscreteVerticalScale () {
   canvasContext.fillStyle = ticksColor.value
   canvasContext.textAlign = 'left'
   const x = barWidth.value + gutter.value
+  let previousTickValue
   for (let i = 0; i < props.classes.length; ++i) {
-    let tick
+    let tickValue
     if (i === 0) {
-      if (props.classes[i] !== Number.MIN_VALUE) tick = formatTick(props.classes[i])
+      if (props.classes[i] !== Number.MIN_VALUE) tickValue = props.classes[i]
     } else if (i === props.classes.length - 1) {
-      if (props.classes[i] !== Number.MAX_VALUE) tick = formatTick(props.classes[i])
-    } else tick = formatTick(props.classes[i])
-    if (tick) canvasContext.fillText(tick, x, yBar + (length - i) * boxHeight + ticksSize.value / 2)
+      if (props.classes[i] !== Number.MAX_VALUE) tickValue = props.classes[i]
+    } else {
+      tickValue = props.classes[i]
+    }
+    if (!_.isNil(tickValue)) {
+      const tick = formatTick(tickValue, previousTickValue)
+      // Tick to be displayed or not ?
+      if (tick) {
+        canvasContext.fillText(tick, x, yBar + (length - i) * boxHeight + ticksSize.value / 2)
+        previousTickValue = tickValue
+      }
+    }
   }
 }
 function drawContinuousHorizontalScale () {
@@ -217,10 +238,26 @@ function drawContinuousHorizontalScale () {
   const yTicks = yBar + barHeight.value + gutter.value + ticksSize.value
   canvasContext.font = ticksFont.value
   canvasContext.fillStyle = ticksColor.value
-  canvasContext.textAlign = 'left'
-  canvasContext.fillText(formatTick(props.domain[reversed.value ? props.domain.length - 1 : 0]), 0, yTicks)
-  canvasContext.textAlign = 'right'
-  canvasContext.fillText(formatTick(props.domain[reversed.value ? 0 : props.domain.length - 1]), canvas.width, yTicks)
+  const domain = (reversed.value ? props.domain.toReversed() : props.domain)
+  let previousTickValue
+  for (let i = 0; i < domain.length; ++i) {
+    const tickValue = domain[i]
+    if (i === 0) {
+      canvasContext.textAlign = 'left'
+    } else if (i === domain.length - 1) {
+      canvasContext.textAlign = 'right'
+    } else {
+      canvasContext.textAlign = 'center'
+    }
+    if (!_.isNil(tickValue)) {
+      const tick = formatTick(tickValue, previousTickValue)
+      // Tick to be displayed or not ?
+      if (tick) {
+        canvasContext.fillText(tick, normalize(tickValue, domain) * length, yTicks)
+        previousTickValue = tickValue
+      }
+    }
+  }
 }
 function drawContinuousVerticalScale () {
   drawLabel()
@@ -238,8 +275,26 @@ function drawContinuousVerticalScale () {
   canvasContext.fillStyle = ticksColor.value
   const x = barWidth.value + gutter.value
   canvasContext.textAlign = 'left'
-  canvasContext.fillText(formatTick(props.domain[reversed.value ? props.domain.length - 1 : 0]), x, canvas.height)
-  canvasContext.fillText(formatTick(props.domain[reversed.value ? 0 : props.domain.length - 1]), x, yBar + ticksSize.value)
+  const domain = (reversed.value ? props.domain.toReversed() : props.domain)
+  let previousTickValue
+  for (let i = 0; i < domain.length; ++i) {
+    let tickValue
+    if (i === 0) {
+      if (domain[i] !== Number.MIN_VALUE) tickValue = domain[i]
+    } else if (i === domain.length - 1) {
+      if (domain[i] !== Number.MAX_VALUE) tickValue = domain[i]
+    } else {
+      tickValue = domain[i]
+    }
+    if (!_.isNil(tickValue)) {
+      const tick = formatTick(tickValue, previousTickValue)
+      // Tick to be displayed or not ?
+      if (tick) {
+        canvasContext.fillText(tick, x, yBar + normalize(tickValue, domain) * length + ticksSize.value / 2)
+        previousTickValue = tickValue
+      }
+    }
+  }
 }
 function refresh () {
   if (!canvas || !expectedSize) return

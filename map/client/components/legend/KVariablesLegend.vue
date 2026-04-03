@@ -11,7 +11,7 @@
       <!-- colorscale -->
       <KColorScale
         v-bind="variable.colorScale"
-        style="height: 46px;"
+        :style="{ height: (variable.colorScale.direction === 'horizontal' ? '46px' : undefined) }"
       />
     </template>
   </KLegendRenderer>
