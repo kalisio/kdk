@@ -4,7 +4,7 @@ import { useQuasar } from 'quasar'
 import KWelcomePrompt from '../components/prompt/KWelcomePrompt.vue'
 import _ from 'lodash'
 import config from 'config'
-import { LocalStorage } from '../local-storage.js'
+import { LocalStorage } from '../web-storage.js'
 
 export function useWelcome () {
   let welcome = null

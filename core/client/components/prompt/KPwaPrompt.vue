@@ -50,7 +50,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
-import { LocalStorage } from '../../local-storage.js'
+import { LocalStorage } from '../../web-storage.js'
 
 // Emits
 defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'])

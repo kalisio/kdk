@@ -78,7 +78,7 @@ import { ref, computed } from 'vue'
 import { openURL, useQuasar, useDialogPluginComponent } from 'quasar'
 import { Store } from '../..'
 import { loadComponent } from '../../utils'
-import { LocalStorage } from '../../local-storage.js'
+import { LocalStorage } from '../../web-storage.js'
 import KAction from '../action/KAction.vue'
 
 // Data

@@ -7,7 +7,7 @@ import { Context } from './context.js'
 import { Configurations } from './configurations.js'
 import { Platform } from './platform.js'
 import { Capabilities } from './capabilities.js'
-import { LocalStorage } from './local-storage.js'
+import { LocalStorage, SessionStorage } from './web-storage.js'
 import { LocalCache } from './local-cache.js'
 import { Broadcaster } from './broadcaster.js'
 import { Storage } from './storage.js'
@@ -37,7 +37,7 @@ export { Context }
 export { Configurations }
 export { Platform }
 export { Capabilities }
-export { LocalStorage }
+export { LocalStorage, SessionStorage }
 export { LocalCache }
 export { Broadcaster }
 export { Storage }
@@ -73,6 +73,7 @@ export default async function initialize () {
   // Initialize singletons that might be used globally first
   // Take care that order matters as some singletons might use others
   LocalStorage.initialize()
+  SessionStorage.initialize()
   LocalCache.initialize()
   await Platform.initialize()
   await Capabilities.initialize()

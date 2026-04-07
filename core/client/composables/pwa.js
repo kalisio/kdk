@@ -4,7 +4,7 @@ import { onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar, Dialog } from 'quasar'
 import { Events } from '../events.js'
 import { i18n } from '../i18n.js'
-import { LocalStorage } from '../local-storage.js'
+import { LocalStorage } from '../web-storage.js'
 import { Platform } from '../platform.js'
 import KPwaPrompt from '../components/prompt/KPwaPrompt.vue'
 

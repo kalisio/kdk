@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Store } from '../store.js'
 import { Events } from '../events.js'
-import { LocalStorage } from '../local-storage.js'
+import { LocalStorage } from '../web-storage.js'
 
 export default function (name, api, options) {
   const mapping = options.propertyMapping
