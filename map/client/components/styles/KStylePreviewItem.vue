@@ -52,9 +52,6 @@ export default {
     }
   },
   computed: {
-    /*name () {
-      return this.item.name
-    },*/
     tags () {
       return this.item.tags || []
     },
