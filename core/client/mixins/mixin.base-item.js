@@ -58,10 +58,11 @@ export const baseItem = {
   },
   computed: {
     name () {
-      return _.get(this.item, this.options.nameField || 'name', '')
+
+      return _.get(this.item, this.options.nameField || 'name', this.item.name || '')
     },
     description () {
-      return _.get(this.item, this.options.descriptionField || 'description', '')
+      return _.get(this.item, this.options.descriptionField || 'description', this.item.description || '')
     },
     avatar () {
       return _.get(this.options, 'avatar', true)
@@ -70,7 +71,7 @@ export const baseItem = {
   methods: {
     setActions (actions) {
       // As context is different for each item we need to clone the global action configuration
-      // otheriwse context will always reference the last processed item
+      // otherwise context will always reference the last processed item
       this.itemActions = (this.bindActions ? bindContent(_.cloneDeep(actions), this.handlerContext || this) : actions)
     },
     clearActions () {
