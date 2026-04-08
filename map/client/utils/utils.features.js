@@ -88,7 +88,7 @@ export async function buildGradientPath (geoJson, options) {
   const variable = options.build.variable
   // Check if the GeoJSON is a FeatureCollection
   if (!geoJson || geoJson.type !== 'FeatureCollection') {
-    logger.warn('[KDK] Invalid GeoJSON, a FeatureCollection is required to build a gradient path')
+    logger.warn('[KDK] Invalid GeoJSON, a FeatureCollection is required to build a gradient path')
     return
   }
   // Check chromajs has required infos
@@ -264,7 +264,7 @@ export async function getFeaturesQuery (options, queryInterval, queryLevel) {
 
   // Request features with at least one data available during last query interval
   if (queryInterval) {
-    // If we have a build instruction 
+    // If we have a build instruction
     if (instruct) {
       query = Object.assign({
         $groupBy: options.featureId,
