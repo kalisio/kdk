@@ -4,7 +4,7 @@ import { onMounted, onBeforeUnmount } from 'vue'
 import { useQuasar, Dialog } from 'quasar'
 import { Events } from '../events.js'
 import { i18n } from '../i18n.js'
-import { LocalStorage } from '../web-storage.js'
+import { LocalStorage, SessionStorage } from '../web-storage.js'
 import { Platform } from '../platform.js'
 import KPwaPrompt from '../components/prompt/KPwaPrompt.vue'
 
@@ -28,7 +28,7 @@ Events.on('pwa-updated', onPwaUpdated)
 export function usePwa (options = { updateTimeout: 5000 }) {
   // Data
   const $q = useQuasar()
-  const installKey = 'install'
+  const webStorageKey = 'pwa-install-prompt'
 
   // Functions
   function install () {
@@ -38,7 +38,8 @@ export function usePwa (options = { updateTimeout: 5000 }) {
     const withinIframe = _.get(Platform, 'within.iframe', false)
     if (isNotPWA || isPWAInstalled || withinIframe) return
     // install prompt can be avoided, eg in tests
-    if (!LocalStorage.get(installKey, true)) return
+    if (!LocalStorage.get(webStorageKey, true)) return
+    if (!SessionStorage.get(webStorageKey, true)) return
     Dialog.create({
       component: KPwaPrompt
     }).onOk(async () => {

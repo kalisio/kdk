@@ -15,14 +15,14 @@
           :label="$t('KPwaPrompt.IGNORE')"
           renderer="form-button"
           :outline="true"
-          :handler="() => onDialogCancel()"
+          :handler="onIgnoredClicked"
         />
         <div class="q-mx-sm"></div>
         <KAction
           id="install-button"
           :label="$t('KPwaPrompt.INSTALL')"
           renderer="form-button"
-          :handler="() => onDialogOK()"
+          :handler="onDialogOK"
         />
       </div>
       <div v-else :class="dense ? 'q-py-xs' : 'q-py-md'">
@@ -30,7 +30,7 @@
           id="close-button"
           label="CLOSE"
           renderer="form-button"
-          :handler="() => onDialogCancel()"
+          :handler="onIgnoredClicked"
         />
       </div>
       <q-checkbox
@@ -40,7 +40,7 @@
         color="primary"
         size="xs"
         :dense="dense"
-        @update:modelValue="onToggleCheckbox"
+        @update:modelValue="onCheckboxToggled"
         :class="dense ? 'text-caption' : ''"
       />
     </q-card>
@@ -50,7 +50,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
-import { LocalStorage } from '../../web-storage.js'
+import { LocalStorage, SessionStorage } from '../../web-storage.js'
 
 // Emits
 defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'])
@@ -58,8 +58,8 @@ defineEmits([...useDialogPluginComponent.emits, 'update:modelValue'])
 // Data
 const $q = useQuasar()
 const toggle = ref(false)
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
-  useDialogPluginComponent()
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
+const webStorageKey = 'pwa-install-prompt'
 
 // Computed
 const dense = computed(() => {
@@ -72,7 +72,11 @@ const computedMessage = computed(() => {
 })
 
 // Functions
-function onToggleCheckbox (toggle) {
-  LocalStorage.set('install', !toggle)
+function onIgnoredClicked () {
+  SessionStorage.set(webStorageKey, false)
+  onDialogCancel()
+}
+function onCheckboxToggled (toggle) {
+  LocalStorage.set(webStorageKey, !toggle)
 }
 </script>
