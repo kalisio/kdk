@@ -189,7 +189,7 @@ export function convertStyle (style, mapping, asNumber = []) {
   let convertedStyle = {}
   _.forOwn(style, (value, key) => {
     const mappedKey = _.get(mapping, key)
-    if (mappedKey && _.isString(value)) _.set(convertedStyle, mappedKey, asNumber.includes(mappedKey) ? _.toNumber(value) : value)
+    if (mappedKey && (_.isString(value) || _.isNumber(value))) _.set(convertedStyle, mappedKey, asNumber.includes(mappedKey) ? _.toNumber(value) : value)
   })
   return convertedStyle
 }
