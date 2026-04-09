@@ -14,6 +14,15 @@
         :picture="pictureId"
         @select="onPictureEvent"
       />
+
+      <div
+        v-if="formattedDate"
+        class="absolute-bottom-left q-ma-md"
+      >
+        <div class="bg-dark text-white q-px-sm q-py-xs rounded-borders">
+          {{ formattedDate }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +48,7 @@ const pictureId = ref(null)
 const sequenceId = ref(null)
 const position = ref(null)
 const bearing = ref(null)
+const formattedDate = ref(null)
 const endpoint = 'https://api.panoramax.xyz/api'
 
 // computed
@@ -148,6 +158,11 @@ const onPictureEvent = async (event) => {
     }
 
     const feature = await response.json()
+
+    const datetime = feature.properties?.datetime
+    if (datetime) {
+      formattedDate.value = formatDate(datetime)
+    }
     const coords = feature.geometry?.coordinates
     if (coords) {
       position.value = { lat: coords[1], lng: coords[0] }
@@ -183,6 +198,16 @@ const refresh = async () => {
     restoreStates()
     if (pictureId.value) hasImage.value = true
   }
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString)
+
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 }
 
 // Vue
