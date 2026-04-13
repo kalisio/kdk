@@ -29,6 +29,8 @@ export function usePwa (options = { updateTimeout: 5000 }) {
   // Data
   const $q = useQuasar()
   const webStorageKey = 'pwa-install-prompt'
+  // Backward compatibility
+  const previousWebStorageKey = 'install'
 
   // Functions
   function install () {
@@ -38,7 +40,7 @@ export function usePwa (options = { updateTimeout: 5000 }) {
     const withinIframe = _.get(Platform, 'within.iframe', false)
     if (isNotPWA || isPWAInstalled || withinIframe) return
     // install prompt can be avoided, eg in tests
-    if (!LocalStorage.get(webStorageKey, true)) return
+    if (!LocalStorage.get(webStorageKey, LocalStorage.get(previousWebStorageKey, true))) return
     if (!SessionStorage.get(webStorageKey, true)) return
     Dialog.create({
       component: KPwaPrompt

@@ -15,8 +15,11 @@ import KRateLimitPrompt from '../components/prompt/KRateLimitPrompt.vue'
 export function useSession (options = {}) {
   // Data
   const { User } = useUser()
-  const disconnectKey = 'disconnect-dialog'
-  const reconnectKey = 'reconnect-dialog'
+  const disconnectKey = 'disconnect-prompt'
+  const reconnectKey = 'reconnect-prompt'
+  // Backward compatibility
+  const previousDisconnectKey = 'disconnect-dialog'
+  const previousReconnectKey = 'reconnect-dialog'
   const router = useRouter()
   const route = useRoute()
   const $q = useQuasar()
@@ -81,7 +84,7 @@ export function useSession (options = {}) {
       // as this error might appear under-the-hood without notifying service operations
       Loading.hide()
       // Disconnect prompt can be avoided, eg in tests
-      if (!LocalStorage.get(disconnectKey, true)) {
+      if (!LocalStorage.get(disconnectKey, LocalStorage.get(previousDisconnectKey, true))) {
         // We flag however that we are waiting for reconnection to avoid emitting the event multiple times
         pendingReconnection = true
         return
@@ -110,7 +113,7 @@ export function useSession (options = {}) {
     // Display it only the first time the reconnection occurs because multiple attempts will be tried
     if (!pendingReload) {
       // Reconnect prompt can be avoided, eg in tests
-      if (!LocalStorage.get(reconnectKey, true)) return
+      if (!LocalStorage.get(reconnectKey, LocalStorage.get(previousReconnectKey, true))) return
       pendingReload = $q.dialog({
         component: KPendingReloadPrompt
       })

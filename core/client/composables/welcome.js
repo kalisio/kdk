@@ -9,11 +9,14 @@ import { LocalStorage } from '../web-storage.js'
 export function useWelcome () {
   let welcome = null
   const $q = useQuasar()
+  const webStorageKey = 'welcome-prompt'
+  // Backward compatibility
+  const previousWebStorageKey = 'welcome'
 
   function show () {
-    const canShow = LocalStorage.get('welcome')
+    const canShow = LocalStorage.get(webStorageKey, LocalStorage.get(previousWebStorageKey, false))
     // Introduction is only for logged users
-    if (!(_.isNil(canShow) ? _.get(config, 'layout.welcome', true) : JSON.parse(canShow))) return
+    if (!(_.isNil(canShow) ? _.get(config, 'layout.welcome', true) : canShow)) return
     welcome = $q.dialog({
       component: KWelcomePrompt
     }).onCancel(() => hide())
