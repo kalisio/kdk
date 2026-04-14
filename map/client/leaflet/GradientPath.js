@@ -134,9 +134,10 @@ function buildSVGGradientPath (geojson, coordinates) {
   if (stroke) {
     const color = _.get(stroke, 'color', 'black')
     const width = _.get(stroke, 'width', 1)
+    const opacity = _.get(stroke, 'opacity', 1)
     if (color !== 'transparent' && width > 0) {
       const border = coordinates.map((p, i) => i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`).join(' ')
-      lines.push(`<path d="${border}" stroke="${color}" stroke-width="${geojson.properties.weight + 2 * width}" stroke-linecap="round" stroke-linejoin="bevel" fill="none" vector-effect="non-scaling-stroke"/>`)
+      lines.push(`<path d="${border}" stroke="${color}" stroke-width="${geojson.properties.weight + 2 * width}" stroke-opacity="${opacity}" stroke-linecap="round" stroke-linejoin="bevel" fill="none" vector-effect="non-scaling-stroke"/>`)
     }
   }
   // Build the gradient path segment by segment
