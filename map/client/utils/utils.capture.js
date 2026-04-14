@@ -47,13 +47,12 @@ export async function capture (values) {
     for (let index = 0; index < dateArray.length; index++) {
       // Setup the request body
       options.body = JSON.stringify({
-        activity: kActivity.value.is3D() ? 'globe' : 'map',
         layers,
         bbox: [bbox.west, bbox.south, bbox.east, bbox.north],
         size: { width: +values.resolution.width, height: +values.resolution.height },
         layout: getLayout(values),
         time: dateArray[index],
-        basePath: _.has(values, 'basePath') ? values.basePath : '/#/home/',
+        path: _.get(values, 'path', kActivity.value.is3D() ? '/#/home/globe' : '/#/home/map'),
         lang: getLocale()
       })
       const response = await fetch(endpoint, options)
