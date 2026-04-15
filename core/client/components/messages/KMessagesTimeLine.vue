@@ -64,7 +64,7 @@ const emit = defineEmits(['messages-refreshed'])
 // Data
 const { dense, wide } = useScreen()
 const baseQuery = ref({})
-const { filterQuery, hasTimeSelection, hasTagsSelection } =
+const { filterQuery, hasTimeFilterSelection, hasTagsFilterSelection } =
   useCollectionFilterQuery({
     service: ref('messages'),
     baseQuery,
@@ -94,8 +94,8 @@ const computedFilterQuery = computed(() => {
 })
 const filterOffset = computed(() => {
   let offset = 0
-  if (hasTimeSelection) offset += 36
-  if (hasTagsSelection) offset += 24
+  if (hasTimeFilterSelection) offset += 36
+  if (hasTagsFilterSelection) offset += 24
   return `${offset}px`
 })
 
