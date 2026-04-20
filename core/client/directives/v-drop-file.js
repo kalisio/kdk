@@ -72,9 +72,9 @@ export const vDropFile = {
         message = i18n.tc('errors.MAX_FILES_REACHED', el.__state.maxFiles)
       } else {
         for (const item of items) {
-          if (item.kind === 'file' && _.includes(el.__state.acceptedTypes, item.type)) acceptedItems.push(item)
+          if (item.kind === 'file' && (!item.type || _.includes(el.__state.acceptedTypes, item.type))) acceptedItems.push(item)
           else rejectedItems.push(item)
-        }  
+        }
         if (_.isEmpty(acceptedItems)) {
           color = colors.getPaletteColor('negative')
           message = i18n.tc('directives.ALL_FILES_ARE_UNSUPPORTED', rejectedItems.length)
@@ -96,7 +96,7 @@ export const vDropFile = {
       overlayBox.style.borderColor = color
       overlayBox.style.color = 'white'
       overlayBox.style.textShadow = '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black'
-      overlayBox.style.padding = '20px;'
+      overlayBox.style.padding = '20px'
       // show the overlay
       dragCounter++
       showOverlay()
@@ -115,7 +115,7 @@ export const vDropFile = {
       hideOverlay()
       if (!canDrop) return
       const files = Array.from(e.dataTransfer.files)
-      const acceptedFiles = Reader.filter(files)    
+      const acceptedFiles = Reader.filter(files)
       if (el.__state.maxTotalSize && _.size(acceptedFiles) > 1) {
         let totalSize = _.reduce(acceptedFiles, (size, file) => {
           size += file.files[0].size
@@ -138,7 +138,7 @@ export const vDropFile = {
         await el.__state.dropCallback(content)
       }
     }
-      
+
     el.__handlers = { onDragEnter, onDragOver, onDragLeave, onDrop }
     el.addEventListener('dragenter', onDragEnter)
     el.addEventListener('dragover', onDragOver)
@@ -154,7 +154,7 @@ export const vDropFile = {
         acceptedTypes:  _.get(binding.value, 'mimeTypes'),
         maxFiles:  _.get(binding.value, 'maxFiles'),
         maxFileSize:  _.get(binding.value, 'maxFileSize'),
-        maxTotalSize:  _.get(binding.value, 'maxTotalSize'),        
+        maxTotalSize:  _.get(binding.value, 'maxTotalSize'),
         fontSize: _.get(binding.value, 'fontSize', '2rem'),
         enabled: _.get(binding.value, 'enabled', true)
       }
