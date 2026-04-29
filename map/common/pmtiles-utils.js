@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { PMTiles } from 'pmtiles'
 
-export async function getPMTilesMetadata(url) {
+export async function getPMTilesMetadata (url) {
   try {
     const pmtiles = new PMTiles(url)
     const header = await pmtiles.getHeader() // fetches and validates the magic number
@@ -12,7 +12,7 @@ export async function getPMTilesMetadata(url) {
   }
 }
 
-export function getPMTilesLayers(header, metadata) {
+export function getPMTilesLayers (header, metadata) {
   return metadata.vector_layers.map(layer => {
     return {
       id: layer.id,
@@ -64,7 +64,7 @@ export function detectStyleType (style) {
 }
 
 // Apply layer filters function to paint rules
-export function applyLayerFilters(filterFn, paintRules) {
+export function applyLayerFilters (filterFn, paintRules) {
   paintRules.forEach(rule => {
     // kdkFilter member may not be present, this is added by kdk_style when translating kdk style
     // to leaflet-protomaps rules

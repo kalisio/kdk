@@ -204,12 +204,12 @@ const values = ref(getValues())
 const properties = ref(getProperties())
 
 // Computed
-let layerHasFeatureSchema = !_.isEmpty(layerSchema)
-let isVectorLayer = layerHasFeatureSchema || (_.get(layer, 'leaflet.type') === 'geoJson')
+const layerHasFeatureSchema = !_.isEmpty(layerSchema)
+const isVectorLayer = layerHasFeatureSchema || (_.get(layer, 'leaflet.type') === 'geoJson')
 const formSchema = _.cloneDeep(layerFormSchema)
 // Allow schema edition in this case
 if (isVectorLayer) {
-  formSchema.properties['schema'] = {
+  formSchema.properties.schema = {
     type: ['object', 'null'],
     nullable: true,
     field: {

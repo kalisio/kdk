@@ -17,7 +17,7 @@ const layoutPath = 'layout'
 const contentDefaults = { content: undefined, filter: {}, mode: undefined, visible: false }
 const paneDefaults = { opener: false, size: [0, 0], zIndex: DefaultZIndex.panes }
 const windowDefaultControls = { menu: true, pin: true, unpin: true, maximize: true, restore: true, close: true, resize: true }
-const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowDefaultControls, controlsMenuBreakpoint: 'xs', zIndex: 980, header: { visible: true }, footer: { visible: true }}
+const windowDefaults = { state: undefined, position: undefined, size: undefined, current: undefined, controls: windowDefaultControls, controlsMenuBreakpoint: 'xs', zIndex: 980, header: { visible: true }, footer: { visible: true } }
 const hWindowDefaultSizePolicy = {
   minSize: [300, 200],
   floating: { position: [0, 0], size: [300, 200] },
@@ -456,13 +456,13 @@ export const Layout = {
     if (!this.placements.includes(placement) || !_.isBoolean(visible)) return
     const props = _.get(this.getElement(`windows.${placement}`), 'header')
     if (props.visible === visible) return
-    Store.patch( this.getElementPath(`windows.${placement}`), { header: { ...props, visible }})
+    Store.patch(this.getElementPath(`windows.${placement}`), { header: { ...props, visible } })
   },
   setWindowFooterVisible (placement, visible) {
     if (!this.placements.includes(placement) || !_.isBoolean(visible)) return
     const props = _.get(this.getElement(`windows.${placement}`), 'footer')
     if (props.visible === visible) return
-    Store.patch( this.getElementPath(`windows.${placement}`), { footer: { ...props, visible }})
+    Store.patch(this.getElementPath(`windows.${placement}`), { footer: { ...props, visible } })
   },
   clearWindow (placement) {
     this.clearElement(`windows.${placement}`)
