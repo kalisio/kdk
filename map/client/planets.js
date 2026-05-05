@@ -23,6 +23,13 @@ export const Planets = {
     })
 
     const client = await createClient(options)
+    // Client creation is resilient to connection error for offline mode
+    // but this is not yet supported for planets.
+    if (client.isDisconnected) {
+      const error = new Error(`Cannot connect to planet ${name}`)
+      logger.error(error)
+      throw error
+    }
     setupApi.bind(client)(options)
     client.on('login', (data) => {
       // Store API gateway token if any
@@ -34,8 +41,9 @@ export const Planets = {
     })
     const accessToken = await client.get('storage').getItem(options.apiJwt)
     if (!accessToken) {
-      logger.error(new Error(`You must set planet ${name} token first`))
-      return
+      const error = new Error(`You must set planet ${name} token first`)
+      logger.error(error)
+      throw error
     }
     await client.authenticate({
       strategy: 'jwt',
