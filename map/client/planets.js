@@ -26,7 +26,7 @@ export const Planets = {
     // Client creation is resilient to connection error for offline mode
     // but this is not yet supported for planets.
     if (client.isDisconnected) {
-      const error = new Error(`Cannot connect to planet ${name}`)
+      const error = new Error(`[KDK] Cannot connect to planet ${name}`)
       logger.error(error)
       throw error
     }
@@ -41,7 +41,7 @@ export const Planets = {
     })
     const accessToken = await client.get('storage').getItem(options.apiJwt)
     if (!accessToken) {
-      const error = new Error(`You must set planet ${name} token first`)
+      const error = new Error(`[KDK] You must set planet ${name} token first`)
       logger.error(error)
       throw error
     }
