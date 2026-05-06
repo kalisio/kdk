@@ -105,7 +105,13 @@ function refresh() {
   const [[south, west], [north, east]] = CurrentActivity.value.getBounds()
   const bounds = bboxPolygon([west, south, east, north])
   const geoJson = CurrentActivity.value.toGeoJson(props.layer.name)
-  layerHasVisibleFeatures.value = false
+  // Works only for layers with GeoJson features
+  if (!geoJson) {
+    layerHasVisibleFeatures.value = true
+    return
+  } else {
+    layerHasVisibleFeatures.value = false
+  }
   // Check if layer has filters with own legend
   if (Array.isArray(props.layer.filters)) {
     props.layer.filters.forEach((filter) => {
