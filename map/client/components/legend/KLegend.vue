@@ -149,7 +149,8 @@ function refresh () {
   if (!CurrentActivity.value) return
   logger.debug('[KDK] Refreshing legend')
   // set the current zoom
-  zoom.value = CurrentActivity.value.getCenter().zoomLevel
+  // We use floor for fractional zoom
+  zoom.value = Math.floor(CurrentActivity.value.getCenter().zoomLevel)
   // set the layers for which it is required to display a legend
   const iterator = {
     layers: [],
