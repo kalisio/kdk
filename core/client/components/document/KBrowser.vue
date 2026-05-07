@@ -174,8 +174,8 @@ const tools = computed(() => {
 
 // Watch
 watch(() => [props.documents, props.default], async () => {
-  if (_.size(props.document) > 0) {
-    files.value = props.documents
+  if (_.size(props.documents) > 0) {
+    files.value = _.cloneDeep(props.documents)
     index.value = _.findIndex(files.value, { name: props.default })
     if (index.value < 0) index.value = 0
     await refresh()
@@ -185,9 +185,6 @@ watch(() => [props.documents, props.default], async () => {
     viewer.value = null
     index.value = -1
   }
-  files.value = props.documents
-  index.value = _.findIndex(files.value, { name: props.default })
-  if (index.value > -1) await refresh()
 }, { immediate: true })
 
 // Functions
@@ -206,7 +203,7 @@ async function next () {
 }
 async function refresh () {
   logger.debug('[KDK] Browser refreshed', files.value, index.value)
-  file.value = files.value[index.value]
+  file.value = { ...files.value[index.value] }
   file.value.url = await Storage.getPresignedUrl({
     key: getDocumentKey(file.value.name),
     expiresIn: 60
