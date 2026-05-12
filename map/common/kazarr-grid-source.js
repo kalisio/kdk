@@ -81,8 +81,8 @@ export class KazarrGridSource extends GridSource {
 
     const question = this.config.url.indexOf('?')
     const datasetUrl = question === -1
-      ? `${this.config.url}/datasets/${this.config.dataset}`
-      : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}${this.config.url.substring(question)}`
+      ? `${this.config.url}/datasets/${this.config.dataset}/metadata`
+      : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/metadata${this.config.url.substring(question)}`
 
     try {
       const resp = await fetch(datasetUrl)
@@ -137,6 +137,7 @@ export class KazarrGridSource extends GridSource {
     }
 
     const grid = {
+      sourceKey: this.sourceKey,
       hasData: () => { return true },
       // HACK: can't import pixi here, return constant value for now
       // cf. https://github.com/pixijs/pixijs/blob/v7.4.3/packages/constants/src/index.ts#L282
@@ -148,7 +149,21 @@ export class KazarrGridSource extends GridSource {
       minLat: dataMinLat,
       maxLat: dataMaxLat,
       minLon: dataMinLon,
-      maxLon: dataMaxLon
+      maxLon: dataMaxLon,
+
+      /* support for TiledWindLayer */
+      getBestFit: (bbox) => {
+        return [0, 0, 15, 15]
+      },
+      getLat: (index) => {
+        return grid.data.vertices[((index * 16) * 3) + 1]
+      },
+      getLon: (index) => {
+        return grid.data.vertices[index * 3]
+      },
+      getValue: (ilat, ilon) => {
+        return grid.data.values[ilat * 16 + ilon]
+      }
     }
 
     grid.genCoordsBuffer = () => genCoordsBuffer(grid)
