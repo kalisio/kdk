@@ -154,6 +154,8 @@ export const pmtilesLayers = {
       // Retrieve the engine layer and update the filter function directly
       const leafletLayer = this.getLeafletLayerByName(layer. name)
       if (!leafletLayer) return
+      // Check if of right type
+      if (!leafletLayer.paintRules) return
       // Filtering is managed by mongodb query syntax, we need to update the filter function
       const filterFn = layers.getFilterFunctionFromLayerFilters(layer)
       applyLayerFilters(filterFn, leafletLayer.paintRules)
