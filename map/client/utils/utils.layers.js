@@ -30,6 +30,10 @@ export function hasFeatureSchema (layer) {
   return _.has(layer, 'schema')
 }
 
+export function hasFilters (layer) {
+  return _.has(layer, 'filters')
+}
+
 export function isLayerSelectable (layer) {
   return _.get(layer, 'isSelectable', true)
 }
@@ -329,6 +333,10 @@ export function isLayerStyleEditable (layer) {
 
 export function isLayerDataEditable (layer) {
   return _.get(layer, 'isDataEditable', isUserLayer(layer) && isFeatureLayer(layer))
+}
+
+export function isLayerFilterable (layer) {
+  return _.get(layer, 'isFilterable', hasFilters(layer))
 }
 
 export function isLayerFilterEditable (layer) {

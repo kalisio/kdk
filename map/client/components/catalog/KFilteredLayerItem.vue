@@ -105,6 +105,8 @@ function onToggleRefCreated (node) {
 }
 function onToggled () {
   emit('toggled', props.layer)
+  // Activating a layer with all filters disabled would be strange as nothing will be visible
+  // In this case we reset all filters to be active by default
   if (props.layer.isVisible) {
     const areFiltersInactive = _.every(filters.value, { isActive: false })
     if (areFiltersInactive) {
@@ -114,6 +116,8 @@ function onToggled () {
 }
 function onFilterToggled (filter) {
   emit('filter-toggled', props.layer, filter)
+  // Having an active layer with all filters disabled would be strange as nothing will be visible
+  // In this case we set the layer to be inactive
   const areFiltersInactive = _.every(filters.value, { isActive: false })
   if (areFiltersInactive) emit('toggled', props.layer)
 }

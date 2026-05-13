@@ -15,7 +15,8 @@ import { getCatalogProjectQuery } from '../utils/utils.project.js'
 
 export const activity = {
   emits: [
-    'layer-filter-toggled'
+    'layer-filter-toggled',
+    'layer-filters-toggled'
   ],
   data () {
     return {
@@ -186,6 +187,7 @@ export const activity = {
     setLayerCached: layers.setLayerCached,
     setLayerUncached: layers.setLayerUncached,
     isLayerEditable: layers.isLayerEditable,
+    isLayerFiltertable: layers.isLayerFilterable,
     isLayerFilterEditable: layers.isLayerFilterEditable,
     isLayerRemovable: layers.isLayerRemovable,
     isLayerStyleEditable: layers.isLayerStyleEditable,
@@ -246,6 +248,19 @@ export const activity = {
 
       this.$emit('layer-filter-toggled', layer, filter)
       this.$engineEvents.emit('layer-filter-toggled', layer, filter)
+    },
+    async onToggleLayerFilters (layer, enabled) {
+      for (const filter of layer.filters) filter.isActive = enabled
+      const isLayerVisible = this.isLayerVisible(layer.name)
+      // Having an active layer with all filters disabled would be strange as nothing will be visible
+      // In this case we set the layer to be inactive
+      if (isLayerVisible !== enabled) this.onTriggerLayer(layer)
+      // Can only apply to realtime layers as we need to force a data refresh
+      // removeMissing seems needed for 3d
+      else if (typeof this.updateLayer === 'function') await this.updateLayer(layer.name, null, { removeMissing: true })
+
+      this.$emit('layer-filters-toggled', layer, enabled)
+      this.$engineEvents.emit('layer-filters-toggled', layer, enabled)
     },
     onZoomIn () {
       this.zoomIn()

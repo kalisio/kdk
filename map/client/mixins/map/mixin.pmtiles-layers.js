@@ -150,7 +150,7 @@ export const pmtilesLayers = {
         }
       }
     },
-    onLayerFilterToggledPMTilesLayers (layer, filter) {
+    onLayerFilterToggledPMTilesLayers (layer) {
       // Retrieve the engine layer and update the filter function directly
       const leafletLayer = this.getLeafletLayerByName(layer. name)
       if (!leafletLayer) return
@@ -168,12 +168,14 @@ export const pmtilesLayers = {
     Events.on('template-context-changed', this.onTemplateContextChangedPMTilesLayers)
     this.$engineEvents.on('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
     this.$engineEvents.on('layer-filter-toggled', this.onLayerFilterToggledPMTilesLayers)
+    this.$engineEvents.on('layer-filters-toggled', this.onLayerFilterToggledPMTilesLayers)
   },
   beforeUnmount () {
     Events.off('time-current-time-changed', this.onCurrentTimeChangedPMTilesLayers)
     Events.off('template-context-changed', this.onTemplateContextChangedPMTilesLayers)
     this.$engineEvents.off('selected-level-changed', this.onCurrentLevelChangedPMTilesLayers)
     this.$engineEvents.off('layer-filter-toggled', this.onLayerFilterToggledPMTilesLayers)
+    this.$engineEvents.off('layer-filters-toggled', this.onLayerFilterToggledPMTilesLayers)
   }
 }
 
