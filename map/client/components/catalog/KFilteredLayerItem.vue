@@ -29,7 +29,7 @@
       <!-- Filter rendering -->
       <div v-else class="row col items-center q-pl-md q-pr-sm no-wrap">
         <!-- Filter toggle -->
-        <q-toggle
+        <q-checkbox
           :ref="onToggleRefCreated(prop.node)"
           v-model="prop.node.isActive"
           :color="layer.isVisible ? 'primary' : 'grey-5'"
@@ -85,6 +85,10 @@ const emit = defineEmits(['toggled', 'filter-toggled'])
 const filters = ref([])
 
 // Computed
+const areFiltersInactive = computed(() => {
+  return _.every(filters.value, { isActive: false })
+})
+
 const filterActions = computed(() => {
   const filterActions = _.cloneDeep(props.layer.actions)
   _.forEach(filterActions, (action) => {
@@ -105,20 +109,8 @@ function onToggleRefCreated (node) {
 }
 function onToggled () {
   emit('toggled', props.layer)
-  // Activating a layer with all filters disabled would be strange as nothing will be visible
-  // In this case we reset all filters to be active by default
-  if (props.layer.isVisible) {
-    const areFiltersInactive = _.every(filters.value, { isActive: false })
-    if (areFiltersInactive) {
-      for (const filter of filters.value) filter.isActive = true
-    }
-  }
 }
 function onFilterToggled (filter) {
   emit('filter-toggled', props.layer, filter)
-  // Having an active layer with all filters disabled would be strange as nothing will be visible
-  // In this case we set the layer to be inactive
-  const areFiltersInactive = _.every(filters.value, { isActive: false })
-  if (areFiltersInactive) emit('toggled', props.layer)
 }
 </script>

@@ -696,26 +696,14 @@ export async function removeLayer (layer) {
 }
 
 export function getFilterFunctionFromLayerFilters (layer) {
-  // To be flexible enough filters can provide a query for their active and inactive state
-  // Similarly, filters can be combined with a different operator for each state
-  const filterOperators = _.get(layer, 'filterOperators', { active: '$or', inactive: '$and' })
   const activeFilters = layer.filters
     .filter(filter => filter.isActive)
     .map(filter => filter.active)
     .filter(filter => !_.isEmpty(filter))
+  // No active filters means nothing should be returned
   const activeCondition = activeFilters.length > 1
-    ? { [filterOperators.active]: activeFilters }
-    : activeFilters.length === 1 ? activeFilters[0] : {}
-  const inactiveFilters = layer.filters
-    .filter(filter => !filter.isActive)
-    .map(filter => filter.inactive)
-    .filter(filter => !_.isEmpty(filter))
-  const inactiveCondition = inactiveFilters.length > 1
-    ? { [filterOperators.inactive]: inactiveFilters }
-    : inactiveFilters.length === 1 ? inactiveFilters[0] : {}
+    ? { '$or': activeFilters }
+    : activeFilters.length === 1 ? activeFilters[0] : { _id: { $in: [] } }
 
-  const finalCondition = activeFilters.length && inactiveFilters.length
-    ? { '$and': [ activeCondition, inactiveCondition ] } : activeFilters.length ? activeCondition : inactiveCondition
-
-  return sift(finalCondition)
+  return sift(activeCondition)
 }

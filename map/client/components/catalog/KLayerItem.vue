@@ -1,8 +1,8 @@
 <template>
   <div :id="id" class="full-width row items-center q-px-sm no-wrap">
     <!-- Layer toggle -->
-    <q-toggle v-if="togglable"
-      v-model="layer.isVisible"
+    <q-checkbox v-if="togglable"
+      v-model="isChecked"
       :disable="layer.isDisabled"
       size="xs"
       @update:modelValue="onToggled"
@@ -45,7 +45,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Document } from '../../../../core/client/document.js'
 import { KPanel } from '../../../../core/client/components'
 
@@ -63,6 +63,9 @@ const props = defineProps({
 
 // Emits
 const emit = defineEmits(['toggled'])
+
+// Data
+const isChecked = ref(null)
 
 // Computed
 const id = computed(() => {
@@ -89,4 +92,13 @@ const layerActions = computed(() => {
 function onToggled () {
   emit('toggled', props.layer)
 }
+
+// Watch
+watch(() => props.layer, () => {
+  const isVisible = _.get(props.layer, 'isVisible', false)
+  isChecked.value = isVisible
+  // Specific case of filtered layers with inactive filters => indeterminate state
+  const hasInactiveFilter = _.some(_.get(props.layer, 'filters', []), { isActive: false })
+  if (isVisible && hasInactiveFilter) isChecked.value = null
+}, { immediate: true, deep: true })
 </script>
