@@ -18,7 +18,7 @@
     :disable="computedDisabled"
     v-close-popup="closePopup"
     @click="onClicked"
-    :class="{ 'k-action-toggled': isToggled }"
+    :class="{ 'k-action-toggled': isToggled, 'k-action-no-hover': !hover }"
   > 
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -53,6 +53,7 @@
     :loading="loading"
     v-close-popup="closePopup"
     @click="onClicked"
+    :class="{ 'k-action-no-hover': !hover }"
   >
     <div class="ellipsis">
       {{ computedLabel }}
@@ -69,6 +70,7 @@
     :disable="computedDisabled"
     v-close-popup="closePopup"
     @click="onClicked"
+    :class="{ 'k-action-no-hover': !hover }"
   >
     <q-item-section v-if="computedIcon || badge" avatar>
       <!-- icon -->
@@ -96,7 +98,7 @@
     :dense="dense"
     :disable="computedDisabled"
     @click="onClicked"
-    class="k-fab"
+    :class="{ 'k-fab': true, 'k-action-no-hover': !hover }"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -124,7 +126,7 @@
     label-class="text-white text-caption"
     :disable="computedDisabled"
     @click="onClicked"
-    class="k-fab-action"
+    :class="{ 'k-fab-action': true, 'k-action-no-hover': !hover }"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -141,7 +143,7 @@
     Tab renderer
   -->
   <q-btn v-else-if="renderer === 'tab'"
-    :class="{'k-tab-action-active': isToggled }"
+    :class="{'k-tab-action-active': isToggled, 'k-action-no-hover': !hover }"
     :id="id"
     no-caps
     no-wrap
@@ -323,5 +325,8 @@ defineExpose({
 }
 .k-action-toggled {
   background-color: #efefef !important;
+}
+.k-action-no-hover :deep(.q-focus-helper) {
+  display: none;
 }
 </style>

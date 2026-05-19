@@ -31,6 +31,10 @@ export const actionProps = {
     type: Boolean,
     default: false
   },
+  hover: {
+    type: Boolean,
+    default: true
+  },
   badge: {
     type: Object,
     default: () => null
