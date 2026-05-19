@@ -51,7 +51,7 @@ export function useHighlight (name, options = {}) {
       // so that we can add our highlight layer, before that it would be cleared by catalog loading
       activity.$engineEvents.on('layer-added', createHighlightsLayer)
       activity.$engineEvents.on('layer-disabled', onHighlightedLayerDisabled)
-      activity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)      
+      activity.$engineEvents.on('layer-enabled', onHighlightedLayerEnabled)
     }
   }
   function getHighlightId (feature, layer) {
@@ -75,6 +75,7 @@ export function useHighlight (name, options = {}) {
     return get(getHighlightId(feature, layer))
   }
   function setHighlightGeometry (feature, highlight) {
+    if (!feature) return
     // Assign geometry
     Object.assign(highlight, feature.geometry
       ? { geometry: feature.geometry }
@@ -123,9 +124,9 @@ export function useHighlight (name, options = {}) {
         }
         // If highlight size is based on a shape with a radius use it, otherwise go for size
         // FIXME: Take care to templating, in this case for now we don't take it into account
-        if (_.isNumber(radius)) Object.assign(highlightStyle, { radius: radius + 0.5 * HighlightMargin }) 
+        if (_.isNumber(radius)) Object.assign(highlightStyle, { radius: radius + 0.5 * HighlightMargin })
         else if (Array.isArray(size) && (size.length > 1) && _.isNumber(size[0]) && _.isNumber(size[1])) Object.assign(highlightStyle, { size: [size[0] + HighlightMargin, size[1] + HighlightMargin] })
-      
+
         Object.assign(highlight, { style: highlightStyle })
       } else {
         // In 3D, keep important style properties from feature, such as "altitudeMode"
@@ -221,7 +222,7 @@ export function useHighlight (name, options = {}) {
   }
   // In order to avoid updating the layer too much often we queue a request update every N ms
   const requestHighlightsLayerUpdate = _.debounce(updateHighlightsLayer, options.updateDelay)
-   
+
   function removeHighlightsLayer () {
     // Clear any running update
     if (activity) activity.removeLayer(HighlightsLayerName)

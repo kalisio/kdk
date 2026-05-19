@@ -13,7 +13,11 @@
         :minHeight="24"
         :maxHeight="204"
         :dense="true"
-        :class="{ 'cursor-pointer': renderer === 'tip'}"
+        :class="{
+          'cursor-pointer': renderer === 'tip' || clickable,
+          'k-clickable-text': renderer === 'tip' || clickable
+        }"
+        @click="onClicked"
       />
       <!-- Map  -->
       <KLocationMap
@@ -59,11 +63,18 @@ const props = defineProps({
     type: String,
     default: 'map',
     validator: (value) => {
-      return _.isNil(value) || ['map', 'tip'].includes(value)
+      return _.isNil(value) || ['map', 'tip', 'none'].includes(value)
     }
+  },
+  clickable: {
+    type: Boolean,
+    default: false
   },
   ...coreUtils.CardSectionProps
 })
+
+// Emit
+const emit = defineEmits(['clicked'])
 
 // Data
 const feature = ref(null)
@@ -78,4 +89,18 @@ watch(() => [props.item, props.locationPath], () => {
   if (_.get(props.item, 'type') === 'Feature') feature.value = _.cloneDeep(props.item)
   else feature.value = _.get(props.item, props.locationPath)
 }, { immediate: true })
+
+// Functions
+function onClicked () {
+  if (props.clickable) emit('clicked')
+}
 </script>
+
+<style lang="scss" scoped>
+.k-clickable-text:hover {
+  font-weight: 405;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 -6px 0 rgba(0, 0, 0, 0.05), 4px 0 0 rgba(0, 0, 0, 0.05), -4px 0 0 rgba(0, 0, 0, 0.05);
+}
+</style>
