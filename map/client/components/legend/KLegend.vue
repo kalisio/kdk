@@ -125,6 +125,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     oldActivity.value.$engineEvents.off('layer-shown', requestRefresh)
     oldActivity.value.$engineEvents.off('layer-hidden', requestRefresh)
     oldActivity.value.$engineEvents.off('layer-filter-toggled', requestRefresh)
+    oldActivity.value.$engineEvents.off('layer-filters-toggled', requestRefresh)
     // clear legend
     sublegends.value = []
     layers.value = []
@@ -137,6 +138,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     zoom.value = Math.round(newActivity.getCenter().zoomLevel)
     refresh()
     // install listeners
+    newActivity.$engineEvents.on('layer-filters-toggled', requestRefresh)
     newActivity.$engineEvents.on('layer-filter-toggled', requestRefresh)
     newActivity.$engineEvents.on('layer-shown', requestRefresh)
     newActivity.$engineEvents.on('layer-hidden', requestRefresh)
@@ -158,9 +160,12 @@ function refresh () {
   }
   _.reduce(CurrentActivity.value.getLayers(), (iterator, layer) => {
     const isVisible = layer.isVisible
+    // Specific case of filtered layers with inactive filters
+    const filters = _.get(layer, 'filters', [])
+    const hasActiveFilters = _.some(filters, { isActive: true })
     const hasLegend = layer.legend
-    const hasFilterLegend = _.some(layer.filters, filter => filter.legend)
-    if (isVisible && (hasLegend || hasFilterLegend)) {
+    const hasFilterLegend = _.some(filters, filter => filter.legend)
+    if (isVisible && ((hasFilterLegend && hasActiveFilters) || (!hasFilterLegend && hasLegend))) {
       if (!hasLegend) iterator.layers.push(layer)
       else if (!layer.legend.group) iterator.layers.push(layer)
       else {
