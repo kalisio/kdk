@@ -4,6 +4,7 @@
     :isExpanded="isExpanded"
     :minHeight="minHeight"
     :maxHeight="maxHeight"
+    v-hover="{ enter: () => hovered = true, leave: () => hovered = false }"
     @click="onClick"
   >
     <KScrollArea
@@ -23,21 +24,36 @@
     </KScrollArea>
     <div class="k-expandable-action">
       <KAction
-        v-if="isExpandable"
+        v-show="isExpandable"
         id="collapse-action"
         class="k-expandable-action"
-        :icon="isExpanded ? 'las la-angle-up' : 'las la-ellipsis-h'"
+        :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'"
         :tooltip="isExpanded ? 'KTextArea.COLLAPSE' : ''"
         size="xs"
         :handler="() => isExpanded = !isExpanded"
         :propagate="false"
       />
     </div>
+    <div class="k-copy-action">
+      <KAction
+        v-show="props.copyable && hovered"
+        id="copy-content"
+        icon="las la-copy"
+        tooltip="KTextArea.COPY"
+        size="0.8rem"
+        :handler="onCopy"
+        :propagate="false"
+        class="k-copy-action"
+      />
+    </div>
   </KExpandable>
 </template>
 
 <script setup>
+import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
+import { Notify, copyToClipboard  } from 'quasar'
+import { i18n } from '../i18n.js'
 import { Document } from '../document.js'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
@@ -64,6 +80,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  copyable: {
+    type: Boolean,
+    default: true
+  },
   isExpanded: {
     type: Boolean,
     default: false
@@ -76,6 +96,7 @@ const scrollAreaKey = ref(0)
 const isExpandable = ref(false)
 const isExpanded = ref(props.isExpanded)
 const isScrollable = ref(false)
+const hovered = ref(false)
 
 // computed
 const cssCursor = computed(() => {
@@ -108,6 +129,21 @@ function onScrolled (info) {
     isScrollable.value = false
   }
 }
+async function onCopy () {
+  try {
+    await copyToClipboard(props.text)
+    Notify.create({
+      type: 'positive',
+      message: i18n.t('KTextArea.COPIED')
+    })
+  } catch (error) {
+    logger.debug('[KDK] Unable to copy data to the clipboard:', error)
+    Notify.create({
+      type: 'negative',
+      message: i18n.t('KTextArea.CANNOT_COPY')
+    })
+  }
+}
 
 // watch
 watch(() => props.text, (text) => {
@@ -137,8 +173,13 @@ watch(() => props.text, (text) => {
 .k-expandable-action {
   position: absolute;
   bottom: 0px;
-  right: 4px;
+  right: 6px;
   padding: 1px;
   background-color: white;
+}
+.k-copy-action {
+  position: absolute;
+  top: -6px;
+  right: 0px;
 }
 </style>

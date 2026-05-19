@@ -705,7 +705,10 @@
     "FILTER": "Filter by time"
   },
   "KTextArea": {
-    "COLLAPSE": "Collapse"
+    "COLLAPSE": "Collapse",
+    "COPY": "Copy",
+    "COPIED": "Copied",
+    "COPY_FAILED": "Copy failed"
   },
   "KTimeControl": {
     "PREVIOUS_STEP": "Previous step",
