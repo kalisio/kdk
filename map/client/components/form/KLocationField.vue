@@ -56,13 +56,24 @@
         <KAction
           v-if="allowGeolocation"
           id="geolocate"
-          tooltip="KLocationField.GEOLOCATE"
           icon="las la-crosshairs"
           color="grey-7"
           size="0.8rem"
           dense
           :handler="onGeolocated"
-        />
+        > <q-tooltip>
+            <div style="text-align: center" v-html="$t('KLocationField.GEOLOCATE')" />
+            <div class="row justify-center q-gutter-x-sm">
+              <q-icon name="warning" size="xs" />
+              <span v-html="$t(accuracyWarningTooltip)" />
+            </div>
+          </q-tooltip>
+          <q-badge v-if="accuracyWarningColor"
+            rounded floating
+            :color="accuracyWarningColor"
+          >
+          </q-badge>
+        </KAction>
         <!-- map drawing -->
         <KAction
           v-if="allowMap"
@@ -117,7 +128,7 @@
     </template>
     <!-- Helper -->
     <template v-if="hasHelper" v-slot:append>
-      <k-action
+      <KAction
         :id="properties.name + '-helper'"
         :label="helperLabel"
         :icon="helperIcon"
@@ -148,6 +159,11 @@ export default {
     KLocationTip
   },
   mixins: [kdkCoreMixins.baseField],
+  data () {
+    return {
+      geolocationAccuracy: null
+    }
+  },
   computed: {
     name () {
       return _.get(this.model, 'properties.name', '')
@@ -166,6 +182,14 @@ export default {
     },
     switchViewboxUsage () {
       return _.get(this.properties, 'field.viewbox.selectable', false)
+    },
+    accuracyWarningTooltip () {
+      if (this.geolocationAccuracy > 300) return 'KLocationField.BAD_ACCURACY'
+      if (this.geolocationAccuracy > 100) return 'KLocationField.LOW_ACCURACY'
+    },
+    accuracyWarningColor () {
+      if (this.geolocationAccuracy > 300) return 'red'
+      if (this.geolocationAccuracy > 100) return 'warning'
     }
   },
   methods: {
@@ -214,9 +238,13 @@ export default {
       search
     }
   },
-  mounted () {
+  async mounted () {
     this.setGeocoders(_.get(this.properties, 'field.geocoders', []))
     this.setViewbox(_.get(this.properties, 'field.viewbox.coordinates', []))
+    if (this.allowGeolocation) {
+      const location = await this.geolocate()
+      this.geolocationAccuracy = _.get(location, 'properties.accuracy')
+    }
   }
 }
 </script>

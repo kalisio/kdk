@@ -436,6 +436,8 @@
     "NO_RESULT": "Aucun résultat trouvé",
     "FILTER": "Filtrer les services de recherche",
     "GEOLOCATE": "Me localiser",
+    "LOW_ACCURACY": "<b>Faible précision</b>",
+    "BAD_ACCURACY": "<b>Mauvaise précision</b>",
     "DRAW": "Dessiner sur une carte",
     "VIEWBOX": "Limiter la recherche dans la zone définie"
   },
