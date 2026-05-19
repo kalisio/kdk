@@ -1,7 +1,7 @@
 <template>
   <div :id="id" class="full-width row items-center q-px-sm no-wrap">
     <!-- Layer toggle -->
-    <q-checkbox v-if="togglable"
+    <q-toggle v-if="togglable"
       v-model="isChecked"
       :disable="layer.isDisabled"
       size="xs"
@@ -38,7 +38,7 @@
       :id="`${layer.name}-actions`"
       :content="layerActions"
       :context="layer"
-      :filter="{ id: { $nin: ['toggle', 'toggle-filter'] } }"
+      :filter="{ id: { $nin: ['toggle', 'toggle-filter', 'toggle-filters'] } }"
     />
   </div>
 </template>
@@ -94,7 +94,7 @@ function onToggled () {
 }
 
 // Watch
-watch(() => props.layer, () => {
+watch(() => props.layer.filters, () => {
   const isVisible = _.get(props.layer, 'isVisible', false)
   isChecked.value = isVisible
   // Specific case of filtered layers with inactive filters => indeterminate state

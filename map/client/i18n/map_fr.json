@@ -80,9 +80,6 @@
       "EDIT_LAYER_STYLE_LABEL": "Éditer le style",
       "RESET_LAYER_STYLE_LABEL": "Réinitialiser le style",
       "FILTER_DATA_LABEL": "Filtrer les données",
-      "EDIT_FILTERS_LABEL": "Éditer les filtres",
-      "TOGGLE_FILTERS_ON_LABEL": "Activer les filtres",
-      "TOGGLE_FILTERS_OFF_LABEL": "Désactiver les filtres",
       "VIEW_DATA_LABEL": "Voir les données",
       "CHART_DATA_LABEL": "Graphique des données",
       "START_EDIT_DATA_LABEL": "Éditer les données",
@@ -617,6 +614,10 @@
   },
   "KLayersSelector": {
     "SELECT_LAYERS": "Sélectionnez des couches"
+  },
+  "KFilteredLayerItem": {
+    "TOGGLE_FILTERS_ON_LABEL": "Activer tout",
+    "TOGGLE_FILTERS_OFF_LABEL": "Désactiver tout"
   },
   "KWeatherLayersSelector": {
     "FORECASTS_LABEL": "Prévisions",

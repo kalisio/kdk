@@ -226,8 +226,10 @@ export const activity = {
       // otherwise context will always reference the last processed item
       actions = bindContent(_.cloneDeep(actions), this, ['dialog'])
       // Add 'virtual' actions used to trigger the layer/filters
-      actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(layer) })
-      actions.push({ id: 'toggle-filter', handler: (filter) => this.onTriggerLayerFilter(layer, filter) })
+      // FIXME: need to retrieve original layer options as here we get processed options by the underlying engine
+      actions.push({ id: 'toggle', handler: () => this.onTriggerLayer(this.getLayerByName(layer.name)) })
+      actions.push({ id: 'toggle-filter', handler: (filter) => this.onTriggerLayerFilter(this.getLayerByName(layer.name), filter) })
+      actions.push({ id: 'toggle-filters', handler: (enabled) => this.onTriggerLayerFilters(this.getLayerByName(layer.name), enabled) })
       // Store the actions
       layer.actions = actions
       return actions
@@ -250,7 +252,7 @@ export const activity = {
       this.$emit('layer-filter-toggled', layer, filter)
       this.$engineEvents.emit('layer-filter-toggled', layer, filter)
     },
-    async onToggleLayerFilters (layer, enabled) {
+    async onTriggerLayerFilters (layer, enabled) {
       for (const filter of layer.filters) filter.isActive = enabled
       // Can only apply to realtime layers as we need to force a data refresh
       // removeMissing seems needed for 3d

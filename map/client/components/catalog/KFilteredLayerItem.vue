@@ -29,7 +29,7 @@
       <!-- Filter rendering -->
       <div v-else class="row col items-center q-pl-md q-pr-sm no-wrap">
         <!-- Filter toggle -->
-        <q-checkbox
+        <q-toggle
           :ref="onToggleRefCreated(prop.node)"
           v-model="prop.node.isActive"
           :color="layer.isVisible ? 'primary' : 'grey-5'"
@@ -57,9 +57,17 @@
           :id="`${layer.name}-${prop.node.label}-filter-actions`"
           :content="filterActions"
           :context="{ layer, filter: prop.node }"
-          :filter="{ id: { $nin: ['toggle', 'toggle-filter'] } }"
+          :filter="{ id: { $nin: ['toggle', 'toggle-filter', 'toggle-filters'] } }"
         />
       </div>
+    </template>
+    <template v-slot:default-body="prop">
+      <!-- Filter selection actions -->
+      <KPanel v-if="prop.node.name && layer?.isVisible !== undefined"
+        :id="`${layer.name}-filters-actions`"
+        :content="filtersActions"
+        :context="{ layer }"
+      />
     </template>
   </q-tree>
 </template>
@@ -79,7 +87,7 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['toggled', 'filter-toggled'])
+const emit = defineEmits(['toggled', 'filter-toggled', 'filters-toggled'])
 
 // Datas
 const filters = ref([])
@@ -88,6 +96,27 @@ const filters = ref([])
 const areFiltersInactive = computed(() => {
   return _.every(filters.value, { isActive: false })
 })
+const areFiltersActive = computed(() => {
+  return _.every(filters.value, { isActive: true })
+})
+const filtersActions = computed(() => [{
+  id: `${props.layer.name}-activate-filters-action`,
+  label: 'KFilteredLayerItem.TOGGLE_FILTERS_ON_LABEL',
+  disabled: areFiltersActive.value,
+  hover: false,
+  handler: () => onFiltersToggled(true)
+}, {
+  id: `${props.layer.name}-filters-actions-separator`,
+  component: 'QSeparator',
+  vertical: true,
+  inset: true
+}, {
+  id: `${props.layer.name}-deactivate-filters-action`,
+  label: 'KFilteredLayerItem.TOGGLE_FILTERS_OFF_LABEL',
+  disabled: areFiltersInactive.value,
+  hover: false,
+  handler: () => onFiltersToggled(false)
+}])
 
 const filterActions = computed(() => {
   const filterActions = _.cloneDeep(props.layer.actions)
@@ -112,5 +141,8 @@ function onToggled () {
 }
 function onFilterToggled (filter) {
   emit('filter-toggled', props.layer, filter)
+}
+function onFiltersToggled (enabled) {
+  emit('filters-toggled', props.layer, enabled)
 }
 </script>

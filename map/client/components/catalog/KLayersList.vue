@@ -21,6 +21,7 @@
             :layer="layer"
             @toggled="onLayerToggled"
             @filter-toggled="onLayerFilterToggled"
+            @filters-toggled="onLayerFiltersToggled"
             style="flex-grow: 1;"
           />
         </div>
@@ -159,6 +160,15 @@ function toggleLayerFilter (layer, filter) {
 function onLayerFilterToggled (layer, filter) {
   if (layer.isDisabled) return
   toggleLayerFilter(layer, filter)
+}
+
+function toggleLayerFilters (layer, enabled) {
+  const toggleFiltersAction = _.find(layer.actions, { id: 'toggle-filters' })
+  if (toggleFiltersAction) toggleFiltersAction.handler(enabled)
+}
+
+function onLayerFiltersToggled (layer, enabled) {
+  toggleLayerFilters(layer, enabled)
 }
 
 function isDraggable () {
