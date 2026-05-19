@@ -134,7 +134,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
   if (newActivity) {
     // setup legend
     engine.value = newActivity.engine
-    zoom.value = newActivity.getCenter().zoomLevel
+    zoom.value = Math.round(newActivity.getCenter().zoomLevel)
     refresh()
     // install listeners
     newActivity.$engineEvents.on('layer-filter-toggled', requestRefresh)
@@ -150,7 +150,7 @@ function refresh () {
   logger.debug('[KDK] Refreshing legend')
   // set the current zoom
   // We use floor for fractional zoom
-  zoom.value = Math.floor(CurrentActivity.value.getCenter().zoomLevel)
+  zoom.value = Math.round(CurrentActivity.value.getCenter().zoomLevel)
   // set the layers for which it is required to display a legend
   const iterator = {
     layers: [],
