@@ -20,11 +20,12 @@
         <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
       </q-badge>
       <q-tooltip
-        v-if="(layer.tooltip || layer.description) && $q.platform.is.desktop" :delay="1000"
+        v-if="tooltip && $q.platform.is.desktop" :delay="1000"
         anchor="center left"
         self="center right"
-        :offset="[20, 0]">
-        {{ layer.tooltip || layer.description }}
+        :offset="[20, 0]"
+      >
+        <span v-html="tooltip" />
       </q-tooltip>
     </div>
     <q-space />
@@ -74,8 +75,10 @@ const id = computed(() => {
   return 'layers-' + name
 })
 const label = computed(() => {
-  const label = _.get(props.layer, 'label')
-  return Document.sanitizeHtml(label || _.get(props.layer, 'name'))
+  return Document.sanitizeHtml(props.layer.label || props.layer.name || '')
+})
+const tooltip = computed(() => {
+  return Document.sanitizeHtml(props.layer.tooltip || props.layer.description)
 })
 const layerActions = computed(() => {
   const layerActions = _.cloneDeep(_.get(props.layer, 'actions', []))
