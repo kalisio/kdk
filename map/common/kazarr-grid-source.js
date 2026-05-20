@@ -103,19 +103,24 @@ export class KazarrGridSource extends GridSource {
   async fetch (abort, bbox, resolution) {
     if (!this.usable) { return null }
 
-    // const sourceKey = this.sourceKey
-
     const reqMinLat = bbox[0]
     const reqMinLon = bbox[1]
     const reqMaxLat = bbox[2]
     const reqMaxLon = bbox[3]
-
-    let queryParams = `variable=${this.config.variable}&lon_min=${reqMinLon}&lon_max=${reqMaxLon}&lat_min=${reqMinLat}&lat_max=${reqMaxLat}`
-    queryParams += '&format=mesh&mesh_tile_size=16&interp_spatial_method=linear'
-    if (this.config.additional) {
-      for (const [key, value] of Object.entries(this.config.additional)) { queryParams += `&${key}=${value}` }
-    }
-
+    const parameters = Object.assign({
+      variable: this.config.variable,
+      lon_min: reqMinLon,
+      lon_max: reqMaxLon,
+      lat_min: reqMinLat,
+      lat_max: reqMaxLat,
+      format: 'mesh',
+      // Default interpolation setup
+      mesh_tile_size: 16,
+      interp_spatial_method: 'linear'
+    }, this.config.additional)
+    let queryParams = ''
+    for (const [key, value] of Object.entries(parameters)) { queryParams += _.isEmpty(queryParams) ? `${key}=${value}` : `&${key}=${value}` }
+    
     const question = this.config.url.indexOf('?')
     const tileUrl = question === -1
       ? `${this.config.url}/datasets/${this.config.dataset}/extract?${queryParams}`
