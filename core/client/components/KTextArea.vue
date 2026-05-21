@@ -52,7 +52,7 @@
 <script setup>
 import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
-import { Notify, copyToClipboard  } from 'quasar'
+import { Notify, copyToClipboard } from 'quasar'
 import { i18n } from '../i18n.js'
 import { Document } from '../document.js'
 import KExpandable from './KExpandable.vue'

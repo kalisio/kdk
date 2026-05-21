@@ -1,7 +1,7 @@
 <template>
   <template v-for="legend in legends" :key="legend.label">
     <div class="q-py-xs q-px-md">
-      <component 
+      <component
         :is="legend.renderer"
         :layer="layer"
         v-bind="legend.props"
@@ -99,7 +99,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
 }, { immediate: true })
 
 // Function
-function refresh() {
+function refresh () {
   if (!CurrentActivity.value) return
   // Check if any feature of the layer is visible in current map bounds
   const [[south, west], [north, east]] = CurrentActivity.value.getBounds()

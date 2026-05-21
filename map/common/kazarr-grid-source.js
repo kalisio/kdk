@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { unitConverters, GridSource, toHalf } from './grid.js'
 
 // grid: {
@@ -120,7 +121,7 @@ export class KazarrGridSource extends GridSource {
     }, this.config.additional)
     let queryParams = ''
     for (const [key, value] of Object.entries(parameters)) { queryParams += _.isEmpty(queryParams) ? `${key}=${value}` : `&${key}=${value}` }
-    
+
     const question = this.config.url.indexOf('?')
     const tileUrl = question === -1
       ? `${this.config.url}/datasets/${this.config.dataset}/extract?${queryParams}`
