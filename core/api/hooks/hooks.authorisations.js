@@ -246,9 +246,11 @@ export async function authorise (hook) {
     // this has to be implemented by the service itself
     } else if (typeof hook.service.get === 'function') {
       // In this case (single get/update/patch/remove) we need to fetch the item first
+      // Avoid sending provider to internal call as it might raises some issues with hooks relying on it otherwise
+      const { provider, ...paramsWithoutProvider } = hook.params
+      const params = Object.assign({ checkAuthorisation: false }, paramsWithoutProvider)
       // Take care we might have additional query parameters to be "catched" by before hooks,
       // however at this stage these query parameters might cause get to fail
-      const params = Object.assign({ checkAuthorisation: false }, hook.params)
       _.unset(params, 'query')
       const resource = await hook.service.get(hook.id, params)
       debug('Target resource is', resource)
