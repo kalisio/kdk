@@ -1,6 +1,6 @@
 <template>
   <div v-if="readOnly" :id="properties.name + '-field'">
-    <div v-html="text" />
+    <div v-safe-html="text" />
   </div>
   <div  v-else class="q-pa-md">
     <p :class="labelClass">{{ label }}</p>

@@ -26,7 +26,7 @@
       <q-resize-observer @resize="onResize" />
     </div>
     <q-tooltip v-if="computedTooltip">
-      <div v-html="Document.sanitizeHtml(computedTooltip)" />
+      <div v-safe-html="computedTooltip" />
     </q-tooltip>
     <slot />
   </q-chip>
@@ -37,7 +37,6 @@ import _ from 'lodash'
 import { ref, computed } from 'vue'
 import { uid } from 'quasar'
 import { i18n } from '../i18n.js'
-import { Document } from '../document.js'
 import { getHtmlColor, getContrastColor } from '../utils'
 
 // Props

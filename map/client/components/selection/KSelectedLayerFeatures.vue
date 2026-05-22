@@ -23,7 +23,7 @@
               'text-grey-6': root.isDisabled || !root.isVisible
             }"
           >
-            <span v-html="prop.node.label" />
+            <span v-safe-html="prop.node.label" />
           </div>
           <q-space  v-if="isFeatureNode(prop.node)"/>
           <!-- Features actions -->

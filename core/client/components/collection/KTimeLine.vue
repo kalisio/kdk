@@ -89,7 +89,7 @@
                     v-bind="bodyRenderer"
                   />
                 </div>
-                <div v-else v-html="getBody(item)" />
+                <div v-else v-safe-html="getBody(item)" />
               </div>
             </q-timeline-entry>
           </template>

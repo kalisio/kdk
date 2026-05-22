@@ -16,7 +16,7 @@
         <span v-if="inline" class="text-grey-8 q-ml-md" v-html="description"></span>
       </q-item-label>
       <q-item-label v-if="!inline" caption lines="2">
-        <span v-html="description" />
+        <span v-safe-html="description" />
       </q-item-label>
     </template>
   </KItem>

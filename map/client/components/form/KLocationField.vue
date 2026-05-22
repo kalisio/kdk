@@ -98,6 +98,19 @@
           }"
           @dialog-confirmed="onLocationChanged"
         />
+        <!-- helper -->
+        <KAction
+          v-if="hasHelper"
+          :id="properties.name + '-helper'"
+          :label="helperLabel"
+          :icon="helperIcon"
+          :tooltip="helperTooltip"
+          :url="helperUrl"
+          :dialog="helperDialog"
+          :context="helperContext"
+          @dialog-confirmed="onHelperDialogConfirmed"
+          color="primary"
+        />
       </div>
     </template>
     <!-- Selected item -->
@@ -125,20 +138,6 @@
           {{ $t('KLocationField.NO_RESULT') }}
         </q-item-section>
       </q-item>
-    </template>
-    <!-- Helper -->
-    <template v-if="hasHelper" v-slot:append>
-      <KAction
-        :id="properties.name + '-helper'"
-        :label="helperLabel"
-        :icon="helperIcon"
-        :tooltip="helperTooltip"
-        :url="helperUrl"
-        :dialog="helperDialog"
-        :context="helperContext"
-        @dialog-confirmed="onHelperDialogConfirmed"
-        color="primary"
-      />
     </template>
   </q-select>
 </template>

@@ -1,32 +1,33 @@
 <template>
-  <KExpandable
-    class="k-expandable"
-    :isExpanded="isExpanded"
-    :minHeight="minHeight"
-    :maxHeight="maxHeight"
-    v-hover="{ enter: () => hovered = true, leave: () => hovered = false }"
-    @click="onClick"
-  >
-    <KScrollArea
-      ref="scrollArea"
-      :key="scrollAreaKey"
+  <div style="position: relative;">
+    <KExpandable
+      v-hover="{ enter: () => hovered = true, leave: () => hovered = false }"
+      class="k-expandable"
+      :isExpanded="isExpanded"
+      :minHeight="minHeight"
       :maxHeight="maxHeight"
-      :visible="isExpanded"
-      :dense="dense"
-      @scrolled="onScrolled"
+      @click="onClick"
     >
-      <!-- content -->
-      <div
-        class="q-pr-lg"
-        :class="{ 'k-textarea-collapsed': !isExpanded, 'k-textarea-expanded': isExpanded }"
-        v-html="Document.sanitizeHtml(props.text)"
-      />
-    </KScrollArea>
+      <KScrollArea
+        ref="scrollArea"
+        :key="scrollAreaKey"
+        :maxHeight="maxHeight"
+        :visible="isExpanded"
+        :dense="dense"
+        @scrolled="onScrolled"
+      >
+        <!-- content -->
+        <div
+          v-safe-html="props.text"
+          class="q-pr-lg"
+          :class="{ 'k-textarea-collapsed': !isExpanded, 'k-textarea-expanded': isExpanded }"
+        />
+      </KScrollArea>
+    </KExpandable>
     <div class="k-expandable-action">
       <KAction
         v-show="isExpandable"
         id="collapse-action"
-        class="k-expandable-action"
         :icon="isExpanded ? 'las la-angle-up' : 'las la-angle-down'"
         :tooltip="isExpanded ? 'KTextArea.COLLAPSE' : ''"
         size="xs"
@@ -37,16 +38,16 @@
     <div class="k-copy-action">
       <KAction
         v-show="props.copyable && hovered"
+        v-hover="{ enter: () => hovered = true, leave: () => hovered = false }"
         id="copy-content"
         icon="las la-copy"
         tooltip="KTextArea.COPY"
-        size="0.8rem"
+        size="md"
         :handler="onCopy"
         :propagate="false"
-        class="k-copy-action"
       />
     </div>
-  </KExpandable>
+  </div>
 </template>
 
 <script setup>
@@ -54,7 +55,6 @@ import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
 import { Notify, copyToClipboard } from 'quasar'
 import { i18n } from '../i18n.js'
-import { Document } from '../document.js'
 import KExpandable from './KExpandable.vue'
 import KScrollArea from './KScrollArea.vue'
 
@@ -172,14 +172,15 @@ watch(() => props.text, (text) => {
 }
 .k-expandable-action {
   position: absolute;
-  bottom: 0px;
+  bottom: 2px;
   right: 6px;
-  padding: 1px;
-  background-color: white;
 }
 .k-copy-action {
   position: absolute;
-  top: -6px;
-  right: 0px;
+  top: -24px;
+  right: -16px;
+  background-color: white;
+  border-radius: 20px;
+  border: 1px solid lightgrey;
 }
 </style>

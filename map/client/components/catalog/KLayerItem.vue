@@ -15,7 +15,7 @@
         'text-grey-6': layer.isDisabled
       }"
     >
-      <span v-html="label" />
+      <span v-safe-html="label" />
       <q-badge v-if="layer.badge" v-bind="layer.badge">
         <q-icon v-if="layer.badge.icon" v-bind="layer.badge.icon" />
       </q-badge>
@@ -25,7 +25,7 @@
         self="center right"
         :offset="[20, 0]"
       >
-        <span v-html="tooltip" />
+        <span v-safe-html="tooltip" />
       </q-tooltip>
     </div>
     <q-space />

@@ -36,7 +36,7 @@
         <!-- Main Content -->
         <div
           id="attributions-content"
-          v-html="sanitizedAttributions"
+          v-safe-html="computedAttributions"
           class="text-caption q-py-none q-px-sm"
         />
         <!-- Footer Content -->
@@ -70,13 +70,13 @@ const footer = _.get(config, 'attribution.footer', [])
 const footerClass = _.get(config, 'attribution.footerClass', '')
 
 // Computed
-const sanitizedAttributions = computed(() => {
+const computedAttributions = computed(() => {
   const filteredAttributions = _.uniq(_.map(attributions.value))
   const content = _.reduce(filteredAttributions, (content, attribution) => {
     content += `${attribution}<br>`
     return content
   }, '')
-  return Document.sanitizeHtml(content)
+  return content
 })
 
 // Functions

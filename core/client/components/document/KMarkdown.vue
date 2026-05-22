@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="html"
-    v-html="html"
+    v-safe-html="html"
   />
 </template>
 
@@ -35,7 +35,7 @@ watch(() => props.url, async (value) => {
   if (response?.ok) {
     const markdown = await response.text()
     const converter = new showdown.Converter(props.options || Document.options.mdConverter)
-    html.value = Document.sanitizeHtml(converter.makeHtml(markdown))
+    html.value = converter.makeHtml(markdown)
   } else html.value = null
 }, { immediate: true })
 </script>

@@ -26,7 +26,7 @@
       <slot name="item-content">
         <q-item-label>{{ name }}</q-item-label>
         <q-item-label caption lines="2">
-          <span v-html="description" />
+          <span v-safe-html="description" />
         </q-item-label>
       </slot>
     </q-item-section>
