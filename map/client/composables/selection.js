@@ -291,7 +291,8 @@ export function useSelection (name, options = {}) {
       // https://wiki.openstreetmap.org/wiki/Zoom_levels
       const metresPerPixel = 40075016.686 * Math.abs(Math.cos(location.lat * Math.PI / 180)) / Math.pow(2, center.zoomLevel + 8)
       items = getIntersectedItems(circle([location.lng, location.lat], options.buffer * metresPerPixel, { steps: 100, units: 'meters' }))
-    } else {
+    }
+    if (_.isEmpty(items)) { // Even if buffer mode if nothing has been selected, this ensure a fallback for other layers than GeoJson
       // Retrieve the feature
       let feature
       // Check the target layer
