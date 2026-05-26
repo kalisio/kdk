@@ -1,9 +1,41 @@
+import _ from 'lodash'
 import * as GeoTIFF from 'geotiff'
 import SphericalMercator from '@mapbox/sphericalmercator'
 import { unitConverters, SortOrder, GridSource, Grid1D } from './grid.js'
 
 const WEB_MERCATOR_EPSG_CODES = new Set([3857, 900913])
 const sm = new SphericalMercator()
+
+// Fields actually read by geotiff decoders. Everything else (TileOffsets, TileByteCounts,
+// ColorMap, geo keys, GDAL metadata...) can be several MB for COG files and is not needed
+// for decoding — stripping it eliminates the dominant structured-clone cost per postMessage.
+// Note: in V3 this has been optimized and should not be requested anymore, a standard pool should work
+const DECODER_FIELDS = new Set([
+  'Compression', 'BitsPerSample', 'SamplesPerPixel', 'SampleFormat',
+  'PlanarConfiguration', 'Predictor', 'JPEGTables', 'LercParameters',
+  'ImageWidth', 'ImageLength', 'TileWidth', 'TileLength', 'RowsPerStrip',
+  'StripOffsets' // basedecoder uses !StripOffsets to distinguish tiled vs strip layout
+])
+
+class GeoTiffDecodingPool {
+  constructor () {
+    this.pool = new GeoTIFF.Pool(typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 2 : 0)
+    this.cache = new WeakMap()
+  }
+
+  decode (fileDirectory, buffer) {
+    let stripped = this.cache.get(fileDirectory)
+    if (!stripped) {
+      stripped = _.pick(fileDirectory, [...DECODER_FIELDS])
+      // Preserve only the truthiness of StripOffsets, not its (potentially large) content
+      if (stripped.StripOffsets) stripped.StripOffsets = true
+      this.cache.set(fileDirectory, stripped)
+    }
+    return this.pool.decode(stripped, buffer)
+  }
+}
+
+const geotiffPool = new GeoTiffDecodingPool()
 
 // pack r,g,b in an uint32
 function packRgb (r, g, b) {
@@ -163,8 +195,8 @@ export class GeoTiffGridSource extends GridSource {
     // readRasters will fetch [left, right[ and [bottom, top[ hence the + 1
     const window = [left, bottom, right + 1, top + 1]
     const bands = this.rgb
-      ? await usedImage.readRGB({ window })
-      : await usedImage.readRasters({ window, fillValue: this.nodata })
+      ? await usedImage.readRGB({ window, pool: geotiffPool, signal: abort })
+      : await usedImage.readRasters({ window, fillValue: this.nodata, pool: geotiffPool, signal: abort })
     const data = this.rgb ? mergeRgb(bands) : bands[0]
 
     if (rx < 0) [left, right] = [right, left]
