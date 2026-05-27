@@ -46,7 +46,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { Document } from '../../../../core/client/document.js'
 import { KPanel } from '../../../../core/client/components'
 
@@ -97,7 +97,7 @@ function onToggled () {
 }
 
 // Watch
-watch(() => props.layer.filters, () => {
+watchEffect(() => {
   const isVisible = _.get(props.layer, 'isVisible', false)
   isChecked.value = isVisible
   // Specific case of filtered layers with inactive filters => indeterminate state
