@@ -103,5 +103,5 @@ watchEffect(() => {
   // Specific case of filtered layers with inactive filters => indeterminate state
   const hasInactiveFilter = _.some(_.get(props.layer, 'filters', []), { isActive: false })
   if (isVisible && hasInactiveFilter) isChecked.value = null
-}, { immediate: true })
+})
 </script>

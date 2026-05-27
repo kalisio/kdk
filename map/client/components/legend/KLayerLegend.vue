@@ -92,9 +92,13 @@ const legends = computed(() => {
 watch(CurrentActivity, (newActivity, oldActivity) => {
   if (oldActivity) {
     oldActivity.value.$engineEvents.off('moveend', requestRefresh)
+    oldActivity.value.$engineEvents.off('layer-filter-toggled', requestRefresh)
+    oldActivity.value.$engineEvents.off('layer-filters-toggled', requestRefresh)
   }
   if (newActivity) {
     newActivity.$engineEvents.on('moveend', requestRefresh)
+    newActivity.$engineEvents.on('layer-filter-toggled', requestRefresh)
+    newActivity.$engineEvents.on('layer-filters-toggled', requestRefresh)
   }
 }, { immediate: true })
 
