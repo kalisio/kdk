@@ -114,12 +114,22 @@ export function buildShaderCode (features) {
     if (addVtx) vtxCode += `// ${feat.name} ------\n${addVtx}`
     if (addFrg) frgCode += `// ${feat.name} ------\n${addFrg}`
   }
-  // additional functions
+  // additional functions (deduplicated: same function body emitted at most once per shader)
   vtxCode += '\n/// additional functions\n'
   frgCode += '\n/// additional functions\n'
+  const vtxFunctions = new Set()
+  const frgFunctions = new Set()
   for (const feat of features) {
-    for (const v of _.get(feat, 'vertex.functions', [])) vtxCode += `// ${feat.name} ------\n${v}\n`
-    for (const v of _.get(feat, 'fragment.functions', [])) frgCode += `// ${feat.name} ------\n${v}\n`
+    for (const v of _.get(feat, 'vertex.functions', [])) {
+      if (vtxFunctions.has(v)) continue
+      vtxFunctions.add(v)
+      vtxCode += `// ${feat.name} ------\n${v}\n`
+    }
+    for (const v of _.get(feat, 'fragment.functions', [])) {
+      if (frgFunctions.has(v)) continue
+      frgFunctions.add(v)
+      frgCode += `// ${feat.name} ------\n${v}\n`
+    }
   }
   // main
   vtxCode += '\n/// vertex shader code\nvoid main()\n{\n'

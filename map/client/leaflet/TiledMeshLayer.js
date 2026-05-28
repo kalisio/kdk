@@ -350,23 +350,49 @@ const TiledMeshLayer = L.GridLayer.extend({
 
     // feature discarding fragments when scalar value is > threshold
     if (this.conf.render.cutOver) {
-      features.push({
-        name: 'cutOver',
-        fragment: {
-          uniforms: ['float in_cutOver'],
-          code: '  if (frg_layerValue > in_cutOver) discard;'
-        }
-      })
+      features.push(this.colorMapShaderCode
+        ? {
+            name: 'cutOver',
+            fragment: {
+              uniforms: ['float in_cutOver'],
+              code: '  if (frg_layerValue > in_cutOver) discard;'
+            }
+          }
+        : {
+            name: 'cutOver',
+            varyings: ['float frg_cutOverLuminance'],
+            vertex: {
+              functions: [WEBGL_FUNCTIONS.rgbFromFloat],
+              code: '  frg_cutOverLuminance = dot(rgbFromFloat(frg_layerValue).rgb, vec3(0.299, 0.587, 0.114));'
+            },
+            fragment: {
+              uniforms: ['float in_cutOver'],
+              code: '  if (frg_cutOverLuminance > in_cutOver) discard;'
+            }
+          })
     }
     // feature discarding fragments when scalar value is < threshold
     if (this.conf.render.cutUnder) {
-      features.push({
-        name: 'cutUnder',
-        fragment: {
-          uniforms: ['float in_cutUnder'],
-          code: '  if (frg_layerValue < in_cutUnder) discard;'
-        }
-      })
+      features.push(this.colorMapShaderCode
+        ? {
+            name: 'cutUnder',
+            fragment: {
+              uniforms: ['float in_cutUnder'],
+              code: '  if (frg_layerValue < in_cutUnder) discard;'
+            }
+          }
+        : {
+            name: 'cutUnder',
+            varyings: ['float frg_cutUnderLuminance'],
+            vertex: {
+              functions: [WEBGL_FUNCTIONS.rgbFromFloat],
+              code: '  frg_cutUnderLuminance = dot(rgbFromFloat(frg_layerValue).rgb, vec3(0.299, 0.587, 0.114));'
+            },
+            fragment: {
+              uniforms: ['float in_cutUnder'],
+              code: '  if (frg_cutUnderLuminance < in_cutUnder) discard;'
+            }
+          })
     }
     // feature discarding fragments when scalar value is nodata
     if (this.gridSource.supportsNoData()) {
