@@ -328,7 +328,12 @@ const TiledMeshLayer = L.GridLayer.extend({
         },
         fragment: {
           uniforms: ['vec4 in_layerBounds'],
-          code: `  bvec4 outside = bvec4(lessThan(frg_layerCoord, in_layerBounds.xy), greaterThan(frg_layerCoord, in_layerBounds.zw));
+          // Small epsilon (0.1% of tile extent) prevents seams at tile boundaries caused by
+          // floating-point precision loss when decoding half-float vertex coordinates.
+          // Adjacent tiles already fetch overlapping source data (via floor/ceil pixel rounding)
+          // so this expansion never reveals data that the neighbouring tile doesn't also render.
+          code: `  vec2 boundsEps = (in_layerBounds.zw - in_layerBounds.xy) * 0.001;
+  bvec4 outside = bvec4(lessThan(frg_layerCoord, in_layerBounds.xy - boundsEps), greaterThan(frg_layerCoord, in_layerBounds.zw + boundsEps));
   if (any(outside)) discard;`
         }
       },
