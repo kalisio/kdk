@@ -34,10 +34,16 @@ const TiledMeshLayer = L.GridLayer.extend({
     L.GridLayer.prototype.initialize.call(this, options)
 
     // setup pixi objects
+    // previousPixiRoot holds tiles from the previous data version while new tiles are loading,
+    // so the screen never goes blank during a data change.
+    this.previousPixiRoot = new PIXI.Container()
     this.pixiRoot = new PIXI.Container()
+    this.pixiWrapper = new PIXI.Container()
+    this.pixiWrapper.addChild(this.previousPixiRoot)
+    this.pixiWrapper.addChild(this.pixiRoot)
     this.pixiLayer = L.pixiOverlay(
       utils => this.renderPixiLayer(utils),
-      this.pixiRoot,
+      this.pixiWrapper,
       { destroyInteractionManager: true, shouldRedrawOnMove: function () { return true } })
     this.layerUniforms = new PIXI.UniformGroup({ in_layerAlpha: options.opacity, in_zoomLevel: 1.0 })
     this.pixiState = new PIXI.State()
@@ -106,6 +112,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.zoomEndCallback = null
 
     this.requestdRedraw.cancel()
+    this.clearPreviousPixiRoot()
     map.removeLayer(this.pixiLayer)
 
     L.GridLayer.prototype.onRemove.call(this, map)
@@ -196,6 +203,11 @@ const TiledMeshLayer = L.GridLayer.extend({
     const mesh = event.tile.mesh
     if (!mesh) return
 
+    // First visible tile at the new zoom/data level: discard the stale tiles that were kept visible.
+    // Only clear on a visible tile so that invisible tiles arriving during a rapid zoom-back
+    // don't prematurely remove the fallback content.
+    if (mesh.visible && this.previousPixiRoot.children.length > 0) this.clearPreviousPixiRoot()
+
     mesh.zoomLevel = event.coords.z
     mesh.visible = mesh.zoomLevel === Math.round(this._map.getZoom())
     this.pixiRoot.addChild(mesh)
@@ -220,19 +232,20 @@ const TiledMeshLayer = L.GridLayer.extend({
       event.tile.fetchController = null
     }
     if (event.tile.mesh) {
-      // remove and destroy tile mesh
-      this.pixiRoot.removeChild(event.tile.mesh)
-
-      if (this.conf.render.showWireframe) {
-        this.pixiRoot.removeChild(event.tile.wireframe)
-        event.tile.wireframe.destroy()
-        event.tile.wireframe = null
+      const mesh = event.tile.mesh
+      // During a data change, onDataChanged moves meshes to previousPixiRoot before redraw(),
+      // so tileunload fires with the mesh already there. Leave it in place so
+      // it keeps rendering until the first new tile arrives.
+      if (mesh.parent === this.pixiRoot) {
+        this.pixiRoot.removeChild(mesh)
+        if (this.conf.render.showWireframe) {
+          this.pixiRoot.removeChild(event.tile.wireframe)
+          event.tile.wireframe.destroy()
+          event.tile.wireframe = null
+        }
+        if (mesh.visible) this.requestdRedraw()
+        mesh.destroy()
       }
-
-      if (event.tile.mesh.visible) {
-        this.requestdRedraw()
-      }
-      event.tile.mesh.destroy()
       event.tile.mesh = null
     }
   },
@@ -275,6 +288,13 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.updateColorMap()
     // eventually, update shader
     this.updateShader()
+
+    // Keep current tiles visible while new ones load by parking them in previousPixiRoot.
+    // Discard any previously parked tiles first to avoid accumulation on rapid changes.
+    this.clearPreviousPixiRoot()
+    for (const child of this.pixiRoot.removeChildren()) {
+      this.previousPixiRoot.addChild(child)
+    }
 
     // clear tiles and request again
     this.redraw()
@@ -485,7 +505,13 @@ const TiledMeshLayer = L.GridLayer.extend({
 
   renderPixiLayer (utils) {
     const renderer = utils.getRenderer()
-    renderer.render(this.pixiRoot)
+    renderer.render(this.pixiWrapper)
+  },
+
+  clearPreviousPixiRoot () {
+    for (const child of this.previousPixiRoot.removeChildren()) {
+      child.destroy()
+    }
   },
 
   setLevel (value) {
