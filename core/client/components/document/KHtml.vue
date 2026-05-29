@@ -7,6 +7,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { Document } from '../../document.js'
 
 // Props
 const props = defineProps({
