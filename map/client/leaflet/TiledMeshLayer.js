@@ -63,6 +63,10 @@ const TiledMeshLayer = L.GridLayer.extend({
       }
     }
 
+    // debounced redraw to batch rapid successive tile load/unload events into one GPU frame
+    // 60 fps is about 16ms per frame
+    this.requestdRedraw = _.debounce(() => this.pixiLayer.redraw(), 16)
+
     // register event callbacks
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
@@ -101,6 +105,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.zoomStartCallback = null
     this.zoomEndCallback = null
 
+    this.requestdRedraw.cancel()
     map.removeLayer(this.pixiLayer)
 
     L.GridLayer.prototype.onRemove.call(this, map)
@@ -203,7 +208,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     }
 
     if (mesh.visible) {
-      this.pixiLayer.redraw()
+      this.requestdRedraw()
     }
   },
 
@@ -225,7 +230,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       }
 
       if (event.tile.mesh.visible) {
-        this.pixiLayer.redraw()
+        this.requestdRedraw()
       }
       event.tile.mesh.destroy()
       event.tile.mesh = null
