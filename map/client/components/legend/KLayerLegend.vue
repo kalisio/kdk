@@ -45,7 +45,7 @@ const props = defineProps({
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const layerHasVisibleFeatures = ref(false)
 const filterHasVisibleFeatures = reactive({})
-const requestRefresh = _.debounce(refresh, 300)
+const requestRefresh = _.debounce(refresh, 250)
 
 // Computed
 const legends = computed(() => {
@@ -92,13 +92,17 @@ const legends = computed(() => {
 watch(CurrentActivity, (newActivity, oldActivity) => {
   if (oldActivity) {
     oldActivity.value.$engineEvents.off('moveend', requestRefresh)
-    oldActivity.value.$engineEvents.off('layer-filter-toggled', requestRefresh)
-    oldActivity.value.$engineEvents.off('layer-filters-toggled', requestRefresh)
+    oldActivity.value.$engineEvents.off('layer-shown', refreshForLayer)
+    oldActivity.value.$engineEvents.off('layer-hidden', refreshForLayer)
+    oldActivity.value.$engineEvents.off('layer-filter-toggled', refreshForLayer)
+    oldActivity.value.$engineEvents.off('layer-filters-toggled', refreshForLayer)
   }
   if (newActivity) {
     newActivity.$engineEvents.on('moveend', requestRefresh)
-    newActivity.$engineEvents.on('layer-filter-toggled', requestRefresh)
-    newActivity.$engineEvents.on('layer-filters-toggled', requestRefresh)
+    newActivity.$engineEvents.on('layer-shown', refreshForLayer)
+    newActivity.$engineEvents.on('layer-hidden', refreshForLayer)
+    newActivity.$engineEvents.on('layer-filter-toggled', refreshForLayer)
+    newActivity.$engineEvents.on('layer-filters-toggled', refreshForLayer)
   }
 }, { immediate: true })
 
@@ -145,6 +149,11 @@ function refresh () {
       })
     }
   })
+}
+function refreshForLayer (layer) {
+  // Refresh only if target layer
+  if (_.get(props.layer, 'name') !== _.get(layer, 'name')) return
+  requestRefresh()
 }
 
 // Immediate

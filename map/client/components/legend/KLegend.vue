@@ -97,7 +97,7 @@ const sublegends = ref([])
 const layers = ref([])
 const engine = ref()
 const zoom = ref()
-const requestRefresh = _.debounce(refresh, 300)
+const requestRefresh = _.debounce(refresh, 250)
 
 // Computed
 const layersBySublegend = computed(() => getLayersBySublegend(layers.value, sublegends.value))
