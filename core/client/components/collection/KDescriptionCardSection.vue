@@ -5,6 +5,7 @@
     :actionsFilter="actionsFilter"
     :hide-separator="hideSeparator"
     :hide-header="hideHeader"
+    :hoverable="hoverable"
     :dense="dense"
   >
     <KTextArea

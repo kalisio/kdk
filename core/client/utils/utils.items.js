@@ -23,6 +23,10 @@ export const CardSectionProps = {
     type: Boolean,
     default: false
   },
+  hoverable: {
+    type: Boolean,
+    default: false
+  },
   dense: {
     type: Boolean,
     default: false

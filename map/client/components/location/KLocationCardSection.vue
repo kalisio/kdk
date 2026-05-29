@@ -4,6 +4,7 @@
     :actions="actions"
     :actionsFilter="actionsFilter"
     :hideHeader="hideHeader"
+    :hoverable="hoverable"
     :dense="dense"
   >
     <div v-if="feature" class="full-width column">
