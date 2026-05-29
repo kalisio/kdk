@@ -114,7 +114,7 @@ export class GeoTiffGridSource extends GridSource {
       }
       // try to guess if rgb image
       if (this.rgb === undefined) {
-        this.rgb = this.refImage.getSamplesPerPixel() > 1
+        this.rgb = this.refImage.getSamplesPerPixel() >= 3
       }
       // generates nodata usable by tiled mesh layer (expects a float value)
       if (this.rgb && this.nodata && this.nodata.length === 3) {
