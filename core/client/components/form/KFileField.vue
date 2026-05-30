@@ -29,6 +29,7 @@
     v-model="files"
     :label="label"
     :accept="getAcceptedTypes()"
+    :capture="getCapture()"
     :filter="filterSelectedFiles"
     :error="hasError"
     :error-message="errorLabel"
@@ -105,6 +106,9 @@ export default {
     },
     getAcceptedTypes () {
       return _.get(this.properties, 'field.mimeTypes', '')
+    },
+    getCapture () {
+      return _.get(this.properties, 'field.capture', '')
     },
     getMaxFiles () {
       return _.get(this.properties, 'field.maxFiles', this.multiple ? 9 : 1)
