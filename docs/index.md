@@ -4,7 +4,7 @@ hero:
   name: KDK
   tagline: The Kalisio Development Kit
   image:
-    src: https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-color-2048x2048.png
+    src: https://kalisio.github.io/kalisioscope/kalisio/kalisio-icon-light.svg
     alt: kalisio-kdk
   actions:
     - theme: brand

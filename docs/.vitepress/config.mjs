@@ -9,10 +9,10 @@ export default withMermaid(
     ignoreDeadLinks: true,
     head: [
       ['link', { href: 'https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css', rel: 'stylesheet' }],
-      ['link', { rel: 'icon', href: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-color-2048x2048.png' }]
+      ['link', { rel: 'icon', href: 'https://kalisio.github.io/kalisioscope/kalisio/kalisio-icon-light.svg' }]
     ],
     themeConfig: {
-      logo: 'https://s3.eu-central-1.amazonaws.com/kalisioscope/kdk/kdk-icon-color-2048x2048.png',
+      logo: 'https://kalisio.github.io/kalisioscope/kalisio/kalisio-icon-light.svg',
       jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkZXYua2FsaXNpby54eXoiLCJpc3MiOiJrYWxpc2lvIn0.CGvJwPPkuiFvNzo3zUBb-_vwD0CKbUfm7w7TkCY-Ts4',
       socialLinks: [{ icon: 'github', link: 'https://github.com/kalisio/kano' }],
       nav: [
@@ -60,9 +60,9 @@ function getGuidesSidebar () {
   return [
     { text: 'Guides', link: '/guides/introduction' },
     { text: 'The Basics', collapsed: true, items: [{ text: 'Introduction to KDK', link: '/guides/basics/introduction' }]},
-    { 
-      text: 'Development', 
-      collapsed: true, 
+    {
+      text: 'Development',
+      collapsed: true,
       items: [
         { text: 'Setup your environment', link: '/guides/development/setup' },
         { text: 'Develop with KDK', link: '/guides/development/develop' },
@@ -72,9 +72,9 @@ function getGuidesSidebar () {
         { text: 'Publish with KDK', link: '/guides/development/publish' }
       ]
     },
-    { 
-      text: 'Migration', 
-      collapsed: true, 
+    {
+      text: 'Migration',
+      collapsed: true,
       items: [
         { text: 'v2.8', link: '/guides/migration/v2.8' },
         { text: 'v2.7', link: '/guides/migration/v2.7' },
@@ -98,9 +98,9 @@ function getArchitectureSidebar () {
 function getAPISidebar () {
   return [
     { text: 'API', link: '/api/introduction' },
-    { 
-      text: 'core', 
-      collapsed: true, 
+    {
+      text: 'core',
+      collapsed: true,
       items: [
         { text: 'Overview', link: '/api/core/introduction' },
         { text: 'Application', link: '/api/core/application' },
@@ -114,9 +114,9 @@ function getAPISidebar () {
         { text: 'Components', link: '/api/core/components' }
       ]
     },
-    { 
-      text: 'map', 
-      collapsed: true, 
+    {
+      text: 'map',
+      collapsed: true,
       items: [
         { text: 'Overview', link: '/api/map/introduction' },
         { text: 'Services', link: '/api/map/services' },

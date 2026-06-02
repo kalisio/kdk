@@ -25,8 +25,12 @@ Found a bug ? Missing a Feature ? Want to contribute ? check out our [contributi
 
 Licensed under the [MIT license](LICENSE).
 
-Copyright (c) 2017-20xx [Kalisio](https://kalisio.com)
+Copyright (c) 2026 [Kalisio](https://kalisio.com).
 
-[![Kalisio](https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-dark.svg"">
+  <source media="(prefers-color-scheme: light)" srcset="https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-light.svg">
+  <img alt="Kalisio" src="https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-light.svg" height="96">
+</picture>
 
 
