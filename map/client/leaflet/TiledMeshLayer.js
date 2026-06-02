@@ -308,7 +308,10 @@ const TiledMeshLayer = L.GridLayer.extend({
 
   updateColorMap () {
     const chromajs = this.conf.chromajs
-    if (_.isNil(chromajs)) return
+    // When using RGB rendering no color mapping is applied at all,
+    // manage the dynamic grid source case as fallback to check the option
+    const rgb = _.get(this.gridSource, 'rgb', _.get(this.gridSource, 'source.rgb'))
+    if (_.isNil(chromajs) || rgb) return
 
     // create color map using domain or classes
     // domain and classes can be specified from options
