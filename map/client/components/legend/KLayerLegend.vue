@@ -94,6 +94,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     oldActivity.value.$engineEvents.off('moveend', requestRefresh)
     oldActivity.value.$engineEvents.off('layer-shown', refreshForLayer)
     oldActivity.value.$engineEvents.off('layer-hidden', refreshForLayer)
+    oldActivity.value.$engineEvents.off('layer-updated', refreshForLayer)
     oldActivity.value.$engineEvents.off('layer-filter-toggled', refreshForLayer)
     oldActivity.value.$engineEvents.off('layer-filters-toggled', refreshForLayer)
   }
@@ -101,6 +102,7 @@ watch(CurrentActivity, (newActivity, oldActivity) => {
     newActivity.$engineEvents.on('moveend', requestRefresh)
     newActivity.$engineEvents.on('layer-shown', refreshForLayer)
     newActivity.$engineEvents.on('layer-hidden', refreshForLayer)
+    newActivity.$engineEvents.on('layer-updated', refreshForLayer)
     newActivity.$engineEvents.on('layer-filter-toggled', refreshForLayer)
     newActivity.$engineEvents.on('layer-filters-toggled', refreshForLayer)
   }
