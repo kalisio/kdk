@@ -118,7 +118,6 @@ function refresh () {
   // Works only for layers with GeoJson features
   if (!geoJson) {
     layerHasVisibleFeatures.value = true
-    return
   } else {
     layerHasVisibleFeatures.value = false
   }
@@ -127,9 +126,11 @@ function refresh () {
     props.layer.filters.forEach((filter) => {
       // Include when filter is active and has a legend
       if (!filter.isActive || !filter.legend) { return }
-      filterHasVisibleFeatures[filter.label] = false
+      // Works only for layers with GeoJson features
+      filterHasVisibleFeatures[filter.label] = !geoJson
     })
   }
+  if (!geoJson) return
   featureEach(geoJson, (feature) => {
     const isFeatureInBounds = intersects(feature, bounds)
     // If at least one feature found for layer no need to test more
