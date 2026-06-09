@@ -51,7 +51,7 @@
           v-for="attachment in attachments"
           :key="attachment.name"
         >
-          <q-chip :label="attachment.name" size="0.8rem" clickable>
+          <q-chip v-if="attachmentMenu" :label="attachment.name" size="0.8rem" clickable>
             <q-popup-proxy
               auto-close
               anchor="top middle"
@@ -81,6 +81,8 @@
                 />
               </div>
             </q-popup-proxy>
+          </q-chip>
+          <q-chip v-else :label="attachment.name" size="0.8rem" clickable @click="viewOrDownloadAttachment(attachment)">
           </q-chip>
         </template>
         <KPanel
@@ -123,6 +125,10 @@ export default {
     dense: {
       type: Boolean,
       default: false
+    },
+    attachmentMenu: {
+      type: Boolean,
+      default: true
     },
     canEditMessageFn: {
       type: Function,
@@ -187,6 +193,10 @@ export default {
     downloadAttachment (attachment) {
       const key = `messages/${this.item._id}/${attachment.name}`
       Storage.export({ file: attachment.name, key, context: this.contextId })
+    },
+    viewOrDownloadAttachment (attachment) {
+      if (Document.hasViewer(attachment.type)) this.viewAttachment(attachment)
+      else this.downloadAttachment(attachment)
     },
     canEditMessage () {
       const result = this.canEditMessageFn(this.item)
