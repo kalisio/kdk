@@ -130,6 +130,10 @@ export default {
       type: Boolean,
       default: true
     },
+    browserToolbar: {
+      type: Array,
+      default: () => ['download']
+    },
     canEditMessageFn: {
       type: Function,
       default: (message) => null
@@ -172,7 +176,7 @@ export default {
       return Document.hasViewer(attachment.type)
     },
     async viewAttachment (attachment) {
-      this.$q.dialog({
+      const browser = this.$q.dialog({
         component: 'KDialog',
         componentProps: {
           component: 'document/KBrowser',
@@ -181,12 +185,14 @@ export default {
             return Document.hasViewer(document.type)
           }),
           'component.default': attachment.name,
-          'component.toolbar': ['download'],
+          'component.toolbar': this.browserToolbar,
+          handlers: { 'close-browser': () => browser.hide() },
           maximized: true,
           scrollable: false,
           backgroundColor: 'dark',
           textColor: 'grey-3',
-          okAction: 'CLOSE'
+          // If close action in browser toolbar no need for button
+          okAction: (!this.browserToolbar.includes('close') ? 'CLOSE' : null)
         }
       })
     },

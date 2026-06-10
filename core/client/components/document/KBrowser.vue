@@ -115,6 +115,9 @@ const props = defineProps({
   }
 })
 
+// Emits
+const emit = defineEmits(['close-browser'])
+
 // Data
 const index = ref(null)
 const files = ref([])
@@ -167,6 +170,15 @@ const tools = computed(() => {
       color: props.dark ? 'grey-3' : 'grey-8',
       tooltip: 'KBrowser.DELETE_FILE',
       handler: deleteFile
+    })
+  }
+  if (props.toolbar.includes('close')) {
+    components.push({
+      id: 'close-browser',
+      icon: 'las la-times',
+      color: props.dark ? 'grey-3' : 'grey-8',
+      tooltip: 'CLOSE',
+      handler: () => emit('close-browser')
     })
   }
   return components
