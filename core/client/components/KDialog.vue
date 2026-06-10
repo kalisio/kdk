@@ -114,30 +114,32 @@ const computedButtons = computed(() => {
       }
     }
   }
-  if (typeof props.okAction === 'string') {
-    buttons.push({
-      // create a basic action that close the dialog
-      id: 'ok-action',
-      label: props.okAction,
-      renderer: 'form-button',
-      loading: loading.value,
-      handler: onDialogOK
-    })
-  } else {
-    // clone the action to overload the handler
-    const okButton = _.merge({ loading: loading.value }, props.okAction)
-    if (okButton.handler) {
-      // overload the handler to call Quasar onDialogOK
-      okButton.handler = async () => {
-        // ! call the orignal handler to avoid recursive call
-        loading.value = true
-        const result = await callHandler(props.okAction.handler)
-        loading.value = false
-        // close dialog if and only if the handler returns true
-        if (result) onDialogOK(result)
+  if (!_.isEmpty(props.okAction)) {
+    if (typeof props.okAction === 'string') {
+      buttons.push({
+        // create a basic action that close the dialog
+        id: 'ok-action',
+        label: props.okAction,
+        renderer: 'form-button',
+        loading: loading.value,
+        handler: onDialogOK
+      })
+    } else {
+      // clone the action to overload the handler
+      const okButton = _.merge({ loading: loading.value }, props.okAction)
+      if (okButton.handler) {
+        // overload the handler to call Quasar onDialogOK
+        okButton.handler = async () => {
+          // ! call the orignal handler to avoid recursive call
+          loading.value = true
+          const result = await callHandler(props.okAction.handler)
+          loading.value = false
+          // close dialog if and only if the handler returns true
+          if (result) onDialogOK(result)
+        }
       }
+      buttons.push(okButton)
     }
-    buttons.push(okButton)
   }
   return buttons
 })
