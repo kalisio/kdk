@@ -106,6 +106,10 @@ const props = defineProps({
     type: Object,
     default: null
   },
+  defaultContent: {
+    type: String,
+    default: ''
+  },
   baseMessage: {
     type: Object,
     required: false
@@ -133,7 +137,7 @@ const editor = ref(props.editorModeByDefault)
 const uploaderRef = ref(null)
 const attachments = ref(null)
 const currentType = ref(_.head(_.keys(MessageTypes)))
-const body = ref('')
+const body = ref(props.defaultContent)
 
 // Computed
 const availableTypes = computed(() => {
@@ -199,6 +203,8 @@ async function sendMessage () {
 }
 
 defineExpose({
-  currentType
+  currentType,
+  body,
+  attachments
 })
 </script>
