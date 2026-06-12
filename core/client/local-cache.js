@@ -15,7 +15,8 @@ export const LocalCache = {
     return await this.storage.getItem(key)
   },
   async setItem (key, item) {
-    await this.storage.setItem(key, item)
+    // Avoid serializing complex JS objects otherwise it will raises an error
+    await this.storage.setItem(key, JSON.parse(JSON.stringify(item)))
   },
   async removeItem (key) {
     return await this.storage.removeItem(key)
