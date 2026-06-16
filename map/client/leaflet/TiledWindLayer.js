@@ -8,7 +8,7 @@ const TiledWindLayer = L.GridLayer.extend({
   initialize (options, uSource, vSource) {
     this.conf = {}
 
-    this.conf.enableDebug = _.get(options, 'enabledDebug', false)
+    this.conf.enableDebug = _.get(options, 'enableDebug', false)
     this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
     this.conf.meteoModelOverride = _.get(options, 'meteoModelOverride')
 

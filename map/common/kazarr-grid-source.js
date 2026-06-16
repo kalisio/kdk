@@ -115,10 +115,12 @@ export class KazarrGridSource extends GridSource {
       lat_min: reqMinLat,
       lat_max: reqMaxLat,
       format: 'mesh',
-      // Default interpolation setup
-      mesh_tile_size: 16,
-      interp_spatial_method: 'linear'
     }, this.config.additional)
+    if (!this.config?.noInterpolation) {
+      // Default interpolation setup
+      parameters.mesh_tile_size = this.config?.meshTileSize || 16
+      parameters.interp_spatial_method = 'linear'
+    }
     let queryParams = ''
     for (const [key, value] of Object.entries(parameters)) { queryParams += _.isEmpty(queryParams) ? `${key}=${value}` : `&${key}=${value}` }
 
@@ -144,7 +146,7 @@ export class KazarrGridSource extends GridSource {
 
     const grid = {
       sourceKey: this.sourceKey,
-      hasData: () => { return true },
+      hasData: () => { return json !== undefined },
       // HACK: can't import pixi here, return constant value for now
       // cf. https://github.com/pixijs/pixijs/blob/v7.4.3/packages/constants/src/index.ts#L282
       drawMode: () => { return 4 /* DRAW_MODES.TRIANGLES */ },
@@ -155,21 +157,29 @@ export class KazarrGridSource extends GridSource {
       minLat: dataMinLat,
       maxLat: dataMaxLat,
       minLon: dataMinLon,
-      maxLon: dataMaxLon,
+      maxLon: dataMaxLon
+    }
 
-      /* support for TiledWindLayer */
-      getBestFit: (bbox) => {
-        return [0, 0, 15, 15]
-      },
-      getLat: (index) => {
-        return grid.data.vertices[((index * 16) * 3) + 1]
-      },
-      getLon: (index) => {
-        return grid.data.vertices[index * 3]
-      },
-      getValue: (ilat, ilon) => {
-        return grid.data.values[ilat * 16 + ilon]
-      }
+    /* support for TiledWindLayer */
+    /* determine grid parameter */
+    {
+      // collect and sort lon, lat coordinates
+      const lonCoords = grid.data.vertices.filter((value, index) => (index % 3) === 0).sort((a, b) => a < b ? -1 : a > b ? 1 : 0)
+      const latCoords = grid.data.vertices.filter((value, index) => (index % 3) === 1).sort((a, b) => a < b ? -1 : a > b ? 1 : 0)
+      // compute differences
+      const lonDiffs = lonCoords.slice(1).map((value, i) => value - lonCoords[i])
+      const latDiffs = latCoords.slice(1).map((value, i) => value - latCoords[i])
+
+      const deltaLon = Math.max(...lonDiffs)
+      const deltaLat = Math.max(...latDiffs)
+
+      const numLons = 1 + Math.round((grid.maxLon - grid.minLon) / deltaLon)
+      const numLats = 1 + Math.round((grid.maxLat - grid.minLat) / deltaLat)
+
+      grid.getBestFit = (bbox) => { return [0, 0, numLats-1, numLons-1] }
+      grid.getLat = (index) => { return grid.data.vertices[((numLats - (index + 1)) * 3) + 1] }
+      grid.getLon = (index) => { return grid.data.vertices[((index * numLats) * 3)] }
+      grid.getValue = (ilat, ilon) => { return grid.data.values[(numLats - (ilat + 1)) + (ilon * numLats)] }
     }
 
     grid.genCoordsBuffer = () => genCoordsBuffer(grid)
