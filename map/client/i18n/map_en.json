@@ -607,6 +607,7 @@
     "ADD_POPUP": "Select target properties to use as popup",
     "TOOLTIP": "Tooltip",
     "ADD_TOOLTIP": "Select a target property to use as tooltip",
+    "TOOLTIP_PERMANENT": "Always show on the map",
     "INFOBOX": "Information box",
     "ADD_INFOBOX": "Select target properties to use as information box"
   },

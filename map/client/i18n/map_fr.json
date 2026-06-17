@@ -607,6 +607,7 @@
     "ADD_POPUP": "Sélectionnez des propriétés à afficher dans la bulle",
     "TOOLTIP": "Bulle d'information",
     "ADD_TOOLTIP": "Sélectionnez une propriété à afficher dans la bulle",
+    "TOOLTIP_PERMANENT": "Afficher en permanence",
     "INFOBOX": "Boîte d'information",
     "ADD_INFOBOX": "Sélectionnez des propriétés à afficher dans la boîte"
   },

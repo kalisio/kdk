@@ -138,6 +138,10 @@
             </q-select>
           </q-item-section>
         </q-item>
+        <q-item class="row">
+          <q-item-section class="col-auto"><q-toggle id="layer-tooltip-permanent-toggle" v-model="values.tooltip.permanent" :disable="!values.tooltip.enabled" /></q-item-section>
+          <q-item-section>{{ $t('KLayerEditor.TOOLTIP_PERMANENT') }}</q-item-section>
+        </q-item>
       </q-list>
     </q-expansion-item>
     <!-- Infobox properties -->
@@ -333,7 +337,9 @@ function getValues () {
     },
     tooltip: {
       enabled: _.get(layer, 'leaflet.tooltip', _.get(activityOptions, 'tooltip', false)) !== false,
-      property: null
+      property: null,
+      // Whether the tooltip is displayed permanently on the map (vs only on hover)
+      permanent: _.get(layer, 'leaflet.tooltip.options.permanent', _.get(activityOptions, 'tooltip.options.permanent', false)) === true
     },
     infobox: {
       enabled: _.get(layer, 'leaflet.infobox', _.get(activityOptions, 'infobox', true)) !== false,
@@ -381,7 +387,7 @@ function apply () {
     ? { pick: values.value.popup.properties.map(property => property.value) }
     : false
   const tooltip = values.value.tooltip.enabled && values.value.tooltip.property
-    ? { property: values.value.tooltip.property.value }
+    ? { property: values.value.tooltip.property.value, options: { permanent: values.value.tooltip.permanent } }
     : false
   const infobox = values.value.infobox.enabled
     ? { pick: values.value.infobox.properties.map(property => property.value) }
