@@ -14,7 +14,7 @@ export function useWelcome () {
   const previousWebStorageKey = 'welcome'
 
   function show () {
-    const canShow = LocalStorage.get(webStorageKey, LocalStorage.get(previousWebStorageKey, false))
+    const canShow = LocalStorage.get(webStorageKey, LocalStorage.get(previousWebStorageKey))
     // Introduction is only for logged users
     if (!(_.isNil(canShow) ? _.get(config, 'layout.welcome', true) : canShow)) return
     welcome = $q.dialog({
