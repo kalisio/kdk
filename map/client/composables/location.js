@@ -41,7 +41,7 @@ export function useLocation () {
         availableGeocoders.value = _.reduce(geocoders, (reducedGeocoders, geocoder) => {
           const source = _.replace(geocoder.source, /^services:.*\//g, `services:${Context.getId()}/`)
           const label = _.replace(geocoder.source, /^services:.*\//g, `services:*/`)
-          if (allGeocoders.includes(source)) {
+          if (_.find(allGeocoders, { value: source })) {
             reducedGeocoders.push({ value: source, label: i18n.tie(`Geocoders.${label}`), selected: geocoder.selected })
           }
           return reducedGeocoders
