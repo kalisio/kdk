@@ -42,7 +42,11 @@ export function useLocation () {
           const source = _.replace(geocoder.source, /^services:.*\//g, `services:${Context.getId()}/`)
           const label = _.replace(geocoder.source, /^services:.*\//g, `services:*/`)
           if (_.find(allGeocoders, { value: source })) {
-            reducedGeocoders.push({ value: source, label: i18n.tie(`Geocoders.${label}`), selected: geocoder.selected })
+            reducedGeocoders.push({
+              ...geocoder,
+              value: source,
+              label: i18n.tie(`Geocoders.${label}`),
+            })
           }
           return reducedGeocoders
         }, [])
