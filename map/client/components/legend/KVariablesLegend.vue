@@ -11,7 +11,7 @@
       <!-- colorscale -->
       <KColorScale
         v-bind="variable.colorScale"
-        :style="{ height: (variable.colorScale.direction === 'horizontal' ? '46px' : undefined) }"
+        :style="getStyleForVariable(variable)"
       />
     </template>
   </KLegendRenderer>
@@ -95,4 +95,9 @@ const variables = computed(() => {
     })
 })
 
+// Functions
+function getStyleForVariable (variable) {
+  const direction = variable.colorScale.direction || 'horizontal'
+  return { height: (direction === 'horizontal' ? '46px' : undefined) }
+}
 </script>
