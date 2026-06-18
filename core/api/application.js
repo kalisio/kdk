@@ -183,7 +183,7 @@ async function createService (name, app, options = {}) {
     paginate,
     multi: true,
     whitelist: [
-      '$exists', '$and', '$or', '$not', '$eq', '$elemMatch', '$distinct', '$groupBy', '$group', '$regex',
+      '$exists', '$and', '$or', '$nor', '$not', '$eq', '$elemMatch', '$distinct', '$groupBy', '$group', '$regex',
       '$text', '$search', '$caseSensitive', '$language', '$diacriticSensitive',
       '$aggregate', '$near', '$nearSphere', '$geoIntersects', '$geoWithin',
       '$maxDistance', '$minDistance', '$geometry', '$box', '$polygon', '$center', '$centerSphere'
