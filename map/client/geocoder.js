@@ -3,7 +3,11 @@ import logger from 'loglevel'
 import config from 'config'
 import { Store, api, i18n, Events } from '../../core/client/index.js'
 import { parseCoordinates } from './utils/index.js'
-import { formatUserCoordinates, formatForwardGeocodingResult } from './utils/utils.location.js'
+import {
+  formatUserCoordinates,
+  formatForwardGeocodingResult ,
+  formatReverseGeocodingResult
+} from './utils/utils.location.js'
 import { Planets } from './planets.js'
 
 export const Geocoder = {
@@ -63,42 +67,43 @@ export const Geocoder = {
     }
     return _.get(response, 'geocoders', [])
   },
-  async queryForward (pattern, options = {}) {
-    const locations = []
-    // Try to parse lat/long coordinates
+
+  async search (pattern, options = {}) {
+    // helper function to the query filter
+    const buildFilter = (geocoderType, options) => {
+      const sources = (options.geocoders ?? [])
+        .flatMap(g => g.type.includes(geocoderType) ? [g.value] : [])
+      const parts = []
+      if (sources.length > 0) parts.push(`sources=*(${sources.join('|')})`)
+      if (geocoderType === 'forward' && options.viewbox) parts.push(`viewbox=${options.viewbox.join(',')}`)
+      parts.push(`limit=${options.limit || 20}`)
+      return parts.map(p => `&${p}`).join('')
+    }
+    // helper function to return the results
+    const formatResults = (result, formatFn) => ({
+      ..._.pick(result, ['type', 'geometry']),
+      properties: {
+        name: formatFn(result),
+        source: result.geokoder.source
+      }
+    })
+    //
     const coordinates = parseCoordinates(pattern)
     if (coordinates) {
-      locations.push({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [coordinates.longitude, coordinates.latitude]
+      const { latitude, longitude } = coordinates
+      const filter = buildFilter('reverse', options)
+      const results = await this.query('reverse', `lat=${latitude}&lon=${longitude}${filter}`)
+      return [
+        {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [longitude, latitude] },
+          properties: { name: formatUserCoordinates(latitude, longitude, Store.get('locationFormat', 'FFf')) }
         },
-        properties: {
-          name: formatUserCoordinates(coordinates.latitude, coordinates.longitude, Store.get('locationFormat', 'FFf'))
-        }
-      })
-    } else {
-      let filter = ''
-      // Take into account optional geocoders
-      if (!_.isEmpty(options.geocoders)) {
-        filter += '&sources=*(' + options.geocoders.join('|') + ')'
-      }
-      // Take into account optional viewbo
-      if (!_.isEmpty(options.viewbox)) {
-        filter += '&viewbox=' + options.viewbox.join(',')
-      }
-      // Define the limit
-      filter += '&limit=' + (options.limit || 20)
-      const results = await this.query('forward', `q=${pattern}${filter}`)
-      results.forEach(result => {
-        locations.push(
-          Object.assign(
-            _.pick(result, ['type', 'geometry']),
-            { properties: { name: formatForwardGeocodingResult(result), source: result.geokoder.source } }))
-      })
+        ...results.map(r => formatResults(r, formatReverseGeocodingResult))
+      ]
     }
-    return locations
+    const filter = buildFilter('forward', options)
+    const results = await this.query('forward', `q=${pattern}${filter}`)
+    return results.map(r => formatResults(r, formatForwardGeocodingResult))
   }
-
 }

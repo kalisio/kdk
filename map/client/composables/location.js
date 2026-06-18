@@ -1,18 +1,17 @@
 import _ from 'lodash'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Store, Context, i18n } from '../../../core.client.js'
 import { Geolocation } from '../geolocation.js'
 import { Geocoder } from '../geocoder.js'
 import { useCurrentActivity } from './activity.js'
 import { filterGeocoders } from '../utils/utils.location.js'
 
+const availableGeocoders = ref([])
+const selectedGeocoders = ref([])
+const selectedViewbox = ref([])
+
 export function useLocation () {
   const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
-
-  // Data
-  const availableGeocoders = ref([])
-  const selectedGeocoders = ref([])
-  const selectedViewbox = ref([])
 
   // Functions
   // Input geocoders if given should be like { source: xxx, selected: true }
@@ -23,12 +22,20 @@ export function useLocation () {
       selectedGeocoders.value = []
     } else {
       // check the capabilities to list the geocoders
-      let allGeocoders = await Geocoder.getForwardCapabilities()
-      allGeocoders = filterGeocoders(allGeocoders, getActivityProject())
+      let forwardGeocoders = await Geocoder.getForwardCapabilities()
+      forwardGeocoders = filterGeocoders(forwardGeocoders, getActivityProject())
+      let reverseGeocoders = await Geocoder.getReverseCapabilities()
+      reverseGeocoders = filterGeocoders(reverseGeocoders, getActivityProject())
+      const allGeocoders = _.map(forwardGeocoders, geocoder => {
+        return { value: geocoder, label: i18n.tie(`Geocoders.${geocoder}`), type: ['forward'] }
+      })
+      _.forEach(reverseGeocoders, geocoder => {
+        const existingGecoder = _.find(allGeocoders, { value: geocoder })
+        if (existingGecoder) existingGecoder.type.push('reverse')
+        else allGeocoders.push({ value: geocoder, label: i18n.tie(`Geocoders.${geocoder}`), type: ['reverse']})
+      })
       if (_.isEmpty(geocoders)) {
-        availableGeocoders.value = _.map(allGeocoders, geocoder => {
-          return { value: geocoder, label: i18n.tie(`Geocoders.${geocoder}`) }
-        })
+        availableGeocoders.value = allGeocoders
         selectedGeocoders.value = allGeocoders
       } else {
         availableGeocoders.value = _.reduce(geocoders, (reducedGeocoders, geocoder) => {
@@ -61,7 +68,7 @@ export function useLocation () {
     return Store.get('geolocation.location')
   }
   async function search (pattern, limit = 25) {
-    return Geocoder.queryForward(pattern, {
+    return Geocoder.search(pattern, {
       geocoders: selectedGeocoders.value,
       viewbox: selectedViewbox.value,
       limit

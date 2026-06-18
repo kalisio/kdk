@@ -79,6 +79,17 @@ export function formatForwardGeocodingResult (result) {
   return label
 }
 
+// Format results from reverse query
+export function formatReverseGeocodingResult (result) {
+  const properties = result.properties
+  if (!properties) {
+    logger.warn('[KDK] invalid geocoding result: missing \'properties\' property')
+    return
+  }
+  // check whether the result as a valid formatted address
+  return properties.formattedLabel
+}
+
 // Filter geocoder sources based on given project
 export function filterGeocoders(geocoders, project) {
   return geocoders.filter(geocoder => {

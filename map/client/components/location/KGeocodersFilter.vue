@@ -9,7 +9,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import { computed } from 'vue'
 
 // Props
@@ -30,13 +29,13 @@ const emit = defineEmits(['update:modelValue'])
 // Computed
 const selectedGeocoders = computed({
   get: function () {
-    return props.modelValue
+    return props.modelValue.map(g => g.value)
   },
   set: function (value) {
-    emit('update:modelValue', value)
+    emit('update:modelValue', props.geocoders.filter(g => value.includes(g.value)))
   }
 })
 const availableGeocoders = computed(() => {
-  return _.sortBy(props.geocoders, ['label'])
+  return [...props.geocoders].sort((g1, g2) => g1.label.localeCompare(g2.label))
 })
 </script>
