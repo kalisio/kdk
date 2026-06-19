@@ -108,6 +108,10 @@ export class KazarrGridSource extends GridSource {
     const reqMinLon = bbox[1]
     const reqMaxLat = bbox[2]
     const reqMaxLon = bbox[3]
+    const interpolation = this.config?.noInterpolation
+      ? {}
+      // Default interpolation setup
+      : { mesh_tile_size: 16, interp_spatial_method: 'linear' }
     const parameters = Object.assign({
       variable: this.config.variable,
       lon_min: reqMinLon,
@@ -115,12 +119,7 @@ export class KazarrGridSource extends GridSource {
       lat_min: reqMinLat,
       lat_max: reqMaxLat,
       format: 'mesh',
-    }, this.config.additional)
-    if (!this.config?.noInterpolation) {
-      // Default interpolation setup
-      parameters.mesh_tile_size = this.config?.meshTileSize || 16
-      parameters.interp_spatial_method = 'linear'
-    }
+    }, interpolation, this.config.additional)
     let queryParams = ''
     for (const [key, value] of Object.entries(parameters)) { queryParams += _.isEmpty(queryParams) ? `${key}=${value}` : `&${key}=${value}` }
 
