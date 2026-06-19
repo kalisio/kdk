@@ -6,9 +6,11 @@ import { Geocoder } from '../geocoder.js'
 import { useCurrentActivity } from './activity.js'
 import { filterGeocoders } from '../utils/utils.location.js'
 
+const DEFAULT_DISTANCE = 10000
 const availableGeocoders = ref([])
 const selectedGeocoders = ref([])
 const selectedViewbox = ref([])
+const selectedDistance = ref(DEFAULT_DISTANCE)
 
 export function useLocation () {
   const { getActivityProject } = useCurrentActivity({ selection: false, probe: false })
@@ -64,6 +66,13 @@ export function useLocation () {
       selectedViewbox.value = viewbox
     }
   }
+  async function setDistance (distance) {
+    if (_.isNull(distance)) {
+      selectedDistance.value = DEFAULT_DISTANCE
+    } else {
+      selectedDistance.value = distance
+    }
+  }
   async function geolocate () {
     await Geolocation.update()
     const error = Store.get('geolocation.error')
@@ -75,6 +84,7 @@ export function useLocation () {
     return Geocoder.search(pattern, {
       geocoders: selectedGeocoders.value,
       viewbox: selectedViewbox.value,
+      distance: selectedDistance.value,
       limit
     })
   }
@@ -84,6 +94,7 @@ export function useLocation () {
     selectedGeocoders,
     setGeocoders,
     setViewbox,
+    setDistance,
     geolocate,
     search
   }

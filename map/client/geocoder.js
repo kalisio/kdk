@@ -76,6 +76,7 @@ export const Geocoder = {
       const parts = []
       if (sources.length > 0) parts.push(`sources=*(${sources.join('|')})`)
       if (geocoderType === 'forward' && options.viewbox) parts.push(`viewbox=${options.viewbox.join(',')}`)
+      if (geocoderType === 'reverse' && options.distance) parts.push(`distance=${options.distance}`)
       parts.push(`limit=${options.limit || 20}`)
       return parts.map(p => `&${p}`).join('')
     }
@@ -92,6 +93,7 @@ export const Geocoder = {
     if (coordinates) {
       const { latitude, longitude } = coordinates
       const filter = buildFilter('reverse', options)
+      logger.debug(`[KDK] Reverse geocoder query: lat=${latitude}&lon=${longitude}${filter}`)
       const results = await this.query('reverse', `lat=${latitude}&lon=${longitude}${filter}`)
       return [
         {
@@ -99,11 +101,12 @@ export const Geocoder = {
           geometry: { type: 'Point', coordinates: [longitude, latitude] },
           properties: { name: formatUserCoordinates(latitude, longitude, Store.get('locationFormat', 'FFf')) }
         },
-        ...results.map(r => formatResults(r, formatReverseGeocodingResult))
+        ...results.map(result => formatResults(result, formatReverseGeocodingResult))
       ]
     }
     const filter = buildFilter('forward', options)
+    logger.debug(`[KDK] Forward geocoder query: q=${pattern}${filter}`)
     const results = await this.query('forward', `q=${pattern}${filter}`)
-    return results.map(r => formatResults(r, formatForwardGeocodingResult))
+    return results.map(result => formatResults(result, formatForwardGeocodingResult))
   }
 }
