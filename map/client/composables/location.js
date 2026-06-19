@@ -41,19 +41,18 @@ export function useLocation () {
         availableGeocoders.value = _.reduce(geocoders, (reducedGeocoders, geocoder) => {
           const source = _.replace(geocoder.source, /^services:.*\//g, `services:${Context.getId()}/`)
           const label = _.replace(geocoder.source, /^services:.*\//g, `services:*/`)
-          if (_.find(allGeocoders, { value: source })) {
+          const availableGeocoder = _.find(allGeocoders, { value: source })
+          if (availableGeocoder) {
             reducedGeocoders.push({
-              ...geocoder,
+              ...availableGeocoder,
               value: source,
               label: i18n.tie(`Geocoders.${label}`),
+              selected: geocoder.selected
             })
           }
           return reducedGeocoders
         }, [])
-        selectedGeocoders.value = _.reduce(availableGeocoders.value, (reducedGeocoders, geocoder) => {
-          if (geocoder.selected) reducedGeocoders.push(geocoder.value)
-          return reducedGeocoders
-        }, [])
+        selectedGeocoders.value = _.filter(availableGeocoders.value, { selected: true })
       }
     }
   }
@@ -72,6 +71,7 @@ export function useLocation () {
     return Store.get('geolocation.location')
   }
   async function search (pattern, limit = 25) {
+    if (_.isEmpty(selectedGeocoders.value)) return
     return Geocoder.search(pattern, {
       geocoders: selectedGeocoders.value,
       viewbox: selectedViewbox.value,

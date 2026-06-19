@@ -19,7 +19,7 @@
     class="q-pl-sm"
   >
     <!-- Extra actions -->
-    <template v-slot:append>
+    <template v-slot:after>
       <div class="q-pl-xs row items-center">
         <!-- viewbox filtering -->
         <KAction
@@ -130,10 +130,6 @@ const props = defineProps({
   autofocus: {
     type: Boolean,
     default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
   }
 })
 
@@ -147,6 +143,9 @@ const locations = ref([])
 const useViewbox = ref(false)
 
 // Computed
+const disabled = computed(() => {
+  return _.isEmpty(selectedGeocoders.value)
+})
 const computedLabel = computed(() => {
   return location.value ? undefined : i18n.tie(props.label)
 })
