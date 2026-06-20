@@ -61,7 +61,12 @@ export async function createOfflineDocument(query) {
   // Create automerge document for it if required
   // at the current time any change in query requires a new document
   await removeOfflineDocument()
-  const offlineDocument = await api.getService('offline').create({ query })
+  // Restrict request to target services
+  const offlineDocument = await api.getService('offline').create({
+    query,
+    // Take care that feathers strip slashes in meta, go from /api to api/
+    services: _.keys(query).map(serviceName => configuration.apiPath.substr(1) + '/' + serviceName)
+  })
   await LocalCache.setItem('offlineDocument', offlineDocument)
   return offlineDocument
 }

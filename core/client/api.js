@@ -218,6 +218,7 @@ export async function createClient (config) {
         */
         service: new AutomergeService(options.documentHandle, {
           idField: '_id',
+          multi: true,
           path
         }),
         // Set required default hooks
