@@ -311,9 +311,10 @@ export const baseMap = {
     },
     showPane(name) {
       const pane = this.getLeafletPaneByName(name)
-      if (!pane || (pane.style.display === 'block')) return
+      if (!pane || (pane.style.display === 'block')) return false
       pane.style.display = 'block'
       this.onPaneShown(name, pane)
+      return true
     },
     onPaneShown (name, leafletPane) {
       this.$emit('pane-shown', name, leafletPane)
@@ -321,15 +322,21 @@ export const baseMap = {
     },
     hidePane(name) {
       const pane = this.getLeafletPaneByName(name)
-      if (!pane || (pane.style.display === 'none')) return
+      if (!pane || (pane.style.display === 'none')) return false
       pane.style.display = 'none'
       this.onPaneHidden(name, pane)
+      return true
     },
     onPaneHidden (name, leafletPane) {
       this.$emit('pane-hidden', name, leafletPane)
       this.$engineEvents.emit('pane-hidden', name, leafletPane)
     },
     updateLeafletPanesVisibility () {
+      // Return information about hidden/shown panes
+      const result = {
+        hidden: [],
+        shown: []
+      }
       // Take care to possible fractional zoom while panes uses integer zoom levels
       const zoom = Math.floor(this.map.getZoom())
       // Check if we need to hide/show some panes based on current zoom level
@@ -339,15 +346,16 @@ export const baseMap = {
         if (!hasMinZoom && !hasMaxZoom) return
         if (!pane.style) pane.style = {}
         if (hasMinZoom && (zoom < _.get(pane, 'minZoom'))) {
-          this.hidePane(paneName)
+          if (this.hidePane(paneName)) result.hidden.push(paneName)
           return
         }
         if (hasMaxZoom && (zoom > _.get(pane, 'maxZoom'))) {
-          this.hidePane(paneName)
+          if (this.hidePane(paneName)) result.hidden.push(paneName)
           return
         }
-        this.showPane(paneName)
+        if (this.showPane(paneName)) result.shown.push(paneName)
       })
+      return result
     },
     createLeafletLayer (options) {
       const name = options.name
@@ -494,14 +502,31 @@ export const baseMap = {
       return leafetLayer && this.map.hasLayer(leafetLayer)
     },
     isLayerDisabled (layer) {
-      const hasMinZoom = !!_.get(layer, 'leaflet.minZoom')
-      const hasMaxZoom = !!_.get(layer, 'leaflet.maxZoom')
+      let hasMinZoom = !!_.get(layer, 'leaflet.minZoom')
+      let hasMaxZoom = !!_.get(layer, 'leaflet.maxZoom')
+      let minZoom = _.get(layer, 'leaflet.minZoom')
+      let maxZoom = _.get(layer, 'leaflet.maxZoom')
+      // The layer might use a pane for min/max zoom
+      const paneName = _.get(layer, 'leaflet.pane')
+      if (paneName) {
+        const pane = this.getLeafletPaneByName(paneName)
+        let hasPaneMinZoom = !!_.get(pane, 'minZoom')
+        let hasPaneMaxZoom = !!_.get(pane, 'maxZoom')
+        let minPaneZoom = _.get(pane, 'minZoom')
+        let maxPaneZoom = _.get(pane, 'maxZoom')
+        if (hasPaneMinZoom) {
+          hasMinZoom = true
+          minZoom = minPaneZoom
+        }
+        if (hasPaneMaxZoom) {
+          hasMaxZoom = true
+          maxZoom = maxPaneZoom
+        }
+      }
       let isDisabled = false
       if (hasMinZoom || hasMaxZoom) {
         // Take care to possible fractional zoom while panes uses integer zoom levels
         const zoom = Math.floor(this.map.getZoom())
-        const minZoom = _.get(layer, 'leaflet.minZoom')
-        const maxZoom = _.get(layer, 'leaflet.maxZoom')
         if (hasMinZoom && (zoom < minZoom)) isDisabled = true
         if (hasMaxZoom && (zoom > maxZoom)) isDisabled = true
       }
@@ -955,12 +980,17 @@ export const baseMap = {
       })
     },
     onMapZoomChanged () {
-      this.updateLeafletPanesVisibility()
-      // Update disable state
+      const { hidden, shown } = this.updateLeafletPanesVisibility()
+      // Update disable state for layer with min/max zoom
       const zoomLayers = _.values(this.layers).filter(sift({
         $or: [{ 'leaflet.minZoom': { $exists: true } }, { 'leaflet.maxZoom': { $exists: true } }]
       }))
       zoomLayers.forEach(async layer => { this.updateLayerDisabled(layer) })
+      // Update disable state for layer with pane with min/max zoom
+      const paneLayers = _.values(this.layers).filter(sift({
+        'leaflet.pane': { $in: hidden.concat(shown) }
+      }))
+      paneLayers.forEach(async layer => { this.updateLayerDisabled(layer) })
     }
   },
   async created () {
