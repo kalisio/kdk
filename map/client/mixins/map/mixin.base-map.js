@@ -365,17 +365,22 @@ export const baseMap = {
       if (hasMaxZoom) layerPane.maxZoom = _.get(leafletOptions, 'maxZoom')
       if (hasZIndex) layerPane.zIndex = _.get(leafletOptions, 'zIndex')
       if (hasZIndex) {
-        this.createLeafletPane(layerPane)
+        const pane = this.createLeafletPane(layerPane)
+        Object.assign(pane, layerPane) // Assign back as Leaflet does not keep it
         // Set layer to use its default pane as target
         // Avoid erasing any existing pane, if so the pane should have been created taken into account the layer zIndex up-front
         if (!_.has(leafletOptions, 'pane')) _.set(leafletOptions, 'pane', layerPane.name)
+        // As we have created a pane we will manage min/max zoom by our own,
+        // this actually helps as well with a Leaflet bug https://github.com/kalisio/kdk/issues/1493
+        if (hasMinZoom) _.unset(leafletOptions, 'minZoom')
+        if (hasMaxZoom) _.unset(leafletOptions, 'maxZoom')
       }
       // Different panes inside a layer can be used to manage visibility according to zoom level
       const panes = _.get(leafletOptions, 'panes', [])
       if (panes) {
         panes.forEach(paneOptions => {
           const pane = this.createLeafletPane(paneOptions)
-          Object.assign(pane, paneOptions)
+          Object.assign(pane, paneOptions) // Assign back as Leaflet does not keep it
         })
       }
       this.updateLeafletPanesVisibility()
@@ -489,11 +494,17 @@ export const baseMap = {
       return leafetLayer && this.map.hasLayer(leafetLayer)
     },
     isLayerDisabled (layer) {
-      const minZoom = _.get(layer, 'leaflet.minZoom')
-      const maxZoom = _.get(layer, 'leaflet.maxZoom')
+      const hasMinZoom = !!_.get(layer, 'leaflet.minZoom')
+      const hasMaxZoom = !!_.get(layer, 'leaflet.maxZoom')
       let isDisabled = false
-      if (minZoom && (this.map.getZoom() < minZoom)) isDisabled = true
-      if (maxZoom && (this.map.getZoom() > maxZoom)) isDisabled = true
+      if (hasMinZoom || hasMaxZoom) {
+        // Take care to possible fractional zoom while panes uses integer zoom levels
+        const zoom = Math.floor(this.map.getZoom())
+        const minZoom = _.get(layer, 'leaflet.minZoom')
+        const maxZoom = _.get(layer, 'leaflet.maxZoom')
+        if (hasMinZoom && (zoom < minZoom)) isDisabled = true
+        if (hasMaxZoom && (zoom > maxZoom)) isDisabled = true
+      }
       return isDisabled
     },
     updateLayerDisabled (layer) {
