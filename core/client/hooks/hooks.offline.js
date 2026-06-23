@@ -11,3 +11,8 @@ export function removeServerSideParameters(context) {
     _.unset(params, 'query.upsert')
   }
 }
+
+export function serializeData(context) {
+  if (context.data) context.data = JSON.parse(JSON.stringify(item))
+}
+

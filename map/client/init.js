@@ -2,6 +2,7 @@ import _ from 'lodash'
 import config from 'config'
 import { reactive } from 'vue'
 import logger from 'loglevel'
+import intersect from '@turf/intersect'
 import { memory } from '@feathersjs/memory'
 import { Store, Reader, utils as kdkCoreUtils, hooks as kdkCoreHooks } from '../../core/client/index.js'
 import * as kMapHooks from './hooks/index.js'
@@ -33,6 +34,17 @@ export function setupApi (configuration) {
   // We also add some features related to offline mode
   api.createOfflineFeaturesService = async function (serviceName, options = {}) {
     options = Object.assign(_.omit(options, ['hooks']), {
+      // Set specific matcher to handle eg bbox filtering
+      matcher: (query) => sift(query, {
+        expressions: {
+          $geoIntersects: function(query, value) {
+            const polygon1 = _.get(query, '$geometry')
+            const polygon2 = value
+            if (!polygon1 || !polygon2) return false
+            return intersect(polygon1, polygon2)
+          }
+        }
+      }),
       // Set required default hooks as the service responds in GeoJson format
       hooks: _.defaultsDeep(_.get(options, 'hooks'), {
         before: {

@@ -87,9 +87,11 @@ export async function cacheView (view, layers, options = {}) {
 export async function uncacheView (view, layers, options = {}) {
   // Clear cache but update view as we should retrieve stored options in cache
   view = await removeViewFromCache(view)
-  Object.assign(options, view || {})
-  // Clear data layer
-  await uncacheLayersForView(view, layers, options)
+  if (view) {
+    Object.assign(options, view || {})
+    // Clear data layer
+    await uncacheLayersForView(view, layers, options)
+  }
   // FIXME: we should clear catalog/project services as well but it's harder to know if they are still required by some other view.
   // For instance categories are indirectly related to layers by filtering options, a project might contains multiple views so one still cached, etc.
   // So for now we only clear it when no views remain

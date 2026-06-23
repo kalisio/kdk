@@ -257,6 +257,8 @@ async function setServiceLayerUncached (layer, options) {
   const serviceOptions = services[layer.service]
   if (serviceOptions) {
     const offlineService = api.getOfflineService(layer.service, serviceOptions.context)
+    /* FIXME: Removing objects through the service will remove it from the server due to sync,
+    this should actually be done by removing the automerge root document
     await offlineService.remove(null, {
       query: {
         south: options.bounds[0][0],
@@ -265,6 +267,7 @@ async function setServiceLayerUncached (layer, options) {
         east: options.bounds[1][1]
       }
     })
+    */
   }
 }
 

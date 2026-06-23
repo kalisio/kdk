@@ -203,19 +203,6 @@ export async function createClient (config) {
       // Take care that feathers strip slashes, go from /api to api/
       const path = config.apiPath.substr(1) + '/' + serviceName
       offlineService = api.createService(offlineServiceName, {
-        /*
-        service: createOfflineService({
-          id: '_id',
-          name: 'offline_services',
-          storeName: serviceName,
-          multi: true,
-          storage: ['IndexedDB'],
-          // FIXME: this should not be hard-coded as it depends on the service
-          // For now we set it at the max value but if a component
-          // does not explicitly set the limit it will get a lot of data
-          paginate: { default: 5000, max: 5000 }
-        }),
-        */
         service: new AutomergeService(options.documentHandle, {
           idField: '_id',
           multi: true,
@@ -224,7 +211,7 @@ export async function createClient (config) {
         // Set required default hooks
         hooks: _.defaultsDeep(_.get(options, 'hooks'), {
           before: {
-            all: [hooks.removeServerSideParameters]
+            all: [hooks.serializeData, hooks.removeServerSideParameters]
           }
         }),
         ...serviceOptions

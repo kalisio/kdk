@@ -49,9 +49,8 @@ export async function removeOfflineServices () {
     for (let i = 0; i < serviceNames.length; i++) {
       const serviceName = serviceNames[i]
       const serviceOptions = services[serviceName]
-      // Do we need to clear data first ?
-      //const offlineService = api.getOfflineService(serviceName, serviceOptions.context)
-      //await offlineService.remove(null, { query: {} })
+      // Data cleaning will occur on automerge root document deletion,
+      // we should not do it through service as it will otherwise sync changes with server
       api.removeService(serviceName, serviceOptions.context)
     }
   }
@@ -101,9 +100,13 @@ export async function getOfflineDocumentContent(offlineDocument) {
 }
 
 export async function removeOfflineDocument() {
-  const offlineDocument = await LocalCache.getItem('offlineDocument')
+  const offlineDocument = await getOfflineDocument()
   if (offlineDocument) {
-    await api.getService('offline').remove(offlineDocument.url)
+    const { url, documentHandle } = offlineDocument
+    await api.getService('offline').remove(url)
+    const repo = api.get('repo')
+    repo.delete(documentHandle.documentId)
+    await LocalCache.removeItem('offlineDocument')
   }
   return offlineDocument
 }
