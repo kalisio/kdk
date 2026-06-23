@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import config from 'config'
+import sift from 'sift'
 import { reactive } from 'vue'
 import logger from 'loglevel'
 import intersect from '@turf/intersect'
