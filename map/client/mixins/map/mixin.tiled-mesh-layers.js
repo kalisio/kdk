@@ -72,6 +72,9 @@ export const tiledMeshLayers = {
       // setup layer
       engineLayer.setModel(this.forecastModel)
       engineLayer.setTime(Time.getCurrentTime())
+      if (this.selectableLevelsLayer && (this.selectableLevelsLayer._id === layer._id)) {
+        engineLayer.setLevel(this.selectedLevel)
+      }
     },
 
     onHideTiledMeshLayer (layer, engineLayer) {
