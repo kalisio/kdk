@@ -6,3 +6,5 @@
 .idea/
 docs/
 coverage/
+.npmrc.publish
+.claude
