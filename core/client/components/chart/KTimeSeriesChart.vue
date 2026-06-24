@@ -1,7 +1,8 @@
 <template>
   <div class="fit position-relative">
     <canvas :ref="onCanvasRef" />
-    <KStamp v-if="!hasData" icon="las la-exclamation-circle" icon-size="3rem"
+    <q-spinner v-if="loading" color="primary" size="3rem" class="absolute-center" />
+    <KStamp v-else-if="!hasData" icon="las la-exclamation-circle" icon-size="3rem"
         :text="$t('KTimeSeriesChart.NO_DATA_AVAILABLE')" text-size="1rem" class="absolute-center" />
   </div>
 </template>
@@ -51,6 +52,7 @@ let chart = null
 const hiddenDatasets = []
 const unit2axis = new Map()
 const hasData = ref(false)
+const loading = ref(true)
 // Min/Max time (ie for x axis)
 const startTime = ref(props.startTime ? moment.utc(props.startTime) : null)
 const endTime = ref(props.endTime ? moment.utc(props.endTime) : null)
@@ -405,6 +407,7 @@ async function exportSeries (options = {}) {
 }
 async function update () {
   if (!canvas) return
+  loading.value = true
   // Reset time/value range
   startTime.value = (props.startTime ? moment.utc(props.startTime) : null)
   endTime.value = (props.endTime ? moment.utc(props.endTime) : null)
@@ -419,6 +422,7 @@ async function update () {
     }
     chart = null
     hasData.value = false
+    loading.value = false
     return
   }
   if (!chart) {
@@ -428,6 +432,7 @@ async function update () {
     Object.assign(chart, config)
     chart.update()
   }
+  loading.value = false
 }
 async function updateCurrentTime () {
   if (!props.currentTime) return
