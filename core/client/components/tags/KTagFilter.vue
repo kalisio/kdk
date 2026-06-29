@@ -3,14 +3,15 @@
     <q-fab
       v-if="hasOptions"
       id="tags-filter-control"
-      icon="las la-filter"
-      color="grey-9"
-      flat
+      :model-value="modelValue"
+      :icon="icon"
+      :color="color"
+      :flat="flat"
       direction="down"
       :vertical-actions-align="computedAlignment"
       padding="xs"
-      @show="showTooltip = false"
-      @hide="showTooltip = true"
+      @show="onShow"
+      @hide="onHide"
     >
       <template v-for="tag in options" :key="tag.name">
         <q-fab-action
@@ -24,19 +25,23 @@
       </template>
     </q-fab>
     <q-tooltip v-if="showTooltip">
-      {{ $t('KTagsFilterControl.FILTER') }}
+      {{ $tie(props.tooltip) }}
     </q-tooltip>
   </div>
 </template>
 
 <script setup>
 import _ from 'lodash'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, useAttrs } from 'vue'
 import { getHtmlColor, getContrastColor } from '../../utils/utils.colors.js'
 import { useScreen } from '../../composables'
 
 // Props
 const props = defineProps({
+  modelValue: {
+    tye: Boolean,
+    default: null
+  },
   options: {
     type: Array,
     default: () => []
@@ -44,6 +49,22 @@ const props = defineProps({
   selection: {
     type: Array,
     default: () => []
+  },
+  icon: {
+    type: String,
+    default: 'las la-filter'
+  },
+  color: {
+    type: String,
+    default: 'grey-9'
+  },
+  flat: {
+    type: Boolean,
+    default: true
+  },
+  tooltip: {
+    type: String,
+    default: 'KTagsFilterControl.FILTER'
   },
   alignment: {
     type: [String, Object],
@@ -56,10 +77,11 @@ const props = defineProps({
 })
 
 // Emits
-const emit = defineEmits(['selection-changed'])
+const emit = defineEmits(['update:modelValue', 'selection-changed', 'shown', 'hidden'])
 
 // Data
 const { Screen } = useScreen()
+const attrs = useAttrs()
 const showTooltip = ref(true)
 const currentSelection = ref(props.selection)
 
@@ -95,5 +117,14 @@ function onTagAdded (tag) {
   props.onSelectionChanged(currentSelection.value)
   emit('selection-changed', currentSelection.value)
 }
-
+function onShow () {
+  showTooltip.value = false
+  emit('update:modelValue', true)
+  emit('shown', attrs.name)
+}
+function onHide () {
+  showTooltip.value = true
+  emit('update:modelValue', false)
+  emit('hidden', attrs.name)
+}
 </script>
