@@ -5,7 +5,7 @@
   >
     <KAction
       id="filter-action"
-      :icon="open ? 'close' : 'las la-filter'"
+      :icon="isOpen ? 'close' : 'las la-filter'"
       :tooltip="computedTooltip"
       color="grey-9"
       :handler="() => { isOpen = !isOpen }"
