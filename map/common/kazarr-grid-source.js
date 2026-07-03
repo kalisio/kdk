@@ -26,7 +26,15 @@ function genCoordsBuffer (grid) {
     ++idx
   }
 
-  return { coords, minLat: grid.minLat, maxLat: grid.maxLat, minLon: grid.minLon, maxLon: grid.maxLon, deltaLat, deltaLon }
+  return { coords,
+           minLat: grid.minLat,
+           maxLat: grid.maxLat,
+           // minLon: grid.minLon,
+           // maxLon: grid.maxLon,
+           minLon: grid.minLon >= 180.0 ? grid.minLon - 360.0 : grid.minLon,
+           maxLon: grid.maxLon >= 180.0 ? grid.maxLon - 360.0 : grid.maxLon,
+           deltaLat,
+           deltaLon }
 }
 
 function genValuesBuffer (grid) {
@@ -96,6 +104,11 @@ export class KazarrGridSource extends GridSource {
       console.error(`Failed requesting ${this.config.dataset} metadata from ${this.config.url}`)
     }
 
+    // Internal tile management requires longitude in [-180, 180]
+    const wrapLongitude = (this.minMaxLon[1] >= 359)
+    this.minMaxLon = [wrapLongitude ? -180 : this.minMaxLon[0], wrapLongitude ? 180 : this.minMaxLon[1]]
+    this.wrapLon = wrapLongitude
+
     this.usable = this.minMaxLat !== null && this.minMaxLat !== null
 
     this.dataChanged()
@@ -104,10 +117,14 @@ export class KazarrGridSource extends GridSource {
   async fetch (abort, bbox, resolution) {
     if (!this.usable) { return null }
 
+    // compute which tile(s) we're going to hit
+    const minLon = this.wrapLon ? (bbox[1] < 0 ? bbox[1] + 360.0 : bbox[1]) : bbox[1]
+    const maxLon = this.wrapLon ? (bbox[3] <= 0 ? bbox[3] + 360.0 : bbox[3]) : bbox[3]
+
     const reqMinLat = bbox[0]
-    const reqMinLon = bbox[1]
+    const reqMinLon = minLon
     const reqMaxLat = bbox[2]
-    const reqMaxLon = bbox[3]
+    const reqMaxLon = maxLon
     const interpolation = this.config?.noInterpolation
       ? {}
       // Default interpolation setup
@@ -128,7 +145,7 @@ export class KazarrGridSource extends GridSource {
       ? `${this.config.url}/datasets/${this.config.dataset}/extract?${queryParams}`
       : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/extract?${queryParams}&${this.config.url.substring(question + 1)}`
 
-    const resp = await fetch(tileUrl)
+    const resp = await fetch(tileUrl, { signal: abort })
     const json = await resp.json()
 
     let dataMinLon = json.vertices[0]
