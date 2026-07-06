@@ -338,9 +338,7 @@ export function generateStyleTemplates (defaultStyle, styles, dotify = true) {
       // So we need to hide the element corresponding to this sub-object by setting all of its properties to null or default values
       // We must create the condition anyway to prevent default style from being applied on this case
       if (!_.get(style.values, property)) {
-        if (_.isNumber(_.get(DefaultStyle, property))) {
-          value = 0
-        } else if (property.includes('shape')) {
+        if (_.isNumber(_.get(DefaultStyle, property)) || property.includes('shape')) {
           value = _.get(DefaultStyle, property)
         } else if (property.includes('color')) {
           value = kdkCoreUtils.getHtmlColor(_.get(defaultStyle, property))
