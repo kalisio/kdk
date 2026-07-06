@@ -408,8 +408,11 @@ onBeforeUnmount(() => {
 .q-timeline__subtitle {
   margin-bottom: 0px;
   opacity: 1.0; // override default opacity
-  text-transform: capitalize;
+  text-transform: none;
   font-weight: 400;
+}
+.q-timeline__subtitle::first-letter {
+  text-transform: uppercase;
 }
 .q-timeline__content {
   padding-bottom: 16px;
