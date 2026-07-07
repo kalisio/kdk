@@ -122,7 +122,7 @@ export const baseMap = {
         duration: 1000
       }
       // Initialize the map
-      this.map = L.map(domEl, Object.assign({ 
+      this.map = L.map(domEl, Object.assign({
         zoomControl: false,
         touchZoom: true,
         gestureHandling: Platform.has.touch && Platform.is.desktop && !Platform.is.firefox,
@@ -1007,10 +1007,12 @@ export const baseMap = {
     Events.on('time-current-time-changed', this.onCurrentMapTimeChanged)
   },
   beforeUnmount () {
-    this.clearLayers()
-    L.DomEvent.off(this.map._container, TouchEvents.join(' '), this.onTouchEvent, this)
-    this.$engineEvents.off('zoomend', this.onMapZoomChanged)
-    Events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
+    if (this.map) {
+      this.clearLayers()
+      L.DomEvent.off(this.map._container, TouchEvents.join(' '), this.onTouchEvent, this)
+      this.$engineEvents.off('zoomend', this.onMapZoomChanged)
+      Events.off('time-current-time-changed', this.onCurrentMapTimeChanged)
+    }
   },
   unmounted () {
     if (this.map) {

@@ -9,6 +9,7 @@ export const activity = {
       this.map.on('moveend', this.storeView)
     },
     finalizeMap () {
+      if (!this.map) return
       this.map.off('moveend', this.storeView)
     },
     storeView () {
