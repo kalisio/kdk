@@ -10,6 +10,7 @@ export function useContext (options) {
   // Data
   const router = useRouter()
   const fallbackRoute = options?.fallbackRoute || 'home'
+  const redirectTimeout = options?.redirectTimeout || 500
   let serviceEventListeners
 
   // Functions
@@ -29,7 +30,7 @@ export function useContext (options) {
         context = await service.get(objectOrId)
       } catch (error) {
         logger.debug(`[KDK] cannot get event with id ${objectOrId}: ${error}`)
-        setTimeout(() => router.push({ name: fallbackRoute }), 2000)
+        setTimeout(() => router.push({ name: fallbackRoute }), redirectTimeout)
       }
     } else if (_.isObject(objectOrId)) {
       // assign context
@@ -41,7 +42,7 @@ export function useContext (options) {
       return
     }
     Context.set(context)
-    track()    
+    track()
   }
   function clearContext () {
     if (Context.get()) untrack()
@@ -63,7 +64,7 @@ export function useContext (options) {
     }
   }
   function onRemoved (data) {
-    const context = Context.get()    
+    const context = Context.get()
     if (context._id === data._id) {
       Dialog.create({
         title: i18n.t('ALERT'),
