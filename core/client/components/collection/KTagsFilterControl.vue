@@ -20,7 +20,7 @@
             :selection="tagsFilterSelection"
             :alignment="computedAlignment"
             :icon="iconForScope(scope)"
-            color="primary"
+            :color="colorForScope(scope)"
             :flat="false"
             :tooltip="tooltipForScope(scope)"
             @selection-changed="onSelectionChanged"
