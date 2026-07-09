@@ -378,12 +378,20 @@ async function exportSeries (options = {}) {
   }
   // Make union of all available times for x-axis
   times = _.uniq(times).map(time => moment.utc(time)).sort((a, b) => a - b)
+  // Optionally clip to the currently visible time range (ie the chart x-axis bounds)
+  if (options.clipToVisibleRange && chart) {
+    const { start, end } = getZoom()
+    if (start.isValid() && end.isValid()) {
+      times = times.filter(time => !time.isBefore(start) && !time.isAfter(end))
+    }
+  }
   // Convert to json
   const json = []
   for (let t = 0; t < times.length; t++) {
     const time = times[t]
     const row = {
-      [i18n.t('KTimeSeriesChart.TIME_LABEL')]: time.toISOString()
+      // Localize the time column to the configured timezone when requested, otherwise keep UTC
+      [i18n.t('KTimeSeriesChart.TIME_LABEL')]: options.localizeTime ? Time.convertToLocal(time).format() : time.toISOString()
     }
     for (let i = 0; i < props.timeSeries.length; i++) {
       const timeSerie = props.timeSeries[i]
