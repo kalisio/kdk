@@ -397,7 +397,7 @@ async function exportSeries (options = {}) {
       const timeSerie = props.timeSeries[i]
       const visible = chart.isDatasetVisible(i)
       // Skip invisible variables in export
-      if (options.visibleOnly && !visible) return
+      if (options.visibleOnly && !visible) continue
       const xAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.xAxisKey', props.xAxisKey)
       const yAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.yAxisKey', props.yAxisKey)
       const data = await timeSerie.data
