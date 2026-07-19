@@ -369,42 +369,53 @@ function makeAnnotation () {
   return annotation
 }
 async function exportSeries (options = {}) {
-  let times = []
+  // Resolve every serie once and index its values by timestamp (ms) for O(1) lookup.
+  // Doing this here avoids re-awaiting data and rebuilding moment objects inside the row loop,
+  // which otherwise makes the export quadratic (times x series x data) and freezes the browser.
+  const series = []
+  const timeSet = new Set()
   for (let i = 0; i < props.timeSeries.length; i++) {
     const timeSerie = props.timeSeries[i]
     const xAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.xAxisKey', props.xAxisKey)
+    const yAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.yAxisKey', props.yAxisKey)
     const data = await timeSerie.data
-    times = times.concat(_.map(data, xAxisKey))
+    const valueByTime = new Map()
+    for (const item of data) {
+      const t = moment.utc(_.get(item, xAxisKey)).valueOf()
+      valueByTime.set(t, _.get(item, yAxisKey, null))
+      timeSet.add(t)
+    }
+    series.push({
+      valueByTime,
+      name: _.get(timeSerie, 'variable.name'),
+      label: _.get(timeSerie, 'variable.label'),
+      // Skip invisible variables in export
+      visible: chart ? chart.isDatasetVisible(i) : true
+    })
   }
-  // Make union of all available times for x-axis
-  times = _.uniq(times).map(time => moment.utc(time)).sort((a, b) => a - b)
+  // Make union of all available times (as ms timestamps) for x-axis
+  let times = Array.from(timeSet).sort((a, b) => a - b)
   // Optionally clip to the currently visible time range (ie the chart x-axis bounds)
   if (options.clipToVisibleRange && chart) {
     const { start, end } = getZoom()
     if (start.isValid() && end.isValid()) {
-      times = times.filter(time => !time.isBefore(start) && !time.isAfter(end))
+      const startMs = start.valueOf()
+      const endMs = end.valueOf()
+      times = times.filter(time => time >= startMs && time <= endMs)
     }
   }
   // Convert to json
   const json = []
-  for (let t = 0; t < times.length; t++) {
-    const time = times[t]
+  for (const time of times) {
+    const m = moment.utc(time)
     const row = {
       // Localize the time column to the configured timezone when requested, otherwise keep UTC
-      [i18n.t('KTimeSeriesChart.TIME_LABEL')]: options.localizeTime ? Time.convertToLocal(time).format() : time.toISOString()
+      [i18n.t('KTimeSeriesChart.TIME_LABEL')]: options.localizeTime ? Time.convertToLocal(m).format() : m.toISOString()
     }
-    for (let i = 0; i < props.timeSeries.length; i++) {
-      const timeSerie = props.timeSeries[i]
-      const visible = chart.isDatasetVisible(i)
-      // Skip invisible variables in export
-      if (options.visibleOnly && !visible) continue
-      const xAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.xAxisKey', props.xAxisKey)
-      const yAxisKey = _.get(timeSerie, 'variable.chartjs.parsing.yAxisKey', props.yAxisKey)
-      const data = await timeSerie.data
-      const value = _.find(data, item => moment.utc(_.get(item, xAxisKey)).valueOf() === time.valueOf())
-      const name = _.get(timeSerie, 'variable.name')
-      const label = _.get(timeSerie, 'variable.label')
-      row[options.labelAsHeader ? `${label}` : `${name}`] = value ? _.get(value, yAxisKey) : null
+    for (const serie of series) {
+      if (options.visibleOnly && !serie.visible) continue
+      const value = serie.valueByTime.has(time) ? serie.valueByTime.get(time) : null
+      row[options.labelAsHeader ? `${serie.label}` : `${serie.name}`] = value
     }
     json.push(row)
   }
