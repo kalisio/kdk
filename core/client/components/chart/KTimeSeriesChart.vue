@@ -381,9 +381,9 @@ async function exportSeries (options = {}) {
     const data = await timeSerie.data
     const valueByTime = new Map()
     for (const item of data) {
-      const t = moment.utc(_.get(item, xAxisKey)).valueOf()
-      valueByTime.set(t, _.get(item, yAxisKey, null))
-      timeSet.add(t)
+      const timestamp = moment.utc(_.get(item, xAxisKey)).valueOf()
+      valueByTime.set(timestamp, _.get(item, yAxisKey, null))
+      timeSet.add(timestamp)
     }
     series.push({
       valueByTime,
@@ -401,20 +401,20 @@ async function exportSeries (options = {}) {
     if (start.isValid() && end.isValid()) {
       const startMs = start.valueOf()
       const endMs = end.valueOf()
-      times = times.filter(time => time >= startMs && time <= endMs)
+      times = times.filter(timestamp => timestamp >= startMs && timestamp <= endMs)
     }
   }
   // Convert to json
   const json = []
-  for (const time of times) {
-    const m = moment.utc(time)
+  for (const timestamp of times) {
+    const time = moment.utc(timestamp)
     const row = {
       // Localize the time column to the configured timezone when requested, otherwise keep UTC
-      [i18n.t('KTimeSeriesChart.TIME_LABEL')]: options.localizeTime ? Time.convertToLocal(m).format() : m.toISOString()
+      [i18n.t('KTimeSeriesChart.TIME_LABEL')]: options.localizeTime ? Time.convertToLocal(time).format() : time.toISOString()
     }
     for (const serie of series) {
       if (options.visibleOnly && !serie.visible) continue
-      const value = serie.valueByTime.has(time) ? serie.valueByTime.get(time) : null
+      const value = serie.valueByTime.has(timestamp) ? serie.valueByTime.get(timestamp) : null
       row[options.labelAsHeader ? `${serie.label}` : `${serie.name}`] = value
     }
     json.push(row)
