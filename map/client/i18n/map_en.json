@@ -721,6 +721,7 @@
     "ADD_RECTANGLE_FEATURES": "Add rectangle features",
     "ADD_LINE_FEATURES": "Add linear features",
     "ADD_POINT_FEATURES": "Add point features",
+    "ADD_FREEHAND_POLYGON_FEATURES": "Add freehand polygon features",
     "EDIT_GEOMETRY": "Edit feature geometry",
     "EDIT_PROPERTIES": "Edit feature properties",
     "DRAG_FEATURES": "Move features",

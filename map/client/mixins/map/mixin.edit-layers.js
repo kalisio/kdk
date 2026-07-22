@@ -1,5 +1,9 @@
 import _ from 'lodash'
 import L from 'leaflet'
+// Freehand polygon drawing is not supported by geoman (Pro only) so we rely on a dedicated layer from the leaflet-freedraw plugin.
+// The resulting geometry is then send to the same pipeline as other shapes so it becomes a regular geoman-editable feature afterwards.
+// Bypass main/browser/module field resolution as it confuses bundler, resolving the default import to something other than the FreeDraw class
+import FreeDraw, { CREATE as FREEHAND_CREATE, NONE as FREEHAND_NONE } from 'leaflet-freedraw/dist/leaflet-freedraw.esm.js'
 import logger from 'loglevel'
 import bearing from '@turf/bearing'
 import { getType, getCoords, getGeom } from '@turf/invariant'
@@ -126,6 +130,8 @@ export const editLayers = {
       if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
       if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
       if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
+      if (this.freeDrawLayer) this.freeDrawLayer.mode(FREEHAND_NONE)
+      this.unsetCursor('freehand-cursor')
       this.map.pm.setGlobalOptions({
         layerGroup: this.map,
         // Ensure it is on top of all others layers while editing
@@ -161,6 +167,9 @@ export const editLayers = {
       } else if (mode === 'add-points') {
         this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         this.map.pm.enableDraw('Marker', { continueDrawing: true })
+      } else if (mode === 'add-freehand-polygons') {
+        this.freeDrawLayer.mode(FREEHAND_CREATE)
+        this.setCursor('freehand-cursor')
       }
 
       this.layerEditMode = mode
@@ -191,7 +200,8 @@ export const editLayers = {
         'add-polygons',
         'add-rectangles',
         'add-lines',
-        'add-points'
+        'add-points',
+        'add-freehand-polygons'
       ]
 
       this.editedLayer = layer
@@ -246,6 +256,15 @@ export const editLayers = {
       bindLeafletEvents(this.map, mapEditEvents, this)
       bindLeafletEvents(this.editableLayer, layerEditEvents, this)
 
+      // This layer is created once and kept alive for the whole map lifetime not editing session.
+      // Indeed, leaflet-freedraw's onRemove doesn't unbind the raw mousedown/mousemove/mouseup listeners
+      // while onAdd attaches it directly to the map, so stacking listeners.
+      if (!this.freeDrawLayer) {
+        this.freeDrawLayer = new FreeDraw({ mode: FREEHAND_NONE, maximumPolygons: 1 })
+        this.map.addLayer(this.freeDrawLayer)
+      }
+      this.freeDrawLayer.on('markers', this.onFreehandCreated)
+
       this.$engineEvents.on('click', this.onEditFeatureProperties)
       this.$engineEvents.on('mousemove', this.onMouseMoveWhileEditing)
       this.$engineEvents.on('zoomend', this.onMapZoomWhileEditing)
@@ -283,7 +302,12 @@ export const editLayers = {
       if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
       if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
       if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
+      this.unsetCursor('freehand-cursor')
       this.map.pm.setGlobalOptions({ layerGroup: this.map })
+
+      // Only unbind our per-session listener, the freehand drawing layer itself is kept alive
+      // and reused across edit sessions (see startEditLayer)
+      this.freeDrawLayer.off('markers', this.onFreehandCreated)
 
       unbindLeafletEvents(this.map, mapEditEvents)
       unbindLeafletEvents(this.editableLayer, layerEditEvents)
@@ -412,15 +436,7 @@ export const editLayers = {
         })
       })
     },
-    async onCreateFeatures (event) {
-      const leafletLayer = event && event.layer
-      if ((this.layerEditMode !== 'add-polygons' &&
-           this.layerEditMode !== 'add-rectangles' &&
-           this.layerEditMode !== 'add-lines' &&
-           this.layerEditMode !== 'add-points') ||
-          !leafletLayer) return
-
-      let geoJson = leafletLayer.toGeoJSON()
+    async saveCreatedFeature (geoJson) {
       // Avoid reentrance from realtime events as also raised when we are the initiator
       if (this.createdFeature && this.createdFeature._id === geoJson._id) return
       // Generate temporary ID for feature
@@ -437,8 +453,35 @@ export const editLayers = {
         // Service will use the provided _id as object key
         await api.getService('features-edition').create(geoJson)
       }
-      this.editableLayer.removeLayer(leafletLayer)
       this.editableLayer.addData(geoJson)
+    },
+    async onCreateFeatures (event) {
+      const leafletLayer = event && event.layer
+      if ((this.layerEditMode !== 'add-polygons' &&
+           this.layerEditMode !== 'add-rectangles' &&
+           this.layerEditMode !== 'add-lines' &&
+           this.layerEditMode !== 'add-points') ||
+          !leafletLayer) return
+
+      const geoJson = leafletLayer.toGeoJSON()
+      await this.saveCreatedFeature(geoJson)
+      this.editableLayer.removeLayer(leafletLayer)
+    },
+    async onFreehandCreated (event) {
+      if (this.layerEditMode !== 'add-freehand-polygons' || event.eventType !== 'create') return
+
+      // event.latLngs holds the current set of closed rings on the freehand layer, ie. what was
+      // just sketched since we always clear it right after capturing the geometry
+      const rings = event.latLngs || []
+      for (const ring of rings) {
+        const geoJson = {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'Polygon', coordinates: [ring.map((latLng) => [latLng.lng, latLng.lat])] }
+        }
+        await this.saveCreatedFeature(geoJson)
+      }
+      this.freeDrawLayer.clear()
     },
     async onEditFeatures (event) {
       const leafletLayer = event && event.layer
