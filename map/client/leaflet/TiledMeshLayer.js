@@ -8,6 +8,42 @@ import 'abort-controller/polyfill.js'
 import { utils as kdkCoreUtils } from '../../../core.client.js'
 import { buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils.js'
 
+// Per-map shared pixi overlay registry — avoids creating one WebGL context per layer.
+// Each map gets exactly one L.pixiOverlay (one WebGL context).
+// Each TiledMeshLayer attaches its pixi wrapper to the shared root container.
+const SharedOverlays = new WeakMap()
+
+function getOrCreateSharedOverlay (map) {
+  if (!SharedOverlays.has(map)) {
+    const container = new PIXI.Container()
+    const pixiLayer = L.pixiOverlay(
+      utils => utils.getRenderer().render(container),
+      container,
+      { destroyInteractionManager: true, shouldRedrawOnMove: () => true }
+    )
+    SharedOverlays.set(map, { pixiLayer, container, count: 0 })
+    map.addLayer(pixiLayer)
+  }
+  const shared = SharedOverlays.get(map)
+  shared.count++
+  return shared
+}
+
+function releaseSharedOverlay (map) {
+  const shared = SharedOverlays.get(map)
+  if (!shared) return
+  shared.count--
+  if (shared.count <= 0) {
+    map.removeLayer(shared.pixiLayer)
+    shared.pixiLayer._destroy()
+    SharedOverlays.delete(map)
+  } else {
+    // If other layers are still using the shared overlay, redraw immediately
+    // so this layer's content is no longer composited onto the canvas.
+    shared.pixiLayer.redraw()
+  }
+}
+
 const TiledMeshLayer = L.GridLayer.extend({
   initialize (options, gridSource) {
     this.conf = {}
@@ -41,10 +77,6 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.pixiWrapper = new PIXI.Container()
     this.pixiWrapper.addChild(this.previousPixiRoot)
     this.pixiWrapper.addChild(this.pixiRoot)
-    this.pixiLayer = L.pixiOverlay(
-      utils => this.renderPixiLayer(utils),
-      this.pixiWrapper,
-      { destroyInteractionManager: true, shouldRedrawOnMove: function () { return true } })
     this.layerUniforms = new PIXI.UniformGroup({ in_layerAlpha: options.opacity, in_zoomLevel: 1.0 })
     this.pixiState = new PIXI.State()
     this.pixiState.culling = this.conf.render.enableCulling
@@ -71,7 +103,7 @@ const TiledMeshLayer = L.GridLayer.extend({
 
     // debounced redraw to batch rapid successive tile load/unload events into one GPU frame
     // 60 fps is about 16ms per frame
-    this.requestdRedraw = _.debounce(() => this.pixiLayer.redraw(), 16)
+    this.requestdRedraw = _.debounce(() => { if (this.sharedOverlay) this.sharedOverlay.pixiLayer.redraw() }, 16)
 
     // register event callbacks
     this.on('tileload', (event) => { this.onTileLoad(event) })
@@ -84,7 +116,9 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
-    map.addLayer(this.pixiLayer)
+    // Attach to the per-map shared pixi overlay so all layers share one WebGL context.
+    this.sharedOverlay = getOrCreateSharedOverlay(map)
+    this.sharedOverlay.container.addChild(this.pixiWrapper)
 
     // This gets computed by pixi layer when it gets added to a map.
     // This uniform is supposed to reflect the visualization zoom level
@@ -92,7 +126,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     // BUT since pixi already handles zoom with the container's scale matrix
     // we use the constant zoom level that was defined when the pixi layer
     // was added to the map.
-    this.layerUniforms.uniforms.in_zoomLevel = this.pixiLayer._initialZoom
+    this.layerUniforms.uniforms.in_zoomLevel = this.sharedOverlay.pixiLayer._initialZoom
 
     // be notified when zoom starts
     // keep a ref on bound objects to be able to remove them later
@@ -113,7 +147,9 @@ const TiledMeshLayer = L.GridLayer.extend({
 
     this.requestdRedraw.cancel()
     this.clearPreviousPixiRoot()
-    map.removeLayer(this.pixiLayer)
+    this.sharedOverlay.container.removeChild(this.pixiWrapper)
+    releaseSharedOverlay(map)
+    this.sharedOverlay = null
 
     L.GridLayer.prototype.onRemove.call(this, map)
   },
@@ -272,7 +308,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     for (const child of this.pixiRoot.children) {
       if (child.zoomLevel === zoomLevel) child.visible = true
     }
-    this.pixiLayer.redraw()
+    this.sharedOverlay.pixiLayer.redraw()
   },
 
   onDataChanged () {
@@ -504,11 +540,6 @@ const TiledMeshLayer = L.GridLayer.extend({
       console.log('Generated fragment shader:')
       console.log(frgCode)
     }
-  },
-
-  renderPixiLayer (utils) {
-    const renderer = utils.getRenderer()
-    renderer.render(this.pixiWrapper)
   },
 
   clearPreviousPixiRoot () {
