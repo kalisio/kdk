@@ -148,6 +148,15 @@ export class KazarrGridSource extends GridSource {
     const resp = await fetch(tileUrl, { signal: abort })
     const json = await resp.json()
 
+    // Update data value bounds as they are only known once data has been fetched on requested tile, not upfront for the whole dataset.
+    if (json.bounds) {
+      const minVal = this.converter ? this.converter(json.bounds.min) : json.bounds.min
+      const maxVal = this.converter ? this.converter(json.bounds.max) : json.bounds.max
+      this.minMaxVal = this.minMaxVal
+        ? [Math.min(this.minMaxVal[0], minVal), Math.max(this.minMaxVal[1], maxVal)]
+        : [minVal, maxVal]
+    }
+
     let dataMinLon = json.vertices[0]
     let dataMaxLon = json.vertices[0]
     let dataMinLat = json.vertices[1]
