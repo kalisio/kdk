@@ -369,9 +369,6 @@ function makeAnnotation () {
   return annotation
 }
 async function exportSeries (options = {}) {
-  // Resolve every serie once and index its values by timestamp (ms) for O(1) lookup.
-  // Doing this here avoids re-awaiting data and rebuilding moment objects inside the row loop,
-  // which otherwise makes the export quadratic (times x series x data) and freezes the browser.
   const series = []
   const timeSet = new Set()
   for (let i = 0; i < props.timeSeries.length; i++) {
@@ -414,7 +411,9 @@ async function exportSeries (options = {}) {
     }
     for (const serie of series) {
       if (options.visibleOnly && !serie.visible) continue
-      const value = serie.valueByTime.has(timestamp) ? serie.valueByTime.get(timestamp) : null
+      let value = serie.valueByTime.has(timestamp) ? serie.valueByTime.get(timestamp) : null
+      // Optionally round numeric values to the requested number of decimals
+      if (!_.isNil(options.precision) && _.isFinite(value)) value = _.round(value, options.precision)
       row[options.labelAsHeader ? `${serie.label}` : `${serie.name}`] = value
     }
     json.push(row)
