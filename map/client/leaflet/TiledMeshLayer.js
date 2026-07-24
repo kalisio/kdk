@@ -103,7 +103,21 @@ const TiledMeshLayer = L.GridLayer.extend({
 
     // debounced redraw to batch rapid successive tile load/unload events into one GPU frame
     // 60 fps is about 16ms per frame
-    this.requestdRedraw = _.debounce(() => { if (this.sharedOverlay) this.sharedOverlay.pixiLayer.redraw() }, 16)
+    this.requestdRedraw = _.debounce(() => {
+      if (this.sharedOverlay) this.sharedOverlay.pixiLayer.redraw()
+    }, 16)
+    // some grid sources discover data value bounds once data has been fetched, possibly only for the tile(s) that were requested.
+    // Checking after every single tile keeps the color mapping progressively refining as data streams in
+    // (rather than one abrupt jump once the whole batch settles). However, rebuilding the shader program still has a real
+    // cost, so debounce it a bit instead of doing it on every single tile.
+    this.requestColorMapRefresh = _.debounce(() => {
+      // Only the color mapping domain moved, not the underlying data: no need to re-fetch anything,
+      // just redraw whatever is already loaded
+      if (this.needsColorMapDomainRefresh()) {
+        this.refreshLoadedTiles()
+        this.fire('data-domain')
+      }
+    }, 250)
 
     // register event callbacks
     this.on('tileload', (event) => { this.onTileLoad(event) })
@@ -146,6 +160,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.zoomEndCallback = null
 
     this.requestdRedraw.cancel()
+    this.requestColorMapRefresh.cancel()
     this.clearPreviousPixiRoot()
     this.sharedOverlay.container.removeChild(this.pixiWrapper)
     releaseSharedOverlay(map)
@@ -258,6 +273,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     if (mesh.visible) {
       this.requestdRedraw()
     }
+    this.requestColorMapRefresh()
   },
 
   onTileUnload (event) {
@@ -308,7 +324,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     for (const child of this.pixiRoot.children) {
       if (child.zoomLevel === zoomLevel) child.visible = true
     }
-    this.sharedOverlay.pixiLayer.redraw()
+    this.requestdRedraw()
   },
 
   onDataChanged () {
@@ -320,9 +336,26 @@ const TiledMeshLayer = L.GridLayer.extend({
       this.options.bounds = L.latLngBounds(c1, c2)
     }
 
-    // eventually, update color map
+    // the underlying data actually changed (new dataset/model/time/...), a full reload is required
+    this.refresh()
+    this.fire('data')
+    this.hasData = true
+  },
+
+  needsColorMapDomainRefresh () {
+    // Only relevant when the domain is updated as data loads, ie. relative mode
+    const chromajs = this.conf.chromajs
+    const rgb = _.get(this.gridSource, 'rgb', _.get(this.gridSource, 'source.rgb'))
+    if (_.isNil(chromajs) || rgb || chromajs.classes || !chromajs.relative) return false
+
+    const domain = this.getColorMapDomain(chromajs)
+    const changed = domain[0] !== this.colorMapDomain[0] || domain[1] !== this.colorMapDomain[1]
+    return (changed)
+  },
+
+  refresh () {
+    // update color map and rebuild the shader program(s) from it
     this.updateColorMap()
-    // eventually, update shader
     this.updateShader()
 
     // Keep current tiles visible while new ones load by parking them in previousPixiRoot.
@@ -332,14 +365,37 @@ const TiledMeshLayer = L.GridLayer.extend({
       this.previousPixiRoot.addChild(child)
     }
 
-    // clear tiles and request again
     this.redraw()
+  },
 
-    // play nice with color legend component
-    if (this.colorMap) {
-      this.fire('data')
-      this.hasData = true
+  refreshLoadedTiles () {
+    // update color map and rebuild the shader program(s) from it
+    this.updateColorMap()
+    this.updateShader()
+
+    // re-shade already loaded tiles in place: the underlying geometry/values haven't changed,
+    // only the color mapping did, so there is no need to go through the grid source again
+    for (const key in this._tiles) {
+      const tile = this._tiles[key].el
+      if (!tile || !tile.mesh) continue
+      const uniforms = tile.mesh.shader.uniforms
+      tile.mesh.shader = new PIXI.Shader(this.program, uniforms)
+      if (this.conf.render.showWireframe && tile.wireframe) {
+        tile.wireframe.shader = new PIXI.Shader(this.wireframeProgram, uniforms)
+      }
     }
+
+    this.requestdRedraw()
+  },
+
+  // Resolves the effective domain to use for the color map. A domain is always required in
+  // config as a starting point:
+  // - not 'relative' (default): absolute, fixed as given, never updated by data
+  // - 'relative': used only until the first data batch has loaded, then replaced by the
+  //   grid source's own bounds (which changes as more data loads)
+  getColorMapDomain (chromajs) {
+    if (!chromajs.relative) return chromajs.domain
+    return this.gridSource.getDataBounds() || chromajs.domain
   },
 
   updateColorMap () {
@@ -349,25 +405,23 @@ const TiledMeshLayer = L.GridLayer.extend({
     const rgb = _.get(this.gridSource, 'rgb', _.get(this.gridSource, 'source.rgb'))
     if (_.isNil(chromajs) || rgb) return
 
-    // create color map using domain or classes
-    // domain and classes can be specified from options
-    // if not, domain can be gathered from grid source
+    // create color map using domain or classes specified from options
     this.colorMap = null
     this.colorMapShaderCode = null
 
     const classes = chromajs.classes
     let domain
     if (!classes) {
-      domain = chromajs.domain
-      if (!domain) {
-        domain = this.gridSource.getDataBounds()
-      }
+      // Keep track of it to check for changes afterwards
+      this.colorMapDomain = domain = this.getColorMapDomain(chromajs)
     }
     const scale = chroma.scale(chromajs.colors)
     // translate to glsl style colors for shader code
     const glcolors = scale.colors().map(c => chroma(c).gl())
 
-    this.colorMap = kdkCoreUtils.buildColorScale(chromajs)
+    // Make sure the CPU-side color scale matches whatever domain ends up driving the GPU shader,
+    // including when it was resolved from the grid source rather than provided in options
+    this.colorMap = kdkCoreUtils.buildColorScale(domain ? { ...chromajs, domain } : chromajs)
     if (domain) {
       this.colorMapShaderCode = buildColorMapShaderCodeFromDomain(domain, glcolors)
     } else if (classes) {

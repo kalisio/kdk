@@ -75,12 +75,24 @@ export const tiledMeshLayers = {
       if (this.selectableLevelsLayer && (this.selectableLevelsLayer._id === layer._id)) {
         engineLayer.setLevel(this.selectedLevel)
       }
+      // Reflect domain update from the engine layer (ie relative color mapping) back onto the reactive layer definition.
+      // Indeed, legend or similar layer components will update like any other config change.
+      engineLayer.updateColorMapDomain = () => {
+        if (engineLayer.colorMapDomain && _.get(layer, 'variables[0].chromajs')) {
+          _.set(layer, 'variables[0].chromajs.domain', engineLayer.colorMapDomain)
+        }
+      }
+      engineLayer.on('data-domain', engineLayer.updateColorMapDomain)
     },
 
     onHideTiledMeshLayer (layer, engineLayer) {
       const isTiledMeshLayer = engineLayer instanceof TiledMeshLayer
       if (!isTiledMeshLayer) return
 
+      if (engineLayer.updateColorMapDomain) {
+        engineLayer.off('data-domain', engineLayer.updateColorMapDomain)
+        delete engineLayer.updateColorMapDomain
+      }
       this.tiledMeshLayers.delete(layer._id)
     },
 
