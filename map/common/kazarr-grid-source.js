@@ -1,6 +1,11 @@
 import _ from 'lodash'
 import { unitConverters, GridSource, toHalf } from './grid.js'
 
+// Bounds for the dynamically computed mesh_tile_size, these are default values that can be overriden by config
+const MIN_MESH_TILE_SIZE = 4
+const DEFAULT_MAX_MESH_TILE_SIZE = 64
+const DEFAULT_MESH_TILE_SIZE = 16
+
 // grid: {
 //   bounds : { min, max }
 //   resolution_factor: {},
@@ -114,6 +119,19 @@ export class KazarrGridSource extends GridSource {
     this.dataChanged()
   }
 
+  // Computes how many mesh points to request for a tile covering [tileExtentLat, tileExtentLon] degrees,
+  // given the display resolution at the current zoom level (degrees/pixel).
+  // We only need as many points as whichever is coarser between the data and the screen actually requires.
+  computeMeshTileSize (tileExtentLat, tileExtentLon, resolution) {
+    const dataResolution = this.config.resolution
+    if (!dataResolution) return _.get(this.config, 'defaultMeshTileSize', DEFAULT_MESH_TILE_SIZE)
+
+    const maxMeshTileSize = _.get(this.config, 'maxMeshTileSize', DEFAULT_MAX_MESH_TILE_SIZE)
+    const sizeLat = tileExtentLat / Math.max(resolution[0], dataResolution[0])
+    const sizeLon = tileExtentLon / Math.max(resolution[1], dataResolution[1])
+    return Math.min(maxMeshTileSize, Math.max(MIN_MESH_TILE_SIZE, Math.round(Math.max(sizeLat, sizeLon))))
+  }
+
   async fetch (abort, bbox, resolution) {
     if (!this.usable) { return null }
 
@@ -127,8 +145,9 @@ export class KazarrGridSource extends GridSource {
     const reqMaxLon = maxLon
     const interpolation = this.config?.noInterpolation
       ? {}
-      // Default interpolation setup
-      : { mesh_tile_size: 16, interp_spatial_method: 'linear' }
+      // Resample about one mesh point per native data cell covered by the tile at the current zoom level,
+      // so we neither use a finer mesh than the data actually supports nor a coarser one than the screen can show.
+      : { mesh_tile_size: this.computeMeshTileSize(reqMaxLat - reqMinLat, reqMaxLon - reqMinLon, resolution), interp_spatial_method: 'linear' }
     const parameters = Object.assign({
       variable: this.config.variable,
       lon_min: reqMinLon,

@@ -106,6 +106,9 @@ export class MeteoModelGridSource extends DynamicGridSource {
     if (ctx.candidate) {
       config = this.deriveConfig(ctx, ctx.candidate.staticProps, ctx.candidate.dynamicProps)
       if (config) {
+        // Make the model's native spatial resolution available to the underlying grid source,
+        // eg. so it can adapt how much it resamples data to the actual zoom level
+        if (ctx.model.resolution) config.resolution = ctx.model.resolution
         source = makeGridSource(ctx.candidate.key, this.options)
       }
     }
