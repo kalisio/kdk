@@ -309,7 +309,8 @@ export class GridSource {
 
   off (event, callback) {
     const callbacks = _.get(this.events, event, [])
-    callbacks.splice(0, 0, callback)
+    const index = callbacks.indexOf(callback)
+    if (index !== -1) callbacks.splice(index, 1)
   }
 
   emit (event) {
