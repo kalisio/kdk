@@ -344,16 +344,15 @@ const TiledMeshLayer = L.GridLayer.extend({
 
   updateColorMap () {
     const chromajs = this.conf.chromajs
+    // Reset unconditionally so that a stale color map built while the source has no data is not a problem.
+    // Indeed, source starts reporting data as rgb or scalar only once loaded.
+    this.colorMap = null
+    this.colorMapShaderCode = null
+
     // When using RGB rendering no color mapping is applied at all,
     // manage the dynamic grid source case as fallback to check the option
     const rgb = _.get(this.gridSource, 'rgb', _.get(this.gridSource, 'source.rgb'))
     if (_.isNil(chromajs) || rgb) return
-
-    // create color map using domain or classes
-    // domain and classes can be specified from options
-    // if not, domain can be gathered from grid source
-    this.colorMap = null
-    this.colorMapShaderCode = null
 
     const classes = chromajs.classes
     let domain
