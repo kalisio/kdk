@@ -122,6 +122,7 @@ const TiledMeshLayer = L.GridLayer.extend({
     // register event callbacks
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
+    this.on('load', () => { this.onLoad() })
 
     this.gridSource = gridSource
     // keep ref on callback to be able to remove it
@@ -299,6 +300,17 @@ const TiledMeshLayer = L.GridLayer.extend({
         mesh.destroy()
       }
       event.tile.mesh = null
+    }
+  },
+
+  onLoad () {
+    // Fired once every tile requested for the current view has settled (loaded or errored),
+    // whether or not any of them produced data. If nothing visible ended up in pixi root element,
+    // clean the fallback content kept to avoid the screen goes blank while loading new tiles.
+    const hasVisibleContent = this.pixiRoot.children.some(child => child.visible)
+    if (!hasVisibleContent && this.previousPixiRoot.children.length > 0) {
+      this.clearPreviousPixiRoot()
+      this.requestdRedraw()
     }
   },
 
