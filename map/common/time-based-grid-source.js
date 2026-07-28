@@ -55,9 +55,11 @@ export class TimeBasedGridSource extends DynamicGridSource {
   makeBuildContext (updateCtx) {
     const ctx = Object.assign({}, updateCtx)
 
-    ctx.candidate = this.selectCandidate(ctx.time)
+    // properties already present in the context (eg. provided via the client-only template
+    // context) are never recomputed/overwritten here
+    if (!ctx.candidate) ctx.candidate = this.selectCandidate(ctx.time)
     if (ctx.candidate) {
-      ctx.stepTime = moment(Math.trunc(ctx.time / ctx.candidate.every) * ctx.candidate.every)
+      if (!ctx.stepTime) ctx.stepTime = moment(Math.trunc(ctx.time / ctx.candidate.every) * ctx.candidate.every)
 
       // switch to utc mode, all display methods will display in UTC
       ctx.time.utc()

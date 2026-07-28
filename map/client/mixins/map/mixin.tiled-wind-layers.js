@@ -3,6 +3,7 @@ import moment from 'moment'
 import 'leaflet-velocity'
 import { Time } from '../../../../core/client/time.js'
 import { Events } from '../../../../core/client/events.js'
+import { TemplateContext } from '../../../../core/client/template-context.js'
 import * as time from '../../../../core/client/utils/utils.time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
@@ -35,13 +36,15 @@ export const tiledWindLayers = {
           apiJwt, gatewayJwt, moment, Time, ...time,
           // This one is for backward compatibility
           jwtToken: gatewayJwt,
-          windComponent: _.get(options, 'meteoElements[0]')
+          windComponent: _.get(options, 'meteoElements[0]'),
+          ...TemplateContext.get()
         })
         Object.assign(vSource.updateCtx, {
           apiJwt, gatewayJwt, ...time,
           // This one is for backward compatibility
           jwtToken: gatewayJwt,
-          windComponent: _.get(options, 'meteoElements[1]')
+          windComponent: _.get(options, 'meteoElements[1]'),
+          ...TemplateContext.get()
         })
       }
 
@@ -116,6 +119,20 @@ export const tiledWindLayers = {
       if (!layer) return
 
       layer.setLevel(value)
+    },
+
+    onTemplateContextChangedTiledWindLayer (path, value, previousValue) {
+      // refresh visible layers so template-driven dynamic properties are recomputed
+      this.tiledWindLayers.forEach((engineLayer) => {
+        const gridSources = [engineLayer.uSource, engineLayer.vSource]
+        gridSources.forEach((gridSource) => {
+          if (gridSource && gridSource.updateCtx) {
+            Object.assign(gridSource.updateCtx, TemplateContext.get())
+            gridSource.invalidate()
+            gridSource.queueUpdate()
+          }
+        })
+      })
     }
   },
 
@@ -129,6 +146,7 @@ export const tiledWindLayers = {
     this.$engineEvents.on('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$engineEvents.on('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
     Events.on('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
+    Events.on('template-context-changed', this.onTemplateContextChangedTiledWindLayer)
   },
 
   beforeUnmount () {
@@ -138,5 +156,6 @@ export const tiledWindLayers = {
     this.$engineEvents.off('selected-level-changed', this.onSelectedLevelChangedTiledWindLayer)
     this.$engineEvents.off('forecast-model-changed', this.onForecastModelChangedTiledWindLayer)
     Events.off('time-current-time-changed', this.onCurrentTimeChangedTiledWindLayer)
+    Events.off('template-context-changed', this.onTemplateContextChangedTiledWindLayer)
   }
 }

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import { Time } from '../../../../core/client/time.js'
 import { Events } from '../../../../core/client/events.js'
+import { TemplateContext } from '../../../../core/client/template-context.js'
 import * as time from '../../../../core/client/utils/utils.time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
 import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer.js'
@@ -31,7 +32,8 @@ export const tiledMeshLayers = {
           apiJwt, gatewayJwt, moment, Time, ...time,
           // This one is for backward compatibility
           jwtToken: gatewayJwt,
-          meteoElements: _.get(options, 'meteoElements')
+          meteoElements: _.get(options, 'meteoElements'),
+          ...TemplateContext.get()
         })
       }
 
@@ -117,6 +119,18 @@ export const tiledMeshLayers = {
     onCurrentTimeChangedTiledMeshLayer (time) {
       // broadcast time to visible layers
       this.tiledMeshLayers.forEach((engineLayer) => { engineLayer.setTime(time) })
+    },
+
+    onTemplateContextChangedTiledMeshLayer (path, value, previousValue) {
+      // refresh visible layers so template-driven dynamic properties are recomputed
+      this.tiledMeshLayers.forEach((engineLayer) => {
+        const gridSource = engineLayer.gridSource
+        if (gridSource && gridSource.updateCtx) {
+          Object.assign(gridSource.updateCtx, TemplateContext.get())
+          gridSource.invalidate()
+          gridSource.queueUpdate()
+        }
+      })
     }
   },
 
@@ -130,6 +144,7 @@ export const tiledMeshLayers = {
     this.$engineEvents.on('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
     this.$engineEvents.on('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
     Events.on('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
+    Events.on('template-context-changed', this.onTemplateContextChangedTiledMeshLayer)
   },
 
   beforeUnmount () {
@@ -139,5 +154,6 @@ export const tiledMeshLayers = {
     this.$engineEvents.off('selected-level-changed', this.onSelectedLevelChangedTiledMeshLayer)
     this.$engineEvents.off('forecast-model-changed', this.onForecastModelChangedTiledMeshLayer)
     Events.off('time-current-time-changed', this.onCurrentTimeChangedTiledMeshLayer)
+    Events.off('template-context-changed', this.onTemplateContextChangedTiledMeshLayer)
   }
 }

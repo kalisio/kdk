@@ -73,14 +73,18 @@ export class MeteoModelGridSource extends DynamicGridSource {
   makeBuildContext (updateCtx) {
     const ctx = Object.assign({}, updateCtx)
 
-    ctx.candidate = this.selectCandidate(updateCtx.time, updateCtx.model.name)
+    // properties already present in the context (eg. provided via the client-only template
+    // context) are never recomputed/overwritten here
+    if (!ctx.candidate) ctx.candidate = this.selectCandidate(updateCtx.time, updateCtx.model.name)
     if (ctx.candidate) {
       // update context
-      ctx.runTime = getNearestRunTime(updateCtx.time, updateCtx.model.runInterval)
-      // take runOffset into account
-      ctx.runTime.subtract(ctx.runOffset * updateCtx.model.runInterval, 'seconds')
-      ctx.forecastTime = getNearestForecastTime(updateCtx.time, updateCtx.model.interval)
-      ctx.forecastOffset = moment.duration(ctx.forecastTime.diff(ctx.runTime))
+      if (!ctx.runTime) {
+        ctx.runTime = getNearestRunTime(updateCtx.time, updateCtx.model.runInterval)
+        // take runOffset into account
+        ctx.runTime.subtract(ctx.runOffset * updateCtx.model.runInterval, 'seconds')
+      }
+      if (!ctx.forecastTime) ctx.forecastTime = getNearestForecastTime(updateCtx.time, updateCtx.model.interval)
+      if (!ctx.forecastOffset) ctx.forecastOffset = moment.duration(ctx.forecastTime.diff(ctx.runTime))
 
       // switch to utc mode, all display methods will display in UTC
       ctx.time.utc()
