@@ -157,6 +157,8 @@ function onFieldRefCreated (reference) {
   }
 }
 function onFieldChanged (field, value) {
+  const fieldInstance = getField(field)
+  if (fieldInstance.reference.value() === value) return
   emit('field-changed', field, value)
   const { isValid, errors } = validateSchema(values())
   if (!isValid) {
@@ -164,12 +166,12 @@ function onFieldChanged (field, value) {
     const error = hasFieldError(field, errors)
     if (error) {
       // Invalidate the field
-      getField(field).reference.invalidate(error.message)
+      fieldInstance.reference.invalidate(error.message)
       return
     }
   }
   // Validate the field
-  getField(field).reference.validate()
+  fieldInstance.reference.validate()
 }
 function hasFieldError (field, errors) {
   for (let i = 0; i < errors.length; i++) {
