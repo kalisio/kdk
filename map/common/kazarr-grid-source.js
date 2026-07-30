@@ -143,7 +143,7 @@ export class KazarrGridSource extends GridSource {
     const reqMinLon = minLon
     const reqMaxLat = bbox[2]
     const reqMaxLon = maxLon
-    const interpolation = this.config?.noInterpolation
+    const resampling = this.config?.noResampling
       ? {}
       // Resample about one mesh point per native data cell covered by the tile at the current zoom level,
       // so we neither use a finer mesh than the data actually supports nor a coarser one than the screen can show.
@@ -155,7 +155,7 @@ export class KazarrGridSource extends GridSource {
       lat_min: reqMinLat,
       lat_max: reqMaxLat,
       format: 'mesh',
-    }, interpolation, this.config.additional)
+    }, resampling, this.config.additional)
     let queryParams = ''
     for (const [key, value] of Object.entries(parameters)) { queryParams += _.isEmpty(queryParams) ? `${key}=${value}` : `&${key}=${value}` }
 
