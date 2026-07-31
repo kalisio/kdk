@@ -14,6 +14,7 @@
     clearable
     use-input
     hide-dropdown-icon
+    behavior="menu"
     :options="locations"
     :display-value="name"
     :error-message="errorLabel"
