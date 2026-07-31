@@ -16,7 +16,7 @@
     map-options
     use-input
     :dense="dense"
-    :clearable="isClearable()"
+    :clearable="clearable"
     :error="hasError"
     :error-message="errorLabel"
     :disable="disabled"
@@ -41,7 +41,7 @@
     <!-- selected item display -->
     <template v-slot:selected-item="scope">
       <q-chip v-if="chips && scope.opt.label"
-        removable
+        :removable="chipRemovable"
         :dense="dense"
         :color="scope.opt.color"
         :textColor="scope.opt.textColor"
@@ -92,8 +92,16 @@ export default {
     multiple () {
       return this.isMultiselect()
     },
+    clearable () {
+      if (this.required && this.options.length <= 1) return false
+      return _.get(this.properties, 'field.clearable', true)
+    },
     chips () {
       return this.hasChips()
+    },
+    chipRemovable () {
+      if (!this.required) return true
+      return this.options.length > 1
     },
     options () {
       let opts = _.map(_.get(this.properties, 'field.options', []), option => {
@@ -140,9 +148,6 @@ export default {
     isMultiselect () {
       return _.get(this.properties, 'multiselect', false)
     },
-    isClearable () {
-      return _.get(this.properties, 'field.clearable', true)
-    },
     hasChips () {
       return _.get(this.properties, 'field.chips', false)
     },
@@ -163,6 +168,11 @@ export default {
     emptyModel () {
       if (this.isMultiselect()) return []
       return null
+    },
+    fill (value) {
+      const newModel = this.isMultiselect() ? _.castArray(value ?? []) : value
+      if (!_.isEqual(this.model, newModel)) this.model = newModel
+      this.error = ''
     },
     onFilter (pattern, update) {
       if (pattern === '') {
