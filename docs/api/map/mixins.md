@@ -164,6 +164,7 @@ Make it easier to create 2D/3D mapping activities by providing methods available
 * **onGeocoding()** geocoding action handler that will open a dialog to search for a location to go to
 * **onGeolocate()** geolocation action handler that will launch a user's position lookup and go to found user's location
 * **onTrackLocation()** location tracking action handler that will enable/disable a location indicator to display location values
+* **getLayerDisabledContext()** provides the extra context to be used by the base map/globe mixins to resolve e.g. the [`'time'` disabled reason](./map-mixins.md#disabling-layers) for meteorological model backed layers.
 
 ::: tip
 This mixin has to be initialized by providing a unique component/activity name like `mixins.activity('map')`. Indeed, the name is then used to retrieve the configuration associated with the activity from the global frontend [configuration](../../guides/basics/step-by-step.md#configuring-a-kapp) according to the following properties:

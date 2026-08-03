@@ -117,6 +117,18 @@ Specifying `zIndex` or `minZoom/maxZoom` at layer level is mutually exclusive wi
 
 Althought the visibility of the panes will be automatically updated based on the current zoom level of your map, you can also programmatically change it using the `showPane/hidePane(name)` methods.
 
+### Disabling layers
+
+A layer can automatically become **disabled** - i.e. greyed out and not togglable in the catalog UI, without being removed from the map - under different independent conditions, by default those are checked whenever they change and combined so that either one is enough to disable the layer:
+* it is used outside its allowed zoom range, as configured by `minZoom`/`maxZoom` (see above),
+* the currently selected time (see the core [Time](../core/components.md#time) component) is past the newest time the layer can have data for, as resolved from its `to` [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) property (see the [catalog service layer](./services.md#layer) documentation) or similar from its underlying sources.
+
+This is exposed on each layer object as a reactive `isDisabled` boolean plus a `disabledReason` (e.g. `'zoom'` or `'time'`), and as `layer-enabled`/`layer-disabled` events fired whenever the state actually changes.
+
+::: tip
+This mixin has no direct knowledge of the currently selected forecast model for instance so that it calls the `getLayerDisabledContext()` virtual method (optional, defaults to no extra context when absent) to get whatever extra context is required.
+:::
+
 ## Map Style
 
 **KDK** introduces its own style specification as described below:

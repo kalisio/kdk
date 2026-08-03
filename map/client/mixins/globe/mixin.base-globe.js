@@ -11,8 +11,10 @@ import * as Cesium from 'cesium'
 import 'cesium/Source/Widgets/widgets.css'
 import { Geolocation } from '../../geolocation.js'
 import { convertCesiumHandlerEvent, isTerrainLayer, convertEntitiesToGeoJson, createCesiumObject } from '../../utils.globe.js'
-import { generateLayerDefinition } from '../../utils/utils.layers.js'
+import { generateLayerDefinition, isLayerDisabledByTime } from '../../utils/utils.layers.js'
+import { getLayerMaxTime } from '../../../common/moment-utils.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
+import { Events } from '../../../../core/client/events.js'
 
 // The URL on our server where CesiumJS's static files are hosted
 window.CESIUM_BASE_URL = '/Cesium/'
@@ -213,8 +215,35 @@ export const baseGlobe = {
       }
     },
     isLayerDisabled (layer) {
-      // TODO
-      return false
+      // Zoom/camera-distance based disabling is not implemented yet for the globe engine (TODO),
+      // only the data time-availability based one, shared with the leaflet engine
+      return isLayerDisabledByTime(layer, this.getLayerDisabledContext?.())
+    },
+    getLayerDisabledReason (layer) {
+      return isLayerDisabledByTime(layer, this.getLayerDisabledContext?.()) ? 'time' : null
+    },
+    updateLayerDisabled (layer) {
+      const wasDisabled = layer.isDisabled
+      const isDisabled = this.isLayerDisabled(layer)
+      // Test if state changed
+      if (wasDisabled === isDisabled) return
+      layer.isDisabled = isDisabled
+      layer.disabledReason = isDisabled ? this.getLayerDisabledReason(layer) : null
+      if (wasDisabled) this.onLayerEnabled(layer)
+      else this.onLayerDisabled(layer)
+    },
+    onLayerEnabled (layer) {
+      this.$emit('layer-enabled', layer)
+      this.$engineEvents.emit('layer-enabled', layer)
+    },
+    onLayerDisabled (layer) {
+      this.$emit('layer-disabled', layer)
+      this.$engineEvents.emit('layer-disabled', layer)
+    },
+    onCurrentGlobeTimeChanged () {
+      // Update disable state for layers bound by a data time-availability window (eg. sensors, satellite imagery)
+      const timeLayers = _.values(this.layers).filter(layer => getLayerMaxTime(layer, this.getLayerDisabledContext?.()) !== null)
+      timeLayers.forEach(layer => { this.updateLayerDisabled(layer) })
     },
     getLayerByName (name) {
       return this.layers[name]
@@ -306,6 +335,7 @@ export const baseGlobe = {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
         layer.isDisabled = this.isLayerDisabled(layer)
+        layer.disabledReason = layer.isDisabled ? this.getLayerDisabledReason(layer) : null
         // Store the layer
         this.layers[layer.name] = layer
         this.onLayerAdded(layer)
@@ -904,6 +934,7 @@ export const baseGlobe = {
     this.userLocation = false
     // Internal event bus
     this.$engineEvents = new EventBus()
+    Events.on('time-current-time-changed', this.onCurrentGlobeTimeChanged)
   },
   beforeUnmount () {
     this.clearLayers()
@@ -912,6 +943,7 @@ export const baseGlobe = {
     this.unregisterCesiumHandler('MOUSE_MOVE')
     this.unregisterCesiumHandler('LEFT_CLICK')
     this.unregisterCesiumHandler('RIGHT_CLICK')
+    Events.off('time-current-time-changed', this.onCurrentGlobeTimeChanged)
   },
   unmounted () {
     this.viewer.destroy()

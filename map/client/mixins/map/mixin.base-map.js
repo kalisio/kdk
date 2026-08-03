@@ -36,7 +36,8 @@ import '../../leaflet/BoxSelection.js'
 import '../../leaflet/WindBarb.js'
 import { Geolocation } from '../../geolocation.js'
 import { LeafletEvents, TouchEvents, bindLeafletEvents, getNearestTime } from '../../utils.map.js' // https://github.com/socib/Leaflet.TimeDimension/issues/124
-import { generateLayerDefinition } from '../../utils/utils.layers.js'
+import { generateLayerDefinition, isLayerDisabledByTime } from '../../utils/utils.layers.js'
+import { getLayerMaxTime } from '../../../common/moment-utils.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -501,7 +502,7 @@ export const baseMap = {
       const leafetLayer = this.getLeafletLayerByName(name)
       return leafetLayer && this.map.hasLayer(leafetLayer)
     },
-    isLayerDisabled (layer) {
+    isLayerDisabledByZoom (layer) {
       let hasMinZoom = !!_.get(layer, 'leaflet.minZoom')
       let hasMaxZoom = !!_.get(layer, 'leaflet.maxZoom')
       let minZoom = _.get(layer, 'leaflet.minZoom')
@@ -532,12 +533,22 @@ export const baseMap = {
       }
       return isDisabled
     },
+    isLayerDisabled (layer) {
+      return this.isLayerDisabledByZoom(layer) || isLayerDisabledByTime(layer, this.getLayerDisabledContext?.())
+    },
+    // Used for UI messaging only, checked in the same precedence order as isLayerDisabled
+    getLayerDisabledReason (layer) {
+      if (this.isLayerDisabledByZoom(layer)) return 'zoom'
+      if (isLayerDisabledByTime(layer, this.getLayerDisabledContext?.())) return 'time'
+      return null
+    },
     updateLayerDisabled (layer) {
       const wasDisabled = layer.isDisabled
       const isDisabled = this.isLayerDisabled(layer)
       // Test if state changed
       if (wasDisabled === isDisabled) return
       layer.isDisabled = isDisabled
+      layer.disabledReason = isDisabled ? this.getLayerDisabledReason(layer) : null
       if (wasDisabled) this.onLayerEnabled(layer)
       else this.onLayerDisabled(layer)
     },
@@ -618,6 +629,7 @@ export const baseMap = {
       if (layer && !this.hasLayer(layer.name)) {
         layer.isVisible = false
         layer.isDisabled = this.isLayerDisabled(layer)
+        layer.disabledReason = layer.isDisabled ? this.getLayerDisabledReason(layer) : null
         // Store the layer
         this.layers[layer.name] = layer
         this.onLayerAdded(layer)
@@ -978,6 +990,9 @@ export const baseMap = {
       _.forEach(this.leafletLayers, leafletLayer => {
         if (typeof leafletLayer.setCurrentTime === 'function') leafletLayer.setCurrentTime(datetime)
       })
+      // Update disable state for layers bound by a data time-availability window (eg. sensors, satellite imagery)
+      const timeLayers = _.values(this.layers).filter(layer => getLayerMaxTime(layer, this.getLayerDisabledContext?.()) !== null)
+      timeLayers.forEach(layer => { this.updateLayerDisabled(layer) })
     },
     onMapZoomChanged () {
       const { hidden, shown } = this.updateLeafletPanesVisibility()

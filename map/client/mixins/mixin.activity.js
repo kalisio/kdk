@@ -51,6 +51,11 @@ export const activity = {
     getFeatureActions (feature, layer) {
       return []
     },
+    // Extra context required by the base map/globe mixins to resolve a layer's disabled state
+    // (eg. isLayerDisabledByTime), beyond the layer definition itself.
+    getLayerDisabledContext () {
+      return { model: this.forecastModel }
+    },
     async getCatalogLayers () {
       const context = Context.get()
       // We get layers coming from global catalog first if any

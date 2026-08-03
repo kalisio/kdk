@@ -4,15 +4,16 @@ import sift from 'sift'
 import { Notify, Loading, uid } from 'quasar'
 import explode from '@turf/explode'
 import SphericalMercator from '@mapbox/sphericalmercator'
-import { i18n, api, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
+import { i18n, api, Time, LocalCache, utils as kCoreUtils, hooks as kCoreHooks } from '../../../core/client/index.js'
 import { cleanFeatures, createFeatures, removeFeatures } from './utils.features.js'
+import { getLayerMaxTime } from '../../common/moment-utils.js'
 import { PMTiles, findTile, zxyToTileId } from 'pmtiles'
 import { sourcesToViews } from 'protomaps-leaflet'
 import * as kMapHooks from '../hooks/index.js'
 import { generatePropertiesSchema, getGeoJsonFeatures } from '../utils.map.js'
 import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle, getStyleType } from './utils.style.js'
 
-const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled']
+const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled', 'disabledReason']
 
 export function isInMemoryLayer (layer) {
   return layer._id === undefined
@@ -44,6 +45,13 @@ export function isLayerHighlightable (layer) {
 
 export function isLayerProbable (layer) {
   return _.get(layer, 'isProbable', false)
+}
+
+// Checks whenever the currently selected time is beyond the newest time this layer can have data for
+// based on the currently selected forecast model if any.
+export function isLayerDisabledByTime (layer, { model = null } = {}) {
+  const maxTime = getLayerMaxTime(layer, { model })
+  return !!maxTime && Time.getCurrentTime().isAfter(maxTime)
 }
 
 export function isLayerStorable (layer) {

@@ -60,6 +60,14 @@ We currently only support `desaturate` post process. The `options` parameter in 
 
 ![Desaturate post process](../../.vitepress/public/images/desaturate-post-process.png)
 
+### Disabling layers
+
+This works similarly as detailled for [map](./map-mixins.md#disabling-layers).
+
+::: warning
+Disabling layers based on distance display condition (equivalent to zoom in map) is not yet supported.
+:::
+
 ## Globe Style
 
 Globe partly supports KDK style specification as detailled for [map](./mixins.md#map-style): color, width, opacity, [maki icons](https://labs.mapbox.com/maki-icons/) as shape by relying on the [pin builder](https://cesium.com/learn/ion-sdk/ref-doc/PinBuilder.html). It also provides additionnal capabilities specific to 3D entities defined in layers or features as an `entityStyle` property.
