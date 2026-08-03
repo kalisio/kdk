@@ -38,7 +38,7 @@ export function setupApi (configuration) {
       // Set specific matcher to handle eg bbox filtering
       matcher: (query) => sift(query, {
         expressions: {
-          $geoIntersects: function(query, value) {
+          $geoIntersects: function (query, value) {
             const polygon1 = _.get(query, '$geometry')
             const polygon2 = value
             if (!polygon1 || !polygon2) return false

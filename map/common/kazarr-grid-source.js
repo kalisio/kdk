@@ -31,15 +31,17 @@ function genCoordsBuffer (grid) {
     ++idx
   }
 
-  return { coords,
-           minLat: grid.minLat,
-           maxLat: grid.maxLat,
-           // minLon: grid.minLon,
-           // maxLon: grid.maxLon,
-           minLon: grid.minLon >= 180.0 ? grid.minLon - 360.0 : grid.minLon,
-           maxLon: grid.maxLon >= 180.0 ? grid.maxLon - 360.0 : grid.maxLon,
-           deltaLat,
-           deltaLon }
+  return {
+    coords,
+    minLat: grid.minLat,
+    maxLat: grid.maxLat,
+    // minLon: grid.minLon,
+    // maxLon: grid.maxLon,
+    minLon: grid.minLon >= 180.0 ? grid.minLon - 360.0 : grid.minLon,
+    maxLon: grid.maxLon >= 180.0 ? grid.maxLon - 360.0 : grid.maxLon,
+    deltaLat,
+    deltaLon
+  }
 }
 
 function genValuesBuffer (grid) {
@@ -154,7 +156,7 @@ export class KazarrGridSource extends GridSource {
       lon_max: reqMaxLon,
       lat_min: reqMinLat,
       lat_max: reqMaxLat,
-      format: 'mesh',
+      format: 'mesh'
     }, resampling, this.config.additional)
     let queryParams = ''
     for (const [key, value] of Object.entries(parameters)) { queryParams += _.isEmpty(queryParams) ? `${key}=${value}` : `&${key}=${value}` }
@@ -220,7 +222,7 @@ export class KazarrGridSource extends GridSource {
       const numLons = 1 + Math.round((grid.maxLon - grid.minLon) / deltaLon)
       const numLats = 1 + Math.round((grid.maxLat - grid.minLat) / deltaLat)
 
-      grid.getBestFit = (bbox) => { return [0, 0, numLats-1, numLons-1] }
+      grid.getBestFit = (bbox) => { return [0, 0, numLats - 1, numLons - 1] }
       grid.getLat = (index) => { return grid.data.vertices[((numLats - (index + 1)) * 3) + 1] }
       grid.getLon = (index) => { return grid.data.vertices[((index * numLats) * 3)] }
       grid.getValue = (ilat, ilon) => { return grid.data.values[(numLats - (ilat + 1)) + (ilon * numLats)] }

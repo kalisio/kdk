@@ -5,7 +5,7 @@ import { Store, api, i18n, Events } from '../../core/client/index.js'
 import { parseCoordinates } from './utils/index.js'
 import {
   formatUserCoordinates,
-  formatForwardGeocodingResult ,
+  formatForwardGeocodingResult,
   formatReverseGeocodingResult
 } from './utils/utils.location.js'
 import { Planets } from './planets.js'
