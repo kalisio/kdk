@@ -74,6 +74,7 @@
         :path="`messages`"
         class="col"
         :maxFileSize="props.maxFileSize"
+        :defaultFiles="defaultAttachments"
         @files-updated="onUploaderUpdated"
       />
       <KAction
@@ -110,6 +111,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  defaultAttachments: {
+    type: Array,
+    default: null
+  },
   baseMessage: {
     type: Object,
     required: false
@@ -135,7 +140,7 @@ const MessageTypes = props.messageTypes ?? config.messagesActivity.messages
 const { createMessage } = useMessages()
 const editor = ref(props.editorModeByDefault)
 const uploaderRef = ref(null)
-const attachments = ref(null)
+const attachments = ref(props.defaultAttachments)
 const currentType = ref(_.head(_.keys(MessageTypes)))
 const body = ref(props.defaultContent)
 
@@ -175,7 +180,8 @@ async function sendMessage () {
     body: body.value,
     author: _.get(User, 'profile.name'),
     authorId: _.get(User, '_id'),
-    attachments: attachments.value
+    // Here we have file blob objects as input, filter required properties to avoid serializing everything
+    attachments: _.map(attachments.value, attachment => _.pick(attachment, ['name', 'type']))
   }
   if (props.baseMessage) _.merge(message, props.baseMessage)
   // check for invalid file type
