@@ -302,13 +302,13 @@ export const editLayers = {
       if (this.map.pm.globalDragModeEnabled()) this.map.pm.disableGlobalDragMode()
       if (this.map.pm.globalRemovalModeEnabled()) this.map.pm.disableGlobalRemovalMode()
       if (this.map.pm.globalRotateModeEnabled()) this.map.pm.disableGlobalRotateMode()
+      this.freeDrawLayer.mode(FREEHAND_NONE)
       this.unsetCursor('freehand-cursor')
       this.map.pm.setGlobalOptions({ layerGroup: this.map })
 
       // Only unbind our per-session listener, the freehand drawing layer itself is kept alive
       // and reused across edit sessions (see startEditLayer)
       this.freeDrawLayer.off('markers', this.onFreehandCreated)
-
       unbindLeafletEvents(this.map, mapEditEvents)
       unbindLeafletEvents(this.editableLayer, layerEditEvents)
 
