@@ -36,6 +36,10 @@ const props = defineProps({
   maxFileSize: {
     type: Number,
     default: 52428800
+  },
+  defaultFiles: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -43,7 +47,7 @@ const props = defineProps({
 const emit = defineEmits(['files-updated', 'files-uploaded'])
 
 // Data
-const files = ref([])
+const files = ref(props.defaultFiles)
 const uploading = ref(false)
 const bToMb = 0.00000095367432
 
@@ -110,13 +114,7 @@ async function upload (path) {
   return true
 }
 function onUpdated (value) {
-  const files = _.map(value, file => {
-    return {
-      name: file.name,
-      type: file.type
-    }
-  })
-  emit('files-updated', files)
+  emit('files-updated', value)
 }
 
 // Expose
