@@ -13,6 +13,7 @@ import {
   fetchGeoJson, getGeoJsonFeatures, LeafletEvents, bindLeafletEvents, unbindLeafletEvents, getFeatureId, isInMemoryLayer, getFeatureStyleType,
   convertSimpleStyleToPointStyle, convertSimpleStyleToLineStyle, convertSimpleStyleToPolygonStyle, createMarkerFromPointStyle
 } from '../../utils.map.js'
+import { listenToLoadingEventsForLayer, unlistenToLoadingEventsForLayer } from '../../utils/utils.layers.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
 import * as wfs from '../../../common/wfs-utils.js'
 
@@ -654,6 +655,12 @@ export const geojsonLayers = {
           delete this.geojsonCache[layer.name]
         }
       }
+      // Specific case of realtime tiled layers: reflect tile loading state back onto the reactive
+      // layer definition so eg. UI can display a spinner while tiles are being fetched for the current view
+      if (engineLayer.tiledLayer) listenToLoadingEventsForLayer(layer, engineLayer.tiledLayer)
+    },
+    onLayerHiddenGeoJsonLayers (layer, engineLayer) {
+      if (engineLayer.tiledLayer) unlistenToLoadingEventsForLayer(layer, engineLayer.tiledLayer)
     },
     onEditStopGeoJsonLayers ({ status, layer }) {
       // Check if we have to cache/update geojson data for this layer
@@ -675,6 +682,7 @@ export const geojsonLayers = {
     Events.on('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.on('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.on('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.on('layer-hidden', this.onLayerHiddenGeoJsonLayers)
     this.$engineEvents.on('edit-stop', this.onEditStopGeoJsonLayers)
     this.$engineEvents.on('layer-removed', this.onLayerRemovedGeoJsonLayers)
 
@@ -689,6 +697,7 @@ export const geojsonLayers = {
     Events.off('units-changed', this.onDefaultUnitChangedGeoJsonLayers)
     this.$engineEvents.off('zoomend', this.onMapZoomChangedGeoJsonLayers)
     this.$engineEvents.off('layer-shown', this.onLayerShownGeoJsonLayers)
+    this.$engineEvents.off('layer-hidden', this.onLayerHiddenGeoJsonLayers)
     this.$engineEvents.off('edit-stop', this.onEditStopGeoJsonLayers)
     this.$engineEvents.off('layer-removed', this.onLayerRemovedGeoJsonLayers)
 

@@ -21,6 +21,9 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.userIsZooming = false
     this.pendingStationUpdates = []
     this.pendingRequests = []
+    // number of pending features/measures fetches, used to fire our own 'loading'/'load' events since
+    // createTile() has no 'done' callback so leaflet's native ones fire before data is actually fetched
+    this.pendingFetchs = 0
 
     this.getFeatureKey = (feature) => {
       return getFeatureId(feature, this.layer)
@@ -379,6 +382,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // keep track of pending request
       promise.status = { cancelled: false, pending: true }
       this.pendingRequests.push(promise)
+      if (this.pendingFetchs === 0) this.fire('loading')
+      ++this.pendingFetchs
 
       promise.then((data) => {
         if (promise.status.cancelled) return
@@ -456,6 +461,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
         if (this.enableDebug) logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
       }).finally(() => {
         promise.status.pending = false
+        --this.pendingFetchs
+        if (this.pendingFetchs === 0) this.fire('load')
       })
     })
 
@@ -474,6 +481,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // keep track of pending request
       promise.status = { cancelled: false, pending: true }
       this.pendingRequests.push(promise)
+      if (this.pendingFetchs === 0) this.fire('loading')
+      ++this.pendingFetchs
 
       // When stations are fetched, we flag them with a 'measureRequestIssued' property that we
       // may use in dynamic styling
@@ -536,6 +545,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
         })
       }).finally(() => {
         promise.status.pending = false
+        --this.pendingFetchs
+        if (this.pendingFetchs === 0) this.fire('load')
       })
     })
 

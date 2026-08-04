@@ -13,7 +13,7 @@ import * as kMapHooks from '../hooks/index.js'
 import { generatePropertiesSchema, getGeoJsonFeatures } from '../utils.map.js'
 import { generateStyleTemplates, filterQueryToConditions, getDefaultStyleFromTemplates, DefaultStyle, getStyleType } from './utils.style.js'
 
-const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled', 'disabledReason']
+const InternalLayerProperties = ['actions', 'label', 'isVisible', 'isDisabled', 'disabledReason', 'isLoading']
 
 export function isInMemoryLayer (layer) {
   return layer._id === undefined
@@ -52,6 +52,27 @@ export function isLayerProbable (layer) {
 export function isLayerDisabledByTime (layer, { model = null } = {}) {
   const maxTime = getLayerMaxTime(layer, { model })
   return !!maxTime && Time.getCurrentTime().isAfter(maxTime)
+}
+
+// Bind loading/load listeners on a tiled engine layer so that its current tile fetching state
+// is reflected onto the reactive layer definition as `layer.isLoading`, eg. for UI to display a loading indicator..
+export function listenToLoadingEventsForLayer (layer, engineLayer) {
+  unlistenToLoadingEventsForLayer(layer, engineLayer)
+  layer.isLoading = false
+  engineLayer.onLoadingStart = () => { layer.isLoading = true }
+  engineLayer.onLoadingEnd = () => { layer.isLoading = false }
+  engineLayer.on('loading', engineLayer.onLoadingStart)
+  engineLayer.on('load', engineLayer.onLoadingEnd)
+}
+
+// Unbind previously bound loading/load listeners from an engine layer
+export function unlistenToLoadingEventsForLayer (layer, engineLayer) {
+  if (!engineLayer || !engineLayer.onLoadingStart) return
+  engineLayer.off('loading', engineLayer.onLoadingStart)
+  engineLayer.off('load', engineLayer.onLoadingEnd)
+  delete engineLayer.onLoadingStart
+  delete engineLayer.onLoadingEnd
+  layer.isLoading = false
 }
 
 export function isLayerStorable (layer) {

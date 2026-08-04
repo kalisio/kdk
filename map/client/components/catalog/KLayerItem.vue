@@ -30,6 +30,7 @@
     </div>
     <q-space />
     <slot name="status">
+      <q-spinner color="primary" size="1.2em" v-if="layer.isLoading" />
       <q-icon name="las la-exclamation-circle" size="sm" color="warning" v-if="layer.isDisabled">
         <q-tooltip>{{ layer.disabledReason === 'time' ? $t('KLayersList.LAYER_DISABLED_TIME') : $t('KLayersList.LAYER_DISABLED') }}</q-tooltip>
       </q-icon>

@@ -6,6 +6,7 @@ import { Events } from '../../../../core/client/events.js'
 import { TemplateContext } from '../../../../core/client/template-context.js'
 import * as time from '../../../../core/client/utils/utils.time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
+import { listenToLoadingEventsForLayer, unlistenToLoadingEventsForLayer } from '../../utils/utils.layers.js'
 import { TiledWindLayer } from '../../leaflet/TiledWindLayer.js'
 
 export const tiledWindLayers = {
@@ -89,12 +90,16 @@ export const tiledWindLayers = {
       if (this.selectableLevelsLayer && (this.selectableLevelsLayer._id === layer._id)) {
         engineLayer.setLevel(this.selectedLevel)
       }
+      // Reflect tile loading state back onto the reactive layer definition so eg. UI can
+      // display a spinner while tiles are being fetched for the current view
+      listenToLoadingEventsForLayer(layer, engineLayer)
     },
 
     onHideTiledWindLayer (layer, engineLayer) {
       const isTiledWindLayer = engineLayer instanceof TiledWindLayer
       if (!isTiledWindLayer) return
 
+      unlistenToLoadingEventsForLayer(layer, engineLayer)
       this.tiledWindLayers.delete(layer._id)
     },
 

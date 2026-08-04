@@ -5,6 +5,7 @@ import { Events } from '../../../../core/client/events.js'
 import { TemplateContext } from '../../../../core/client/template-context.js'
 import * as time from '../../../../core/client/utils/utils.time.js'
 import { makeGridSource, extractGridSourceConfig } from '../../../common/grid.js'
+import { listenToLoadingEventsForLayer, unlistenToLoadingEventsForLayer } from '../../utils/utils.layers.js'
 import { TiledMeshLayer } from '../../leaflet/TiledMeshLayer.js'
 
 export const tiledMeshLayers = {
@@ -85,6 +86,9 @@ export const tiledMeshLayers = {
         }
       }
       engineLayer.on('data-domain', engineLayer.updateColorMapDomain)
+      // Reflect tile loading state back onto the reactive layer definition so eg. UI can
+      // display a spinner while tiles are being fetched for the current view
+      listenToLoadingEventsForLayer(layer, engineLayer)
     },
 
     onHideTiledMeshLayer (layer, engineLayer) {
@@ -95,6 +99,7 @@ export const tiledMeshLayers = {
         engineLayer.off('data-domain', engineLayer.updateColorMapDomain)
         delete engineLayer.updateColorMapDomain
       }
+      unlistenToLoadingEventsForLayer(layer, engineLayer)
       this.tiledMeshLayers.delete(layer._id)
     },
 

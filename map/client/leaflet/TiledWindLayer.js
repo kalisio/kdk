@@ -292,6 +292,10 @@ const TiledWindLayer = L.GridLayer.extend({
       const uPromise = this.uSource.fetch(null, reqBBox, resolution)
       const vPromise = this.vSource.fetch(null, reqBBox, resolution)
 
+      // createTile() has no 'done' callback so leaflet's native loading/load events fire almost
+      // immediately and don't reflect real fetch completion here (unlike TiledMeshLayer), hence
+      // this manual firing based on our own pendingFetchs count, mirroring what leaflet does natively
+      if (this.pendingFetchs === 0) this.fire('loading')
       ++this.pendingFetchs
 
       // robin: i don't use a finally() call since it fails on firefox for obscure reasons
@@ -301,6 +305,7 @@ const TiledWindLayer = L.GridLayer.extend({
       const doFinally = () => {
         // in any case
         --this.pendingFetchs
+        if (this.pendingFetchs === 0) this.fire('load')
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
