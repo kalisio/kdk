@@ -255,13 +255,13 @@ const TiledMeshLayer = L.GridLayer.extend({
     const mesh = event.tile.mesh
     if (!mesh) return
 
-    // First visible tile at the new zoom/data level: discard the stale tiles that were kept visible.
-    // Only clear on a visible tile so that invisible tiles arriving during a rapid zoom-back
-    // don't prematurely remove the fallback content.
-    if (mesh.visible && this.previousPixiRoot.children.length > 0) this.clearPreviousPixiRoot()
-
     mesh.zoomLevel = event.coords.z
-    mesh.visible = mesh.zoomLevel === Math.round(this._map.getZoom())
+    const matchesCurrentZoom = mesh.zoomLevel === Math.round(this._map.getZoom())
+    // While fallback content is parked in previousPixiRoot, keep new tiles hidden even if they'd
+    // otherwise be visible at the current zoom: revealing them one by one as they stream in would
+    // blend them with the (additively blended) fallback content still on screen. Instead they only
+    // get revealed all together, atomically, once the whole batch has settled - see onLoad() below.
+    mesh.visible = matchesCurrentZoom && (this.previousPixiRoot.children.length === 0)
     this.pixiRoot.addChild(mesh)
 
     if (this.conf.render.showWireframe) {
@@ -288,7 +288,7 @@ const TiledMeshLayer = L.GridLayer.extend({
       const mesh = event.tile.mesh
       // During a data change, onDataChanged moves meshes to previousPixiRoot before redraw(),
       // so tileunload fires with the mesh already there. Leave it in place so
-      // it keeps rendering until the first new tile arrives.
+      // it keeps rendering until the whole new batch has settled (see onLoad()).
       if (mesh.parent === this.pixiRoot) {
         this.pixiRoot.removeChild(mesh)
         if (this.conf.render.showWireframe) {
@@ -304,11 +304,16 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   onLoad () {
-    // Fired once every tile requested for the current view has settled (loaded or errored),
-    // whether or not any of them produced data. If nothing visible ended up in pixi root element,
-    // clean the fallback content kept to avoid the screen goes blank while loading new tiles.
-    const hasVisibleContent = this.pixiRoot.children.some(child => child.visible)
-    if (!hasVisibleContent && this.previousPixiRoot.children.length > 0) {
+    // Fired once every tile requested for the current view has settled (loaded or errored), whether
+    // or not any of them produced data. Tiles that arrived while fallback content was parked in
+    // previousPixiRoot were kept hidden (see onTileLoad) precisely to avoid ever blending old and new
+    // content together, so reveal them now (per their zoom level, same as onZoomEnd) and discard the
+    // fallback in the same frame, swapping to the new batch atomically.
+    if (this.previousPixiRoot.children.length > 0) {
+      const zoomLevel = Math.round(this._map.getZoom())
+      for (const child of this.pixiRoot.children) {
+        child.visible = child.zoomLevel === zoomLevel
+      }
       this.clearPreviousPixiRoot()
       this.requestdRedraw()
     }
