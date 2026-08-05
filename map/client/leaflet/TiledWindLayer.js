@@ -108,21 +108,19 @@ const TiledWindLayer = L.GridLayer.extend({
   setTime (time) {
     const applyU = typeof this.uSource.setTime === 'function'
     const applyV = typeof this.vSource.setTime === 'function'
-    if (applyU || applyV) {
-      if (!this.pendingAdd) { this._resetView() }
-      if (applyU) { this.uSource.setTime(time) }
-      if (applyV) { this.vSource.setTime(time) }
-    }
+    // no need to force a tile refresh here as the real invalidation happens later,
+    // once the grid source actually changes its data
+    if (applyU) { this.uSource.setTime(time) }
+    if (applyV) { this.vSource.setTime(time) }
   },
 
   setLevel (level) {
     const applyU = typeof this.uSource.setLevel === 'function'
     const applyV = typeof this.vSource.setLevel === 'function'
-    if (applyU || applyV) {
-      if (!this.pendingAdd) { this._resetView() }
-      if (applyU) { this.uSource.setLevel(level) }
-      if (applyV) { this.vSource.setLevel(level) }
-    }
+    // no need to force a tile refresh here as the real invalidation happens later,
+    // once the grid source actually changes its data
+    if (applyU) { this.uSource.setLevel(level) }
+    if (applyV) { this.vSource.setLevel(level) }
   },
 
   setModel (model) {
@@ -162,11 +160,10 @@ const TiledWindLayer = L.GridLayer.extend({
 
     const applyU = typeof this.uSource.setModel === 'function'
     const applyV = typeof this.vSource.setModel === 'function'
-    if (applyU || applyV) {
-      if (!this.pendingAdd) { this._resetView() }
-      if (applyU) { this.uSource.setModel(model) }
-      if (applyV) { this.vSource.setModel(model) }
-    }
+    // no need to force a tile refresh here as the real invalidation happens later,
+    // once the grid source actually changes its data
+    if (applyU) { this.uSource.setModel(model) }
+    if (applyV) { this.vSource.setModel(model) }
   },
 
   onDataChanged () {
@@ -206,7 +203,7 @@ const TiledWindLayer = L.GridLayer.extend({
 
   onAdd (map) {
     // defer actual addLayer call to the point where we have data ready to be displayed
-    // otherwise, leaflet will start loading meaningless tiles
+    // otherwise, leaflet will start loading meaningless tiles against a grid source that hasn't been configured yet
     this.pendingAdd = map
   },
 
@@ -259,7 +256,7 @@ const TiledWindLayer = L.GridLayer.extend({
     }
   },
 
-  createTile (coords) {
+  createTile (coords, done) {
     const tile = document.createElement('div')
 
     // check we need to load the tile
@@ -292,10 +289,6 @@ const TiledWindLayer = L.GridLayer.extend({
       const uPromise = this.uSource.fetch(null, reqBBox, resolution)
       const vPromise = this.vSource.fetch(null, reqBBox, resolution)
 
-      // createTile() has no 'done' callback so leaflet's native loading/load events fire almost
-      // immediately and don't reflect real fetch completion here (unlike TiledMeshLayer), hence
-      // this manual firing based on our own pendingFetchs count, mirroring what leaflet does natively
-      if (this.pendingFetchs === 0) this.fire('loading')
       ++this.pendingFetchs
 
       // robin: i don't use a finally() call since it fails on firefox for obscure reasons
@@ -305,7 +298,6 @@ const TiledWindLayer = L.GridLayer.extend({
       const doFinally = () => {
         // in any case
         --this.pendingFetchs
-        if (this.pendingFetchs === 0) this.fire('load')
         if (this.pendingFetchs === 0 && !this.userIsDragging) {
           // last pending fetch triggers a wind restart
           this.velocityLayer._clearAndRestart()
@@ -346,6 +338,7 @@ const TiledWindLayer = L.GridLayer.extend({
         }
 
         doFinally()
+        done(null, tile)
       }).catch(err => {
         // fetch failed
         if (this.conf.enableDebug) {
@@ -354,14 +347,16 @@ const TiledWindLayer = L.GridLayer.extend({
         }
 
         doFinally()
-
-        throw err
+        done(err, tile)
       })
     } else {
       if (this.conf.enableDebug) {
         tile.style.outline = '1px solid green'
         tile.innerHTML += ' skipped'
       }
+      // Nothing to fetch for this tile (already covered by a loaded parent).
+      // Defer to a microtask as calling done() synchronously here would be a no-op on leaflet's side.
+      Promise.resolve().then(() => done(null, tile))
     }
 
     return tile

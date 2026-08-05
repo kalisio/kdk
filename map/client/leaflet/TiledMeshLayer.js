@@ -131,6 +131,14 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   onAdd (map) {
+    // defer actual addLayer call to the point where we have data ready to be displayed
+    // otherwise, leaflet will start loading meaningless tiles against a grid source that hasn't been configured yet
+    this.pendingAdd = map
+  },
+
+  onPendingAdd () {
+    const map = this.pendingAdd
+
     // Attach to the per-map shared pixi overlay so all layers share one WebGL context.
     this.sharedOverlay = getOrCreateSharedOverlay(map)
     this.sharedOverlay.container.addChild(this.pixiWrapper)
@@ -151,9 +159,17 @@ const TiledMeshLayer = L.GridLayer.extend({
     map.on('zoomend', this.zoomEndCallback)
 
     L.GridLayer.prototype.onAdd.call(this, map)
+
+    this.pendingAdd = null
   },
 
   onRemove (map) {
+    if (this.pendingAdd) {
+      // never actually got added to leaflet (see onAdd/onPendingAdd), nothing to clean up
+      this.pendingAdd = null
+      return
+    }
+
     // remove map listeners
     map.off('zoomstart', this.zoomStartCallback)
     map.off('zoomend', this.zoomEndCallback)
@@ -261,6 +277,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     // otherwise be visible at the current zoom: revealing them one by one as they stream in would
     // blend them with the (additively blended) fallback content still on screen. Instead they only
     // get revealed all together, atomically, once the whole batch has settled - see onLoad() below.
+    // No such concern for the very first batch ever loaded (nothing to blend with), so tiles appear
+    // immediately as they arrive in that case, same as any ordinary tile layer.
     mesh.visible = matchesCurrentZoom && (this.previousPixiRoot.children.length === 0)
     this.pixiRoot.addChild(mesh)
 
@@ -353,8 +371,17 @@ const TiledMeshLayer = L.GridLayer.extend({
       this.options.bounds = L.latLngBounds(c1, c2)
     }
 
-    // the underlying data actually changed (new dataset/model/time/...), a full reload is required
-    this.refresh()
+    if (this.pendingAdd) {
+      // First data ever available for this layer: only now do we actually add it to leaflet (see
+      // onAdd/onPendingAdd), so it doesn't fetch meaningless tiles on initial add against a grid
+      // source that wasn't configured yet. Still need the color map/shader built once for it.
+      this.updateColorMap()
+      this.updateShader()
+      this.onPendingAdd()
+    } else {
+      // the underlying data actually changed (new dataset/model/time/...), a full reload is required
+      this.refresh()
+    }
     this.fire('data')
     this.hasData = true
   },
@@ -625,21 +652,24 @@ const TiledMeshLayer = L.GridLayer.extend({
       this.layerUniforms.uniforms[this.cutValueUniform] = value
       this.pixiLayer.redraw()
     } else if (typeof this.gridSource.setLevel === 'function') {
-      this._resetView()
+      // no need to force a tile refresh here as the real invalidation happens later,
+      // once the grid source actually changes its data
       this.gridSource.setLevel(value)
     }
   },
 
   setTime (time) {
     if (typeof this.gridSource.setTime === 'function') {
-      this._resetView()
+      // no need to force a tile refresh here as the real invalidation happens later,
+      // once the grid source actually changes its data
       this.gridSource.setTime(time)
     }
   },
 
   setModel (model) {
     if (typeof this.gridSource.setModel === 'function') {
-      this._resetView()
+      // no need to force a tile refresh here as the real invalidation happens later,
+      // once the grid source actually changes its data
       this.gridSource.setModel(model)
     }
   },

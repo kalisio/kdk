@@ -21,9 +21,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
     this.userIsZooming = false
     this.pendingStationUpdates = []
     this.pendingRequests = []
-    // number of pending features/measures fetches, used to fire our own 'loading'/'load' events since
-    // createTile() has no 'done' callback so leaflet's native ones fire before data is actually fetched
-    this.pendingFetchs = 0
 
     this.getFeatureKey = (feature) => {
       return getFeatureId(feature, this.layer)
@@ -129,7 +126,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
     return events
   },
 
-  createTile (coords) {
+  createTile (coords, done) {
     const key = tile2key(coords)
     let tile = this.flyingTiles.get(key)
     if (tile === undefined) {
@@ -156,9 +153,23 @@ const TiledFeatureLayer = L.GridLayer.extend({
       if (this.enableDebug) tile.div.innerHTML += '</br>createTile: found in flying tiles'
     }
 
+    // called once both featuresRequest and measuresRequest have settled for this tile (see
+    // resolveTile), so leaflet's native loading/load events accurately reflect real fetch completion
+    tile.done = done
     this.modifiedTiles.add(key)
 
     return tile.div
+  },
+
+  // Resolves a tile with leaflet once both its features and measures requests (if any) have settled,
+  // successfully or not, by calling the 'done' callback given to createTile(). A tile that never
+  // needed a request at all (eg. data found in an already-loaded parent tile) resolves immediately.
+  resolveTile (tile, err) {
+    if (tile.featuresRequest !== null || tile.measuresRequest !== null) return
+    const done = tile.done
+    if (!done) return
+    tile.done = null
+    done(err || null, tile.div)
   },
 
   onTileUnload (event) {
@@ -286,6 +297,10 @@ const TiledFeatureLayer = L.GridLayer.extend({
     const tilesToRemove = []
     const tilesWithFeaturesRequest = []
     const tilesWithMeasuresRequest = []
+    // tiles touched by this update, used at the end to resolve() those that turned out to need no
+    // request at all (eg. data found in an already-loaded parent tile) - tiles that do get a request
+    // assigned below are resolved later, once that request settles (see resolveTile() call sites)
+    const touchedTiles = []
 
     const minFeatureZoom = _.get(this.options, 'minFeatureZoom', this._map.getMinZoom())
     const maxFeatureZoom = _.get(this.options, 'maxFeatureZoom', this._map.getMaxZoom())
@@ -301,6 +316,8 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // This can happen when a tile has been removed from flyingTiles
       // because the associated request failed
       if (tile === undefined) return
+
+      touchedTiles.push(tile)
 
       if (tile.unload) {
         // Wait for request to end before removing associated tile data since
@@ -382,8 +399,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // keep track of pending request
       promise.status = { cancelled: false, pending: true }
       this.pendingRequests.push(promise)
-      if (this.pendingFetchs === 0) this.fire('loading')
-      ++this.pendingFetchs
 
       promise.then((data) => {
         if (promise.status.cancelled) return
@@ -432,6 +447,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
           tile.featuresChildren = []
           // When a tile was scheduled for removal, add it to the list of tiles to consider
           if (tile.unload) this.modifiedTiles.add(tile2key(tile.coords))
+          this.resolveTile(tile)
 
           if (this.enableDebug) {
             tile.div.style.outline = '1px solid green'
@@ -451,6 +467,13 @@ const TiledFeatureLayer = L.GridLayer.extend({
         // Failed tiles are removed from flyingTiles
         tiles.forEach((tile) => {
           this.flyingTiles.delete(tile2key(tile.coords))
+          // Tile is gone for good, resolve it directly (regardless of measuresRequest state) so
+          // leaflet doesn't keep waiting on it forever
+          if (tile.done) {
+            const done = tile.done
+            tile.done = null
+            done(err, tile.div)
+          }
 
           if (this.enableDebug) {
             tile.div.style.outline = '1px solid red'
@@ -461,8 +484,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
         if (this.enableDebug) logger.debug(`TiledFeatureLayer: allFeatures is ${this.allFeatures.size} long`)
       }).finally(() => {
         promise.status.pending = false
-        --this.pendingFetchs
-        if (this.pendingFetchs === 0) this.fire('load')
       })
     })
 
@@ -481,8 +502,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
       // keep track of pending request
       promise.status = { cancelled: false, pending: true }
       this.pendingRequests.push(promise)
-      if (this.pendingFetchs === 0) this.fire('loading')
-      ++this.pendingFetchs
 
       // When stations are fetched, we flag them with a 'measureRequestIssued' property that we
       // may use in dynamic styling
@@ -517,6 +536,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
           tile.measuresChildren = []
           // We want to push measures _after_ we pushed the stations
           if (tile.featuresRequest) stationPromises.push(tile.featuresRequest)
+          this.resolveTile(tile)
 
           if (this.enableDebug) tile.div.innerHTML += `</br>measures request success: ${data.features.length} total`
         })
@@ -538,6 +558,14 @@ const TiledFeatureLayer = L.GridLayer.extend({
         const tiles = allTiles.flat()
 
         tiles.forEach((tile) => {
+          // Unlike a failed features request, the tile itself isn't removed from flyingTiles here
+          // (its features may still be valid), so its measuresRequest must still be cleared,
+          // otherwise it would stay a rejected promise reference forever, and the tile would never
+          // resolve
+          tile.measuresRequest = null
+          tile.measuresChildren = []
+          this.resolveTile(tile, err)
+
           if (this.enableDebug) {
             tile.div.style.outline = '1px solid red'
             tile.div.innerHTML += `</br>measures request failed: ${err}`
@@ -545,8 +573,6 @@ const TiledFeatureLayer = L.GridLayer.extend({
         })
       }).finally(() => {
         promise.status.pending = false
-        --this.pendingFetchs
-        if (this.pendingFetchs === 0) this.fire('load')
       })
     })
 
@@ -565,6 +591,11 @@ const TiledFeatureLayer = L.GridLayer.extend({
       this.flyingTiles.delete(tile2key(tile.coords))
     })
     if (removeCollection.length) this.activity.updateLayer(this.layer.name, featureCollection(removeCollection), { remove: true })
+
+    // Resolve tiles that turned out to need no request at all this round (eg. data found in an
+    // already-loaded parent tile) - tiles that did get a request assigned above are resolved later,
+    // asynchronously, once that request settles (see the resolveTile() calls above)
+    touchedTiles.forEach((tile) => this.resolveTile(tile))
 
     if (this.enableDebug) {
       logger.debug(`TiledFeatureLayer: flyingTiles is ${this.flyingTiles.size} long`)
@@ -609,7 +640,7 @@ const TiledFeatureLayer = L.GridLayer.extend({
 
     // request grid layer redraw
     L.GridLayer.prototype.redraw.call(this)
-  }
+  },
 })
 
 export { TiledFeatureLayer }

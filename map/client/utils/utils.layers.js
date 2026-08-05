@@ -55,12 +55,17 @@ export function isLayerDisabledByTime (layer, { model = null } = {}) {
 }
 
 // Bind loading/load listeners on a tiled engine layer so that its current tile fetching state
-// is reflected onto the reactive layer definition as `layer.isLoading`, eg. for UI to display a loading indicator..
+// is reflected onto the reactive layer definition as `layer.isLoading`, eg. for UI to display a loading indicator.
 export function listenToLoadingEventsForLayer (layer, engineLayer) {
   unlistenToLoadingEventsForLayer(layer, engineLayer)
-  layer.isLoading = false
-  engineLayer.onLoadingStart = () => { layer.isLoading = true }
-  engineLayer.onLoadingEnd = () => { layer.isLoading = false }
+  // Take care the engine layer may already be loading its first batch by the time this is called
+  layer.isLoading = typeof engineLayer.isLoading === 'function' ? engineLayer.isLoading() : false
+  engineLayer.onLoadingStart = () => {
+    layer.isLoading = true
+  }
+  engineLayer.onLoadingEnd = () => {
+    layer.isLoading = false
+  }
   engineLayer.on('loading', engineLayer.onLoadingStart)
   engineLayer.on('load', engineLayer.onLoadingEnd)
 }
