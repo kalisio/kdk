@@ -264,6 +264,11 @@ export class GridSource {
   constructor (options) {
     this.events = {}
     this.sourceKey = 0
+    // Max number of previous 'runs' a meteo model grid source may retry when this source turns out
+    // unusable for the nearest run (eg. because its data hasn't been published yet).
+    // Most grid sources either have data for a given point in time or they don't,
+    // so retrying with an earlier run wouldn't help. Override where relevant.
+    this.maxRunOffset = 0
   }
 
   getBBox () {

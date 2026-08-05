@@ -145,18 +145,13 @@ export class MeteoModelGridSource extends DynamicGridSource {
   }
 
   dataChanged () {
-    // check if we need to try to fetch data from a previous run
-    // in case the nearest run doesn't exists or fails to provide
-    // required data
-
-    if (this.source && !this.source.usable) {
-      // if we have a selected source but it's not usable
-      if (this.updateCtx.runOffset === 0) {
-        // queue updaty with an offseted run
-        this.updateCtx.runOffset = 1
-        this.queueUpdate()
-        return
-      }
+    // Check if we need to fetch data from a previous run in case the nearest run fails to provide required data.
+    // How many runs are worth retrying (if any) is up to the underlying grid source itself.
+    if (this.source && !this.source.usable && this.updateCtx.runOffset < this.source.maxRunOffset) {
+      // queue update with an offseted run
+      this.updateCtx.runOffset += 1
+      this.queueUpdate()
+      return
     }
 
     super.dataChanged()

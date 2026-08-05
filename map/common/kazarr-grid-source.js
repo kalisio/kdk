@@ -74,6 +74,9 @@ export class KazarrGridSource extends GridSource {
     super(options)
 
     this.usable = false
+    // Unlike weacast there's no 'run time' concept in kazarr, this is usuallt managed in the dataset URL,
+    // so that usually requesting with a different run time makes no sense.
+    this.maxRunOffset = 0
   }
 
   getBBox () {
@@ -112,15 +115,21 @@ export class KazarrGridSource extends GridSource {
       }
     } catch (error) {
       console.error(`Failed requesting ${this.config.dataset} metadata from ${this.config.url}`)
-      return
     }
 
-    // Internal tile management requires longitude in [-180, 180]
-    const wrapLongitude = (this.minMaxLon[1] >= 359)
-    this.minMaxLon = [wrapLongitude ? -180 : this.minMaxLon[0], wrapLongitude ? 180 : this.minMaxLon[1]]
-    this.wrapLon = wrapLongitude
+    // this.minMaxLat/minMaxLon stay null when the fetch above failed or returned no bounding_box
+    // (eg. no data at all for the requested time), in which case this.usable below stays false -
+    // note we still fall through to this.dataChanged() in that case (see below), we must not return
+    // early here, otherwise listeners (eg. TiledMeshLayer) would never be notified and would keep
+    // displaying whatever data they had before indefinitely
+    if (this.minMaxLat && this.minMaxLon) {
+      // Internal tile management requires longitude in [-180, 180]
+      const wrapLongitude = (this.minMaxLon[1] >= 359)
+      this.minMaxLon = [wrapLongitude ? -180 : this.minMaxLon[0], wrapLongitude ? 180 : this.minMaxLon[1]]
+      this.wrapLon = wrapLongitude
+    }
 
-    this.usable = this.minMaxLat !== null && this.minMaxLat !== null
+    this.usable = this.minMaxLat !== null && this.minMaxLon !== null
 
     this.dataChanged()
   }

@@ -60,6 +60,8 @@ export class WeacastGridSource extends GridSource {
 
     this.api = options.planetApi
     this.usable = false
+    // A forecast run may simply not have been published yet, worth retrying with the previous one
+    this.maxRunOffset = 1
   }
 
   getBBox () {
