@@ -101,14 +101,18 @@ export class KazarrGridSource extends GridSource {
       : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/metadata${this.config.url.substring(question)}`
 
     try {
-      const resp = await fetch(datasetUrl)
-      const json = await resp.json()
+      const response = await fetch(datasetUrl)
+      if (response.status !== 200) {
+        throw new Error(`Impossible to fetch ${datasetUrl}: ` + response.status)
+      }
+      const json = await response.json()
       if (json.bounding_box) {
         this.minMaxLat = [json.bounding_box.lat.min, json.bounding_box.lat.max]
         this.minMaxLon = [json.bounding_box.lon.min, json.bounding_box.lon.max]
       }
     } catch (error) {
       console.error(`Failed requesting ${this.config.dataset} metadata from ${this.config.url}`)
+      return
     }
 
     // Internal tile management requires longitude in [-180, 180]
@@ -192,7 +196,7 @@ export class KazarrGridSource extends GridSource {
 
     const grid = {
       sourceKey: this.sourceKey,
-      hasData: () => { return json !== undefined },
+      hasData: () => { return Array.isArray(json.values) && json.values.length > 0 },
       // HACK: can't import pixi here, return constant value for now
       // cf. https://github.com/pixijs/pixijs/blob/v7.4.3/packages/constants/src/index.ts#L282
       drawMode: () => { return 4 /* DRAW_MODES.TRIANGLES */ },
