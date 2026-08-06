@@ -6,6 +6,7 @@ import L from 'leaflet'
 import FreeDraw, { CREATE as FREEHAND_CREATE, NONE as FREEHAND_NONE } from 'leaflet-freedraw/dist/leaflet-freedraw.esm.js'
 import logger from 'loglevel'
 import bearing from '@turf/bearing'
+import circle from '@turf/circle'
 import { getType, getCoords, getGeom } from '@turf/invariant'
 import { uid } from 'quasar'
 import { Context } from '../../../../core/client/context.js'
@@ -161,6 +162,9 @@ export const editLayers = {
       } else if (mode === 'add-rectangles') {
         this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         this.map.pm.enableDraw('Rectangle', { continueDrawing: true })
+      } else if (mode === 'add-circles') {
+        this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
+        this.map.pm.enableDraw('Circle', { continueDrawing: true })
       } else if (mode === 'add-lines') {
         this.map.pm.setGlobalOptions({ layerGroup: this.editableLayer })
         this.map.pm.enableDraw('Line', { continueDrawing: true })
@@ -199,6 +203,7 @@ export const editLayers = {
         'remove',
         'add-polygons',
         'add-rectangles',
+        'add-circles',
         'add-lines',
         'add-points',
         'add-freehand-polygons'
@@ -372,7 +377,7 @@ export const editLayers = {
       const { latlng } = event
       if (_.isNil(latlng)) return
       let tooltip = this.hintTooltipInitialContent
-      const modesWithCoordinates = ['add-polygons', 'add-rectangles', 'add-lines', 'add-points']
+      const modesWithCoordinates = ['add-polygons', 'add-rectangles', 'add-circles', 'add-lines', 'add-points']
       const modesWithOrientation = ['add-polygons', 'add-lines']
       if (modesWithCoordinates.includes(this.layerEditMode)) {
         tooltip += `<br/>${formatUserCoordinates(latlng.lat, latlng.lng, Store.get('locationFormat', 'FFf'))}`
@@ -459,11 +464,18 @@ export const editLayers = {
       const leafletLayer = event && event.layer
       if ((this.layerEditMode !== 'add-polygons' &&
            this.layerEditMode !== 'add-rectangles' &&
+           this.layerEditMode !== 'add-circles' &&
            this.layerEditMode !== 'add-lines' &&
            this.layerEditMode !== 'add-points') ||
           !leafletLayer) return
 
-      const geoJson = leafletLayer.toGeoJSON()
+      // L.Circle.toGeoJSON() drops the radius (it only ever serializes to a bare Point), so we
+      // approximate the circle as a polygon instead. This also reuses the exact same storage/rendering
+      // pipeline as every other drawn shape, at the cost of it becoming a regular (vertex-editable)
+      // polygon afterwards rather than a resizable circle.
+      const geoJson = (this.layerEditMode === 'add-circles')
+        ? circle([leafletLayer.getLatLng().lng, leafletLayer.getLatLng().lat], leafletLayer.getRadius(), { units: 'meters' })
+        : leafletLayer.toGeoJSON()
       await this.saveCreatedFeature(geoJson)
       this.editableLayer.removeLayer(leafletLayer)
     },

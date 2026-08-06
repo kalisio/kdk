@@ -26,6 +26,7 @@ export default {
       const allEditModes = [
         { id: 'add-polygons', icon: 'las la-draw-polygon', toggled: this.editMode === 'add-polygons', tooltip: 'KLayerEditionToolbar.ADD_POLYGON_FEATURES', handler: () => { this.setMode('add-polygons') } },
         { id: 'add-rectangles', icon: 'las la-vector-square', toggled: this.editMode === 'add-rectangles', tooltip: 'KLayerEditionToolbar.ADD_RECTANGLE_FEATURES', handler: () => { this.setMode('add-rectangles') } },
+        { id: 'add-circles', icon: 'las la-circle', toggled: this.editMode === 'add-circles', tooltip: 'KLayerEditionToolbar.ADD_CIRCLE_FEATURES', handler: () => { this.setMode('add-circles') } },
         { id: 'add-lines', icon: 'las la-project-diagram', toggled: this.editMode === 'add-lines', tooltip: 'KLayerEditionToolbar.ADD_LINE_FEATURES', handler: () => { this.setMode('add-lines') } },
         { id: 'add-points', icon: 'las la-map-marker', toggled: this.editMode === 'add-points', tooltip: 'KLayerEditionToolbar.ADD_POINT_FEATURES', handler: () => { this.setMode('add-points') } },
         { id: 'add-freehand-polygons', icon: 'las la-paint-brush', toggled: this.editMode === 'add-freehand-polygons', tooltip: 'KLayerEditionToolbar.ADD_FREEHAND_POLYGON_FEATURES', handler: () => { this.setMode('add-freehand-polygons') } },
