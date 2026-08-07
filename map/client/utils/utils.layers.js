@@ -509,16 +509,19 @@ async function getLayerFiltersWithStyle (layer) {
 }
 
 // Return generic legend or filters for a layer without mutating it
-export async function getLegendForLayer (layer) {
+export async function getLegendForLayer (layer, engineStyle = {}) {
   const generateLegendFromStyle = (root, style, layerGeometryTypes) => {
     const layerStyleTypes = _.uniq(_.map(layerGeometryTypes, type => getStyleType(type)))
     const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
     const symbols = []
     _.forIn(shapes, (shape, type) => {
       const isInLayerGeometryTypes = (layerStyleTypes.length === 0) || (layerStyleTypes.includes(type))
+      // If we apply a style without a specific type or the type does not exist at all in layer we don't want it to appear in legend
       if (style[type] && isInLayerGeometryTypes) {
+        // Merge with default styles in any case the layer does not specify all properties
+        const legendStyle = _.merge(_.cloneDeep(DefaultStyle[type] || {}), _.cloneDeep(engineStyle[type] || {}), style[type])
         symbols.push({
-          symbol: { 'media/KShape': { options: _.merge({ shape }, _.omit(style[type], ['size'])) } },
+          symbol: { 'media/KShape': { options: _.merge({ shape }, _.omit(legendStyle, ['size'])) } },
           label: _.get(root, 'label', _.get(root, 'name'))
         })
       }
