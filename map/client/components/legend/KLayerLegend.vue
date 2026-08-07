@@ -20,6 +20,7 @@ import intersects from '@turf/boolean-intersects'
 import { featureEach } from '@turf/meta'
 import { useCurrentActivity } from '../../composables'
 import { utils as coreUtils } from '../../../../core/client'
+import { resolveSymbolsLegend } from '../../utils/utils.layers.js'
 
 // Props
 const props = defineProps({
@@ -52,18 +53,22 @@ const legends = computed(() => {
   const result = []
   const hideWhenNoFeaturesVisible = _.get(props.layer, 'hideLegendWhenNoFeaturesVisible', true)
   if (hideWhenNoFeaturesVisible && !layerHasVisibleFeatures.value) return result
+  const layerLabel = _.get(props.layer, 'label', _.get(props.layer, 'name'))
   let layerLegends = props.layer.legend || []
   if (!Array.isArray(layerLegends)) layerLegends = [layerLegends]
+  // Keep each legend with the actual label it was generated from as required by templated labels
+  layerLegends = layerLegends.map(legend => ({ legend, label: layerLabel }))
   // Check if layer has filters with own legend
   if (Array.isArray(props.layer.filters)) {
     props.layer.filters.forEach((filter) => {
       // Include when filter is active, has a legend and has feature
       if (!filter.isActive || !filter.legend || (hideWhenNoFeaturesVisible && !filterHasVisibleFeatures[filter.label])) return
+      const filterLabel = _.get(filter, 'label', _.get(filter, 'name'))
       const filterLegends = Array.isArray(filter.legend) ? filter.legend : [filter.legend]
-      layerLegends.push(...filterLegends)
+      layerLegends.push(...filterLegends.map(legend => ({ legend, label: filterLabel })))
     })
   }
-  layerLegends.forEach(legend => {
+  layerLegends.forEach(({ legend, label }) => {
     const minZoom = _.get(legend, 'minZoom', _.get(props.layer, `${props.engine}.minZoom`, 0))
     const maxZoom = _.get(legend, 'maxZoom', _.get(props.layer, `${props.engine}.maxZoom`, 99))
     // Check for valid number on min/max zoom level as we might set it to false/null to indicate
@@ -81,7 +86,7 @@ const legends = computed(() => {
       }
       result.push({
         renderer: coreUtils.loadComponent(renderer),
-        props: _.omit(legend, ['minZoom', 'maxZoom']) // Pass through additional legend props
+        props: _.omit(resolveSymbolsLegend(legend, label), ['minZoom', 'maxZoom']) // Pass through additional legend props
       })
     }
   })

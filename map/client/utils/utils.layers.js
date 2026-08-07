@@ -513,12 +513,14 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
   // See https://github.com/kalisio/kdk/issues/1522: if a layer has multiple geometry types
   // we display it in the legend tyo discriminate, otherwise we only keep the provided label if any.
   const geometryTypeLabels = { point: 'KLegend.POINT_TYPE', line: 'KLegend.LINE_TYPE', polygon: 'KLegend.POLYGON_TYPE' }
-  // labelPrefix: label to prefix onto the symbols' geometry type, if relevant.
+  // includeLabelPrefix: whether the root's (layer's or filter's) name should prefix the symbols' labels.
   // - Filters are listed alongside their layer's other filters, so their name carries information
   //   (with the geometry type appended when it disambiguates multiple types).
   // - A layer with no filters already has its label shown as the legend section header, so repeating it on
   //   every symbol would be redundant so only the geometry type is shown (when there's more than one).
-  const generateLegendFromStyle = ({ labelPrefix, style, layerGeometryTypes }) => {
+  // The label is templated here so it's evaluated against the actual layer/filter name at legend render time,
+  // this avoid requiring to keep the legend in sync when updating layer/filters.
+  const generateLegendFromStyle = ({ includeLabelPrefix = false, style, layerGeometryTypes }) => {
     const layerStyleTypes = _.uniq(_.map(layerGeometryTypes, type => getStyleType(type)))
     const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
     // If we apply a style without a specific type or the type does not exist at all in layer we don't want it to appear in legend
@@ -526,12 +528,13 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
       const isInLayerGeometryTypes = (layerStyleTypes.length === 0) || (layerStyleTypes.includes(type))
       return style[type] && isInLayerGeometryTypes
     })
-    const resolvedLabelPrefix = labelPrefix ? i18n.tie(labelPrefix) : ''
     const symbols = types.map(type => {
       // Merge with default styles in any case the layer does not specify all properties
       const legendStyle = _.merge(_.cloneDeep(DefaultStyle[type] || {}), _.cloneDeep(engineStyle[type] || {}), style[type])
       const typeLabel = types.length > 1 ? i18n.tie(geometryTypeLabels[type]) : ''
-      const label = (resolvedLabelPrefix && typeLabel) ? `${resolvedLabelPrefix} (${typeLabel})` : (resolvedLabelPrefix || typeLabel)
+      const label = includeLabelPrefix
+        ? (typeLabel ? `<%= label %> (${typeLabel})` : '<%= label %>')
+        : typeLabel
       return {
         symbol: { 'media/KShape': { options: _.merge({ shape: shapes[type] }, _.omit(legendStyle, ['size'])) } },
         label
@@ -553,7 +556,7 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
       hasFilterWithStyle = true
 
       const filterLegend = generateLegendFromStyle({
-        labelPrefix: _.get(filter, 'label', _.get(filter, 'name')),
+        includeLabelPrefix: true,
         style: filter.linkedStyle,
         layerGeometryTypes: _.get(layer, 'geometryTypes', [])
       })
@@ -572,6 +575,29 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
     const legend = generateLegendFromStyle({ style: layerStyle, layerGeometryTypes: _.get(layer, 'geometryTypes', []) })
     legend.label = _.get(layer, 'label', _.get(layer, 'name'))
     return { legend }
+  }
+}
+
+// Resolve a 'symbols' legend's templated labels against the current name of the layer/filters.
+export function resolveSymbolsLegend (legend, label) {
+  // Evaluate a legend label that may be a template string according to given context.
+  function resolveLegendLabel (label, context) {
+    if (!_.isString(label) || !label.includes('<%')) return label
+    return _.template(label)(context)
+  }
+  if (_.get(legend, 'type') !== 'symbols') return legend
+  const resolvedLabel = label ? i18n.tie(label) : ''
+  const context = { label: resolvedLabel }
+  const symbols = _.map(_.get(legend, 'content.symbols', []), symbol => ({
+    ...symbol,
+    label: resolveLegendLabel(symbol.label, context)
+  }))
+  return {
+    ...legend,
+    // Updates the legend's own section-header label only when it already had one,
+    // eg a filter's legend has no header label of its own as the parent layer already has it.
+    label: legend.label ? (resolvedLabel || legend.label) : legend.label,
+    content: { ...legend.content, symbols }
   }
 }
 
