@@ -203,7 +203,8 @@ function onTagSelectionChanged (selection) {
   tagsSelection.value = selection
 }
 async function applyToLayer (layer, styleToApply) {
-  await editLayerStyle(layer, styleToApply)
+  const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
+  await editLayerStyle(layer, engineStyle, styleToApply)
   if (CurrentActivity.value.isInMemoryLayer(layer)) {
     await CurrentActivity.value.resetLayer(layer)
   }
