@@ -384,18 +384,18 @@ async function generateStyleFromFilters (layer, defaultStyle) {
   return result
 }
 
-export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) {
+export async function editLayerStyle (layer, engineStyle, style, ignoreFeatureStyle = false) {
   style = _.pick(style, ['point', 'line', 'polygon'])
   if (layer._id) {
     // Need to regenerate templates to update default style in them
     const result = await generateStyleFromFilters(layer, style)
     if (result) {
       // Update legend
-      Object.assign(result, await getLegendForLayer(Object.assign({}, layer, result)))
+      Object.assign(result, await getLegendForLayer(Object.assign({}, layer, result), engineStyle))
       if (ignoreFeatureStyle) result.ignoreFeatureStyle = true
       await api.getService('catalog').patch(layer._id, result)
     } else {
-      const legend = await getLegendForLayer(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }))
+      const legend = await getLegendForLayer(Object.assign({}, layer, { 'cesium.style': style, 'leaflet.style': style }), engineStyle)
       const patch = Object.assign(
         {},
         _.has(layer, 'cesium') ? { 'cesium.style': style } : {},
@@ -408,7 +408,7 @@ export async function editLayerStyle (layer, style, ignoreFeatureStyle = false) 
   } else {
     if (_.has(layer, 'cesium')) _.set(layer, 'cesium.style', style)
     if (_.has(layer, 'leaflet')) _.set(layer, 'leaflet.style', style)
-    Object.assign(layer, await getLegendForLayer(layer))
+    Object.assign(layer, await getLegendForLayer(layer, engineStyle))
     if (ignoreFeatureStyle) layer.ignoreFeatureStyle = true
   }
   return layer
@@ -455,7 +455,7 @@ export async function editFilterStyle (layer, filter, engineStyle, style, ignore
   )
   if (ignoreFeatureStyle) patch.ignoreFeatureStyle = true
   // Update legend
-  Object.assign(patch, await getLegendForLayer(Object.assign({}, layer, { filters: layerFilters })))
+  Object.assign(patch, await getLegendForLayer(Object.assign({}, layer, { filters: layerFilters }), engineStyle))
   await api.getService('catalog').patch(layer._id, patch)
 }
 

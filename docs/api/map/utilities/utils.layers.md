@@ -142,12 +142,13 @@ Type-specific cache functions. Prefer the generic `setLayerCached`.
 
 ## Edit Functions
 
-### `editLayerStyle(layer, style, ignoreFeatureStyle?)`
+### `editLayerStyle(layer, engineStyle, style, ignoreFeatureStyle?)`
 
 Updates the style of a layer. For persisted layers (`layer._id`), patches the catalog service. For in-memory layers, updates the layer object directly. Regenerates legend and filter style templates as needed.
 
 - **Parameters:**
   - `layer` *(Object)*: The layer to update.
+  - `engineStyle` *(Object)*: Engine fallback style.
   - `style` *(Object)*: A `{ point, line, polygon }` style object.
   - `ignoreFeatureStyle` *(boolean, optional)*: When `true`, sets `ignoreFeatureStyle` on the patch.
 - **Returns:** `Promise<Object>` — The updated layer.

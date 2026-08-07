@@ -71,11 +71,11 @@ const menuContent = computed(() => {
 // Functions
 async function applyToLayer (styleToApply) {
   const layer = props.context
+  const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
   if (_.get(layer, 'filter')) {
-    const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
     await editFilterStyle(layer.layer, layer.filter, engineStyle, styleToApply, props.ignoreFeatureStyle)
   } else {
-    await editLayerStyle(layer, styleToApply, props.ignoreFeatureStyle)
+    await editLayerStyle(layer, engineStyle, styleToApply, props.ignoreFeatureStyle)
     if (CurrentActivity.value.isInMemoryLayer(layer)) {
       await CurrentActivity.value.resetLayer(layer)
     }

@@ -325,7 +325,7 @@ export const activity = {
       await this.stopEditLayer(status)
     },
     async onResetLayerStyle (layer) {
-      await layers.editLayerStyle(layer, {})
+      await layers.editLayerStyle(layer, this.activityOptions.engine.style, { point: {}, line: {}, polygon: {} })
       if (!layer._id) {
         await this.resetLayer(layer)
       }
