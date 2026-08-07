@@ -510,20 +510,31 @@ async function getLayerFiltersWithStyle (layer) {
 
 // Return generic legend or filters for a layer without mutating it
 export async function getLegendForLayer (layer, engineStyle = {}) {
-  const generateLegendFromStyle = (root, style, layerGeometryTypes) => {
+  // See https://github.com/kalisio/kdk/issues/1522: if a layer has multiple geometry types
+  // we display it in the legend tyo discriminate, otherwise we only keep the provided label if any.
+  const geometryTypeLabels = { point: 'KLegend.POINT_TYPE', line: 'KLegend.LINE_TYPE', polygon: 'KLegend.POLYGON_TYPE' }
+  // labelPrefix: label to prefix onto the symbols' geometry type, if relevant.
+  // - Filters are listed alongside their layer's other filters, so their name carries information
+  //   (with the geometry type appended when it disambiguates multiple types).
+  // - A layer with no filters already has its label shown as the legend section header, so repeating it on
+  //   every symbol would be redundant so only the geometry type is shown (when there's more than one).
+  const generateLegendFromStyle = ({ labelPrefix, style, layerGeometryTypes }) => {
     const layerStyleTypes = _.uniq(_.map(layerGeometryTypes, type => getStyleType(type)))
     const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
-    const symbols = []
-    _.forIn(shapes, (shape, type) => {
+    // If we apply a style without a specific type or the type does not exist at all in layer we don't want it to appear in legend
+    const types = _.filter(_.keys(shapes), type => {
       const isInLayerGeometryTypes = (layerStyleTypes.length === 0) || (layerStyleTypes.includes(type))
-      // If we apply a style without a specific type or the type does not exist at all in layer we don't want it to appear in legend
-      if (style[type] && isInLayerGeometryTypes) {
-        // Merge with default styles in any case the layer does not specify all properties
-        const legendStyle = _.merge(_.cloneDeep(DefaultStyle[type] || {}), _.cloneDeep(engineStyle[type] || {}), style[type])
-        symbols.push({
-          symbol: { 'media/KShape': { options: _.merge({ shape }, _.omit(legendStyle, ['size'])) } },
-          label: _.get(root, 'label', _.get(root, 'name'))
-        })
+      return style[type] && isInLayerGeometryTypes
+    })
+    const resolvedLabelPrefix = labelPrefix ? i18n.tie(labelPrefix) : ''
+    const symbols = types.map(type => {
+      // Merge with default styles in any case the layer does not specify all properties
+      const legendStyle = _.merge(_.cloneDeep(DefaultStyle[type] || {}), _.cloneDeep(engineStyle[type] || {}), style[type])
+      const typeLabel = types.length > 1 ? i18n.tie(geometryTypeLabels[type]) : ''
+      const label = (resolvedLabelPrefix && typeLabel) ? `${resolvedLabelPrefix} (${typeLabel})` : (resolvedLabelPrefix || typeLabel)
+      return {
+        symbol: { 'media/KShape': { options: _.merge({ shape: shapes[type] }, _.omit(legendStyle, ['size'])) } },
+        label
       }
     })
     return {
@@ -541,7 +552,11 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
       if (!_.has(filter, 'linkedStyle')) return
       hasFilterWithStyle = true
 
-      const filterLegend = generateLegendFromStyle(filter, filter.linkedStyle, _.get(layer, 'geometryTypes', []))
+      const filterLegend = generateLegendFromStyle({
+        labelPrefix: _.get(filter, 'label', _.get(filter, 'name')),
+        style: filter.linkedStyle,
+        layerGeometryTypes: _.get(layer, 'geometryTypes', [])
+      })
       filter.legend = filterLegend
     })
     const legend = {
@@ -554,7 +569,7 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
     return legend
   } else {
     const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
-    const legend = generateLegendFromStyle(layer, layerStyle, _.get(layer, 'geometryTypes', []))
+    const legend = generateLegendFromStyle({ style: layerStyle, layerGeometryTypes: _.get(layer, 'geometryTypes', []) })
     legend.label = _.get(layer, 'label', _.get(layer, 'name'))
     return { legend }
   }

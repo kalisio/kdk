@@ -762,7 +762,10 @@
     "PROFILE_CHART_LEGEND": "Profile elevation"
   },
   "KLegend": {
-    "LABEL": "Legend"
+    "LABEL": "Legend",
+    "POINT_TYPE": "Points",
+    "LINE_TYPE": "Polylines",
+    "POLYGON_TYPE": "Polygons"
   },
   "KCompass": {
     "FROM_TO": "From {direction}° to {source}°",

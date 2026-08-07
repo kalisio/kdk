@@ -762,7 +762,10 @@
     "PROFILE_CHART_LEGEND": "Hauteur du profil"
   },
   "KLegend": {
-    "LABEL": "Légende"
+    "LABEL": "Légende",
+    "POINT_TYPE": "Points",
+    "LINE_TYPE": "Polylignes",
+    "POLYGON_TYPE": "Polygones"
   },
   "KCompass": {
     "FROM_TO": "De {direction}° vers {source}°",
