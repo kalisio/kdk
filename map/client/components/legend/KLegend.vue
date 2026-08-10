@@ -53,6 +53,7 @@ import logger from 'loglevel'
 import { ref, computed, watch } from 'vue'
 import { i18n } from '../../../../core/client'
 import { getLayersBySublegend } from '../../utils'
+import { isGeoJsonLayer } from '../../utils/utils.layers.js'
 import { useCurrentActivity } from '../../composables'
 import KLayerLegend from './KLayerLegend.vue'
 
@@ -165,7 +166,11 @@ function refresh () {
     const hasActiveFilters = _.some(filters, { isActive: true })
     const hasLegend = layer.legend
     const hasFilterLegend = _.some(filters, filter => filter.legend)
-    if (isVisible && ((hasFilterLegend && hasActiveFilters) || (!hasFilterLegend && hasLegend))) {
+    const hasActiveFilterLegend = _.some(filters, filter => filter.isActive && filter.legend)
+    // A layer with nothing to display (no explicit legend, and no legend from a currently active filter)
+    // will have one synthesized from its effective style at render time so include it too
+    const canHaveDefaultLegend = !hasLegend && !hasActiveFilterLegend && isGeoJsonLayer(layer, engine.value)
+    if (isVisible && ((hasFilterLegend && hasActiveFilters) || (!hasFilterLegend && hasLegend) || canHaveDefaultLegend)) {
       if (!hasLegend) iterator.layers.push(layer)
       else if (!layer.legend.group) iterator.layers.push(layer)
       else {

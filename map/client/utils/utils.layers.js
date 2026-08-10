@@ -19,6 +19,10 @@ export function isInMemoryLayer (layer) {
   return layer._id === undefined
 }
 
+export function isGeoJsonLayer (layer, engine) {
+  return _.get(layer, `${engine}.type`) === 'geoJson'
+}
+
 export function isUserLayer (layer) {
   return (_.get(layer, 'scope') === 'user')
 }
@@ -508,46 +512,59 @@ async function getLayerFiltersWithStyle (layer) {
   return filtersWithStyle
 }
 
-// Return generic legend or filters for a layer without mutating it
-export async function getLegendForLayer (layer, engineStyle = {}) {
-  // See https://github.com/kalisio/kdk/issues/1522: if a layer has multiple geometry types
-  // we display it in the legend tyo discriminate, otherwise we only keep the provided label if any.
-  const geometryTypeLabels = { point: 'KLegend.POINT_TYPE', line: 'KLegend.LINE_TYPE', polygon: 'KLegend.POLYGON_TYPE' }
-  // includeLabelPrefix: whether the root's (layer's or filter's) name should prefix the symbols' labels.
-  // - Filters are listed alongside their layer's other filters, so their name carries information
-  //   (with the geometry type appended when it disambiguates multiple types).
-  // - A layer with no filters already has its label shown as the legend section header, so repeating it on
-  //   every symbol would be redundant so only the geometry type is shown (when there's more than one).
-  // The label is templated here so it's evaluated against the actual layer/filter name at legend render time,
-  // this avoid requiring to keep the legend in sync when updating layer/filters.
-  const generateLegendFromStyle = ({ includeLabelPrefix = false, style, layerGeometryTypes }) => {
-    const layerStyleTypes = _.uniq(_.map(layerGeometryTypes, type => getStyleType(type)))
-    const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
-    // If we apply a style without a specific type or the type does not exist at all in layer we don't want it to appear in legend
-    const types = _.filter(_.keys(shapes), type => {
-      const isInLayerGeometryTypes = (layerStyleTypes.length === 0) || (layerStyleTypes.includes(type))
-      return style[type] && isInLayerGeometryTypes
-    })
-    const symbols = types.map(type => {
-      // Merge with default styles in any case the layer does not specify all properties
-      const legendStyle = _.merge(_.cloneDeep(DefaultStyle[type] || {}), _.cloneDeep(engineStyle[type] || {}), style[type])
-      const typeLabel = types.length > 1 ? i18n.tie(geometryTypeLabels[type]) : ''
-      const label = includeLabelPrefix
-        ? (typeLabel ? `<%= label %> (${typeLabel})` : '<%= label %>')
-        : typeLabel
-      return {
-        symbol: { 'media/KShape': { options: _.merge({ shape: shapes[type] }, _.omit(legendStyle, ['size'])) } },
-        label
-      }
-    })
+// See https://github.com/kalisio/kdk/issues/1522: if a layer has multiple geometry types
+// we display it in the legend to discriminate, otherwise we only keep the provided label if any.
+const geometryTypeLabels = { point: 'KLegend.POINT_TYPE', line: 'KLegend.LINE_TYPE', polygon: 'KLegend.POLYGON_TYPE' }
+// includeLabelPrefix: whether the root's (layer's or filter's) name should prefix the symbols' labels.
+// - Filters are listed alongside their layer's other filters, so their name carries information
+//   (with the geometry type appended when it disambiguates multiple types).
+// - A layer with no filters already has its label shown as the legend section header, so repeating it on
+//   every symbol would be redundant so only the geometry type is shown (when there's more than one).
+// The label is templated here so it's evaluated against the actual layer/filter name at legend render time,
+// this avoid requiring to keep the legend in sync when updating layer/filters.
+function generateLegendFromStyle ({ includeLabelPrefix = false, style, layerGeometryTypes, engineStyle = {} }) {
+  const layerStyleTypes = _.uniq(_.map(layerGeometryTypes, type => getStyleType(type)))
+  const shapes = { point: 'circle', line: 'polyline', polygon: 'rect' }
+  // If we apply a style without a specific type or the type does not exist at all in layer we don't want it to appear in legend
+  const types = _.filter(_.keys(shapes), type => {
+    const isInLayerGeometryTypes = (layerStyleTypes.length === 0) || (layerStyleTypes.includes(type))
+    return style[type] && isInLayerGeometryTypes
+  })
+  const symbols = types.map(type => {
+    // Merge with default styles in any case the layer does not specify all properties
+    const legendStyle = _.merge(_.cloneDeep(DefaultStyle[type] || {}), _.cloneDeep(engineStyle[type] || {}), style[type])
+    const typeLabel = types.length > 1 ? i18n.tie(geometryTypeLabels[type]) : ''
+    const label = includeLabelPrefix
+      ? (typeLabel ? `<%= label %> (${typeLabel})` : '<%= label %>')
+      : typeLabel
     return {
-      type: 'symbols',
-      content: {
-        symbols
-      }
+      symbol: { 'media/KShape': { options: _.merge({ shape: shapes[type] }, _.omit(legendStyle, ['size'])) } },
+      label
+    }
+  })
+  return {
+    type: 'symbols',
+    content: {
+      symbols
     }
   }
+}
 
+// Synthesize a default legend from a layer's effective style when it does not declare an explicit legend.
+export function getDefaultLegend (layer, engineStyle = {}, layerGeometryTypes = _.get(layer, 'geometryTypes', [])) {
+  const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
+  // A layer's style might not declare anything at all for a given geometry type while it still renders features of that type using the default style.
+  // So make sure such a type isn't skipped from the legend just because it has no style override of its own.
+  _.uniq(_.map(layerGeometryTypes, getStyleType)).forEach(type => {
+    if (type && !layerStyle[type]) layerStyle[type] = {}
+  })
+  const legend = generateLegendFromStyle({ style: layerStyle, layerGeometryTypes, engineStyle })
+  legend.label = _.get(layer, 'label', _.get(layer, 'name'))
+  return legend
+}
+
+// Return generic legend or filters for a layer without mutating it
+export async function getLegendForLayer (layer, engineStyle = {}) {
   if (_.has(layer, 'filters') && !_.isEmpty(layer.filters)) {
     const filtersWithStyle = await getLayerFiltersWithStyle(layer)
     let hasFilterWithStyle = false
@@ -558,7 +575,8 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
       const filterLegend = generateLegendFromStyle({
         includeLabelPrefix: true,
         style: filter.linkedStyle,
-        layerGeometryTypes: _.get(layer, 'geometryTypes', [])
+        layerGeometryTypes: _.get(layer, 'geometryTypes', []),
+        engineStyle
       })
       filter.legend = filterLegend
     })
@@ -571,10 +589,7 @@ export async function getLegendForLayer (layer, engineStyle = {}) {
     if (!hasFilterWithStyle) return { $unset: { legend: '' } }
     return legend
   } else {
-    const layerStyle = getDefaultStyleFromTemplates(_.get(layer, 'leaflet.style', _.get(layer, 'cesium.style', {})))
-    const legend = generateLegendFromStyle({ style: layerStyle, layerGeometryTypes: _.get(layer, 'geometryTypes', []) })
-    legend.label = _.get(layer, 'label', _.get(layer, 'name'))
-    return { legend }
+    return { legend: getDefaultLegend(layer, engineStyle) }
   }
 }
 

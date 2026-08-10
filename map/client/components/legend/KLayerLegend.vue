@@ -20,7 +20,7 @@ import intersects from '@turf/boolean-intersects'
 import { featureEach } from '@turf/meta'
 import { useCurrentActivity } from '../../composables'
 import { utils as coreUtils } from '../../../../core/client'
-import { resolveSymbolsLegend } from '../../utils/utils.layers.js'
+import { resolveSymbolsLegend, getDefaultLegend, isGeoJsonLayer } from '../../utils/utils.layers.js'
 
 // Props
 const props = defineProps({
@@ -45,6 +45,7 @@ const props = defineProps({
 // Data
 const { CurrentActivity } = useCurrentActivity({ selection: false, probe: false })
 const layerHasVisibleFeatures = ref(false)
+const layerGeometryTypes = ref([])
 const filterHasVisibleFeatures = reactive({})
 const requestRefresh = _.debounce(refresh, 250)
 
@@ -58,7 +59,7 @@ const legends = computed(() => {
   if (!Array.isArray(layerLegends)) layerLegends = [layerLegends]
   // Keep each legend with the actual label it was generated from as required by templated labels
   layerLegends = layerLegends.map(legend => ({ legend, label: layerLabel }))
-  // Check if layer has filters with own legend
+  // Append legends from filters with their own, when active and visible
   if (Array.isArray(props.layer.filters)) {
     props.layer.filters.forEach((filter) => {
       // Include when filter is active, has a legend and has feature
@@ -67,6 +68,11 @@ const legends = computed(() => {
       const filterLegends = Array.isArray(filter.legend) ? filter.legend : [filter.legend]
       layerLegends.push(...filterLegends.map(legend => ({ legend, label: filterLabel })))
     })
+  }
+  // A layer with nothing to display yet still gets a default legend synthesized from its effective style
+  if (!layerLegends.length && isGeoJsonLayer(props.layer, props.engine)) {
+    const engineStyle = _.pick(_.get(CurrentActivity.value, 'activityOptions.engine.style', {}), ['point', 'line', 'polygon'])
+    layerLegends = [{ legend: getDefaultLegend(props.layer, engineStyle, layerGeometryTypes.value), label: layerLabel }]
   }
   layerLegends.forEach(({ legend, label }) => {
     const minZoom = _.get(legend, 'minZoom', _.get(props.layer, `${props.engine}.minZoom`, 0))
@@ -136,7 +142,11 @@ function refresh () {
     })
   }
   if (!geoJson) return
+  // Geometry types actually present are not necessarily known upfront (eg. imported layers don't have
+  // it computed automatically), so derive them from the layer's own features for the default legend fallback
+  const geometryTypes = new Set()
   featureEach(geoJson, (feature) => {
+    if (_.get(feature, 'geometry.type')) geometryTypes.add(feature.geometry.type)
     const isFeatureInBounds = intersects(feature, bounds)
     // If at least one feature found for layer no need to test more
     if (!layerHasVisibleFeatures.value && isFeatureInBounds) {
@@ -157,6 +167,7 @@ function refresh () {
       })
     }
   })
+  layerGeometryTypes.value = Array.from(geometryTypes)
 }
 function refreshForLayer (layer) {
   // Refresh only if target layer
