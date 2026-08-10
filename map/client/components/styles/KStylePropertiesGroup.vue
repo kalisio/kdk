@@ -2,12 +2,14 @@
   <div class="full-width column">
     <div class="full-width row items-center no-wrap">
       <q-toggle
+        v-if="canBeDisabled"
         v-model="isActive"
         :label="$t(label)"
         size="sm"
         :dense="dense"
         @update:model-value="onToggled"
       />
+      <div v-else class="text-caption">{{ $t(label) }}</div>
       <div class="full-width q-pa-md">
         <q-separator class="col-grow" />
       </div>
@@ -46,6 +48,10 @@ const props = defineProps({
   dense: {
     type: Boolean,
     default: false
+  },
+  canBeDisabled: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -59,15 +65,21 @@ const values = ref(null)
 // Watch
 watch(() => props.modelValue, (value) => {
   values.value = _.clone(value)
-  isActive.value = !_.isEmpty(value)
+  isActive.value = !props.canBeDisabled || !_.isEmpty(value)
+  if (!props.canBeDisabled && _.isEmpty(values.value)) {
+    values.value = getValues()
+    emit('update:modelValue', values.value)
+  }
 }, { immediate: true })
 
 // Function
+function getValues () {
+  const values = {}
+  for (const property of props.properties) values[property.name] = property.default
+  return values
+}
 function onToggled (value) {
-  if (value) {
-    values.value = {}
-    for (const property of props.properties) values.value[property.name] = property.default
-  } else values.value = null
+  values.value = value ? getValues() : null
   emit('update:modelValue', values.value)
 }
 function onPropertyUpdated () {
