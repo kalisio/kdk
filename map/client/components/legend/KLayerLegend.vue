@@ -142,8 +142,8 @@ function refresh () {
     })
   }
   if (!geoJson) return
-  // Geometry types actually present are not necessarily known upfront (eg. imported layers don't have
-  // it computed automatically), so derive them from the layer's own features for the default legend fallback
+  // Geometry types actually present are not necessarily known upfront (eg. imported layers),
+  // so derive them from the layer's own features as we have it here.
   const geometryTypes = new Set()
   featureEach(geoJson, (feature) => {
     if (_.get(feature, 'geometry.type')) geometryTypes.add(feature.geometry.type)
