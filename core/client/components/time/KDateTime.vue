@@ -135,7 +135,9 @@ const computedDateModel = computed({
   },
   set: function (value) {
     const { YYYY, MM, DD } = toYMD(value)
-    if (!dateTime.value) dateTime.value = moment({ year: YYYY, month: MM, date: DD })
+    // Can't use Time.convertToLocal here as we need to set date components individually some mimic the same logic
+    const timezone = props.timezone || Time.getFormatTimezone()
+    if (!dateTime.value) dateTime.value = (timezone ? moment.tz({ year: YYYY, month: MM, date: DD }, timezone) : moment({ year: YYYY, month: MM, date: DD }))
     else dateTime.value.set({ year: YYYY, month: MM, date: DD })
     triggerEmit()
   }
@@ -167,15 +169,15 @@ watch(() => props.modelValue, (value) => {
   dateTime.value = Time.convertToLocal(props.modelValue)
 })
 watch(() => props.timezone, (value) => {
-  dateTime.value = Time.convertToLocal(props.modelValue)
-  minDateTime.value = Time.convertToLocal(props.min)
-  maxDateTime.value = Time.convertToLocal(props.max)
+  dateTime.value = Time.convertToLocal(props.modelValue, props.timezone)
+  minDateTime.value = Time.convertToLocal(props.min, props.timezone)
+  maxDateTime.value = Time.convertToLocal(props.max, props.timezone)
 })
 watch(() => props.min, (value) => {
-  minDateTime.value = Time.convertToLocal(props.min)
+  minDateTime.value = Time.convertToLocal(props.min, props.timezone)
 })
 watch(() => props.max, (value) => {
-  maxDateTime.value = Time.convertToLocal(props.max)
+  maxDateTime.value = Time.convertToLocal(props.max, props.timezone)
 })
 
 // Functions
@@ -238,7 +240,7 @@ const triggerEmit = _.debounce(() => {
 }, 100)
 
 // Immediate
-if (props.modelValue) dateTime.value = Time.convertToLocal(props.modelValue)
-if (props.min) minDateTime.value = Time.convertToLocal(props.min)
-if (props.max) maxDateTime.value = Time.convertToLocal(props.max)
+if (props.modelValue) dateTime.value = Time.convertToLocal(props.modelValue, props.timezone)
+if (props.min) minDateTime.value = Time.convertToLocal(props.min, props.timezone)
+if (props.max) maxDateTime.value = Time.convertToLocal(props.max, props.timezone)
 </script>

@@ -88,11 +88,13 @@ export const Time = {
   getFormatTimezone () {
     return this.getFormat().timezone
   },
-  convertToLocal (datetime) {
+  convertToLocal (datetime, timezone) {
+    // Defaults to current time zone
+    if (!timezone) timezone = this.getFormatTimezone()
     let currentTime = this.convertToMoment(datetime)
     // Convert to local time
-    if (this.getFormatTimezone()) {
-      currentTime = moment.tz(currentTime.toISOString(), this.getFormatTimezone())
+    if (timezone) {
+      currentTime = moment.tz(currentTime.toISOString(), timezone)
     }
     return currentTime
   },
