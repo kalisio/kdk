@@ -356,8 +356,19 @@ export const Units = {
     // Take care that we name area/volume units like m^2 / m^3 but mathjs does not like it and uses m2 / m3
     const sourceName = sourceUnitDef.name.replace('^', '')
     const targetName = targetUnitDef.name.replace('^', '')
-    // If target unit or source unit is unknown by unit system does nothing
-    if (!math.Unit.isValuelessUnit(sourceName) || !math.Unit.isValuelessUnit(targetName)) return value
+    // If target unit or source unit is unknown by underlying unit system does nothing
+    // We do not use math.Unit.isValuelessUnit() to check that here as it does not work for compound unit like m/s
+    let fromUnit, toUnit
+    try {
+      fromUnit = math.unit(sourceName)
+      toUnit = math.unit(targetName)
+    } catch (error) {
+      // Catch silently as we check just after for both from/to units
+    }
+    if (!fromUnit || !toUnit) {
+      logger.warn(`[KDK] cannot convert ${value} ${sourceUnit} to ${targetUnit} as ${fromUnit ? 'target' : 'source'} unit is unknown of underlying unit system`)
+      return value
+    }
     // Now convert
     let n = math.unit(value, sourceName)
     n = n.toNumber(targetName)
