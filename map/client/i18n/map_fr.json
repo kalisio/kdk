@@ -613,7 +613,8 @@
   },
   "KLayersList": {
     "NO_LAYER_AVAILABLE": "Aucune couche disponible",
-    "LAYER_DISABLED": "Zoomez davantage pour voir cette couche",
+    "LAYER_DISABLED_ZOOM_IN": "Zoomez davantage pour voir cette couche",
+    "LAYER_DISABLED_ZOOM_OUT": "Dézoomez pour voir cette couche",
     "LAYER_DISABLED_TIME": "Aucune donnée disponible à cette horodate"
   },
   "KLayersSelector": {

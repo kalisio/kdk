@@ -32,7 +32,7 @@
     <slot name="status">
       <q-spinner color="primary" size="1.2em" v-if="layer.isLoading" />
       <q-icon name="las la-exclamation-circle" size="sm" color="warning" v-if="layer.isDisabled">
-        <q-tooltip>{{ layer.disabledReason === 'time' ? $t('KLayersList.LAYER_DISABLED_TIME') : $t('KLayersList.LAYER_DISABLED') }}</q-tooltip>
+        <q-tooltip>{{ $t(disabledMessageKey) }}</q-tooltip>
       </q-icon>
     </slot>
     <!-- Layer actions -->
@@ -80,6 +80,13 @@ const label = computed(() => {
 })
 const tooltip = computed(() => {
   return Document.sanitizeHtml(props.layer.tooltip || props.layer.description)
+})
+const disabledMessageKey = computed(() => {
+  switch (props.layer.disabledReason) {
+    case 'time': return 'KLayersList.LAYER_DISABLED_TIME'
+    case 'zoom-out': return 'KLayersList.LAYER_DISABLED_ZOOM_OUT'
+    default: return 'KLayersList.LAYER_DISABLED_ZOOM_IN'
+  }
 })
 const layerActions = computed(() => {
   const layerActions = _.cloneDeep(_.get(props.layer, 'actions', []))

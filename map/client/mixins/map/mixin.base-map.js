@@ -502,7 +502,8 @@ export const baseMap = {
       const leafetLayer = this.getLeafletLayerByName(name)
       return leafetLayer && this.map.hasLayer(leafetLayer)
     },
-    isLayerDisabledByZoom (layer) {
+    // Returns 'zoom-in' if the layer requires a higher zoom level, 'zoom-out' if it requires a lower one, otherwise null
+    getLayerZoomDisabledReason (layer) {
       let hasMinZoom = !!_.get(layer, 'leaflet.minZoom')
       let hasMaxZoom = !!_.get(layer, 'leaflet.maxZoom')
       let minZoom = _.get(layer, 'leaflet.minZoom')
@@ -524,21 +525,24 @@ export const baseMap = {
           maxZoom = maxPaneZoom
         }
       }
-      let isDisabled = false
       if (hasMinZoom || hasMaxZoom) {
         // Take care to possible fractional zoom while panes uses integer zoom levels
         const zoom = Math.floor(this.map.getZoom())
-        if (hasMinZoom && (zoom < minZoom)) isDisabled = true
-        if (hasMaxZoom && (zoom > maxZoom)) isDisabled = true
+        if (hasMinZoom && (zoom < minZoom)) return 'zoom-in'
+        if (hasMaxZoom && (zoom > maxZoom)) return 'zoom-out'
       }
-      return isDisabled
+      return null
+    },
+    isLayerDisabledByZoom (layer) {
+      return !!this.getLayerZoomDisabledReason(layer)
     },
     isLayerDisabled (layer) {
       return this.isLayerDisabledByZoom(layer) || isLayerDisabledByTime(layer, this.getLayerDisabledContext?.())
     },
     // Used for UI messaging only, checked in the same precedence order as isLayerDisabled
     getLayerDisabledReason (layer) {
-      if (this.isLayerDisabledByZoom(layer)) return 'zoom'
+      const zoomReason = this.getLayerZoomDisabledReason(layer)
+      if (zoomReason) return zoomReason
       if (isLayerDisabledByTime(layer, this.getLayerDisabledContext?.())) return 'time'
       return null
     },
