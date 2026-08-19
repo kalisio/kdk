@@ -1,6 +1,6 @@
-export function clamp (value, min, max) {
-  return Math.min(Math.max(value, min), max)
-}
+import { math } from '@kalisio/common-core/utilities'
+
+export const clamp = math.clamp
 
 export function easeOut (t, linearity = 0.5) {
   return 1 - Math.pow(1 - t, 1 / linearity)

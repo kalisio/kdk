@@ -1391,6 +1391,11 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz#6912b00d2c631c0d15ce1a7ab57cd657f2a8f8ba"
   integrity sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==
 
+"@kalisio/common-core@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@kalisio/common-core/-/common-core-0.9.0.tgz#97a0e4104d5294057d2a12342109d34a386b8505"
+  integrity sha512-lLOOpZIw3mXN4ne9c1FrCAdI11FesjZ/0IFworod8htxiOv6I9bwAI2b6gj3kyRK3pTu+SjI3X4B0ZtV5gS+cQ==
+
 "@kalisio/feathers-localforage@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@kalisio/feathers-localforage/-/feathers-localforage-1.2.0.tgz#5235933863195a6aed6a923ebb46b9c85c748c40"
@@ -9000,6 +9005,11 @@ lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
+
+lodash-es@~4.18.1:
+  version "4.18.1"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.18.1.tgz#b962eeb80d9d983a900bf342961fb7418ca10b1d"
+  integrity sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==
 
 lodash.includes@^4.3.0:
   version "4.3.0"

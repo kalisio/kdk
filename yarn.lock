@@ -1745,6 +1745,11 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@kalisio/common-core@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@kalisio/common-core/-/common-core-0.9.0.tgz#97a0e4104d5294057d2a12342109d34a386b8505"
+  integrity sha512-lLOOpZIw3mXN4ne9c1FrCAdI11FesjZ/0IFworod8htxiOv6I9bwAI2b6gj3kyRK3pTu+SjI3X4B0ZtV5gS+cQ==
+
 "@kalisio/feathers-distributed@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@kalisio/feathers-distributed/-/feathers-distributed-2.4.0.tgz#68943672c0940702c457a3d32c67f09d831a8e0f"
@@ -4954,11 +4959,6 @@ email-templates@^2.7.1:
     juice "^4.1.0"
     lodash "^4.0.1"
 
-email-validator@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/email-validator/-/email-validator-2.0.4.tgz#b8dfaa5d0dae28f1b03c95881d904d4e40bfe7ed"
-  integrity sha512-gYCwo7kh5S3IDyZPLZf6hSS0MnZT8QmJFqYvbqlDZSbwdZlY6QZWxJ4i/6UhITOJ4XzyI647Bm2MXKCLqnJ4nQ==
-
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
@@ -7685,6 +7685,11 @@ locate-path@^6.0.0:
   integrity sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==
   dependencies:
     p-locate "^5.0.0"
+
+lodash-es@~4.18.1:
+  version "4.18.1"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.18.1.tgz#b962eeb80d9d983a900bf342961fb7418ca10b1d"
+  integrity sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==
 
 lodash.assignin@^4.0.9:
   version "4.2.0"

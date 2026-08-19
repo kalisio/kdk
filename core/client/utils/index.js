@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import logger from 'loglevel'
-import emailValidator from 'email-validator'
+import { is } from '@kalisio/common-core/predicates'
 import { Notify, Dialog, Loading, exportFile } from 'quasar'
 import { defineAsyncComponent, markRaw } from 'vue'
 
@@ -81,7 +81,7 @@ export function getInitials (name) {
 }
 
 export function isEmailValid (email) {
-  return emailValidator.validate(email)
+  return is.email(email)
 }
 
 export function createThumbnail (imageDataUri, width, height, quality, callback) {
