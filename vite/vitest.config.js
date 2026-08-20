@@ -30,6 +30,9 @@ export default defineConfig({
       '@components': fileURLToPath(new URL('../core/client/components', import.meta.url)),
       // Packages installed in vite/node_modules but not resolvable from core/client/ source files.
       // Vite parses all imported files (including mocked ones) and must resolve their dependencies.
+      '@kalisio/common-core/utilities': fileURLToPath(new URL('./node_modules/@kalisio/common-core/dist/utilities/index.mjs', import.meta.url)),
+      '@kalisio/common-core/predicates': fileURLToPath(new URL('./node_modules/@kalisio/common-core/dist/predicates/index.mjs', import.meta.url)),
+      '@kalisio/common-graphics': fileURLToPath(new URL('./node_modules/@kalisio/common-graphics/dist/index.mjs', import.meta.url)),
       'jwt-decode': fileURLToPath(new URL('./node_modules/jwt-decode/build/jwt-decode.cjs.js', import.meta.url)),
       'vue-i18n': fileURLToPath(new URL('./node_modules/vue-i18n/index.js', import.meta.url)),
       'moment-timezone/builds/moment-timezone-with-data-10-year-range.js':

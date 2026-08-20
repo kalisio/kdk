@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import logger from 'loglevel'
 import { colors } from 'quasar'
-import chroma from 'chroma-js'
+import { color as graphicsColor } from '@kalisio/common-graphics'
 
 export const QuasarPalette = {
   red: '#f44336',
@@ -494,16 +494,8 @@ export function findClosestPaletteColor (color) {
     logger.warn('[KDK] findClosestPaletteColor: \'color\' must be defined')
     return
   }
-  let minDistance = Number.MAX_VALUE
-  let closestColor = null
-  for (const key in QuasarPalette) {
-    const d = chroma.deltaE(color, QuasarPalette[key])
-    if (d < minDistance) {
-      minDistance = d
-      closestColor = key
-    }
-  }
-  return closestColor
+  const nearest = graphicsColor.nearest(color, Object.values(QuasarPalette))
+  return _.findKey(QuasarPalette, value => value === nearest)
 }
 
 export function getContrastColor (color, light = 'white', dark = 'black') {
@@ -516,7 +508,7 @@ export function getContrastColor (color, light = 'white', dark = 'black') {
     logger.warn(`[KDK] getContrastColor: no HTML color found for '${color}'`)
     return dark
   }
-  return colors.luminosity(htmlColor) < 0.5 ? light : dark
+  return graphicsColor.contrast(htmlColor, light, dark)
 }
 
 export function buildColorScale (options) {
@@ -535,19 +527,5 @@ export function buildColorScale (options) {
       colors = 'Spectral'
     }
   }
-  let scale = chroma.scale(colors)
-  if (options.classes) {
-    if (Array.isArray(options.classes)) {
-      // The provided classes implicitly define the domain, then we omit the domain
-      scale = scale.classes(options.classes)
-    } else {
-      // In this case, we need to take into account an optional domain
-      if (options.domain) scale = scale.domain(options.domain).classes(options.classes)
-      else scale = scale.classes(options.classes)
-    }
-  } else {
-    // No classes defined, we need to take into account an optional domain
-    if (options.domain) scale = scale.domain(options.domain)
-  }
-  return scale
+  return graphicsColor.scale({ colors, domain: options.domain, classes: options.classes })
 }

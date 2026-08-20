@@ -1396,6 +1396,11 @@
   resolved "https://registry.yarnpkg.com/@kalisio/common-core/-/common-core-0.9.0.tgz#97a0e4104d5294057d2a12342109d34a386b8505"
   integrity sha512-lLOOpZIw3mXN4ne9c1FrCAdI11FesjZ/0IFworod8htxiOv6I9bwAI2b6gj3kyRK3pTu+SjI3X4B0ZtV5gS+cQ==
 
+"@kalisio/common-graphics@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@kalisio/common-graphics/-/common-graphics-0.9.0.tgz#0bf10f28ec492e0dce9ed42cdee6310a4669efe9"
+  integrity sha512-RVkbExL3tvFhr+h45MJ6c4IP8l6/9AkoEWPtdcjmvYTyyCcfP+tdVbjelSZpF8UeuGo/01J4SxbJ6MfzsKmbvg==
+
 "@kalisio/feathers-localforage@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@kalisio/feathers-localforage/-/feathers-localforage-1.2.0.tgz#5235933863195a6aed6a923ebb46b9c85c748c40"
@@ -1453,6 +1458,11 @@
   integrity sha512-x/iUDjcS90W69PryLDIMgFyV21YLTnG9zOpPXS7Bkt2b8AsY3zZsIpOLBkYr9fBcF3HbkKaER5hOBZLfpLgYNw==
   dependencies:
     vary "^1.1.2"
+
+"@logtape/logtape@~0.7.0":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@logtape/logtape/-/logtape-0.7.2.tgz#413c7073e3caf37dd4acd30c948d840e7f4f7397"
+  integrity sha512-3iL71YEiJ8GM6HzeW4eCG2pS8/F9EX6tYfVVCp/oWhzYjQ5FY/QMesSPMtAYdAGG4Evac23ugOSXZJp592zg0A==
 
 "@mapbox/geojsonhint@^3.0.1":
   version "3.3.0"
@@ -5605,6 +5615,11 @@ chroma-js@^2.4.2:
   resolved "https://registry.yarnpkg.com/chroma-js/-/chroma-js-2.6.0.tgz#578743dd359698a75067a19fa5571dec54d0b70b"
   integrity sha512-BLHvCB9s8Z1EV4ethr6xnkl/P2YRFOGqfgvuMG/MyCbZPrTA+NeiByY6XvgF0zP4/2deU2CXnWyMa3zu1LqQ3A==
 
+chroma-js@~3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/chroma-js/-/chroma-js-3.2.0.tgz#4e9e665290b9bbfece524fccf759d5120e351ff2"
+  integrity sha512-os/OippSlX1RlWWr+QDPcGUZs0uoqr32urfxESG9U93lhUfbnlyckte84Q8P1UQY/qth983AS1JONKmLS4T0nw==
+
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/cipher-base/-/cipher-base-1.0.6.tgz#8fe672437d01cd6c4561af5334e0cc50ff1955f7"
@@ -9109,6 +9124,11 @@ lru-cache@^2.7.0:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.7.3.tgz#6d4524e8b955f95d4f5b58851ce21dd72fb4e952"
   integrity sha512-WpibWJ60c3AgAz8a2iYErDrcT2C7OmKnsWhIcHOjkUHFjkXncJhtLxNSqUmxRxRunpb5I8Vprd7aNSd2NtksJQ==
+
+lru-cache@~11.3.5:
+  version "11.3.6"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-11.3.6.tgz#f0306ad6e9f0a5dc25b16aeba4e8f57b7ec2df55"
+  integrity sha512-Gf/KoL3C/MlI7Bt0PGI9I+TeTC/I6r/csU58N4BSNc4lppLBeKsOdFYkK+dX0ABDUMJNfCHTyPpzwwO21Awd3A==
 
 magic-string@^0.25.7:
   version "0.25.9"
