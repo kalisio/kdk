@@ -111,8 +111,12 @@ if (process.env.BUILD_MODE === 'lib') {
   build.lib.formats = ['es']
   build.rollupOptions.output.manualChunks = (id) => 'kdk'
   Object.assign(alias, {
+    // FIXME: why do we need this to avoid import error on this file ?
+    'quasar/src/css/variables.sass': './node_modules/quasar/src/css/variables.sass',
     // This library does not seem to have a valid configuration in package.json
-    jsts: path.resolve(__dirname, './node_modules/jsts/dist/jsts.min.js')
+    jsts: path.resolve(__dirname, './node_modules/jsts/dist/jsts.min.js'),
+    // Required by quasar.variables.scss, used in both lib and app build modes
+    'kdk/core.variables': fileURLToPath(new URL('../client/css/core.variables.scss', import.meta.url))
   })
 } else {
   Object.assign(alias, {

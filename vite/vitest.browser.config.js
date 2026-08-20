@@ -19,7 +19,7 @@ export default defineConfig({
       'moment-timezone/builds/moment-timezone-with-data-10-year-range.js':
         fileURLToPath(new URL('./node_modules/moment-timezone/builds/moment-timezone-with-data-10-year-range.js', import.meta.url)),
       'feathers-reactive': fileURLToPath(new URL('./node_modules/feathers-reactive/dist/index.cjs', import.meta.url)),
-      '@kalisio/feathers-automerge': fileURLToPath(new URL('./node_modules/@kalisio/feathers-automerge/index.js', import.meta.url)),
+      '@kalisio/feathers-automerge': fileURLToPath(new URL('./node_modules/@kalisio/feathers-automerge/lib/index.js', import.meta.url)),
       'path-browserify': fileURLToPath(new URL('./node_modules/path-browserify/index.js', import.meta.url)),
       '@thumbmarkjs/thumbmarkjs': fileURLToPath(new URL('./node_modules/@thumbmarkjs/thumbmarkjs/dist/thumbmark.esm.js', import.meta.url)),
       'vue-router': fileURLToPath(new URL('./node_modules/vue-router/dist/vue-router.mjs', import.meta.url)),
