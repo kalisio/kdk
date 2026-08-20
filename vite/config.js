@@ -1,5 +1,12 @@
 const KANO_API_PREFIX = '/api'
-const KANO_DOMAIN = 'http://localhost:8086' // 'https://kano.dev.kalisio.xyz' 
+const KANO_DOMAIN = 'http://localhost:8086' // 'https://kano.dev.kalisio.xyz'
+
+// composables.test.js exercises the real initializeApi() bootstrap, whose client tries to
+// reach KANO_DOMAIN above - unreachable in test runs, so it falls back to offline mode as
+// designed. That expected fallback logs through here (warn/error); keep it silent so it
+// doesn't clutter test output. Set VITEST_DEBUG to restore normal verbosity when debugging.
+let logLevel = ((process.env.NODE_ENV === 'development') || process.env.DEBUG) ? 'debug' : 'info'
+if (process.env.VITEST && !process.env.VITEST_DEBUG) logLevel = 'silent'
 
 // Map engine configuration
 const mapEngine = {
@@ -196,7 +203,7 @@ export default {
     fallback: 'en'
   },
   logs: {
-    level: (((process.env.NODE_ENV === 'development') || process.env.DEBUG) ? 'debug' : 'info')
+    level: logLevel
   },
   layout: {
     page: { visible: true },
