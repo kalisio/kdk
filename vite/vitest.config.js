@@ -16,11 +16,18 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
+import Components from 'unplugin-vue-components/vite'
 import vue from '@vitejs/plugin-vue'
 
 // Configuration Vitest pour les tests unitaires de composants KDK
 // Quasar est configuré via installQuasarPlugin() dans test/setup.js.
 export default defineConfig({
+  // Both @thumbmarkjs/thumbmarkjs's and the built client/kdk.client.map.js's published sourcemaps
+  // reference "sources" paths (original .ts files, a worker's .map) that aren't shipped in the
+  // package/build output, even though sourcesContent is embedded. Vite warns about this at the
+  // logger level regardless, so drop its own diagnostics to errors only - this doesn't affect
+  // Vue's component warnings or actual test failures, which go through separate channels.
+  logLevel: 'error',
   plugins: [
     // Mirrors vite.config.js: core/client/, map/client/ and client/ (the built lib) sit outside
     // vite/, so plain ancestor-walk resolution can't see vite/node_modules from their source
@@ -28,6 +35,16 @@ export default defineConfig({
     nodeResolve({
       rootDir: path.join(process.cwd(), '.'),
       modulePaths: [path.join(process.cwd(), 'node_modules')]
+    }),
+    // Mirrors vite.config.js: the real app never registers components explicitly (eg. <k-action>
+    // in KForm.vue) - this plugin auto-resolves them by scanning the component directories.
+    // Without it, any kebab-case tag referenced in a template (even one guarded by v-if/v-for
+    // that never renders) warns on every mount, since Vue's compiler eagerly hoists all
+    // resolveComponent() calls to the top of the render function.
+    Components({
+      dirs: ['../core/client/components', '../map/client/components'],
+      extensions: ['vue'],
+      deep: true
     }),
     vue()
   ],

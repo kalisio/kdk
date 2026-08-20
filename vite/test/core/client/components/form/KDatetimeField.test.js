@@ -23,7 +23,8 @@ const baseProperties = {
 describe('KDatetimeField', () => {
   it('renders in read-only mode as a div', () => {
     const wrapper = shallowMount(KDatetimeField, {
-      props: { properties: baseProperties, readOnly: true }
+      props: { properties: baseProperties, readOnly: true },
+      global: { stubs: { QField: false } }
     })
     // readOnly renders a plain div, not q-field
     expect(wrapper.find('div').exists()).toBe(true)
@@ -32,14 +33,16 @@ describe('KDatetimeField', () => {
 
   it('renders in edit mode with a QField', () => {
     const wrapper = shallowMount(KDatetimeField, {
-      props: { properties: baseProperties }
+      props: { properties: baseProperties },
+      global: { stubs: { QField: false } }
     })
     expect(wrapper.findComponent({ name: 'QField' }).exists()).toBe(true)
   })
 
   it('shows the label from properties.field.label', () => {
     const wrapper = shallowMount(KDatetimeField, {
-      props: { properties: { ...baseProperties, field: { ...baseProperties.field, label: 'My Date' } } }
+      props: { properties: { ...baseProperties, field: { ...baseProperties.field, label: 'My Date' } } },
+      global: { stubs: { QField: false } }
     })
     const field = wrapper.findComponent({ name: 'QField' })
     expect(field.props('label')).toBe('My Date')
@@ -47,7 +50,8 @@ describe('KDatetimeField', () => {
 
   it('is disabled when properties.field.disabled is true', () => {
     const wrapper = shallowMount(KDatetimeField, {
-      props: { properties: { ...baseProperties, field: { ...baseProperties.field, disabled: true } } }
+      props: { properties: { ...baseProperties, field: { ...baseProperties.field, disabled: true } } },
+      global: { stubs: { QField: false } }
     })
     const field = wrapper.findComponent({ name: 'QField' })
     expect(field.props('disable')).toBe(true)
@@ -56,7 +60,8 @@ describe('KDatetimeField', () => {
   it('fills the model when fill() is called', async () => {
     const isoDate = '2024-06-15T10:30:00.000Z'
     const wrapper = shallowMount(KDatetimeField, {
-      props: { properties: baseProperties }
+      props: { properties: baseProperties },
+      global: { stubs: { QField: false } }
     })
     await wrapper.vm.fill(isoDate)
     expect(wrapper.vm.value()).toBe(isoDate)
@@ -65,7 +70,8 @@ describe('KDatetimeField', () => {
   it('clears the model when clear() is called', async () => {
     const isoDate = '2024-06-15T10:30:00.000Z'
     const wrapper = shallowMount(KDatetimeField, {
-      props: { properties: baseProperties }
+      props: { properties: baseProperties },
+      global: { stubs: { QField: false } }
     })
     await wrapper.vm.fill(isoDate)
     await wrapper.vm.clear()
@@ -76,7 +82,8 @@ describe('KDatetimeField', () => {
 
   it('emits field-changed when onChanged is called', async () => {
     const wrapper = shallowMount(KDatetimeField, {
-      props: { properties: baseProperties }
+      props: { properties: baseProperties },
+      global: { stubs: { QField: false } }
     })
     await wrapper.vm.onChanged()
     expect(wrapper.emitted('field-changed')).toBeTruthy()
