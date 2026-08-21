@@ -125,17 +125,6 @@ export default async function init () {
     Reader.register(entry.mimeTypes, readers[entry.reader])
   })
 
-  // Register additional shapes
-  kdkCoreUtils.Shapes.polyline = {
-    viewBox: [0, 0, 50, 50],
-    content: '<path d="M1 44L17 6L33 44L49 6" />',
-    clipPath: false
-  }
-  kdkCoreUtils.Shapes.polygon = {
-    viewBox: [0, 0, 50, 50],
-    content: '<path d="M10 40L1 24L5 10L20 1L40 10L49 24L40 40L32 49Z" />'
-  }
-
   // Store the initialization state
   Store.set('kdk.map.initialized', true)
   logger.debug('[KDK] Map module initialized')
