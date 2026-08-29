@@ -81,7 +81,7 @@
     "@mapbox/sphericalmercator": "^1.2.0",
     "@pdfme/common": "^4.1.0",
     "@pdfme/generator": "^4.1.0",
-    "@pdfme/schemas": "^4.1.0",
+    "@pdfme/schemas": "^5.5.10",
     "@pdfme/ui": "^4.1.0",
     "@quasar/extras": "1.16.3",
     "@quasar/quasar-app-extension-testing-unit-vitest": "^1.2.4",
