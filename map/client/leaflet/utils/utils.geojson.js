@@ -104,11 +104,34 @@ L.Polyline.include({
   }
 })
 
+// Detect a line crossing the antimeridian, ie a jump of more than 180° of longitude between two consecutive points.
+function crossesAntimeridian (coordinates) {
+  for (let i = 1; i < coordinates.length; i++) {
+    if (Math.abs(coordinates[i][0] - coordinates[i - 1][0]) > 180) return true
+  }
+  return false
+}
+function geometryCrossesAntimeridian (geometry) {
+  if (geometry.type === 'LineString') return crossesAntimeridian(geometry.coordinates)
+  if (geometry.type === 'MultiLineString') return geometry.coordinates.some(crossesAntimeridian)
+  return false
+}
+
 // Override default Leaflet GeoJson utility to manage some specific use cases
 const geometryToLayer = L.GeoJSON.geometryToLayer
 L.GeoJSON.geometryToLayer = function (geojson, options) {
   const geometry = geojson.geometry
-  const properties = geojson.properties
+  let properties = geojson.properties
+  // Transparently fall back to the geodesic renderer - which already knows how to avoid a spurious
+  // antimeridian join by setting its "wrap" option to false - whenever a linear geometry crosses the
+  // antimeridian, even when not explicitly flagged as geodesic. This only concerns lines that actually
+  // cross it, so the extra cost of geodesic interpolation stays limited to those.
+  if (geometry && properties && !properties.geodesic &&
+      (geometry.type === 'LineString' || geometry.type === 'MultiLineString') &&
+      geometryCrossesAntimeridian(geometry)) {
+    properties = Object.assign({}, properties, { geodesic: true, wrap: false })
+    geojson = Object.assign({}, geojson, { properties })
+  }
   if (geometry && properties && properties.geodesic) {
     if (geometry.type === 'LineString') {
       return new L.Geodesic([L.GeoJSON.coordsToLatLngs(geometry.coordinates, 0)],
@@ -200,12 +223,17 @@ export function getUpdateFeatureFunction(leafletOptions) {
         if (typeof oldLayer.setData === 'function') {
           // Support Gradient Path
           oldLayer.setData(feature)
-        } else if (feature.properties.geodesic) {
-          // Support geodesic line & linestrings
+        } else if (oldLayer instanceof L.Geodesic) {
+          // Support geodesic, including those automatically switched to geodesic
+          // rendering because they cross the antimeridian, see the geometryToLayer() override above
           const latlngs = type === 'LineString'
             ? [L.GeoJSON.coordsToLatLngs(coordinates, 0)]
             : coordinates.map((linestring) => L.GeoJSON.coordsToLatLngs(linestring, 0))
           oldLayer.setLatLngs(latlngs)
+        } else if (!feature.properties.geodesic && geometryCrossesAntimeridian(feature.geometry)) {
+          // The layer was created before the trajectory started crossing the antimeridian, it needs
+          // to be recreated as geodesic: returning no layer lets the caller do so via geometryToLayer()
+          return
         } else {
           oldLayer.setLatLngs(L.GeoJSON.coordsToLatLngs(coordinates, type === 'LineString' ? 0 : 1))
         }
