@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
-import common from 'feathers-hooks-common'
+import { getItems, replaceItems } from 'feathers-hooks-common'
 import errors from '@feathersjs/errors'
 import { populateObject, unpopulateObject, populateObjects, unpopulateObjects } from './hooks.query.js'
 import { objectifyIDs } from '../db.js'
@@ -9,7 +9,6 @@ import {
   Roles, RoleNames, countSubjectsForResource
 } from '../../common/permissions.js'
 
-const { getItems, replaceItems } = common
 const { Forbidden } = errors
 const debug = makeDebug('kdk:core:authorisations:hooks')
 

@@ -3,12 +3,11 @@ import moment from 'moment'
 import bbox from '@turf/bbox'
 import makeDebug from 'debug'
 import feathers from '@feathersjs/feathers'
-import common from 'feathers-hooks-common'
+import { iff, getItems, replaceItems }  from 'feathers-hooks-common'
 import mongodbFuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { hooks as coreHooks, unmarshallTime } from '../../../core/api/index.js'
 
 const { defaultEventMap } = feathers
-const { iff, getItems, replaceItems } = common
 const debug = makeDebug('kdk:map:features:hooks')
 
 function getTimeRange (features) {

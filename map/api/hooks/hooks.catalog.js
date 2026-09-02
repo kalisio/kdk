@@ -1,10 +1,9 @@
 import _ from 'lodash'
 import siftModule from 'sift'
-import common from 'feathers-hooks-common'
+import { getItems, replaceItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 import { toString, toJson } from '../../../core/api/hooks/index.js'
 
-const { getItems, replaceItems } = common
 const sift = siftModule.default
 const debug = makeDebug('kdk:map:catalog:hooks')
 

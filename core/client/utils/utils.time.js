@@ -1,9 +1,9 @@
-import moment from 'moment'
+import { tz } from 'moment-timezone'
 import { Time } from '../time.js'
 
 // Add UTC offset to timezone name
 export function getTimezoneLabel (timezone) {
-  const offset = moment().tz(timezone).format('Z')
+  const offset = tz(timezone).format('Z')
   return `${timezone} (${offset})`
 }
 

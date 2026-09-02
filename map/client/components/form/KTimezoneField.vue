@@ -76,13 +76,13 @@
 
 <script>
 import _ from 'lodash'
-import moment from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
+import moment, { tz } from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../../core/client'
 import { KAction, KModal } from '../../../../core/client/components'
 import KTimezoneMap from '../KTimezoneMap.vue'
 import meta from 'moment-timezone/data/meta/latest.json'
 
-const timezones = moment.tz.names()
+const timezones = tz.names()
 // Timezone names contains additional "usual" timezone namings like GMT+1, etc.
 // const timezones = _.keys(meta.zones)
 const countries = _.values(meta.countries)

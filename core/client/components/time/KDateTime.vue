@@ -32,7 +32,7 @@
 
 <script setup>
 import _ from 'lodash'
-import moment from 'moment'
+import moment, { tz } from 'moment-timezone'
 import { ref, computed, watch } from 'vue'
 import { Time } from '../../time.js'
 import KDate from './KDate.vue'
@@ -137,7 +137,7 @@ const computedDateModel = computed({
     const { YYYY, MM, DD } = toYMD(value)
     // Can't use Time.convertToLocal here as we need to set date components individually some mimic the same logic
     const timezone = props.timezone || Time.getFormatTimezone()
-    if (!dateTime.value) dateTime.value = (timezone ? moment.tz({ year: YYYY, month: MM, date: DD }, timezone) : moment({ year: YYYY, month: MM, date: DD }))
+    if (!dateTime.value) dateTime.value = (timezone ? tz({ year: YYYY, month: MM, date: DD }, timezone) : moment({ year: YYYY, month: MM, date: DD }))
     else dateTime.value.set({ year: YYYY, month: MM, date: DD })
     triggerEmit()
   }

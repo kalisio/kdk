@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import authentication from '@feathersjs/authentication'
-import commonHooks from 'feathers-hooks-common'
+import { iff, disallow, isProvider, keep, discard } from 'feathers-hooks-common'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
@@ -8,7 +8,6 @@ import core, { kdk, hooks } from '../../../core/api/index.js'
 
 const { authenticate } = authentication.hooks
 const { util, expect } = chai
-const { iff, disallow, isProvider, keep, discard } = commonHooks
 const { isNotMe, onlyMe, preventChanges } = hooks
 
 describe('core:users', () => {

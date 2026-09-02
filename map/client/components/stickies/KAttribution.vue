@@ -1,19 +1,22 @@
 <template>
   <div v-if="CurrentActivity" class="q-pa-sm">
     <KShape
-      class="text-weight-bold"
       :options="{
         shape: 'circle',
+        radius: 14,
         color: 'white',
         stroke: {
           color: 'primary',
-          width: '2'
+          width: 2
         },
         text: {
           label: 'i',
-          color: 'primary'
+          color: 'primary',
+          size: 16,
+          weight: 'bold'
         }
       }"
+      class="cursor-pointer"
     />
     <q-popup-proxy
       id="attributions-popup"

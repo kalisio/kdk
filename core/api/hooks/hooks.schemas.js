@@ -1,12 +1,11 @@
 import _ from 'lodash'
 import makeDebug from 'debug'
 import errors from '@feathersjs/errors'
-import commonHooks from 'feathers-hooks-common'
+import { getItems, replaceItems } from 'feathers-hooks-common'
 import { schema as makeSchema } from '@feathersjs/schema'
 import { Schema } from '../../common/schema.js'
 
 const { BadRequest } = errors
-const { getItems, replaceItems } = commonHooks
 const debug = makeDebug('kdk:core:schemas:hooks')
 
 export function validateData (schema) {

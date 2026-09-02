@@ -1,4 +1,4 @@
-import commonHooks from 'feathers-hooks-common'
+import * as commonHooks from 'feathers-hooks-common'
 import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { diacriticSearch, marshallComparisonQuery } from '../../hooks/index.js'
 

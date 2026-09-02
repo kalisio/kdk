@@ -1,4 +1,4 @@
-import common from 'feathers-hooks-common'
+import { iff, when } from 'feathers-hooks-common'
 import request from 'superagent'
 import chai from 'chai'
 import chailint from 'chai-lint'
@@ -11,7 +11,6 @@ import { permissions } from '../../../core/common/index.js'
 // import { createGmailClient } from './utils.js'
 import { createMailerStub } from './utils.js'
 
-const { iff, when } = common
 const { util, expect, assert } = chai
 
 describe('core:account', () => {

@@ -12,7 +12,7 @@
 
 <script setup>
 import _ from 'lodash'
-import moment from 'moment'
+import { tz } from 'moment-timezone'
 import { computed } from 'vue'
 import { Time } from '../../time.js'
 import { i18n } from '../../i18n.js'
@@ -74,7 +74,7 @@ const computedButton = computed(() => {
   if (_.isEmpty(format)) format = _.get(Time.getFormat(), 'time.long')
   // compute label
   let label
-  if (!_.isEmpty(computedModel.value)) label = moment.tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
+  if (!_.isEmpty(computedModel.value)) label = tz(computedModel.value, mask, Time.getFormatTimezone()).format(format)
   else label = i18n.tie(props.placeholder)
   // define button spec
   const spec = {

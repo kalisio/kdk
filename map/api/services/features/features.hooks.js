@@ -1,12 +1,10 @@
 import _ from 'lodash'
-import common from 'feathers-hooks-common'
+import { getItems, replaceItems }  from 'feathers-hooks-common'
 import { hooks as coreHooks } from '../../../../core/api/index.js'
 import {
   marshallSpatialQuery, aggregateFeaturesQuery, asGeoJson,
   simplifyResult, simplifyEvents, skipEvents, fuzzySearch
 } from '../../hooks/index.js'
-
-const { getItems, replaceItems } = common
 
 // Allow to control real-time events emission if required
 const emitEvents = (hook) => {

@@ -4,11 +4,10 @@ import moment from 'moment'
 import errors from '@feathersjs/errors'
 import { objectifyIDs, toObjectIDs } from '../db.js'
 import { marshallTimes, unmarshallTimes } from '../marshall.js'
-import common from 'feathers-hooks-common'
+import { getItems, replaceItems } from 'feathers-hooks-common'
 import makeDebug from 'debug'
 
 const { Conflict, BadRequest } = errors
-const { getItems, replaceItems } = common
 const sift = siftModule.default
 const debug = makeDebug('kdk:core:model:hooks')
 
