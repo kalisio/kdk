@@ -35,28 +35,29 @@
         </template>
         <template v-slot:append>
           <!-- Map display -->
-          <KAction
-            id="timezone-map"
-            icon="las la-map-marker"
-            color="primary"
-            :handler="openTimezoneMap"
-            :tooltip="$t('KTimezoneField.TIMEZONE_MAP_TOOLTIP')"
-            :propagate="false"
-          />
-        </template>
-        <!-- Helper -->
-        <template v-if="hasHelper" v-slot:append>
-          <k-action
-            :id="properties.name + '-helper'"
-            :label="helperLabel"
-            :icon="helperIcon"
-            :tooltip="helperTooltip"
-            :url="helperUrl"
-            :dialog="helperDialog"
-            :context="helperContext"
-            @dialog-confirmed="onHelperDialogConfirmed"
-            color="primary"
-          />
+          <div class="row items-center">
+            <KAction
+              id="timezone-map"
+              icon="las la-map-marker"
+              color="primary"
+              :handler="openTimezoneMap"
+              :tooltip="$t('KTimezoneField.TIMEZONE_MAP_TOOLTIP')"
+              :propagate="false"
+            />
+            <!-- Helper -->
+            <KAction
+              v-if="hasHelper"
+              :id="properties.name + '-helper'"
+              :label="helperLabel"
+              :icon="helperIcon"
+              :tooltip="helperTooltip"
+              :url="helperUrl"
+              :dialog="helperDialog"
+              :context="helperContext"
+              @dialog-confirmed="onHelperDialogConfirmed"
+              color="primary"
+            />
+          </div>
         </template>
       </q-select>
       <k-modal ref="timezoneMapModal"
@@ -76,7 +77,7 @@
 
 <script>
 import _ from 'lodash'
-import moment, { tz } from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
+import { tz } from 'moment-timezone/builds/moment-timezone-with-data-10-year-range'
 import { mixins as kCoreMixins, utils as kCoreUtils } from '../../../../core/client'
 import { KAction, KModal } from '../../../../core/client/components'
 import KTimezoneMap from '../KTimezoneMap.vue'
