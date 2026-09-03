@@ -96,7 +96,7 @@
     "@feathersjs/mongodb": "~5.0.44",
     "@feathersjs/schema": "~5.0.44",
     "@feathersjs/socketio": "~5.0.44",
-    "@kalisio/common-core": "link:../common-ekosystem/packages/common-core",
+    "@kalisio/common-core": "~0.11.0",
     "@kalisio/feathers-import-export": "^1.4.1",
     "@kalisio/feathers-s3": "^1.6.0",
     "@kalisio/feathers-webpush": "^1.0.2",
