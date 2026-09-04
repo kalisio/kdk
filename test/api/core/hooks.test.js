@@ -6,7 +6,7 @@ import fuzzySearch from 'feathers-mongodb-fuzzy-search'
 import { kdk, hooks } from '../../../core/api/index.js'
 import mongodb from 'mongodb'
 
-const { ObjectID } = mongodb
+const { ObjectId: ObjectID } = mongodb
 const { util, expect } = chai
 
 describe('core:hooks', () => {

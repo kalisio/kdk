@@ -7,7 +7,7 @@ import { addSubscription } from '@kalisio/feathers-webpush/client'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 // We now rely on mailer stub which is faster
-// Integration testing with real email account shouuld be restricted to apps
+// Integration testing with real email account should be restricted to apps
 // import { createGmailClient } from './utils.js'
 import { createMailerStub } from './utils.js'
 
@@ -31,7 +31,6 @@ describe('core:account', () => {
 
   before(async () => {
     chailint(chai, util)
-
     // Register all default hooks for authorisation
     // Default rules for all users
     permissions.defineAbilities.registerHook(permissions.defineUserAbilities)

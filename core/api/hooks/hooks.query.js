@@ -1,12 +1,10 @@
 import _ from 'lodash'
-import mongodb from 'mongodb'
 import errors from '@feathersjs/errors'
 import makeDebug from 'debug'
 import { marshallComparisonFields, marshallTime, marshallBooleanFields, marshallNumberFields, marshallDateFields } from '../marshall.js'
 import { isValidObjectID, isObjectID } from '../db.js'
 import { makeDiacriticPattern } from '../../common/utils.js'
 
-const { ObjectID } = mongodb
 const { Forbidden } = errors
 const debug = makeDebug('kdk:core:query:hooks')
 

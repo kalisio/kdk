@@ -44,7 +44,7 @@ module.exports = {
   },
   db: {
     adapter: 'mongodb',
-    url: (isDocker ? 'mongodb://mongodb:27017/kdk-test' : 'mongodb://127.0.0.1:27017/kdk-test')
+    url: (isDocker() ? 'mongodb://mongodb:27017/kdk-test' : 'mongodb://127.0.0.1:27017/kdk-test')
   },
   storage: {
     s3Client: {

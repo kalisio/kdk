@@ -4,7 +4,7 @@ import makeDebug from 'debug'
 import mongodb from 'mongodb'
 import errors from '@feathersjs/errors'
 
-const { MongoClient, ObjectID } = mongodb
+const { MongoClient, ObjectId: ObjectID } = mongodb
 const debug = makeDebug('kdk:core:db')
 
 // This ensure moment objects are correctly serialized in MongoDB

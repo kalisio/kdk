@@ -2,9 +2,7 @@ import _ from 'lodash'
 import path from 'path'
 import makeDebug from 'debug'
 import { fileURLToPath } from 'url'
-import mongodb from 'mongodb'
 import { isValidObjectID } from '../db.js'
-const { ObjectID } = mongodb
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const modelsPath = path.join(__dirname, '..', 'models')
