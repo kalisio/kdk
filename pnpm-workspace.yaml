@@ -1,0 +1,2 @@
+allowBuilds:
+  "@weacast/grib2json": true
