@@ -1,4 +1,4 @@
-import { deleteExpiredSubscriptions } from '@kalisio/feathers-webpush'
+import { deleteExpiredSubscriptions } from '@kalisio/feathers-webpush/server'
 import { when, disallow } from 'feathers-hooks-common'
 import { disallowExternalPush } from '../../hooks/index.js'
 

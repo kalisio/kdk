@@ -8,7 +8,7 @@ import {
   subscribePushNotifications,
   requestNotificationPermission,
   addSubscription
-} from '@kalisio/feathers-webpush/client.js'
+} from '@kalisio/feathers-webpush/client'
 import { i18n } from '../i18n.js'
 import { Store } from '../store.js'
 import { api } from '../api.js'

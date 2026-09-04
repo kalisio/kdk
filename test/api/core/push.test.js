@@ -2,7 +2,7 @@ import _ from 'lodash'
 import chai from 'chai'
 import chailint from 'chai-lint'
 import config from 'config'
-import { addSubscription, removeSubscription } from '@kalisio/feathers-webpush/client.js'
+import { addSubscription, removeSubscription } from '@kalisio/feathers-webpush/client'
 import core, { kdk, hooks } from '../../../core/api/index.js'
 import { permissions } from '../../../core/common/index.js'
 // We now rely on mailer stub which is faster

@@ -1,4 +1,4 @@
-import { Service } from '@kalisio/feathers-webpush'
+import { Service } from '@kalisio/feathers-webpush/server'
 import makeDebug from 'debug'
 
 const debug = makeDebug('kdk:push:service')

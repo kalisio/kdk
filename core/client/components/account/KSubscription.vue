@@ -21,7 +21,7 @@
 
 <script setup>
 import _ from 'lodash'
-import { removeSubscription } from '@kalisio/feathers-webpush/client.js'
+import { removeSubscription } from '@kalisio/feathers-webpush/client'
 import { computed } from 'vue'
 import { Dialog } from 'quasar'
 import { Store, i18n, api, Time, utils } from '../..'
