@@ -148,7 +148,8 @@ describe('core:push', () => {
       subscriptionFilter: { _id: user._id }
     })
     expect(operation).toExist()
-    expect(operation.succesful[0].statusCode).to.equal(201)
+    console.log(operation)
+    expect(operation.succeeded[0].statusCode).to.equal(201)
   })
   // Let enough time to process
     .timeout(10000)
@@ -172,8 +173,8 @@ describe('core:push', () => {
     // Check that expired subscriptions have been deleted
     expect(user.subscriptions.length === 1).beTrue()
     expect(operation).toExist()
-    expect(operation.succesful.length === 1).beTrue()
-    expect(operation.succesful[0].statusCode).to.equal(201)
+    expect(operation.succeeded.length === 1).beTrue()
+    expect(operation.succeeded[0].statusCode).to.equal(201)
     expect(operation.failed.length === 1).beTrue()
     expect((operation.failed[0].statusCode === 404) || (operation.failed[0].statusCode === 410)).beTrue()
     expect(operation.failed[0].endpoint).to.equal(expiredSubscription.endpoint)
