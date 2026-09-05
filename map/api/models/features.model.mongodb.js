@@ -1,8 +1,8 @@
-export default function (app, options) {
+export default async function (app, options) {
   const db = options.db || app.db
   options.Model = db.collection(options.collection)
-  options.Model.createIndex({ geometry: '2dsphere' })
-  options.Model.createIndex({ layer: 1 })
+  await options.Model.createIndex({ geometry: '2dsphere' })
+  await options.Model.createIndex({ layer: 1 })
   let baseIndex
   if (options.featureId) {
     // Support compound index

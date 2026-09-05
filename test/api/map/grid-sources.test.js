@@ -18,6 +18,14 @@ const __dirname = dirname(__filename)
 const { util, expect } = chai
 const sift = siftModule.default
 
+const createEqualsOperation = siftModule.createEqualsOperation
+const $geoIntersects = (params, ownerQuery, options) =>
+  createEqualsOperation((value) => {
+    const polygon1 = _.get(params, '$geometry')
+    if (!polygon1 || !value) return false
+    return !!intersect(polygon1, value)
+  }, ownerQuery, options)
+
 // returns the required byte range of the given file
 // range is the raw value of the 'range' http header
 // the returned object contains the data, and the value
@@ -255,16 +263,7 @@ describe('map:grid-source', () => {
 
     it('initialize Weacast API mock', async () => {
       // Add geospatial operator to sift
-      const matcher = (query) => sift(query, {
-        expressions: {
-          $geoIntersects: function (query, value) {
-            const polygon1 = _.get(query, '$geometry')
-            const polygon2 = value
-            if (!polygon1 || !polygon2) return false
-            return intersect(polygon1, polygon2)
-          }
-        }
-      })
+      const matcher = (query) => sift(query, { operations: { $geoIntersects } })
       const weacastApi = weacast()
       weacastApi.models = [model]
       await weacastApi.createElementService(model, element,

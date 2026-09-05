@@ -13,6 +13,13 @@ import { Geocoder } from './geocoder.js'
 import { Navigator } from './navigator.js'
 import * as readers from './readers/index.js'
 
+const $geoIntersects = (params, ownerQuery, options) =>
+  sift.createEqualsOperation((value) => {
+    const polygon1 = _.get(params, '$geometry')
+    if (!polygon1 || !value) return false
+    return !!intersect(polygon1, value)
+  }, ownerQuery, options)
+
 function siftMatcher (originalQuery) {
   // Filter out specific operators others than the reserved ones (starting by $),
   // which are already filtered by core matcher
@@ -36,16 +43,7 @@ export function setupApi (configuration) {
   api.createOfflineFeaturesService = async function (serviceName, options = {}) {
     options = Object.assign(_.omit(options, ['hooks']), {
       // Set specific matcher to handle eg bbox filtering
-      matcher: (query) => sift(query, {
-        expressions: {
-          $geoIntersects: function (query, value) {
-            const polygon1 = _.get(query, '$geometry')
-            const polygon2 = value
-            if (!polygon1 || !polygon2) return false
-            return intersect(polygon1, polygon2)
-          }
-        }
-      }),
+      matcher: (query) => sift(query, { operations: { $geoIntersects } }),
       // Set required default hooks as the service responds in GeoJson format
       hooks: _.defaultsDeep(_.get(options, 'hooks'), {
         before: {

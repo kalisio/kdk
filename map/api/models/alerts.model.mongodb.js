@@ -1,7 +1,7 @@
-export default function (app, options) {
+export default async function (app, options) {
   const db = options.db || app.db
   options.Model = db.collection('alerts')
-  options.Model.createIndex({ geometry: '2dsphere' })
+  await options.Model.createIndex({ geometry: '2dsphere' })
   // Expire at a given date
-  options.Model.createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 })
+  await options.Model.createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 })
 }

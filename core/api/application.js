@@ -194,24 +194,21 @@ async function createService (name, app, options = {}) {
   const fileName = serviceOptions.modelName || name
 
   let dbService = false
-  try {
-    if (serviceOptions.modelsPath) {
-      const filepath = path.join(serviceOptions.modelsPath, `${fileName}.model.${app.db.adapter}.js`)
-      const fileExists = await fs.pathExists(filepath)
-      if (fileExists) {
+  if (serviceOptions.modelsPath) {
+    const filepath = path.join(
+      serviceOptions.modelsPath,
+      `${fileName}.model.${app.db.adapter}.js`
+    )
+    if (await fs.pathExists(filepath)) {
+      try {
         const configureModel = (await import(url.pathToFileURL(filepath))).default
-        configureModel(app, serviceOptions)
-        debug(name + ' service model configured on path ' + serviceOptions.modelsPath)
+        await configureModel(app, serviceOptions)
         dbService = true
+      } catch (error) {
+        debug(`Failed to configure model ${filepath}: ${error.message}`)
+        throw error
       }
     }
-  } catch (error) {
-    debug('No ' + fileName + ' service model configured on path ' + serviceOptions.modelsPath)
-    // if (error.code !== 'ERR_MODULE_NOT_FOUND') {
-    // Log error in this case as this might be linked to a syntax error in required file
-    debug(fileName, error)
-    // }
-    // As this is optionnal this require has to fail silently
   }
 
   // Initialize our service with any options it requires
