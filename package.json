@@ -94,9 +94,9 @@
     "@feathersjs/feathers": "^5.0.8",
     "@feathersjs/schema": "^5.0.8",
     "@feathersjs/socketio": "^5.0.8",
-    "@kalisio/feathers-import-export": "^1.4.1",
-    "@kalisio/feathers-s3": "^1.6.0",
-    "@kalisio/feathers-webpush": "^1.0.2",
+    "@kalisio/feathers-import-export": "^3.0.0",
+    "@kalisio/feathers-s3": "^3.0.0",
+    "@kalisio/feathers-webpush": "^3.0.0",
     "@mapbox/sphericalmercator": "^1.2.0",
     "@turf/bbox": "^6.0.1",
     "@weacast/core": "^2.2.1",
@@ -131,7 +131,7 @@
     "papaparse": "^5.4.1",
     "password-generator": "^2.3.2",
     "password-validator": "^4.0.0",
-    "sanitize-html": "^2.13.0",
+    "sanitize-html": "2.17.4",
     "sift": "^8.0.0",
     "superagent": "^5.1.0",
     "winston": "^3.2.1",
@@ -139,7 +139,8 @@
     "xml2js": "^0.4.22"
   },
   "resolutions": {
-    "typed-function": "4.1.1"
+    "typed-function": "4.1.1",
+     "sanitize-html": "2.17.4" 
   },
   "devDependencies": {
     "@feathersjs/authentication-client": "^5.0.8",
