@@ -439,8 +439,10 @@ If you want to disable a default clustering configuration like `cluster: { disab
 ### Additional feature types
 
 The following options can be set as feature `properties` to manage more geometry types:
-* **geodesic** boolean set to `true` on a `LineString` will result in a geodesic line from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin
+* **geodesic** boolean set to `true` on a `LineString` will result in a geodesic line from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin (it will be set by default if the line is detected to be crossing the antimeridian, opt-out via forcing it to `false`)
+// rendered as a continuous progression instead of jumping to the other side of the map
 * **geodesic** boolean set to `true` on a `Point` will result in a great circle from the [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin, which **radius** must be specified in meters
+* **geodesic** boolean set to `true` (default, opt-out via forcing it to `false`) on a point-only features collection will assume it comes from geodesic line so that crossing the antimeridian will render as a continuous progression instead of jumping to the other side of the map
 * **wrap** additional [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin option, when **geodesic** is specified, defaults to `false`
 * **steps** additional [Leaflet.Geodesic](https://github.com/henrythasler/Leaflet.Geodesic) plugin option, when **geodesic** is specified, defaults to `4` or `360` for circles
 * **gradient** color array set on a `LineString` will result in a color ramp applied to the line by mapping each point to the corresponding color in the array

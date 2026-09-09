@@ -27,6 +27,12 @@ const Realtime = L.Realtime.extend({
       return L.Realtime.prototype.remove.call(this, geojson)
     }
   },
+  // Transparently unwrap Point features crossing the antimeridian before the data is split apart and
+  // features are rendered one by one, so a trail of points stays continuous instead of a subset of it
+  // jumping to the other side of the map, see unwrapPointFeatureCollectionAntimeridian() below
+  _onNewData(removeMissing, geojson) {
+    return L.Realtime.prototype._onNewData.call(this, removeMissing, unwrapPointFeatureCollectionAntimeridian(geojson))
+  },
   // Add FeatureGroup interface so that layer edition works as well
   toGeoJSON() {
     return { type: 'FeatureCollection', features: getObjectValues(this._features) }
@@ -104,17 +110,50 @@ L.Polyline.include({
   }
 })
 
-// Detect a line crossing the antimeridian, ie a jump of more than 180° of longitude between two consecutive points.
+// Detect a jump of more than 180° of longitude between two consecutive points, ie an antimeridian
+// crossing, returning the sign of that jump (+1/-1), or 0 (falsy) when there is none.
 function crossesAntimeridian (coordinates) {
   for (let i = 1; i < coordinates.length; i++) {
-    if (Math.abs(coordinates[i][0] - coordinates[i - 1][0]) > 180) return true
+    const delta = coordinates[i][0] - coordinates[i - 1][0]
+    if (delta > 180) return 1
+    if (delta < -180) return -1
   }
-  return false
+  return 0
 }
 function geometryCrossesAntimeridian (geometry) {
   if (geometry.type === 'LineString') return crossesAntimeridian(geometry.coordinates)
   if (geometry.type === 'MultiLineString') return geometry.coordinates.some(crossesAntimeridian)
   return false
+}
+
+// Unwrap the longitude of a sequence of Point features so that ones crossing the antimeridian are
+// rendered as a continuous progression instead of jumping to the other side of the map.
+function unwrapPointFeatures (features) {
+  let previous
+  let offset = 0
+  return features.map((feature) => {
+    const coordinates = feature.geometry.coordinates
+    if (previous) offset -= crossesAntimeridian([previous, coordinates]) * 360
+    previous = coordinates
+    if (!offset) return feature
+    return Object.assign({}, feature, {
+      geometry: Object.assign({}, feature.geometry, { coordinates: [coordinates[0] + offset, ...coordinates.slice(1)] })
+    })
+  })
+}
+
+// Unwrap data received whenever it only contains Point features, before it gets split apart into individual features. 
+// Indeed, it's only meaningful for a single related trail/history of positions given together, not an arbitrary scatter of unrelated points.
+// Opt-out via a "geodesic" property set to false on the feature collection, true by default, consistent with the same
+// property already used for LineString/MultiLineString and Point+radius geometries above.
+function unwrapPointFeatureCollectionAntimeridian (geojson) {
+  if (_.get(geojson, 'properties.geodesic', true) === false) return geojson
+  const features = Array.isArray(geojson) ? geojson : (geojson.features || (geojson.geometry ? [geojson] : null))
+  if (!features || !features.length || features.some((feature) => _.get(feature, 'geometry.type') !== 'Point')) return geojson
+  const unwrapped = unwrapPointFeatures(features)
+  if (Array.isArray(geojson)) return unwrapped
+  if (geojson.features) return Object.assign({}, geojson, { features: unwrapped })
+  return unwrapped[0]
 }
 
 // Override default Leaflet GeoJson utility to manage some specific use cases
