@@ -135,7 +135,7 @@ const computedDateModel = computed({
   },
   set: function (value) {
     const { YYYY, MM, DD } = toYMD(value)
-    // Can't use Time.convertToLocal here as we need to set date components individually some mimic the same logic
+    // Can't use Time.convertToLocal here as we need to set date components individually so mimic the same logic
     const timezone = props.timezone || Time.getFormatTimezone()
     if (!dateTime.value) dateTime.value = (timezone ? moment.tz({ year: YYYY, month: MM, date: DD }, timezone) : moment({ year: YYYY, month: MM, date: DD }))
     else dateTime.value.set({ year: YYYY, month: MM, date: DD })
@@ -183,38 +183,47 @@ watch(() => props.max, (value) => {
 // Functions
 function checkDate (date) {
   const { YYYY, MM, DD } = toYMD(date)
-  const dateToCheck = moment({
+  // Can't use Time.convertToLocal here as we need to set date components individually so mimic the same logic
+  const datetimeComponents = {
     year: YYYY,
     month: MM,
     date: DD,
-    hour: dateTime.value ? dateTime.value.hour() : 0,
-    minute: dateTime.value ? dateTime.value.minute() : 0
-  })
-  if (dateToCheck.isBefore(minDateTime.value)) return false
-  if (dateToCheck.isAfter(maxDateTime.value)) return false
+    hour: 0,
+    minute: 0
+  }
+  const timezone = props.timezone || Time.getFormatTimezone()
+  const dateToCheck = (timezone ? moment.tz(datetimeComponents, timezone) : moment(datetimeComponents))
+  if (dateToCheck.isBefore(minDateTime.value.clone().startOf('day'))) return false
+  if (dateToCheck.isAfter(maxDateTime.value.clone().startOf('day'))) return false
   return true
 }
 function checkTime (hours, minutes, seconds) {
   if (minDateTime.value) {
-    const maxTimeToCheck = moment({
+    // Can't use Time.convertToLocal here as we need to set date components individually so mimic the same logic
+    const datetimeComponents = {
       year: dateTime.value.year(),
       month: dateTime.value.month(),
       date: dateTime.value.date(),
       hour: Number(hours),
       minute: Number(minutes) || 59,
       second: Number(seconds) || 59
-    })
+    }
+    const timezone = props.timezone || Time.getFormatTimezone()
+    const maxTimeToCheck = (timezone ? moment.tz(datetimeComponents, timezone) : moment(datetimeComponents))
     if (maxTimeToCheck.isBefore(minDateTime.value)) return false
   }
   if (maxDateTime.value) {
-    const minTimeToCheck = moment({
+    // Can't use Time.convertToLocal here as we need to set date components individually so mimic the same logic
+    const datetimeComponents = {
       year: dateTime.value.year(),
       month: dateTime.value.month(),
       date: dateTime.value.date(),
       hour: Number(hours),
       minute: Number(minutes) || 0,
       second: Number(seconds) || 0
-    })
+    }
+    const timezone = props.timezone || Time.getFormatTimezone()
+    const minTimeToCheck = (timezone ? moment.tz(datetimeComponents, timezone) : moment(datetimeComponents))
     if (minTimeToCheck.isAfter(maxDateTime.value)) return false
   }
   return true
