@@ -91,7 +91,7 @@ if (process.env.BUILD_MODE === 'lib') {
   // We need to manually add some dependencies that are included in a "non-standard" way
   dependencies = dependencies.concat([
     'config',
-    '@kalisio/feathers-s3/client.js',
+    '@kalisio/feathers-s3/client',
     'moment-timezone/builds/moment-timezone-with-data-10-year-range.js',
     'jsdap/src/parser.js',
     'jsdap/src/xdr.js',

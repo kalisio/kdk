@@ -95,7 +95,7 @@
     "@feathersjs/schema": "^5.0.8",
     "@feathersjs/socketio": "^5.0.8",
     "@kalisio/feathers-import-export": "^1.4.1",
-    "@kalisio/feathers-s3": "^1.6.0",
+    "@kalisio/feathers-s3": "~3.0.0",
     "@kalisio/feathers-webpush": "^1.0.2",
     "@mapbox/sphericalmercator": "^1.2.0",
     "@turf/bbox": "^6.0.1",

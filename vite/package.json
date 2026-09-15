@@ -72,7 +72,7 @@
     "@geoman-io/leaflet-geoman-free": "2.18.3",
     "@intlify/vue-i18n-loader": "^4.2.0",
     "@kalisio/feathers-localforage": "^1.2.0",
-    "@kalisio/feathers-s3": "^1.5.0",
+    "@kalisio/feathers-s3": "~3.0.0",
     "@kalisio/feathers-webpush": "^1.0.1",
     "@kalisio/leaflet-graphicscale": "^1.0.0",
     "@kalisio/leaflet-pmtiles": "https://github.com/kalisio/leaflet-pmtiles",

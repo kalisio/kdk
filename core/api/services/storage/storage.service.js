@@ -1,4 +1,4 @@
-import { Service, getObject } from '@kalisio/feathers-s3'
+import { Service, getObject } from '@kalisio/feathers-s3/server'
 import { authenticate } from '@feathersjs/express'
 import makeDebug from 'debug'
 import { extractJwtFromQuery } from '../../authentication.js'

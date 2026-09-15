@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import config from 'config'
 import logger from 'loglevel'
-import { getClientService } from '@kalisio/feathers-s3/client.js'
+import { getClientService } from '@kalisio/feathers-s3/client'
 import { api } from './api.js'
 import { i18n } from './i18n.js'
 import { Events } from './events.js'
