@@ -15,13 +15,7 @@ function vectorToSpeed (u, v) {
   return Math.sqrt(u * u + v * v)
 }
 
-// Draws a wind barb icon at each sample of a fixed lattice of points we control ourselves, in global
-// pixel space, queried via kazarr's dedicated point-probing endpoint. This deliberately avoids
-// extracting/resampling a mesh over each tile's bounding box (the same operation the particle
-// (tiledWindLayer) layer uses): reconstructing a regular grid out of a per-tile mesh response has to
-// assume things about that mesh (its exact extent, its native resolution) that only hold when nothing
-// resamples/interpolates it, and that otherwise make independently-fetched neighbouring tiles line up
-// cleanly only by accident.
+// Draws a wind barb icon at each sample of a fixed lattice of points in global pixel space.
 const TiledWindBarbLayer = L.GridLayer.extend({
   options: {
     // Unlike a plain raster tile, a tile here means a real network round-trip (a probe request), so
@@ -35,7 +29,7 @@ const TiledWindBarbLayer = L.GridLayer.extend({
     // wind barbs need to stay legible and spaced apart, so this is expected to be fairly coarse
     // (eg. 40 to 60, meaning one sample every 40 to 60 screen pixels)
     this.conf.resolutionScale = _.get(options, 'resolutionScale', [40.0, 40.0])
-    // options forwarded as-is to each L.WindBarb.icon(), fillColor/strokeColor are overridden
+    // options forwarded as-is to each L.WindBarb.icon(), fillColor can be overridden
     // per sample from the color map when available
     this.conf.barb = _.get(options, 'barb', {})
 
@@ -162,7 +156,7 @@ const TiledWindBarbLayer = L.GridLayer.extend({
     const color = this.colorMap ? this.colorMap(speed).hex() : undefined
     const barbOptions = Object.assign({}, this.conf.barb, { deg, speed })
     // TODO: we could add an option to use configured color map for barbs
-    //if (color) Object.assign(barbOptions, { fillColor: color, strokeColor: color, pointStroke: color })
+    if (this.conf.barb.useColorScale && color) Object.assign(barbOptions, { fillColor: color, strokeColor: color, pointStroke: color })
     const barb = new WindBarbIcon(barbOptions)
 
     // Icon is actually the point and shadow the barbs
@@ -180,20 +174,14 @@ const TiledWindBarbLayer = L.GridLayer.extend({
     // Build a lattice of points to probe, spaced by resolutionScale screen pixels, in GLOBAL pixel
     // space at this zoom level (tile origin + a fixed step, not "N points across this tile"). Since
     // every tile derives its lattice from the exact same global origin and step, two independently
-    // fetched neighbouring tiles necessarily share the same lattice lines - there's no reconstruction
-    // of a mesh into a regular grid involved (and so no way for that reconstruction to disagree at a
-    // shared edge).
+    // fetched neighbouring tiles necessarily share the same lattice lines - no problem at a shared edge).
     const tileSize = this.getTileSize()
     const tileOrigin = coords.scaleBy(tileSize)
     const spacing = this.conf.resolutionScale
     const startX = Math.ceil(tileOrigin.x / spacing[0]) * spacing[0]
     const startY = Math.ceil(tileOrigin.y / spacing[1]) * spacing[1]
 
-    // Build the lattice as a GeoJSON FeatureCollection of Point features, the shape kazarr's probe
-    // endpoint expects directly - each geometry's optional 3rd coordinate is the level, and we stash
-    // this tile's own screen coordinates in 'properties' (passed through untouched by kazarr) to read
-    // back once the response comes in, instead of re-deriving them from the (possibly re-projected)
-    // response coordinates.
+    // Stash tile's own screen coordinates in 'properties' (passed through untouched by kazarr) to read back once the response comes in.
     const features = []
     for (let px = startX; px < tileOrigin.x + tileSize.x; px += spacing[0]) {
       for (let py = startY; py < tileOrigin.y + tileSize.y; py += spacing[1]) {
@@ -244,9 +232,7 @@ const TiledWindBarbLayer = L.GridLayer.extend({
       const v = vValues[i]
       if (!Number.isFinite(u) || !Number.isFinite(v)) continue
 
-      // position relative to the tile itself: leaflet CSS-transforms the whole tile as one block
-      // when panning, so a plain absolutely positioned child stays put for free, no per-frame update
-      // needed - this is exactly the pixel position the point was generated from in createTile()
+      // position relative to the tile itself
       const { x, y } = features[i].properties
       const point = L.point(x, y)
       this.renderBarb(tile, point, u, v)
