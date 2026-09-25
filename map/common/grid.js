@@ -302,7 +302,14 @@ export class GridSource {
     throw new Error('Not implemented')
   }
 
+  // Queries the value of one or more elements at an arbitrary, caller-provided bbox and grid resolution.
   async fetch (abort, bbox, resolution) {
+    throw new Error('Not implemented')
+  }
+
+  // Queries the value of one or more elements at an arbitrary, caller-provided GeoJSON FeatureCollection
+  // of Point features (each geometry's optional 3rd coordinate is the level).
+  async probe (abort, pointsCollection, options) {
     throw new Error('Not implemented')
   }
 

@@ -248,4 +248,44 @@ export class KazarrGridSource extends GridSource {
 
     return grid
   }
+
+  // Queries the value of one or more elements at an arbitrary, caller-provided GeoJSON FeatureCollection
+  // of Point features (each geometry's optional 3rd coordinate is the level).
+  async probe (abort, pointsCollection, options = {}) {
+    if (!this.usable || !pointsCollection || !pointsCollection.features || pointsCollection.features.length === 0) { return null }
+
+    const variables = (options.variables && options.variables.length) ? options.variables : [this.config.variable]
+    // probes takes a single 'variable' or a repeated 'variables' list, but not both
+    const parameters = Object.assign({ format: 'geojson' }, this.config.additional, variables.length === 1 ? { variable: variables[0] } : { variables })
+    let queryParams = ''
+    for (const [key, value] of Object.entries(parameters)) {
+      const entries = Array.isArray(value) ? value : [value]
+      for (const entry of entries) { queryParams += _.isEmpty(queryParams) ? `${key}=${entry}` : `&${key}=${entry}` }
+    }
+
+    const question = this.config.url.indexOf('?')
+    const probeUrl = question === -1
+      ? `${this.config.url}/datasets/${this.config.dataset}/probes?${queryParams}`
+      : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/probes?${queryParams}&${this.config.url.substring(question + 1)}`
+
+    const response = await fetch(probeUrl, {
+      method: 'POST',
+      signal: abort,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pointsCollection)
+    })
+    const json = await response.json()
+
+    const values = {}
+    for (const variable of variables) {
+      values[variable] = json.features.map((feature) => {
+        // the variable's value comes back as an array (one entry per requested time), we only ever probe a single time so just take the first one
+        let value = feature.properties[variable]
+        value = Array.isArray(value) ? value[0] : value
+        return this.converter ? this.converter(value) : value
+      })
+    }
+
+    return { sourceKey: this.sourceKey, values }
+  }
 }

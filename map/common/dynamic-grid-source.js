@@ -28,6 +28,10 @@ export class DynamicGridSource extends GridSource {
     return this.source ? this.source.fetch(abort, bbox, resolution) : null
   }
 
+  async probe (abort, pointsCollection, options) {
+    return this.source ? this.source.probe(abort, pointsCollection, options) : null
+  }
+
   invalidate () {
     // next update can't be skipped
     this.forceUpdate = true
