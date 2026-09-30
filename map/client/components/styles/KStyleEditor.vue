@@ -19,6 +19,7 @@
         ref="formRef"
         :values="formValues"
         :schema="formSchema"
+        @form-ready="onFormReady"
         @field-changed="onNameChanged"
       />
       <!--
@@ -129,6 +130,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  duplicate: {
+    type: Boolean,
+    default: false
+  },
   hideButtons: {
     type: Boolean,
     default: false
@@ -154,10 +159,10 @@ const emit = defineEmits(['applied', 'canceled'])
 const { CurrentActivityContext } = useCurrentActivity()
 const formRef = ref(null)
 const model = ref(null)
-const mode = props.style ? 'edition' : 'creation'
+const mode = (props.style && !props.duplicate) ? 'edition' : 'creation'
 const enabledSections = ref({ point: true, line: true, polygon: true })
 const formValues = {
-  name: _.get(props.style, 'name', ''),
+  name: props.duplicate ? i18n.t('KStyleEditor.COPY_OF', { name: props.style.name }) : _.get(props.style, 'name', ''),
   tags: _.get(props.style, 'tags', [])
 }
 const formSchema = {
@@ -257,6 +262,7 @@ watch(() => props.style, (value) => {
   const onFirstLoad = model.value === null
 
   if (!value) model.value = _.clone(_.pick(engine.value.style, ['point', 'line', 'polygon']))
+  else if (props.duplicate) model.value = _.cloneDeep(_.omit(value, ['_id', 'scope', 'createdAt', 'updatedAt']))
   else model.value = value
 
   _.forEach(['point', 'line', 'polygon'], section => {
@@ -270,6 +276,18 @@ watch(() => props.style, (value) => {
 // Functions
 function getDefaultValue (path) {
   return _.get(engine.value.style, path, _.cloneDeep(_.get(DefaultStyle, path)))
+}
+async function onFormReady () {
+  if (!props.duplicate) return
+  const service = api.getService('styles')
+  const baseName = formValues.name
+  let name = baseName
+  let index = 1
+  while ((await service.find({ query: { name, $limit: 0 } })).total > 0) {
+    index++
+    name = `${baseName} (${index})`
+  }
+  if (name !== baseName && formRef.value) formRef.value.fill({ name, tags: formValues.tags })
 }
 const onNameChanged = _.debounce(async (field, value) => {
   if (field !== 'name' || !value) return
