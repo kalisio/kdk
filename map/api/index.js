@@ -1,18 +1,13 @@
-import makeDebug from 'debug'
-import services from './services/index.js'
-import * as hooks from './hooks/index.js'
+import kdkMapApi from '@kalisio/kdk-map-api'
+import { createAlertsService, removeAlertsService, initializeAlerts } from './services/alerts.js'
 
-export * from './services/index.js'
-export { hooks }
-export * from './marshall.js'
-export * from '../common/index.js'
+export * from '@kalisio/kdk-map-api'
+export { createAlertsService, removeAlertsService }
 
-const debug = makeDebug('kdk:map')
-
+// The alerts service has no equivalent in @kalisio/kdk-map-api yet (see services/alerts.js),
+// so it's initialized here alongside the package's own service registration
 export default async function init () {
   const app = this
-
-  debug('Initializing KDK map')
-
-  await app.configure(services)
+  await kdkMapApi.call(app)
+  await initializeAlerts(app)
 }

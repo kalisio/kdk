@@ -177,6 +177,7 @@ describe('map:grid-source', () => {
 
     it('setup correctly', async () => {
       nock('http://kMap.test')
+        .persist()
         .get('/data.tif')
         .reply(function (uri, requestBody) {
           const res = readRange(path.join(__dirname, '/data/GetCoverage.tif'), this.req.headers.range)
@@ -193,13 +194,7 @@ describe('map:grid-source', () => {
     })
 
     it('returns an appropriate grid when requesting data', async () => {
-      nock('http://kMap.test')
-        .get('/data.tif')
-        .reply(function (uri, requestBody) {
-          const res = readRange(path.join(__dirname, '/data/GetCoverage.tif', this.req.headers.range))
-          if (res.data) return [206, res.data, { 'content-range': res.range }]
-          return [404]
-        })
+      // No need to redeclare nock as it is persisted
 
       const fetchBBox = [-5, -5, 5, 5]
       const fetchRes = [0.15, 0.15]

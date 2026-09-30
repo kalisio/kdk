@@ -18,7 +18,7 @@ export { utils }
 export { elevationUtils }
 export { composables }
 export { mixins }
-export * from '../common/index.js'
+export * from '../common/index.js' // eslint-disable-line import/export -- re-exports @kalisio/kdk-map-common transitively, which the resolver can't see through
 export * from './init.js'
 
 export default init

@@ -1,10 +1,5 @@
-// We faced a bug in babel so that transform-runtime with export * from 'x' generates import statements in transpiled code
-// Tracked here : https://github.com/babel/babel/issues/2877
-// We tested the workaround given here https://github.com/babel/babel/issues/2877#issuecomment-270700000 with success so far
-import * as errors from './errors.js'
-import * as permissions from './permissions.js'
-
-export { errors }
-export { permissions }
-export * from './schema.js'
-export * from './utils.js'
+export * from '@kalisio/kdk-core-common'
+// Named (not star) re-export: these override the package's own colliding names
+// (eg. buildUrl) with the historical kdk behavior implemented in utils.js
+export { addQueryParameter, buildUrl, buildEncodedUrl, makeDiacriticPattern } from './utils.js'
+export { makeServiceSnapshot } from './utils.offline.js'

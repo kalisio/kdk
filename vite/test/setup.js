@@ -1,6 +1,6 @@
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-vitest'
 import { config } from '@vue/test-utils'
-import { Schema } from '../../core/common/schema.js'
+import { Schema } from '../../core/common/index.js'
 import { vSafeHtml } from '../../core/client/directives/index.js'
 
 installQuasarPlugin()

@@ -5,15 +5,15 @@ import { Store } from '../store.js'
 import { api } from '../api.js'
 import { i18n } from '../i18n.js'
 import { setOfflineServicesDocumentHandle } from '../utils/utils.offline.js'
-import { defineAbilities } from '../../common/permissions.js'
+import { defineAbilities } from '../../common/index.js'
 
-async function authenticate(authentication) {
+async function authenticate (authentication) {
   // Do not update data twice in any case
   let user = Store.get('user')
   if (user) return
   // Store latest authentication data for offline mode
   // Avoid blocking on eg QuotaExceededError
-  try {    
+  try {
     await LocalCache.setItem('authentication', authentication)
   } catch (error) {
     logger.error(error)
@@ -37,8 +37,8 @@ async function authenticate(authentication) {
 export async function login (email, password) {
   const payload = {
     strategy: 'local',
-    email: email,
-    password: password
+    email,
+    password
   }
   const authentication = await api.authenticate(payload)
   await authenticate(authentication)
@@ -74,7 +74,7 @@ export async function restoreSession () {
         api.emit('login', authentication)
         api.emit('authenticated', authentication)
       }
-    } 
+    }
     // In local first mode we allow to use remote service if offline information doesn't exist
     if (!authentication) {
       authentication = await api.reAuthenticate()
