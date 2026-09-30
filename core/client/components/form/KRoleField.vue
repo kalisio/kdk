@@ -43,7 +43,7 @@
 <script>
 import _ from 'lodash'
 import { baseField } from '../../mixins'
-import { RoleNames } from '../../../common/permissions'
+import { RoleNames } from '../../../common/index.js'
 import { QOptionGroup } from 'quasar'
 
 export default {
