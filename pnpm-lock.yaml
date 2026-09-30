@@ -7,6 +7,8 @@ settings:
 overrides:
   typed-function: 4.1.1
 
+pnpmfileChecksum: sha256-p6j76jp3euwP+0Tsk/APRVYVXMWO/s8Bw5H66/CMXnU=
+
 importers:
 
   .:
