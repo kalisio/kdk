@@ -73,9 +73,12 @@ const TiledWindBarbLayer = L.GridLayer.extend({
 
   setLevel (level) {
     // we query the sources ourselves, passing the level on each point (see createTile), so all we
-    // need is to refresh currently visible tiles so they get probed again with it
-    this.level = level
-    this.redraw()
+    // need is to refresh currently visible tiles so they get probed again with it if config allow it
+    // (eg a layer might want to force not using the level at all)
+    if (_.get(this.options, 'useLevel', true)) {
+      this.level = level
+      this.redraw()
+    }
   },
 
   setModel (model) {
@@ -186,7 +189,7 @@ const TiledWindBarbLayer = L.GridLayer.extend({
     for (let px = startX; px < tileOrigin.x + tileSize.x; px += spacing[0]) {
       for (let py = startY; py < tileOrigin.y + tileSize.y; py += spacing[1]) {
         const latlng = this._map.unproject(L.point(px, py), coords.z)
-        const coordinates = (this.level !== undefined && this.level !== null)
+        const coordinates = !_.isNil(this.level)
           ? [latlng.lng, latlng.lat, this.level]
           : [latlng.lng, latlng.lat]
         features.push({
