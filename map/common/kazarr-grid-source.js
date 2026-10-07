@@ -288,4 +288,46 @@ export class KazarrGridSource extends GridSource {
 
     return { sourceKey: this.sourceKey, values }
   }
+
+  // Computes isolines of the element over the given bbox ([minLat, minLon, maxLat, maxLon]) as GeoJSON
+  async isolines (abort, bbox, options = {}) {
+    if (!this.usable || !bbox) { return null }
+
+    const thresholds = _.castArray(_.get(options, 'thresholds', []))
+    // kazarr takes care of [0, 360] datasets and bounding boxes crossing the antimeridian itself
+    const parameters = Object.assign({
+      variable: this.config.variable,
+      thresholds,
+      lon_min: bbox[1],
+      lon_max: bbox[3],
+      lat_min: bbox[0],
+      lat_max: bbox[2],
+      format: 'geojson'
+    }, this.config.additional)
+    let queryParams = ''
+    for (const [key, value] of Object.entries(parameters)) {
+      const entries = Array.isArray(value) ? value : [value]
+      for (const entry of entries) { queryParams += _.isEmpty(queryParams) ? `${key}=${entry}` : `&${key}=${entry}` }
+    }
+
+    const question = this.config.url.indexOf('?')
+    const isolineUrl = question === -1
+      ? `${this.config.url}/datasets/${this.config.dataset}/isoline?${queryParams}`
+      : `${this.config.url.substring(0, question)}/datasets/${this.config.dataset}/isoline?${queryParams}&${this.config.url.substring(question + 1)}`
+
+    const response = await fetch(isolineUrl, { signal: abort })
+    if (!response.ok) {
+      throw new Error(`Impossible to fetch isolines of ${this.config.dataset}: ` + response.status)
+    }
+    const json = await response.json()
+
+    // Thresholds without any line in the bbox come back as an empty MultiLineString, skip them
+    const features = _.filter(json.features, (feature) => !_.isEmpty(_.get(feature, 'geometry.coordinates')))
+    // Expose thresholds in the same unit as other values of the source
+    if (this.converter) {
+      features.forEach((feature) => { feature.properties.threshold = this.converter(feature.properties.threshold) })
+    }
+
+    return { sourceKey: this.sourceKey, geojson: { type: 'FeatureCollection', features } }
+  }
 }

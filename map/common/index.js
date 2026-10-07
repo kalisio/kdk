@@ -29,3 +29,4 @@ gridSourceFactories[TimeBasedGridSource.getKey()] = function (options) { return 
 gridSourceFactories[KazarrGridSource.getKey()] = function (options) { return new KazarrGridSource(options) }
 
 unitConverters.kelvin2celsius = function (kelvin) { return kelvin - 273.15 }
+unitConverters.geopotential2height = function (geopotential) { return geopotential / 9.80665 }

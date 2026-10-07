@@ -313,6 +313,11 @@ export class GridSource {
     throw new Error('Not implemented')
   }
 
+  // Computes isolines of the element over an arbitrary, caller-provided bbox as a GeoJSON FeatureCollection.
+  async isolines (abort, bbox, options) {
+    throw new Error('Not implemented')
+  }
+
   on (event, callback) {
     const callbacks = _.get(this.events, event, [])
     callbacks.push(callback)
