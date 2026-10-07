@@ -208,8 +208,8 @@ const IsolineLayer = L.GeoJSON.extend({
       text: {
         color: _.get(layer, 'options.color'),
         size: 11,
-        // white halo so that labels remain readable over the isoline and the background
-        extraStyle: 'text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff'
+        // white rounded background so that labels remain readable over the isoline and the map
+        extraStyle: 'background-color: #fff; border-radius: 8px; padding: 0 4px; line-height: 1.4'
       }
     }, this.getZoom())
     const label = _.toString(_.get(labelStyle, 'text.label'))
