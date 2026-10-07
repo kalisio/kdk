@@ -175,7 +175,7 @@ export function createShape (options) {
   if (options.text && !hasShape) {
     if (hasText) {
       textTag = '<span '
-      if (options.text.classes) textTag += `classes="${options.text.classes}" `
+      if (options.text.classes) textTag += `class="${options.text.classes}" `
       const color = getHtmlColor(options.text.color, defaultColor)
       const textSize = options.text.size || defaultTextSize
       const extraTextStyle = options.text.extraStyle || ''
