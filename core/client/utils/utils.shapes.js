@@ -284,13 +284,14 @@ export function createShape (options) {
     if (!_.isNil(options.text.label)) {
       if (!_.isEmpty(options.text.label)) {
         textTag = '<span '
-        if (options.text.classes) textTag += `classes="${options.text.classes}" `
+        if (options.text.classes) textTag += `class="${options.text.classes}" `
         const color = getHtmlColor(options.text.color, defaultColor)
         const textSize = options.text.size || defaultTextSize
         const translation = options.text.translation || _.get(shape, 'text.translation', ['-50%', '-50%'])
-        const rotation = options.text.rotation || _.get(shape, 'icon.rotation', 0)
+        const rotation = options.text.rotation || _.get(shape, 'text.rotation', 0)
         const extraTextStyle = options.text.extraStyle || ''
-        textTag += `style="position: absolute; 5px; top: 50%; left: 50%; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px; ${extraTextStyle}"`
+        // Text is laid out in a box as large as the shape, prevent it from wrapping when it is larger than the shape
+        textTag += `style="position: absolute; top: 50%; left: 50%; white-space: nowrap; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px; ${extraTextStyle}"`
         textTag += '>'
         textTag += options.text.label
         textTag += '</span>'
