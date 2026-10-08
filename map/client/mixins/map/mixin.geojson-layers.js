@@ -15,7 +15,7 @@ import {
 } from '../../utils.map.js'
 import { listenToLoadingEventsForLayer, unlistenToLoadingEventsForLayer } from '../../utils/utils.layers.js'
 import * as maths from '../../../../core/client/utils/utils.math.js'
-import * as wfs from '../../../common/wfs-utils.js'
+import { wfs } from '../../../common/index.js'
 
 export const geojsonLayers = {
   emits: [

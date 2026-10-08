@@ -83,11 +83,7 @@ import _ from 'lodash'
 import xml2js from 'xml2js'
 import { api, Store, mixins as kCoreMixins } from '../../../../core/client'
 import { KAction } from '../../../../core/client/components'
-import * as pmtiles from '../../../common/pmtiles-utils'
-import * as wms from '../../../common/wms-utils'
-import * as wfs from '../../../common/wfs-utils'
-import * as wmts from '../../../common/wmts-utils'
-import * as tms from '../../../common/tms-utils'
+import { pmtiles, wms, wfs, wmts, tms } from '../../../common/index.js'
 
 export default {
   name: 'k-ows-service-field',

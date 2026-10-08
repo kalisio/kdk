@@ -8,7 +8,9 @@ import { mapbox_style, kdk_style } from '@kalisio/leaflet-pmtiles'
 import { api, Time, Units, Events, TemplateContext } from '../../../../core/client/index.js'
 import * as time from '../../../../core/client/utils/utils.time.js'
 import * as layers from '../../utils/utils.layers.js'
-import { detectStyleType, applyLayerFilters } from '../../../common/pmtiles-utils.js'
+import { pmtiles } from '../../../common/index.js'
+
+const { detectStyleType, applyLayerFilters } = pmtiles
 
 export const pmtilesLayers = {
   methods: {

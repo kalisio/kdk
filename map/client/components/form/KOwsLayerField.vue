@@ -49,8 +49,7 @@
 <script>
 import _ from 'lodash'
 import { mixins as kCoreMixins } from '../../../../core/client'
-import * as pmtiles from '../../../common/pmtiles-utils'
-import * as wfs from '../../../common/wfs-utils'
+import { pmtiles, wfs } from '../../../common/index.js'
 
 export default {
   name: 'k-ows-layer-field',
