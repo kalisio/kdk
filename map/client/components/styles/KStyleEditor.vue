@@ -262,8 +262,10 @@ watch(() => props.style, (value) => {
   const onFirstLoad = model.value === null
 
   if (!value) model.value = _.clone(_.pick(engine.value.style, ['point', 'line', 'polygon']))
-  else if (props.duplicate) model.value = _.cloneDeep(_.omit(value, ['_id', 'scope', 'createdAt', 'updatedAt']))
-  else model.value = value
+  else if (props.duplicate) {
+    if (!onFirstLoad) return
+    model.value = _.cloneDeep(_.omit(value, ['_id', 'scope', 'user', 'createdAt', 'updatedAt']))
+  } else model.value = value
 
   _.forEach(['point', 'line', 'polygon'], section => {
     if (!_.get(model.value, section)) {
