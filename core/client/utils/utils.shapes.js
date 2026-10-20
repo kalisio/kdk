@@ -66,11 +66,13 @@ function getSize (size) {
     - classes: extra classes to apply to the text
     - color: String - the text color
     - size: Number - the font size in pixel - 14
+    - translation: Array - the text translation, only when shape is 'none' - ['-50%', '-50%']
+    - rotation: Number - the text rotation in degrees, only when shape is 'none' - 0
   - html: Object specifying an html overlay
 
-  Note: unlike the previous implementation, icon/text rotation and translation overrides,
-  the 'symbol' icon type and custom inline shape objects are no longer supported, as the
-  underlying @kalisio/common-graphics shape renderer has no equivalent.
+  Note: unlike the previous implementation, icon/text rotation and translation overrides (except
+  for a text without shape), the 'symbol' icon type and custom inline shape objects are no longer
+  supported, as the underlying @kalisio/common-graphics shape renderer has no equivalent.
 */
 export function createShape (options) {
   // Check arguments
@@ -178,8 +180,11 @@ export function createShape (options) {
       if (options.text.classes) textTag += `class="${options.text.classes}" `
       const color = getHtmlColor(options.text.color, defaultColor)
       const textSize = options.text.size || defaultTextSize
+      const translation = options.text.translation || ['-50%', '-50%']
+      const rotation = options.text.rotation || 0
       const extraTextStyle = options.text.extraStyle || ''
-      textTag += `style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: ${color}; font-size: ${textSize}px; ${extraTextStyle}"`
+      // Text is laid out in a box as large as the shape, prevent it from wrapping when it is larger than the shape
+      textTag += `style="position: absolute; top: 50%; left: 50%; white-space: nowrap; transform: translate(${translation[0]},${translation[1]}) rotate(${rotation}deg); color: ${color}; font-size: ${textSize}px; ${extraTextStyle}"`
       textTag += '>'
       textTag += options.text.label
       textTag += '</span>'

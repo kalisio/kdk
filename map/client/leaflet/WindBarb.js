@@ -239,7 +239,7 @@ const WindBarbIcon = L.Icon.extend({
           path = document.createElementNS(xmlns, 'polygon')
           path.setAttributeNS(null, 'stroke', sc)
           path.setAttributeNS(null, 'stroke-width', sw)
-          path.setAttributeNS(null, 'fill', '#000000')
+          path.setAttributeNS(null, 'fill', sc)
           path.setAttributeNS(null, 'points', p1 + ' ' + p2 + ' ' + p3)
           g.appendChild(path)
           px -= 2 * bs

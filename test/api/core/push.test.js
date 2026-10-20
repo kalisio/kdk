@@ -148,7 +148,6 @@ describe('core:push', () => {
       subscriptionFilter: { _id: user._id }
     })
     expect(operation).toExist()
-    console.log(operation)
     expect(operation.succeeded[0].statusCode).to.equal(201)
   })
   // Let enough time to process

@@ -798,6 +798,7 @@
   "KStyleEditor": {
     "NAME_LABEL": "Saisissez le nom du style",
     "STYLE_ALREADY_EXISTS": "Le style {style} existe déjà !",
+    "COPY_OF": "Copie de {name}",
     "POINT_SECTION": "Point",
     "LINE_SECTION": "Ligne",
     "POLYGON_SECTION": "Polygone",
