@@ -105,7 +105,7 @@ export function createShape (options) {
       if (strokeColor !== 'transparent') {
         params.stroke = {
           color: strokeColor,
-          width: options.stroke.width || 1,
+          width: Math.ceil(options.stroke.width || 1),
           opacity: options.stroke.opacity,
           dashArray: options.stroke.dashArray,
           dashOffset: options.stroke.dashOffset,
