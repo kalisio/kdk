@@ -39,7 +39,7 @@
         },
         "time": {
           "type": "string",
-          "format": "time"
+          "format": "iso-time"
         },
         "id": {
           "type": "string",
