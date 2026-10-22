@@ -12,7 +12,7 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 ## Parse options
 ##
 
-NODE_VER=20
+NODE_VER=24
 while getopts "n:" option; do
     case $option in
         n) # defines node version

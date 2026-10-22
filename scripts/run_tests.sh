@@ -12,7 +12,7 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 ## Parse options
 ##
 
-NODE_VER=20
+NODE_VER=24
 MONGO_VER=7
 CI_STEP_NAME="Run tests"
 RUN_SONAR=false
@@ -20,7 +20,7 @@ while getopts "m:n:sr:" option; do
     case $option in
         m) # defines mongo version
             MONGO_VER=$OPTARG
-            ;;    
+            ;;
         n) # defines node version
             NODE_VER=$OPTARG
             ;;
@@ -28,7 +28,7 @@ while getopts "m:n:sr:" option; do
             RUN_SONAR=true
             ;;
         r) # report outcome to slack
-            CI_STEP_NAME=$OPTARG        
+            CI_STEP_NAME=$OPTARG
             load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_LIBS.enc.env"
             trap 'slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$?" "$SLACK_WEBHOOK_LIBS"' EXIT
             ;;
