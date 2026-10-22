@@ -66,10 +66,10 @@ describe('map:catalog', () => {
 
   it('registers the default layer catalog', async () => {
     const layers = await fs.readJson(path.join(__dirname, 'config/layers.json'))
-    expect(layers.length > 0)
+    expect(layers.length > 0).beTrue()
     // Create a global catalog service
     defaultLayers = await catalogService.create(layers)
-    expect(defaultLayers.length > 0)
+    expect(defaultLayers.length > 0).beTrue()
     zonesLayer = _.find(defaultLayers, { name: 'zones' })
     vigicruesLayer = _.find(defaultLayers, { name: 'vigicrues-stations' })
   })

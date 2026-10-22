@@ -7,7 +7,7 @@ settings:
 overrides:
   typed-function: 4.1.1
 
-pnpmfileChecksum: sha256-p6j76jp3euwP+0Tsk/APRVYVXMWO/s8Bw5H66/CMXnU=
+pnpmfileChecksum: sha256-rbnyMd8SUu64KfwLItroW4jJpK8PHS7XoVBVxljdW+M=
 
 importers:
 
@@ -77,11 +77,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       ajv:
-        specifier: ^8.12.0
+        specifier: 8.20.0
         version: 8.20.0
       ajv-formats:
-        specifier: ^2.1.1
-        version: 2.1.1(ajv@8.20.0)
+        specifier: 3.0.1
+        version: 3.0.1(ajv@8.20.0)
       ajv-keywords:
         specifier: ^5.1.0
         version: 5.1.0(ajv@8.20.0)
@@ -115,9 +115,6 @@ importers:
       feathers-mailer:
         specifier: ~3.0.0
         version: 3.0.1
-      feathers-mongodb:
-        specifier: ^6.4.1
-        version: 6.4.1
       feathers-mongodb-fuzzy-search:
         specifier: ~2.0.1
         version: 2.0.1
@@ -568,10 +565,6 @@ packages:
     resolution: {integrity: sha512-r+n31iZ/B5Rl1mLkC9/S20UI445MdkZvE3VBmjupep2t8OuyTYHPkFEgR25HY6khH+RothK1VL3B5eumk9N2QQ==}
     engines: {node: '>= 6.0.0'}
 
-  '@feathersjs/adapter-commons@4.5.21':
-    resolution: {integrity: sha512-b9FwaFRVMR5CiMY0l/ypJaJk/zE0MBOBvVWvfng3vBFSUA0RekojdsJQgvIJ+Ezkxt/sVnaRuDzvurr2J1juJQ==}
-    engines: {node: '>= 10'}
-
   '@feathersjs/adapter-commons@5.0.49':
     resolution: {integrity: sha512-APPd108+smkvTiDRj8wJ6qWqMIjUriC6Iy/CCnQupAvbdH4OTB3H9K+iB1/Nj1HWg0V0NzBOw5SrzZwKlfj2Ug==}
     engines: {node: '>= 12'}
@@ -616,10 +609,6 @@ packages:
     resolution: {integrity: sha512-eVEcLJL3GcPQBQcD77jI3fZ4MMx+iD02Px2Z1lDw+cn/iGCeQkWWAPQs4Tp+HGR1rTL5JO+unyhzN8V9X7OYmw==}
     engines: {node: '>= 10'}
 
-  '@feathersjs/commons@4.5.21':
-    resolution: {integrity: sha512-X2EjuY8ezv1WU9pFBPcxIlihpbV5FYQG4HhGcoprf6J9QDzC7CYUTa9khc5DmaZzEVjScQe7A+NJGcAHJ18Qjg==}
-    engines: {node: '>= 10'}
-
   '@feathersjs/commons@5.0.49':
     resolution: {integrity: sha512-A74QexhiglOe1L+C9pBEULMgiMyhCK994WiswLob7uPaprDAoNtChN7mMAaN4cj6bbTaT8YMvRXLBtd5Folzfg==}
     engines: {node: '>= 12'}
@@ -636,10 +625,6 @@ packages:
     resolution: {integrity: sha512-EJAYWMsWZlUA/halbgZBc6eP2d3HPkHi5GzprYEK58GCh51KJ36VjX7VKVEnMjgBSED+PE00tpr3ZvUC4nUR+Q==}
     engines: {node: '>= 10'}
 
-  '@feathersjs/errors@4.5.21':
-    resolution: {integrity: sha512-5r3P9HBIoXy8VOxPDsF9TMHSKsZxQOcEtceA7TK5of4u7e2xxYzFodFzOCYmMzCO5q7Ki65954JRh77erfZzEg==}
-    engines: {node: '>= 10'}
-
   '@feathersjs/errors@5.0.49':
     resolution: {integrity: sha512-68pp+Nu1luhgoLhXHYwl2lfxkBMEmxi1O4zS7VeW3JgpcKhYEHluRF0tO4ZIZFFSkejpxPwzrkwrISS7TRW+Tg==}
     engines: {node: '>= 12'}
@@ -650,10 +635,6 @@ packages:
 
   '@feathersjs/feathers@4.5.15':
     resolution: {integrity: sha512-Q7sa1QAEhspYHsVEJPRg313bqjNaOhgvibiUxtjf3CGGJL9hVcAPLHQbrzsZuVTR4QwBATZSf6voEtuNmG/pIQ==}
-    engines: {node: '>= 10'}
-
-  '@feathersjs/feathers@4.5.21':
-    resolution: {integrity: sha512-6Axa0u+UPTUO6foJcdgfzj6QnoZUMuwXasd9I8PYkwITIA26GLw4u7lyAUmErz+IBBl5ZUL2g4/Qtm85R2D3eg==}
     engines: {node: '>= 10'}
 
   '@feathersjs/feathers@5.0.49':
@@ -1387,14 +1368,6 @@ packages:
   agent-base@7.1.0:
     resolution: {integrity: sha512-o/zjMZRhJxny7OyEF+Op8X+efiELC7k7yOjMzgfzVqOzXqkBkWI79YoTdOtsuWd5BWhAGAuOY/Xa6xpiaWXiNg==}
     engines: {node: '>= 14'}
-
-  ajv-formats@2.1.1:
-    resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependencies:
-      ajv: ^8.0.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
@@ -2658,10 +2631,6 @@ packages:
     engines: {node: '>= 6'}
     peerDependencies:
       mongodb: ^3.1.1
-
-  feathers-mongodb@6.4.1:
-    resolution: {integrity: sha512-EZssrp/EIeMxQ3qzNOdlXbUoTXOKvwCMsuYZ5JuPsahRjQluxPEY2WIKmBAzFi4/Jgfl+JhQQLxceRTjZlsynw==}
-    engines: {node: '>= 8'}
 
   fecha@4.2.3:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
@@ -5816,14 +5785,6 @@ snapshots:
 
   '@feathers-plus/batch-loader@0.3.6': {}
 
-  '@feathersjs/adapter-commons@4.5.21':
-    dependencies:
-      '@feathersjs/commons': 4.5.21
-      '@feathersjs/errors': 4.5.21
-      '@feathersjs/feathers': 4.5.21
-    transitivePeerDependencies:
-      - supports-color
-
   '@feathersjs/adapter-commons@5.0.49':
     dependencies:
       '@feathersjs/commons': 5.0.49
@@ -5932,8 +5893,6 @@ snapshots:
 
   '@feathersjs/commons@4.5.15': {}
 
-  '@feathersjs/commons@4.5.21': {}
-
   '@feathersjs/commons@5.0.49': {}
 
   '@feathersjs/configuration@5.0.49(typescript@7.0.2)':
@@ -5953,12 +5912,6 @@ snapshots:
       - supports-color
 
   '@feathersjs/errors@4.5.15':
-    dependencies:
-      debug: 4.4.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@feathersjs/errors@4.5.21':
     dependencies:
       debug: 4.4.3
     transitivePeerDependencies:
@@ -5987,15 +5940,6 @@ snapshots:
   '@feathersjs/feathers@4.5.15':
     dependencies:
       '@feathersjs/commons': 4.5.15
-      debug: 4.4.3
-      events: 3.3.0
-      uberproto: 2.0.6
-    transitivePeerDependencies:
-      - supports-color
-
-  '@feathersjs/feathers@4.5.21':
-    dependencies:
-      '@feathersjs/commons': 4.5.21
       debug: 4.4.3
       events: 3.3.0
       uberproto: 2.0.6
@@ -6965,10 +6909,6 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
-
-  ajv-formats@2.1.1(ajv@8.20.0):
-    optionalDependencies:
-      ajv: 8.20.0
 
   ajv-formats@3.0.1(ajv@8.20.0):
     optionalDependencies:
@@ -8450,14 +8390,6 @@ snapshots:
       lodash.omit: 4.5.0
       mongodb: 3.7.3
       uberproto: 2.0.6
-    transitivePeerDependencies:
-      - supports-color
-
-  feathers-mongodb@6.4.1:
-    dependencies:
-      '@feathersjs/adapter-commons': 4.5.21
-      '@feathersjs/commons': 4.5.15
-      '@feathersjs/errors': 4.5.15
     transitivePeerDependencies:
       - supports-color
 
