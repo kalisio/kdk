@@ -39,7 +39,7 @@
     "mocha:map": "cross-env NODE_OPTIONS=--conditions=development NODE_CONFIG_DIR=./test/api/map/config/ mocha test/api/map/**/*.test.js --exit",
     "mocha": "npm-run-all --serial mocha:**",
     "coverage": "c8 npm run mocha",
-    "test:client": "cd vite && yarn test:core",
+    "test:client": "cd vite && pnpm test:core",
     "test": "npm run lint && npm run coverage && npm run test:client"
   },
   "standard": {
@@ -97,16 +97,16 @@
     "@feathersjs/mongodb": "5.0.44",
     "@feathersjs/schema": "5.0.44",
     "@feathersjs/socketio": "5.0.44",
-    "@kalisio/common-core": "~0.12.0",
-    "@kalisio/common-graphics": "~0.12.0",
+    "@kalisio/common-core": "~0.12.1",
+    "@kalisio/common-graphics": "~0.12.1",
     "@kalisio/feathers-import-export": "~3.0.0",
     "@kalisio/feathers-mongodb-management": "~3.0.0",
     "@kalisio/feathers-s3": "~3.0.0",
     "@kalisio/feathers-webpush": "~3.0.0",
-    "@kalisio/kdk-core-api": "^0.0.0",
-    "@kalisio/kdk-core-common": "^0.0.0",
-    "@kalisio/kdk-map-api": "^0.0.0",
-    "@kalisio/kdk-map-common": "^0.0.0",
+    "@kalisio/kdk-core-api": "github:kalisio/kdk-ekosystem#master&path:/packages/kdk-core-api",
+    "@kalisio/kdk-core-common": "github:kalisio/kdk-ekosystem#master&path:/packages/kdk-core-common",
+    "@kalisio/kdk-map-api": "github:kalisio/kdk-ekosystem#master&path:/packages/kdk-map-api",
+    "@kalisio/kdk-map-common": "github:kalisio/kdk-ekosystem#master&path:/packages/kdk-map-common",
     "@mapbox/sphericalmercator": "^1.2.0",
     "@turf/bbox": "^6.0.1",
     "@weacast/core": "^2.2.1",
@@ -175,5 +175,9 @@
     "sass-embedded": "^1.32.12",
     "shx": "^0.3.2",
     "standard": "^17.1.2"
+  },
+  "metaWorkspace": {
+    "version": "0.11.0",
+    "syncedAt": "2026-10-22T07:20:46.522Z"
   }
 }
