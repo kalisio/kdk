@@ -33,5 +33,8 @@ done
 ## Build docs
 ##
 
+# Settings the KnowledgeSearch
+load_env_files "$WORKSPACE_DIR/development/workspaces/libs/kdk/knowledge_docs.enc.env"
+
 build_docs "$ROOT_DIR" "kalisio/kdk" "$PUBLISH"
 
