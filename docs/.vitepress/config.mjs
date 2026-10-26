@@ -37,10 +37,10 @@ export default withMermaid(
     },
     vite: {
       optimizeDeps: {
-        include: ['keycloak-js', 'lodash'],
+        include: ['dayjs', 'mermaid', 'cytoscape', 'cytoscape-cose-bilkent'],
       },
       ssr: {
-        noExternal: ['vitepress-theme-kalisio']
+        noExternal: ['@kalisio/vitepress-theme']
       }
     }
   })
