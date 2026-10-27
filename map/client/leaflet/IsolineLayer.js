@@ -155,6 +155,8 @@ const IsolineLayer = L.GeoJSON.extend({
     this.clearLayers()
     if (geojson) this.addData(geojson)
     this.updateLabels()
+    // notify others displayed isolines have changed (for example legend component), same as realtime GeoJSON layers
+    this.fire('update', { features: _.get(geojson, 'features', []) })
   },
 
   refresh () {

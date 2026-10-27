@@ -9,6 +9,9 @@ import { listenToLoadingEventsForLayer, unlistenToLoadingEventsForLayer } from '
 import { IsolineLayer } from '../../leaflet/IsolineLayer.js'
 
 export const isolineLayers = {
+  emits: [
+    'layer-updated'
+  ],
   methods: {
     async createLeafletIsolineLayer (options) {
       const layerOptions = options.leaflet || options
@@ -92,6 +95,11 @@ export const isolineLayers = {
       // Reflect loading state back onto the reactive layer definition so eg. UI can
       // display a spinner while isolines are being fetched for the current view
       listenToLoadingEventsForLayer(layer, engineLayer)
+      // Isolines are fetched asynchronously for the current view so that we mimic
+      // here what realtime layers do to notify others once displayed isolines have changed
+      if (engineLayer.onUpdate) engineLayer.off('update', engineLayer.onUpdate)
+      engineLayer.onUpdate = (data) => this.onIsolineLayerUpdated(layer, engineLayer, data)
+      engineLayer.on('update', engineLayer.onUpdate)
     },
 
     onHideIsolineLayer (layer, engineLayer) {
@@ -99,7 +107,16 @@ export const isolineLayers = {
       if (!isIsolineLayer) return
 
       unlistenToLoadingEventsForLayer(layer, engineLayer)
+      if (engineLayer.onUpdate) {
+        engineLayer.off('update', engineLayer.onUpdate)
+        delete engineLayer.onUpdate
+      }
       this.isolineLayers.delete(layer._id)
+    },
+
+    onIsolineLayerUpdated (layer, engineLayer, data) {
+      this.$emit('layer-updated', layer, engineLayer, data)
+      this.$engineEvents.emit('layer-updated', layer, engineLayer, data)
     },
 
     onSelectedLevelChangedIsolineLayer (value) {
