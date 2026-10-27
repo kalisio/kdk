@@ -8,6 +8,8 @@
         v-model="startTimeModel"
         :date-picker="datePicker"
         :time-picker="timePicker"
+        :with-minutes="withMinutes"
+        :with-seconds="withSeconds"
         :date-format="dateFormat"
         :time-format="timeFormat"
         :date-class="dateClass"
@@ -47,6 +49,8 @@
         v-model="endTimeModel"
         :date-picker="datePicker"
         :time-picker="timePicker"
+        :with-minutes="withMinutes"
+        :with-seconds="withSeconds"
         :date-format="dateFormat"
         :time-format="timeFormat"
         :date-class="dateClass"
@@ -93,6 +97,10 @@ const props = defineProps({
   timePicker: {
     type: Object,
     default: () => null
+  },
+  withMinutes: {
+    type: Boolean,
+    default: true
   },
   withSeconds: {
     type: Boolean,
