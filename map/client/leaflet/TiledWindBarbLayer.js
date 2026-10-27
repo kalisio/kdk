@@ -3,6 +3,7 @@ import L from 'leaflet'
 import 'abort-controller/polyfill.js'
 import { utils as kdkCoreUtils } from '../../../core.client.js'
 import { WindBarbIcon } from './WindBarb.js'
+import { TiledGridSourceLayer } from './TiledGridSourceLayer.js'
 
 // Same convention as everywhere else in the app: u/v are eastward/northward components (m/s).
 // Returns the meteorological direction the wind blows FROM, clockwise from north, in degrees.
@@ -16,7 +17,7 @@ function vectorToSpeed (u, v) {
 }
 
 // Draws a wind barb icon at each sample of a fixed lattice of points in global pixel space.
-const TiledWindBarbLayer = L.GridLayer.extend({
+const TiledWindBarbLayer = TiledGridSourceLayer.extend({
   options: {
     // Unlike a plain raster tile, a tile here means a real network round-trip (a probe request), so
     // don't fire one for every tile the view passes through while a drag/zoom gesture is still in
@@ -33,7 +34,7 @@ const TiledWindBarbLayer = L.GridLayer.extend({
     // per sample from the color map when available
     this.conf.barb = _.get(options, 'barb', {})
 
-    L.GridLayer.prototype.initialize.call(this, options)
+    TiledGridSourceLayer.prototype.initialize.call(this, options, uSource, vSource)
 
     // Setup the colormap, exactly as the tiled mesh layer does: color each sample according to
     // the underlying variable's chromajs config (here, wind speed)
@@ -51,24 +52,10 @@ const TiledWindBarbLayer = L.GridLayer.extend({
 
     this.uSource = uSource
     this.vSource = vSource
-    this.onDataChangedCallback = this.onDataChanged.bind(this)
-    this.uSource.on('data-changed', this.onDataChangedCallback)
-    this.vSource.on('data-changed', this.onDataChangedCallback)
-    // we're listening to 2 sources: u and v, wait for both to have fired before reacting
-    this.numDataChanged = 0
 
     // abort in-flight requests for tiles that get unloaded before they resolve (eg. scrolled past
     // during a pan), instead of letting them complete for nothing
     this.on('tileunload', (event) => { this.onTileUnload(event) })
-  },
-
-  setTime (time) {
-    const applyU = typeof this.uSource.setTime === 'function'
-    const applyV = typeof this.vSource.setTime === 'function'
-    // no need to force a tile refresh here as the real invalidation happens later,
-    // once the grid source actually changes its data
-    if (applyU) { this.uSource.setTime(time) }
-    if (applyV) { this.vSource.setTime(time) }
   },
 
   setLevel (level) {
@@ -79,68 +66,6 @@ const TiledWindBarbLayer = L.GridLayer.extend({
       this.level = level
       this.redraw()
     }
-  },
-
-  setModel (model) {
-    const applyU = typeof this.uSource.setModel === 'function'
-    const applyV = typeof this.vSource.setModel === 'function'
-    if (applyU) { this.uSource.setModel(model) }
-    if (applyV) { this.vSource.setModel(model) }
-  },
-
-  onDataChanged () {
-    // we're listening to 2 sources: u and v, so wait every 2 fired events to process anything
-    ++this.numDataChanged
-    if (this.numDataChanged !== 2) return
-    this.numDataChanged = 0
-
-    // allow grid layer to only request tiles located in those bounds
-    const points = []
-    const vbbox = this.vSource.getBBox()
-    if (vbbox) {
-      points.push(L.latLng(vbbox[0], vbbox[1]))
-      points.push(L.latLng(vbbox[2], vbbox[3]))
-    }
-    const ubbox = this.uSource.getBBox()
-    if (ubbox) {
-      points.push(L.latLng(ubbox[0], ubbox[1]))
-      points.push(L.latLng(ubbox[2], ubbox[3]))
-    }
-    this.options.bounds = points.length ? L.latLngBounds(points) : null
-
-    // we now have data to display, it may be time to add the layer to the map
-    if (this.pendingAdd) {
-      this.onPendingAdd()
-    } else {
-      this.redraw()
-    }
-
-    // notify others we have data (for example color legend component)
-    this.fire('data')
-    this.hasData = true
-  },
-
-  onAdd (map) {
-    // defer actual addLayer call to the point where we have data ready to be displayed
-    // otherwise, leaflet will start loading meaningless tiles against a grid source that hasn't been configured yet
-    this.pendingAdd = map
-  },
-
-  onPendingAdd () {
-    const map = this.pendingAdd
-    L.GridLayer.prototype.onAdd.call(this, map)
-    this.pendingAdd = null
-  },
-
-  onRemove (map) {
-    if (this.pendingAdd) {
-      this.pendingAdd = null
-    } else {
-      L.GridLayer.prototype.onRemove.call(this, map)
-    }
-
-    this.uSource.invalidate()
-    this.vSource.invalidate()
   },
 
   onTileUnload (event) {
@@ -240,11 +165,6 @@ const TiledWindBarbLayer = L.GridLayer.extend({
       const point = L.point(x, y)
       this.renderBarb(tile, point, u, v)
     }
-  },
-
-  getBounds () {
-    const bounds = this.options.bounds ? this.options.bounds : L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
-    return this._map ? this._map.wrapLatLngBounds(bounds) : bounds
   }
 })
 

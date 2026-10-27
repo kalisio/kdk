@@ -3,8 +3,9 @@ import L from 'leaflet'
 import { utils as kdkCoreUtils } from '../../../core.client.js'
 
 import { tile2key, tileSetContainsParent } from './utils/utils.tiles.js'
+import { TiledGridSourceLayer } from './TiledGridSourceLayer.js'
 
-const TiledWindLayer = L.GridLayer.extend({
+const TiledWindLayer = TiledGridSourceLayer.extend({
   initialize (options, uSource, vSource) {
     this.conf = {}
 
@@ -12,7 +13,7 @@ const TiledWindLayer = L.GridLayer.extend({
     this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
     this.conf.meteoModelOverride = _.get(options, 'meteoModelOverride')
 
-    L.GridLayer.prototype.initialize.call(this, options)
+    TiledGridSourceLayer.prototype.initialize.call(this, options, uSource, vSource)
 
     // is user currently dragging the map ?
     this.userIsDragging = false
@@ -26,10 +27,6 @@ const TiledWindLayer = L.GridLayer.extend({
     this.colorMap = kdkCoreUtils.buildColorScale(chromajs)
     this.uSource = uSource
     this.vSource = vSource
-    this.onDataChangedCallback = this.onDataChanged.bind(this)
-    this.uSource.on('data-changed', this.onDataChangedCallback)
-    this.vSource.on('data-changed', this.onDataChangedCallback)
-    this.numDataChanged = 0
 
     // build the underlying velocity layer
     const velocityOptions = Object.assign({
@@ -105,24 +102,6 @@ const TiledWindLayer = L.GridLayer.extend({
     return events
   },
 
-  setTime (time) {
-    const applyU = typeof this.uSource.setTime === 'function'
-    const applyV = typeof this.vSource.setTime === 'function'
-    // no need to force a tile refresh here as the real invalidation happens later,
-    // once the grid source actually changes its data
-    if (applyU) { this.uSource.setTime(time) }
-    if (applyV) { this.vSource.setTime(time) }
-  },
-
-  setLevel (level) {
-    const applyU = typeof this.uSource.setLevel === 'function'
-    const applyV = typeof this.vSource.setLevel === 'function'
-    // no need to force a tile refresh here as the real invalidation happens later,
-    // once the grid source actually changes its data
-    if (applyU) { this.uSource.setLevel(level) }
-    if (applyV) { this.vSource.setLevel(level) }
-  },
-
   setModel (model) {
     const modelHeader = {
       nx: model.size[0],
@@ -158,60 +137,14 @@ const TiledWindLayer = L.GridLayer.extend({
     // const modelTileSize = L.latLng(model.tileResolution[1], model.tileResolution[0])
     // this.options.maxNativeZoom = computeIdealMaxNativeZoom(this, modelBounds, modelTileSize)
 
-    const applyU = typeof this.uSource.setModel === 'function'
-    const applyV = typeof this.vSource.setModel === 'function'
-    // no need to force a tile refresh here as the real invalidation happens later,
-    // once the grid source actually changes its data
-    if (applyU) { this.uSource.setModel(model) }
-    if (applyV) { this.vSource.setModel(model) }
-  },
-
-  onDataChanged () {
-    // we're listening to 2 sources: u and v
-    // so wait every 2 fired events to process anything
-    ++this.numDataChanged
-    if (this.numDataChanged !== 2) return
-    this.numDataChanged = 0
-
-    this.loadedTiles.clear()
-
-    // allow grid layer to only request tiles located in those bounds
-    const points = []
-    const vbbox = this.vSource.getBBox()
-    if (vbbox) {
-      points.push(L.latLng(vbbox[0], vbbox[1]))
-      points.push(L.latLng(vbbox[2], vbbox[3]))
-    }
-    const ubbox = this.uSource.getBBox()
-    if (ubbox) {
-      points.push(L.latLng(ubbox[0], ubbox[1]))
-      points.push(L.latLng(ubbox[2], ubbox[3]))
-    }
-    this.options.bounds = points.length ? L.latLngBounds(points) : null
-
-    // we now have data to display, it may be time to add the layer to the map
-    if (this.pendingAdd) {
-      this.onPendingAdd()
-    } else {
-      this.redraw()
-    }
-
-    // notify others we have data (for example color legend component)
-    this.fire('data')
-    this.hasData = true
-  },
-
-  onAdd (map) {
-    // defer actual addLayer call to the point where we have data ready to be displayed
-    // otherwise, leaflet will start loading meaningless tiles against a grid source that hasn't been configured yet
-    this.pendingAdd = map
+    TiledGridSourceLayer.prototype.setModel.call(this, model)
   },
 
   onPendingAdd () {
     const map = this.pendingAdd
     this.loadedTiles.clear()
 
-    L.GridLayer.prototype.onAdd.call(this, map)
+    TiledGridSourceLayer.prototype.onPendingAdd.call(this)
     map.addLayer(this.velocityLayer)
     this.velocityLayer.setData([this.uFlow, this.vFlow])
     this.velocityLayer._initWindy(this.velocityLayer)
@@ -219,20 +152,11 @@ const TiledWindLayer = L.GridLayer.extend({
     // no need to stop animation when panning
     this._map.off('dragstart', this.velocityLayer._windy.stop)
     this._map.off('dragend', this.velocityLayer._clearAndRestart)
-
-    this.pendingAdd = null
   },
 
   onRemove (map) {
-    if (this.pendingAdd) {
-      this.pendingAdd = null
-    } else {
-      map.removeLayer(this.velocityLayer)
-      L.GridLayer.prototype.onRemove.call(this, map)
-    }
-
-    this.uSource.invalidate()
-    this.vSource.invalidate()
+    if (!this.pendingAdd) map.removeLayer(this.velocityLayer)
+    TiledGridSourceLayer.prototype.onRemove.call(this, map)
     this.loadedTiles.clear()
   },
 
@@ -368,12 +292,7 @@ const TiledWindLayer = L.GridLayer.extend({
     this.uFlow.data.fill(0)
     this.vFlow.data.fill(0)
 
-    L.GridLayer.prototype.redraw.call(this)
-  },
-
-  getBounds () {
-    const bounds = this.options.bounds ? this.options.bounds : L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
-    return this._map ? this._map.wrapLatLngBounds(bounds) : bounds
+    TiledGridSourceLayer.prototype.redraw.call(this)
   }
 })
 
