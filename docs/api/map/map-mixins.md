@@ -646,6 +646,62 @@ Make it possible to manage [Weacast map layers](https://weacast.github.io/weacas
 This mixin assumes that your component has initialized its [Weacast client](https://weacast.github.io/weacast-docs/api/application.html#client-setup) in the `weacastApi` property by using e.g. the [Weacast mixin](./mixins.md#weacast)
 :::
 
+## Isoline Layer
+
+Make it possible to display the isolines of a grid source variable, computed by the source itself, over the current view:
+* **createLeafletIsolineLayer(options)** automatically registered isoline Leaflet layer constructor
+
+Unlike tiled layers, isolines are requested for the whole view at once, so that each isoline comes in one piece instead of being cut at tile boundaries. They are requested again each time the map is moved, as well as when the current time, forecast model, selected level or template context changes.
+
+::: warning
+Only grid sources able to compute isolines can be used, e.g. `kazarr` or a `time_based` source relying on `kazarr` sources.
+:::
+
+The following options can be set in the Leaflet layer options:
+* **type** must be `isolineLayer`
+* **thresholds** array of values to compute isolines for, forwarded as is to the grid source
+* **labels.spacing** distance in pixels between two consecutive labels along an isoline (defaults to `250`), `0` means a single label in the middle of each isoline
+* **useColorScale** when `true` each isoline is colored according to its threshold using the color scale (`chromajs` property) of the first layer variable, unless overridden by the layer style
+* **useLevel** when `false` the selected level is not forwarded to the grid source (defaults to `true`)
+* **minZoom/maxZoom** zoom range where isolines are displayed, which can be set per forecast model using **meteoModelMinZoom/meteoModelMaxZoom** objects keyed by model name
+* the grid source configuration under its key (e.g. `kazarr`)
+
+Isolines and their labels are styled like any [GeoJson layer](./map-mixins.md#geojson-layer): isolines use the `line` style and labels use the `point` style, a label being a shape-less marker repeated along each isoline and oriented according to it. Each isoline feature exposes its value in the `threshold` property, which can be used in style or tooltip templates:
+```js
+{
+  name: 'Temperature isolines',
+  type: 'OverlayLayer',
+  variables: [{ name: 'temperature', unit: 'degC', chromajs: { colors: ['#313695', '#ffffbf', '#a50026'], domain: [-20, 40] } }],
+  leaflet: {
+    type: 'isolineLayer',
+    thresholds: [-10, -5, 0, 5, 10, 15, 20, 25, 30],
+    useColorScale: true,
+    labels: { spacing: 300 },
+    style: {
+      line: { width: 2 },
+      point: { text: { label: '<%= properties.threshold %>°C' } }
+    },
+    kazarr: {
+      url: 'https://kazarr.example.com',
+      dataset: 'my-dataset',
+      variable: 'temperature'
+    }
+  }
+}
+```
+
+The layer emits `loading` and `load` Leaflet events while isolines are being fetched, which are reflected in the `isLoading` property of the layer definition.
+
+Each time displayed isolines are replaced the layer emits an `update` Leaflet event, forwarded as a `layer-updated` event (both by the component and by `$engineEvents`) with the layer definition, the Leaflet layer and the event data as arguments, so that eg. legend components can be refreshed.
+
+::: warning
+Although it is named after the [GeoJson layer](./map-mixins.md#geojson-layer) event, the `update` event data is not the same: it only contains a `features` array of the displayed isolines, while realtime GeoJson layers provide `features`, `enter`, `update` and `exit` objects keyed by feature ID.
+:::
+
+::: danger
+The [style mixin](./map-mixins.md#map-style) and [GeoJson layer mixin](./map-mixins.md#geojson-layer) are mandatory when using this mixin.
+:::
+
 ## Canvas Layer
 
 Make it possible to draw custom graphic elements on top of other layers using HTML canvas elements. These custom graphic elements are defined by their draw function and are run in the client application, using a controlled draw context. It is not possible for these draw functions to access anything outside the specified context.
