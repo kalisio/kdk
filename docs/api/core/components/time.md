@@ -39,6 +39,7 @@ This component is a time picker button. It allows users to select a time by clic
 |----------------|-----------|----------------|----------------|
 | `modelValue`   | String  | `null`         | The selected time value, used with `v-model`. |
 | `picker`       | Object  | `null`         | Configuration options for the `QTime` picker. |
+| `withMinutes`  | Boolean | `true`         | Determines whether minutes should be displayed, when `false` the time picker only allows to select an hour. |
 | `withSeconds`  | Boolean | `false`        | Determines whether seconds should be displayed in the time picker. |
 | `format`       | String  | `null`         | Custom time format for displaying the selected time. |
 | `placeholder`  | String  | `null`         | Text shown when no time is selected. |
@@ -69,6 +70,7 @@ This component provides a combined date and time picker, allowing users to selec
 | `modelValue`   | String  | `null`         | The selected date-time value, used with `v-model`. Must be a valid date-time string. |
 | `datePicker`   | Object  | `null`         | Configuration options for the `KDate` picker. |
 | `timePicker`   | Object  | `null`         | Configuration options for the `KTime` picker. |
+| `withMinutes`  | Boolean | `true`         | Determines whether minutes should be displayed, when `false` the time picker only allows to select an hour. |
 | `withSeconds`  | Boolean | `false`        | Determines whether seconds should be displayed in the time picker. |
 | `dateFormat`   | String  | `null`         | Custom format for displaying the date. |
 | `timeFormat`   | String  | `null`         | Custom format for displaying the time. |
@@ -107,6 +109,7 @@ This component is a date-time range selector that allows users to pick a start a
 | `modelValue`    | Object | `null`         | Contains `start` and `end` date-time values. | Ensures validity using Moment.js. Updates when `startTimeModel` or `endTimeModel` changes. |
 | `datePicker`    | Object | `null`         | Configuration options for the date picker. | Merged with default date picker settings. |
 | `timePicker`    | Object | `null`         | Configuration options for the time picker. | Merged with default time picker settings. |
+| `withMinutes`   | Boolean | `true`        | Determines whether minutes should be displayed, when `false` the time picker only allows to select an hour. | Affects the `KDateTime` time format. |
 | `withSeconds`   | Boolean | `false`       | Determines whether seconds should be displayed in the time picker. | Affects the `KDateTime` time format. |
 | `dateFormat`    | String  | `null`        | Custom format for displaying dates. | Overrides default date format in `KDateTime`. |
 | `timeFormat`    | String  | `null`        | Custom format for displaying times. | Overrides default time format in `KDateTime`. |

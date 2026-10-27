@@ -20,6 +20,7 @@
     <KTime
       v-model="computedTimeModel"
       :picker="computedTimePicker"
+      :with-minutes="withMinutes"
       :with-seconds="withSeconds"
       :format="timeFormat"
       :icon="null"
@@ -55,6 +56,10 @@ const props = defineProps({
   timePicker: {
     type: Object,
     default: () => null
+  },
+  withMinutes: {
+    type: Boolean,
+    default: true
   },
   withSeconds: {
     type: Boolean,
@@ -245,6 +250,8 @@ function toHMS (value) {
   }
 }
 const triggerEmit = _.debounce(() => {
+  // Minutes are not displayed so that the time is truncated to the hour
+  if (!props.withMinutes) dateTime.value.startOf('hour')
   emit('update:modelValue', dateTime.value.toISOString())
 }, 100)
 
