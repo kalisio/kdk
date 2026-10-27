@@ -7,6 +7,7 @@ import 'leaflet-pixi-overlay'
 import 'abort-controller/polyfill.js'
 import { utils as kdkCoreUtils } from '../../../core.client.js'
 import { buildColorMapShaderCodeFromClasses, buildColorMapShaderCodeFromDomain, buildShaderCode, WEBGL_FUNCTIONS } from '../pixi-utils.js'
+import { TiledGridSourceLayer } from './TiledGridSourceLayer.js'
 
 // Per-map shared pixi overlay registry — avoids creating one WebGL context per layer.
 // Each map gets exactly one L.pixiOverlay (one WebGL context).
@@ -44,7 +45,7 @@ function releaseSharedOverlay (map) {
   }
 }
 
-const TiledMeshLayer = L.GridLayer.extend({
+const TiledMeshLayer = TiledGridSourceLayer.extend({
   initialize (options, gridSource) {
     this.conf = {}
 
@@ -67,7 +68,8 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.conf.resolutionScale = _.get(options, 'resolutionScale', [1.0, 1.0])
 
     // initialize grid layer
-    L.GridLayer.prototype.initialize.call(this, options)
+    TiledGridSourceLayer.prototype.initialize.call(this, options, gridSource)
+    this.gridSource = gridSource
 
     // setup pixi objects
     // previousPixiRoot holds tiles from the previous data version while new tiles are loading,
@@ -123,21 +125,14 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.on('tileload', (event) => { this.onTileLoad(event) })
     this.on('tileunload', (event) => { this.onTileUnload(event) })
     this.on('load', () => { this.onLoad() })
-
-    this.gridSource = gridSource
-    // keep ref on callback to be able to remove it
-    this.onDataChangedCallback = this.onDataChanged.bind(this)
-    this.gridSource.on('data-changed', this.onDataChangedCallback)
-  },
-
-  onAdd (map) {
-    // defer actual addLayer call to the point where we have data ready to be displayed
-    // otherwise, leaflet will start loading meaningless tiles against a grid source that hasn't been configured yet
-    this.pendingAdd = map
   },
 
   onPendingAdd () {
     const map = this.pendingAdd
+
+    // First data ever available for this layer, still need the color map/shader built once for it
+    this.updateColorMap()
+    this.updateShader()
 
     // Attach to the per-map shared pixi overlay so all layers share one WebGL context.
     this.sharedOverlay = getOrCreateSharedOverlay(map)
@@ -158,32 +153,27 @@ const TiledMeshLayer = L.GridLayer.extend({
     map.on('zoomstart', this.zoomStartCallback)
     map.on('zoomend', this.zoomEndCallback)
 
-    L.GridLayer.prototype.onAdd.call(this, map)
-
-    this.pendingAdd = null
+    TiledGridSourceLayer.prototype.onPendingAdd.call(this)
   },
 
   onRemove (map) {
-    if (this.pendingAdd) {
-      // never actually got added to leaflet (see onAdd/onPendingAdd), nothing to clean up
-      this.pendingAdd = null
-      return
+    // nothing to clean up if never actually added to leaflet (see onAdd/onPendingAdd)
+    if (!this.pendingAdd) {
+      // remove map listeners
+      map.off('zoomstart', this.zoomStartCallback)
+      map.off('zoomend', this.zoomEndCallback)
+      this.zoomStartCallback = null
+      this.zoomEndCallback = null
+
+      this.requestdRedraw.cancel()
+      this.requestColorMapRefresh.cancel()
+      this.clearPreviousPixiRoot()
+      this.sharedOverlay.container.removeChild(this.pixiWrapper)
+      releaseSharedOverlay(map)
+      this.sharedOverlay = null
     }
 
-    // remove map listeners
-    map.off('zoomstart', this.zoomStartCallback)
-    map.off('zoomend', this.zoomEndCallback)
-    this.zoomStartCallback = null
-    this.zoomEndCallback = null
-
-    this.requestdRedraw.cancel()
-    this.requestColorMapRefresh.cancel()
-    this.clearPreviousPixiRoot()
-    this.sharedOverlay.container.removeChild(this.pixiWrapper)
-    releaseSharedOverlay(map)
-    this.sharedOverlay = null
-
-    L.GridLayer.prototype.onRemove.call(this, map)
+    TiledGridSourceLayer.prototype.onRemove.call(this, map)
   },
 
   createTile (coords, done) {
@@ -362,30 +352,6 @@ const TiledMeshLayer = L.GridLayer.extend({
     this.requestdRedraw()
   },
 
-  onDataChanged () {
-    const bbox = this.gridSource.getBBox()
-    if (bbox) {
-      // allow grid layer to only request tiles located in those bounds
-      const c1 = L.latLng(bbox[0], bbox[1])
-      const c2 = L.latLng(bbox[2], bbox[3])
-      this.options.bounds = L.latLngBounds(c1, c2)
-    }
-
-    if (this.pendingAdd) {
-      // First data ever available for this layer: only now do we actually add it to leaflet (see
-      // onAdd/onPendingAdd), so it doesn't fetch meaningless tiles on initial add against a grid
-      // source that wasn't configured yet. Still need the color map/shader built once for it.
-      this.updateColorMap()
-      this.updateShader()
-      this.onPendingAdd()
-    } else {
-      // the underlying data actually changed (new dataset/model/time/...), a full reload is required
-      this.refresh()
-    }
-    this.fire('data')
-    this.hasData = true
-  },
-
   needsColorMapDomainRefresh () {
     // Only relevant when the domain is updated as data loads, ie. relative mode
     const chromajs = this.conf.chromajs
@@ -398,6 +364,7 @@ const TiledMeshLayer = L.GridLayer.extend({
   },
 
   refresh () {
+    // the underlying data actually changed (new dataset/model/time/...), a full reload is required
     // update color map and rebuild the shader program(s) from it
     this.updateColorMap()
     this.updateShader()
@@ -650,33 +617,10 @@ const TiledMeshLayer = L.GridLayer.extend({
   setLevel (value) {
     if (this.cutValueUniform) {
       this.layerUniforms.uniforms[this.cutValueUniform] = value
-      this.pixiLayer.redraw()
-    } else if (typeof this.gridSource.setLevel === 'function') {
-      // no need to force a tile refresh here as the real invalidation happens later,
-      // once the grid source actually changes its data
-      this.gridSource.setLevel(value)
+      this.requestdRedraw()
+    } else {
+      TiledGridSourceLayer.prototype.setLevel.call(this, value)
     }
-  },
-
-  setTime (time) {
-    if (typeof this.gridSource.setTime === 'function') {
-      // no need to force a tile refresh here as the real invalidation happens later,
-      // once the grid source actually changes its data
-      this.gridSource.setTime(time)
-    }
-  },
-
-  setModel (model) {
-    if (typeof this.gridSource.setModel === 'function') {
-      // no need to force a tile refresh here as the real invalidation happens later,
-      // once the grid source actually changes its data
-      this.gridSource.setModel(model)
-    }
-  },
-
-  getBounds () {
-    const bounds = this.options.bounds ? this.options.bounds : L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
-    return this._map ? this._map.wrapLatLngBounds(bounds) : bounds
   }
 })
 
