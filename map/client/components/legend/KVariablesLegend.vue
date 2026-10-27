@@ -59,7 +59,7 @@ const variables = computed(() => {
   })
     .map(variable => {
       // Pick useful properties
-      let { name, label, chromajs, unit } = _.pick(variable, ['name', 'label', 'chromajs', 'unit'])
+      let { name, label, chromajs, unit, targetUnit } = _.pick(variable, ['name', 'label', 'chromajs', 'unit', 'targetUnit'])
       // Avoid mutating layer data for color scale props
       const colorScale = _.merge(_.cloneDeep(chromajs), props.content)
       // We allow variable name to be customized based on level information
@@ -74,7 +74,7 @@ const variables = computed(() => {
       if (typeof format === 'string') {
         _.set(colorScale, 'layout.ticks.format', _.template(format))
       }
-      label = `${label} (${Units.getTargetUnitSymbol(unit)})`
+      label = `${label} (${Units.getTargetUnitSymbol(targetUnit || unit)})`
       // Rename required properties for backward compatibility
       if (colorScale.scale) {
         colorScale.colors = colorScale.scale
@@ -82,10 +82,10 @@ const variables = computed(() => {
       }
       // Convert to target unit
       if (colorScale.domain) {
-        colorScale.domain = colorScale.domain.map(value => Units.convert(value, unit))
+        colorScale.domain = colorScale.domain.map(value => Units.convert(value, unit, targetUnit))
       }
       if (colorScale.classes) {
-        colorScale.classes = colorScale.classes.map(value => Units.convert(value, unit))
+        colorScale.classes = colorScale.classes.map(value => Units.convert(value, unit, targetUnit))
       }
       return {
         name,
