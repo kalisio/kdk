@@ -265,7 +265,8 @@ function drawContinuousVerticalScale () {
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = canvas.height - yBar
   const colors = buildColorScale(props).colors(length)
-  if (reversed.value) colors.reverse()
+  // We draw color from bottom to top so in the reverse order than for horizontal scale
+  if (!reversed.value) colors.reverse()
   for (let i = 0; i < length; i++) {
     canvasContext.fillStyle = colors[i]
     canvasContext.fillRect(0, yBar + length - i, barWidth.value, 1)
