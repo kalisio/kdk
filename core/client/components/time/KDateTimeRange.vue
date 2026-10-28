@@ -226,13 +226,13 @@ watch(() => [props.min, props.max], () => {
   } else {
     const start = moment(startTimeModel.value)
     const end = moment(endTimeModel.value)
-    if (min.isSameOrAfter(start)) {
+    if (!start.isValid() || min.isSameOrAfter(start)) {
       startTimeModel.value = min
       rangeModel.value.min = 0
     } else {
       rangeModel.value.min = 100 * moment.duration(start.diff(min)).asMilliseconds() / duration
     }
-    if (max.isSameOrBefore(end)) {
+    if (!end.isValid() || max.isSameOrBefore(end)) {
       endTimeModel.value = max
       rangeModel.value.max = 100
     } else {
