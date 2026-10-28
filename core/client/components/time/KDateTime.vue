@@ -175,14 +175,14 @@ watch(() => props.modelValue, (value) => {
 })
 watch(() => props.timezone, (value) => {
   dateTime.value = Time.convertToLocal(props.modelValue, props.timezone)
-  minDateTime.value = Time.convertToLocal(props.min, props.timezone)
-  maxDateTime.value = Time.convertToLocal(props.max, props.timezone)
+  if (props.min) minDateTime.value = Time.convertToLocal(props.min, props.timezone)
+  if (props.max) maxDateTime.value = Time.convertToLocal(props.max, props.timezone)
 })
 watch(() => props.min, (value) => {
-  minDateTime.value = Time.convertToLocal(props.min, props.timezone)
+  if (props.min) minDateTime.value = Time.convertToLocal(props.min, props.timezone)
 })
 watch(() => props.max, (value) => {
-  maxDateTime.value = Time.convertToLocal(props.max, props.timezone)
+  if (props.max) maxDateTime.value = Time.convertToLocal(props.max, props.timezone)
 })
 
 // Functions
@@ -198,8 +198,8 @@ function checkDate (date) {
   }
   const timezone = props.timezone || Time.getFormatTimezone()
   const dateToCheck = (timezone ? moment.tz(datetimeComponents, timezone) : moment(datetimeComponents))
-  if (dateToCheck.isBefore(minDateTime.value.clone().startOf('day'))) return false
-  if (dateToCheck.isAfter(maxDateTime.value.clone().startOf('day'))) return false
+  if (minDateTime.value && dateToCheck.isBefore(minDateTime.value.clone().startOf('day'))) return false
+  if (maxDateTime.value && dateToCheck.isAfter(maxDateTime.value.clone().startOf('day'))) return false
   return true
 }
 function checkTime (hours, minutes, seconds) {
