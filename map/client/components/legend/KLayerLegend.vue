@@ -58,7 +58,7 @@ const legends = computed(() => {
   let layerLegends = props.layer.legend || []
   if (!Array.isArray(layerLegends)) layerLegends = [layerLegends]
   // Keep each legend with the actual label it was generated from as required by templated labels
-  layerLegends = layerLegends.map(legend => ({ legend, label: layerLabel }))
+  layerLegends = layerLegends.map(legend => ({ legend, label: legend.label || layerLabel }))
   // Append legends from filters with their own, when active and visible
   if (Array.isArray(props.layer.filters)) {
     props.layer.filters.forEach((filter) => {
