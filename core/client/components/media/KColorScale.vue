@@ -122,11 +122,24 @@ const reversed = computed(() => {
 })
 
 // Functions
-function formatTick (tick, previousTick) {
-  return (typeof ticksFormat.value === 'function' ? ticksFormat.value({ tick, previousTick }) : math.format(tick, ticksFormat.value))
+function formatTick ({ tickValue, previousTickValue, isFirstTick, isLastTick }) {
+  return (typeof ticksFormat.value === 'function' ? ticksFormat.value({ tick: tickValue, previousTick: previousTickValue, isFirstTick, isLastTick }) : math.format(tickValue, ticksFormat.value))
 }
 function normalize (x, domain) {
   return Math.min(1, Math.max(0, (x - domain[0]) / (domain[domain.length - 1] - domain[0])))
+}
+// Used to get tick value corresponding to a color index
+// when a domain is matched by a list of colors
+function getTickValueFromColorIndex (i, colors, domain) {
+  const nbColors = colors.length
+  const nbValues = domain.length
+  // Domain is split according to provided colors list
+  // e.g. [0,0.25,1] => ['yellow', 'lightgreen', '008ae5']
+  if (nbColors === nbValues) return domain[i]
+  // Continuous domain split regularly according to colors list
+  // e.g. [0,1] => ['yellow', 'lightgreen', 'darkgreen', '008ae5']
+  const normalizedValue = i / (nbColors - 1)
+  return domain[0] + normalizedValue * (domain[domain.length - 1] - domain[0])
 }
 function drawLabel () {
   if (_.isNil(labelText.value)) return
@@ -162,13 +175,15 @@ function drawDiscreteHorizontalScale () {
   canvasContext.fillStyle = ticksColor.value
   let previousTickValue
   for (let i = 0; i < props.classes.length; ++i) {
+    const isFirstTick = (i === 0)
+    const isLastTick = (i === props.classes.length - 1)
     let tickValue
-    if (i === 0) {
+    if (isFirstTick) {
       if (props.classes[i] !== Number.MIN_VALUE) {
         canvasContext.textAlign = 'left'
         tickValue = props.classes[i]
       }
-    } else if (i === props.classes.length - 1) {
+    } else if (isLastTick) {
       if (props.classes[i] !== Number.MAX_VALUE) {
         canvasContext.textAlign = 'right'
         tickValue = props.classes[i]
@@ -178,7 +193,7 @@ function drawDiscreteHorizontalScale () {
       tickValue = props.classes[i]
     }
     if (!_.isNil(tickValue)) {
-      const tick = formatTick(tickValue, previousTickValue)
+      const tick = formatTick({ tickValue, previousTickValue, isFirstTick, isLastTick })
       // Tick to be displayed or not ?
       if (tick) {
         canvasContext.fillText(tick, i * boxWidth, yTicks)
@@ -205,16 +220,18 @@ function drawDiscreteVerticalScale () {
   const x = barWidth.value + gutter.value
   let previousTickValue
   for (let i = 0; i < props.classes.length; ++i) {
+    const isFirstTick = (i === 0)
+    const isLastTick = (i === props.classes.length - 1)
     let tickValue
-    if (i === 0) {
+    if (isFirstTick) {
       if (props.classes[i] !== Number.MIN_VALUE) tickValue = props.classes[i]
-    } else if (i === props.classes.length - 1) {
+    } else if (isLastTick) {
       if (props.classes[i] !== Number.MAX_VALUE) tickValue = props.classes[i]
     } else {
       tickValue = props.classes[i]
     }
     if (!_.isNil(tickValue)) {
-      const tick = formatTick(tickValue, previousTickValue)
+      const tick = formatTick({ tickValue, previousTickValue, isFirstTick, isLastTick })
       // Tick to be displayed or not ?
       if (tick) {
         canvasContext.fillText(tick, x, yBar + (length - i) * boxHeight + ticksSize.value / 2)
@@ -240,17 +257,22 @@ function drawContinuousHorizontalScale () {
   canvasContext.fillStyle = ticksColor.value
   const domain = (reversed.value ? props.domain.toReversed() : props.domain)
   let previousTickValue
-  for (let i = 0; i < domain.length; ++i) {
-    const tickValue = domain[i]
-    if (i === 0) {
+  // We either iterate over domain items or colors if domain is split according to a color list
+  // so that we will have more ticks (one for each color)
+  const items = (Array.isArray(props.colors) ? props.colors : domain)
+  for (let i = 0; i < items.length; ++i) {
+    const isFirstTick = (i === 0)
+    const isLastTick = (i === items.length - 1)
+    const tickValue = (items === props.colors ? getTickValueFromColorIndex (i, props.colors, domain) : domain[i])
+    if (isFirstTick) {
       canvasContext.textAlign = 'left'
-    } else if (i === domain.length - 1) {
+    } else if (isLastTick) {
       canvasContext.textAlign = 'right'
     } else {
       canvasContext.textAlign = 'center'
     }
     if (!_.isNil(tickValue)) {
-      const tick = formatTick(tickValue, previousTickValue)
+      const tick = formatTick({ tickValue, previousTickValue, isFirstTick, isLastTick })
       // Tick to be displayed or not ?
       if (tick) {
         canvasContext.fillText(tick, normalize(tickValue, domain) * length, yTicks)
@@ -265,7 +287,6 @@ function drawContinuousVerticalScale () {
   const yBar = _.isNil(props.label) ? 0 : labelSize.value + gutter.value
   const length = canvas.height - yBar
   const colors = buildColorScale(props).colors(length)
-  // We draw color from bottom to top so in the reverse order than for horizontal scale
   if (!reversed.value) colors.reverse()
   for (let i = 0; i < length; i++) {
     canvasContext.fillStyle = colors[i]
@@ -277,18 +298,23 @@ function drawContinuousVerticalScale () {
   const x = barWidth.value + gutter.value
   canvasContext.textAlign = 'left'
   const domain = (reversed.value ? props.domain.toReversed() : props.domain)
+  // We either iterate over domain items or colors if domain is split according to a color list
+  // so that we will have more ticks (one for each color)
+  const items = (Array.isArray(props.colors) ? props.colors : domain)
   let previousTickValue
-  for (let i = 0; i < domain.length; ++i) {
+  for (let i = 0; i < items.length; ++i) {
+    const isFirstTick = (i === 0)
+    const isLastTick = (i === items.length - 1)
     let tickValue
-    if (i === 0) {
+    if (isFirstTick) {
       if (domain[i] !== Number.MIN_VALUE) tickValue = domain[i]
-    } else if (i === domain.length - 1) {
+    } else if (isLastTick) {
       if (domain[i] !== Number.MAX_VALUE) tickValue = domain[i]
     } else {
-      tickValue = domain[i]
+      tickValue = (items === props.colors ? getTickValueFromColorIndex (i, props.colors, domain) : domain[i])
     }
     if (!_.isNil(tickValue)) {
-      const tick = formatTick(tickValue, previousTickValue)
+      const tick = formatTick({ tickValue, previousTickValue, isFirstTick, isLastTick })
       // Tick to be displayed or not ?
       if (tick) {
         canvasContext.fillText(tick, x, yBar + normalize(tickValue, domain) * length + ticksSize.value / 2)
