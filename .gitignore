@@ -38,7 +38,10 @@ lib/
 *.bkp
 *.dtmp
 
-# vitepress
+## PNPM hook
+.pnpmfile.cjs
+
+# Vitepress
 docs/.vitepress/cache
 docs/.vitepress/dist
 docs/node_modules/
