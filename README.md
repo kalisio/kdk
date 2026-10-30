@@ -14,8 +14,6 @@ _The Kalisio Development Kit_
 
 The full documentation is available [here](https://kalisio.github.io/kdk/)
 
-> The documentation website is generated using [VuePress](https://vuepress.vuejs.org/)
-
 ## Contributing
 
 Found a bug ? Missing a Feature ? Want to contribute ? check out our [contribution guidelines](https://kalisio.github.io/kdk/about/roadmap.html#contributing) for details
