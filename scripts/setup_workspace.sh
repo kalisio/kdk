@@ -61,7 +61,7 @@ setup_lib_workspace "$WORKSPACE_DIR" "$KALISIO_GITHUB_URL/kalisio/development.gi
 if [ "$WORKSPACE_KIND" != "nokli" ]; then
     # On master branch we use kli, on other branches / tags we just yarn install
     if [ "$WORKSPACE_REF" = "master" ]; then
-        run_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$WORKSPACE_DIR/development/workspaces/libs/kdk/dev/kdk.cjs" "$WORKSPACE_KIND"
+        run_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$WORKSPACE_DIR/development/workspaces/libs/kdk/dev/kdk.js" "$WORKSPACE_KIND"
     else
         cd "$WORKSPACE_DIR/kdk" && nvm exec "$WORKSPACE_NODE" yarn install && cd ~-
     fi
