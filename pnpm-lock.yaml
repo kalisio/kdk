@@ -162,9 +162,6 @@ catalogs:
     papaparse:
       specifier: 5.7.0
       version: 5.7.0
-    password-generator:
-      specifier: 2.3.2
-      version: 2.3.2
     password-validator:
       specifier: 4.0.0
       version: 4.0.0
@@ -205,8 +202,6 @@ overrides:
   socket.io-parser@4.2.6: 4.2.7
   undici@6.25.0: 6.27.0
   ws@8.18.3: 8.21.3
-
-pnpmfileChecksum: sha256-rbnyMd8SUu64KfwLItroW4jJpK8PHS7XoVBVxljdW+M=
 
 importers:
 
@@ -371,9 +366,6 @@ importers:
       papaparse:
         specifier: 'catalog:'
         version: 5.7.0
-      password-generator:
-        specifier: 'catalog:'
-        version: 2.3.2
       password-validator:
         specifier: 'catalog:'
         version: 4.0.0

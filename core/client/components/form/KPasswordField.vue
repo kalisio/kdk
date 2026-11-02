@@ -17,18 +17,16 @@
     @blur="onChanged"
     @update:model-value="onChanged"
   >
-    <!-- Visibility icon -->
     <template v-slot:append>
+      <!-- Visibility icon -->
       <q-icon
         :id="properties.name + '-field-visibility'"
         :name="showPassword ? 'visibility_off' : 'visibility'"
         class="q-pl-md cursor-pointer"
         @click="showPassword = !showPassword"
       />
-    </template>
-    <!-- Helper -->
-    <template v-if="hasHelper" v-slot:append>
-      <k-action
+      <!-- Helper -->
+      <KAction v-if="hasHelper"
         :id="properties.name + '-helper'"
         :label="helperLabel"
         :icon="helperIcon"
@@ -44,9 +42,9 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import { random } from '@kalisio/common-core/utilities'
 import { baseField } from '../../mixins'
-import generateRandomPassword from 'password-generator'
+
 
 export default {
   mixins: [baseField],
@@ -58,10 +56,10 @@ export default {
   },
   created () {
     // generate a default password if required
-    if (_.get(this.properties, 'field.suggest')) {
-      const length = _.get(this.properties.field.suggest, 'length', 12)
-      const rules = _.get(this.properties.field.suggest, 'rules', /[\w\d?-]/)
-      _.set(this.properties, 'default', generateRandomPassword(length, false, rules))
+    const suggest = this.properties.field?.suggest
+    if (suggest) {
+      const { length = 12, digits = 1, specials = 1 } = suggest
+      this.properties.default = random.password({ length, digits, specials })
     }
   }
 }
