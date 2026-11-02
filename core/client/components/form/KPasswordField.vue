@@ -51,7 +51,7 @@ export default {
   data () {
     return {
       showPassword: true,
-      autocomplete: _.get(this.properties, 'field.autocomplete', 'on')
+      autocomplete: this.properties.field?.autocomplete ?? 'on'
     }
   },
   created () {
