@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import SphericalMercator from '@mapbox/sphericalmercator'
+import { SphericalMercator } from '@mapbox/sphericalmercator'
 import { ref, computed } from 'vue'
 import KForm from '../../../../core/client/components/form/KForm.vue'
 

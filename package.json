@@ -109,7 +109,7 @@
     "@kalisio/kdk-core-common": "catalog:",
     "@kalisio/kdk-map-api": "catalog:",
     "@kalisio/kdk-map-common": "catalog:",
-    "@mapbox/sphericalmercator": "^1.2.0",
+    "@mapbox/sphericalmercator": "catalog:",
     "@turf/bbox": "^6.0.1",
     "@weacast/core": "^2.2.1",
     "abort-controller": "^3.0.0",
