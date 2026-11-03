@@ -294,10 +294,12 @@ export class KazarrGridSource extends GridSource {
     if (!this.usable || !bbox) { return null }
 
     const thresholds = _.castArray(_.get(options, 'thresholds', []))
+    const thresholdsMode = _.get(options, 'thresholdsMode', 'absolute')
     // kazarr takes care of [0, 360] datasets and bounding boxes crossing the antimeridian itself
     const parameters = Object.assign({
       variable: this.config.variable,
       thresholds,
+      thresholds_mode: thresholdsMode,
       lon_min: bbox[1],
       lon_max: bbox[3],
       lat_min: bbox[0],
