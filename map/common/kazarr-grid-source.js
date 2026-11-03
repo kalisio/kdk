@@ -2,9 +2,9 @@ import _ from 'lodash'
 import { unitConverters, GridSource, toHalf } from './grid.js'
 
 // Bounds for the dynamically computed mesh_tile_size, these are default values that can be overriden by config
-const MIN_MESH_TILE_SIZE = 4
-const DEFAULT_MAX_MESH_TILE_SIZE = 64
-const DEFAULT_MESH_TILE_SIZE = 16
+const DEFAULT_MIN_MESH_TILE_SIZE = 16
+const DEFAULT_MAX_MESH_TILE_SIZE = 128
+const DEFAULT_MESH_TILE_SIZE = 32
 
 // grid: {
 //   bounds : { min, max }
@@ -141,10 +141,11 @@ export class KazarrGridSource extends GridSource {
     const dataResolution = this.config.resolution
     if (!dataResolution) return _.get(this.config, 'defaultMeshTileSize', DEFAULT_MESH_TILE_SIZE)
 
+    const minMeshTileSize = _.get(this.config, 'minMeshTileSize', DEFAULT_MIN_MESH_TILE_SIZE)
     const maxMeshTileSize = _.get(this.config, 'maxMeshTileSize', DEFAULT_MAX_MESH_TILE_SIZE)
     const sizeLat = tileExtentLat / Math.max(resolution[0], dataResolution[0])
     const sizeLon = tileExtentLon / Math.max(resolution[1], dataResolution[1])
-    return Math.min(maxMeshTileSize, Math.max(MIN_MESH_TILE_SIZE, Math.round(Math.max(sizeLat, sizeLon))))
+    return Math.min(maxMeshTileSize, Math.max(minMeshTileSize, Math.round(Math.max(sizeLat, sizeLon))))
   }
 
   async fetch (abort, bbox, resolution) {
