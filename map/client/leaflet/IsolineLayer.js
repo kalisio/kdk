@@ -39,6 +39,7 @@ const IsolineLayer = L.GeoJSON.extend({
   initialize (options, gridSource) {
     // thresholds to compute isolines for, forwarded as is to the grid source (see eg. KazarrGridSource.isolines)
     this.thresholds = _.get(options, 'thresholds', [])
+    this.thresholdsMode = _.get(options, 'thresholdsMode')
     this.labelOptions = _.defaults({}, _.get(options, 'labels'), DefaultLabels)
 
     // Take care that 'style' is also used as the kdk style of the layer in options,
@@ -173,7 +174,7 @@ const IsolineLayer = L.GeoJSON.extend({
     const fetchController = new AbortController()
     this.fetchController = fetchController
     this.fire('loading')
-    this.gridSource.isolines(fetchController.signal, bbox, { thresholds: this.thresholds }).then((result) => {
+    this.gridSource.isolines(fetchController.signal, bbox, { thresholds: this.thresholds, thresholdsMode: this.thresholdsMode }).then((result) => {
       // superseded by another request meanwhile
       if (this.fetchController !== fetchController) return
       this.fetchController = null
