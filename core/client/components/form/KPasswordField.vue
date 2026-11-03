@@ -45,7 +45,6 @@
 import { random } from '@kalisio/common-core/utilities'
 import { baseField } from '../../mixins'
 
-
 export default {
   mixins: [baseField],
   data () {
