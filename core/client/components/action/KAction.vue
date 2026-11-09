@@ -19,7 +19,7 @@
     v-close-popup="closePopup"
     @click="onClicked"
     :class="{ 'k-action-toggled': isToggled, 'k-action-no-hover': !hover }"
-  > 
+  >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
     <!-- label -->
@@ -99,6 +99,7 @@
     :disable="computedDisabled"
     @click="onClicked"
     :class="{ 'k-fab': true, 'k-action-no-hover': !hover }"
+    :style="{ borderColor: computedBorderColor }"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -127,6 +128,7 @@
     :disable="computedDisabled"
     @click="onClicked"
     :class="{ 'k-fab-action': true, 'k-action-no-hover': !hover }"
+    :style="{ borderColor: computedBorderColor }"
   >
     <!-- icon -->
     <KIcon v-if="!iconRight && computedIcon" :icon="computedIcon" />
@@ -182,7 +184,7 @@ export default {
 import _ from 'lodash'
 import { ref, toRef, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuasar, openURL } from 'quasar'
+import { colors, useQuasar, openURL } from 'quasar'
 import { i18n } from '../../i18n.js'
 import { actionProps } from '../../utils/utils.actions'
 import { bindParams, bindProperties } from '../../utils/utils.content.js'
@@ -213,6 +215,9 @@ const computedIcon = computed(() => {
 const computedColor = computed(() => {
   if (isToggled.value) return _.get(props.toggle, 'color', 'primary')
   return props.color
+})
+const computedBorderColor = computed(() => {
+  return colors.lighten(colors.getPaletteColor(computedColor.value), -75)
 })
 const computedTooltip = computed(() => {
   if (computedDisabled.value) return
@@ -318,7 +323,6 @@ defineExpose({
 <style lang="scss" scoped>
 .k-fab, .k-fab-action {
   border: 2px solid;
-  border-color: v-bind(computedColor) - 75%; 
 }
 .k-tab-action-active {
   border-bottom: solid 2px;
