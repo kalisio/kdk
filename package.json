@@ -26,6 +26,7 @@
     "node": ">= 16.0.0"
   },
   "scripts": {
+    "prepare": "node scripts/prepare.mjs",
     "publish": "git push origin --tags && git push origin",
     "release:patch": "pnpm version --force patch && echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc.publish && npm publish --userconfig .npmrc.publish --access public; rm -f .npmrc.publish",
     "release:minor": "pnpm version --force minor && echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc.publish && npm publish --userconfig .npmrc.publish --access public; rm -f .npmrc.publish",
@@ -168,7 +169,9 @@
     "express": "^5.2.1",
     "fs-extra": "catalog:",
     "googleapis": "^21.3.0",
+    "husky": "catalog:",
     "is-docker": "catalog:",
+    "lint-staged": "catalog:",
     "mocha": "^9.1.1",
     "nock": "^14.0.5",
     "pngjs": "^5.0.0",
