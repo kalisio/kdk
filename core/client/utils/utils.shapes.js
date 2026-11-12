@@ -88,6 +88,7 @@ export function createShape (options) {
   const hasShape = options.shape && options.shape !== 'none'
   const hasUrlIcon = options.icon && !_.isEmpty(options.icon.url)
   const hasClassesIcon = options.icon && !_.isEmpty(options.icon.classes)
+  const hasSymbolIcon = options.icon && !_.isEmpty(options.icon.symbol)
   const hasText = options.text && !_.isEmpty(options.text.label)
   if (hasShape) {
     let shapeName = options.shape
@@ -125,6 +126,13 @@ export function createShape (options) {
     } else if (hasUrlIcon) {
       params.icon = {
         url: options.icon.url,
+        size: options.icon.size || defaultIconSize
+      }
+    } else if (hasSymbolIcon) {
+      params.icon = {
+        symbol: options.icon.symbol,
+        color: getHtmlColor(options.icon.color, defaultColor),
+        opacity: options.icon.opacity || 1.0,
         size: options.icon.size || defaultIconSize
       }
     }
