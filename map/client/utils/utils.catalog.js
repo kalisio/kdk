@@ -1,33 +1,54 @@
 import _ from 'lodash'
 import sift from 'sift'
+import { is } from '@kalisio/common-core/predicates'
+import { url } from '@kalisio/common-core/utilities'
 import { api, i18n, Store } from '../../../core/client/index.js'
-import { buildUrl } from '../../../core/common/index.js'
 import { getCatalogProjectQuery, getViewsProjectQuery } from './utils.project.js'
 
-// Helper to set a JWT as query param in a target URL
+// Resolve a relative reference (e.g. /api/storage/xxx) against the application origin,
+// where the browser will send the request. Absolute and root-relative URLs are kept as
+// written, so that templated ones ({s}, {z}/{x}/{y}...) are not re-encoded; other relative
+// references are normalized by the URL parser. Returns null if it cannot be resolved.
+function resolveUrl (value) {
+  if (!is.string(value) || !value.trim()) return null
+  if (is.url(value)) return value
+  const origin = globalThis.location?.origin
+  if (!origin || !URL.canParse(value, origin)) return null
+  // Root-relative, excluding //host and /\host which target another host
+  if (value.startsWith('/') && !value.startsWith('//') && !value.includes('\\')) return `${origin}${value}`
+  return new URL(value, origin).href
+}
+
+// Set the token in the query of a file extension, keeping its other parameters
+function setExtensionJwt (extension, jwtField, jwt) {
+  const queryIndex = extension.indexOf('?')
+  const name = queryIndex === -1 ? extension : extension.slice(0, queryIndex)
+  const key = encodeURIComponent(jwtField)
+  const params = (queryIndex === -1 ? [] : extension.slice(queryIndex + 1).split('&'))
+    .filter(param => param && param.split('=')[0] !== key)
+  params.push(`${key}=${encodeURIComponent(jwt)}`)
+  return `${name}?${params.join('&')}`
+}
+
 export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
-  let url = _.get(item, path)
-  if (!url) return
-  // Check it conforms to required base URL
-  if (!url.startsWith(baseUrl)) return
-  // Take care it might inlcude an old token that needs to be refreshed
-  if (url.includes(`?${jwtField}=`)) {
-    url = url.replace(/eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*/g, '').replace(`?${jwtField}=`, '')
-  }
+  const value = _.get(item, path)
+  // Callers opt in to references to the application origin with a relative base URL:
+  // an absolute base URL only matches absolute URLs
+  const target = (is.url(baseUrl) && !is.url(value)) ? null : resolveUrl(value)
+  const scope = resolveUrl(baseUrl)
+  // Only URLs within the trusted scope receive the token: neither a lookalike host
+  // (https://gateway.com.evil.com), a userinfo trick (https://gateway.com@evil.com),
+  // a protocol-relative URL (//evil.com) nor a dot segment escaping the base path
+  if (!target || !scope || !url.isWithin(target, scope)) return
   // FIXME: specific case of Cesium OpenStreetMap provider
   // Because Cesium generates the final url as base url + tile scheme + extension
   // updating the base url property breaks it, for now we modify the extension
   if ((path === 'cesium.url') && _.get(item, 'cesium.type') === 'OpenStreetMap') {
-    const ext = _.get(item, 'cesium.fileExtension', 'png')
-    _.set(item, 'cesium.fileExtension', ext + `?${jwtField}=${jwt}`)
-  } else {
-    console.log('[KDK] setUrlJwt', {
-      path,
-      baseUrl,
-      url: url.replace(/([?&](?:jwt|token)=)[^&#]*/gi, '$1[REDACTED]')
-    })
-    _.set(item, path, buildUrl(url, { [jwtField]: jwt }))
+    _.set(item, 'cesium.fileExtension', setExtensionJwt(_.get(item, 'cesium.fileExtension', 'png'), jwtField, jwt))
+    return
   }
+  // Replaces a previous token wherever it is in the query, without re-encoding the URL
+  _.set(item, path, url.addQueryParam(target, { [jwtField]: jwt }))
 }
 
 // Helper to set required JWT as query param in a given set of layers for underlying engine
