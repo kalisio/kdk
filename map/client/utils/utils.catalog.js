@@ -21,6 +21,11 @@ export function setUrlJwt (item, path, baseUrl, jwtField, jwt) {
     const ext = _.get(item, 'cesium.fileExtension', 'png')
     _.set(item, 'cesium.fileExtension', ext + `?${jwtField}=${jwt}`)
   } else {
+    console.log('[KDK] setUrlJwt', {
+      path,
+      baseUrl,
+      url: url.replace(/([?&](?:jwt|token)=)[^&#]*/gi, '$1[REDACTED]')
+    })
     _.set(item, path, buildUrl(url, { [jwtField]: jwt }))
   }
 }
@@ -111,7 +116,7 @@ export async function getLayers (options = {}) {
   })
   // We expect the project object to expose the underlying API
   const planetApi = (options.project && typeof options.project.getPlanetApi === 'function' ? options.project.getPlanetApi() : options.planetApi)
-    
+
   let layers = []
   const catalogService = planetApi.getService('catalog', options.context)
   if (catalogService) {
@@ -186,7 +191,7 @@ export async function getViews (options = {}) {
   })
   // We expect the project object to expose the underlying API
   const planetApi = (options.project && typeof options.project.getPlanetApi === 'function' ? options.project.getPlanetApi() : options.planetApi)
-  
+
   let views = []
   const catalogService = planetApi.getService('catalog', options.context)
   if (catalogService) {
@@ -204,7 +209,7 @@ export function orderCatalogItemsBy(items, itemsOrder) {
   if (!_.isEmpty(itemsOrder)) {
     for (let i = itemsOrder.length; i >= 0; i--) {
       const itemIdOrName = itemsOrder[i]
-      // Move item to beginning of array          
+      // Move item to beginning of array
       const itemIndex = items.findIndex(item => (item?._id === itemIdOrName) || (item?.name === itemIdOrName))
       if (itemIndex >= 0) {
         const removedItems = items.splice(itemIndex, 1)
